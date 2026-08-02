@@ -11,57 +11,40 @@ import (
 )
 
 func TestEvaluateHandler(t *testing.T) {
-	t.Parallel()
+	t.Setenv("GROK_API_KEY", "test-key")
 
-	handler := NewEvaluateHandler(usecases.NewEvaluationService())
+	grokServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, err := w.Write([]byte(`{"choices":[{"message":{"content":"{\"passed\": true}"}}]}`))
+		if err != nil {
+			t.Fatalf("error escribiendo respuesta mock: %v", err)
+		}
+	}))
+	defer grokServer.Close()
 
-	tests := []struct {
-		name       string
-		body       evaluateRequest
-		wantPassed bool
-		wantStatus int
-	}{
-		{
-			name:       "aprobado",
-			body:       evaluateRequest{Code: "print(42)", LevelID: 1},
-			wantPassed: true,
-			wantStatus: http.StatusOK,
-		},
-		{
-			name:       "desaprobado",
-			body:       evaluateRequest{Code: "return 42", LevelID: 1},
-			wantPassed: false,
-			wantStatus: http.StatusOK,
-		},
+	service := usecases.NewEvaluationServiceForTest(grokServer.Client(), grokServer.URL)
+	handler := NewEvaluateHandler(service)
+
+	payload, err := json.Marshal(evaluateRequest{Code: "print(42)", LevelID: 1})
+	if err != nil {
+		t.Fatalf("no se pudo serializar request: %v", err)
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
+	req := httptest.NewRequest(http.MethodPost, "/api/evaluate", bytes.NewReader(payload))
+	rec := httptest.NewRecorder()
 
-			payload, err := json.Marshal(tt.body)
-			if err != nil {
-				t.Fatalf("no se pudo serializar request: %v", err)
-			}
+	handler.Evaluate(rec, req)
 
-			req := httptest.NewRequest(http.MethodPost, "/api/evaluate", bytes.NewReader(payload))
-			rec := httptest.NewRecorder()
+	if rec.Code != http.StatusOK {
+		t.Fatalf("código HTTP inesperado: got %d, want %d", rec.Code, http.StatusOK)
+	}
 
-			handler.Evaluate(rec, req)
-
-			if rec.Code != tt.wantStatus {
-				t.Fatalf("código HTTP inesperado: got %d, want %d", rec.Code, tt.wantStatus)
-			}
-
-			var resp evaluateResponse
-			if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
-				t.Fatalf("JSON inválido: %v", err)
-			}
-
-			if resp.Passed != tt.wantPassed {
-				t.Fatalf("passed inesperado: got %v, want %v", resp.Passed, tt.wantPassed)
-			}
-		})
+	var resp evaluateResponse
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("JSON inválido: %v", err)
+	}
+	if !resp.Passed {
+		t.Fatal("se esperaba passed=true")
 	}
 }
 
@@ -76,5 +59,24 @@ func TestEvaluateHandlerInvalidJSON(t *testing.T) {
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("código HTTP inesperado: got %d, want %d", rec.Code, http.StatusBadRequest)
+	}
+}
+
+func TestEvaluateHandlerMissingAPIKey(t *testing.T) {
+	t.Setenv("GROK_API_KEY", "")
+
+	handler := NewEvaluateHandler(usecases.NewEvaluationService())
+	payload, err := json.Marshal(evaluateRequest{Code: "print(1)", LevelID: 1})
+	if err != nil {
+		t.Fatalf("no se pudo serializar request: %v", err)
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/api/evaluate", bytes.NewReader(payload))
+	rec := httptest.NewRecorder()
+
+	handler.Evaluate(rec, req)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("código HTTP inesperado: got %d, want %d", rec.Code, http.StatusInternalServerError)
 	}
 }
