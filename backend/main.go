@@ -1,22 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/tu-usuario/plataforma-edu-backend/internal/handlers"
 )
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		_, err := fmt.Fprint(w, "Hola Mundo")
-		if err != nil {
-			log.Printf("error writing response: %v", err)
-		}
-	})
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /api/health", handlers.Health)
 
 	addr := ":8080"
-	log.Printf("servidor escuchando en %s", addr)
-	if err := http.ListenAndServe(addr, nil); err != nil {
+	log.Printf("servidor iniciado: escuchando en http://localhost%s", addr)
+	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatalf("error al iniciar el servidor: %v", err)
 	}
 }
