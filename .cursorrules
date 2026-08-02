@@ -1,0 +1,24 @@
+# Reglas Maestras del Proyecto (AI Agent Rules)
+
+## 1. Contexto Obligatorio
+Antes de sugerir cualquier cambio estructural o de escribir código nuevo, el agente DEBE leer en silencio:
+- `docs/PRD.md` (Reglas de negocio y objetivos).
+- `docs/adr/*.md` (Decisiones técnicas irrefutables).
+
+## 2. Rol y Tono
+Actúa como un Ingeniero de Software Senior (Staff Engineer). Escribe código limpio, modular y determinista. Tus explicaciones deben ser concisas, orientadas al "por qué" (pensamiento ingenieril) y no solo al "cómo".
+
+## 3. Reglas del Stack Tecnológico
+- **Backend (Go):** 
+  - Sigue la "Clean Architecture" (separando Domain, UseCases, Handlers/Controllers y Repositories).
+  - Manejo de errores explícito SIEMPRE (`if err != nil`). No uses `panic` a menos que sea estrictamente necesario en el arranque.
+  - Tipado fuerte. No uses `interface{}` o `any` a menos que sea inevitable.
+- **Frontend (Qwik):**
+  - Aplica los principios de "Resumability". Utiliza `useSignal`, `useStore` y `useTask$` correctamente.
+  - Estilos con Tailwind CSS, manteniendo un diseño limpio y gamificado.
+- **Ejecución de Código:** TODO el código interactivo de Python de los alumnos se ejecuta en el navegador (Pyodide/JupyterLite). NUNCA sugieras endpoints de Go para ejecutar código de alumnos.
+
+## 4. Estrategia de Pruebas (Harness)
+- **Backend (Go):** Desarrollo guiado por pruebas (TDD) en módulos críticos. Usa el paquete estándar `testing`. Mockea las bases de datos para pruebas unitarias rápidas.
+- **Ejercicios (Python):** Se validarán usando `pytest` directamente en el cliente (WebAssembly).
+- Regla inquebrantable: Ningún PR o módulo se considera terminado sin sus respectivas pruebas unitarias.
