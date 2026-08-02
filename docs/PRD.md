@@ -1,5 +1,10 @@
 # Product Requirements Document (PRD)
 ## Nombre del Proyecto: Plataforma Educativa de Pensamiento Ingenieril
+
+> **Spec-Driven Development (OpenSpec):** este PRD conserva la visión fundacional.
+> Los requisitos vivos, deltas y el plan de implementación se gestionan en `openspec/`.
+> Change activo inicial: `openspec/changes/core-learning-engine/` (`proposal.md`, `specs/`, `design.md`, `tasks.md`).
+
 ### 1. Visión y Objetivo
 Desarrollar una plataforma web de aprendizaje autogestionado para enseñar programación (Python y Go), matemáticas e inglés técnico. El diferenciador principal es el enfoque pedagógico: enseñar "Pensamiento Ingenieril" (Abstracción → Diseño → Implementación → Pruebas). 
 La plataforma debe ser ultrarrápida, de bajo costo operativo y altamente gamificada mediante el desbloqueo automático de niveles.
