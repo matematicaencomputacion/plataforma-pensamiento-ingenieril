@@ -37,6 +37,7 @@ func (h *EvaluateHandler) Evaluate(w http.ResponseWriter, r *http.Request) {
 
 	passed, err := h.service.EvaluateCode(req.Code, req.LevelID)
 	if err != nil {
+		log.Printf("Error detallado en EvaluateCode: %v", err)
 		http.Error(w, "error al evaluar el código", http.StatusInternalServerError)
 		return
 	}

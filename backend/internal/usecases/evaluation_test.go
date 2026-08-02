@@ -87,6 +87,51 @@ func TestEvaluateCodeRejected(t *testing.T) {
 	}
 }
 
+func TestEvaluateCodeNonOKStatus(t *testing.T) {
+	t.Setenv("GROK_API_KEY", "test-key")
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, err := w.Write([]byte(`{"error":"invalid api key"}`))
+		if err != nil {
+			t.Fatalf("error escribiendo respuesta mock: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	service := NewEvaluationServiceForTest(server.Client(), server.URL)
+
+	_, err := service.EvaluateCode("print(1)", 1)
+	if err == nil {
+		t.Fatal("se esperaba error por status != 200")
+	}
+
+	wantFragment := `xAI API error: status 401, body: {"error":"invalid api key"}`
+	if err.Error() != wantFragment {
+		t.Fatalf("mensaje de error inesperado:\ngot:  %q\nwant: %q", err.Error(), wantFragment)
+	}
+}
+
+func TestEvaluateCodeInvalidCompletionJSON(t *testing.T) {
+	t.Setenv("GROK_API_KEY", "test-key")
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, err := w.Write([]byte(`{"choices":`))
+		if err != nil {
+			t.Fatalf("error escribiendo respuesta mock: %v", err)
+		}
+	}))
+	defer server.Close()
+
+	service := NewEvaluationServiceForTest(server.Client(), server.URL)
+
+	_, err := service.EvaluateCode("print(1)", 1)
+	if err == nil {
+		t.Fatal("se esperaba error de unmarshal")
+	}
+}
+
 func TestParsePassedFromContent(t *testing.T) {
 	t.Parallel()
 

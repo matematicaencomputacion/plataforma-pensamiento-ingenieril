@@ -93,31 +93,31 @@ func (s *EvaluationService) EvaluateCode(code string, levelID int) (bool, error)
 
 	resp, err := s.httpClient.Do(req)
 	if err != nil {
-		return false, fmt.Errorf("error al llamar a la API de Grok: %w", err)
+		return false, fmt.Errorf("xAI API error: fallo en http.Client: %w", err)
 	}
 	defer resp.Body.Close()
 
-	respBody, err := io.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return false, fmt.Errorf("error al leer la respuesta de Grok: %w", err)
+		return false, fmt.Errorf("xAI API error: no se pudo leer el cuerpo de la respuesta: %w", err)
 	}
 
-	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		return false, fmt.Errorf("API de Grok respondió con estado %d: %s", resp.StatusCode, string(respBody))
+	if resp.StatusCode != http.StatusOK {
+		return false, fmt.Errorf("xAI API error: status %d, body: %s", resp.StatusCode, string(bodyBytes))
 	}
 
 	var completion chatCompletionResponse
-	if err := json.Unmarshal(respBody, &completion); err != nil {
-		return false, fmt.Errorf("error al parsear la respuesta de Grok: %w", err)
+	if err := json.Unmarshal(bodyBytes, &completion); err != nil {
+		return false, fmt.Errorf("error al unmarshal de la respuesta de xAI: %w; body: %s", err, string(bodyBytes))
 	}
 
 	if len(completion.Choices) == 0 {
-		return false, fmt.Errorf("la API de Grok no devolvió choices")
+		return false, fmt.Errorf("xAI API error: la respuesta no contiene choices; body: %s", string(bodyBytes))
 	}
 
 	passed, err := parsePassedFromContent(completion.Choices[0].Message.Content)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("error al unmarshal del veredicto de evaluación: %w", err)
 	}
 
 	return passed, nil
