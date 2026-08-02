@@ -11,7 +11,7 @@ func TestEvaluateCodeMissingAPIKey(t *testing.T) {
 	t.Setenv("GROK_API_KEY", "")
 
 	service := NewEvaluationService()
-	_, err := service.EvaluateCode("print(1)", 1)
+	_, _, err := service.EvaluateCode("print(1)", 1)
 	if err == nil {
 		t.Fatal("se esperaba error cuando GROK_API_KEY está vacía")
 	}
@@ -46,7 +46,7 @@ func TestEvaluateCodeSuccess(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		_, err := w.Write([]byte(`{"choices":[{"message":{"content":"{\"passed\": true}"}}]}`))
+		_, err := w.Write([]byte(`{"choices":[{"message":{"content":"{\"passed\": true, \"feedback\": \"Excelente trabajo\"}"}}]}`))
 		if err != nil {
 			t.Fatalf("error escribiendo respuesta mock: %v", err)
 		}
@@ -55,12 +55,15 @@ func TestEvaluateCodeSuccess(t *testing.T) {
 
 	service := NewEvaluationServiceForTest(server.Client(), server.URL)
 
-	got, err := service.EvaluateCode("print(1)", 1)
+	got, feedback, err := service.EvaluateCode("print(1)", 1)
 	if err != nil {
 		t.Fatalf("error inesperado: %v", err)
 	}
 	if !got {
 		t.Fatal("se esperaba passed=true")
+	}
+	if feedback != "Excelente trabajo" {
+		t.Fatalf("feedback inesperado: got %q", feedback)
 	}
 }
 
@@ -69,7 +72,7 @@ func TestEvaluateCodeRejected(t *testing.T) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		_, err := w.Write([]byte(`{"choices":[{"message":{"content":"{\"passed\": false}"}}]}`))
+		_, err := w.Write([]byte(`{"choices":[{"message":{"content":"{\"passed\": false, \"feedback\": \"Falta un print válido\"}"}}]}`))
 		if err != nil {
 			t.Fatalf("error escribiendo respuesta mock: %v", err)
 		}
@@ -78,12 +81,15 @@ func TestEvaluateCodeRejected(t *testing.T) {
 
 	service := NewEvaluationServiceForTest(server.Client(), server.URL)
 
-	got, err := service.EvaluateCode("x = 1", 1)
+	got, feedback, err := service.EvaluateCode("x = 1", 1)
 	if err != nil {
 		t.Fatalf("error inesperado: %v", err)
 	}
 	if got {
 		t.Fatal("se esperaba passed=false")
+	}
+	if feedback != "Falta un print válido" {
+		t.Fatalf("feedback inesperado: got %q", feedback)
 	}
 }
 
@@ -101,7 +107,7 @@ func TestEvaluateCodeNonOKStatus(t *testing.T) {
 
 	service := NewEvaluationServiceForTest(server.Client(), server.URL)
 
-	_, err := service.EvaluateCode("print(1)", 1)
+	_, _, err := service.EvaluateCode("print(1)", 1)
 	if err == nil {
 		t.Fatal("se esperaba error por status != 200")
 	}
@@ -126,29 +132,32 @@ func TestEvaluateCodeInvalidCompletionJSON(t *testing.T) {
 
 	service := NewEvaluationServiceForTest(server.Client(), server.URL)
 
-	_, err := service.EvaluateCode("print(1)", 1)
+	_, _, err := service.EvaluateCode("print(1)", 1)
 	if err == nil {
 		t.Fatal("se esperaba error de unmarshal")
 	}
 }
 
-func TestParsePassedFromContent(t *testing.T) {
+func TestParseVerdictFromContent(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name    string
-		content string
-		want    bool
+		name         string
+		content      string
+		wantPassed   bool
+		wantFeedback string
 	}{
 		{
-			name:    "json puro",
-			content: `{"passed": true}`,
-			want:    true,
+			name:         "json puro",
+			content:      `{"passed": true, "feedback": "Bien hecho"}`,
+			wantPassed:   true,
+			wantFeedback: "Bien hecho",
 		},
 		{
-			name:    "json con fences markdown",
-			content: "```json\n{\"passed\": false}\n```",
-			want:    false,
+			name:         "json con fences markdown",
+			content:      "```json\n{\"passed\": false, \"feedback\": \"Revisa el print\"}\n```",
+			wantPassed:   false,
+			wantFeedback: "Revisa el print",
 		},
 	}
 
@@ -156,12 +165,15 @@ func TestParsePassedFromContent(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got, err := parsePassedFromContent(tt.content)
+			gotPassed, gotFeedback, err := parseVerdictFromContent(tt.content)
 			if err != nil {
 				t.Fatalf("error inesperado: %v", err)
 			}
-			if got != tt.want {
-				t.Fatalf("resultado inesperado: got %v, want %v", got, tt.want)
+			if gotPassed != tt.wantPassed {
+				t.Fatalf("passed inesperado: got %v, want %v", gotPassed, tt.wantPassed)
+			}
+			if gotFeedback != tt.wantFeedback {
+				t.Fatalf("feedback inesperado: got %q, want %q", gotFeedback, tt.wantFeedback)
 			}
 		})
 	}

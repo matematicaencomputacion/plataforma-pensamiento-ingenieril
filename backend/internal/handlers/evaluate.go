@@ -14,7 +14,8 @@ type evaluateRequest struct {
 }
 
 type evaluateResponse struct {
-	Passed bool `json:"passed"`
+	Passed   bool   `json:"passed"`
+	Feedback string `json:"feedback"`
 }
 
 // EvaluateHandler expone el caso de uso de evaluación vía HTTP.
@@ -35,14 +36,17 @@ func (h *EvaluateHandler) Evaluate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	passed, err := h.service.EvaluateCode(req.Code, req.LevelID)
+	passed, feedback, err := h.service.EvaluateCode(req.Code, req.LevelID)
 	if err != nil {
 		log.Printf("Error detallado en EvaluateCode: %v", err)
 		http.Error(w, "error al evaluar el código", http.StatusInternalServerError)
 		return
 	}
 
-	response := evaluateResponse{Passed: passed}
+	response := evaluateResponse{
+		Passed:   passed,
+		Feedback: feedback,
+	}
 	payload, err := json.Marshal(response)
 	if err != nil {
 		http.Error(w, "error al codificar la respuesta", http.StatusInternalServerError)

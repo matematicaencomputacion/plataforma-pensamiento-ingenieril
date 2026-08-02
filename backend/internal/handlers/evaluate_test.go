@@ -15,7 +15,7 @@ func TestEvaluateHandler(t *testing.T) {
 
 	grokServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		_, err := w.Write([]byte(`{"choices":[{"message":{"content":"{\"passed\": true}"}}]}`))
+		_, err := w.Write([]byte(`{"choices":[{"message":{"content":"{\"passed\": true, \"feedback\": \"Excelente print\"}"}}]}`))
 		if err != nil {
 			t.Fatalf("error escribiendo respuesta mock: %v", err)
 		}
@@ -45,6 +45,9 @@ func TestEvaluateHandler(t *testing.T) {
 	}
 	if !resp.Passed {
 		t.Fatal("se esperaba passed=true")
+	}
+	if resp.Feedback != "Excelente print" {
+		t.Fatalf("feedback inesperado: got %q", resp.Feedback)
 	}
 }
 

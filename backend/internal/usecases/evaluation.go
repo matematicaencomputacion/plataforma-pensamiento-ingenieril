@@ -13,9 +13,9 @@ import (
 
 const (
 	grokChatCompletionsURL = "https://api.x.ai/v1/chat/completions"
-	// latest apunta al modelo chat más reciente recomendado por xAI.
-	grokModel        = "latest"
-	grokSystemPrompt = "Eres un evaluador estricto de código Python. El usuario enviará un código. Tu única respuesta debe ser un JSON puro con la estructura {\"passed\": true} si el código resuelve un problema básico, o {\"passed\": false} si es incorrecto. No agregues markdown ni explicaciones."
+	// grok-4.5: modelo chat actual usado por el motor de evaluación.
+	grokModel        = "grok-4.5"
+	grokSystemPrompt = "Eres un profesor de programación empático, alentador y claro. El usuario enviará un código en Python. Evalúa si el código es correcto y ejecuta al menos un print() válido. Devuelve EXCLUSIVAMENTE un JSON puro con esta estructura: {\"passed\": true/false, \"feedback\": \"Tu explicación aquí\"}. Si es correcto, felicítalo brevemente. Si hay un error, explícale el porqué de forma didáctica para guiarlo, sin darle el código resuelto. REGLA ESTRICTA: NO uses bloques Markdown (```json)."
 )
 
 // EvaluationService orquesta la evaluación de ejercicios usando la API de Grok (xAI).
@@ -59,16 +59,17 @@ type chatCompletionResponse struct {
 }
 
 type evaluationVerdict struct {
-	Passed bool `json:"passed"`
+	Passed   bool   `json:"passed"`
+	Feedback string `json:"feedback"`
 }
 
-// EvaluateCode envía el código a Grok y retorna si el ejercicio fue aprobado.
-func (s *EvaluationService) EvaluateCode(code string, levelID int) (bool, error) {
+// EvaluateCode envía el código a Grok y retorna aprobación + feedback educativo.
+func (s *EvaluationService) EvaluateCode(code string, levelID int) (bool, string, error) {
 	_ = levelID // reservado para prompts por nivel en iteraciones futuras
 
 	apiKey := os.Getenv("GROK_API_KEY")
 	if apiKey == "" {
-		return false, fmt.Errorf("GROK_API_KEY no está configurada")
+		return false, "", fmt.Errorf("GROK_API_KEY no está configurada")
 	}
 
 	payload := chatCompletionRequest{
@@ -81,49 +82,49 @@ func (s *EvaluationService) EvaluateCode(code string, levelID int) (bool, error)
 
 	body, err := json.Marshal(payload)
 	if err != nil {
-		return false, fmt.Errorf("error al codificar la petición a Grok: %w", err)
+		return false, "", fmt.Errorf("error al codificar la petición a Grok: %w", err)
 	}
 
 	req, err := http.NewRequest(http.MethodPost, s.apiURL, bytes.NewReader(body))
 	if err != nil {
-		return false, fmt.Errorf("error al crear la petición a Grok: %w", err)
+		return false, "", fmt.Errorf("error al crear la petición a Grok: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+apiKey)
 
 	resp, err := s.httpClient.Do(req)
 	if err != nil {
-		return false, fmt.Errorf("xAI API error: fallo en http.Client: %w", err)
+		return false, "", fmt.Errorf("xAI API error: fallo en http.Client: %w", err)
 	}
 	defer resp.Body.Close()
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return false, fmt.Errorf("xAI API error: no se pudo leer el cuerpo de la respuesta: %w", err)
+		return false, "", fmt.Errorf("xAI API error: no se pudo leer el cuerpo de la respuesta: %w", err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return false, fmt.Errorf("xAI API error: status %d, body: %s", resp.StatusCode, string(bodyBytes))
+		return false, "", fmt.Errorf("xAI API error: status %d, body: %s", resp.StatusCode, string(bodyBytes))
 	}
 
 	var completion chatCompletionResponse
 	if err := json.Unmarshal(bodyBytes, &completion); err != nil {
-		return false, fmt.Errorf("error al unmarshal de la respuesta de xAI: %w; body: %s", err, string(bodyBytes))
+		return false, "", fmt.Errorf("error al unmarshal de la respuesta de xAI: %w; body: %s", err, string(bodyBytes))
 	}
 
 	if len(completion.Choices) == 0 {
-		return false, fmt.Errorf("xAI API error: la respuesta no contiene choices; body: %s", string(bodyBytes))
+		return false, "", fmt.Errorf("xAI API error: la respuesta no contiene choices; body: %s", string(bodyBytes))
 	}
 
-	passed, err := parsePassedFromContent(completion.Choices[0].Message.Content)
+	passed, feedback, err := parseVerdictFromContent(completion.Choices[0].Message.Content)
 	if err != nil {
-		return false, fmt.Errorf("error al unmarshal del veredicto de evaluación: %w", err)
+		return false, "", fmt.Errorf("error al unmarshal del veredicto de evaluación: %w", err)
 	}
 
-	return passed, nil
+	return passed, feedback, nil
 }
 
-func parsePassedFromContent(content string) (bool, error) {
+func parseVerdictFromContent(content string) (bool, string, error) {
 	cleaned := strings.TrimSpace(content)
 	cleaned = strings.TrimPrefix(cleaned, "```json")
 	cleaned = strings.TrimPrefix(cleaned, "```")
@@ -132,8 +133,8 @@ func parsePassedFromContent(content string) (bool, error) {
 
 	var verdict evaluationVerdict
 	if err := json.Unmarshal([]byte(cleaned), &verdict); err != nil {
-		return false, fmt.Errorf("no se pudo parsear el veredicto de Grok (%q): %w", content, err)
+		return false, "", fmt.Errorf("no se pudo parsear el veredicto de Grok (%q): %w", content, err)
 	}
 
-	return verdict.Passed, nil
+	return verdict.Passed, verdict.Feedback, nil
 }

@@ -3,6 +3,7 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 
 type EvaluateResponse = {
   passed: boolean;
+  feedback?: string;
 };
 
 export default component$(() => {
@@ -10,6 +11,7 @@ export default component$(() => {
     '# Escribe tu solución en Python\nprint("Hola, pensamiento ingenieril")\n',
   );
   const result = useSignal("");
+  const feedback = useSignal("");
   const isEvaluating = useSignal(false);
   const passed = useSignal<boolean | null>(null);
 
@@ -49,6 +51,7 @@ export default component$(() => {
             onClick$={async () => {
               isEvaluating.value = true;
               result.value = "Evaluando...";
+              feedback.value = "";
               passed.value = null;
 
               try {
@@ -69,6 +72,7 @@ export default component$(() => {
                 if (!response.ok) {
                   result.value =
                     "Error al evaluar: el servidor respondió con un estado inesperado.";
+                  feedback.value = "";
                   return;
                 }
 
@@ -77,9 +81,11 @@ export default component$(() => {
                 result.value = data.passed
                   ? "Aprobado ✅"
                   : "Desaprobado ❌";
+                feedback.value = data.feedback?.trim() ?? "";
               } catch {
                 result.value =
                   "No se pudo conectar con el backend en http://localhost:8080.";
+                feedback.value = "";
               } finally {
                 isEvaluating.value = false;
               }
@@ -98,6 +104,13 @@ export default component$(() => {
         >
           {result.value || "El resultado de la evaluación aparecerá aquí."}
         </div>
+
+        {feedback.value && (
+          <aside class="workspace__feedback" aria-label="Nota del profesor">
+            <p class="workspace__feedback-label">Nota del profesor</p>
+            <p class="workspace__feedback-text">{feedback.value}</p>
+          </aside>
+        )}
       </section>
     </main>
   );
