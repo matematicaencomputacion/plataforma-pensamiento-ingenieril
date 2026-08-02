@@ -1,0 +1,23 @@
+schema: spec-driven
+
+context: |
+  Proyecto: Plataforma Educativa de Pensamiento Ingenieril
+  Stack: Qwik + Tailwind (frontend), Go Clean Architecture (backend), PostgreSQL/SQLite, ejecución Python client-side (Pyodide/JupyterLite).
+  ADRs: docs/adr/0001-stack-tecnologico.md, docs/adr/0002-ejecucion-client-side.md
+  Reglas agente: .cursorrules
+  Producto fundacional: docs/PRD.md (visión histórica). Definición viva de producto/specs: openspec/
+  Dominio pedagógico: Track 1 Micro-pasos (sintaxis) + Track 2 Retos Ingenieriles; Perfil Cognitivo para personalizar prompts a Grok (xAI).
+  Convenciones: conventional commits; autor git matematica.en.computacion@gmail.com; API Go en :8080; frontend Qwik en dev local.
+
+rules:
+  proposal:
+    - Mantener propuestas concisas y orientadas al "por qué".
+    - Incluir siempre Alcance incluido, Fuera de alcance y Plan de rollback.
+  specs:
+    - Usar requisitos verificables con escenarios Given/When/Then.
+    - Preferir SHALL/MUST en el texto del requisito.
+  design:
+    - Respetar Clean Architecture en Go y Resumability en Qwik.
+    - No proponer ejecución de código de alumnos en el servidor (ADR 002).
+  tasks:
+    - Tareas pequeñas, chequeables y ordenadas por dependencia.

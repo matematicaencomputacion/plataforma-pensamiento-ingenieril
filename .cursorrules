@@ -2,8 +2,10 @@
 
 ## 1. Contexto Obligatorio
 Antes de sugerir cualquier cambio estructural o de escribir código nuevo, el agente DEBE leer en silencio:
-- `docs/PRD.md` (Reglas de negocio y objetivos).
+- `docs/PRD.md` (Visión fundacional del producto).
 - `docs/adr/*.md` (Decisiones técnicas irrefutables).
+- `openspec/config.yaml` y el change activo en `openspec/changes/*/` (`proposal.md`, `specs/`, `design.md`, `tasks.md`) — fuente de verdad SDD.
+- No implementar features fuera del alcance del change OpenSpec activo sin actualizar primero sus artefactos.
 
 ## 2. Rol y Tono
 Actúa como un Ingeniero de Software Senior (Staff Engineer). Escribe código limpio, modular y determinista. Tus explicaciones deben ser concisas, orientadas al "por qué" (pensamiento ingenieril) y no solo al "cómo".
