@@ -1,16 +1,16 @@
 ## 1. Dominio y contratos
 
-- [ ] 1.1 Definir structs de dominio `Challenge`/`Level` (id, title, statement, trackType, evaluationPrompt) en `backend/internal/domain`
-- [ ] 1.2 Definir structs `CognitiveProfile` y `Skill` (id, status, lastReviewedAt) en `backend/internal/domain`
-- [ ] 1.3 Definir interfaces de repositorio para niveles y perfil en la capa adecuada (puertos)
+- [x] 1.1 Definir structs de dominio `Challenge`/`Level` (id, title, statement, trackType, evaluationPrompt) en `backend/internal/domain`
+- [x] 1.2 Definir structs `CognitiveProfile` y `Skill` (id, status, lastReviewedAt) en `backend/internal/domain`
+- [x] 1.3 Definir interfaces de repositorio para niveles y perfil en la capa adecuada (puertos)
 
 ## 2. Backend — datos y casos de uso
 
-- [ ] 2.1 Implementar repositorio in-memory/SQLite con seed: 1 micro_paso + 1 reto_ingenieril + perfil demo
-- [ ] 2.2 Caso de uso `GetCurrentLevel` y handler `GET /api/levels/current`
-- [ ] 2.3 Extender `EvaluationService` para componer system prompt (track + perfil cognitivo + reglas JSON)
-- [ ] 2.4 Actualizar tests unitarios de evaluación/handlers con mocks HTTP y perfil seeded
-- [ ] 2.5 Registrar rutas en `main.go` y verificar CORS
+- [x] 2.1 Implementar repositorio in-memory/SQLite con seed: 1 micro_paso + 1 reto_ingenieril + perfil demo
+- [x] 2.2 Caso de uso `GetCurrentLevel` y handler `GET /api/levels/current` (+ `GET /api/levels/{id}`)
+- [x] 2.3 Extender `EvaluationService` para componer system prompt (track + perfil cognitivo + reglas JSON)
+- [x] 2.4 Actualizar tests unitarios de evaluación/handlers con mocks HTTP y perfil seeded
+- [x] 2.5 Registrar rutas en `main.go` y verificar CORS
 
 ## 3. Frontend — enunciado y evaluación
 

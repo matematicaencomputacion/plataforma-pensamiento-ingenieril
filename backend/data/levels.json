@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "Tu primer print",
+    "statement": "Escribe un programa en Python que imprima un saludo usando print().",
+    "track_type": "micro_paso",
+    "evaluation_prompt": "Eres un Tutor Básico. Evalúa si el código Python ejecuta al menos un print() válido. Responde EXCLUSIVAMENTE JSON puro {\"passed\": true/false, \"feedback\": \"...\"} sin markdown."
+  },
+  {
+    "id": 2,
+    "title": "Inventario mínimo",
+    "statement": "Diseña una función que reciba una lista de productos y devuelva cuántos hay. Piensa en abstracción, nombres claros y un print() que muestre el resultado.",
+    "track_type": "reto_ingenieril",
+    "evaluation_prompt": "Eres un Arquitecto de Software. Evalúa si el código resuelve el problema abierto con claridad de diseño y al menos un print() válido. Responde EXCLUSIVAMENTE JSON puro {\"passed\": true/false, \"feedback\": \"...\"} sin markdown."
+  }
+]
