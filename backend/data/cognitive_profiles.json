@@ -1,0 +1,17 @@
+[
+  {
+    "user_id": "demo-user",
+    "skills": [
+      {
+        "id": "bucles_for",
+        "status": "mastered",
+        "last_reviewed_at": "2026-07-26T12:00:00Z"
+      },
+      {
+        "id": "print_basico",
+        "status": "learning",
+        "last_reviewed_at": "2026-08-01T12:00:00Z"
+      }
+    ]
+  }
+]

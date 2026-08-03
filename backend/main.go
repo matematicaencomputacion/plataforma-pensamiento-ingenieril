@@ -3,8 +3,11 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/tu-usuario/plataforma-edu-backend/internal/handlers"
+	"github.com/tu-usuario/plataforma-edu-backend/internal/repositories/jsonstore"
 	"github.com/tu-usuario/plataforma-edu-backend/internal/usecases"
 )
 
@@ -23,16 +26,43 @@ func enableCORS(next http.Handler) http.Handler {
 	})
 }
 
+func resolveDataDir() string {
+	if dir := os.Getenv("DATA_DIR"); dir != "" {
+		return dir
+	}
+
+	candidates := []string{
+		"data",
+		filepath.Join("backend", "data"),
+	}
+	for _, candidate := range candidates {
+		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
+			return candidate
+		}
+	}
+
+	return "data"
+}
+
 func main() {
-	evaluationService := usecases.NewEvaluationService()
+	dataDir := resolveDataDir()
+	levelRepo := jsonstore.NewLevelRepository(jsonstore.DefaultLevelsPath(dataDir))
+	profileRepo := jsonstore.NewCognitiveProfileRepository(jsonstore.DefaultCognitiveProfilesPath(dataDir))
+
+	levelService := usecases.NewLevelService(levelRepo)
+	evaluationService := usecases.NewEvaluationService(levelRepo, profileRepo)
+
+	levelHandler := handlers.NewLevelHandler(levelService)
 	evaluateHandler := handlers.NewEvaluateHandler(evaluationService)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/health", handlers.Health)
+	mux.HandleFunc("GET /api/levels/current", levelHandler.GetCurrent)
+	mux.HandleFunc("GET /api/levels/{id}", levelHandler.GetByID)
 	mux.HandleFunc("POST /api/evaluate", evaluateHandler.Evaluate)
 
 	addr := ":8080"
-	log.Printf("servidor iniciado: escuchando en http://localhost%s", addr)
+	log.Printf("servidor iniciado: escuchando en http://localhost%s (data=%s)", addr, dataDir)
 	if err := http.ListenAndServe(addr, enableCORS(mux)); err != nil {
 		log.Fatalf("error al iniciar el servidor: %v", err)
 	}

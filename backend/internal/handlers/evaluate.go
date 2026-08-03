@@ -5,12 +5,14 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/tu-usuario/plataforma-edu-backend/internal/domain"
 	"github.com/tu-usuario/plataforma-edu-backend/internal/usecases"
 )
 
 type evaluateRequest struct {
-	Code    string `json:"code"`
-	LevelID int    `json:"level_id"`
+	Code      string `json:"code"`
+	LevelID   int    `json:"level_id"`
+	StudentID string `json:"student_id"`
 }
 
 type evaluateResponse struct {
@@ -36,7 +38,17 @@ func (h *EvaluateHandler) Evaluate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	passed, feedback, err := h.service.EvaluateCode(req.Code, req.LevelID)
+	if req.LevelID <= 0 {
+		http.Error(w, "level_id es obligatorio y debe ser > 0", http.StatusBadRequest)
+		return
+	}
+
+	studentID := req.StudentID
+	if studentID == "" {
+		studentID = domain.DemoUserID
+	}
+
+	passed, feedback, err := h.service.EvaluateCode(req.Code, req.LevelID, studentID)
 	if err != nil {
 		log.Printf("Error detallado en EvaluateCode: %v", err)
 		http.Error(w, "error al evaluar el código", http.StatusInternalServerError)

@@ -3,12 +3,60 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
+	"time"
 
+	"github.com/tu-usuario/plataforma-edu-backend/internal/domain"
+	"github.com/tu-usuario/plataforma-edu-backend/internal/repositories/jsonstore"
 	"github.com/tu-usuario/plataforma-edu-backend/internal/usecases"
 )
+
+type stubLevelRepo struct {
+	levels map[int]domain.Level
+}
+
+func (r *stubLevelRepo) GetByID(id int) (domain.Level, error) {
+	level, ok := r.levels[id]
+	if !ok {
+		return domain.Level{}, fmt.Errorf("nivel %d no encontrado", id)
+	}
+	return level, nil
+}
+
+func (r *stubLevelRepo) GetCurrent() (domain.Level, error) {
+	return r.GetByID(1)
+}
+
+func (r *stubLevelRepo) List() ([]domain.Level, error) {
+	return []domain.Level{r.levels[1]}, nil
+}
+
+func testProfileRepo(t *testing.T) *jsonstore.CognitiveProfileRepository {
+	t.Helper()
+	dir := t.TempDir()
+	path := filepath.Join(dir, "cognitive_profiles.json")
+	seed := []domain.CognitiveProfile{{
+		UserID: domain.DemoUserID,
+		Skills: []domain.StudentSkill{{
+			ID:             "print_basico",
+			Status:         domain.SkillStatusLearning,
+			LastReviewedAt: time.Now().UTC(),
+		}},
+	}}
+	raw, err := json.MarshalIndent(seed, "", "  ")
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	if err := os.WriteFile(path, append(raw, '\n'), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+	return jsonstore.NewCognitiveProfileRepository(path)
+}
 
 func TestEvaluateHandler(t *testing.T) {
 	t.Setenv("GROK_API_KEY", "test-key")
@@ -22,42 +70,54 @@ func TestEvaluateHandler(t *testing.T) {
 	}))
 	defer grokServer.Close()
 
-	service := usecases.NewEvaluationServiceForTest(grokServer.Client(), grokServer.URL)
+	levels := &stubLevelRepo{levels: map[int]domain.Level{
+		1: {
+			ID:               1,
+			Title:            "print",
+			Statement:        "usa print",
+			TrackType:        domain.TrackMicroPaso,
+			EvaluationPrompt: "Tutor Básico",
+		},
+	}}
+	profiles := testProfileRepo(t)
+	service := usecases.NewEvaluationServiceForTest(grokServer.Client(), grokServer.URL, levels, profiles)
 	handler := NewEvaluateHandler(service)
 
-	payload, err := json.Marshal(evaluateRequest{Code: "print(42)", LevelID: 1})
+	payload, err := json.Marshal(evaluateRequest{
+		Code:      "print(42)",
+		LevelID:   1,
+		StudentID: domain.DemoUserID,
+	})
 	if err != nil {
 		t.Fatalf("no se pudo serializar request: %v", err)
 	}
 
 	req := httptest.NewRequest(http.MethodPost, "/api/evaluate", bytes.NewReader(payload))
 	rec := httptest.NewRecorder()
-
 	handler.Evaluate(rec, req)
 
 	if rec.Code != http.StatusOK {
-		t.Fatalf("código HTTP inesperado: got %d, want %d", rec.Code, http.StatusOK)
+		t.Fatalf("código HTTP inesperado: got %d body %s", rec.Code, rec.Body.String())
 	}
 
 	var resp evaluateResponse
 	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
 		t.Fatalf("JSON inválido: %v", err)
 	}
-	if !resp.Passed {
-		t.Fatal("se esperaba passed=true")
-	}
-	if resp.Feedback != "Excelente print" {
-		t.Fatalf("feedback inesperado: got %q", resp.Feedback)
+	if !resp.Passed || resp.Feedback != "Excelente print" {
+		t.Fatalf("respuesta inesperada: %+v", resp)
 	}
 }
 
 func TestEvaluateHandlerInvalidJSON(t *testing.T) {
 	t.Parallel()
 
-	handler := NewEvaluateHandler(usecases.NewEvaluationService())
+	levels := &stubLevelRepo{levels: map[int]domain.Level{}}
+	profiles := testProfileRepo(t)
+	handler := NewEvaluateHandler(usecases.NewEvaluationService(levels, profiles))
+
 	req := httptest.NewRequest(http.MethodPost, "/api/evaluate", bytes.NewBufferString("{invalid"))
 	rec := httptest.NewRecorder()
-
 	handler.Evaluate(rec, req)
 
 	if rec.Code != http.StatusBadRequest {
@@ -68,15 +128,19 @@ func TestEvaluateHandlerInvalidJSON(t *testing.T) {
 func TestEvaluateHandlerMissingAPIKey(t *testing.T) {
 	t.Setenv("GROK_API_KEY", "")
 
-	handler := NewEvaluateHandler(usecases.NewEvaluationService())
-	payload, err := json.Marshal(evaluateRequest{Code: "print(1)", LevelID: 1})
+	levels := &stubLevelRepo{levels: map[int]domain.Level{
+		1: {ID: 1, Title: "t", Statement: "s", TrackType: domain.TrackMicroPaso, EvaluationPrompt: "p"},
+	}}
+	profiles := testProfileRepo(t)
+	handler := NewEvaluateHandler(usecases.NewEvaluationService(levels, profiles))
+
+	payload, err := json.Marshal(evaluateRequest{Code: "print(1)", LevelID: 1, StudentID: domain.DemoUserID})
 	if err != nil {
 		t.Fatalf("no se pudo serializar request: %v", err)
 	}
 
 	req := httptest.NewRequest(http.MethodPost, "/api/evaluate", bytes.NewReader(payload))
 	rec := httptest.NewRecorder()
-
 	handler.Evaluate(rec, req)
 
 	if rec.Code != http.StatusInternalServerError {
