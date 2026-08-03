@@ -14,10 +14,10 @@
 
 ## 3. Frontend — enunciado y evaluación
 
-- [ ] 3.1 Fetch de nivel actual al cargar la vista del estudiante
-- [ ] 3.2 Render condicional de tarjeta de enunciado (micro_paso vs reto_ingenieril)
-- [ ] 3.3 Mantener flujo de evaluación + feedback del profesor con el `level_id` del nivel cargado
-- [ ] 3.4 Estados de carga/error de enunciado con `useSignal`/`useStore`
+- [x] 3.1 Fetch de nivel actual al cargar la vista del estudiante
+- [x] 3.2 Render condicional de tarjeta de enunciado (micro_paso vs reto_ingenieril)
+- [x] 3.3 Mantener flujo de evaluación + feedback del profesor con el `level_id` del nivel cargado
+- [x] 3.4 Estados de carga/error de enunciado con `useSignal`/`useStore`
 
 ## 4. Validación SDD
 
