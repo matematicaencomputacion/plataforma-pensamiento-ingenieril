@@ -24,3 +24,10 @@
 - [ ] 4.1 Cubrir escenarios de `learning-tracks` y `cognitive-profile` con pruebas automatizadas o checklist manual documentado
 - [ ] 4.2 Ejecutar `openspec validate core-learning-engine` en verde
 - [ ] 4.3 Commit convencional del change implementado (fuera de este scaffolding)
+
+## 5. Curriculum DAG (desbloqueo dinámico)
+
+- [x] 5.1 Dominio `LessonNode` + `CurriculumGraph` + `IsUnlocked` en `backend/internal/domain/curriculum.go`
+- [x] 5.2 Seed `backend/data/curriculum.json` (≥3 lecciones con dependencias) y repositorio JSON con `sync.RWMutex`
+- [x] 5.3 Use cases + endpoints `GET /api/curriculum` y `GET /api/curriculum/lessons/{id}`
+- [x] 5.4 Tests unitarios de `IsUnlocked` (cumplidos / bloqueados / ciclo / transitivos)

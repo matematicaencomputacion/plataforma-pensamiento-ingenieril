@@ -48,17 +48,22 @@ func main() {
 	dataDir := resolveDataDir()
 	levelRepo := jsonstore.NewLevelRepository(jsonstore.DefaultLevelsPath(dataDir))
 	profileRepo := jsonstore.NewCognitiveProfileRepository(jsonstore.DefaultCognitiveProfilesPath(dataDir))
+	curriculumRepo := jsonstore.NewCurriculumRepository(jsonstore.DefaultCurriculumPath(dataDir))
 
 	levelService := usecases.NewLevelService(levelRepo)
 	evaluationService := usecases.NewEvaluationService(levelRepo, profileRepo)
+	curriculumService := usecases.NewCurriculumService(curriculumRepo, profileRepo)
 
 	levelHandler := handlers.NewLevelHandler(levelService)
 	evaluateHandler := handlers.NewEvaluateHandler(evaluationService)
+	curriculumHandler := handlers.NewCurriculumHandler(curriculumService)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/health", handlers.Health)
 	mux.HandleFunc("GET /api/levels/current", levelHandler.GetCurrent)
 	mux.HandleFunc("GET /api/levels/{id}", levelHandler.GetByID)
+	mux.HandleFunc("GET /api/curriculum", curriculumHandler.List)
+	mux.HandleFunc("GET /api/curriculum/lessons/{id}", curriculumHandler.GetLesson)
 	mux.HandleFunc("POST /api/evaluate", evaluateHandler.Evaluate)
 
 	addr := ":8080"
