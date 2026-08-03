@@ -1,19 +1,48 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
-
-type EvaluateResponse = {
-  passed: boolean;
-  feedback?: string;
-};
+import { LevelDescription } from "../components/level-description/level-description";
+import {
+  API_BASE_URL,
+  DEMO_STUDENT_ID,
+  type EvaluateResponse,
+  type Level,
+} from "../lib/api";
 
 export default component$(() => {
   const code = useSignal(
     '# Escribe tu solución en Python\nprint("Hola, pensamiento ingenieril")\n',
   );
+  const level = useSignal<Level | null>(null);
+  const levelLoading = useSignal(true);
+  const levelError = useSignal("");
   const result = useSignal("");
   const feedback = useSignal("");
   const isEvaluating = useSignal(false);
   const passed = useSignal<boolean | null>(null);
+
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(async () => {
+    levelLoading.value = true;
+    levelError.value = "";
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/levels/current`);
+      if (!response.ok) {
+        levelError.value =
+          "No se pudo cargar el enunciado del nivel actual.";
+        level.value = null;
+        return;
+      }
+
+      level.value = (await response.json()) as Level;
+    } catch {
+      levelError.value =
+        "No se pudo conectar con el backend para cargar el nivel.";
+      level.value = null;
+    } finally {
+      levelLoading.value = false;
+    }
+  });
 
   return (
     <main class="workspace">
@@ -26,10 +55,26 @@ export default component$(() => {
         </p>
       </header>
 
+      {levelLoading.value && (
+        <p class="workspace__status" role="status">
+          Cargando enunciado del nivel...
+        </p>
+      )}
+
+      {levelError.value && (
+        <p class="workspace__status workspace__status--error" role="alert">
+          {levelError.value}
+        </p>
+      )}
+
+      {level.value && <LevelDescription level={level.value} />}
+
       <section class="workspace__panel" aria-labelledby="editor-heading">
         <div class="workspace__panel-head">
           <h2 id="editor-heading">Editor de Python</h2>
-          <span class="workspace__level">Nivel 1</span>
+          <span class="workspace__level">
+            {level.value ? `Nivel ${level.value.id}` : "Sin nivel"}
+          </span>
         </div>
 
         <label class="sr-only" for="student-code">
@@ -47,8 +92,15 @@ export default component$(() => {
           <button
             class="workspace__button"
             type="button"
-            disabled={isEvaluating.value}
+            disabled={
+              isEvaluating.value || levelLoading.value || !level.value
+            }
             onClick$={async () => {
+              if (!level.value) {
+                result.value = "No hay un nivel cargado para evaluar.";
+                return;
+              }
+
               isEvaluating.value = true;
               result.value = "Evaluando...";
               feedback.value = "";
@@ -56,7 +108,7 @@ export default component$(() => {
 
               try {
                 const response = await fetch(
-                  "http://localhost:8080/api/evaluate",
+                  `${API_BASE_URL}/api/evaluate`,
                   {
                     method: "POST",
                     headers: {
@@ -64,7 +116,8 @@ export default component$(() => {
                     },
                     body: JSON.stringify({
                       code: code.value,
-                      level_id: 1,
+                      level_id: level.value.id,
+                      student_id: DEMO_STUDENT_ID,
                     }),
                   },
                 );
@@ -79,8 +132,8 @@ export default component$(() => {
                 const data = (await response.json()) as EvaluateResponse;
                 passed.value = data.passed;
                 result.value = data.passed
-                  ? "Aprobado ✅"
-                  : "Desaprobado ❌";
+                  ? "Aprobado ✅ Reto superado"
+                  : "Desaprobado ❌ Sigue intentando";
                 feedback.value = data.feedback?.trim() ?? "";
               } catch {
                 result.value =
@@ -106,7 +159,12 @@ export default component$(() => {
         </div>
 
         {feedback.value && (
-          <aside class="workspace__feedback" aria-label="Nota del profesor">
+          <aside
+            class={`workspace__feedback${
+              passed.value === true ? " workspace__feedback--pass" : ""
+            }${passed.value === false ? " workspace__feedback--fail" : ""}`}
+            aria-label="Nota del profesor"
+          >
             <p class="workspace__feedback-label">Nota del profesor</p>
             <p class="workspace__feedback-text">{feedback.value}</p>
           </aside>

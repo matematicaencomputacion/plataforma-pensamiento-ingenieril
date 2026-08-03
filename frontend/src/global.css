@@ -83,6 +83,104 @@ body {
   line-height: 1.55;
 }
 
+.workspace__status {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #f8fafb;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.workspace__status--error {
+  border-color: rgba(159, 18, 57, 0.22);
+  background: var(--fail-bg);
+  color: var(--fail);
+}
+
+.level-card {
+  margin-bottom: 1rem;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  padding: 1.25rem 1.35rem;
+}
+
+.level-card--micro {
+  border-color: rgba(15, 118, 110, 0.28);
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.08), transparent 45%),
+    var(--panel);
+}
+
+.level-card--reto {
+  border-color: rgba(180, 83, 9, 0.28);
+  background:
+    linear-gradient(135deg, rgba(180, 83, 9, 0.1), transparent 45%),
+    var(--panel);
+}
+
+.level-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.level-card__badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.level-card__badge--micro {
+  background: rgba(15, 118, 110, 0.12);
+  color: var(--accent-ink);
+  border: 1px solid rgba(15, 118, 110, 0.25);
+}
+
+.level-card__badge--reto {
+  background: rgba(180, 83, 9, 0.12);
+  color: #7c2d12;
+  border: 1px solid rgba(180, 83, 9, 0.28);
+}
+
+.level-card__id {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.level-card__title {
+  margin: 0 0 0.65rem;
+  font-family: "IBM Plex Serif", "Georgia", serif;
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  letter-spacing: -0.02em;
+}
+
+.level-card__statement {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.level-card__hint {
+  margin: 0.9rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
 .workspace__panel {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -215,6 +313,28 @@ body {
   font-size: 0.98rem;
   line-height: 1.55;
   white-space: pre-wrap;
+}
+
+.workspace__feedback--pass {
+  border-color: rgba(22, 101, 52, 0.25);
+  background:
+    linear-gradient(180deg, rgba(22, 101, 52, 0.08), rgba(255, 255, 255, 0.92)),
+    var(--pass-bg);
+}
+
+.workspace__feedback--pass .workspace__feedback-label {
+  color: var(--pass);
+}
+
+.workspace__feedback--fail {
+  border-color: rgba(159, 18, 57, 0.22);
+  background:
+    linear-gradient(180deg, rgba(159, 18, 57, 0.06), rgba(255, 255, 255, 0.92)),
+    var(--fail-bg);
+}
+
+.workspace__feedback--fail .workspace__feedback-label {
+  color: var(--fail);
 }
 
 @media (max-width: 640px) {
