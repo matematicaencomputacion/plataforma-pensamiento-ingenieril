@@ -1,35 +1,26 @@
 {
   "module_id": "python-module-01-declarative-foundations",
+  "standards": ["MIT 6.0001", "CS50P", "PY4E"],
   "concepts": [
     {
       "id": "variables",
       "title": "Variables",
-      "summary": "Nombres que referencian valores en memoria; binding y rebinding."
+      "summary": "Nombres que referencian valores en memoria; binding, rebinding y alcance básico."
     },
     {
-      "id": "data_types",
-      "title": "Tipos de datos",
-      "summary": "int, float, str, bool como foundations declarativas."
+      "id": "integers",
+      "title": "Integers",
+      "summary": "Literales enteros, aritmética básica y el tipo int."
     },
     {
-      "id": "assignment",
-      "title": "Asignación",
-      "summary": "Operador = y expresiones del lado derecho."
+      "id": "strings",
+      "title": "Strings",
+      "summary": "Literales de texto, concatenación, repetición y longitud; tipo str."
     },
     {
-      "id": "expressions",
-      "title": "Expresiones",
-      "summary": "Operaciones aritméticas y de comparación básicas."
-    },
-    {
-      "id": "print_io",
-      "title": "Salida con print",
-      "summary": "Comunicar resultados al estudiante/evaluador vía print()."
-    },
-    {
-      "id": "naming",
-      "title": "Convenciones de nombres",
-      "summary": "snake_case, claridad semántica, evitar keywords."
+      "id": "basic_declarations",
+      "title": "Declaraciones Básicas",
+      "summary": "Statements declarativos: asignación (=), expresiones RHS y print()."
     }
   ]
 }
