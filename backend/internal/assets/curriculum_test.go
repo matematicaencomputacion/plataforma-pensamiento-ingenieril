@@ -113,3 +113,39 @@ func TestUnifiedCurriculumDAGIsAcyclicAndSortable(t *testing.T) {
 	assertBefore("concept:dua-dimensions", "concept:interactive-stage")
 	assertBefore("concept:interactive-stage", "concept:live-station")
 }
+
+func TestModule1ConceptsOptionalMedia(t *testing.T) {
+	t.Parallel()
+
+	var graph domain.CurriculumGraph
+	if err := json.Unmarshal(CurriculumJSON, &graph); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+
+	withMedia := 0
+	for _, concept := range graph.Concepts {
+		if concept.ResourceURL == "" && len(concept.Transcript) == 0 {
+			continue
+		}
+		if !concept.HasMedia() {
+			t.Fatalf("media parcial inválida en %s", concept.ID)
+		}
+		withMedia++
+		for i, seg := range concept.Transcript {
+			if seg.EndSec <= seg.StartSec || strings.TrimSpace(seg.Text) == "" {
+				t.Fatalf("segmento inválido en %s[%d]: %+v", concept.ID, i, seg)
+			}
+		}
+	}
+	if withMedia < 2 {
+		t.Fatalf("Module 1 debe sembrar al menos 2 conceptos con media OCW/DUA, got %d", withMedia)
+	}
+
+	seed := graph.Concepts["concept:string-literals"]
+	if !seed.HasMedia() {
+		t.Fatal("concept:string-literals debe incluir resource_url y transcript")
+	}
+	if _, ok := seed.ActiveTranscriptSegment(20); !ok {
+		t.Fatal("ActiveTranscriptSegment debe resolver un bloque en t=20s")
+	}
+}
