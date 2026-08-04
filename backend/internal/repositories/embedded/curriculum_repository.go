@@ -46,6 +46,9 @@ func (r *CurriculumRepository) GetGraph() (domain.CurriculumGraph, error) {
 		if graph.Lessons == nil {
 			graph.Lessons = map[string]domain.LessonNode{}
 		}
+		if graph.Concepts == nil {
+			graph.Concepts = map[domain.ConceptID]domain.Concept{}
+		}
 		r.graph = graph
 	})
 
@@ -76,12 +79,25 @@ func (r *CurriculumRepository) GetLesson(id string) (domain.LessonNode, error) {
 
 func cloneGraph(graph domain.CurriculumGraph) domain.CurriculumGraph {
 	cloned := domain.CurriculumGraph{
-		Lessons: make(map[string]domain.LessonNode, len(graph.Lessons)),
+		Lessons:  make(map[string]domain.LessonNode, len(graph.Lessons)),
+		Concepts: make(map[domain.ConceptID]domain.Concept, len(graph.Concepts)),
+	}
+	for id, concept := range graph.Concepts {
+		cloned.Concepts[id] = concept
 	}
 	for id, lesson := range graph.Lessons {
-		prereqs := make([]string, len(lesson.Prerequisites))
+		prereqs := make(domain.PrerequisiteList, len(lesson.Prerequisites))
 		copy(prereqs, lesson.Prerequisites)
 		lesson.Prerequisites = prereqs
+
+		concepts := make([]domain.ConceptID, len(lesson.Concepts))
+		copy(concepts, lesson.Concepts)
+		lesson.Concepts = concepts
+
+		competencies := make([]domain.Competency, len(lesson.Competencies))
+		copy(competencies, lesson.Competencies)
+		lesson.Competencies = competencies
+
 		cloned.Lessons[id] = lesson
 	}
 	return cloned

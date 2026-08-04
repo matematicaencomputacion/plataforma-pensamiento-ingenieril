@@ -1,4 +1,31 @@
 {
+  "concepts": {
+    "variables": {
+      "id": "variables",
+      "title": "Variables",
+      "summary": "Nombres que referencian valores en memoria; binding y rebinding."
+    },
+    "data_types": {
+      "id": "data_types",
+      "title": "Tipos de datos",
+      "summary": "int, float, str, bool como foundations declarativas."
+    },
+    "print_io": {
+      "id": "print_io",
+      "title": "Salida con print",
+      "summary": "Comunicar resultados al estudiante/evaluador vía print()."
+    },
+    "naming": {
+      "id": "naming",
+      "title": "Convenciones de nombres",
+      "summary": "snake_case, claridad semántica, evitar keywords."
+    },
+    "abstraction": {
+      "id": "abstraction",
+      "title": "Abstracción",
+      "summary": "Separar el qué del cómo al modelar un problema."
+    }
+  },
   "lessons": {
     "print-basics": {
       "id": "print-basics",
@@ -6,6 +33,10 @@
       "track_type": "micro_paso",
       "description": "Escribe un programa en Python que imprima un saludo usando print().",
       "prerequisites": [],
+      "concepts": ["print_io"],
+      "competencies": [
+        { "concept_id": "print_io", "level": "introductory" }
+      ],
       "skill_target": "print_basico"
     },
     "variables-and-types": {
@@ -13,7 +44,14 @@
       "title": "Variables y tipos",
       "track_type": "micro_paso",
       "description": "Declara variables con tipos claros, reutilízalas y muestra el resultado con print().",
-      "prerequisites": ["print-basics"],
+      "prerequisites": [
+        { "kind": "lesson", "ref_id": "print-basics" }
+      ],
+      "concepts": ["variables", "data_types", "print_io", "naming"],
+      "competencies": [
+        { "concept_id": "variables", "level": "developing" },
+        { "concept_id": "data_types", "level": "introductory" }
+      ],
       "skill_target": "variables"
     },
     "inventory-challenge": {
@@ -21,7 +59,15 @@
       "title": "Inventario mínimo",
       "track_type": "reto_ingenieril",
       "description": "Diseña una función que reciba una lista de productos y devuelva cuántos hay. Abstrae, nombra con claridad y valida con un print().",
-      "prerequisites": ["print-basics", "variables-and-types"],
+      "prerequisites": [
+        { "kind": "lesson", "ref_id": "print-basics" },
+        { "kind": "lesson", "ref_id": "variables-and-types" }
+      ],
+      "concepts": ["variables", "print_io", "naming", "abstraction"],
+      "competencies": [
+        { "concept_id": "abstraction", "level": "developing" },
+        { "concept_id": "naming", "level": "proficient" }
+      ],
       "skill_target": "inventario_basico"
     }
   }

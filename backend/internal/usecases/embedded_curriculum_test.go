@@ -36,8 +36,12 @@ func TestEmbeddedCurriculumServiceFromMemory(t *testing.T) {
 	if lesson.TrackType != domain.TrackMicroPaso {
 		t.Fatalf("track_type inesperado: %q", lesson.TrackType)
 	}
-	if len(lesson.Prerequisites) != 1 || lesson.Prerequisites[0] != "print-basics" {
+	prereqs := lesson.Prerequisites.LessonIDs()
+	if len(prereqs) != 1 || prereqs[0] != "print-basics" {
 		t.Fatalf("prerrequisitos inesperados: %+v", lesson.Prerequisites)
+	}
+	if len(lesson.ConceptIDs()) < 2 {
+		t.Fatalf("el nodo debe declarar múltiples conceptos: %+v", lesson.Concepts)
 	}
 }
 
