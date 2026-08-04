@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/tu-usuario/plataforma-edu-backend/internal/domain"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
 )
 
 // CognitiveProfileRepository persiste perfiles cognitivos en JSON con acceso concurrente seguro.

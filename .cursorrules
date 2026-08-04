@@ -24,3 +24,30 @@ Actúa como un Ingeniero de Software Senior (Staff Engineer). Escribe código li
 - **Backend (Go):** Desarrollo guiado por pruebas (TDD) en módulos críticos. Usa el paquete estándar `testing`. Mockea las bases de datos para pruebas unitarias rápidas.
 - **Ejercicios (Python):** Se validarán usando `pytest` directamente en el cliente (WebAssembly).
 - Regla inquebrantable: Ningún PR o módulo se considera terminado sin sus respectivas pruebas unitarias.
+- Preferir `make test` / `make ci` desde la raíz del monorepo cuando exista Makefile.
+
+## 5. Ramas y main limpia
+- NUNCA implementar ni commitear hitos directamente en `main`.
+- Iterar en ramas `feat/*`, `fix/*`, `docs/*`, `wip/*`.
+- Abrir PR hacia `main` solo al completar un hito del roadmap (ej. PPI 1.1).
+
+## 6. Automatización de Pull Requests y CI (Git + gh)
+El agente TIENE autorización para usar la terminal con Git y GitHub CLI (`gh`). Pipeline estricto:
+
+### 6.1 Pre-CI Local (Regla de oro)
+- NUNCA proponer ni abrir un PR si el código está roto.
+- ANTES de `git push`: ejecutar la suite local (`make test` o `cd backend && go test ./...`) y confirmar que pasa al 100%.
+- Si hay frontend tocado en el hito: `cd frontend && npm run build` (o el target Makefile equivalente).
+
+### 6.2 Creación del PR
+Cuando se alcance un hito del roadmap:
+1. Commit convencional en la rama feature.
+2. `git push -u origin HEAD`.
+3. `gh pr create` con:
+   - Título semántico (conventional commits / scope del hito).
+   - Body estructurado: qué hace, archivos tocados, checklist de pruebas.
+4. NO mergear a `main` salvo instrucción explícita del usuario.
+
+### 6.3 Monitoreo del CI
+- Tras crear el PR: `gh pr checks` (y `gh run watch` / logs si hace falta).
+- Si CI falla: analizar logs desde la terminal, proponer e implementar el fix en la MISMA rama, re-ejecutar Pre-CI local, push, y volver a monitorear hasta verde o bloqueo externo (secrets, permisos, etc.).

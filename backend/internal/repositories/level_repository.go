@@ -1,6 +1,6 @@
 package repositories
 
-import "github.com/tu-usuario/plataforma-edu-backend/internal/domain"
+import "github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
 
 // LevelRepository define el puerto de acceso a niveles/retos.
 type LevelRepository interface {

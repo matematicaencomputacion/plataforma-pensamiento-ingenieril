@@ -3,7 +3,7 @@ package usecases
 import (
 	"testing"
 
-	"github.com/tu-usuario/plataforma-edu-backend/internal/domain"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
 )
 
 func TestLevelServiceGetByID(t *testing.T) {

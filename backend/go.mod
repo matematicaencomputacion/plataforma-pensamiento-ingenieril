@@ -1,3 +1,3 @@
-module github.com/tu-usuario/plataforma-edu-backend
+module github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend
 
-go 1.22.2
+go 1.25.0

@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tu-usuario/plataforma-edu-backend/internal/domain"
-	"github.com/tu-usuario/plataforma-edu-backend/internal/repositories/jsonstore"
-	"github.com/tu-usuario/plataforma-edu-backend/internal/usecases"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/repositories/jsonstore"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/usecases"
 )
 
 type stubLevelRepo struct {

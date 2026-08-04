@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/tu-usuario/plataforma-edu-backend/internal/domain"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
 )
 
 // LevelRepository persiste niveles en un archivo JSON local.

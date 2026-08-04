@@ -1,0 +1,35 @@
+{
+  "module_id": "python-module-01-declarative-foundations",
+  "concepts": [
+    {
+      "id": "variables",
+      "title": "Variables",
+      "summary": "Nombres que referencian valores en memoria; binding y rebinding."
+    },
+    {
+      "id": "data_types",
+      "title": "Tipos de datos",
+      "summary": "int, float, str, bool como foundations declarativas."
+    },
+    {
+      "id": "assignment",
+      "title": "Asignación",
+      "summary": "Operador = y expresiones del lado derecho."
+    },
+    {
+      "id": "expressions",
+      "title": "Expresiones",
+      "summary": "Operaciones aritméticas y de comparación básicas."
+    },
+    {
+      "id": "print_io",
+      "title": "Salida con print",
+      "summary": "Comunicar resultados al estudiante/evaluador vía print()."
+    },
+    {
+      "id": "naming",
+      "title": "Convenciones de nombres",
+      "summary": "snake_case, claridad semántica, evitar keywords."
+    }
+  ]
+}

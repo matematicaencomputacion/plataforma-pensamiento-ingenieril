@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/tu-usuario/plataforma-edu-backend/internal/domain"
-	"github.com/tu-usuario/plataforma-edu-backend/internal/usecases"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/usecases"
 )
 
 func TestLevelHandlerGetByID(t *testing.T) {
