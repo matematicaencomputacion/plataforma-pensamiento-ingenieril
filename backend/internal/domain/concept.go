@@ -97,3 +97,14 @@ func (p PrerequisiteList) LessonIDs() []string {
 	}
 	return ids
 }
+
+// ConceptIDs retorna solo los prerrequisitos de tipo concepto.
+func (p PrerequisiteList) ConceptIDs() []ConceptID {
+	ids := make([]ConceptID, 0, len(p))
+	for _, item := range p {
+		if item.Kind == PrerequisiteKindConcept && item.RefID != "" {
+			ids = append(ids, ConceptID(item.RefID))
+		}
+	}
+	return ids
+}
