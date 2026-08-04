@@ -13,7 +13,28 @@ type Concept struct {
 	ID      ConceptID `json:"id"`
 	Title   string    `json:"title"`
 	Summary string    `json:"summary"`
+	Track   string    `json:"track,omitempty"`
+	Tags    []string  `json:"tags,omitempty"`
+	Source  string    `json:"source,omitempty"`
 }
+
+// CurriculumEdge es una arista del grafo unificado de conceptos (con rationale curable).
+type CurriculumEdge struct {
+	From        string  `json:"from"`
+	To          string  `json:"to"`
+	Kind        string  `json:"kind"`
+	Strength    float64 `json:"strength"`
+	RationaleES string  `json:"rationale_es"`
+	Source      string  `json:"source"`
+}
+
+// Edge kinds del esquema unificado vectorial / PPI.
+const (
+	EdgeKindRequires    = "requires"
+	EdgeKindDeepens     = "deepens"
+	EdgeKindContinues   = "continues"
+	EdgeKindAlternative = "alternative"
+)
 
 // PrerequisiteKind distingue el destino de un prerrequisito.
 type PrerequisiteKind string

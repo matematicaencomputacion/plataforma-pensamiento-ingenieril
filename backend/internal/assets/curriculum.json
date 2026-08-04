@@ -1,176 +1,377 @@
 {
-  "concepts": {
-    "variables": {
-      "id": "variables",
-      "title": "Variables",
-      "summary": "Nombres que referencian valores en memoria; binding, rebinding y alcance básico (MIT 6.0001 / CS50P / PY4E)."
+  "version": 1,
+  "concepts": [
+    {
+      "id": "concept:string-literals",
+      "title": "Literales de texto (strings)",
+      "summary": "Cómo se escriben textos en código: comillas, escapes y errores típicos de sintaxis.",
+      "track": "python",
+      "tags": [
+        "sintaxis",
+        "basico"
+      ],
+      "source": "seed"
     },
-    "integers": {
-      "id": "integers",
-      "title": "Integers",
-      "summary": "Literales enteros, aritmética básica (+ - * // %), y el tipo int como foundation numérica."
+    {
+      "id": "concept:variables-scope",
+      "title": "Variables y scope",
+      "summary": "Qué es una variable y dónde vive su valor (local, función, módulo).",
+      "track": "python",
+      "tags": [
+        "variables",
+        "scope"
+      ],
+      "source": "seed"
     },
-    "strings": {
-      "id": "strings",
-      "title": "Strings",
-      "summary": "Literales de texto, concatenación, repetición y longitud; el tipo str como foundation textual."
+    {
+      "id": "concept:function-parameters",
+      "title": "Parámetros de función",
+      "summary": "Cómo una función recibe valores de entrada y los usa sin confundirlos con variables globales.",
+      "track": "python",
+      "tags": [
+        "funciones"
+      ],
+      "source": "seed"
     },
-    "basic_declarations": {
-      "id": "basic_declarations",
-      "title": "Declaraciones Básicas",
-      "summary": "Statements declarativos: asignación (=), expresiones del lado derecho y salida con print()."
+    {
+      "id": "concept:env-file",
+      "title": "Archivo .env",
+      "summary": "Separar configuración del código con un archivo de entorno legible en ejecución.",
+      "track": "python",
+      "tags": [
+        "config",
+        "env"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:env-secrets",
+      "title": "Secretos y credenciales",
+      "summary": "Por qué no versionar claves y cómo el .env protege secretos de despliegue.",
+      "track": "python",
+      "tags": [
+        "seguridad",
+        "env"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:async-await",
+      "title": "Async / Await",
+      "summary": "Escribir trabajo no bloqueante con async/await y cuándo vale la pena usarlo.",
+      "track": "python",
+      "tags": [
+        "concurrency"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:debug-variables",
+      "title": "Depurar variables",
+      "summary": "Desbloquear NameError / undefined con pistas y casos de prueba mínimos.",
+      "track": "python",
+      "tags": [
+        "debug"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:coordinate-geometry",
+      "title": "Geometría de coordenadas",
+      "summary": "Puntos en el plano: ejes, distancia y noción de radio alrededor de un origen.",
+      "track": "matematica",
+      "tags": [
+        "geometria"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:distance-on-plane",
+      "title": "Distancia en el plano",
+      "summary": "Calcular si un punto cae dentro de un radio dado (base conceptual de ST_DWithin).",
+      "track": "matematica",
+      "tags": [
+        "geometria",
+        "distancia"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:postgis-stdwithin",
+      "title": "PostGIS ST_DWithin",
+      "summary": "Consultar geometrías dentro de una distancia usando PostGIS.",
+      "track": "python",
+      "tags": [
+        "spatial",
+        "sql"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:reading-technical-docs",
+      "title": "Lectura de documentación técnica",
+      "summary": "Estrategias para leer docs en inglés sin perderse en el detalle.",
+      "track": "ingles",
+      "tags": [
+        "lectura"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:vocab-scope-english",
+      "title": "Vocabulario: scope / alcance",
+      "summary": "Palabras del dominio (scope, variable, parameter) y falsos amigos en español.",
+      "track": "ingles",
+      "tags": [
+        "vocabulario"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:vocab-async-english",
+      "title": "Vocabulario: async / await",
+      "summary": "Léxico de concurrencia en inglés técnico para leer ejemplos y APIs.",
+      "track": "ingles",
+      "tags": [
+        "vocabulario",
+        "concurrency"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:proportions-basics",
+      "title": "Proporciones básicas",
+      "summary": "Razones y proporciones como herramienta de modelado cuantitativo.",
+      "track": "matematica",
+      "tags": [
+        "proporciones"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:dua-dimensions",
+      "title": "Dimensiones DUA",
+      "summary": "Representación, Acción y Compromiso como carriles de un mismo concepto.",
+      "track": "plataforma",
+      "tags": [
+        "dua"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:interactive-stage",
+      "title": "Escenario interactivo",
+      "summary": "Stage + botonera: cómo se presenta un nodo pedagógico en AVLP.",
+      "track": "plataforma",
+      "tags": [
+        "ui",
+        "dua"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:live-station",
+      "title": "Estación live",
+      "summary": "Recursos generados en runtime cuando no hay nodo curado cercano.",
+      "track": "plataforma",
+      "tags": [
+        "rag",
+        "live"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:automobile-systems",
+      "title": "Sistemas de un automóvil",
+      "summary": "Exploración jerárquica macro → micro como metáfora de zoom pedagógico.",
+      "track": "plataforma",
+      "tags": [
+        "jerarquia",
+        "metafora"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:hierarchy-zoom",
+      "title": "Zoom jerárquico",
+      "summary": "Navegar de visión general a detalle sin forzar un camino lineal.",
+      "track": "plataforma",
+      "tags": [
+        "jerarquia"
+      ],
+      "source": "seed"
+    },
+    {
+      "id": "concept:units-and-scale",
+      "title": "Unidades y escala",
+      "summary": "Elegir unidades coherentes al medir distancias o radios en un mapa.",
+      "track": "matematica",
+      "tags": [
+        "unidades"
+      ],
+      "source": "seed"
     }
-  },
-  "lessons": {
-    "py-m01-01-hello-print": {
-      "id": "py-m01-01-hello-print",
-      "title": "Hola, print()",
-      "track_type": "micro_paso",
-      "description": "Escribe tu primer programa Python que comunique un mensaje con print(). Base CS50P/PY4E.",
-      "prerequisites": [],
-      "concepts": ["basic_declarations"],
-      "competencies": [
-        { "concept_id": "basic_declarations", "level": "introductory" }
-      ],
-      "skill_target": "py_m01_hello_print"
+  ],
+  "edges": [
+    {
+      "from": "concept:variables-scope",
+      "to": "concept:string-literals",
+      "kind": "requires",
+      "strength": 0.8,
+      "rationale_es": "Para nombrar y asignar variables con texto hace falta entender literales de string.",
+      "source": "curated"
     },
-    "py-m01-02-assignment": {
-      "id": "py-m01-02-assignment",
-      "title": "Asignación y binding",
-      "track_type": "micro_paso",
-      "description": "Declara variables con =, reutilízalas y muestra el valor con print().",
-      "prerequisites": [
-        { "kind": "lesson", "ref_id": "py-m01-01-hello-print" }
-      ],
-      "concepts": ["variables", "basic_declarations"],
-      "competencies": [
-        { "concept_id": "variables", "level": "introductory" },
-        { "concept_id": "basic_declarations", "level": "developing" }
-      ],
-      "skill_target": "py_m01_assignment"
+    {
+      "from": "concept:function-parameters",
+      "to": "concept:variables-scope",
+      "kind": "requires",
+      "strength": 0.9,
+      "rationale_es": "Un parámetro es una variable local con alcance de función; sin scope el parámetro se confunde con el global.",
+      "source": "curated"
     },
-    "py-m01-03-naming": {
-      "id": "py-m01-03-naming",
-      "title": "Nombres con intención",
-      "track_type": "micro_paso",
-      "description": "Elige identificadores claros en snake_case y evita keywords al declarar variables.",
-      "prerequisites": [
-        { "kind": "lesson", "ref_id": "py-m01-02-assignment" }
-      ],
-      "concepts": ["variables", "basic_declarations"],
-      "competencies": [
-        { "concept_id": "variables", "level": "developing" }
-      ],
-      "skill_target": "py_m01_naming"
+    {
+      "from": "concept:env-file",
+      "to": "concept:variables-scope",
+      "kind": "requires",
+      "strength": 0.85,
+      "rationale_es": "Pasar las variables a un archivo que nunca sube a GitHub te saca el miedo de filtrar claves y te deja guardar tus secretos en casa.",
+      "source": "curated"
     },
-    "py-m01-04-integer-literals": {
-      "id": "py-m01-04-integer-literals",
-      "title": "Literales enteros",
-      "track_type": "micro_paso",
-      "description": "Asigna literales int a variables y observa su comportamiento con print().",
-      "prerequisites": [
-        { "kind": "lesson", "ref_id": "py-m01-02-assignment" }
-      ],
-      "concepts": ["integers", "variables"],
-      "competencies": [
-        { "concept_id": "integers", "level": "introductory" }
-      ],
-      "skill_target": "py_m01_integer_literals"
+    {
+      "from": "concept:env-secrets",
+      "to": "concept:env-file",
+      "kind": "requires",
+      "strength": 1.0,
+      "rationale_es": "Ya sabés usar variables; meterlas en un .env que no se sube a GitHub es lo que te permite manejar claves sin exponerlas.",
+      "source": "curated"
     },
-    "py-m01-05-integer-arithmetic": {
-      "id": "py-m01-05-integer-arithmetic",
-      "title": "Aritmética con enteros",
-      "track_type": "micro_paso",
-      "description": "Combina +, -, *, // y % en expresiones enteras asignadas a variables.",
-      "prerequisites": [
-        { "kind": "lesson", "ref_id": "py-m01-04-integer-literals" }
-      ],
-      "concepts": ["integers", "basic_declarations"],
-      "competencies": [
-        { "concept_id": "integers", "level": "developing" },
-        { "concept_id": "basic_declarations", "level": "developing" }
-      ],
-      "skill_target": "py_m01_integer_arithmetic"
+    {
+      "from": "concept:async-await",
+      "to": "concept:function-parameters",
+      "kind": "requires",
+      "strength": 0.75,
+      "rationale_es": "async/await se apoya en funciones que reciben argumentos y devuelven resultados.",
+      "source": "curated"
     },
-    "py-m01-06-string-literals": {
-      "id": "py-m01-06-string-literals",
-      "title": "Literales de texto",
-      "track_type": "micro_paso",
-      "description": "Declara strings con comillas simples o dobles y muéstralos por consola.",
-      "prerequisites": [
-        { "kind": "lesson", "ref_id": "py-m01-02-assignment" }
-      ],
-      "concepts": ["strings", "variables"],
-      "competencies": [
-        { "concept_id": "strings", "level": "introductory" }
-      ],
-      "skill_target": "py_m01_string_literals"
+    {
+      "from": "concept:debug-variables",
+      "to": "concept:variables-scope",
+      "kind": "requires",
+      "strength": 0.95,
+      "rationale_es": "Depurar NameError exige saber dónde debería existir cada variable.",
+      "source": "curated"
     },
-    "py-m01-07-string-operations": {
-      "id": "py-m01-07-string-operations",
-      "title": "Operaciones con strings",
-      "track_type": "micro_paso",
-      "description": "Concatena, repite y mide longitud (len) sobre variables str.",
-      "prerequisites": [
-        { "kind": "lesson", "ref_id": "py-m01-06-string-literals" }
-      ],
-      "concepts": ["strings", "basic_declarations"],
-      "competencies": [
-        { "concept_id": "strings", "level": "developing" }
-      ],
-      "skill_target": "py_m01_string_operations"
+    {
+      "from": "concept:distance-on-plane",
+      "to": "concept:coordinate-geometry",
+      "kind": "requires",
+      "strength": 0.9,
+      "rationale_es": "La distancia entre puntos asume el plano cartesiano.",
+      "source": "curated"
     },
-    "py-m01-08-types-conversion": {
-      "id": "py-m01-08-types-conversion",
-      "title": "Tipos y conversión",
-      "track_type": "micro_paso",
-      "description": "Distingue int y str; convierte con int() y str() para componer mensajes y cálculos.",
-      "prerequisites": [
-        { "kind": "lesson", "ref_id": "py-m01-05-integer-arithmetic" },
-        { "kind": "lesson", "ref_id": "py-m01-07-string-operations" }
-      ],
-      "concepts": ["variables", "integers", "strings", "basic_declarations"],
-      "competencies": [
-        { "concept_id": "variables", "level": "developing" },
-        { "concept_id": "integers", "level": "developing" },
-        { "concept_id": "strings", "level": "developing" }
-      ],
-      "skill_target": "py_m01_types_conversion"
+    {
+      "from": "concept:distance-on-plane",
+      "to": "concept:units-and-scale",
+      "kind": "requires",
+      "strength": 0.7,
+      "rationale_es": "Un radio sin unidades coherentes no se puede interpretar en un mapa.",
+      "source": "curated"
     },
-    "py-m01-09-composed-expressions": {
-      "id": "py-m01-09-composed-expressions",
-      "title": "Expresiones compuestas",
-      "track_type": "micro_paso",
-      "description": "Compón declaraciones que mezclan enteros, strings y variables con nombres claros.",
-      "prerequisites": [
-        { "kind": "lesson", "ref_id": "py-m01-03-naming" },
-        { "kind": "lesson", "ref_id": "py-m01-05-integer-arithmetic" },
-        { "kind": "lesson", "ref_id": "py-m01-07-string-operations" }
-      ],
-      "concepts": ["variables", "integers", "strings", "basic_declarations"],
-      "competencies": [
-        { "concept_id": "basic_declarations", "level": "proficient" },
-        { "concept_id": "variables", "level": "proficient" }
-      ],
-      "skill_target": "py_m01_composed_expressions"
+    {
+      "from": "concept:postgis-stdwithin",
+      "to": "concept:distance-on-plane",
+      "kind": "requires",
+      "strength": 0.9,
+      "rationale_es": "ST_DWithin implementa la idea de «dentro de un radio» sobre geometrías.",
+      "source": "curated"
     },
-    "py-m01-10-declarative-studio": {
-      "id": "py-m01-10-declarative-studio",
-      "title": "Studio: ficha declarativa",
-      "track_type": "reto_ingenieril",
-      "description": "Modela una ficha mínima (nombre, cantidad entera, etiqueta) con variables, ints, strings y print(). Abstrae el qué del cómo.",
-      "prerequisites": [
-        { "kind": "lesson", "ref_id": "py-m01-08-types-conversion" },
-        { "kind": "lesson", "ref_id": "py-m01-09-composed-expressions" }
-      ],
-      "concepts": ["variables", "integers", "strings", "basic_declarations"],
-      "competencies": [
-        { "concept_id": "variables", "level": "proficient" },
-        { "concept_id": "integers", "level": "proficient" },
-        { "concept_id": "strings", "level": "proficient" },
-        { "concept_id": "basic_declarations", "level": "proficient" }
-      ],
-      "skill_target": "py_m01_declarative_studio"
+    {
+      "from": "concept:postgis-stdwithin",
+      "to": "concept:function-parameters",
+      "kind": "requires",
+      "strength": 0.55,
+      "rationale_es": "Llamar a ST_DWithin es pasar argumentos a una función SQL; conviene ya manejar parámetros.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:vocab-scope-english",
+      "to": "concept:reading-technical-docs",
+      "kind": "requires",
+      "strength": 0.8,
+      "rationale_es": "El vocabulario de scope se aprende leyendo documentación técnica con método.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:vocab-async-english",
+      "to": "concept:reading-technical-docs",
+      "kind": "requires",
+      "strength": 0.8,
+      "rationale_es": "El léxico de async se ancla en la lectura guiada de docs y ejemplos.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:vocab-scope-english",
+      "to": "concept:variables-scope",
+      "kind": "deepens",
+      "strength": 0.6,
+      "rationale_es": "Tras practicar scope en código, el inglés técnico del mismo concepto refuerza la transferencia.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:vocab-async-english",
+      "to": "concept:async-await",
+      "kind": "continues",
+      "strength": 0.65,
+      "rationale_es": "Después de async en práctica, sigue el vocabulario inglés para leer APIs.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:interactive-stage",
+      "to": "concept:dua-dimensions",
+      "kind": "requires",
+      "strength": 0.85,
+      "rationale_es": "El escenario interactivo se organiza según las dimensiones DUA.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:live-station",
+      "to": "concept:interactive-stage",
+      "kind": "requires",
+      "strength": 0.7,
+      "rationale_es": "Una estación live reutiliza el contrato de stage cuando falta material curado.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:hierarchy-zoom",
+      "to": "concept:automobile-systems",
+      "kind": "deepens",
+      "strength": 0.75,
+      "rationale_es": "El zoom jerárquico se vuelve concreto con la metáfora del automóvil.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:proportions-basics",
+      "to": "concept:units-and-scale",
+      "kind": "continues",
+      "strength": 0.5,
+      "rationale_es": "Tras unidades, las proporciones modelan escalas y razones en problemas cuantitativos.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:string-literals",
+      "to": "concept:vocab-scope-english",
+      "kind": "alternative",
+      "strength": 0.4,
+      "rationale_es": "Entrada alternativa: o practicás literales en código, o entrás vía vocabulario técnico en inglés.",
+      "source": "curated"
+    },
+    {
+      "from": "concept:debug-variables",
+      "to": "concept:env-file",
+      "kind": "continues",
+      "strength": 0.45,
+      "rationale_es": "Tras desbloquear variables en depuración, sigue cargar configuración desde .env.",
+      "source": "curated"
     }
-  }
+  ]
 }
