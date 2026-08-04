@@ -1,0 +1,28 @@
+{
+  "lessons": {
+    "print-basics": {
+      "id": "print-basics",
+      "title": "Tu primer print",
+      "track_type": "micro_paso",
+      "description": "Escribe un programa en Python que imprima un saludo usando print().",
+      "prerequisites": [],
+      "skill_target": "print_basico"
+    },
+    "variables-and-types": {
+      "id": "variables-and-types",
+      "title": "Variables y tipos",
+      "track_type": "micro_paso",
+      "description": "Declara variables con tipos claros, reutilízalas y muestra el resultado con print().",
+      "prerequisites": ["print-basics"],
+      "skill_target": "variables"
+    },
+    "inventory-challenge": {
+      "id": "inventory-challenge",
+      "title": "Inventario mínimo",
+      "track_type": "reto_ingenieril",
+      "description": "Diseña una función que reciba una lista de productos y devuelva cuántos hay. Abstrae, nombra con claridad y valida con un print().",
+      "prerequisites": ["print-basics", "variables-and-types"],
+      "skill_target": "inventario_basico"
+    }
+  }
+}
