@@ -11,7 +11,7 @@
         "basico"
       ],
       "source": "seed",
-      "resource_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8",
+      "resource_url": "https://www.youtube.com/watch?v=QJeGxd8biVA",
       "transcript": [
         {
           "start_sec": 0,
@@ -33,7 +33,59 @@
           "end_sec": 80,
           "text": "Práctica: declara un literal, asígnalo a una variable y muéstralo con print()."
         }
-      ]
+      ],
+      "resources": {
+        "es": {
+          "resource_url": "https://www.youtube.com/watch?v=QJeGxd8biVA",
+          "transcript": [
+            {
+              "start_sec": 0,
+              "end_sec": 15,
+              "text": "Bienvenida al Módulo 1 — Declarative Foundations: vamos a leer y escribir literales de texto en Python."
+            },
+            {
+              "start_sec": 15,
+              "end_sec": 35,
+              "text": "Un string se declara entre comillas simples o dobles. Ejemplo: mensaje = \"hola\"."
+            },
+            {
+              "start_sec": 35,
+              "end_sec": 55,
+              "text": "Los escapes como \\n permiten saltos de línea; un error típico es olvidar cerrar las comillas."
+            },
+            {
+              "start_sec": 55,
+              "end_sec": 80,
+              "text": "Práctica: declara un literal, asígnalo a una variable y muéstralo con print()."
+            }
+          ]
+        },
+        "en": {
+          "resource_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8",
+          "transcript": [
+            {
+              "start_sec": 0,
+              "end_sec": 15,
+              "text": "Welcome to Module 1 — Declarative Foundations: we will read and write text literals in Python."
+            },
+            {
+              "start_sec": 15,
+              "end_sec": 35,
+              "text": "A string is declared with single or double quotes. Example: message = \"hello\"."
+            },
+            {
+              "start_sec": 35,
+              "end_sec": 55,
+              "text": "Escapes like \\n create new lines; a common mistake is forgetting to close the quotes."
+            },
+            {
+              "start_sec": 55,
+              "end_sec": 80,
+              "text": "Practice: declare a literal, bind it to a variable, and show it with print()."
+            }
+          ]
+        }
+      }
     },
     {
       "id": "concept:variables-scope",
@@ -45,7 +97,7 @@
         "scope"
       ],
       "source": "seed",
-      "resource_url": "https://www.youtube.com/watch?v=Z1Yd7upQsXY",
+      "resource_url": "https://www.youtube.com/watch?v=QJeGxd8biVA",
       "transcript": [
         {
           "start_sec": 0,
@@ -67,7 +119,59 @@
           "end_sec": 90,
           "text": "Siguiente paso: combinar literales de string con variables de alcance local en un micro-paso."
         }
-      ]
+      ],
+      "resources": {
+        "es": {
+          "resource_url": "https://www.youtube.com/watch?v=QJeGxd8biVA",
+          "transcript": [
+            {
+              "start_sec": 0,
+              "end_sec": 18,
+              "text": "Una variable es un nombre que referencia un valor en memoria; el binding ocurre con =."
+            },
+            {
+              "start_sec": 18,
+              "end_sec": 40,
+              "text": "El scope define dónde vive ese nombre: módulo, función o bloque. Fuera de su alcance aparece NameError."
+            },
+            {
+              "start_sec": 40,
+              "end_sec": 65,
+              "text": "Al leer código, pregunta: ¿dónde se creó esta variable y hasta dónde es visible?"
+            },
+            {
+              "start_sec": 65,
+              "end_sec": 90,
+              "text": "Siguiente paso: combinar literales de string con variables de alcance local en un micro-paso."
+            }
+          ]
+        },
+        "en": {
+          "resource_url": "https://www.youtube.com/watch?v=Z1Yd7upQsXY",
+          "transcript": [
+            {
+              "start_sec": 0,
+              "end_sec": 18,
+              "text": "A variable is a name that references a value in memory; binding happens with =."
+            },
+            {
+              "start_sec": 18,
+              "end_sec": 40,
+              "text": "Scope defines where that name lives: module, function, or block. Outside its scope you get NameError."
+            },
+            {
+              "start_sec": 40,
+              "end_sec": 65,
+              "text": "When reading code, ask: where was this variable created and how far is it visible?"
+            },
+            {
+              "start_sec": 65,
+              "end_sec": 90,
+              "text": "Next step: combine string literals with local-scope variables in a micro-step."
+            }
+          ]
+        }
+      }
     },
     {
       "id": "concept:function-parameters",

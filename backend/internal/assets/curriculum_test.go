@@ -124,16 +124,19 @@ func TestModule1ConceptsOptionalMedia(t *testing.T) {
 
 	withMedia := 0
 	for _, concept := range graph.Concepts {
-		if concept.ResourceURL == "" && len(concept.Transcript) == 0 {
+		if !concept.HasMedia() {
 			continue
 		}
-		if !concept.HasMedia() {
-			t.Fatalf("media parcial inválida en %s", concept.ID)
-		}
 		withMedia++
-		for i, seg := range concept.Transcript {
-			if seg.EndSec <= seg.StartSec || strings.TrimSpace(seg.Text) == "" {
-				t.Fatalf("segmento inválido en %s[%d]: %+v", concept.ID, i, seg)
+		for _, lang := range concept.AvailableMediaLocales() {
+			media, ok := concept.MediaFor(lang)
+			if !ok || !media.HasURL() {
+				t.Fatalf("MediaFor(%s) inválido en %s", lang, concept.ID)
+			}
+			for i, seg := range media.Transcript {
+				if seg.EndSec <= seg.StartSec || strings.TrimSpace(seg.Text) == "" {
+					t.Fatalf("segmento inválido en %s/%s[%d]: %+v", concept.ID, lang, i, seg)
+				}
 			}
 		}
 	}
@@ -143,9 +146,26 @@ func TestModule1ConceptsOptionalMedia(t *testing.T) {
 
 	seed := graph.Concepts["concept:string-literals"]
 	if !seed.HasMedia() {
-		t.Fatal("concept:string-literals debe incluir resource_url y transcript")
+		t.Fatal("concept:string-literals debe incluir media")
+	}
+	if len(seed.Resources) < 2 {
+		t.Fatalf("string-literals debe ser bilingüe, resources=%d", len(seed.Resources))
+	}
+	es, ok := seed.MediaFor("es")
+	if !ok || !es.HasContent() {
+		t.Fatal("MediaFor(es) incompleto")
+	}
+	en, ok := seed.MediaFor("en")
+	if !ok || !en.HasContent() {
+		t.Fatal("MediaFor(en) incompleto")
+	}
+	if es.ResourceURL == en.ResourceURL {
+		t.Fatal("ES y EN deberían apuntar a videos distintos en el seed bilingüe")
+	}
+	if _, ok := seed.ActiveTranscriptSegmentFor("en", 20); !ok {
+		t.Fatal("ActiveTranscriptSegmentFor(en) debe resolver un bloque en t=20s")
 	}
 	if _, ok := seed.ActiveTranscriptSegment(20); !ok {
-		t.Fatal("ActiveTranscriptSegment debe resolver un bloque en t=20s")
+		t.Fatal("ActiveTranscriptSegment (legado/es) debe resolver un bloque en t=20s")
 	}
 }
