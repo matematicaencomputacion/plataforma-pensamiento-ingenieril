@@ -91,6 +91,11 @@ func cloneGraph(graph domain.CurriculumGraph) domain.CurriculumGraph {
 			copy(tags, concept.Tags)
 			concept.Tags = tags
 		}
+		if len(concept.Transcript) > 0 {
+			transcript := make([]domain.TranscriptSegment, len(concept.Transcript))
+			copy(transcript, concept.Transcript)
+			concept.Transcript = transcript
+		}
 		cloned.Concepts[id] = concept
 	}
 	for id, lesson := range graph.Lessons {

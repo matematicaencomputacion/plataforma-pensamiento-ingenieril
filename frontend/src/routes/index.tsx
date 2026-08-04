@@ -1,5 +1,6 @@
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import { InteractiveStage } from "../components/interactive-stage/interactive-stage";
 import { LevelDescription } from "../components/level-description/level-description";
 import {
   API_BASE_URL,
@@ -68,6 +69,8 @@ export default component$(() => {
       )}
 
       {level.value && <LevelDescription level={level.value} />}
+
+      <InteractiveStage />
 
       <section class="workspace__panel" aria-labelledby="editor-heading">
         <div class="workspace__panel-head">

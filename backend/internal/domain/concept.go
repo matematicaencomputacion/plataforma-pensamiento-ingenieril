@@ -3,10 +3,18 @@ package domain
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 // ConceptID es la clave estable de un concepto de aprendizaje compartido.
 type ConceptID string
+
+// TranscriptSegment es un bloque de transcripción con marcas de tiempo (segundos).
+type TranscriptSegment struct {
+	StartSec float64 `json:"start_sec"`
+	EndSec   float64 `json:"end_sec"`
+	Text     string  `json:"text"`
+}
 
 // Concept describe una unidad cognitiva reutilizable en el curriculum.
 type Concept struct {
@@ -16,6 +24,29 @@ type Concept struct {
 	Track   string    `json:"track,omitempty"`
 	Tags    []string  `json:"tags,omitempty"`
 	Source  string    `json:"source,omitempty"`
+	// ResourceURL apunta a un recurso multimedia opcional (p. ej. YouTube).
+	ResourceURL string `json:"resource_url,omitempty"`
+	// Transcript es la transcripción sincronizable del recurso (opcional, DUA/OCW).
+	Transcript []TranscriptSegment `json:"transcript,omitempty"`
+}
+
+// HasMedia indica si el concepto declara recurso multimedia usable en InteractiveStage.
+func (c Concept) HasMedia() bool {
+	return strings.TrimSpace(c.ResourceURL) != "" && len(c.Transcript) > 0
+}
+
+// ActiveTranscriptSegment retorna el bloque activo para un instante de reproducción.
+func (c Concept) ActiveTranscriptSegment(atSec float64) (TranscriptSegment, bool) {
+	for _, seg := range c.Transcript {
+		if atSec >= seg.StartSec && atSec < seg.EndSec {
+			return seg, true
+		}
+	}
+	if len(c.Transcript) > 0 && atSec >= c.Transcript[len(c.Transcript)-1].EndSec {
+		last := c.Transcript[len(c.Transcript)-1]
+		return last, true
+	}
+	return TranscriptSegment{}, false
 }
 
 // CurriculumEdge es una arista del grafo unificado de conceptos (con rationale curable).

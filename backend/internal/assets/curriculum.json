@@ -10,7 +10,30 @@
         "sintaxis",
         "basico"
       ],
-      "source": "seed"
+      "source": "seed",
+      "resource_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8",
+      "transcript": [
+        {
+          "start_sec": 0,
+          "end_sec": 15,
+          "text": "Bienvenida al Módulo 1 — Declarative Foundations: vamos a leer y escribir literales de texto en Python."
+        },
+        {
+          "start_sec": 15,
+          "end_sec": 35,
+          "text": "Un string se declara entre comillas simples o dobles. Ejemplo: mensaje = \"hola\"."
+        },
+        {
+          "start_sec": 35,
+          "end_sec": 55,
+          "text": "Los escapes como \\n permiten saltos de línea; un error típico es olvidar cerrar las comillas."
+        },
+        {
+          "start_sec": 55,
+          "end_sec": 80,
+          "text": "Práctica: declara un literal, asígnalo a una variable y muéstralo con print()."
+        }
+      ]
     },
     {
       "id": "concept:variables-scope",
@@ -21,7 +44,30 @@
         "variables",
         "scope"
       ],
-      "source": "seed"
+      "source": "seed",
+      "resource_url": "https://www.youtube.com/watch?v=Z1Yd7upQsXY",
+      "transcript": [
+        {
+          "start_sec": 0,
+          "end_sec": 18,
+          "text": "Una variable es un nombre que referencia un valor en memoria; el binding ocurre con =."
+        },
+        {
+          "start_sec": 18,
+          "end_sec": 40,
+          "text": "El scope define dónde vive ese nombre: módulo, función o bloque. Fuera de su alcance aparece NameError."
+        },
+        {
+          "start_sec": 40,
+          "end_sec": 65,
+          "text": "Al leer código, pregunta: ¿dónde se creó esta variable y hasta dónde es visible?"
+        },
+        {
+          "start_sec": 65,
+          "end_sec": 90,
+          "text": "Siguiente paso: combinar literales de string con variables de alcance local en un micro-paso."
+        }
+      ]
     },
     {
       "id": "concept:function-parameters",

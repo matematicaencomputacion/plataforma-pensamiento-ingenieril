@@ -126,3 +126,42 @@ func TestCurriculumGraphResolveConcepts(t *testing.T) {
 		t.Fatalf("concepto ausente del catálogo debería degradar a ID: %+v", resolved[2])
 	}
 }
+
+func TestConceptOptionalMediaAndActiveSegment(t *testing.T) {
+	t.Parallel()
+
+	plain := Concept{ID: "concept:plain", Title: "Sin media"}
+	if plain.HasMedia() {
+		t.Fatal("concepto sin resource_url/transcript no tiene media")
+	}
+
+	raw := `{
+		"id":"concept:string-literals",
+		"title":"Literales",
+		"summary":"demo",
+		"resource_url":"https://www.youtube.com/watch?v=kqtD5dpn9C8",
+		"transcript":[
+			{"start_sec":0,"end_sec":10,"text":"intro"},
+			{"start_sec":10,"end_sec":25,"text":"cuerpo"}
+		]
+	}`
+	var concept Concept
+	if err := json.Unmarshal([]byte(raw), &concept); err != nil {
+		t.Fatalf("unmarshal media: %v", err)
+	}
+	if !concept.HasMedia() {
+		t.Fatal("se esperaba HasMedia tras unmarshal")
+	}
+	if concept.ResourceURL == "" || len(concept.Transcript) != 2 {
+		t.Fatalf("media incompleta: %+v", concept)
+	}
+
+	seg, ok := concept.ActiveTranscriptSegment(12)
+	if !ok || seg.Text != "cuerpo" {
+		t.Fatalf("segmento activo inesperado: ok=%v seg=%+v", ok, seg)
+	}
+	seg, ok = concept.ActiveTranscriptSegment(3)
+	if !ok || seg.Text != "intro" {
+		t.Fatalf("segmento intro inesperado: ok=%v seg=%+v", ok, seg)
+	}
+}
