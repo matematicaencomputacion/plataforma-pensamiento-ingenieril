@@ -2,6 +2,7 @@ package domain
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -163,5 +164,75 @@ func TestConceptOptionalMediaAndActiveSegment(t *testing.T) {
 	seg, ok = concept.ActiveTranscriptSegment(3)
 	if !ok || seg.Text != "intro" {
 		t.Fatalf("segmento intro inesperado: ok=%v seg=%+v", ok, seg)
+	}
+}
+
+func TestConceptMultilingualResourcesUnmarshalAndResolve(t *testing.T) {
+	t.Parallel()
+
+	raw := `{
+		"id":"concept:string-literals",
+		"title":"Literales",
+		"summary":"demo",
+		"resources":{
+			"es":{
+				"resource_url":"https://www.youtube.com/watch?v=es-video",
+				"transcript":[{"start_sec":0,"end_sec":10,"text":"hola"}]
+			},
+			"en":{
+				"resource_url":"https://www.youtube.com/watch?v=en-video",
+				"transcript":[{"start_sec":0,"end_sec":10,"text":"hello"}]
+			}
+		}
+	}`
+	var concept Concept
+	if err := json.Unmarshal([]byte(raw), &concept); err != nil {
+		t.Fatalf("unmarshal resources: %v", err)
+	}
+	if !concept.HasMedia() {
+		t.Fatal("HasMedia debería detectar resources")
+	}
+	locales := concept.AvailableMediaLocales()
+	if len(locales) != 2 {
+		t.Fatalf("locales: %+v", locales)
+	}
+
+	es, ok := concept.MediaFor("es")
+	if !ok || !strings.Contains(es.ResourceURL, "es-video") {
+		t.Fatalf("MediaFor(es): %+v ok=%v", es, ok)
+	}
+	en, ok := concept.MediaFor("en")
+	if !ok || !strings.Contains(en.ResourceURL, "en-video") {
+		t.Fatalf("MediaFor(en): %+v ok=%v", en, ok)
+	}
+
+	seg, ok := concept.ActiveTranscriptSegmentFor("en", 2)
+	if !ok || seg.Text != "hello" {
+		t.Fatalf("segmento EN: ok=%v %+v", ok, seg)
+	}
+	seg, ok = concept.ActiveTranscriptSegmentFor("es", 2)
+	if !ok || seg.Text != "hola" {
+		t.Fatalf("segmento ES: ok=%v %+v", ok, seg)
+	}
+}
+
+func TestConceptLegacyMediaFallback(t *testing.T) {
+	t.Parallel()
+
+	concept := Concept{
+		ID:          "concept:legacy",
+		ResourceURL: "https://www.youtube.com/watch?v=legacy",
+		Transcript: []TranscriptSegment{
+			{StartSec: 0, EndSec: 5, Text: "legado"},
+		},
+	}
+	media, ok := concept.MediaFor("es")
+	if !ok || media.ResourceURL != concept.ResourceURL || media.Transcript[0].Text != "legado" {
+		t.Fatalf("fallback legado ES falló: ok=%v %+v", ok, media)
+	}
+	// Sin resources, EN cae al legado es.
+	media, ok = concept.MediaFor("en")
+	if !ok || media.Transcript[0].Text != "legado" {
+		t.Fatalf("fallback EN→legado: ok=%v %+v", ok, media)
 	}
 }

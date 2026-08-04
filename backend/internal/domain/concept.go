@@ -16,6 +16,27 @@ type TranscriptSegment struct {
 	Text     string  `json:"text"`
 }
 
+// MediaResource agrupa video + transcripción para un idioma (Hito 8 i18n).
+type MediaResource struct {
+	ResourceURL string              `json:"resource_url"`
+	Transcript  []TranscriptSegment `json:"transcript"`
+}
+
+// HasURL indica si hay un recurso de video.
+func (m MediaResource) HasURL() bool {
+	return strings.TrimSpace(m.ResourceURL) != ""
+}
+
+// HasTranscript indica si hay segmentos de transcripción utilizables.
+func (m MediaResource) HasTranscript() bool {
+	return len(m.Transcript) > 0
+}
+
+// HasContent indica video + transcripción (stage completo).
+func (m MediaResource) HasContent() bool {
+	return m.HasURL() && m.HasTranscript()
+}
+
 // Concept describe una unidad cognitiva reutilizable en el curriculum.
 type Concept struct {
 	ID      ConceptID `json:"id"`
@@ -24,29 +45,129 @@ type Concept struct {
 	Track   string    `json:"track,omitempty"`
 	Tags    []string  `json:"tags,omitempty"`
 	Source  string    `json:"source,omitempty"`
-	// ResourceURL apunta a un recurso multimedia opcional (p. ej. YouTube).
+	// ResourceURL (legado) apunta a un recurso multimedia opcional (p. ej. YouTube).
 	ResourceURL string `json:"resource_url,omitempty"`
-	// Transcript es la transcripción sincronizable del recurso (opcional, DUA/OCW).
+	// Transcript (legado) es la transcripción sincronizable del recurso.
 	Transcript []TranscriptSegment `json:"transcript,omitempty"`
+	// Resources mapea idioma ("es"|"en") → recurso multimedia (preferido sobre legado).
+	Resources map[string]MediaResource `json:"resources,omitempty"`
 }
 
-// HasMedia indica si el concepto declara recurso multimedia usable en InteractiveStage.
+// HasMedia indica si el concepto declara algún recurso usable en InteractiveStage.
 func (c Concept) HasMedia() bool {
-	return strings.TrimSpace(c.ResourceURL) != "" && len(c.Transcript) > 0
+	if _, ok := c.MediaFor("es"); ok {
+		return true
+	}
+	if _, ok := c.MediaFor("en"); ok {
+		return true
+	}
+	for lang := range c.Resources {
+		if m, ok := c.MediaFor(lang); ok && m.HasURL() {
+			return true
+		}
+	}
+	return strings.TrimSpace(c.ResourceURL) != ""
 }
 
-// ActiveTranscriptSegment retorna el bloque activo para un instante de reproducción.
+// MediaFor resuelve el recurso para un idioma con fallback legado y entre idiomas.
+func (c Concept) MediaFor(lang string) (MediaResource, bool) {
+	lang = strings.ToLower(strings.TrimSpace(lang))
+	if lang == "" {
+		lang = "es"
+	}
+
+	if c.Resources != nil {
+		if m, ok := c.Resources[lang]; ok && m.HasURL() {
+			return cloneMediaResource(m), true
+		}
+	}
+
+	// Legado: resource_url/transcript se interpreta como locale "es".
+	if lang == "es" && strings.TrimSpace(c.ResourceURL) != "" {
+		return MediaResource{
+			ResourceURL: c.ResourceURL,
+			Transcript:  append([]TranscriptSegment(nil), c.Transcript...),
+		}, true
+	}
+
+	for _, fallback := range []string{"es", "en"} {
+		if fallback == lang {
+			continue
+		}
+		if c.Resources != nil {
+			if m, ok := c.Resources[fallback]; ok && m.HasURL() {
+				return cloneMediaResource(m), true
+			}
+		}
+		if fallback == "es" && strings.TrimSpace(c.ResourceURL) != "" {
+			return MediaResource{
+				ResourceURL: c.ResourceURL,
+				Transcript:  append([]TranscriptSegment(nil), c.Transcript...),
+			}, true
+		}
+	}
+
+	return MediaResource{}, false
+}
+
+// AvailableMediaLocales retorna los idiomas con al menos URL de video.
+func (c Concept) AvailableMediaLocales() []string {
+	seen := map[string]struct{}{}
+	var out []string
+	add := func(lang string) {
+		lang = strings.ToLower(strings.TrimSpace(lang))
+		if lang == "" {
+			return
+		}
+		if _, ok := seen[lang]; ok {
+			return
+		}
+		seen[lang] = struct{}{}
+		out = append(out, lang)
+	}
+	for lang, m := range c.Resources {
+		if m.HasURL() {
+			add(lang)
+		}
+	}
+	if strings.TrimSpace(c.ResourceURL) != "" {
+		add("es")
+	}
+	return out
+}
+
+// ActiveTranscriptSegment retorna el bloque activo (locale por defecto: es).
 func (c Concept) ActiveTranscriptSegment(atSec float64) (TranscriptSegment, bool) {
-	for _, seg := range c.Transcript {
+	return c.ActiveTranscriptSegmentFor("es", atSec)
+}
+
+// ActiveTranscriptSegmentFor retorna el bloque activo para un idioma.
+func (c Concept) ActiveTranscriptSegmentFor(lang string, atSec float64) (TranscriptSegment, bool) {
+	media, ok := c.MediaFor(lang)
+	if !ok || !media.HasTranscript() {
+		return TranscriptSegment{}, false
+	}
+	return activeTranscriptSegment(media.Transcript, atSec)
+}
+
+func activeTranscriptSegment(transcript []TranscriptSegment, atSec float64) (TranscriptSegment, bool) {
+	for _, seg := range transcript {
 		if atSec >= seg.StartSec && atSec < seg.EndSec {
 			return seg, true
 		}
 	}
-	if len(c.Transcript) > 0 && atSec >= c.Transcript[len(c.Transcript)-1].EndSec {
-		last := c.Transcript[len(c.Transcript)-1]
-		return last, true
+	if len(transcript) > 0 && atSec >= transcript[len(transcript)-1].EndSec {
+		return transcript[len(transcript)-1], true
 	}
 	return TranscriptSegment{}, false
+}
+
+func cloneMediaResource(m MediaResource) MediaResource {
+	out := MediaResource{ResourceURL: m.ResourceURL}
+	if len(m.Transcript) > 0 {
+		out.Transcript = append([]TranscriptSegment(nil), m.Transcript...)
+	}
+	return out
 }
 
 // CurriculumEdge es una arista del grafo unificado de conceptos (con rationale curable).
