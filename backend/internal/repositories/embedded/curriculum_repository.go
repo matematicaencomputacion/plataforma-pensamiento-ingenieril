@@ -79,10 +79,18 @@ func (r *CurriculumRepository) GetLesson(id string) (domain.LessonNode, error) {
 
 func cloneGraph(graph domain.CurriculumGraph) domain.CurriculumGraph {
 	cloned := domain.CurriculumGraph{
+		Version:  graph.Version,
 		Lessons:  make(map[string]domain.LessonNode, len(graph.Lessons)),
 		Concepts: make(map[domain.ConceptID]domain.Concept, len(graph.Concepts)),
+		Edges:    make([]domain.CurriculumEdge, len(graph.Edges)),
 	}
+	copy(cloned.Edges, graph.Edges)
 	for id, concept := range graph.Concepts {
+		if len(concept.Tags) > 0 {
+			tags := make([]string, len(concept.Tags))
+			copy(tags, concept.Tags)
+			concept.Tags = tags
+		}
 		cloned.Concepts[id] = concept
 	}
 	for id, lesson := range graph.Lessons {

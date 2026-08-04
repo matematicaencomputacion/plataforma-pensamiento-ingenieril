@@ -2,6 +2,7 @@ package assets
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
@@ -14,54 +15,49 @@ func TestCurriculumJSONEmbedded(t *testing.T) {
 		t.Fatal("CurriculumJSON embebido está vacío")
 	}
 
-	var payload map[string]json.RawMessage
+	var payload struct {
+		Version  int `json:"version"`
+		Concepts []struct {
+			ID string `json:"id"`
+		} `json:"concepts"`
+		Edges []struct {
+			From        string `json:"from"`
+			To          string `json:"to"`
+			RationaleES string `json:"rationale_es"`
+			Source      string `json:"source"`
+		} `json:"edges"`
+	}
 	if err := json.Unmarshal(CurriculumJSON, &payload); err != nil {
 		t.Fatalf("JSON embebido inválido: %v", err)
 	}
 
-	lessonsRaw, ok := payload["lessons"]
-	if !ok {
-		t.Fatal("el JSON embebido debe contener la clave lessons")
+	if payload.Version != 1 {
+		t.Fatalf("version inesperada: %d", payload.Version)
+	}
+	if len(payload.Concepts) != 20 {
+		t.Fatalf("se esperaban 20 conceptos, got %d", len(payload.Concepts))
+	}
+	if len(payload.Edges) != 20 {
+		t.Fatalf("se esperaban 20 aristas, got %d", len(payload.Edges))
 	}
 
-	var lessons map[string]struct {
-		ID       string   `json:"id"`
-		Concepts []string `json:"concepts"`
-	}
-	if err := json.Unmarshal(lessonsRaw, &lessons); err != nil {
-		t.Fatalf("no se pudo parsear lessons: %v", err)
-	}
-
-	if len(lessons) != 10 {
-		t.Fatalf("Module 1 debe exponer 10 lecciones, got %d", len(lessons))
-	}
-
-	if _, ok := lessons["py-m01-01-hello-print"]; !ok {
-		t.Fatal("falta lección raíz py-m01-01-hello-print")
-	}
-	if _, ok := lessons["py-m01-10-declarative-studio"]; !ok {
-		t.Fatal("falta reto final py-m01-10-declarative-studio")
-	}
-
-	var concepts map[string]struct {
-		ID string `json:"id"`
-	}
-	if err := json.Unmarshal(payload["concepts"], &concepts); err != nil {
-		t.Fatalf("no se pudo parsear concepts: %v", err)
-	}
-	for _, id := range []string{"variables", "integers", "strings", "basic_declarations"} {
-		if _, ok := concepts[id]; !ok {
-			t.Fatalf("falta concepto base %q", id)
+	for i, edge := range payload.Edges {
+		if edge.From == "" || edge.To == "" {
+			t.Fatalf("arista %d incompleta: %+v", i, edge)
 		}
-	}
-
-	multi := lessons["py-m01-08-types-conversion"]
-	if len(multi.Concepts) < 3 {
-		t.Fatalf("types-conversion debe mapear múltiples conceptos, got %+v", multi.Concepts)
+		if strings.TrimSpace(edge.RationaleES) == "" {
+			t.Fatalf("arista %s->%s sin rationale_es", edge.From, edge.To)
+		}
+		if edge.Source != "curated" {
+			t.Fatalf("rationale debe estar curado (source=curated), got %q en %s->%s", edge.Source, edge.From, edge.To)
+		}
+		if strings.Contains(edge.RationaleES, "BORRADOR") {
+			t.Fatalf("rationale_es no debe quedar en borrador: %q", edge.RationaleES)
+		}
 	}
 }
 
-func TestPythonModule1DAGIsAcyclicAndSortable(t *testing.T) {
+func TestUnifiedCurriculumDAGIsAcyclicAndSortable(t *testing.T) {
 	t.Parallel()
 
 	var graph domain.CurriculumGraph
@@ -69,16 +65,26 @@ func TestPythonModule1DAGIsAcyclicAndSortable(t *testing.T) {
 		t.Fatalf("unmarshal CurriculumGraph: %v", err)
 	}
 
+	if len(graph.Concepts) != 20 {
+		t.Fatalf("catálogo: got %d want 20", len(graph.Concepts))
+	}
+	if len(graph.Edges) != 20 {
+		t.Fatalf("edges: got %d want 20", len(graph.Edges))
+	}
+	if len(graph.Lessons) != 20 {
+		t.Fatalf("proyección a lessons: got %d want 20", len(graph.Lessons))
+	}
+
 	if err := graph.HasCycles(); err != nil {
-		t.Fatalf("Module 1 no debe tener ciclos: %v", err)
+		t.Fatalf("curriculum unificado no debe tener ciclos: %v", err)
 	}
 
 	order, err := graph.TopologicalSort()
 	if err != nil {
-		t.Fatalf("TopologicalSort Module 1: %v", err)
+		t.Fatalf("TopologicalSort: %v", err)
 	}
-	if len(order) != 10 {
-		t.Fatalf("orden topológico incompleto: got %d want 10 (%v)", len(order), order)
+	if len(order) != 20 {
+		t.Fatalf("orden topológico incompleto: got %d want 20 (%v)", len(order), order)
 	}
 
 	index := make(map[string]int, len(order))
@@ -98,14 +104,12 @@ func TestPythonModule1DAGIsAcyclicAndSortable(t *testing.T) {
 		}
 	}
 
-	assertBefore("py-m01-01-hello-print", "py-m01-02-assignment")
-	assertBefore("py-m01-02-assignment", "py-m01-04-integer-literals")
-	assertBefore("py-m01-02-assignment", "py-m01-06-string-literals")
-	assertBefore("py-m01-04-integer-literals", "py-m01-05-integer-arithmetic")
-	assertBefore("py-m01-06-string-literals", "py-m01-07-string-operations")
-	assertBefore("py-m01-05-integer-arithmetic", "py-m01-08-types-conversion")
-	assertBefore("py-m01-07-string-operations", "py-m01-08-types-conversion")
-	assertBefore("py-m01-03-naming", "py-m01-09-composed-expressions")
-	assertBefore("py-m01-08-types-conversion", "py-m01-10-declarative-studio")
-	assertBefore("py-m01-09-composed-expressions", "py-m01-10-declarative-studio")
+	// requires: from requiere to ⇒ to antecede a from
+	assertBefore("concept:string-literals", "concept:variables-scope")
+	assertBefore("concept:variables-scope", "concept:function-parameters")
+	assertBefore("concept:env-file", "concept:env-secrets")
+	assertBefore("concept:coordinate-geometry", "concept:distance-on-plane")
+	assertBefore("concept:distance-on-plane", "concept:postgis-stdwithin")
+	assertBefore("concept:dua-dimensions", "concept:interactive-stage")
+	assertBefore("concept:interactive-stage", "concept:live-station")
 }

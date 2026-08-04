@@ -25,11 +25,14 @@ func TestEmbeddedCurriculumServiceFromMemory(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetGraph: %v", err)
 	}
-	if len(graph.Lessons) != 10 {
-		t.Fatalf("grafo Module 1 incompleto: %d lecciones", len(graph.Lessons))
+	if len(graph.Concepts) != 20 || len(graph.Edges) != 20 {
+		t.Fatalf("grafo unificado incompleto: concepts=%d edges=%d", len(graph.Concepts), len(graph.Edges))
+	}
+	if len(graph.Lessons) != 20 {
+		t.Fatalf("proyección de lessons incompleta: %d", len(graph.Lessons))
 	}
 
-	lesson, err := service.GetLesson("py-m01-02-assignment")
+	lesson, err := service.GetLesson("concept:variables-scope")
 	if err != nil {
 		t.Fatalf("GetLesson: %v", err)
 	}
@@ -37,11 +40,11 @@ func TestEmbeddedCurriculumServiceFromMemory(t *testing.T) {
 		t.Fatalf("track_type inesperado: %q", lesson.TrackType)
 	}
 	prereqs := lesson.Prerequisites.LessonIDs()
-	if len(prereqs) != 1 || prereqs[0] != "py-m01-01-hello-print" {
+	if len(prereqs) != 1 || prereqs[0] != "concept:string-literals" {
 		t.Fatalf("prerrequisitos inesperados: %+v", lesson.Prerequisites)
 	}
-	if len(lesson.ConceptIDs()) < 2 {
-		t.Fatalf("el nodo debe declarar múltiples conceptos: %+v", lesson.Concepts)
+	if len(lesson.ConceptIDs()) != 1 || lesson.ConceptIDs()[0] != "concept:variables-scope" {
+		t.Fatalf("conceptos del nodo inesperados: %+v", lesson.Concepts)
 	}
 }
 
