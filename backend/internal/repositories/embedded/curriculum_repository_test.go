@@ -24,11 +24,11 @@ func TestCurriculumRepositoryReadsFromMemory(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetGraph: %v", err)
 	}
-	if len(graph.Lessons) < 3 {
-		t.Fatalf("lecciones insuficientes: %d", len(graph.Lessons))
+	if len(graph.Lessons) != 10 {
+		t.Fatalf("Module 1 debe tener 10 lecciones, got %d", len(graph.Lessons))
 	}
 
-	lesson, err := repo.GetLesson("inventory-challenge")
+	lesson, err := repo.GetLesson("py-m01-10-declarative-studio")
 	if err != nil {
 		t.Fatalf("GetLesson: %v", err)
 	}
@@ -36,13 +36,19 @@ func TestCurriculumRepositoryReadsFromMemory(t *testing.T) {
 		t.Fatalf("track_type inesperado: %q", lesson.TrackType)
 	}
 	if len(lesson.Prerequisites.LessonIDs()) != 2 {
-		t.Fatalf("prerrequisitos inesperados: %+v", lesson.Prerequisites)
+		t.Fatalf("prerrequisitos de lección inesperados: %+v", lesson.Prerequisites)
 	}
 	if len(lesson.Concepts) < 2 {
 		t.Fatalf("se esperaban múltiples conceptos en el nodo, got %+v", lesson.Concepts)
 	}
-	if len(graph.Concepts) < 3 {
-		t.Fatalf("catálogo de conceptos incompleto: %d", len(graph.Concepts))
+	if len(graph.Concepts) != 4 {
+		t.Fatalf("catálogo base incompleto: %d", len(graph.Concepts))
+	}
+	if err := graph.HasCycles(); err != nil {
+		t.Fatalf("curriculum embebido con ciclo: %v", err)
+	}
+	if _, err := graph.TopologicalSort(); err != nil {
+		t.Fatalf("TopologicalSort curriculum embebido: %v", err)
 	}
 }
 
@@ -65,15 +71,15 @@ func TestCurriculumRepositoryGraphIsolation(t *testing.T) {
 		t.Fatalf("GetGraph: %v", err)
 	}
 
-	lesson := graph.Lessons["print-basics"]
+	lesson := graph.Lessons["py-m01-01-hello-print"]
 	lesson.Title = "mutado"
-	graph.Lessons["print-basics"] = lesson
+	graph.Lessons["py-m01-01-hello-print"] = lesson
 
 	reloaded, err := repo.GetGraph()
 	if err != nil {
 		t.Fatalf("GetGraph reload: %v", err)
 	}
-	if reloaded.Lessons["print-basics"].Title == "mutado" {
+	if reloaded.Lessons["py-m01-01-hello-print"].Title == "mutado" {
 		t.Fatal("GetGraph debe devolver una copia aislada del grafo embebido")
 	}
 }

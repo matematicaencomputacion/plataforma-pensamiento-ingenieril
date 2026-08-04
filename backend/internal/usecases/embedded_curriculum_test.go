@@ -25,11 +25,11 @@ func TestEmbeddedCurriculumServiceFromMemory(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetGraph: %v", err)
 	}
-	if len(graph.Lessons) < 3 {
-		t.Fatalf("grafo incompleto: %d lecciones", len(graph.Lessons))
+	if len(graph.Lessons) != 10 {
+		t.Fatalf("grafo Module 1 incompleto: %d lecciones", len(graph.Lessons))
 	}
 
-	lesson, err := service.GetLesson("variables-and-types")
+	lesson, err := service.GetLesson("py-m01-02-assignment")
 	if err != nil {
 		t.Fatalf("GetLesson: %v", err)
 	}
@@ -37,7 +37,7 @@ func TestEmbeddedCurriculumServiceFromMemory(t *testing.T) {
 		t.Fatalf("track_type inesperado: %q", lesson.TrackType)
 	}
 	prereqs := lesson.Prerequisites.LessonIDs()
-	if len(prereqs) != 1 || prereqs[0] != "print-basics" {
+	if len(prereqs) != 1 || prereqs[0] != "py-m01-01-hello-print" {
 		t.Fatalf("prerrequisitos inesperados: %+v", lesson.Prerequisites)
 	}
 	if len(lesson.ConceptIDs()) < 2 {

@@ -3,7 +3,7 @@
   "title": "Module 1 — Declarative Foundations",
   "language": "python",
   "track_type": "micro_paso",
-  "status": "scaffold",
+  "status": "mapped",
   "standards": [
     "MIT 6.0001",
     "CS50P",
@@ -11,17 +11,28 @@
   ],
   "concept_keys": [
     "variables",
-    "data_types",
-    "assignment",
-    "expressions",
-    "print_io",
-    "naming"
+    "integers",
+    "strings",
+    "basic_declarations"
   ],
+  "runtime_curriculum": "backend/internal/assets/curriculum.json",
   "target_levels": 10,
+  "lesson_ids": [
+    "py-m01-01-hello-print",
+    "py-m01-02-assignment",
+    "py-m01-03-naming",
+    "py-m01-04-integer-literals",
+    "py-m01-05-integer-arithmetic",
+    "py-m01-06-string-literals",
+    "py-m01-07-string-operations",
+    "py-m01-08-types-conversion",
+    "py-m01-09-composed-expressions",
+    "py-m01-10-declarative-studio"
+  ],
   "directories": {
     "concepts": "concepts/",
     "levels": "levels/",
     "assessments": "assessments/"
   },
-  "notes": "Scaffold PPI 1.1. El mapeo completo de ~10 niveles se completará en la fase Curso Python fundamentos."
+  "notes": "Malla de 10 LessonNodes en el curriculum embebido; validada con HasCycles y TopologicalSort (Curso Python Fundamentos)."
 }
