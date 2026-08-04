@@ -23,7 +23,8 @@ func TestCurriculumJSONEmbedded(t *testing.T) {
 	}
 
 	var lessons map[string]struct {
-		ID string `json:"id"`
+		ID       string   `json:"id"`
+		Concepts []string `json:"concepts"`
 	}
 	if err := json.Unmarshal(lessonsRaw, &lessons); err != nil {
 		t.Fatalf("no se pudo parsear lessons: %v", err)
@@ -35,5 +36,14 @@ func TestCurriculumJSONEmbedded(t *testing.T) {
 
 	if _, ok := lessons["print-basics"]; !ok {
 		t.Fatal("falta lección print-basics en el embed")
+	}
+
+	if _, ok := payload["concepts"]; !ok {
+		t.Fatal("el JSON embebido debe contener el catálogo concepts")
+	}
+
+	multiConceptLesson := lessons["variables-and-types"]
+	if len(multiConceptLesson.Concepts) < 2 {
+		t.Fatalf("variables-and-types debe mapear múltiples conceptos, got %+v", multiConceptLesson.Concepts)
 	}
 }

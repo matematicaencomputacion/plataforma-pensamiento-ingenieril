@@ -35,8 +35,14 @@ func TestCurriculumRepositoryReadsFromMemory(t *testing.T) {
 	if lesson.TrackType != domain.TrackRetoIngenieril {
 		t.Fatalf("track_type inesperado: %q", lesson.TrackType)
 	}
-	if len(lesson.Prerequisites) != 2 {
+	if len(lesson.Prerequisites.LessonIDs()) != 2 {
 		t.Fatalf("prerrequisitos inesperados: %+v", lesson.Prerequisites)
+	}
+	if len(lesson.Concepts) < 2 {
+		t.Fatalf("se esperaban múltiples conceptos en el nodo, got %+v", lesson.Concepts)
+	}
+	if len(graph.Concepts) < 3 {
+		t.Fatalf("catálogo de conceptos incompleto: %d", len(graph.Concepts))
 	}
 }
 
