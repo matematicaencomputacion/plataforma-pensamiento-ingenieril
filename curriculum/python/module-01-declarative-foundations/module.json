@@ -1,0 +1,27 @@
+{
+  "id": "python-module-01-declarative-foundations",
+  "title": "Module 1 — Declarative Foundations",
+  "language": "python",
+  "track_type": "micro_paso",
+  "status": "scaffold",
+  "standards": [
+    "MIT 6.0001",
+    "CS50P",
+    "PY4E"
+  ],
+  "concept_keys": [
+    "variables",
+    "data_types",
+    "assignment",
+    "expressions",
+    "print_io",
+    "naming"
+  ],
+  "target_levels": 10,
+  "directories": {
+    "concepts": "concepts/",
+    "levels": "levels/",
+    "assessments": "assessments/"
+  },
+  "notes": "Scaffold PPI 1.1. El mapeo completo de ~10 niveles se completará en la fase Curso Python fundamentos."
+}

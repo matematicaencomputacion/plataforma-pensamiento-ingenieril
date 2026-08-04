@@ -1,1 +1,6 @@
 .idea/
+backend/bin/
+*.exe
+*.test
+.DS_Store
+

@@ -1,0 +1,30 @@
+---
+description: Pipeline estricto de Pre-CI local, gh pr create y monitoreo de GitHub Actions
+alwaysApply: true
+---
+
+# CI & GitHub Automation (PPI)
+
+Usar Git + GitHub CLI (`gh`) desde la terminal para el ciclo de vida del código.
+
+## Pre-CI Local (obligatorio antes de push/PR)
+
+- No abrir PR con código roto.
+- Antes de pushear: `make test` (o `cd backend && go test ./...`) al 100% verde.
+- Si el hito toca frontend: validar build (`cd frontend && npm run build`).
+- Preferir `make ci` cuando exista Makefile.
+
+## Crear PR al completar un hito
+
+1. Trabajar solo en rama feature (`feat/*`, etc.). `main` permanece limpia.
+2. Commit convencional → `git push -u origin HEAD`.
+3. `gh pr create` con título semántico y body:
+   - Qué hace
+   - Archivos/áreas tocadas
+   - Checklist de pruebas ejecutadas
+4. No mergear salvo pedido explícito del usuario.
+
+## Monitoreo CI
+
+- Tras el PR: `gh pr checks`.
+- Si falla: leer logs (`gh run view --log-failed` / `gh pr checks`), fix en la misma rama, Pre-CI local, push, re-chequear.

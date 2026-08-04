@@ -1,13 +1,17 @@
 schema: spec-driven
 
 context: |
-  Proyecto: Plataforma Educativa de Pensamiento Ingenieril
-  Stack: Qwik + Tailwind (frontend), Go Clean Architecture (backend), PostgreSQL/SQLite, ejecución Python client-side (Pyodide/JupyterLite).
+  Proyecto: Plataforma Educativa de Pensamiento Ingenieril (PPI)
+  Roadmap Spark beta: PPI 1.1 foundations → Vectorial B0 → PPI 1.2 conceptos → PPI 1.3 DAG → Curso Python → PPI 1.5 IA tutora.
+  Backend module: github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend
+  Toolchain: Go 1.25.0 (GOTOOLCHAIN=auto); DX local optimizado para macOS Apple Silicon (darwin/arm64).
+  Stack: Qwik + Tailwind (frontend), Go Clean Architecture (backend), jsonstore/JSON inicial, ejecución Python client-side (Pyodide/JupyterLite). Integraciones futuras Python/R.
+  Curriculum versionado: curriculum/python/ (Module 1 Declarative Foundations). Runtime seeds: backend/data/.
   ADRs: docs/adr/0001-stack-tecnologico.md, docs/adr/0002-ejecucion-client-side.md
   Reglas agente: .cursorrules
-  Producto fundacional: docs/PRD.md (visión histórica). Definición viva de producto/specs: openspec/
-  Dominio pedagógico: Track 1 Micro-pasos (sintaxis) + Track 2 Retos Ingenieriles; Perfil Cognitivo para personalizar prompts a Grok (xAI).
-  Convenciones: conventional commits; autor git matematica.en.computacion@gmail.com; API Go en :8080; frontend Qwik en dev local.
+  Producto fundacional: docs/PRD.md. Specs vivas: openspec/
+  Convenciones: conventional commits; autor matematica.en.computacion@gmail.com; API :8080; main limpia + ramas feature.
+  CI/PR: Pre-CI local obligatorio (make test / go test) antes de push; gh pr create en hitos; monitorear con gh pr checks y fix en la misma rama.
 
 rules:
   proposal:
@@ -19,5 +23,7 @@ rules:
   design:
     - Respetar Clean Architecture en Go y Resumability en Qwik.
     - No proponer ejecución de código de alumnos en el servidor (ADR 002).
+    - Preferir module path real; prohibido github.com/tu-usuario/*.
   tasks:
     - Tareas pequeñas, chequeables y ordenadas por dependencia.
+    - Todo código Go nuevo requiere *_test.go.

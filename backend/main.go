@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/tu-usuario/plataforma-edu-backend/internal/handlers"
-	"github.com/tu-usuario/plataforma-edu-backend/internal/repositories/jsonstore"
-	"github.com/tu-usuario/plataforma-edu-backend/internal/usecases"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/handlers"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/repositories/jsonstore"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/usecases"
 )
 
 func enableCORS(next http.Handler) http.Handler {

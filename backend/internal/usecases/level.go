@@ -3,8 +3,8 @@ package usecases
 import (
 	"fmt"
 
-	"github.com/tu-usuario/plataforma-edu-backend/internal/domain"
-	"github.com/tu-usuario/plataforma-edu-backend/internal/repositories"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/repositories"
 )
 
 // LevelService expone consultas de niveles/retos.

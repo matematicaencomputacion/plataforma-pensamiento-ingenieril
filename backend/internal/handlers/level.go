@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tu-usuario/plataforma-edu-backend/internal/domain"
-	"github.com/tu-usuario/plataforma-edu-backend/internal/usecases"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/usecases"
 )
 
 // LevelHandler expone endpoints de niveles.
