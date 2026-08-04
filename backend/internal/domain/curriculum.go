@@ -10,7 +10,7 @@ type LessonNode struct {
 	Prerequisites PrerequisiteList `json:"prerequisites"`
 	Concepts      []ConceptID     `json:"concepts"`
 	Competencies  []Competency    `json:"competencies,omitempty"`
-	// SkillTarget mantiene el puente con CognitiveProfile (Vectorial / PPI 1.3).
+	// SkillTarget mantiene el puente con CognitiveProfile (Vectorial).
 	SkillTarget string `json:"skill_target"`
 }
 
