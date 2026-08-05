@@ -168,4 +168,54 @@ func TestModule1ConceptsOptionalMedia(t *testing.T) {
 	if _, ok := seed.ActiveTranscriptSegment(20); !ok {
 		t.Fatal("ActiveTranscriptSegment (legado/es) debe resolver un bloque en t=20s")
 	}
+
+	esMedia, ok := seed.MediaFor("es")
+	if !ok || !esMedia.HasChapters() {
+		t.Fatal("string-literals/es debe exponer chapters del arnés pedagógico")
+	}
+	if len(esMedia.Chapters) != 18 {
+		t.Fatalf("curso MoureDev debe exponer 18 capítulos oficiales, got %d", len(esMedia.Chapters))
+	}
+
+	wantBounds := []struct {
+		atSec float64
+		id    string
+		title string
+	}{
+		{0, "ch-01-introduccion", "Capítulo 1: Introducción"},
+		{244, "ch-02-contexto", "Capítulo 2: Contexto"},
+		{850, "ch-03-configuracion", "Capítulo 3: 01 - Configuración"},
+		{2938, "ch-05-variables", "Capítulo 5: 03 - Variables"},
+		{8645, "ch-07-strings", "Capítulo 7: 05 - Strings"},
+		{26619, "ch-14-funciones", "Capítulo 14: 12 - Funciones"},
+		{36391, "ch-18-proximos-pasos", "Capítulo 18: Próximos pasos"},
+	}
+	for _, want := range wantBounds {
+		ch, ok := esMedia.ChapterAt(want.atSec)
+		if !ok || ch.ID != want.id {
+			t.Fatalf("ChapterAt(%.0f): got ok=%v id=%q want %q", want.atSec, ok, ch.ID, want.id)
+		}
+		if ch.Title != want.title {
+			t.Fatalf("ChapterAt(%.0f) title: got %q want %q", want.atSec, ch.Title, want.title)
+		}
+		if ch.EndSec <= ch.StartSec {
+			t.Fatalf("capítulo %s con rango inválido: %.0f-%.0f", ch.ID, ch.StartSec, ch.EndSec)
+		}
+	}
+
+	last := esMedia.Chapters[len(esMedia.Chapters)-1]
+	if last.EndSec != 36454 {
+		t.Fatalf("fin del video/capítulo 18: got %.0f want 36454", last.EndSec)
+	}
+	if len(esMedia.TranscriptForChapter(esMedia.Chapters[0])) == 0 {
+		t.Fatal("el capítulo 1 debe aportar transcripción propia o filtrada")
+	}
+
+	enMedia, ok := seed.MediaFor("en")
+	if !ok {
+		t.Fatal("MediaFor(en) debe seguir disponible")
+	}
+	if enMedia.HasChapters() {
+		t.Fatal("EN corto no debe requerir chapters (retrocompatibilidad)")
+	}
 }

@@ -4,3 +4,13 @@ backend/bin/
 *.test
 .DS_Store
 
+# Secretos locales (Nunca subir a GitHub)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Service account / ADC de Google Cloud
+project-*.json
+*-service-account*.json
+**/google-credentials*.json

@@ -104,6 +104,18 @@ func cloneGraph(graph domain.CurriculumGraph) domain.CurriculumGraph {
 					copy(segs, media.Transcript)
 					media.Transcript = segs
 				}
+				if len(media.Chapters) > 0 {
+					chapters := make([]domain.MediaChapter, len(media.Chapters))
+					for i, ch := range media.Chapters {
+						if len(ch.Transcript) > 0 {
+							segs := make([]domain.TranscriptSegment, len(ch.Transcript))
+							copy(segs, ch.Transcript)
+							ch.Transcript = segs
+						}
+						chapters[i] = ch
+					}
+					media.Chapters = chapters
+				}
 				resources[lang] = media
 			}
 			concept.Resources = resources

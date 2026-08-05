@@ -6,6 +6,10 @@ import {
   type NoSerialize,
   type QRL,
 } from "@builder.io/qwik";
+import {
+  extractYouTubeVideoId,
+  toYouTubeEmbedUrl,
+} from "../../lib/youtube-utils";
 
 type YTPlayer = {
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
@@ -15,17 +19,14 @@ type YTPlayer = {
 
 type YTNamespace = {
   Player: new (
-    elementId: string,
-    config: {
-      videoId: string;
-      playerVars?: Record<string, string | number>;
+    elementId: string | HTMLElement,
+    config?: {
       events?: {
         onReady?: () => void;
-        onStateChange?: (event: { data: number }) => void;
+        onError?: (event: { data: number }) => void;
       };
     },
   ) => YTPlayer;
-  PlayerState: { PLAYING: number };
 };
 
 declare global {
@@ -36,7 +37,8 @@ declare global {
 }
 
 export type YouTubePlayerProps = {
-  videoId: string;
+  /** URL watch / youtu.be / embed / shorts o VIDEO_ID crudo del curriculum. */
+  resourceUrl: string;
   playerDomId: string;
   onTimeUpdate$?: QRL<(seconds: number) => void>;
   seekRequest?: number | null;
@@ -60,7 +62,9 @@ function loadYouTubeAPI(): Promise<void> {
       previous?.();
       resolve();
     };
-    if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+    if (
+      !document.querySelector('script[src="https://www.youtube.com/iframe_api"]')
+    ) {
       const script = document.createElement("script");
       script.src = "https://www.youtube.com/iframe_api";
       script.async = true;
@@ -73,34 +77,69 @@ function loadYouTubeAPI(): Promise<void> {
 export const YouTubePlayer = component$<YouTubePlayerProps>((props) => {
   const playerRef = useSignal<NoSerialize<YTPlayer> | null>(null);
   const ready = useSignal(false);
+  const apiError = useSignal("");
+
+  const videoId = extractYouTubeVideoId(props.resourceUrl);
+  const embedSrc = videoId
+    ? toYouTubeEmbedUrl(props.resourceUrl, {
+        autoplay: false,
+        enableJsApi: true,
+      })
+    : null;
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async ({ track, cleanup }) => {
-    const videoId = track(() => props.videoId);
+    const resourceUrl = track(() => props.resourceUrl);
     const domId = track(() => props.playerDomId);
 
-    await loadYouTubeAPI();
-    if (!window.YT?.Player) {
+    ready.value = false;
+    apiError.value = "";
+
+    const id = extractYouTubeVideoId(resourceUrl);
+    const withOrigin = toYouTubeEmbedUrl(resourceUrl, {
+      autoplay: false,
+      enableJsApi: true,
+      origin: window.location.origin,
+    });
+
+    if (!id || !withOrigin) {
+      apiError.value =
+        "No se pudo interpretar la URL del video. Revisá el recurso del curriculum.";
       return;
     }
 
-    const existing = playerRef.value;
-    if (existing) {
-      existing.destroy();
-      playerRef.value = null;
+    const iframe = document.getElementById(domId) as HTMLIFrameElement | null;
+    if (!iframe) {
+      apiError.value = "No se encontró el contenedor del reproductor.";
+      return;
     }
 
-    const player = new window.YT.Player(domId, {
-      videoId,
-      playerVars: {
-        enablejsapi: 1,
-        rel: 0,
-        modestbranding: 1,
-        playsinline: 1,
-      },
+    // Garantiza src embed (nunca watch?v=) e incluye origin para la IFrame API.
+    if (iframe.src !== withOrigin) {
+      iframe.src = withOrigin;
+    }
+
+    await loadYouTubeAPI();
+    if (!window.YT?.Player) {
+      apiError.value = "No se pudo cargar la API de YouTube.";
+      return;
+    }
+
+    try {
+      playerRef.value?.destroy();
+    } catch {
+      // ignore
+    }
+    playerRef.value = null;
+
+    const player = new window.YT.Player(iframe, {
       events: {
         onReady: () => {
           ready.value = true;
+        },
+        onError: () => {
+          apiError.value =
+            "YouTube no pudo reproducir este video (ID inválido o sin permiso de incrustación).";
         },
       },
     });
@@ -108,12 +147,11 @@ export const YouTubePlayer = component$<YouTubePlayerProps>((props) => {
 
     const timer = window.setInterval(() => {
       const current = playerRef.value;
-      if (!current || !props.onTimeUpdate$) {
+      if (!current || !props.onTimeUpdate$ || !ready.value) {
         return;
       }
       try {
-        const t = current.getCurrentTime();
-        void props.onTimeUpdate$(t);
+        void props.onTimeUpdate$(current.getCurrentTime());
       } catch {
         // player aún no listo
       }
@@ -141,16 +179,34 @@ export const YouTubePlayer = component$<YouTubePlayerProps>((props) => {
     player.seekTo(seekTo, true);
   });
 
+  if (!embedSrc || !videoId) {
+    return (
+      <div class="yt-player yt-player--error" role="alert">
+        <p class="yt-player__error">
+          URL de video inválida o no compatible con incrustación. Se espera un
+          enlace de YouTube (`watch`, `youtu.be`, `embed`) o un VIDEO_ID.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div class="yt-player">
-      <div id={props.playerDomId} class="yt-player__frame" />
+      <iframe
+        key={videoId}
+        id={props.playerDomId}
+        class="yt-player__frame"
+        src={embedSrc}
+        title="Reproductor de lección YouTube"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullscreen
+        referrerPolicy="strict-origin-when-cross-origin"
+      />
+      {apiError.value && (
+        <p class="yt-player__error yt-player__error--overlay" role="status">
+          {apiError.value}
+        </p>
+      )}
     </div>
   );
 });
-
-export function seekYouTubePlayer(
-  player: YTPlayer | null | undefined,
-  seconds: number,
-) {
-  player?.seekTo(seconds, true);
-}

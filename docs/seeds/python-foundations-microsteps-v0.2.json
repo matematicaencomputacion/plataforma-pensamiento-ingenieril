@@ -1,0 +1,375 @@
+{
+  "metadata": {
+    "id": "seed:python-foundations-microsteps",
+    "title": "Python Foundations: Micro-Pasos Interactivos",
+    "description": "Semilla v0.3: layout bifurcado onboarding (coaching) vs coding. Semilla iterable (v0.2) de los primeros 10 temas del tutorial W3Schools/Python, adaptada a IngenierIA: teoría breve + editor + pytest client-side (Pyodide). Fuentes: capturas/tests del Doc de curaduría, ejercicios W3Schools Casting, y capítulo Strings como frontera del lote.",
+    "version": "0.3.0",
+    "status": "seed",
+    "total_steps": 11,
+    "locale": "es",
+    "pedagogy": {
+      "pattern": "explain → try → check",
+      "inspiration": [
+        "https://www.w3schools.com/python/exercise.asp?x=xrcise_casting2",
+        "https://www.w3schools.com/python/python_strings.asp",
+        "https://docs.google.com/document/d/1c-5ytwF94LMhakubqhxRIcZnlsHQJxZsBSv1l_C0dR4/edit"
+      ],
+      "constraints": [
+        "Sin input() en ejercicios evaluables (runtime browser/Pyodide).",
+        "Validación por asserts/pytest, no por igualdad exacta de source string.",
+        "Teoría corta (≤120 palabras); el aprendizaje ocurre en el micro-ejercicio.",
+        "Cada step produce un artefacto observable (print/type/valor)."
+      ]
+    },
+    "sources": {
+      "w3_home": "https://www.w3schools.com/python/python_getstarted.asp",
+      "w3_casting_theory": "https://www.w3schools.com/python/python_casting.asp",
+      "w3_casting_exercise": "https://www.w3schools.com/python/exercise.asp?x=xrcise_casting2",
+      "w3_strings_next": "https://www.w3schools.com/python/python_strings.asp",
+      "curation_doc": "https://docs.google.com/document/d/1c-5ytwF94LMhakubqhxRIcZnlsHQJxZsBSv1l_C0dR4/edit"
+    }
+  },
+  "ux": {
+    "layout": "single_viewport",
+    "panes": [
+      "theory",
+      "editor",
+      "console_or_tests"
+    ],
+    "features": {
+      "show_hints": true,
+      "run_code": true,
+      "validate_with_pytest": true,
+      "show_solution_on_demand": true,
+      "mcq_optional": true
+    },
+    "notes": "Imitar la ventana completa de W3Schools Exercise: un solo foco, sin dashboard. La teoría previa (como python_strings.asp) vive en el panel izquierdo/superior; el reto ocupa el editor."
+  },
+  "steps": [
+    {
+      "id": "py-01-home",
+      "step_number": 1,
+      "slug": "python-home",
+      "title": "Conocé tu propósito",
+      "type": "orient",
+      "objective": "Capturar motivación, urgencia y stack previo antes de escribir código.",
+      "w3_ref": "https://www.w3schools.com/python/default.asp",
+      "content": {
+        "prompt_md": "**Bienvenida**\n\nAntes de programar, queremos entender tu propósito.",
+        "starter_code": "",
+        "coaching_prompts": [
+          "¿Qué te trae a aprender Python ahora?",
+          "¿Con qué urgencia necesitás estos resultados? (días, semanas, meses)",
+          "Imaginá dentro de 5 años: ¿qué problema te gustaría poder resolver con código?",
+          "¿Qué entornos conocés o te gustaría usar? (Jupyter, Cursor, Positron, Colab, R/RStudio, GitHub…)"
+        ]
+      },
+      "checks": {
+        "mode": "mcq_or_run"
+      },
+      "tags": [
+        "orientacion",
+        "motivacion"
+      ],
+      "next": "py-02-variables",
+      "layoutType": "onboarding"
+    },
+    {
+      "id": "py-02-variables",
+      "step_number": 2,
+      "slug": "python-variables-bridge",
+      "title": "Variables (puente coding)",
+      "layoutType": "coding",
+      "type": "micro_exercise",
+      "objective": "Primer micro-ejercicio de código tras el onboarding.",
+      "content": {
+        "prompt_md": "**Variables**\n\nUna variable guarda un valor. En Python se crea al asignar.\n\n**Micro-reto:**\n1. Crea `nombre` con un texto\n2. Crea `edad` con un entero\n3. Imprime ambas con `print(nombre, edad)`",
+        "starter_code": "# nombre = ...\n# edad = ...\n# print(...)\n"
+      },
+      "checks": {
+        "mode": "pytest",
+        "pytest": "def test_variables(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'nombre' in ns and isinstance(ns['nombre'], str)\n    assert 'edad' in ns and isinstance(ns['edad'], int)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert str(ns['nombre']) in out and str(ns['edad']) in out\n"
+      },
+      "hint": "nombre = \"Ana\"\\nedad = 25\\nprint(nombre, edad)",
+      "solution_example": "nombre = \"Ana\"\nedad = 25\nprint(nombre, edad)",
+      "tags": [
+        "variables",
+        "coding-bridge"
+      ],
+      "next": "py-02-intro"
+    },
+    {
+      "id": "py-02-intro",
+      "step_number": 3,
+      "slug": "python-intro",
+      "title": "Python Intro",
+      "type": "theory_plus_run",
+      "objective": "Reconocer sintaxis legible, indentación e intérprete mediante un Hola Mundo.",
+      "w3_ref": "https://www.w3schools.com/python/python_intro.asp",
+      "content": {
+        "prompt_md": "**¿Qué es Python?**\n\nCreado por Guido van Rossum (1991). Destaca por:\n- sintaxis cercana al inglés,\n- ejecución con intérprete (prototipado rápido),\n- indentación para definir bloques.\n\n**Micro-reto:** Haz que el programa imprima exactamente `Hello, World!`",
+        "starter_code": "# Completa la línea\nprint()\n"
+      },
+      "checks": {
+        "mode": "pytest",
+        "pytest": "def test_hello(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    assert capsys.readouterr().out.strip() == 'Hello, World!'\n"
+      },
+      "hint": "Usa comillas: print(\"Hello, World!\")",
+      "solution_example": "print(\"Hello, World!\")",
+      "tags": [
+        "intro",
+        "print"
+      ],
+      "next": "py-03-get-started",
+      "layoutType": "coding"
+    },
+    {
+      "id": "py-03-get-started",
+      "step_number": 4,
+      "slug": "python-get-started",
+      "title": "Python Get Started",
+      "type": "theory_plus_run",
+      "objective": "Entender que el código se ejecuta en el navegador (Pyodide) sin instalar nada, y producir una salida propia.",
+      "w3_ref": "https://www.w3schools.com/python/python_getstarted.asp",
+      "content": {
+        "prompt_md": "**Get Started**\n\nEn W3Schools (y aquí) puedes probar Python **sin instalar**. El editor corre en el navegador.\n\nOpcional offline: `python --version` y un archivo `hello.py`.\n\n**Micro-reto:** Imprime tu propio mensaje de bienvenida que contenga la palabra `Python`.",
+        "starter_code": "# Escribe tu mensaje\n"
+      },
+      "checks": {
+        "mode": "pytest",
+        "pytest": "def test_contains_python(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    assert 'Python' in capsys.readouterr().out\n"
+      },
+      "hint": "Cualquier print(\"... Python ...\") válido alcanza.",
+      "solution_example": "print(\"Estoy aprendiendo Python\")",
+      "tags": [
+        "entorno",
+        "browser-first"
+      ],
+      "next": "py-04-syntax",
+      "layoutType": "coding"
+    },
+    {
+      "id": "py-04-syntax",
+      "step_number": 5,
+      "slug": "python-syntax",
+      "title": "Python Syntax",
+      "type": "micro_exercise",
+      "objective": "Usar statements secuenciales (una instrucción por línea) como en el challenge del Doc.",
+      "w3_ref": "https://www.w3schools.com/python/python_syntax.asp",
+      "content": {
+        "prompt_md": "**Sintaxis / Statements**\n\nUn programa es una lista de instrucciones (statements). En Python suelen terminar al final de la línea (sin `;`).\n\n**Challenge (Doc / W3):**\n1. Imprime `Hello World!`\n2. Imprime `Have a good day.`\n3. Imprime `Learning Python is fun!`",
+        "starter_code": "# Tres statements, uno por línea\n"
+      },
+      "checks": {
+        "mode": "pytest",
+        "pytest": "def test_three_statements(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == [\n        'Hello World!',\n        'Have a good day.',\n        'Learning Python is fun!',\n    ]\n"
+      },
+      "hint": "Tres llamadas a print(), en ese orden exacto.",
+      "solution_example": "print(\"Hello World!\")\nprint(\"Have a good day.\")\nprint(\"Learning Python is fun!\")",
+      "tags": [
+        "syntax",
+        "statements"
+      ],
+      "next": "py-05-output",
+      "layoutType": "coding"
+    },
+    {
+      "id": "py-05-output",
+      "step_number": 6,
+      "slug": "python-output",
+      "title": "Python Output",
+      "type": "micro_exercise",
+      "objective": "Mezclar texto y número en un solo print (coma), patrón del challenge del Doc.",
+      "w3_ref": "https://www.w3schools.com/python/python_output.asp",
+      "content": {
+        "prompt_md": "**Output / print()**\n\n- Texto entre comillas; números sin comillas.\n- Puedes mezclar con comas: `print(\"I am\", 25)`.\n\n**Challenge:** En **un** `print`, muestra el texto `I am` y el número `25`.",
+        "starter_code": "# Un solo print\n"
+      },
+      "checks": {
+        "mode": "pytest",
+        "pytest": "def test_mix_text_number(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'I am 25'\n"
+      },
+      "hint": "print(\"I am\", 25) — la coma inserta un espacio.",
+      "solution_example": "print(\"I am\", 25)",
+      "tags": [
+        "print",
+        "output"
+      ],
+      "next": "py-06-comments",
+      "layoutType": "coding"
+    },
+    {
+      "id": "py-06-comments",
+      "step_number": 7,
+      "slug": "python-comments",
+      "title": "Python Comments",
+      "type": "micro_exercise",
+      "objective": "Usar # y docstring-como-comentario; comentar código para que no se ejecute.",
+      "w3_ref": "https://www.w3schools.com/python/python_comments.asp",
+      "content": {
+        "prompt_md": "**Comments**\n\n- `#` comenta una línea.\n- También puedes \"apagar\" código comentándolo.\n- Multilínea: varios `#` o un string `\"\"\"...\"\"\"` no asignado.\n\n**Challenge:**\n1. Añade un comentario de una línea: `This is a comment`\n2. Comenta `print(\"This should not run\")` para que no se ejecute\n3. Añade un comentario multilínea con las tres líneas:\n   `This is` / `a multiline` / `comment`\n4. Debe imprimirse solo: `Comments work!`",
+        "starter_code": "print(\"This should not run\")\nprint(\"Comments work!\")\n"
+      },
+      "checks": {
+        "mode": "pytest",
+        "pytest": "def test_comments(capsys):\n    src = open('solution.py', encoding='utf-8').read()\n    assert 'This is a comment' in src\n    assert 'This should not run' in src\n    # la línea peligrosa no debe ejecutarse: o está comentada o ausente como statement activo\n    assert 'This is' in src and 'a multiline' in src and 'comment' in src\n    exec(src)\n    assert capsys.readouterr().out.strip() == 'Comments work!'\n"
+      },
+      "hint": "Pon # delante de print(\"This should not run\"). Usa \"\"\" ... \"\"\" para el bloque multilínea.",
+      "solution_example": "# This is a comment\n# print(\"This should not run\")\n\"\"\"\nThis is\na multiline\ncomment\n\"\"\"\nprint(\"Comments work!\")",
+      "tags": [
+        "comments"
+      ],
+      "next": "py-07-variables",
+      "layoutType": "coding"
+    },
+    {
+      "id": "py-07-variables",
+      "step_number": 8,
+      "slug": "python-variables",
+      "title": "Python Variables",
+      "type": "micro_exercise",
+      "objective": "Crear variables por asignación y mostrarlas; reglas básicas de nombres.",
+      "w3_ref": "https://www.w3schools.com/python/python_variables.asp",
+      "content": {
+        "prompt_md": "**Variables**\n\nSon contenedores de valores. Se crean al asignar: `x = 5`. Son case-sensitive.\n\n**Challenge (lote semilla):**\n1. Crea `nombre` con un texto\n2. Crea `edad` con un entero\n3. Imprime ambas en una sola línea con coma: `print(nombre, edad)`",
+        "starter_code": "# nombre = ...\n# edad = ...\n# print(...)\n"
+      },
+      "checks": {
+        "mode": "pytest",
+        "pytest": "def test_variables(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'nombre' in ns and isinstance(ns['nombre'], str)\n    assert 'edad' in ns and isinstance(ns['edad'], int)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert str(ns['nombre']) in out and str(ns['edad']) in out\n"
+      },
+      "hint": "nombre = \"Ana\"\\nedad = 25\\nprint(nombre, edad)",
+      "solution_example": "nombre = \"Ana\"\nedad = 25\nprint(nombre, edad)",
+      "tags": [
+        "variables"
+      ],
+      "next": "py-08-data-types",
+      "layoutType": "coding"
+    },
+    {
+      "id": "py-08-data-types",
+      "step_number": 9,
+      "slug": "python-data-types",
+      "title": "Python Data Types",
+      "type": "micro_exercise",
+      "objective": "Distinguir str / int / float y usar type().",
+      "w3_ref": "https://www.w3schools.com/python/python_datatypes.asp",
+      "content": {
+        "prompt_md": "**Data Types**\n\nTipos básicos del lote: `str`, `int`, `float` (y luego `bool`, `complex`).\n\n**Challenge (Doc):**\n1. `x = 5`\n2. `y = 3.14`\n3. `z = \"Hello\"`\n4. Imprime `type(x)`, `type(y)`, `type(z)`",
+        "starter_code": "# x, y, z + type()\n"
+      },
+      "checks": {
+        "mode": "pytest",
+        "pytest": "def test_types(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 5 and type(ns['x']) is int\n    assert ns.get('y') == 3.14 and type(ns['y']) is float\n    assert ns.get('z') == 'Hello' and type(ns['z']) is str\n    out = capsys.readouterr().out\n    assert \"<class 'int'>\" in out\n    assert \"<class 'float'>\" in out\n    assert \"<class 'str'>\" in out\n"
+      },
+      "hint": "Tres print(type(...)) en orden x, y, z.",
+      "solution_example": "x = 5\ny = 3.14\nz = \"Hello\"\nprint(type(x))\nprint(type(y))\nprint(type(z))",
+      "tags": [
+        "types",
+        "type()"
+      ],
+      "next": "py-09-numbers",
+      "layoutType": "coding"
+    },
+    {
+      "id": "py-09-numbers",
+      "step_number": 10,
+      "slug": "python-numbers",
+      "title": "Python Numbers",
+      "type": "micro_exercise",
+      "objective": "Crear int, float y complex; inspeccionar tipos.",
+      "w3_ref": "https://www.w3schools.com/python/python_numbers.asp",
+      "content": {
+        "prompt_md": "**Numbers**\n\nTres tipos numéricos: `int`, `float`, `complex` (parte imaginaria con `j`).\n\n**Challenge (Doc):**\n1. `x = 5` (int)\n2. `y = 3.14` (float)\n3. `z = 2+3j` (complex)\n4. Imprime el `type` de cada una",
+        "starter_code": "# x, y, z numéricos\n"
+      },
+      "checks": {
+        "mode": "pytest",
+        "pytest": "def test_numbers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 5 and isinstance(ns['x'], int)\n    assert ns.get('y') == 3.14 and isinstance(ns['y'], float)\n    assert ns.get('z') == (2+3j) and isinstance(ns['z'], complex)\n    out = capsys.readouterr().out\n    assert \"<class 'int'>\" in out\n    assert \"<class 'float'>\" in out\n    assert \"<class 'complex'>\" in out\n"
+      },
+      "hint": "complex se escribe 2+3j (sin espacios o con: 2 + 3j).",
+      "solution_example": "x = 5\ny = 3.14\nz = 2 + 3j\nprint(type(x))\nprint(type(y))\nprint(type(z))",
+      "tags": [
+        "numbers",
+        "complex"
+      ],
+      "next": "py-10-casting",
+      "layoutType": "coding"
+    },
+    {
+      "id": "py-10-casting",
+      "step_number": 11,
+      "slug": "python-casting",
+      "title": "Python Casting",
+      "type": "micro_exercise",
+      "objective": "Convertir tipos con int(), float(), str(); cerrar el lote antes de Strings.",
+      "w3_ref": "https://www.w3schools.com/python/python_casting.asp",
+      "w3_exercise": "https://www.w3schools.com/python/exercise.asp?x=xrcise_casting2",
+      "content": {
+        "prompt_md": "**Casting**\n\nConstructores: `int()`, `float()`, `str()`.\n\nEjemplo conceptual W3 (MCQ): `print(float(35))` → `35.0`.\n\n**Challenge (Doc):**\n1. `x = 1`\n2. Convierte `x` a float → `a`\n3. Convierte `x` a string → `b`\n4. Imprime `a` y `b`",
+        "starter_code": "x = 1\n# a = ...\n# b = ...\n# print(...)\n",
+        "mcq_bank": [
+          {
+            "id": "cast-mcq-1",
+            "prompt": "¿Resultado de print(float(35))?",
+            "options": [
+              "35",
+              "35.0",
+              "0.35"
+            ],
+            "correct": "35.0",
+            "source": "https://www.w3schools.com/python/exercise.asp?x=xrcise_casting2"
+          }
+        ]
+      },
+      "checks": {
+        "mode": "pytest_plus_optional_mcq",
+        "pytest": "def test_casting(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 1\n    assert ns.get('a') == 1.0 and isinstance(ns['a'], float)\n    assert ns.get('b') == '1' and isinstance(ns['b'], str)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '1.0' in out and '1' in out\n"
+      },
+      "hint": "a = float(x); b = str(x); print(a, b)",
+      "solution_example": "x = 1\na = float(x)\nb = str(x)\nprint(a)\nprint(b)",
+      "tags": [
+        "casting",
+        "float",
+        "str"
+      ],
+      "next": "py-11-strings",
+      "frontier_note": "El siguiente lote empieza en Strings (python_strings.asp): literales, comillas, multilínea, indexación.",
+      "layoutType": "coding"
+    }
+  ],
+  "roadmap_after_seed": [
+    {
+      "id": "py-11-strings",
+      "title": "Python Strings",
+      "w3_ref": "https://www.w3schools.com/python/python_strings.asp",
+      "why": "Es el 'previo con el problema' natural tras Casting: mismo patrón UI, nuevo dominio (texto como array de caracteres)."
+    }
+  ],
+  "iteration_backlog": [
+    {
+      "id": "iter-01",
+      "title": "Bajar teoría a ≤80 palabras y mover ejemplos a starter_code comentado"
+    },
+    {
+      "id": "iter-02",
+      "title": "Mapear cada step a un Concept.id del curriculum.json (DAG PPI)"
+    },
+    {
+      "id": "iter-03",
+      "title": "Añadir 2–3 MCQ por capítulo (modo W3 Exercise) además del coding challenge"
+    },
+    {
+      "id": "iter-04",
+      "title": "i18n es/en en prompt_md y hints"
+    },
+    {
+      "id": "iter-05",
+      "title": "Harness UI single-viewport: theory | editor | tests (como ventana W3 Exercise)"
+    },
+    {
+      "id": "iter-06",
+      "title": "Sustituir exec(open('solution.py')) por contrato real del runner Pyodide del frontend"
+    }
+  ]
+}

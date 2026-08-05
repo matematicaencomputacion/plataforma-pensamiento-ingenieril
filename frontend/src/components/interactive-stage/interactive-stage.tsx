@@ -3,23 +3,32 @@ import {
   useSignal,
   useTask$,
   useVisibleTask$,
+  type QRL,
 } from "@builder.io/qwik";
 import {
   MODULE1_STAGE_SEED,
   activeTranscriptSegment,
   availableMediaLocales,
   buildTutorTranscriptContext,
-  extractYouTubeId,
+  chapterAt,
+  normalizeChapters,
   resolveMedia,
+  transcriptForChapter,
   type ConceptMedia,
+  type MediaChapter,
   type MediaLocale,
+  type PedTopicContext,
   type TutorTranscriptContext,
 } from "../../lib/curriculum-media";
+import { isValidYouTubeResource } from "../../lib/youtube-utils";
+import { ResourceLinks } from "./resource-links";
+import { TopicNavigator } from "./topic-navigator";
 import { TranscriptPanel } from "./transcript-panel";
 import { YouTubePlayer } from "./youtube-player";
 
 export type InteractiveStageProps = {
   concept?: ConceptMedia;
+  onTopicChange$?: QRL<(ctx: PedTopicContext) => void>;
 };
 
 export const InteractiveStage = component$<InteractiveStageProps>((props) => {
@@ -30,41 +39,94 @@ export const InteractiveStage = component$<InteractiveStageProps>((props) => {
   const locale = useSignal<MediaLocale>(initialLocale);
   const currentTime = useSignal(0);
   const seekRequest = useSignal<number | null>(null);
+  const pinnedChapterId = useSignal<string | null>(null);
 
   const media = resolveMedia(concept, locale.value);
-  const transcript = media?.transcript ?? [];
-  const videoId = media ? (extractYouTubeId(media.resource_url) ?? "") : "";
-  const hasTranscript = transcript.length > 0;
+  const chapters = normalizeChapters(media);
+  const resourceUrl = media?.resource_url ?? "";
+  const hasValidVideo = isValidYouTubeResource(resourceUrl);
+
+  const autoChapter = chapterAt(chapters, currentTime.value);
+  const activeChapter: MediaChapter | null = (() => {
+    if (!pinnedChapterId.value) {
+      return autoChapter;
+    }
+    return chapters.find((ch) => ch.id === pinnedChapterId.value) ?? autoChapter;
+  })();
+
+  const visibleTranscript =
+    media && activeChapter
+      ? transcriptForChapter(media, activeChapter)
+      : (media?.transcript ?? []);
+  const hasTranscript = visibleTranscript.length > 0;
+  const activeCue = activeTranscriptSegment(
+    visibleTranscript,
+    currentTime.value,
+  );
 
   const tutorContext = useSignal<TutorTranscriptContext>(
-    buildTutorTranscriptContext(concept.id, initialLocale, transcript, 0),
+    buildTutorTranscriptContext({
+      conceptId: concept.id,
+      locale: initialLocale,
+      transcript: [],
+      currentTimeSec: 0,
+      chapter: null,
+    }),
   );
 
   useTask$(({ track }) => {
     const t = track(() => currentTime.value);
     const lang = track(() => locale.value);
+    const pinned = track(() => pinnedChapterId.value);
     const resolved = resolveMedia(concept, lang);
-    tutorContext.value = buildTutorTranscriptContext(
-      concept.id,
-      lang,
-      resolved?.transcript ?? [],
-      t,
-    );
+    const chs = normalizeChapters(resolved);
+    const automatic = chapterAt(chs, t);
+    const chapter = pinned
+      ? (chs.find((c) => c.id === pinned) ?? automatic)
+      : automatic;
+    const transcript =
+      resolved && chapter
+        ? transcriptForChapter(resolved, chapter)
+        : (resolved?.transcript ?? []);
+
+    const next = buildTutorTranscriptContext({
+      conceptId: concept.id,
+      locale: lang,
+      transcript,
+      currentTimeSec: t,
+      chapter,
+    });
+    tutorContext.value = next;
+
+    void props.onTopicChange$?.({
+      conceptId: concept.id,
+      locale: lang,
+      chapterId: chapter?.id ?? null,
+      chapterTitle: chapter?.title ?? null,
+      exerciseRef: chapter?.exercise_ref ?? concept.id,
+      currentTimeSec: t,
+    });
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
     const ctx = track(() => tutorContext.value);
-    (
-      window as Window & {
-        __ppiTutorTranscriptContext?: TutorTranscriptContext;
-      }
-    ).__ppiTutorTranscriptContext = ctx;
+    const win = window as Window & {
+      __ppiTutorTranscriptContext?: TutorTranscriptContext;
+      __ppiActiveTopic?: PedTopicContext;
+    };
+    win.__ppiTutorTranscriptContext = ctx;
+    win.__ppiActiveTopic = {
+      conceptId: ctx.conceptId,
+      locale: ctx.locale,
+      chapterId: ctx.activeChapterId,
+      chapterTitle: ctx.activeChapterTitle,
+      exerciseRef: ctx.exerciseRef,
+      currentTimeSec: ctx.currentTimeSec,
+    };
   });
 
-  const active = activeTranscriptSegment(transcript, currentTime.value);
-
-  if (!media || !videoId) {
+  if (!media || !hasValidVideo) {
     return (
       <section class="interactive-stage interactive-stage--empty" role="status">
         <p>Este concepto aún no tiene un recurso de video válido.</p>
@@ -78,6 +140,8 @@ export const InteractiveStage = component$<InteractiveStageProps>((props) => {
       aria-labelledby="interactive-stage-title"
       data-concept-id={concept.id}
       data-media-locale={locale.value}
+      data-active-chapter={activeChapter?.id ?? ""}
+      data-exercise-ref={activeChapter?.exercise_ref ?? concept.id}
       data-tutor-context="ready"
     >
       <header class="interactive-stage__header">
@@ -105,6 +169,7 @@ export const InteractiveStage = component$<InteractiveStageProps>((props) => {
                       return;
                     }
                     locale.value = lang;
+                    pinnedChapterId.value = null;
                     currentTime.value = 0;
                     seekRequest.value = 0;
                   }}
@@ -121,10 +186,28 @@ export const InteractiveStage = component$<InteractiveStageProps>((props) => {
         <p class="interactive-stage__summary">{concept.summary}</p>
       </header>
 
+      <ResourceLinks />
+
+      {chapters.length > 0 && (
+        <TopicNavigator
+          chapters={chapters}
+          activeChapterId={activeChapter?.id ?? null}
+          onSelect$={(chapterId) => {
+            const selected = chapters.find((ch) => ch.id === chapterId);
+            if (!selected) {
+              return;
+            }
+            pinnedChapterId.value = selected.id;
+            seekRequest.value = selected.start_sec;
+            currentTime.value = selected.start_sec;
+          }}
+        />
+      )}
+
       <div class="interactive-stage__layout">
         <div class="interactive-stage__media">
           <YouTubePlayer
-            videoId={videoId}
+            resourceUrl={resourceUrl}
             playerDomId="ppi-m01-yt-player"
             seekRequest={seekRequest.value}
             onTimeUpdate$={(seconds) => {
@@ -132,14 +215,21 @@ export const InteractiveStage = component$<InteractiveStageProps>((props) => {
               if (seekRequest.value != null) {
                 seekRequest.value = null;
               }
+              const pinned = pinnedChapterId.value;
+              if (pinned) {
+                const ch = chapters.find((c) => c.id === pinned);
+                if (ch && (seconds < ch.start_sec || seconds >= ch.end_sec)) {
+                  pinnedChapterId.value = null;
+                }
+              }
             }}
           />
         </div>
 
         {hasTranscript ? (
           <TranscriptPanel
-            segments={transcript}
-            activeStartSec={active?.start_sec ?? null}
+            segments={visibleTranscript}
+            activeStartSec={activeCue?.start_sec ?? null}
             onSeek$={(startSec) => {
               seekRequest.value = startSec;
               currentTime.value = startSec;
@@ -151,20 +241,26 @@ export const InteractiveStage = component$<InteractiveStageProps>((props) => {
               <h3 class="transcript-panel__title">Transcripción</h3>
             </header>
             <p class="transcript-panel__missing">
-              No hay una transcripción detallada disponible en{" "}
-              <strong>{locale.value.toUpperCase()}</strong> para este concepto.
-              Podés cambiar de idioma o continuar con el video.
+              No hay una transcripción detallada disponible
+              {activeChapter
+                ? ` para el tema “${activeChapter.title}”`
+                : ` en ${locale.value.toUpperCase()}`}
+              .
             </p>
           </aside>
         )}
       </div>
 
       <p class="interactive-stage__tutor-bridge" aria-live="polite">
-        [{locale.value.toUpperCase()}] Segmento activo para tutora:{" "}
+        [{locale.value.toUpperCase()}]
+        {activeChapter
+          ? ` Tema: ${activeChapter.title} · ejercicio ${activeChapter.exercise_ref ?? concept.id}`
+          : " Tema: (video completo)"}
+        {" — "}
         {tutorContext.value.activeSegment?.text ??
           (hasTranscript
             ? "reproducí el video para sincronizar el contexto"
-            : "sin transcripción en este idioma")}
+            : "sin transcripción en este bloque")}
       </p>
     </section>
   );
