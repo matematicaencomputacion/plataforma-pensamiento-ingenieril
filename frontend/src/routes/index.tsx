@@ -1,13 +1,19 @@
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import {
+  BrandName,
+  BRAND_NAME_PLAIN,
+} from "../components/brand-name/brand-name";
 import { InteractiveStage } from "../components/interactive-stage/interactive-stage";
 import { LevelDescription } from "../components/level-description/level-description";
+import { ToolStackBar } from "../components/tool-stack-bar/tool-stack-bar";
 import {
   API_BASE_URL,
   DEMO_STUDENT_ID,
   type EvaluateResponse,
   type Level,
 } from "../lib/api";
+import type { PedTopicContext } from "../lib/curriculum-media";
 
 export default component$(() => {
   const code = useSignal(
@@ -20,6 +26,7 @@ export default component$(() => {
   const feedback = useSignal("");
   const isEvaluating = useSignal(false);
   const passed = useSignal<boolean | null>(null);
+  const activeTopic = useSignal<PedTopicContext | null>(null);
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
@@ -48,11 +55,20 @@ export default component$(() => {
   return (
     <main class="workspace">
       <header class="workspace__header">
-        <p class="workspace__brand">Pensamiento Ingenieril</p>
-        <h1 class="workspace__title">Plataforma de Pensamiento Ingenieril</h1>
+        <div class="workspace__brand-row">
+          <h1 class="workspace__title" aria-label={BRAND_NAME_PLAIN}>
+            <BrandName />
+          </h1>
+          <ToolStackBar />
+        </div>
         <p class="workspace__subtitle">
           Escribe, evalúa y avanza: Abstracción → Diseño → Implementación →
           Pruebas.
+        </p>
+        <p class="workspace__cta-row">
+          <a class="workspace__cta" href="/exercise?step=py-01-home">
+            Micro-pasos Python
+          </a>
         </p>
       </header>
 
@@ -70,15 +86,36 @@ export default component$(() => {
 
       {level.value && <LevelDescription level={level.value} />}
 
-      <InteractiveStage />
+      <InteractiveStage
+        onTopicChange$={(ctx) => {
+          activeTopic.value = ctx;
+        }}
+      />
 
-      <section class="workspace__panel" aria-labelledby="editor-heading">
+      <section
+        class="workspace__panel"
+        aria-labelledby="editor-heading"
+        data-exercise-ref={activeTopic.value?.exerciseRef ?? ""}
+        data-active-chapter={activeTopic.value?.chapterId ?? ""}
+      >
         <div class="workspace__panel-head">
           <h2 id="editor-heading">Editor de Python</h2>
           <span class="workspace__level">
-            {level.value ? `Nivel ${level.value.id}` : "Sin nivel"}
+            {activeTopic.value?.chapterTitle
+              ? activeTopic.value.chapterTitle
+              : level.value
+                ? `Nivel ${level.value.id}`
+                : "Sin nivel"}
           </span>
         </div>
+        {activeTopic.value?.exerciseRef && (
+          <p class="workspace__exercise-ref" aria-live="polite">
+            Ejercicio vinculado: <code>{activeTopic.value.exerciseRef}</code>
+            {activeTopic.value.chapterTitle
+              ? ` · tema “${activeTopic.value.chapterTitle}”`
+              : ""}
+          </p>
+        )}
 
         <label class="sr-only" for="student-code">
           Código Python del estudiante
@@ -178,12 +215,12 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Plataforma de Pensamiento Ingenieril",
+  title: BRAND_NAME_PLAIN,
   meta: [
     {
       name: "description",
       content:
-        "Interfaz del estudiante para escribir y evaluar ejercicios de Python.",
+        "IngenierIA — interfaz del estudiante para escribir y evaluar ejercicios de Python.",
     },
   ],
 };

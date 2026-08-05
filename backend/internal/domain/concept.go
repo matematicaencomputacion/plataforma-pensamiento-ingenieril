@@ -16,10 +16,38 @@ type TranscriptSegment struct {
 	Text     string  `json:"text"`
 }
 
-// MediaResource agrupa video + transcripción para un idioma (Hito 8 i18n).
+// MediaChapter es un bloque temático dentro de un video largo (arnés pedagógico).
+type MediaChapter struct {
+	ID          string              `json:"id"`
+	Title       string              `json:"title"`
+	StartSec    float64             `json:"start_sec"`
+	EndSec      float64             `json:"end_sec"`
+	Transcript  []TranscriptSegment `json:"transcript,omitempty"`
+	ExerciseRef string              `json:"exercise_ref,omitempty"`
+}
+
+// MediaResource agrupa video + transcripción (+ capítulos opcionales) por idioma.
 type MediaResource struct {
 	ResourceURL string              `json:"resource_url"`
-	Transcript  []TranscriptSegment `json:"transcript"`
+	Transcript  []TranscriptSegment `json:"transcript,omitempty"`
+	Chapters    []MediaChapter      `json:"chapters,omitempty"`
+}
+
+// UnmarshalJSON acepta "chapters" o el alias "topics".
+func (m *MediaResource) UnmarshalJSON(data []byte) error {
+	type alias MediaResource
+	var raw struct {
+		alias
+		Topics []MediaChapter `json:"topics"`
+	}
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+	*m = MediaResource(raw.alias)
+	if len(m.Chapters) == 0 && len(raw.Topics) > 0 {
+		m.Chapters = raw.Topics
+	}
+	return nil
 }
 
 // HasURL indica si hay un recurso de video.
@@ -32,9 +60,65 @@ func (m MediaResource) HasTranscript() bool {
 	return len(m.Transcript) > 0
 }
 
-// HasContent indica video + transcripción (stage completo).
+// HasChapters indica si el video declara índice temático.
+func (m MediaResource) HasChapters() bool {
+	return len(m.Chapters) > 0
+}
+
+// HasContent indica video usable en InteractiveStage (transcript y/o chapters).
 func (m MediaResource) HasContent() bool {
-	return m.HasURL() && m.HasTranscript()
+	if !m.HasURL() {
+		return false
+	}
+	if m.HasTranscript() || m.HasChapters() {
+		return true
+	}
+	for _, ch := range m.Chapters {
+		if len(ch.Transcript) > 0 {
+			return true
+		}
+	}
+	return false
+}
+
+// ChapterAt resuelve el capítulo activo para un instante de reproducción.
+func (m MediaResource) ChapterAt(atSec float64) (MediaChapter, bool) {
+	for _, ch := range m.Chapters {
+		if atSec >= ch.StartSec && atSec < ch.EndSec {
+			return ch, true
+		}
+	}
+	if len(m.Chapters) > 0 && atSec >= m.Chapters[len(m.Chapters)-1].EndSec {
+		return m.Chapters[len(m.Chapters)-1], true
+	}
+	return MediaChapter{}, false
+}
+
+// ChapterByID busca un capítulo por identificador estable.
+func (m MediaResource) ChapterByID(id string) (MediaChapter, bool) {
+	for _, ch := range m.Chapters {
+		if ch.ID == id {
+			return ch, true
+		}
+	}
+	return MediaChapter{}, false
+}
+
+// TranscriptForChapter retorna la transcripción del capítulo (propia o filtrada del recurso).
+func (m MediaResource) TranscriptForChapter(ch MediaChapter) []TranscriptSegment {
+	if len(ch.Transcript) > 0 {
+		return append([]TranscriptSegment(nil), ch.Transcript...)
+	}
+	if len(m.Transcript) == 0 {
+		return nil
+	}
+	out := make([]TranscriptSegment, 0, len(m.Transcript))
+	for _, seg := range m.Transcript {
+		if seg.StartSec >= ch.StartSec && seg.StartSec < ch.EndSec {
+			out = append(out, seg)
+		}
+	}
+	return out
 }
 
 // Concept describe una unidad cognitiva reutilizable en el curriculum.
@@ -166,6 +250,16 @@ func cloneMediaResource(m MediaResource) MediaResource {
 	out := MediaResource{ResourceURL: m.ResourceURL}
 	if len(m.Transcript) > 0 {
 		out.Transcript = append([]TranscriptSegment(nil), m.Transcript...)
+	}
+	if len(m.Chapters) > 0 {
+		out.Chapters = make([]MediaChapter, len(m.Chapters))
+		for i, ch := range m.Chapters {
+			cloned := ch
+			if len(ch.Transcript) > 0 {
+				cloned.Transcript = append([]TranscriptSegment(nil), ch.Transcript...)
+			}
+			out.Chapters[i] = cloned
+		}
 	}
 	return out
 }

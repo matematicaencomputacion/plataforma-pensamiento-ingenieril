@@ -236,3 +236,111 @@ func TestConceptLegacyMediaFallback(t *testing.T) {
 		t.Fatalf("fallback EN→legado: ok=%v %+v", ok, media)
 	}
 }
+
+func TestMediaChaptersUnmarshalAndResolve(t *testing.T) {
+	t.Parallel()
+
+	raw := `{
+		"resource_url":"https://www.youtube.com/watch?v=Kp4Mvapo5kc",
+		"topics":[
+			{
+				"id":"topic-literals",
+				"title":"Literales",
+				"start_sec":100,
+				"end_sec":200,
+				"exercise_ref":"concept:string-literals",
+				"transcript":[{"start_sec":100,"end_sec":150,"text":"hola literal"}]
+			},
+			{
+				"id":"topic-variables",
+				"title":"Variables",
+				"start_sec":200,
+				"end_sec":300,
+				"exercise_ref":"concept:variables-scope"
+			}
+		],
+		"transcript":[
+			{"start_sec":210,"end_sec":250,"text":"binding"},
+			{"start_sec":250,"end_sec":290,"text":"scope"}
+		]
+	}`
+	var media MediaResource
+	if err := json.Unmarshal([]byte(raw), &media); err != nil {
+		t.Fatalf("unmarshal chapters/topics: %v", err)
+	}
+	if !media.HasChapters() || len(media.Chapters) != 2 {
+		t.Fatalf("chapters: %+v", media.Chapters)
+	}
+
+	ch, ok := media.ChapterAt(120)
+	if !ok || ch.ID != "topic-literals" {
+		t.Fatalf("ChapterAt: ok=%v %+v", ok, ch)
+	}
+	segs := media.TranscriptForChapter(ch)
+	if len(segs) != 1 || segs[0].Text != "hola literal" {
+		t.Fatalf("transcript propio del capítulo: %+v", segs)
+	}
+
+	varsCh, ok := media.ChapterByID("topic-variables")
+	if !ok {
+		t.Fatal("ChapterByID variables")
+	}
+	filtered := media.TranscriptForChapter(varsCh)
+	if len(filtered) != 2 {
+		t.Fatalf("transcript filtrado por rango: %+v", filtered)
+	}
+}
+
+func TestMediaWithoutChaptersStillValid(t *testing.T) {
+	t.Parallel()
+
+	media := MediaResource{
+		ResourceURL: "https://www.youtube.com/watch?v=kqtD5dpn9C8",
+		Transcript: []TranscriptSegment{
+			{StartSec: 0, EndSec: 10, Text: "intro"},
+		},
+	}
+	if media.HasChapters() {
+		t.Fatal("no debería tener chapters")
+	}
+	if !media.HasContent() {
+		t.Fatal("recurso corto sigue siendo válido")
+	}
+	if _, ok := media.ChapterAt(5); ok {
+		t.Fatal("ChapterAt sin chapters debe fallar")
+	}
+}
+
+func TestOfficialMoureDevChapterBoundaries(t *testing.T) {
+	t.Parallel()
+
+	raw := `{
+		"resource_url":"https://www.youtube.com/watch?v=Kp4Mvapo5kc",
+		"chapters":[
+			{"id":"ch-01-introduccion","title":"Capítulo 1: Introducción","start_sec":0,"end_sec":244},
+			{"id":"ch-02-contexto","title":"Capítulo 2: Contexto","start_sec":244,"end_sec":850},
+			{"id":"ch-05-variables","title":"Capítulo 5: 03 - Variables","start_sec":2938,"end_sec":5665},
+			{"id":"ch-07-strings","title":"Capítulo 7: 05 - Strings","start_sec":8645,"end_sec":10875},
+			{"id":"ch-18-proximos-pasos","title":"Capítulo 18: Próximos pasos","start_sec":36391,"end_sec":36454}
+		]
+	}`
+	var media MediaResource
+	if err := json.Unmarshal([]byte(raw), &media); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if ch, ok := media.ChapterAt(0); !ok || ch.ID != "ch-01-introduccion" {
+		t.Fatalf("t=0: %+v ok=%v", ch, ok)
+	}
+	if ch, ok := media.ChapterAt(244); !ok || ch.ID != "ch-02-contexto" {
+		t.Fatalf("t=244: %+v ok=%v", ch, ok)
+	}
+	if ch, ok := media.ChapterAt(3000); !ok || ch.ID != "ch-05-variables" {
+		t.Fatalf("t=3000: %+v ok=%v", ch, ok)
+	}
+	if ch, ok := media.ChapterAt(9000); !ok || ch.ID != "ch-07-strings" {
+		t.Fatalf("t=9000: %+v ok=%v", ch, ok)
+	}
+	if ch, ok := media.ChapterAt(36400); !ok || ch.ID != "ch-18-proximos-pasos" {
+		t.Fatalf("t=36400: %+v ok=%v", ch, ok)
+	}
+}
