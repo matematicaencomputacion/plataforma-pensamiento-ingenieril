@@ -5,13 +5,17 @@ import {
   useStore,
   type QRL,
 } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { useNavigate } from "@builder.io/qwik-city";
 import type { Microstep } from "../../lib/microsteps";
 import {
   CoachingInterface,
   type CoachingInteractionState,
 } from "./coaching-interface";
-import { saveLearnerProfile } from "./learner-profile";
+import {
+  putUserProfile,
+  saveLearnerProfile,
+  synthesisToUserProfile,
+} from "./learner-profile";
 import { ProfileBuilder } from "./profile-builder";
 import {
   EMPTY_PROFILE_SYNTHESIS,
@@ -23,7 +27,7 @@ import { synthesizeLearnerProfile } from "./synthesize-profile";
 export type OnboardingLayoutProps = {
   step: Microstep;
   notes: string;
-  /** Href del paso 2 — navegación por Link (más fiable que onClick$ QRL). */
+  /** Href del paso 2 — solo se navega tras PUT 200. */
   nextStepHref?: string;
   onNotesChange$: QRL<(value: string) => void>;
   onContinue$: QRL<() => void>;
@@ -33,12 +37,14 @@ export type OnboardingLayoutProps = {
 
 /** Layout de onboarding: coaching (izq) + profile builder (der). */
 export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
+  const nav = useNavigate();
   const interactionState = useSignal<CoachingInteractionState>("drafting");
   const profileSynthesis = useStore<ProfileSynthesis>({
     ...EMPTY_PROFILE_SYNTHESIS,
   });
   const saveUi = useStore({ isSaving: false, error: "" });
   const analyzeUi = useStore({ isAnalyzing: false, error: "" });
+  const advanceUi = useStore({ isAdvancing: false, error: "" });
 
   const analyze$ = $(async () => {
     if (analyzeUi.isAnalyzing) {
@@ -47,6 +53,7 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
     analyzeUi.isAnalyzing = true;
     analyzeUi.error = "";
     saveUi.error = "";
+    advanceUi.error = "";
     if (props.onProfileReset$) {
       await props.onProfileReset$();
     }
@@ -76,6 +83,8 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
     saveUi.isSaving = false;
     analyzeUi.error = "";
     analyzeUi.isAnalyzing = false;
+    advanceUi.error = "";
+    advanceUi.isAdvancing = false;
     if (props.onProfileReset$) {
       props.onProfileReset$();
     }
@@ -87,6 +96,7 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
     }
     saveUi.isSaving = true;
     saveUi.error = "";
+    advanceUi.error = "";
     try {
       const result = await saveLearnerProfile({
         purpose: profileSynthesis.purpose,
@@ -113,6 +123,35 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
     }
   });
 
+  /** Botón verde: PUT /api/user/profile y navega al paso 2 solo si HTTP 200. */
+  const advance$ = $(async () => {
+    if (interactionState.value !== "saved" || advanceUi.isAdvancing) {
+      return;
+    }
+    if (!props.nextStepHref) {
+      await props.onContinue$();
+      return;
+    }
+
+    advanceUi.isAdvancing = true;
+    advanceUi.error = "";
+    try {
+      const result = await putUserProfile(
+        synthesisToUserProfile(profileSynthesis),
+      );
+      if (!result.ok) {
+        advanceUi.error = result.message;
+        return;
+      }
+      await nav(props.nextStepHref);
+    } catch {
+      advanceUi.error =
+        "Error al persistir el perfil. Intentá avanzar de nuevo.";
+    } finally {
+      advanceUi.isAdvancing = false;
+    }
+  });
+
   const snippet = props.notes.trim()
     ? props.notes.trim().slice(0, 160) +
       (props.notes.trim().length > 160 ? "…" : "")
@@ -135,21 +174,20 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
         />
         {showContinue && (
           <div class="coaching__continue">
-            {props.nextStepHref ? (
-              <Link
-                href={props.nextStepHref}
-                class="exercise-ws__btn exercise-ws__btn--primary adaptive-mcq__continue"
-              >
-                Avanzar hacia los ejercicios
-              </Link>
-            ) : (
-              <button
-                type="button"
-                class="exercise-ws__btn exercise-ws__btn--primary adaptive-mcq__continue"
-                onClick$={props.onContinue$}
-              >
-                Avanzar hacia los ejercicios
-              </button>
+            <button
+              type="button"
+              class="exercise-ws__btn exercise-ws__btn--primary adaptive-mcq__continue"
+              disabled={advanceUi.isAdvancing}
+              onClick$={advance$}
+            >
+              {advanceUi.isAdvancing
+                ? "Guardando perfil…"
+                : "Avanzar hacia los ejercicios"}
+            </button>
+            {advanceUi.error && (
+              <p class="profile-builder__save-error" role="alert">
+                {advanceUi.error}
+              </p>
             )}
           </div>
         )}
@@ -163,9 +201,10 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
           }
           isSaving={saveUi.isSaving}
           saveError={saveUi.error}
-          nextStepHref={props.nextStepHref}
+          isAdvancing={advanceUi.isAdvancing}
+          advanceError={advanceUi.error}
           onSave$={save$}
-          onContinue$={props.onContinue$}
+          onContinue$={advance$}
         />
       </div>
     </div>

@@ -22,7 +22,7 @@ type authSuccessResponse struct {
 	Token string            `json:"token"`
 }
 
-// AuthHandler endpoints de registro, login, logout y /me.
+// AuthHandler endpoints de registro, login, logout, /me y perfil.
 type AuthHandler struct {
 	service *usecases.AuthService
 }
@@ -79,6 +79,27 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, user)
 }
 
+func (h *AuthHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
+	token, ok := bearerToken(r)
+	if !ok {
+		writeJSONError(w, "no autorizado", http.StatusUnauthorized)
+		return
+	}
+
+	var req domain.LearnerProfile
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(w, "JSON de entrada inválido", http.StatusBadRequest)
+		return
+	}
+
+	profile, err := h.service.UpdateProfile(r.Context(), token, req)
+	if err != nil {
+		writeAuthError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, profile)
+}
+
 func bearerToken(r *http.Request) (string, bool) {
 	h := strings.TrimSpace(r.Header.Get("Authorization"))
 	if h == "" {
@@ -94,7 +115,7 @@ func bearerToken(r *http.Request) (string, bool) {
 
 func writeAuthError(w http.ResponseWriter, err error) {
 	switch {
-	case errors.Is(err, domain.ErrInvalidEmail), errors.Is(err, domain.ErrInvalidPassword):
+	case errors.Is(err, domain.ErrInvalidEmail), errors.Is(err, domain.ErrInvalidPassword), errors.Is(err, domain.ErrEmptyProfile):
 		writeJSONError(w, err.Error(), http.StatusBadRequest)
 	case errors.Is(err, repositories.ErrEmailTaken):
 		writeJSONError(w, "email ya registrado", http.StatusConflict)

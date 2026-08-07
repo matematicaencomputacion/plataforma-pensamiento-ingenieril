@@ -1,5 +1,4 @@
 import { component$, type QRL } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
 import type { CoachingInteractionState } from "./coaching-interface";
 import {
   PROFILE_WAITING_COPY,
@@ -27,7 +26,8 @@ export type ProfileBuilderProps = {
   learnerSnippet?: string;
   isSaving?: boolean;
   saveError?: string;
-  nextStepHref?: string;
+  isAdvancing?: boolean;
+  advanceError?: string;
   onSave$: QRL<() => void>;
   onContinue$?: QRL<() => void>;
 };
@@ -39,7 +39,7 @@ export const ProfileBuilder = component$((props: ProfileBuilderProps) => {
   const showCards = props.interactionState !== "drafting";
   const isReviewing = props.interactionState === "reviewing";
   const isSaved = props.interactionState === "saved";
-  const canAdvance = Boolean(props.nextStepHref || props.onContinue$);
+  const canAdvance = Boolean(props.onContinue$);
 
   return (
     <section
@@ -60,7 +60,7 @@ export const ProfileBuilder = component$((props: ProfileBuilderProps) => {
         {props.interactionState === "drafting"
           ? "Cuando envíes tu respuesta, IngenierIA sintetizará propósito, urgencia, visión y stack."
           : isSaved
-            ? "Perfil listo. Podés avanzar a los ejercicios o rediseñar tu respuesta."
+            ? "Perfil listo. Avanzá para persistirlo en tu cuenta y continuar a los ejercicios."
             : "Revisá lo que dedujimos. Si no refleja tu historia, volvé a rediseñar tu respuesta."}
       </p>
 
@@ -115,23 +115,26 @@ export const ProfileBuilder = component$((props: ProfileBuilderProps) => {
       {isSaved && canAdvance && (
         <div class="profile-builder__after-save">
           <p class="profile-builder__saved" role="status">
-            ✅ Perfil actualizado
+            ✅ Síntesis confirmada — al avanzar se guarda en tu cuenta
           </p>
-          {props.nextStepHref ? (
-            <Link
-              href={props.nextStepHref}
-              class="exercise-ws__btn exercise-ws__btn--primary profile-builder__next"
-            >
-              Avanzar hacia los ejercicios
-            </Link>
-          ) : (
-            <button
-              type="button"
-              class="exercise-ws__btn exercise-ws__btn--primary profile-builder__next"
-              onClick$={props.onContinue$}
-            >
-              Avanzar hacia los ejercicios
-            </button>
+          <button
+            type="button"
+            class="exercise-ws__btn exercise-ws__btn--primary profile-builder__next"
+            disabled={Boolean(props.isAdvancing)}
+            onClick$={async () => {
+              if (props.onContinue$) {
+                await props.onContinue$();
+              }
+            }}
+          >
+            {props.isAdvancing
+              ? "Guardando perfil…"
+              : "Avanzar hacia los ejercicios"}
+          </button>
+          {props.advanceError && (
+            <p class="profile-builder__save-error" role="alert">
+              {props.advanceError}
+            </p>
           )}
         </div>
       )}

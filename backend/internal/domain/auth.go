@@ -11,6 +11,8 @@ var (
 	ErrInvalidEmail = errors.New("email inválido")
 	// ErrUnauthorized token ausente o inválido.
 	ErrUnauthorized = errors.New("no autorizado")
+	// ErrEmptyProfile indica un body de perfil sin campos útiles.
+	ErrEmptyProfile = errors.New("perfil vacío")
 )
 
 // PublicUser es la proyección segura del usuario (sin hash).
