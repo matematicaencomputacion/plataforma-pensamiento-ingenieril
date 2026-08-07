@@ -15,11 +15,11 @@
 
 ## 3. Runner client-side
 
-- [ ] 3.1 Editor MVP (textarea tipado o Monaco si ya está disponible) inicializado con `starter_code`
-- [ ] 3.2 Lazy-load de Pyodide al entrar a `/exercise` o al primer Run, con UI “Preparando motor Python…”
-- [ ] 3.3 Acción Run: ejecutar código del alumno y mostrar stdout/stderr en el panel de resultados
-- [ ] 3.4 Acción Check: evaluar `testSource` en browser y reportar pass/fail; no llamar API Go de ejecución
-- [ ] 3.5 Acciones Hint / Show Solution revelan `hint` y `solution_example` en sesión local
+- [x] 3.1 Editor MVP (textarea tipado o Monaco si ya está disponible) inicializado con `starter_code`
+- [x] 3.2 Lazy-load de Pyodide al entrar a `/exercise` o al primer Run, con UI “Preparando motor Python…”
+- [x] 3.3 Acción Run: ejecutar código del alumno y mostrar stdout/stderr en el panel de resultados
+- [x] 3.4 Acción Check: evaluar `testSource` en browser y reportar pass/fail; no llamar API Go de ejecución
+- [x] 3.5 Acciones Hint / Show Solution revelan `hint` y `solution_example` en sesión local
 
 ## 4. MCQ y pulido UX
 

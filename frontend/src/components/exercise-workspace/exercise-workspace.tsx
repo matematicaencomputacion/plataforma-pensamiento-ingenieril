@@ -2,6 +2,7 @@ import {
   component$,
   useStore,
   useTask$,
+  useVisibleTask$,
   $,
   type QRL,
 } from "@builder.io/qwik";
@@ -12,9 +13,17 @@ import {
   getLayoutType,
   getSeedStepCount,
   isFrontierNext,
-  normalizeCheckPayload,
   resolveStep,
 } from "../../lib/microsteps";
+import {
+  bootstrapPyodide,
+  checkStudentCode,
+  formatCheckLog,
+  formatRunLog,
+  pyodideStatusMessage,
+  runStudentCode,
+  type PyodideEngineStatus,
+} from "../../lib/pyodide";
 
 export type ExerciseWorkspaceProps = {
   initialStepId?: string;
@@ -32,6 +41,8 @@ type ExerciseState = {
   coachingNotes: string;
   profileSaved: boolean;
   isAdvancing: boolean;
+  engineStatus: PyodideEngineStatus;
+  isBusy: boolean;
 };
 
 function initState(stepId?: string): ExerciseState {
@@ -41,13 +52,15 @@ function initState(stepId?: string): ExerciseState {
     code: step.content.starter_code,
     checkStatus: "idle",
     resultsLog:
-      "Motor Python (Pyodide) pendiente — Bloque 3.\nUsá Validar (demo) para recorrer la navegación de coding.",
+      "Al abrir un paso de código se prepara el motor Python (Pyodide) en el navegador.",
     showHint: false,
     showSolution: false,
     lotComplete: false,
     coachingNotes: "",
     profileSaved: false,
     isAdvancing: false,
+    engineStatus: "idle",
+    isBusy: false,
   };
 }
 
@@ -56,7 +69,7 @@ function stepHref(stepId: string): string {
 }
 
 /**
- * Bifurca onboarding (coaching) vs coding (teoría + editor).
+ * Bifurca onboarding (coaching) vs coding (teoría + editor + Pyodide).
  */
 export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
   const state = useStore<ExerciseState>(initState(props.initialStepId));
@@ -74,11 +87,34 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
     state.showSolution = false;
     state.lotComplete = false;
     state.isAdvancing = false;
+    state.isBusy = false;
     if (getLayoutType(step) === "onboarding") {
       state.coachingNotes = "";
       state.profileSaved = false;
+      state.resultsLog = "Onboarding: contanos tu propósito.";
+    } else {
+      state.resultsLog =
+        state.engineStatus === "ready"
+          ? pyodideStatusMessage("ready")
+          : pyodideStatusMessage(
+              state.engineStatus === "loading" ? "loading" : "idle",
+            );
     }
-    state.resultsLog = "Step sincronizado desde la URL.";
+  });
+
+  // Lazy-load Pyodide al montar el harness (cliente). No corre en SSR.
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(async () => {
+    if (state.engineStatus === "ready" || state.engineStatus === "loading") {
+      return;
+    }
+    state.engineStatus = "loading";
+    state.resultsLog = pyodideStatusMessage("loading");
+    const ready = await bootstrapPyodide();
+    state.engineStatus = ready.status;
+    if (getLayoutType(resolveStep(state.stepId).step) === "coding") {
+      state.resultsLog = ready.message;
+    }
   });
 
   const goNext = $(async () => {
@@ -87,8 +123,6 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
     }
     const current = resolveStep(state.stepId).step;
     const layout = getLayoutType(current);
-    // En onboarding, el CTA solo aparece tras `saved`; sincronizamos el flag
-    // por si el prop canContinue quedó stale entre padre/hijo.
     if (layout === "onboarding") {
       state.profileSaved = true;
     }
@@ -107,8 +141,6 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
     }
     state.isAdvancing = true;
     try {
-      // La URL es la fuente de verdad: el useTask$ hidrata el siguiente step.
-      // Evita QRL anidados / serialización de Microstep (fallo silencioso / OOM).
       if (props.onStepChange$) {
         await props.onStepChange$(nextId);
       } else {
@@ -122,10 +154,63 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
         state.resultsLog =
           getLayoutType(next) === "onboarding"
             ? "Onboarding: contanos tu propósito."
-            : "Step de código cargado. Escribí en el editor y usá Validar (demo).";
+            : pyodideStatusMessage(
+                state.engineStatus === "ready" ? "ready" : state.engineStatus,
+              );
       }
     } finally {
       state.isAdvancing = false;
+    }
+  });
+
+  const runCode$ = $(async () => {
+    if (state.engineStatus !== "ready" || state.isBusy) {
+      return;
+    }
+    state.isBusy = true;
+    state.checkStatus = "idle";
+    state.resultsLog = "Ejecutando…";
+    try {
+      const result = await runStudentCode(state.code);
+      state.resultsLog = formatRunLog(result);
+      if (!result.ok) {
+        state.checkStatus = "fail";
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      state.resultsLog = `=== Run ===\n--- error ---\n${message}`;
+      state.checkStatus = "fail";
+    } finally {
+      state.isBusy = false;
+    }
+  });
+
+  const validate$ = $(async () => {
+    if (state.engineStatus !== "ready" || state.isBusy) {
+      return;
+    }
+    const current = resolveStep(state.stepId).step;
+    const testSource = current.checks.pytest?.trim();
+    if (!testSource) {
+      state.checkStatus = "fail";
+      state.resultsLog =
+        "=== Validar ===\nEste paso no define checks pytest en la semilla.";
+      return;
+    }
+
+    state.isBusy = true;
+    state.checkStatus = "idle";
+    state.resultsLog = "Validando contra los checks del micro-reto…";
+    try {
+      const result = await checkStudentCode(state.code, testSource);
+      state.resultsLog = formatCheckLog(result);
+      state.checkStatus = result.passed ? "pass" : "fail";
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      state.resultsLog = `=== Validar ===\n--- error ---\n${message}`;
+      state.checkStatus = "fail";
+    } finally {
+      state.isBusy = false;
     }
   });
 
@@ -150,6 +235,12 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
             Paso {step.step_number}/{seedTotal}
             {fallback ? " · (fallback al primero)" : ""}
             {isOnboarding ? " · Onboarding" : " · Coding"}
+            {!isOnboarding && state.engineStatus === "loading"
+              ? " · Preparando Python…"
+              : ""}
+            {!isOnboarding && state.engineStatus === "ready"
+              ? " · Pyodide listo"
+              : ""}
           </p>
           <h1 class="exercise-ws__title">{step.title}</h1>
         </div>
@@ -210,24 +301,16 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
           resultsLog={state.resultsLog}
           lotComplete={state.lotComplete}
           canContinue={canContinue}
+          engineStatus={state.engineStatus}
+          isBusy={state.isBusy}
           onCodeInput$={(value) => {
             state.code = value;
             if (state.checkStatus !== "idle") {
               state.checkStatus = "idle";
             }
           }}
-          onValidateDemo$={() => {
-            const current = resolveStep(state.stepId).step;
-            const payload = normalizeCheckPayload(current, state.code);
-            state.resultsLog = [
-              "[demo] Check stub (sin Pyodide aún)",
-              `step=${payload.stepId}`,
-              `mode=${payload.mode}`,
-              "",
-              "✓ Validación demo OK — puedes Continuar",
-            ].join("\n");
-            state.checkStatus = "pass";
-          }}
+          onRun$={runCode$}
+          onValidate$={validate$}
           onContinue$={goNext}
         />
       )}
