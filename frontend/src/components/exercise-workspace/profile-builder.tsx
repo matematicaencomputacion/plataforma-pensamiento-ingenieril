@@ -1,4 +1,5 @@
 import { component$, type QRL } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import type { CoachingInteractionState } from "./coaching-interface";
 import {
   PROFILE_WAITING_COPY,
@@ -26,6 +27,7 @@ export type ProfileBuilderProps = {
   learnerSnippet?: string;
   isSaving?: boolean;
   saveError?: string;
+  nextStepHref?: string;
   onSave$: QRL<() => void>;
   onContinue$?: QRL<() => void>;
 };
@@ -37,6 +39,7 @@ export const ProfileBuilder = component$((props: ProfileBuilderProps) => {
   const showCards = props.interactionState !== "drafting";
   const isReviewing = props.interactionState === "reviewing";
   const isSaved = props.interactionState === "saved";
+  const canAdvance = Boolean(props.nextStepHref || props.onContinue$);
 
   return (
     <section
@@ -109,18 +112,23 @@ export const ProfileBuilder = component$((props: ProfileBuilderProps) => {
         </div>
       )}
 
-      {isSaved && (
+      {isSaved && canAdvance && (
         <div class="profile-builder__after-save">
           <p class="profile-builder__saved" role="status">
             ✅ Perfil actualizado
           </p>
-          {props.onContinue$ && (
+          {props.nextStepHref ? (
+            <Link
+              href={props.nextStepHref}
+              class="exercise-ws__btn exercise-ws__btn--primary profile-builder__next"
+            >
+              Avanzar hacia los ejercicios
+            </Link>
+          ) : (
             <button
               type="button"
               class="exercise-ws__btn exercise-ws__btn--primary profile-builder__next"
-              onClick$={async () => {
-                await props.onContinue$?.();
-              }}
+              onClick$={props.onContinue$}
             >
               Avanzar hacia los ejercicios
             </button>

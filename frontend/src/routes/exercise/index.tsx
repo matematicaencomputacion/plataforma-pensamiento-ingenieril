@@ -17,11 +17,10 @@ export default component$(() => {
   return (
     <main class="exercise-page">
       <ExerciseWorkspace
+        key={step.id}
         initialStepId={step.id}
         onStepChange$={async (stepId) => {
-          await nav(`/exercise?step=${encodeURIComponent(stepId)}`, {
-            replaceState: true,
-          });
+          await nav(`/exercise?step=${encodeURIComponent(stepId)}`);
         }}
       />
     </main>

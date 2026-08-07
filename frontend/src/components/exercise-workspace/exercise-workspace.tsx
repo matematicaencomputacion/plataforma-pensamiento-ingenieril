@@ -14,7 +14,6 @@ import {
   isFrontierNext,
   normalizeCheckPayload,
   resolveStep,
-  type Microstep,
 } from "../../lib/microsteps";
 
 export type ExerciseWorkspaceProps = {
@@ -32,6 +31,7 @@ type ExerciseState = {
   lotComplete: boolean;
   coachingNotes: string;
   profileSaved: boolean;
+  isAdvancing: boolean;
 };
 
 function initState(stepId?: string): ExerciseState {
@@ -47,7 +47,12 @@ function initState(stepId?: string): ExerciseState {
     lotComplete: false,
     coachingNotes: "",
     profileSaved: false,
+    isAdvancing: false,
   };
+}
+
+function stepHref(stepId: string): string {
+  return `/exercise?step=${encodeURIComponent(stepId)}`;
 }
 
 /**
@@ -68,6 +73,7 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
     state.showHint = false;
     state.showSolution = false;
     state.lotComplete = false;
+    state.isAdvancing = false;
     if (getLayoutType(step) === "onboarding") {
       state.coachingNotes = "";
       state.profileSaved = false;
@@ -75,27 +81,10 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
     state.resultsLog = "Step sincronizado desde la URL.";
   });
 
-  const loadStep = $(async (next: Microstep) => {
-    state.stepId = next.id;
-    state.code = next.content.starter_code;
-    state.checkStatus = "idle";
-    state.showHint = false;
-    state.showSolution = false;
-    state.lotComplete = false;
-    if (getLayoutType(next) === "onboarding") {
-      state.coachingNotes = "";
-      state.profileSaved = false;
-      state.resultsLog = "Onboarding: contanos tu propósito.";
-    } else {
-      state.resultsLog =
-        "Step de código cargado. Escribí en el editor y usá Validar (demo).";
-    }
-    if (props.onStepChange$) {
-      await props.onStepChange$(next.id);
-    }
-  });
-
   const goNext = $(async () => {
+    if (state.isAdvancing || state.lotComplete) {
+      return;
+    }
     const current = resolveStep(state.stepId).step;
     const layout = getLayoutType(current);
     // En onboarding, el CTA solo aparece tras `saved`; sincronizamos el flag
@@ -105,27 +94,51 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
     }
     const allowed =
       layout === "onboarding"
-        ? state.profileSaved && !state.lotComplete
-        : state.checkStatus === "pass" && !state.lotComplete;
+        ? state.profileSaved
+        : state.checkStatus === "pass";
     if (!allowed) {
       return;
     }
-    if (!current.next || isFrontierNext(current.next)) {
+    const nextId = current.next;
+    if (!nextId || isFrontierNext(nextId)) {
       state.lotComplete = true;
       state.resultsLog = "Lote completado. Próximamente: Strings.";
       return;
     }
-    const { step: nextStep } = resolveStep(current.next);
-    await loadStep(nextStep);
+    state.isAdvancing = true;
+    try {
+      // La URL es la fuente de verdad: el useTask$ hidrata el siguiente step.
+      // Evita QRL anidados / serialización de Microstep (fallo silencioso / OOM).
+      if (props.onStepChange$) {
+        await props.onStepChange$(nextId);
+      } else {
+        const next = resolveStep(nextId).step;
+        state.stepId = next.id;
+        state.code = next.content.starter_code;
+        state.checkStatus = "idle";
+        state.showHint = false;
+        state.showSolution = false;
+        state.lotComplete = false;
+        state.resultsLog =
+          getLayoutType(next) === "onboarding"
+            ? "Onboarding: contanos tu propósito."
+            : "Step de código cargado. Escribí en el editor y usá Validar (demo).";
+      }
+    } finally {
+      state.isAdvancing = false;
+    }
   });
 
   const { step, fallback } = resolveStep(state.stepId);
   const layout = getLayoutType(step);
   const seedTotal = getSeedStepCount();
   const isOnboarding = layout === "onboarding";
+  const nextStepId =
+    step.next && !isFrontierNext(step.next) ? step.next : undefined;
+  const nextStepHref = nextStepId ? stepHref(nextStepId) : undefined;
   const canContinue = isOnboarding
-    ? state.profileSaved && !state.lotComplete
-    : state.checkStatus === "pass" && !state.lotComplete;
+    ? state.profileSaved && !state.lotComplete && !state.isAdvancing
+    : state.checkStatus === "pass" && !state.lotComplete && !state.isAdvancing;
 
   return (
     <div
@@ -165,7 +178,7 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
               </button>
             </>
           )}
-          <Link class="exercise-ws__btn exercise-ws__btn--ghost" href="/">
+          <Link class="exercise-ws__btn exercise-ws__btn--ghost" href="/workspace">
             Salir al workspace
           </Link>
         </div>
@@ -175,6 +188,7 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
         <OnboardingLayout
           step={step}
           notes={state.coachingNotes}
+          nextStepHref={nextStepHref}
           onNotesChange$={(value) => {
             state.coachingNotes = value;
           }}
