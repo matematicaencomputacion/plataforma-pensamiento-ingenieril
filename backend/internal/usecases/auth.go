@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"errors"
 	"net/mail"
 	"strings"
 	"unicode/utf8"
@@ -94,6 +95,36 @@ func (s *AuthService) Me(_ context.Context, bearerToken string) (domain.PublicUs
 		return domain.PublicUser{}, domain.ErrUnauthorized
 	}
 	return user.ToPublic(), nil
+}
+
+// UpdateProfile persiste el coaching de onboarding del usuario autenticado.
+func (s *AuthService) UpdateProfile(
+	_ context.Context,
+	bearerToken string,
+	profile domain.LearnerProfile,
+) (domain.LearnerProfile, error) {
+	userID, _, err := s.tokens.Parse(bearerToken)
+	if err != nil {
+		return domain.LearnerProfile{}, domain.ErrUnauthorized
+	}
+
+	normalized := domain.LearnerProfile{
+		LifePurpose:  strings.TrimSpace(profile.LifePurpose),
+		Urgency:      strings.TrimSpace(profile.Urgency),
+		Vision5Years: strings.TrimSpace(profile.Vision5Years),
+		TechStack:    strings.TrimSpace(profile.TechStack),
+	}
+	if normalized.IsEmpty() {
+		return domain.LearnerProfile{}, domain.ErrEmptyProfile
+	}
+
+	if err := s.users.UpdateProfile(userID, normalized); err != nil {
+		if errors.Is(err, repositories.ErrUserNotFound) {
+			return domain.LearnerProfile{}, domain.ErrUnauthorized
+		}
+		return domain.LearnerProfile{}, err
+	}
+	return normalized, nil
 }
 
 func normalizeEmail(email string) (string, error) {

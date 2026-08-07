@@ -77,3 +77,39 @@ func TestRegisterValidation(t *testing.T) {
 		t.Fatalf("expected invalid password, got %v", err)
 	}
 }
+
+func TestUpdateProfile(t *testing.T) {
+	svc := newTestAuth(t)
+	ctx := context.Background()
+
+	reg, err := svc.Register(ctx, "perfil@example.com", "secreto12")
+	if err != nil {
+		t.Fatalf("register: %v", err)
+	}
+
+	_, err = svc.UpdateProfile(ctx, "token-invalido", domain.LearnerProfile{LifePurpose: "x"})
+	if !errors.Is(err, domain.ErrUnauthorized) {
+		t.Fatalf("expected unauthorized, got %v", err)
+	}
+
+	_, err = svc.UpdateProfile(ctx, reg.Token, domain.LearnerProfile{})
+	if !errors.Is(err, domain.ErrEmptyProfile) {
+		t.Fatalf("expected empty profile, got %v", err)
+	}
+
+	got, err := svc.UpdateProfile(ctx, reg.Token, domain.LearnerProfile{
+		LifePurpose:  "  Cambiar mi vida  ",
+		Urgency:      "esta semana",
+		Vision5Years: "liderazgo técnico",
+		TechStack:    "python",
+	})
+	if err != nil {
+		t.Fatalf("update: %v", err)
+	}
+	if got.LifePurpose != "Cambiar mi vida" {
+		t.Fatalf("trim purpose: %q", got.LifePurpose)
+	}
+	if got.Urgency != "esta semana" || got.Vision5Years != "liderazgo técnico" || got.TechStack != "python" {
+		t.Fatalf("unexpected profile: %+v", got)
+	}
+}

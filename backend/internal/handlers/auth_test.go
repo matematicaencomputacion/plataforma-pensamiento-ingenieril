@@ -85,3 +85,65 @@ func TestAuthHTTPFlow(t *testing.T) {
 		t.Fatalf("logout status %d", logoutRec.Code)
 	}
 }
+
+func TestUpdateProfileHTTP(t *testing.T) {
+	h := newAuthHandler(t)
+
+	regBody := []byte(`{"email":"perfil@ppi.local","password":"clave1234"}`)
+	regReq := httptest.NewRequest(http.MethodPost, "/api/auth/register", bytes.NewReader(regBody))
+	regRec := httptest.NewRecorder()
+	h.Register(regRec, regReq)
+	if regRec.Code != http.StatusCreated {
+		t.Fatalf("register status %d body %s", regRec.Code, regRec.Body.String())
+	}
+	var regResp map[string]any
+	if err := json.Unmarshal(regRec.Body.Bytes(), &regResp); err != nil {
+		t.Fatalf("decode register: %v", err)
+	}
+	token, _ := regResp["token"].(string)
+
+	unauthorized := httptest.NewRequest(
+		http.MethodPut,
+		"/api/user/profile",
+		bytes.NewReader([]byte(`{"lifePurpose":"x"}`)),
+	)
+	unauthRec := httptest.NewRecorder()
+	h.UpdateProfile(unauthRec, unauthorized)
+	if unauthRec.Code != http.StatusUnauthorized {
+		t.Fatalf("expected 401, got %d", unauthRec.Code)
+	}
+
+	emptyReq := httptest.NewRequest(
+		http.MethodPut,
+		"/api/user/profile",
+		bytes.NewReader([]byte(`{}`)),
+	)
+	emptyReq.Header.Set("Authorization", "Bearer "+token)
+	emptyRec := httptest.NewRecorder()
+	h.UpdateProfile(emptyRec, emptyReq)
+	if emptyRec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 empty, got %d body %s", emptyRec.Code, emptyRec.Body.String())
+	}
+
+	body := []byte(`{
+		"lifePurpose":"Construir productos",
+		"urgency":"ahora",
+		"vision5Years":"ser staff engineer",
+		"techStack":"go y python"
+	}`)
+	okReq := httptest.NewRequest(http.MethodPut, "/api/user/profile", bytes.NewReader(body))
+	okReq.Header.Set("Authorization", "Bearer "+token)
+	okRec := httptest.NewRecorder()
+	h.UpdateProfile(okRec, okReq)
+	if okRec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d body %s", okRec.Code, okRec.Body.String())
+	}
+
+	var profile map[string]string
+	if err := json.Unmarshal(okRec.Body.Bytes(), &profile); err != nil {
+		t.Fatalf("decode profile: %v", err)
+	}
+	if profile["lifePurpose"] != "Construir productos" || profile["techStack"] != "go y python" {
+		t.Fatalf("unexpected profile response: %#v", profile)
+	}
+}

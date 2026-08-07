@@ -18,4 +18,5 @@ type UserRepository interface {
 	Create(user domain.User) error
 	GetByEmail(email string) (domain.User, error)
 	GetByID(id string) (domain.User, error)
+	UpdateProfile(userID string, profile domain.LearnerProfile) error
 }
