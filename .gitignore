@@ -14,3 +14,6 @@ backend/bin/
 project-*.json
 *-service-account*.json
 **/google-credentials*.json
+
+# SQLite local / runtime DB
+data/
