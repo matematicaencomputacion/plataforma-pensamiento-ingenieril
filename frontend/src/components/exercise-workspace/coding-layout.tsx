@@ -1,5 +1,6 @@
 import { component$, type QRL } from "@builder.io/qwik";
 import type { Microstep } from "../../lib/microsteps";
+import type { PyodideEngineStatus } from "../../lib/pyodide";
 import { PromptMarkdown } from "./prompt-markdown";
 
 export type CodingLayoutProps = {
@@ -11,17 +12,23 @@ export type CodingLayoutProps = {
   resultsLog: string;
   lotComplete: boolean;
   canContinue: boolean;
+  engineStatus: PyodideEngineStatus;
+  isBusy: boolean;
   onCodeInput$: QRL<(value: string) => void>;
-  onValidateDemo$: QRL<() => void>;
+  onRun$: QRL<() => void>;
+  onValidate$: QRL<() => void>;
   onContinue$: QRL<() => void>;
 };
 
 /**
  * Layout coding: enunciado atómico (izq) + editor/ayudas (der) + resultados.
- * Sin Check rápido A/B/C: el foco es escribir código.
+ * Run / Validar ejecutan Python en el navegador vía Pyodide.
  */
 export const CodingLayout = component$((props: CodingLayoutProps) => {
   const { step } = props;
+  const engineReady = props.engineStatus === "ready";
+  const engineLoading = props.engineStatus === "loading";
+  const controlsDisabled = !engineReady || props.isBusy;
 
   return (
     <div class="exercise-ws__grid exercise-ws__grid--coding">
@@ -68,17 +75,30 @@ export const CodingLayout = component$((props: CodingLayoutProps) => {
           <button
             type="button"
             class="exercise-ws__btn"
-            disabled
-            title="Disponible en Bloque 3 (Pyodide)"
+            disabled={controlsDisabled}
+            title={
+              engineLoading
+                ? "Preparando motor Python…"
+                : engineReady
+                  ? "Ejecutar el código y ver la salida (print)"
+                  : "Motor Python no disponible"
+            }
+            onClick$={props.onRun$}
           >
-            Run
+            {props.isBusy ? "Ejecutando…" : "Run"}
           </button>
           <button
             type="button"
             class="exercise-ws__btn exercise-ws__btn--accent"
-            onClick$={props.onValidateDemo$}
+            disabled={controlsDisabled}
+            title={
+              engineReady
+                ? "Validar el código contra los checks del micro-reto"
+                : "Esperá a que el motor Python esté listo"
+            }
+            onClick$={props.onValidate$}
           >
-            Validar (demo)
+            {props.isBusy ? "Validando…" : "Validar"}
           </button>
           <button
             type="button"
@@ -97,6 +117,7 @@ export const CodingLayout = component$((props: CodingLayoutProps) => {
                 ? " exercise-ws__console--fail"
                 : ""
           }`}
+          aria-live="polite"
         >
           {props.resultsLog}
         </pre>
