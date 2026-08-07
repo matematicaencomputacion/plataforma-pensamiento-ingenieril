@@ -5,6 +5,7 @@ import {
   useStore,
   type QRL,
 } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import type { Microstep } from "../../lib/microsteps";
 import {
   CoachingInterface,
@@ -22,6 +23,8 @@ import { synthesizeLearnerProfile } from "./synthesize-profile";
 export type OnboardingLayoutProps = {
   step: Microstep;
   notes: string;
+  /** Href del paso 2 — navegación por Link (más fiable que onClick$ QRL). */
+  nextStepHref?: string;
   onNotesChange$: QRL<(value: string) => void>;
   onContinue$: QRL<() => void>;
   onProfileSaved$?: QRL<() => void>;
@@ -132,15 +135,22 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
         />
         {showContinue && (
           <div class="coaching__continue">
-            <button
-              type="button"
-              class="exercise-ws__btn exercise-ws__btn--primary adaptive-mcq__continue"
-              onClick$={async () => {
-                await props.onContinue$();
-              }}
-            >
-              Avanzar hacia los ejercicios
-            </button>
+            {props.nextStepHref ? (
+              <Link
+                href={props.nextStepHref}
+                class="exercise-ws__btn exercise-ws__btn--primary adaptive-mcq__continue"
+              >
+                Avanzar hacia los ejercicios
+              </Link>
+            ) : (
+              <button
+                type="button"
+                class="exercise-ws__btn exercise-ws__btn--primary adaptive-mcq__continue"
+                onClick$={props.onContinue$}
+              >
+                Avanzar hacia los ejercicios
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -153,6 +163,7 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
           }
           isSaving={saveUi.isSaving}
           saveError={saveUi.error}
+          nextStepHref={props.nextStepHref}
           onSave$={save$}
           onContinue$={props.onContinue$}
         />
