@@ -8,12 +8,15 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/gemini"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/keyword"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/config"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/handlers"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/repositories/jsonstore"
+	sqliterepo "github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/repositories/sqlite"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/usecases"
 )
 
@@ -21,7 +24,7 @@ func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
@@ -97,6 +100,28 @@ func main() {
 	config.ResolveCredentialsPath(repoRoot)
 
 	dataDir := resolveDataDir()
+	authCfg := config.LoadAuthConfig()
+
+	sqlitePath := authCfg.SQLitePath()
+	if !filepath.IsAbs(sqlitePath) && sqlitePath != ":memory:" {
+		sqlitePath = filepath.Join(repoRoot, sqlitePath)
+	}
+	userDB, err := sqliterepo.OpenDB(sqlitePath)
+	if err != nil {
+		log.Fatalf("sqlite: %v", err)
+	}
+	defer userDB.Close()
+	userRepo, err := sqliterepo.NewUserRepository(userDB)
+	if err != nil {
+		log.Fatalf("user repo: %v", err)
+	}
+	authService := usecases.NewAuthService(
+		userRepo,
+		crypto.NewBcryptHasher(),
+		jwtauth.NewHS256Issuer(authCfg.JWTSecret),
+	)
+	authHandler := handlers.NewAuthHandler(authService)
+
 	levelRepo := jsonstore.NewLevelRepository(jsonstore.DefaultLevelsPath(dataDir))
 	profileRepo := jsonstore.NewCognitiveProfileRepository(jsonstore.DefaultCognitiveProfilesPath(dataDir))
 
@@ -112,13 +137,20 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/health", handlers.Health)
+	mux.HandleFunc("POST /api/auth/register", authHandler.Register)
+	mux.HandleFunc("POST /api/auth/login", authHandler.Login)
+	mux.HandleFunc("POST /api/auth/logout", authHandler.Logout)
+	mux.HandleFunc("GET /api/me", authHandler.Me)
 	mux.HandleFunc("GET /api/levels/current", levelHandler.GetCurrent)
 	mux.HandleFunc("GET /api/levels/{id}", levelHandler.GetByID)
 	mux.HandleFunc("POST /api/evaluate", evaluateHandler.Evaluate)
 	mux.HandleFunc("POST /api/learner/profile/synthesize", learnerProfileHandler.Synthesize)
 
 	addr := ":8080"
-	log.Printf("servidor iniciado: escuchando en http://localhost%s (data=%s root=%s)", addr, dataDir, repoRoot)
+	log.Printf(
+		"servidor iniciado: escuchando en http://localhost%s (data=%s root=%s sqlite=%s)",
+		addr, dataDir, repoRoot, sqlitePath,
+	)
 	if err := http.ListenAndServe(addr, enableCORS(mux)); err != nil {
 		log.Fatalf("error al iniciar el servidor: %v", err)
 	}

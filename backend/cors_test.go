@@ -53,7 +53,7 @@ func assertCORSHeaders(t *testing.T, rec *httptest.ResponseRecorder) {
 	checks := map[string]string{
 		"Access-Control-Allow-Origin":  "*",
 		"Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-		"Access-Control-Allow-Headers": "Content-Type",
+		"Access-Control-Allow-Headers": "Content-Type, Authorization",
 	}
 
 	for header, want := range checks {
