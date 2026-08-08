@@ -1,22 +1,27 @@
 import { component$, type QRL } from "@builder.io/qwik";
 import {
   PYTHON_TYPE_CHIPS,
+  getPythonTypeChip,
   type PythonTypeId,
 } from "./python-type-catalog";
 
 export type PythonTypeChipsProps = {
+  /** Tipo activo, o `null` si el panel está cerrado. */
   activeType: PythonTypeId | null;
   onSelect$: QRL<(typeId: PythonTypeId | null) => void>;
 };
 
 /**
- * Chips exclusivos: un solo tipo "encendido".
- * La explicación permanente solo se muestra si hay uno activo.
+ * Píldoras exclusivas (acordeón): un solo tipo activo.
+ * Toggle el mismo chip cierra el panel; otro chip lo reemplaza.
  */
 export const PythonTypeChips = component$((props: PythonTypeChipsProps) => {
+  const activeChip = getPythonTypeChip(props.activeType);
+  const panelOpen = Boolean(activeChip);
+
   return (
     <div class="type-chips">
-      <p class="type-chips__label">Tipos rápidos</p>
+      <p class="type-chips__label">Tipos de variable</p>
       <div class="type-chips__row" role="group" aria-label="Tipos de datos Python">
         {PYTHON_TYPE_CHIPS.map((chip) => {
           const on = props.activeType === chip.id;
@@ -26,11 +31,9 @@ export const PythonTypeChips = component$((props: PythonTypeChipsProps) => {
               type="button"
               class={`type-chips__chip${on ? " type-chips__chip--on" : ""}`}
               aria-pressed={on}
-              title={
-                on
-                  ? `Apagar ejemplo ${chip.label}`
-                  : `Insertar ejemplo ${chip.label}`
-              }
+              aria-expanded={on}
+              aria-controls="python-type-explain-panel"
+              title={on ? `Ocultar ${chip.label}` : `Explicar ${chip.label}`}
               onClick$={() => {
                 props.onSelect$(on ? null : chip.id);
               }}
@@ -40,14 +43,21 @@ export const PythonTypeChips = component$((props: PythonTypeChipsProps) => {
           );
         })}
       </div>
-      {props.activeType && (
-        <p class="type-chips__explain" role="status">
-          {
-            PYTHON_TYPE_CHIPS.find((c) => c.id === props.activeType)
-              ?.explanation
-          }
-        </p>
-      )}
+
+      <div
+        id="python-type-explain-panel"
+        class={`type-chips__panel${panelOpen ? " type-chips__panel--open" : ""}`}
+        aria-hidden={!panelOpen}
+      >
+        <div class="type-chips__panel-inner">
+          {activeChip && (
+            <aside class="type-chips__explain" role="region" aria-live="polite">
+              <p class="type-chips__explain-text">{activeChip.explanation}</p>
+              <pre class="type-chips__code">{activeChip.sampleCode}</pre>
+            </aside>
+          )}
+        </div>
+      </div>
     </div>
   );
 });
