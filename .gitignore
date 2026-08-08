@@ -17,3 +17,6 @@ project-*.json
 
 # SQLite local / runtime DB
 data/
+
+# Residuos de tooling local (browser MCP)
+.playwright-mcp/
