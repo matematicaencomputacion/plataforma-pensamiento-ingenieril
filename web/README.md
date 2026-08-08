@@ -16,8 +16,19 @@ cargo install trunk
 make run
 
 # Terminal B — UI Leptos
-cd web && trunk serve
+cd web && env -u NO_COLOR trunk serve
 ```
+
+Rutas del spike auth:
+
+| Ruta | Descripción |
+|---|---|
+| `/` | Portada + CTAs registro/login |
+| `/login` | Login real → `POST /api/auth/login` |
+| `/register` | Registro → `POST /api/auth/register` |
+| `/workspace` | Placeholder post-auth (harness Qwik intacto) |
+
+Token Bearer en `localStorage` (`ppi.auth.token`), mismos contratos JSON que el cliente Qwik.
 
 Targets Makefile (desde la raíz, aislados de `make test` Go):
 

@@ -1,12 +1,18 @@
 //! IngenierIA web shell — Leptos CSR targeting the Go API on :8080.
 
+mod api;
+mod auth;
+mod components;
+mod pages;
+mod session;
+
 use leptos::prelude::*;
-use leptos_router::components::{Route, Router, Routes};
+use leptos_router::components::{A, Route, Router, Routes};
 use leptos_router::path;
 
-mod api;
-
-use api::API_BASE_URL;
+use components::SessionBar;
+use pages::{LandingPage, LoginPage, RegisterPage, WorkspacePage};
+use session::{SessionBootstrap, SessionCtx};
 
 fn main() {
     console_error_panic_hook::set_once();
@@ -18,37 +24,29 @@ fn main() {
 /// Root application shell (CSR).
 #[component]
 fn App() -> impl IntoView {
+    let _session = SessionCtx::provide();
+
     view! {
         <Router>
+            <SessionBootstrap />
             <div class="shell">
                 <header class="shell__header">
-                    <p class="shell__brand">"IngenierIA"</p>
-                    <p class="shell__meta">"Leptos CSR · Go API"</p>
+                    <A href="/" attr:class="shell__brand">
+                        "IngenierIA"
+                    </A>
+                    <SessionBar />
                 </header>
                 <main class="shell__main">
                     <Routes fallback=|| {
-                        view! { <p>"Ruta no encontrada"</p> }
+                        view! { <p class="not-found">"Ruta no encontrada"</p> }
                     }>
-                        <Route path=path!("/") view=HomePage />
+                        <Route path=path!("/") view=LandingPage />
+                        <Route path=path!("/login") view=LoginPage />
+                        <Route path=path!("/register") view=RegisterPage />
+                        <Route path=path!("/workspace") view=WorkspacePage />
                     </Routes>
                 </main>
             </div>
         </Router>
-    }
-}
-
-#[component]
-fn HomePage() -> impl IntoView {
-    view! {
-        <section class="hero">
-            <p class="hero__eyebrow">"Pensamiento ingenieril"</p>
-            <h1 class="hero__title">"IngenierIA"</h1>
-            <p class="hero__support">
-                "Scaffold Leptos CSR listo. El backend Go permanece en "
-                <code>{API_BASE_URL}</code>
-                " — Qwik en frontend/ intacto hasta el cutover."
-            </p>
-            <p class="hero__api">{format!("API_BASE_URL = {API_BASE_URL}")}</p>
-        </section>
     }
 }
