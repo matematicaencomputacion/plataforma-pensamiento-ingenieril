@@ -1,12 +1,18 @@
 ## Why
 
-El onboarding ya captura el relato del alumno y confirma una síntesis de perfil, pero la clasificación aún es un mock por keywords. Eso no escala al “mapa de migas” hacia Neo4j ni refleja el contexto real del estudiante. Ya existen ADC (`GOOGLE_APPLICATION_CREDENTIALS`) y un service account listos para Gemini en Vertex AI.
+El onboarding ya captura el relato del alumno y confirma una síntesis de perfil, pero la clasificación aún es un mock por keywords. Eso no escala al “mapa de migas” hacia Neo4j ni refleja el contexto real del estudiante.
+
+> **Nota de sincronización (2026-08-08):** el proveedor LLM implementado es **xAI Grok**
+> (adapter `backend/internal/adapters/xai`, API OpenAI-compatible), no Gemini/Vertex como
+> proponía el borrador original. El pivote se hizo durante la implementación
+> (commit `fix(ai): usar xAI Grok 4.5 en vez de Groq`) para reusar la misma key/proveedor
+> que la tutora de evaluación. Estos artefactos quedan actualizados a esa realidad.
 
 ## What Changes
 
-- Backend Go: puerto de clasificación de perfil + adapter Vertex/Gemini Pro + `POST /api/learner/profile/synthesize`.
+- Backend Go: puerto de clasificación de perfil + adapter xAI Grok (chat completions con `response_format: json_object`) + `POST /api/learner/profile/synthesize`.
 - Frontend `/exercise` onboarding: “Enviar para análisis” llama a esa API (ya no al mock automático) y muestra loading/error antes de pasar a `reviewing`.
-- Config local: variables de proyecto/ubicación/modelo en `.env` / `.env.example` (sin secretos en Git).
+- Config local: `GROK_API_KEY` (alias `XAI_API_KEY`), `GROK_MODEL`, `XAI_BASE_URL` en `.env` / `.env.example` (sin secretos en Git).
 - Persistencia Neo4j: **fuera de este hito** (sigue el `saveLearnerProfile` simulado / log).
 
 ### Alcance incluido
@@ -19,7 +25,7 @@ El onboarding ya captura el relato del alumno y confirma una síntesis de perfil
 
 - Escritura real a Neo4j.
 - Auth JWT del alumno.
-- Sustituir la tutora Grok de evaluación de código.
+- Cambiar la tutora Grok de evaluación de código (comparte proveedor, no implementación).
 - Pyodide / checks del harness W3 (sigue en `w3-exercise-harness`).
 
 ### Plan de rollback
@@ -31,7 +37,7 @@ El onboarding ya captura el relato del alumno y confirma una síntesis de perfil
 
 ### New Capabilities
 
-- `learner-profile-synthesis`: Clasificación del texto de onboarding vía Gemini (Vertex) y contrato HTTP hacia el frontend.
+- `learner-profile-synthesis`: Clasificación del texto de onboarding vía xAI Grok y contrato HTTP hacia el frontend.
 
 ### Modified Capabilities
 
@@ -39,7 +45,7 @@ El onboarding ya captura el relato del alumno y confirma una síntesis de perfil
 
 ## Impact
 
-- `backend/`: domain, usecases, adapters/gemini, handlers, `main.go`, `go.mod`.
+- `backend/`: domain, usecases, `adapters/xai` (+ `adapters/keyword` como mock), handlers, `main.go`, `internal/config/grok.go`.
 - `frontend/`: `onboarding-layout` / servicio de análisis; estados UI analyzing/error.
-- Dependencias: Google Gen AI / Vertex SDK en Go; ADC en runtime local.
-- Costo/latencia: llamada a Gemini Pro por cada “Enviar para análisis”.
+- Dependencias: solo `net/http` estándar (API OpenAI-compatible de xAI); sin SDK de Google.
+- Costo/latencia: llamada a Grok por cada “Enviar para análisis” (timeout 45s).
