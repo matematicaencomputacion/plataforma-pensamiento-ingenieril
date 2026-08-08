@@ -1,4 +1,4 @@
-package groq_test
+package xai_test
 
 import (
 	"context"
@@ -8,14 +8,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/groq"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/xai"
 )
 
 func TestClassifierClassifyOK(t *testing.T) {
 	t.Parallel()
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/openai/v1/chat/completions" {
+		if r.URL.Path != "/v1/chat/completions" {
 			t.Fatalf("path: %s", r.URL.Path)
 		}
 		if !strings.HasPrefix(r.Header.Get("Authorization"), "Bearer test-key") {
@@ -33,10 +33,10 @@ func TestClassifierClassifyOK(t *testing.T) {
 	}))
 	t.Cleanup(srv.Close)
 
-	clf, err := groq.NewClassifier(context.Background(), groq.Config{
+	clf, err := xai.NewClassifier(context.Background(), xai.Config{
 		APIKey:  "test-key",
-		Model:   "llama-3.1-8b-instant",
-		BaseURL: srv.URL + "/openai/v1",
+		Model:   "grok-4.5",
+		BaseURL: srv.URL + "/v1",
 	})
 	if err != nil {
 		t.Fatalf("new: %v", err)
@@ -52,9 +52,10 @@ func TestClassifierClassifyOK(t *testing.T) {
 }
 
 func TestNewClassifierRequiresAPIKey(t *testing.T) {
-	t.Setenv("GROQ_API_KEY", "")
-	_, err := groq.NewClassifier(context.Background(), groq.Config{})
+	t.Setenv("GROK_API_KEY", "")
+	t.Setenv("XAI_API_KEY", "")
+	_, err := xai.NewClassifier(context.Background(), xai.Config{})
 	if err == nil {
-		t.Fatal("expected error without GROQ_API_KEY")
+		t.Fatal("expected error without GROK_API_KEY")
 	}
 }

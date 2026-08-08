@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
-	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/groq"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/keyword"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/xai"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/config"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/handlers"
@@ -53,30 +53,30 @@ func resolveDataDir() string {
 	return "data"
 }
 
-func newProfileClassifier(ctx context.Context, groqCfg config.GroqConfig) (domain.ProfileClassifier, string) {
+func newProfileClassifier(ctx context.Context, grokCfg config.GrokConfig) (domain.ProfileClassifier, string) {
 	mode := strings.ToLower(strings.TrimSpace(os.Getenv("LEARNER_PROFILE_LLM")))
 	if mode == "" {
-		mode = "groq"
+		mode = "grok"
 	}
 	if mode == "mock" || mode == "keyword" {
 		log.Printf("clasificador de perfil: mock/keywords")
 		return keyword.NewClassifier(), "mock"
 	}
 
-	classifier, err := groq.NewClassifier(ctx, groq.Config{
-		APIKey:  groqCfg.APIKey,
-		Model:   groqCfg.Model,
-		BaseURL: groqCfg.BaseURL,
+	classifier, err := xai.NewClassifier(ctx, xai.Config{
+		APIKey:  grokCfg.APIKey,
+		Model:   grokCfg.Model,
+		BaseURL: grokCfg.BaseURL,
 	})
 	if err != nil {
-		log.Printf("WARN: no se pudo iniciar Groq (%v); usando mock keywords", err)
+		log.Printf("WARN: no se pudo iniciar Grok/xAI (%v); usando mock keywords", err)
 		return keyword.NewClassifier(), "mock-fallback"
 	}
 	log.Printf(
-		"clasificador de perfil: groq model=%s",
-		firstNonEmpty(groqCfg.Model, "llama-3.1-8b-instant"),
+		"clasificador de perfil: grok model=%s",
+		firstNonEmpty(grokCfg.Model, "grok-4.5"),
 	)
-	return classifier, "groq"
+	return classifier, "grok"
 }
 
 func firstNonEmpty(values ...string) string {
@@ -97,7 +97,7 @@ func main() {
 
 	dataDir := resolveDataDir()
 	authCfg := config.LoadAuthConfig()
-	groqCfg := config.LoadGroqConfig()
+	grokCfg := config.LoadGrokConfig()
 
 	sqlitePath := authCfg.SQLitePath()
 	if !filepath.IsAbs(sqlitePath) && sqlitePath != ":memory:" {
@@ -125,7 +125,7 @@ func main() {
 	levelService := usecases.NewLevelService(levelRepo)
 	evaluationService := usecases.NewEvaluationService(levelRepo, profileRepo)
 
-	classifier, _ := newProfileClassifier(context.Background(), groqCfg)
+	classifier, _ := newProfileClassifier(context.Background(), grokCfg)
 	learnerProfileService := usecases.NewLearnerProfileService(classifier)
 
 	levelHandler := handlers.NewLevelHandler(levelService)

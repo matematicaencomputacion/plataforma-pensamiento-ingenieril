@@ -57,11 +57,11 @@ func (h *LearnerProfileHandler) Synthesize(w http.ResponseWriter, r *http.Reques
 		errText := err.Error()
 		switch {
 		case strings.Contains(errText, "401"), strings.Contains(errText, "Invalid API Key"):
-			msg = "Groq rechazó la API key. Revisá GROQ_API_KEY en .env."
+			msg = "xAI rechazó la API key. Revisá GROK_API_KEY en .env."
 		case strings.Contains(errText, "429"), strings.Contains(errText, "rate_limit"):
-			msg = "Cuota/rate limit de Groq. Esperá un momento e intentá de nuevo."
+			msg = "Cuota/rate limit de Grok. Esperá un momento e intentá de nuevo."
 		case strings.Contains(errText, "model"), strings.Contains(errText, "404"):
-			msg = "El modelo Groq configurado no está disponible. Probá otro GROQ_MODEL en .env."
+			msg = "El modelo Grok configurado no está disponible. Probá otro GROK_MODEL en .env."
 		}
 		_ = json.NewEncoder(w).Encode(map[string]string{"error": msg})
 		return

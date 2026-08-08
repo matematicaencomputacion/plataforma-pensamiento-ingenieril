@@ -1,4 +1,4 @@
-package groq
+package xai
 
 import (
 	"bytes"
@@ -15,12 +15,12 @@ import (
 )
 
 const (
-	defaultModel   = "llama-3.1-8b-instant"
-	defaultBaseURL = "https://api.groq.com/openai/v1"
-	httpTimeout    = 20 * time.Second
+	defaultModel   = "grok-4.5"
+	defaultBaseURL = "https://api.x.ai/v1"
+	httpTimeout    = 45 * time.Second
 )
 
-// Classifier implementa domain.ProfileClassifier vía Groq (OpenAI-compatible).
+// Classifier implementa domain.ProfileClassifier vía xAI Grok (OpenAI-compatible).
 type Classifier struct {
 	apiKey     string
 	model      string
@@ -28,7 +28,7 @@ type Classifier struct {
 	httpClient *http.Client
 }
 
-// Config mantiene la misma forma de construcción que el adaptador previo (API key + model).
+// Config mantiene API key + model (misma forma que el adaptador previo).
 type Config struct {
 	APIKey  string
 	Model   string
@@ -36,12 +36,12 @@ type Config struct {
 }
 
 func NewClassifier(_ context.Context, cfg Config) (*Classifier, error) {
-	apiKey := firstNonEmpty(cfg.APIKey, os.Getenv("GROQ_API_KEY"))
+	apiKey := firstNonEmpty(cfg.APIKey, os.Getenv("GROK_API_KEY"), os.Getenv("XAI_API_KEY"))
 	if apiKey == "" {
-		return nil, fmt.Errorf("GROQ_API_KEY es obligatorio para el clasificador Groq")
+		return nil, fmt.Errorf("GROK_API_KEY (o XAI_API_KEY) es obligatorio para Grok")
 	}
-	model := firstNonEmpty(cfg.Model, os.Getenv("GROQ_MODEL"), defaultModel)
-	baseURL := strings.TrimRight(firstNonEmpty(cfg.BaseURL, os.Getenv("GROQ_BASE_URL"), defaultBaseURL), "/")
+	model := firstNonEmpty(cfg.Model, os.Getenv("GROK_MODEL"), defaultModel)
+	baseURL := strings.TrimRight(firstNonEmpty(cfg.BaseURL, os.Getenv("XAI_BASE_URL"), defaultBaseURL), "/")
 
 	return &Classifier{
 		apiKey:  apiKey,
@@ -96,17 +96,17 @@ No inventes biografía. No uses markdown. Solo JSON con claves purpose, urgency,
 
 	res, err := c.httpClient.Do(req)
 	if err != nil {
-		return domain.LearnerProfileSynthesis{}, fmt.Errorf("groq request: %w", err)
+		return domain.LearnerProfileSynthesis{}, fmt.Errorf("xAI request: %w", err)
 	}
 	defer res.Body.Close()
 
 	rawBody, err := io.ReadAll(io.LimitReader(res.Body, 1<<20))
 	if err != nil {
-		return domain.LearnerProfileSynthesis{}, fmt.Errorf("leer respuesta groq: %w", err)
+		return domain.LearnerProfileSynthesis{}, fmt.Errorf("leer respuesta xAI: %w", err)
 	}
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
 		return domain.LearnerProfileSynthesis{}, fmt.Errorf(
-			"groq HTTP %d: %s",
+			"xAI HTTP %d: %s",
 			res.StatusCode,
 			truncate(string(rawBody), 300),
 		)
@@ -114,7 +114,7 @@ No inventes biografía. No uses markdown. Solo JSON con claves purpose, urgency,
 
 	var parsed chatResponse
 	if err := json.Unmarshal(rawBody, &parsed); err != nil {
-		return domain.LearnerProfileSynthesis{}, fmt.Errorf("decode groq: %w", err)
+		return domain.LearnerProfileSynthesis{}, fmt.Errorf("decode xAI: %w", err)
 	}
 	if len(parsed.Choices) == 0 || strings.TrimSpace(parsed.Choices[0].Message.Content) == "" {
 		return domain.LearnerProfileSynthesis{}, fmt.Errorf("respuesta vacía del modelo")
