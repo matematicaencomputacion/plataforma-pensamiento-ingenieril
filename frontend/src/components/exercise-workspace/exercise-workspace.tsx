@@ -10,9 +10,12 @@ import { Link } from "@builder.io/qwik-city";
 import { CodingLayout } from "./coding-layout";
 import { OnboardingLayout } from "./onboarding-layout";
 import {
+  areBankAnswersCorrect,
   getLayoutType,
   getSeedStepCount,
+  getStepMcqBank,
   isFrontierNext,
+  isStepGateOpen,
   resolveStep,
 } from "../../lib/microsteps";
 import {
@@ -37,6 +40,8 @@ type ExerciseState = {
   resultsLog: string;
   showHint: boolean;
   showSolution: boolean;
+  /** id de pregunta MCQ → opción elegida (estado local, sin backend). */
+  mcqAnswers: Record<string, string>;
   lotComplete: boolean;
   coachingNotes: string;
   profileSaved: boolean;
@@ -55,6 +60,7 @@ function initState(stepId?: string): ExerciseState {
       "Al abrir un paso de código se prepara el motor Python (Pyodide) en el navegador.",
     showHint: false,
     showSolution: false,
+    mcqAnswers: {},
     lotComplete: false,
     coachingNotes: "",
     profileSaved: false,
@@ -85,6 +91,7 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
     state.checkStatus = "idle";
     state.showHint = false;
     state.showSolution = false;
+    state.mcqAnswers = {};
     state.lotComplete = false;
     state.isAdvancing = false;
     state.isBusy = false;
@@ -129,7 +136,11 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
     const allowed =
       layout === "onboarding"
         ? state.profileSaved
-        : state.checkStatus === "pass";
+        : isStepGateOpen(
+            current.checks.mode,
+            state.checkStatus === "pass",
+            areBankAnswersCorrect(getStepMcqBank(current), state.mcqAnswers),
+          );
     if (!allowed) {
       return;
     }
@@ -150,6 +161,7 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
         state.checkStatus = "idle";
         state.showHint = false;
         state.showSolution = false;
+        state.mcqAnswers = {};
         state.lotComplete = false;
         state.resultsLog =
           getLayoutType(next) === "onboarding"
@@ -221,9 +233,14 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
   const nextStepId =
     step.next && !isFrontierNext(step.next) ? step.next : undefined;
   const nextStepHref = nextStepId ? stepHref(nextStepId) : undefined;
-  const canContinue = isOnboarding
-    ? state.profileSaved && !state.lotComplete && !state.isAdvancing
-    : state.checkStatus === "pass" && !state.lotComplete && !state.isAdvancing;
+  const gateOpen = isOnboarding
+    ? state.profileSaved
+    : isStepGateOpen(
+        step.checks.mode,
+        state.checkStatus === "pass",
+        areBankAnswersCorrect(getStepMcqBank(step), state.mcqAnswers),
+      );
+  const canContinue = gateOpen && !state.lotComplete && !state.isAdvancing;
 
   return (
     <div
@@ -297,6 +314,10 @@ export const ExerciseWorkspace = component$((props: ExerciseWorkspaceProps) => {
           code={state.code}
           showHint={state.showHint}
           showSolution={state.showSolution}
+          mcqAnswers={state.mcqAnswers}
+          onMcqAnswer$={(questionId, option) => {
+            state.mcqAnswers = { ...state.mcqAnswers, [questionId]: option };
+          }}
           checkStatus={state.checkStatus}
           resultsLog={state.resultsLog}
           lotComplete={state.lotComplete}

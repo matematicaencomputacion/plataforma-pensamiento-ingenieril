@@ -23,12 +23,12 @@
 
 ## 4. MCQ y pulido UX
 
-- [ ] 4.1 Renderizar MCQ cuando exista `checks.mcq` o `content.mcq_bank` e integrarlo según `checks.mode`
-- [ ] 4.2 Responsive: stack vertical theory → editor → checks en viewport estrecho
-- [ ] 4.3 Estado local `useStore` (step, código, pass/fail, hint/solution visibles); sin persistencia backend
+- [x] 4.1 Renderizar MCQ cuando exista `checks.mcq` o `content.mcq_bank` e integrarlo según `checks.mode`
+- [x] 4.2 Responsive: stack vertical theory → editor → checks en viewport estrecho
+- [x] 4.3 Estado local `useStore` (step, código, pass/fail, hint/solution visibles); sin persistencia backend
 
 ## 5. Validación y cierre
 
-- [ ] 5.1 Smoke manual de los 10 steps (HOME → Casting) en el harness
-- [ ] 5.2 `cd frontend && npm run build` y lint sin errores
-- [ ] 5.3 PR `feat/w3-exercise-harness` con checklist Pre-CI (sin merge a main salvo pedido)
+- [x] 5.1 Smoke manual de los 10 steps (HOME → Casting) en el harness
+- [x] 5.2 `cd frontend && npm run build` y lint sin errores
+- [x] 5.3 PR con checklist Pre-CI (rama `feat/w3-harness-mcq-responsive`; sin merge a main salvo pedido)
