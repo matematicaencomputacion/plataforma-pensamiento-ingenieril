@@ -100,18 +100,52 @@ func (h *AuthHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req domain.LearnerProfile
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeJSONError(w, "JSON de entrada inválido", http.StatusBadRequest)
+	var wire profileUpdateWire
+	dec := json.NewDecoder(r.Body)
+	if err := dec.Decode(&wire); err != nil {
+		writeJSONError(w, "JSON de entrada inválido: se esperaba lifePurpose, urgency, vision5Years, techStack", http.StatusBadRequest)
 		return
 	}
 
+	req := wire.toLearnerProfile()
 	profile, err := h.service.UpdateProfile(r.Context(), token, req)
 	if err != nil {
 		writeAuthError(w, err)
 		return
 	}
 	writeJSON(w, http.StatusOK, profile)
+}
+
+// profileUpdateWire acepta el contrato canónico y aliases de la síntesis UI.
+type profileUpdateWire struct {
+	LifePurpose  string `json:"lifePurpose"`
+	Urgency      string `json:"urgency"`
+	Vision5Years string `json:"vision5Years"`
+	TechStack    string `json:"techStack"`
+	Purpose      string `json:"purpose"`
+	Vision       string `json:"vision"`
+	Stack        string `json:"stack"`
+}
+
+func (w profileUpdateWire) toLearnerProfile() domain.LearnerProfile {
+	life := strings.TrimSpace(w.LifePurpose)
+	if life == "" {
+		life = strings.TrimSpace(w.Purpose)
+	}
+	vision := strings.TrimSpace(w.Vision5Years)
+	if vision == "" {
+		vision = strings.TrimSpace(w.Vision)
+	}
+	stack := strings.TrimSpace(w.TechStack)
+	if stack == "" {
+		stack = strings.TrimSpace(w.Stack)
+	}
+	return domain.LearnerProfile{
+		LifePurpose:  life,
+		Urgency:      strings.TrimSpace(w.Urgency),
+		Vision5Years: vision,
+		TechStack:    stack,
+	}
 }
 
 // Profile despacha GET (rehidratación) y PUT/POST (persistencia) en /api/user/profile.

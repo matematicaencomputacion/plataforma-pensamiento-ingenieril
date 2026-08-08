@@ -14,8 +14,10 @@ import {
 } from "./coaching-interface";
 import {
   fetchUserProfile,
+  isUserProfileEmpty,
   putUserProfile,
   saveLearnerProfile,
+  snapshotUserProfile,
   synthesisToUserProfile,
   userProfileToSynthesis,
 } from "./learner-profile";
@@ -30,7 +32,7 @@ import { synthesizeLearnerProfile } from "./synthesize-profile";
 export type OnboardingLayoutProps = {
   step: Microstep;
   notes: string;
-  /** Href del paso 2 — solo se navega tras PUT 200. */
+  /** Href del paso 2 — se navega tras persistir (si dirty) o en seco (si limpio). */
   nextStepHref?: string;
   onNotesChange$: QRL<(value: string) => void>;
   onContinue$: QRL<() => void>;
@@ -45,6 +47,8 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
   const profileSynthesis = useStore<ProfileSynthesis>({
     ...EMPTY_PROFILE_SYNTHESIS,
   });
+  /** Snapshot JSON del perfil rehidratado / último persistido (dirty checking). */
+  const baselineSnapshot = useSignal<string | null>(null);
   const saveUi = useStore({ isSaving: false, error: "" });
   const analyzeUi = useStore({ isAnalyzing: false, error: "" });
   const advanceUi = useStore({ isAdvancing: false, error: "" });
@@ -65,12 +69,14 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
         return;
       }
       if (result.empty) {
+        baselineSnapshot.value = null;
         return;
       }
       applyProfileSynthesis(
         profileSynthesis,
         userProfileToSynthesis(result.profile),
       );
+      baselineSnapshot.value = snapshotUserProfile(result.profile);
       interactionState.value = "saved";
       if (props.onProfileSaved$) {
         await props.onProfileSaved$();
@@ -159,7 +165,10 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
     }
   });
 
-  /** Botón verde: PUT /api/user/profile y navega al paso 2 solo si HTTP 200. */
+  /**
+   * Botón verde: PUT solo si el perfil cambió vs baseline;
+   * si está limpio, navega sin pegarle al API.
+   */
   const advance$ = $(async () => {
     if (interactionState.value !== "saved" || advanceUi.isAdvancing) {
       return;
@@ -172,17 +181,32 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
     advanceUi.isAdvancing = true;
     advanceUi.error = "";
     try {
-      const result = await putUserProfile(
-        synthesisToUserProfile(profileSynthesis),
-      );
-      if (!result.ok) {
-        advanceUi.error = result.message;
-        return;
+      const current = synthesisToUserProfile(profileSynthesis);
+      const currentSnap = snapshotUserProfile(current);
+      const dirty =
+        baselineSnapshot.value === null ||
+        baselineSnapshot.value !== currentSnap;
+
+      if (dirty) {
+        if (isUserProfileEmpty(current)) {
+          advanceUi.error =
+            "El perfil está vacío. Analizá y confirmá tu síntesis antes de avanzar.";
+          return;
+        }
+        const result = await putUserProfile(current);
+        if (!result.ok) {
+          advanceUi.error = result.message;
+          return;
+        }
+        baselineSnapshot.value = snapshotUserProfile(result.profile);
       }
+
       await nav(props.nextStepHref);
-    } catch {
-      advanceUi.error =
-        "Error al persistir el perfil. Intentá avanzar de nuevo.";
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      advanceUi.error = detail
+        ? `Error al avanzar: ${detail}`
+        : "Error al persistir el perfil. Intentá avanzar de nuevo.";
     } finally {
       advanceUi.isAdvancing = false;
     }

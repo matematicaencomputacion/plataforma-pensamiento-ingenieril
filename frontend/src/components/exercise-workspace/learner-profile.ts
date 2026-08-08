@@ -9,7 +9,7 @@ export type LearnerProfileSynthesis = ProfileSynthesis & {
   savedAt: string;
 };
 
-/** Campos que acepta PUT /api/user/profile. */
+/** Campos que acepta GET|PUT /api/user/profile (contrato Go `LearnerProfile`). */
 export type UserProfilePayload = {
   lifePurpose: string;
   urgency: string;
@@ -17,20 +17,50 @@ export type UserProfilePayload = {
   techStack: string;
 };
 
+export const EMPTY_USER_PROFILE: UserProfilePayload = {
+  lifePurpose: "",
+  urgency: "",
+  vision5Years: "",
+  techStack: "",
+};
+
+/** Normaliza null/undefined y espacios para comparación y wire JSON. */
+export function normalizeUserProfile(
+  input: Partial<UserProfilePayload> | null | undefined,
+): UserProfilePayload {
+  return {
+    lifePurpose: String(input?.lifePurpose ?? "").trim(),
+    urgency: String(input?.urgency ?? "").trim(),
+    vision5Years: String(input?.vision5Years ?? "").trim(),
+    techStack: String(input?.techStack ?? "").trim(),
+  };
+}
+
+export function snapshotUserProfile(profile: UserProfilePayload): string {
+  return JSON.stringify(normalizeUserProfile(profile));
+}
+
+export function profilesEqual(
+  a: UserProfilePayload,
+  b: UserProfilePayload,
+): boolean {
+  return snapshotUserProfile(a) === snapshotUserProfile(b);
+}
+
 export function synthesisToUserProfile(
   synthesis: ProfileSynthesis,
 ): UserProfilePayload {
-  return {
-    lifePurpose: synthesis.purpose.trim(),
-    urgency: synthesis.urgency.trim(),
-    vision5Years: synthesis.vision.trim(),
-    techStack: synthesis.stack.trim(),
-  };
+  return normalizeUserProfile({
+    lifePurpose: synthesis.purpose,
+    urgency: synthesis.urgency,
+    vision5Years: synthesis.vision,
+    techStack: synthesis.stack,
+  });
 }
 
 /**
  * Confirmación local de la síntesis (borrador).
- * La persistencia real ocurre al avanzar (PUT /api/user/profile).
+ * La persistencia real ocurre al avanzar (PUT /api/user/profile) si está dirty.
  */
 export async function saveLearnerProfile(
   profileData: LearnerProfileSynthesis,
@@ -60,21 +90,58 @@ export type FetchUserProfileResult =
 export function userProfileToSynthesis(
   profile: UserProfilePayload,
 ): ProfileSynthesis {
+  const n = normalizeUserProfile(profile);
   return {
-    purpose: profile.lifePurpose.trim(),
-    urgency: profile.urgency.trim(),
-    vision: profile.vision5Years.trim(),
-    stack: profile.techStack.trim(),
+    purpose: n.lifePurpose,
+    urgency: n.urgency,
+    vision: n.vision5Years,
+    stack: n.techStack,
   };
 }
 
 export function isUserProfileEmpty(profile: UserProfilePayload): boolean {
+  const n = normalizeUserProfile(profile);
   return (
-    !profile.lifePurpose.trim() &&
-    !profile.urgency.trim() &&
-    !profile.vision5Years.trim() &&
-    !profile.techStack.trim()
+    !n.lifePurpose && !n.urgency && !n.vision5Years && !n.techStack
   );
+}
+
+async function readApiError(res: Response, fallback: string): Promise<string> {
+  let text = "";
+  try {
+    text = (await res.text()).trim();
+  } catch {
+    return `${fallback} (HTTP ${res.status})`;
+  }
+  if (!text) {
+    return `${fallback} (HTTP ${res.status})`;
+  }
+  try {
+    const body = JSON.parse(text) as { error?: string; message?: string };
+    if (body.error && body.error.trim()) {
+      return body.error.trim();
+    }
+    if (body.message && body.message.trim()) {
+      return body.message.trim();
+    }
+  } catch {
+    /* texto plano */
+  }
+  return text.slice(0, 240);
+}
+
+function parseProfileBody(raw: unknown): UserProfilePayload {
+  if (!raw || typeof raw !== "object") {
+    return { ...EMPTY_USER_PROFILE };
+  }
+  const obj = raw as Record<string, unknown>;
+  // Contrato canónico + aliases por si el wire llega con keys de síntesis.
+  return normalizeUserProfile({
+    lifePurpose: String(obj.lifePurpose ?? obj.purpose ?? ""),
+    urgency: String(obj.urgency ?? ""),
+    vision5Years: String(obj.vision5Years ?? obj.vision ?? ""),
+    techStack: String(obj.techStack ?? obj.stack ?? ""),
+  });
 }
 
 /**
@@ -94,7 +161,10 @@ export async function fetchUserProfile(): Promise<FetchUserProfileResult> {
   try {
     res = await fetch(`${API_BASE_URL}/api/user/profile`, {
       method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
   } catch {
     return {
@@ -105,19 +175,24 @@ export async function fetchUserProfile(): Promise<FetchUserProfileResult> {
   }
 
   if (!res.ok) {
-    let message = `No pudimos cargar el perfil (HTTP ${res.status}).`;
-    try {
-      const body = (await res.json()) as { error?: string };
-      if (body.error) {
-        message = body.error;
-      }
-    } catch {
-      /* ignore */
-    }
-    return { ok: false, status: res.status, message };
+    return {
+      ok: false,
+      status: res.status,
+      message: await readApiError(res, "No pudimos cargar el perfil"),
+    };
   }
 
-  const profile = (await res.json()) as UserProfilePayload;
+  let profile: UserProfilePayload;
+  try {
+    profile = parseProfileBody(await res.json());
+  } catch {
+    return {
+      ok: false,
+      status: res.status,
+      message: "El servidor devolvió un perfil con formato inválido.",
+    };
+  }
+
   try {
     if (typeof localStorage !== "undefined" && !isUserProfileEmpty(profile)) {
       localStorage.setItem("ppi.learner.profile", JSON.stringify(profile));
@@ -134,7 +209,7 @@ export async function fetchUserProfile(): Promise<FetchUserProfileResult> {
 
 /**
  * Persiste el perfil de coaching del alumno autenticado.
- * Solo el caller debe avanzar de paso si `ok &&` implícito status 200.
+ * Nunca lanza: errores tipados vía `{ ok: false }`.
  */
 export async function putUserProfile(
   payload: UserProfilePayload,
@@ -148,15 +223,26 @@ export async function putUserProfile(
     };
   }
 
+  const body = normalizeUserProfile(payload);
+  if (isUserProfileEmpty(body)) {
+    return {
+      ok: false,
+      status: 400,
+      message:
+        "El perfil está vacío. Completá al menos un campo antes de guardar.",
+    };
+  }
+
   let res: Response;
   try {
     res = await fetch(`${API_BASE_URL}/api/user/profile`, {
       method: "PUT",
       headers: {
+        Accept: "application/json",
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(body),
     });
   } catch {
     return {
@@ -167,19 +253,24 @@ export async function putUserProfile(
   }
 
   if (res.status !== 200) {
-    let message = `No pudimos guardar el perfil (HTTP ${res.status}).`;
-    try {
-      const body = (await res.json()) as { error?: string };
-      if (body.error) {
-        message = body.error;
-      }
-    } catch {
-      /* ignore */
-    }
-    return { ok: false, status: res.status, message };
+    return {
+      ok: false,
+      status: res.status,
+      message: await readApiError(res, "No pudimos guardar el perfil"),
+    };
   }
 
-  const profile = (await res.json()) as UserProfilePayload;
+  let profile: UserProfilePayload;
+  try {
+    const text = await res.text();
+    profile = text.trim()
+      ? parseProfileBody(JSON.parse(text) as unknown)
+      : body;
+  } catch {
+    // Persistió (200) pero el body no parsea: tratamos el request como fuente de verdad.
+    profile = body;
+  }
+
   try {
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("ppi.learner.profile", JSON.stringify(profile));
