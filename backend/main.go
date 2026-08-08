@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
-	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/gemini"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/groq"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/keyword"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/config"
@@ -53,34 +53,30 @@ func resolveDataDir() string {
 	return "data"
 }
 
-func newProfileClassifier(ctx context.Context) (domain.ProfileClassifier, string) {
+func newProfileClassifier(ctx context.Context, groqCfg config.GroqConfig) (domain.ProfileClassifier, string) {
 	mode := strings.ToLower(strings.TrimSpace(os.Getenv("LEARNER_PROFILE_LLM")))
 	if mode == "" {
-		mode = "gemini"
+		mode = "groq"
 	}
 	if mode == "mock" || mode == "keyword" {
 		log.Printf("clasificador de perfil: mock/keywords")
 		return keyword.NewClassifier(), "mock"
 	}
 
-	classifier, err := gemini.NewClassifier(ctx, gemini.Config{
-		Project:  os.Getenv("GOOGLE_CLOUD_PROJECT"),
-		Location: os.Getenv("VERTEX_LOCATION"),
-		Model:    os.Getenv("GEMINI_MODEL"),
-		Backend:  os.Getenv("LEARNER_PROFILE_BACKEND"),
-		APIKey:   os.Getenv("GEMINI_API_KEY"),
+	classifier, err := groq.NewClassifier(ctx, groq.Config{
+		APIKey:  groqCfg.APIKey,
+		Model:   groqCfg.Model,
+		BaseURL: groqCfg.BaseURL,
 	})
 	if err != nil {
-		log.Printf("WARN: no se pudo iniciar Gemini (%v); usando mock keywords", err)
+		log.Printf("WARN: no se pudo iniciar Groq (%v); usando mock keywords", err)
 		return keyword.NewClassifier(), "mock-fallback"
 	}
 	log.Printf(
-		"clasificador de perfil: gemini model=%s backend=%s project=%s",
-		firstNonEmpty(os.Getenv("GEMINI_MODEL"), "gemini-2.0-pro"),
-		firstNonEmpty(os.Getenv("LEARNER_PROFILE_BACKEND"), "auto"),
-		os.Getenv("GOOGLE_CLOUD_PROJECT"),
+		"clasificador de perfil: groq model=%s",
+		firstNonEmpty(groqCfg.Model, "llama-3.1-8b-instant"),
 	)
-	return classifier, "gemini"
+	return classifier, "groq"
 }
 
 func firstNonEmpty(values ...string) string {
@@ -101,6 +97,7 @@ func main() {
 
 	dataDir := resolveDataDir()
 	authCfg := config.LoadAuthConfig()
+	groqCfg := config.LoadGroqConfig()
 
 	sqlitePath := authCfg.SQLitePath()
 	if !filepath.IsAbs(sqlitePath) && sqlitePath != ":memory:" {
@@ -128,7 +125,7 @@ func main() {
 	levelService := usecases.NewLevelService(levelRepo)
 	evaluationService := usecases.NewEvaluationService(levelRepo, profileRepo)
 
-	classifier, _ := newProfileClassifier(context.Background())
+	classifier, _ := newProfileClassifier(context.Background(), groqCfg)
 	learnerProfileService := usecases.NewLearnerProfileService(classifier)
 
 	levelHandler := handlers.NewLevelHandler(levelService)
@@ -141,6 +138,7 @@ func main() {
 	mux.HandleFunc("POST /api/auth/login", authHandler.Login)
 	mux.HandleFunc("POST /api/auth/logout", authHandler.Logout)
 	mux.HandleFunc("GET /api/me", authHandler.Me)
+	mux.HandleFunc("GET /api/user/profile", authHandler.GetProfile)
 	mux.HandleFunc("PUT /api/user/profile", authHandler.UpdateProfile)
 	mux.HandleFunc("GET /api/levels/current", levelHandler.GetCurrent)
 	mux.HandleFunc("GET /api/levels/{id}", levelHandler.GetByID)

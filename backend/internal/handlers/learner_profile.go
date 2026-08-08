@@ -56,12 +56,12 @@ func (h *LearnerProfileHandler) Synthesize(w http.ResponseWriter, r *http.Reques
 		msg := "error al sintetizar el perfil"
 		errText := err.Error()
 		switch {
-		case strings.Contains(errText, "PERMISSION_DENIED"), strings.Contains(errText, "403"):
-			msg = "Gemini/Vertex rechazó la petición (permisos IAM o API no habilitada). Revisá roles del service account."
-		case strings.Contains(errText, "RESOURCE_EXHAUSTED"), strings.Contains(errText, "429"):
-			msg = "Cuota de Gemini agotada. Esperá un momento o revisá billing/límites del proyecto."
-		case strings.Contains(errText, "NOT_FOUND"), strings.Contains(errText, "404"):
-			msg = "El modelo Gemini configurado no está disponible. Probá otro GEMINI_MODEL en .env."
+		case strings.Contains(errText, "401"), strings.Contains(errText, "Invalid API Key"):
+			msg = "Groq rechazó la API key. Revisá GROQ_API_KEY en .env."
+		case strings.Contains(errText, "429"), strings.Contains(errText, "rate_limit"):
+			msg = "Cuota/rate limit de Groq. Esperá un momento e intentá de nuevo."
+		case strings.Contains(errText, "model"), strings.Contains(errText, "404"):
+			msg = "El modelo Groq configurado no está disponible. Probá otro GROQ_MODEL en .env."
 		}
 		_ = json.NewEncoder(w).Encode(map[string]string{"error": msg})
 		return

@@ -97,6 +97,19 @@ func (s *AuthService) Me(_ context.Context, bearerToken string) (domain.PublicUs
 	return user.ToPublic(), nil
 }
 
+// GetProfile devuelve el coaching persistido del usuario autenticado (puede estar vacío).
+func (s *AuthService) GetProfile(_ context.Context, bearerToken string) (domain.LearnerProfile, error) {
+	userID, _, err := s.tokens.Parse(bearerToken)
+	if err != nil {
+		return domain.LearnerProfile{}, domain.ErrUnauthorized
+	}
+	user, err := s.users.GetByID(userID)
+	if err != nil {
+		return domain.LearnerProfile{}, domain.ErrUnauthorized
+	}
+	return user.Profile, nil
+}
+
 // UpdateProfile persiste el coaching de onboarding del usuario autenticado.
 func (s *AuthService) UpdateProfile(
 	_ context.Context,

@@ -146,4 +146,26 @@ func TestUpdateProfileHTTP(t *testing.T) {
 	if profile["lifePurpose"] != "Construir productos" || profile["techStack"] != "go y python" {
 		t.Fatalf("unexpected profile response: %#v", profile)
 	}
+
+	getReq := httptest.NewRequest(http.MethodGet, "/api/user/profile", nil)
+	getReq.Header.Set("Authorization", "Bearer "+token)
+	getRec := httptest.NewRecorder()
+	h.GetProfile(getRec, getReq)
+	if getRec.Code != http.StatusOK {
+		t.Fatalf("GET profile expected 200, got %d body %s", getRec.Code, getRec.Body.String())
+	}
+	var loaded map[string]string
+	if err := json.Unmarshal(getRec.Body.Bytes(), &loaded); err != nil {
+		t.Fatalf("decode get profile: %v", err)
+	}
+	if loaded["lifePurpose"] != "Construir productos" {
+		t.Fatalf("GET profile mismatch: %#v", loaded)
+	}
+
+	emptyGet := httptest.NewRequest(http.MethodGet, "/api/user/profile", nil)
+	emptyGetRec := httptest.NewRecorder()
+	h.GetProfile(emptyGetRec, emptyGet)
+	if emptyGetRec.Code != http.StatusUnauthorized {
+		t.Fatalf("GET without token expected 401, got %d", emptyGetRec.Code)
+	}
 }

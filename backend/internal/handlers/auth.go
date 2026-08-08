@@ -79,6 +79,20 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, user)
 }
 
+func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
+	token, ok := bearerToken(r)
+	if !ok {
+		writeJSONError(w, "no autorizado", http.StatusUnauthorized)
+		return
+	}
+	profile, err := h.service.GetProfile(r.Context(), token)
+	if err != nil {
+		writeAuthError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, profile)
+}
+
 func (h *AuthHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	token, ok := bearerToken(r)
 	if !ok {
