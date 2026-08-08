@@ -4,8 +4,13 @@ import {
   useTask$,
   type QRL,
 } from "@builder.io/qwik";
-import type { Microstep } from "../../lib/microsteps";
+import {
+  getStepMcqBank,
+  stepHasMcq,
+  type Microstep,
+} from "../../lib/microsteps";
 import type { PyodideEngineStatus } from "../../lib/pyodide";
+import { McqBankPanel } from "./mcq-bank";
 import { PromptMarkdown } from "./prompt-markdown";
 import { PythonTypeChips } from "./python-type-chips";
 import {
@@ -20,6 +25,8 @@ export type CodingLayoutProps = {
   code: string;
   showHint: boolean;
   showSolution: boolean;
+  mcqAnswers: Record<string, string>;
+  onMcqAnswer$: QRL<(questionId: string, option: string) => void>;
   checkStatus: "idle" | "pass" | "fail";
   resultsLog: string;
   lotComplete: boolean;
@@ -73,6 +80,15 @@ export const CodingLayout = component$((props: CodingLayoutProps) => {
           <p class="exercise-ws__objective">
             <strong>Objetivo:</strong> {step.objective}
           </p>
+        )}
+        {stepHasMcq(step) && (
+          <McqBankPanel
+            bank={getStepMcqBank(step)}
+            checksMcq={step.checks.mcq ?? null}
+            optional={step.checks.mode === "pytest_plus_optional_mcq"}
+            answers={props.mcqAnswers}
+            onAnswer$={props.onMcqAnswer$}
+          />
         )}
       </section>
 
