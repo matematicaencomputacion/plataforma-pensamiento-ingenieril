@@ -181,6 +181,25 @@ func TestUpdateProfileHTTP(t *testing.T) {
 		t.Fatalf("POST profile expected 200, got %d body %s", postRec.Code, postRec.Body.String())
 	}
 
+	aliasReq := httptest.NewRequest(
+		http.MethodPut,
+		"/api/user/profile",
+		bytes.NewReader([]byte(`{"purpose":"alias purpose","urgency":"u","vision":"v","stack":"s"}`)),
+	)
+	aliasReq.Header.Set("Authorization", "Bearer "+token)
+	aliasRec := httptest.NewRecorder()
+	h.UpdateProfile(aliasRec, aliasReq)
+	if aliasRec.Code != http.StatusOK {
+		t.Fatalf("alias PUT expected 200, got %d body %s", aliasRec.Code, aliasRec.Body.String())
+	}
+	var aliased map[string]string
+	if err := json.Unmarshal(aliasRec.Body.Bytes(), &aliased); err != nil {
+		t.Fatalf("decode alias: %v", err)
+	}
+	if aliased["lifePurpose"] != "alias purpose" || aliased["techStack"] != "s" {
+		t.Fatalf("alias mapping failed: %#v", aliased)
+	}
+
 	badMethod := httptest.NewRequest(http.MethodDelete, "/api/user/profile", nil)
 	badMethod.Header.Set("Authorization", "Bearer "+token)
 	badRec := httptest.NewRecorder()
