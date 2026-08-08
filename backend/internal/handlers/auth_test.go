@@ -168,4 +168,24 @@ func TestUpdateProfileHTTP(t *testing.T) {
 	if emptyGetRec.Code != http.StatusUnauthorized {
 		t.Fatalf("GET without token expected 401, got %d", emptyGetRec.Code)
 	}
+
+	postReq := httptest.NewRequest(
+		http.MethodPost,
+		"/api/user/profile",
+		bytes.NewReader([]byte(`{"lifePurpose":"vía POST","urgency":"hoy","vision5Years":"x","techStack":"go"}`)),
+	)
+	postReq.Header.Set("Authorization", "Bearer "+token)
+	postRec := httptest.NewRecorder()
+	h.Profile(postRec, postReq)
+	if postRec.Code != http.StatusOK {
+		t.Fatalf("POST profile expected 200, got %d body %s", postRec.Code, postRec.Body.String())
+	}
+
+	badMethod := httptest.NewRequest(http.MethodDelete, "/api/user/profile", nil)
+	badMethod.Header.Set("Authorization", "Bearer "+token)
+	badRec := httptest.NewRecorder()
+	h.Profile(badRec, badMethod)
+	if badRec.Code != http.StatusMethodNotAllowed {
+		t.Fatalf("DELETE expected 405, got %d", badRec.Code)
+	}
 }

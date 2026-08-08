@@ -114,6 +114,19 @@ func (h *AuthHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, profile)
 }
 
+// Profile despacha GET (rehidratación) y PUT/POST (persistencia) en /api/user/profile.
+func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.GetProfile(w, r)
+	case http.MethodPut, http.MethodPost:
+		h.UpdateProfile(w, r)
+	default:
+		w.Header().Set("Allow", "GET, PUT, POST, OPTIONS")
+		writeJSONError(w, "método no permitido", http.StatusMethodNotAllowed)
+	}
+}
+
 func bearerToken(r *http.Request) (string, bool) {
 	h := strings.TrimSpace(r.Header.Get("Authorization"))
 	if h == "" {
