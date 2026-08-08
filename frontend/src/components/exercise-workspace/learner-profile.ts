@@ -53,6 +53,85 @@ export type PutUserProfileResult =
   | { ok: true; profile: UserProfilePayload }
   | { ok: false; status: number; message: string };
 
+export type FetchUserProfileResult =
+  | { ok: true; profile: UserProfilePayload; empty: boolean }
+  | { ok: false; status: number; message: string };
+
+export function userProfileToSynthesis(
+  profile: UserProfilePayload,
+): ProfileSynthesis {
+  return {
+    purpose: profile.lifePurpose.trim(),
+    urgency: profile.urgency.trim(),
+    vision: profile.vision5Years.trim(),
+    stack: profile.techStack.trim(),
+  };
+}
+
+export function isUserProfileEmpty(profile: UserProfilePayload): boolean {
+  return (
+    !profile.lifePurpose.trim() &&
+    !profile.urgency.trim() &&
+    !profile.vision5Years.trim() &&
+    !profile.techStack.trim()
+  );
+}
+
+/**
+ * Rehidrata el perfil de coaching del alumno autenticado (GET).
+ */
+export async function fetchUserProfile(): Promise<FetchUserProfileResult> {
+  const token = getStoredToken();
+  if (!token) {
+    return {
+      ok: false,
+      status: 401,
+      message: "Sesión no iniciada.",
+    };
+  }
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/api/user/profile`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    return {
+      ok: false,
+      status: 0,
+      message: "No pudimos conectar con el servidor. Revisá la conexión.",
+    };
+  }
+
+  if (!res.ok) {
+    let message = `No pudimos cargar el perfil (HTTP ${res.status}).`;
+    try {
+      const body = (await res.json()) as { error?: string };
+      if (body.error) {
+        message = body.error;
+      }
+    } catch {
+      /* ignore */
+    }
+    return { ok: false, status: res.status, message };
+  }
+
+  const profile = (await res.json()) as UserProfilePayload;
+  try {
+    if (typeof localStorage !== "undefined" && !isUserProfileEmpty(profile)) {
+      localStorage.setItem("ppi.learner.profile", JSON.stringify(profile));
+    }
+  } catch {
+    /* private mode */
+  }
+  return {
+    ok: true,
+    profile,
+    empty: isUserProfileEmpty(profile),
+  };
+}
+
 /**
  * Persiste el perfil de coaching del alumno autenticado.
  * Solo el caller debe avanzar de paso si `ok &&` implícito status 200.

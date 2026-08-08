@@ -112,4 +112,12 @@ func TestUpdateProfile(t *testing.T) {
 	if got.Urgency != "esta semana" || got.Vision5Years != "liderazgo técnico" || got.TechStack != "python" {
 		t.Fatalf("unexpected profile: %+v", got)
 	}
+
+	loaded, err := svc.GetProfile(ctx, reg.Token)
+	if err != nil {
+		t.Fatalf("get profile: %v", err)
+	}
+	if loaded.LifePurpose != "Cambiar mi vida" || loaded.TechStack != "python" {
+		t.Fatalf("rehydrate mismatch: %+v", loaded)
+	}
 }

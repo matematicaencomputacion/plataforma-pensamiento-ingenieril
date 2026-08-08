@@ -79,6 +79,20 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, user)
 }
 
+func (h *AuthHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
+	token, ok := bearerToken(r)
+	if !ok {
+		writeJSONError(w, "no autorizado", http.StatusUnauthorized)
+		return
+	}
+	profile, err := h.service.GetProfile(r.Context(), token)
+	if err != nil {
+		writeAuthError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, profile)
+}
+
 func (h *AuthHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	token, ok := bearerToken(r)
 	if !ok {
@@ -98,6 +112,19 @@ func (h *AuthHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, profile)
+}
+
+// Profile despacha GET (rehidratación) y PUT/POST (persistencia) en /api/user/profile.
+func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.GetProfile(w, r)
+	case http.MethodPut, http.MethodPost:
+		h.UpdateProfile(w, r)
+	default:
+		w.Header().Set("Allow", "GET, PUT, POST, OPTIONS")
+		writeJSONError(w, "método no permitido", http.StatusMethodNotAllowed)
+	}
 }
 
 func bearerToken(r *http.Request) (string, bool) {

@@ -3,6 +3,7 @@ import {
   component$,
   useSignal,
   useStore,
+  useVisibleTask$,
   type QRL,
 } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
@@ -12,9 +13,11 @@ import {
   type CoachingInteractionState,
 } from "./coaching-interface";
 import {
+  fetchUserProfile,
   putUserProfile,
   saveLearnerProfile,
   synthesisToUserProfile,
+  userProfileToSynthesis,
 } from "./learner-profile";
 import { ProfileBuilder } from "./profile-builder";
 import {
@@ -45,6 +48,39 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
   const saveUi = useStore({ isSaving: false, error: "" });
   const analyzeUi = useStore({ isAnalyzing: false, error: "" });
   const advanceUi = useStore({ isAdvancing: false, error: "" });
+  const hydrateUi = useStore({ loading: true, error: "" });
+
+  // Rehidratación: GET /api/user/profile al montar el onboarding (cliente).
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(async () => {
+    hydrateUi.loading = true;
+    hydrateUi.error = "";
+    try {
+      const result = await fetchUserProfile();
+      if (!result.ok) {
+        // Sin sesión o error de red: el alumno puede seguir redactando.
+        if (result.status !== 401) {
+          hydrateUi.error = result.message;
+        }
+        return;
+      }
+      if (result.empty) {
+        return;
+      }
+      applyProfileSynthesis(
+        profileSynthesis,
+        userProfileToSynthesis(result.profile),
+      );
+      interactionState.value = "saved";
+      if (props.onProfileSaved$) {
+        await props.onProfileSaved$();
+      }
+    } catch {
+      hydrateUi.error = "No pudimos rehidratar el perfil guardado.";
+    } finally {
+      hydrateUi.loading = false;
+    }
+  });
 
   const analyze$ = $(async () => {
     if (analyzeUi.isAnalyzing) {
@@ -162,6 +198,16 @@ export const OnboardingLayout = component$((props: OnboardingLayoutProps) => {
   return (
     <div class="exercise-ws__grid exercise-ws__grid--onboarding">
       <div class="exercise-ws__theory exercise-ws__pane--coaching">
+        {hydrateUi.loading && (
+          <p class="exercise-ws__objective" role="status">
+            Recuperando perfil guardado…
+          </p>
+        )}
+        {hydrateUi.error && (
+          <p class="profile-builder__save-error" role="alert">
+            {hydrateUi.error}
+          </p>
+        )}
         <CoachingInterface
           prompts={props.step.content.coaching_prompts ?? []}
           notes={props.notes}

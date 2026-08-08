@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
-	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/gemini"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/keyword"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/xai"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/config"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/handlers"
@@ -53,34 +53,30 @@ func resolveDataDir() string {
 	return "data"
 }
 
-func newProfileClassifier(ctx context.Context) (domain.ProfileClassifier, string) {
+func newProfileClassifier(ctx context.Context, grokCfg config.GrokConfig) (domain.ProfileClassifier, string) {
 	mode := strings.ToLower(strings.TrimSpace(os.Getenv("LEARNER_PROFILE_LLM")))
 	if mode == "" {
-		mode = "gemini"
+		mode = "grok"
 	}
 	if mode == "mock" || mode == "keyword" {
 		log.Printf("clasificador de perfil: mock/keywords")
 		return keyword.NewClassifier(), "mock"
 	}
 
-	classifier, err := gemini.NewClassifier(ctx, gemini.Config{
-		Project:  os.Getenv("GOOGLE_CLOUD_PROJECT"),
-		Location: os.Getenv("VERTEX_LOCATION"),
-		Model:    os.Getenv("GEMINI_MODEL"),
-		Backend:  os.Getenv("LEARNER_PROFILE_BACKEND"),
-		APIKey:   os.Getenv("GEMINI_API_KEY"),
+	classifier, err := xai.NewClassifier(ctx, xai.Config{
+		APIKey:  grokCfg.APIKey,
+		Model:   grokCfg.Model,
+		BaseURL: grokCfg.BaseURL,
 	})
 	if err != nil {
-		log.Printf("WARN: no se pudo iniciar Gemini (%v); usando mock keywords", err)
+		log.Printf("WARN: no se pudo iniciar Grok/xAI (%v); usando mock keywords", err)
 		return keyword.NewClassifier(), "mock-fallback"
 	}
 	log.Printf(
-		"clasificador de perfil: gemini model=%s backend=%s project=%s",
-		firstNonEmpty(os.Getenv("GEMINI_MODEL"), "gemini-2.0-pro"),
-		firstNonEmpty(os.Getenv("LEARNER_PROFILE_BACKEND"), "auto"),
-		os.Getenv("GOOGLE_CLOUD_PROJECT"),
+		"clasificador de perfil: grok model=%s",
+		firstNonEmpty(grokCfg.Model, "grok-4.5"),
 	)
-	return classifier, "gemini"
+	return classifier, "grok"
 }
 
 func firstNonEmpty(values ...string) string {
@@ -101,6 +97,7 @@ func main() {
 
 	dataDir := resolveDataDir()
 	authCfg := config.LoadAuthConfig()
+	grokCfg := config.LoadGrokConfig()
 
 	sqlitePath := authCfg.SQLitePath()
 	if !filepath.IsAbs(sqlitePath) && sqlitePath != ":memory:" {
@@ -128,7 +125,7 @@ func main() {
 	levelService := usecases.NewLevelService(levelRepo)
 	evaluationService := usecases.NewEvaluationService(levelRepo, profileRepo)
 
-	classifier, _ := newProfileClassifier(context.Background())
+	classifier, _ := newProfileClassifier(context.Background(), grokCfg)
 	learnerProfileService := usecases.NewLearnerProfileService(classifier)
 
 	levelHandler := handlers.NewLevelHandler(levelService)
@@ -141,7 +138,7 @@ func main() {
 	mux.HandleFunc("POST /api/auth/login", authHandler.Login)
 	mux.HandleFunc("POST /api/auth/logout", authHandler.Logout)
 	mux.HandleFunc("GET /api/me", authHandler.Me)
-	mux.HandleFunc("PUT /api/user/profile", authHandler.UpdateProfile)
+	mux.HandleFunc("/api/user/profile", authHandler.Profile)
 	mux.HandleFunc("GET /api/levels/current", levelHandler.GetCurrent)
 	mux.HandleFunc("GET /api/levels/{id}", levelHandler.GetByID)
 	mux.HandleFunc("POST /api/evaluate", evaluateHandler.Evaluate)
