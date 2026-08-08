@@ -1624,6 +1624,22 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+  margin: 0 0 0.85rem;
+}
+
+.type-chips__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.75rem;
+}
+
+.type-chips__heading {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
 .type-chips__label {
@@ -1653,10 +1669,11 @@ body {
   color: var(--ink-soft);
   cursor: pointer;
   transition:
-    background 140ms ease,
-    border-color 140ms ease,
-    color 140ms ease,
-    box-shadow 140ms ease;
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
 .type-chips__chip code {
@@ -1671,21 +1688,55 @@ body {
 }
 
 .type-chips__chip--on {
-  background: rgba(15, 118, 110, 0.12);
+  background: rgba(15, 118, 110, 0.18);
   border-color: var(--accent);
   color: var(--accent-ink);
-  box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.12);
+  box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.16);
+  transform: translateY(-1px);
+}
+
+.type-chips__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 240ms ease;
+}
+
+.type-chips__panel--open {
+  grid-template-rows: 1fr;
+}
+
+.type-chips__panel-inner {
+  overflow: hidden;
+  min-height: 0;
 }
 
 .type-chips__explain {
-  margin: 0;
-  padding: 0.65rem 0.75rem;
+  margin: 0.15rem 0 0;
+  padding: 0.75rem 0.85rem;
   border-radius: 12px;
   border: 1px solid rgba(15, 118, 110, 0.22);
   background: linear-gradient(180deg, rgba(15, 118, 110, 0.08), #fff);
   color: var(--ink);
   font-size: 0.88rem;
   line-height: 1.45;
+}
+
+.type-chips__explain-text {
+  margin: 0 0 0.65rem;
+}
+
+.type-chips__code {
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-x: auto;
 }
 
 .prompt-md__list {

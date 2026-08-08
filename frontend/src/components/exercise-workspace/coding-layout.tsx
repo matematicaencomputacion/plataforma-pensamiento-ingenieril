@@ -1,7 +1,19 @@
-import { component$, type QRL } from "@builder.io/qwik";
+import {
+  component$,
+  useSignal,
+  useTask$,
+  type QRL,
+} from "@builder.io/qwik";
 import type { Microstep } from "../../lib/microsteps";
 import type { PyodideEngineStatus } from "../../lib/pyodide";
 import { PromptMarkdown } from "./prompt-markdown";
+import { PythonTypeChips } from "./python-type-chips";
+import {
+  PY02_VARIABLE_HINTS,
+  splitVariablesPromptHeading,
+  stepShowsPythonTypeChips,
+  type PythonTypeId,
+} from "./python-type-catalog";
 
 export type CodingLayoutProps = {
   step: Microstep;
@@ -29,12 +41,34 @@ export const CodingLayout = component$((props: CodingLayoutProps) => {
   const engineReady = props.engineStatus === "ready";
   const engineLoading = props.engineStatus === "loading";
   const controlsDisabled = !engineReady || props.isBusy;
+  const showTypeChips = stepShowsPythonTypeChips(step.id, step.title);
+  const activeType = useSignal<PythonTypeId | null>(null);
+  const promptParts = showTypeChips
+    ? splitVariablesPromptHeading(step.content.prompt_md)
+    : { heading: null as string | null, body: step.content.prompt_md };
+
+  useTask$(({ track }) => {
+    track(() => props.step.id);
+    activeType.value = null;
+  });
 
   return (
     <div class="exercise-ws__grid exercise-ws__grid--coding">
       <section class="exercise-ws__theory" aria-label="Teoría y enunciado">
         <h2 class="exercise-ws__section-title">Enunciado</h2>
-        <PromptMarkdown markdown={step.content.prompt_md} />
+        {showTypeChips && (
+          <PythonTypeChips
+            heading={promptParts.heading ?? "Variables"}
+            activeType={activeType.value}
+            onSelect$={(typeId) => {
+              activeType.value = typeId;
+            }}
+          />
+        )}
+        <PromptMarkdown
+          markdown={promptParts.body}
+          variableHints={showTypeChips ? PY02_VARIABLE_HINTS : undefined}
+        />
         {step.objective && (
           <p class="exercise-ws__objective">
             <strong>Objetivo:</strong> {step.objective}
