@@ -73,3 +73,21 @@ export function stepShowsPythonTypeChips(stepId: string, title: string): boolean
   }
   return /variable/i.test(title);
 }
+
+/**
+ * Extrae el encabezado **Variables** del prompt para mostrarlo
+ * junto a las píldoras; el resto queda en el cuerpo del enunciado.
+ */
+export function splitVariablesPromptHeading(markdown: string): {
+  heading: string | null;
+  body: string;
+} {
+  const match = markdown.match(/^\s*\*\*(Variables)\*\*\s*(?:\r?\n)+/i);
+  if (!match) {
+    return { heading: null, body: markdown };
+  }
+  return {
+    heading: match[1],
+    body: markdown.slice(match[0].length),
+  };
+}

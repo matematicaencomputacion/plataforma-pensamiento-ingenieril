@@ -9,6 +9,8 @@ export type PythonTypeChipsProps = {
   /** Tipo activo, o `null` si el panel está cerrado. */
   activeType: PythonTypeId | null;
   onSelect$: QRL<(typeId: PythonTypeId | null) => void>;
+  /** Título de sección mostrado junto a las píldoras (p. ej. "Variables"). */
+  heading?: string;
 };
 
 /**
@@ -18,30 +20,41 @@ export type PythonTypeChipsProps = {
 export const PythonTypeChips = component$((props: PythonTypeChipsProps) => {
   const activeChip = getPythonTypeChip(props.activeType);
   const panelOpen = Boolean(activeChip);
+  const heading = props.heading?.trim() || "";
 
   return (
     <div class="type-chips">
-      <p class="type-chips__label">Tipos de variable</p>
-      <div class="type-chips__row" role="group" aria-label="Tipos de datos Python">
-        {PYTHON_TYPE_CHIPS.map((chip) => {
-          const on = props.activeType === chip.id;
-          return (
-            <button
-              key={chip.id}
-              type="button"
-              class={`type-chips__chip${on ? " type-chips__chip--on" : ""}`}
-              aria-pressed={on}
-              aria-expanded={on}
-              aria-controls="python-type-explain-panel"
-              title={on ? `Ocultar ${chip.label}` : `Explicar ${chip.label}`}
-              onClick$={() => {
-                props.onSelect$(on ? null : chip.id);
-              }}
-            >
-              <code>{chip.label}</code>
-            </button>
-          );
-        })}
+      <div class="type-chips__title-row">
+        {heading ? (
+          <h3 class="type-chips__heading">{heading}</h3>
+        ) : (
+          <p class="type-chips__label">Tipos de variable</p>
+        )}
+        <div
+          class="type-chips__row"
+          role="group"
+          aria-label="Tipos de datos Python"
+        >
+          {PYTHON_TYPE_CHIPS.map((chip) => {
+            const on = props.activeType === chip.id;
+            return (
+              <button
+                key={chip.id}
+                type="button"
+                class={`type-chips__chip${on ? " type-chips__chip--on" : ""}`}
+                aria-pressed={on}
+                aria-expanded={on}
+                aria-controls="python-type-explain-panel"
+                title={on ? `Ocultar ${chip.label}` : `Explicar ${chip.label}`}
+                onClick$={() => {
+                  props.onSelect$(on ? null : chip.id);
+                }}
+              >
+                <code>{chip.label}</code>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div

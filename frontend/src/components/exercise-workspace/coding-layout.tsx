@@ -10,6 +10,7 @@ import { PromptMarkdown } from "./prompt-markdown";
 import { PythonTypeChips } from "./python-type-chips";
 import {
   PY02_VARIABLE_HINTS,
+  splitVariablesPromptHeading,
   stepShowsPythonTypeChips,
   type PythonTypeId,
 } from "./python-type-catalog";
@@ -42,6 +43,9 @@ export const CodingLayout = component$((props: CodingLayoutProps) => {
   const controlsDisabled = !engineReady || props.isBusy;
   const showTypeChips = stepShowsPythonTypeChips(step.id, step.title);
   const activeType = useSignal<PythonTypeId | null>(null);
+  const promptParts = showTypeChips
+    ? splitVariablesPromptHeading(step.content.prompt_md)
+    : { heading: null as string | null, body: step.content.prompt_md };
 
   useTask$(({ track }) => {
     track(() => props.step.id);
@@ -51,19 +55,18 @@ export const CodingLayout = component$((props: CodingLayoutProps) => {
   return (
     <div class="exercise-ws__grid exercise-ws__grid--coding">
       <section class="exercise-ws__theory" aria-label="Teoría y enunciado">
-        <div class="exercise-ws__theory-head">
-          <h2 class="exercise-ws__section-title">Enunciado</h2>
-          {showTypeChips && (
-            <PythonTypeChips
-              activeType={activeType.value}
-              onSelect$={(typeId) => {
-                activeType.value = typeId;
-              }}
-            />
-          )}
-        </div>
+        <h2 class="exercise-ws__section-title">Enunciado</h2>
+        {showTypeChips && (
+          <PythonTypeChips
+            heading={promptParts.heading ?? "Variables"}
+            activeType={activeType.value}
+            onSelect$={(typeId) => {
+              activeType.value = typeId;
+            }}
+          />
+        )}
         <PromptMarkdown
-          markdown={step.content.prompt_md}
+          markdown={promptParts.body}
           variableHints={showTypeChips ? PY02_VARIABLE_HINTS : undefined}
         />
         {step.objective && (
