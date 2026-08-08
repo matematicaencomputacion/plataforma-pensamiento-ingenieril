@@ -9,6 +9,7 @@ SHELL := /bin/zsh
 .SHELLFLAGS := -euo pipefail -c
 
 BACKEND_DIR := backend
+WEB_DIR     := web
 BIN_DIR     := $(BACKEND_DIR)/bin
 BIN_NAME    := ppi-api
 MODULE      := github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend
@@ -35,7 +36,7 @@ export CGO_ENABLED ?= 0
 GO ?= go
 GOFLAGS ?=
 
-.PHONY: help toolchain fmt vet test build run clean openspec-validate ci
+.PHONY: help toolchain fmt vet test build run clean openspec-validate web-test web-build ci
 
 help: ## Muestra targets disponibles
 	@awk 'BEGIN {FS = ":.*##"; printf "\nTargets PPI:\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  %-18s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -68,11 +69,20 @@ build: ## Compila el binario del API (backend/bin/ppi-api)
 run: build ## Compila y levanta el API en :8080
 	@cd $(BACKEND_DIR) && ./bin/$(BIN_NAME)
 
-clean: ## Limpia binarios
+clean: ## Limpia binarios Go y artefactos web (dist/target)
 	@rm -rf $(BIN_DIR)
+	@rm -rf $(WEB_DIR)/dist $(WEB_DIR)/target
+
+web-test: ## Tests unitarios del shell Leptos (aislado del Go)
+	@cd $(WEB_DIR) && cargo test
+
+web-build: ## Build Wasm release del shell Leptos via Trunk
+	@# Trunk 0.21 trata NO_COLOR=1 como flag clap inválido; limpiar en el target.
+	@cd $(WEB_DIR) && env -u NO_COLOR trunk build --release
+	@echo ">> built $(WEB_DIR)/dist (wasm)"
 
 openspec-validate: ## Valida el change PPI 1.1
 	@openspec validate ppi-1-1-foundations --no-interactive
 
-ci: fmt vet test build openspec-validate ## Pipeline local rápido
+ci: fmt vet test build openspec-validate ## Pipeline local rápido (Go; web es opt-in via web-test/web-build)
 	@echo ">> CI local OK — module $(MODULE)"

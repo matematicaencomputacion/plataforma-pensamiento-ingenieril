@@ -1,0 +1,97 @@
+:root {
+  color-scheme: light;
+  --bg: #0f1c18;
+  --bg-accent: #1a3329;
+  --fg: #e8f0ea;
+  --muted: #a3b8aa;
+  --accent: #3d8f6e;
+  --border: rgba(232, 240, 234, 0.12);
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--fg);
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(61, 143, 110, 0.35), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(26, 51, 41, 0.9), transparent),
+    var(--bg);
+}
+
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.shell__brand {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+
+.shell__meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.shell__main {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.hero {
+  max-width: 36rem;
+  text-align: center;
+}
+
+.hero__eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.hero__title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+}
+
+.hero__support {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.hero__api {
+  display: inline-block;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  background: rgba(15, 28, 24, 0.55);
+  color: var(--fg);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+}

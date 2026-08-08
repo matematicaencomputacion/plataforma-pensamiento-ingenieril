@@ -20,3 +20,6 @@ data/
 
 # Residuos de tooling local (browser MCP)
 .playwright-mcp/
+
+# CLI OpenSpec / toolchains locales
+.tools/
