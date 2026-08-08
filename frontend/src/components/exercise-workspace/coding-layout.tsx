@@ -1,13 +1,32 @@
-import { component$, type QRL } from "@builder.io/qwik";
-import type { Microstep } from "../../lib/microsteps";
+import {
+  component$,
+  useSignal,
+  useTask$,
+  type QRL,
+} from "@builder.io/qwik";
+import {
+  getStepMcqBank,
+  stepHasMcq,
+  type Microstep,
+} from "../../lib/microsteps";
 import type { PyodideEngineStatus } from "../../lib/pyodide";
+import { McqBankPanel } from "./mcq-bank";
 import { PromptMarkdown } from "./prompt-markdown";
+import { PythonTypeChips } from "./python-type-chips";
+import {
+  PY02_VARIABLE_HINTS,
+  splitVariablesPromptHeading,
+  stepShowsPythonTypeChips,
+  type PythonTypeId,
+} from "./python-type-catalog";
 
 export type CodingLayoutProps = {
   step: Microstep;
   code: string;
   showHint: boolean;
   showSolution: boolean;
+  mcqAnswers: Record<string, string>;
+  onMcqAnswer$: QRL<(questionId: string, option: string) => void>;
   checkStatus: "idle" | "pass" | "fail";
   resultsLog: string;
   lotComplete: boolean;
@@ -29,16 +48,47 @@ export const CodingLayout = component$((props: CodingLayoutProps) => {
   const engineReady = props.engineStatus === "ready";
   const engineLoading = props.engineStatus === "loading";
   const controlsDisabled = !engineReady || props.isBusy;
+  const showTypeChips = stepShowsPythonTypeChips(step.id, step.title);
+  const activeType = useSignal<PythonTypeId | null>(null);
+  const promptParts = showTypeChips
+    ? splitVariablesPromptHeading(step.content.prompt_md)
+    : { heading: null as string | null, body: step.content.prompt_md };
+
+  useTask$(({ track }) => {
+    track(() => props.step.id);
+    activeType.value = null;
+  });
 
   return (
     <div class="exercise-ws__grid exercise-ws__grid--coding">
       <section class="exercise-ws__theory" aria-label="Teoría y enunciado">
         <h2 class="exercise-ws__section-title">Enunciado</h2>
-        <PromptMarkdown markdown={step.content.prompt_md} />
+        {showTypeChips && (
+          <PythonTypeChips
+            heading={promptParts.heading ?? "Variables"}
+            activeType={activeType.value}
+            onSelect$={(typeId) => {
+              activeType.value = typeId;
+            }}
+          />
+        )}
+        <PromptMarkdown
+          markdown={promptParts.body}
+          variableHints={showTypeChips ? PY02_VARIABLE_HINTS : undefined}
+        />
         {step.objective && (
           <p class="exercise-ws__objective">
             <strong>Objetivo:</strong> {step.objective}
           </p>
+        )}
+        {stepHasMcq(step) && (
+          <McqBankPanel
+            bank={getStepMcqBank(step)}
+            checksMcq={step.checks.mcq ?? null}
+            optional={step.checks.mode === "pytest_plus_optional_mcq"}
+            answers={props.mcqAnswers}
+            onAnswer$={props.onMcqAnswer$}
+          />
         )}
       </section>
 

@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Sintetizar perfil de aprendiz desde texto libre
-El sistema SHALL aceptar el relato de onboarding del alumno y devolver una síntesis estructurada con las claves `purpose`, `urgency`, `vision` y `stack` en español, usando un clasificador LLM (Gemini vía Vertex) o un mock configurable.
+El sistema SHALL aceptar el relato de onboarding del alumno y devolver una síntesis estructurada con las claves `purpose`, `urgency`, `vision` y `stack` en español, usando un clasificador LLM (xAI Grok, API OpenAI-compatible) o un mock configurable.
 
 #### Scenario: Clasificación exitosa vía API
 - **WHEN** el cliente envía `POST /api/learner/profile/synthesize` con `raw_notes` de longitud ≥ 12 y el proveedor LLM responde JSON válido
@@ -16,11 +16,11 @@ El sistema SHALL aceptar el relato de onboarding del alumno y devolver una sínt
 - **THEN** el sistema responde HTTP 502 con mensaje genérico seguro (sin filtrar secretos) y el frontend permanece en `drafting` con error visible
 
 ### Requirement: Modo mock para desarrollo offline
-El sistema SHALL permitir `LEARNER_PROFILE_LLM=mock` para clasificar con el motor por keywords sin llamar a Vertex.
+El sistema SHALL permitir `LEARNER_PROFILE_LLM=mock` para clasificar con el motor por keywords sin llamar a xAI.
 
 #### Scenario: Mock activo
 - **WHEN** `LEARNER_PROFILE_LLM=mock` y el cliente solicita síntesis
-- **THEN** el sistema usa el clasificador local por keywords y no realiza llamadas de red a Google
+- **THEN** el sistema usa el clasificador local por keywords y no realiza llamadas de red a xAI
 
 ### Requirement: Onboarding usa síntesis bajo demanda
 El frontend de onboarding SHALL invocar la API de síntesis solo al confirmar “Enviar para análisis”, y solo entonces transiciónar a `reviewing` si la respuesta es exitosa.

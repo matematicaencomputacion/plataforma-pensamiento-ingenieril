@@ -1624,6 +1624,22 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+  margin: 0 0 0.85rem;
+}
+
+.type-chips__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.75rem;
+}
+
+.type-chips__heading {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
 .type-chips__label {
@@ -1653,10 +1669,11 @@ body {
   color: var(--ink-soft);
   cursor: pointer;
   transition:
-    background 140ms ease,
-    border-color 140ms ease,
-    color 140ms ease,
-    box-shadow 140ms ease;
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
 .type-chips__chip code {
@@ -1671,21 +1688,55 @@ body {
 }
 
 .type-chips__chip--on {
-  background: rgba(15, 118, 110, 0.12);
+  background: rgba(15, 118, 110, 0.18);
   border-color: var(--accent);
   color: var(--accent-ink);
-  box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.12);
+  box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.16);
+  transform: translateY(-1px);
+}
+
+.type-chips__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 240ms ease;
+}
+
+.type-chips__panel--open {
+  grid-template-rows: 1fr;
+}
+
+.type-chips__panel-inner {
+  overflow: hidden;
+  min-height: 0;
 }
 
 .type-chips__explain {
-  margin: 0;
-  padding: 0.65rem 0.75rem;
+  margin: 0.15rem 0 0;
+  padding: 0.75rem 0.85rem;
   border-radius: 12px;
   border: 1px solid rgba(15, 118, 110, 0.22);
   background: linear-gradient(180deg, rgba(15, 118, 110, 0.08), #fff);
   color: var(--ink);
   font-size: 0.88rem;
   line-height: 1.45;
+}
+
+.type-chips__explain-text {
+  margin: 0 0 0.65rem;
+}
+
+.type-chips__code {
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-x: auto;
 }
 
 .prompt-md__list {
@@ -2083,6 +2134,97 @@ body {
   background: #0b5f59;
 }
 
+/* —— MCQ del banco de la semilla (w3-exercise-harness, tarea 4.1) —— */
+
+.mcq-bank {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #f7faf9;
+}
+
+.mcq-bank__label {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.mcq-bank__question {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.mcq-bank__question + .mcq-bank__question {
+  margin-top: 0.9rem;
+}
+
+.mcq-bank__prompt {
+  padding: 0;
+  margin-bottom: 0.55rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.mcq-bank__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.mcq-bank__option {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.88rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.mcq-bank__option:hover {
+  border-color: var(--accent);
+}
+
+.mcq-bank__option--correct {
+  border-color: #15803d;
+  background: #f0fdf4;
+}
+
+.mcq-bank__option--incorrect {
+  border-color: #b91c1c;
+  background: #fef2f2;
+}
+
+.mcq-bank__option--muted {
+  opacity: 0.55;
+}
+
+.mcq-bank__feedback {
+  margin: 0.55rem 0 0;
+  font-size: 0.85rem;
+}
+
+.mcq-bank__feedback--pass {
+  color: #15803d;
+}
+
+.mcq-bank__feedback--fail {
+  color: #b91c1c;
+}
+
+/* —— Responsive: stack vertical theory → editor → checks (tarea 4.2) —— */
+
 @media (max-width: 900px) {
   .exercise-ws__grid {
     grid-template-columns: 1fr;
@@ -2098,6 +2240,23 @@ body {
 
   .exercise-ws__editor {
     min-height: 180px;
+  }
+
+  .exercise-ws__console {
+    max-height: 240px;
+    overflow-y: auto;
+  }
+
+  .exercise-ws__toolbar {
+    flex-wrap: wrap;
+  }
+
+  .exercise-ws__header {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .exercise-ws__actions {
+    width: 100%;
   }
 }
 

@@ -20,4 +20,10 @@ export {
   normalizeCheckPayload,
   resolveStep,
 } from "./loader";
+export {
+  areBankAnswersCorrect,
+  getStepMcqBank,
+  isStepGateOpen,
+  stepHasMcq,
+} from "./gating";
 
