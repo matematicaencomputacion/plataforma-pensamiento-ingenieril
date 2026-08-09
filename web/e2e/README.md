@@ -58,14 +58,23 @@ Desde la raíz del monorepo:
 make web-e2e
 ```
 
-## Cloud / agente remoto
+## Cloud / CI (GitHub Actions)
 
-1. Secrets del entorno: `PPI_E2E_EMAIL`, `PPI_E2E_PASSWORD` (y opcionalmente `PPI_E2E_BASE_URL` si el preview no es local).
-2. Instalar deps + Chromium: `cd web/e2e && npm ci && npx playwright install --with-deps chromium`.
-3. Levantar API + Trunk (o apuntar `PPI_E2E_BASE_URL` a un deploy de preview).
-4. `npm test`.
+El workflow `.github/workflows/e2e.yml` levanta Go (`:8080`) + Trunk (`:3001`) y corre
+Playwright en Chromium **headless**.
 
-En GitHub Actions, usá repository secrets — no pongas el password del correo en el YAML.
+Credenciales: **usuario efímero por run** (`PPI_E2E_MODE=register` + email único
+`e2e-<run_id>@example.com`). No hace falta configurar `PPI_E2E_EMAIL` /
+`PPI_E2E_PASSWORD` en GitHub Secrets para el smoke verde.
+
+Si en el futuro querés fijar un usuario:
+1. Secrets `PPI_E2E_EMAIL` / `PPI_E2E_PASSWORD`
+2. Ajustar el workflow a `PPI_E2E_MODE=login` (o override por env)
+
+En un agente cloud local:
+1. `cd web/e2e && npm ci && npx playwright install --with-deps chromium`
+2. Exportá `PPI_E2E_*` o usá registro efímero
+3. API + Trunk arriba → `npm test`
 
 ## Selectores
 
