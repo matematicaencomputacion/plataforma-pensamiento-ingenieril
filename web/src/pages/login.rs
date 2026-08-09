@@ -51,6 +51,10 @@ pub fn LoginPage() -> impl IntoView {
                     navigate("/workspace", Default::default());
                 }
                 Err(err) => {
+                    // Stale bearer ghosts on 401/409 must not keep the shell "logged in".
+                    if matches!(err.status, Some(401 | 409)) {
+                        session.clear();
+                    }
                     error.set(err.message);
                     busy.set(false);
                 }

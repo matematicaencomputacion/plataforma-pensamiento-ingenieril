@@ -63,9 +63,18 @@ func NewAuthService(
 }
 
 // ResolveExposeResetToken decides DX token revelation from env + JWT secret.
+//
+// Priority:
+//  1. PPI_EXPOSE_RESET_TOKEN explicit (1/true → on, 0/false → off)
+//  2. ENV / APP_ENV / GO_ENV ∈ {development,dev,local} → on
+//  3. Known local/CI JWT secrets → on
+//  4. otherwise off
 func ResolveExposeResetToken(jwtSecret string) bool {
 	if v := strings.TrimSpace(os.Getenv("PPI_EXPOSE_RESET_TOKEN")); v != "" {
 		return v == "1" || strings.EqualFold(v, "true")
+	}
+	if isLocalDevEnv() {
+		return true
 	}
 	switch strings.TrimSpace(jwtSecret) {
 	case "dev-only-change-me-ppi-jwt-secret", "harness-jwt-secret", "test-secret", "ci-e2e-only-ppi-jwt-secret":
@@ -73,6 +82,17 @@ func ResolveExposeResetToken(jwtSecret string) bool {
 	default:
 		return false
 	}
+}
+
+func isLocalDevEnv() bool {
+	for _, key := range []string{"ENV", "APP_ENV", "GO_ENV"} {
+		v := strings.ToLower(strings.TrimSpace(os.Getenv(key)))
+		switch v {
+		case "development", "dev", "local":
+			return true
+		}
+	}
+	return false
 }
 
 type AuthResult struct {

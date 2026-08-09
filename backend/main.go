@@ -112,15 +112,19 @@ func main() {
 	if err != nil {
 		log.Fatalf("user repo: %v", err)
 	}
+	exposeReset := usecases.ResolveExposeResetToken(authCfg.JWTSecret)
 	authService := usecases.NewAuthService(
 		userRepo,
 		crypto.NewBcryptHasher(),
 		jwtauth.NewHS256Issuer(authCfg.JWTSecret),
 		usecases.AuthOptions{
-			ExposeResetToken: usecases.ResolveExposeResetToken(authCfg.JWTSecret),
+			ExposeResetToken: exposeReset,
 		},
 	)
 	authHandler := handlers.NewAuthHandler(authService)
+	if exposeReset {
+		log.Printf("auth DX: forgot-password incluye resetToken (dev/harness)")
+	}
 
 	levelRepo := jsonstore.NewLevelRepository(jsonstore.DefaultLevelsPath(dataDir))
 	profileRepo := jsonstore.NewCognitiveProfileRepository(jsonstore.DefaultCognitiveProfilesPath(dataDir))

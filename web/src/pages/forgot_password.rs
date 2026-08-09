@@ -1,10 +1,12 @@
 use leptos::prelude::*;
 use leptos_router::components::A;
+use leptos_router::hooks::use_navigate;
 
 use crate::auth::{input_value, request_password_reset};
 
 #[component]
 pub fn ForgotPasswordPage() -> impl IntoView {
+    let navigate = use_navigate();
     let email = RwSignal::new(String::new());
     let error = RwSignal::new(String::new());
     let message = RwSignal::new(String::new());
@@ -22,12 +24,18 @@ pub fn ForgotPasswordPage() -> impl IntoView {
         busy.set(true);
 
         let email_v = email.get_untracked();
+        let navigate = navigate.clone();
         leptos::task::spawn_local(async move {
             match request_password_reset(email_v).await {
                 Ok(res) => {
                     message.set(res.message);
-                    if let Some(tok) = res.reset_token {
-                        reset_token.set(tok);
+                    if let Some(tok) = res.reset_token.filter(|t| !t.is_empty()) {
+                        // DX: backend only includes resetToken in local/dev exposure modes.
+                        reset_token.set(tok.clone());
+                        navigate(
+                            &format!("/reset-password?token={tok}"),
+                            Default::default(),
+                        );
                     }
                     busy.set(false);
                 }
@@ -75,14 +83,12 @@ pub fn ForgotPasswordPage() -> impl IntoView {
                     <Show when=move || !reset_token.get().is_empty()>
                         <p class="auth-form__dev" data-testid="reset-token-hint">
                             "Entorno de desarrollo: "
-                            <a
-                                class="auth-form__dev-link"
-                                href=move || {
-                                    format!("/reset-password?token={}", reset_token.get())
-                                }
+                            <A
+                                href=move || format!("/reset-password?token={}", reset_token.get())
+                                attr:class="auth-form__dev-link"
                             >
                                 "continuar al reseteo"
-                            </a>
+                            </A>
                         </p>
                     </Show>
                     <button
