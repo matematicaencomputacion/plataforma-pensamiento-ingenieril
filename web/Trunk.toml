@@ -5,15 +5,14 @@ dist = "dist"
 [watch]
 ignore = ["dist"]
 
-# Avoid colliding with the Go API on :8080.
+# Avoid colliding with the Go API on :8080 (otherwise Trunk SPA answers POST with 405).
 [serve]
 port = 3001
+address = "127.0.0.1"
 
-# Dev-only (`trunk serve`): browser calls same-origin `/api/...` and Trunk
-# forwards to the Go API. Avoids CORS between :8080 (API) and the Trunk port.
-# Request `/api/auth/login` → `http://localhost:8080/api/auth/login`
-# (rewrite prefix is stripped, then backend path is re-applied).
-# Note: Trunk 0.21 has no `pass_host`; Host is set to the backend host automatically.
+# Dev-only (`trunk serve`): browser same-origin `/api/...` → Go API.
+# Trailing slashes matter for Trunk's nest_service matching (SPA fallback returns 405 on POST).
+# Request: POST /api/auth/login → http://127.0.0.1:8080/api/auth/login
 [[proxy]]
-rewrite = "/api"
-backend = "http://localhost:8080/api"
+rewrite = "/api/"
+backend = "http://127.0.0.1:8080/api/"

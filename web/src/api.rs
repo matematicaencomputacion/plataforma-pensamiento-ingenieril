@@ -8,7 +8,9 @@ use serde::{Deserialize, Serialize};
 /// API origin for the Go backend.
 ///
 /// Empty string → same-origin relative URLs (`/api/...`) so `trunk serve`'s
-/// `[[proxy]]` can forward to `http://localhost:8080` without browser CORS.
+/// `[[proxy]]` (`rewrite = "/api/"` → `http://127.0.0.1:8080/api/`) can forward
+/// POSTs to Go. A misconfigured proxy falls through to Trunk's SPA and returns
+/// HTTP 405 (Allow: GET, HEAD) on auth endpoints.
 pub const API_BASE_URL: &str = "";
 
 /// localStorage key (shared semantic with the legacy Qwik client).
