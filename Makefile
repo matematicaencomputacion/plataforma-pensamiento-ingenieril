@@ -37,7 +37,7 @@ GO ?= go
 GOFLAGS ?=
 
 .PHONY: help toolchain fmt vet test build run clean openspec-validate web-test web-build web-e2e \
-	harness harness-unit harness-integration harness-e2e ci dev-set-password
+	harness harness-unit harness-integration harness-e2e harness-journeys ci dev-set-password
 
 help: ## Muestra targets disponibles
 	@awk 'BEGIN {FS = ":.*##"; printf "\nTargets PPI:\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  %-18s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -108,6 +108,10 @@ harness-integration: ## Go integration tags (PPI_HARNESS_INTEGRATION=1)
 harness-e2e: ## Levanta stack efímero + Playwright + teardown
 	@chmod +x scripts/harness/run.sh
 	@./scripts/harness/run.sh e2e
+
+harness-journeys: ## ADR 003: journeys Auth+Hub (P1→P3) con stack efímero
+	@chmod +x scripts/harness/run.sh
+	@./scripts/harness/run.sh journeys
 
 openspec-validate: ## Valida el change PPI 1.1
 	@openspec validate ppi-1-1-foundations --no-interactive

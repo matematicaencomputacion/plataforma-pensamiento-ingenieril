@@ -1,29 +1,46 @@
 import { expect, test } from "@playwright/test";
+import {
+  e2eTimeout,
+  fillLeptosInput,
+  gotoApp,
+  waitForAuthFormReady,
+} from "./helpers";
 
 /**
- * Scaffold: form validation UX for auth screens.
- * Enable when assertions stabilize against Leptos error rendering.
+ * Auth form validation UX (ADR 003).
  */
-test.describe.skip("auth validation (scaffold)", () => {
+test.describe("auth validation", () => {
   test("login shows alert on invalid credentials", async ({ page }) => {
-    await page.goto("/login");
-    await page.locator("#login-email").fill("nobody@example.com");
-    await page.locator("#login-password").fill("wrong-password-xx");
+    await gotoApp(page, "/login");
+    await waitForAuthFormReady(page, {
+      emailSelector: "#login-email",
+      passwordSelector: "#login-password",
+      submitName: "Entrar",
+    });
+    await fillLeptosInput(page, "#login-email", "nobody@example.com");
+    await fillLeptosInput(page, "#login-password", "wrong-password-xx");
     await page.getByRole("button", { name: "Entrar" }).click();
-    await expect(page.getByRole("alert")).toBeVisible();
+    await expect(page.getByRole("alert")).toBeVisible({ timeout: e2eTimeout });
     await expect(page).not.toHaveURL(/\/workspace/);
   });
 
   test("register rejects too-short password client-side or via API", async ({
     page,
   }) => {
-    await page.goto("/register");
-    await page.locator("#register-email").fill("short-pass@example.com");
-    await page.locator("#register-password").fill("short");
+    await gotoApp(page, "/register");
+    await waitForAuthFormReady(page, {
+      emailSelector: "#register-email",
+      passwordSelector: "#register-password",
+      submitName: "Crear cuenta",
+    });
+    await fillLeptosInput(page, "#register-email", `short-${Date.now()}@example.com`);
+    await fillLeptosInput(page, "#register-password", "short");
     await page.getByRole("button", { name: "Crear cuenta" }).click();
-    // Either HTML5 minlength blocks submit or API returns 400 alert.
+    // HTML5 minlength may block submit, or API/Leptos shows an alert.
+    await page.waitForTimeout(500);
     const stillOnRegister = page.url().includes("/register");
     const alertVisible = await page.getByRole("alert").isVisible().catch(() => false);
     expect(stillOnRegister || alertVisible).toBeTruthy();
+    await expect(page).not.toHaveURL(/\/workspace/);
   });
 });
