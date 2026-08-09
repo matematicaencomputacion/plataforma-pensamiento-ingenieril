@@ -34,6 +34,7 @@ Targets Makefile (desde la raíz, aislados de `make test` Go):
 
 - `make web-test` — `cargo test` en `web/`
 - `make web-build` — `trunk build --release` en `web/`
+- `make web-e2e` — smoke Playwright (ver `web/e2e/README.md`; requiere `PPI_E2E_*`)
 
 ## Notas
 

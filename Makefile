@@ -36,7 +36,7 @@ export CGO_ENABLED ?= 0
 GO ?= go
 GOFLAGS ?=
 
-.PHONY: help toolchain fmt vet test build run clean openspec-validate web-test web-build ci
+.PHONY: help toolchain fmt vet test build run clean openspec-validate web-test web-build web-e2e ci
 
 help: ## Muestra targets disponibles
 	@awk 'BEGIN {FS = ":.*##"; printf "\nTargets PPI:\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  %-18s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -80,6 +80,9 @@ web-build: ## Build Wasm release del shell Leptos via Trunk
 	@# Trunk 0.21 trata NO_COLOR=1 como flag clap inválido; limpiar en el target.
 	@cd $(WEB_DIR) && env -u NO_COLOR trunk build --release
 	@echo ">> built $(WEB_DIR)/dist (wasm)"
+
+web-e2e: ## Smoke Playwright auth (requiere PPI_E2E_EMAIL/PASSWORD + API :8080 + Trunk :3001)
+	@cd $(WEB_DIR)/e2e && npm test
 
 openspec-validate: ## Valida el change PPI 1.1
 	@openspec validate ppi-1-1-foundations --no-interactive
