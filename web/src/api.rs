@@ -60,6 +60,37 @@ pub fn me_url() -> String {
     api_url("/api/me")
 }
 
+/// True when the API rejected the Bearer session (orphan / wiped DB / bad JWT).
+pub fn is_auth_rejection(status: u16) -> bool {
+    status == 401 || status == 403
+}
+
+pub fn forgot_password_url() -> String {
+    api_url("/api/auth/forgot-password")
+}
+
+pub fn reset_password_url() -> String {
+    api_url("/api/auth/reset-password")
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ForgotPasswordRequest {
+    pub email: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ForgotPasswordResponse {
+    pub message: String,
+    #[serde(default, rename = "resetToken")]
+    pub reset_token: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ResetPasswordRequest {
+    pub token: String,
+    pub password: String,
+}
+
 /// Prefer API `error` field; fall back to HTTP status text.
 pub fn parse_auth_error_body(body: &str, status: u16) -> String {
     if let Ok(parsed) = serde_json::from_str::<AuthErrorBody>(body) {
@@ -87,6 +118,31 @@ mod tests {
         assert_eq!(register_url(), "/api/auth/register");
         assert_eq!(logout_url(), "/api/auth/logout");
         assert_eq!(me_url(), "/api/me");
+        assert_eq!(forgot_password_url(), "/api/auth/forgot-password");
+        assert_eq!(reset_password_url(), "/api/auth/reset-password");
+    }
+
+    #[test]
+    fn forgot_reset_json_matches_backend_contract() {
+        let forgot = serde_json::to_string(&ForgotPasswordRequest {
+            email: "alum@example.com".into(),
+        })
+        .expect("serialize forgot");
+        assert!(forgot.contains("\"email\""));
+
+        let reset = serde_json::to_string(&ResetPasswordRequest {
+            token: "abc".into(),
+            password: "secreto12".into(),
+        })
+        .expect("serialize reset");
+        assert!(reset.contains("\"token\""));
+        assert!(reset.contains("\"password\""));
+
+        let parsed: ForgotPasswordResponse = serde_json::from_str(
+            r#"{"message":"ok","resetToken":"deadbeef"}"#,
+        )
+        .expect("decode forgot");
+        assert_eq!(parsed.reset_token.as_deref(), Some("deadbeef"));
     }
 
     #[test]
@@ -108,6 +164,14 @@ mod tests {
             "credenciales inválidas"
         );
         assert_eq!(parse_auth_error_body("not-json", 500), "Error HTTP 500");
+    }
+
+    #[test]
+    fn auth_rejection_detects_unauthorized_and_forbidden() {
+        assert!(is_auth_rejection(401));
+        assert!(is_auth_rejection(403));
+        assert!(!is_auth_rejection(400));
+        assert!(!is_auth_rejection(500));
     }
 
     #[test]

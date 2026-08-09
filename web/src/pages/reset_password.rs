@@ -1,16 +1,23 @@
 use leptos::prelude::*;
 use leptos_router::components::A;
-use leptos_router::hooks::use_navigate;
+use leptos_router::hooks::{use_navigate, use_query_map};
 
-use crate::auth::{input_value, login_user};
+use crate::auth::{input_value, reset_password};
 use crate::session::SessionCtx;
 
 #[component]
-pub fn LoginPage() -> impl IntoView {
+pub fn ResetPasswordPage() -> impl IntoView {
     let session = expect_context::<SessionCtx>();
     let navigate = use_navigate();
+    let query = use_query_map();
 
-    let email = RwSignal::new(String::new());
+    let token = RwSignal::new(
+        query
+            .get_untracked()
+            .get_str("token")
+            .unwrap_or_default()
+            .to_string(),
+    );
     let password = RwSignal::new(String::new());
     let error = RwSignal::new(String::new());
     let busy = RwSignal::new(false);
@@ -23,12 +30,22 @@ pub fn LoginPage() -> impl IntoView {
         error.set(String::new());
         busy.set(true);
 
-        let email_v = email.get_untracked();
+        // Re-read query in case the signal was initialized before the router hydrated.
+        let from_query = query
+            .get_untracked()
+            .get_str("token")
+            .unwrap_or_default()
+            .to_string();
+        let mut token_v = token.get_untracked();
+        if token_v.is_empty() && !from_query.is_empty() {
+            token_v = from_query;
+            token.set(token_v.clone());
+        }
         let password_v = password.get_untracked();
         let navigate = navigate.clone();
 
         leptos::task::spawn_local(async move {
-            match login_user(email_v, password_v).await {
+            match reset_password(token_v, password_v).await {
                 Ok(result) => {
                     session.establish(result.user, result.token);
                     busy.set(false);
@@ -48,33 +65,33 @@ pub fn LoginPage() -> impl IntoView {
                 <A href="/" attr:class="auth-page__brand">
                     "IngenierIA"
                 </A>
-                <h1 class="auth-page__title">"Iniciar sesión"</h1>
+                <h1 class="auth-page__title">"Nueva contraseña"</h1>
                 <p class="auth-page__lead">
-                    "Entrá con tu correo para continuar en el workspace."
+                    "Elegí una contraseña de al menos 8 caracteres."
                 </p>
                 <form class="auth-form" on:submit=on_submit>
-                    <label class="auth-form__label" for="login-email">
-                        "Correo"
+                    <label class="auth-form__label" for="reset-token">
+                        "Token de recuperación"
                     </label>
                     <input
-                        id="login-email"
+                        id="reset-token"
                         class="auth-form__input"
-                        type="email"
-                        autocomplete="email"
+                        type="text"
+                        autocomplete="off"
                         required
-                        prop:value=move || email.get()
-                        on:input=move |ev| email.set(input_value(&ev))
+                        prop:value=move || token.get()
+                        on:input=move |ev| token.set(input_value(&ev))
                     />
-                    <label class="auth-form__label" for="login-password">
-                        "Contraseña"
+                    <label class="auth-form__label" for="reset-password">
+                        "Nueva contraseña"
                     </label>
                     <input
-                        id="login-password"
+                        id="reset-password"
                         class="auth-form__input"
                         type="password"
-                        autocomplete="current-password"
+                        autocomplete="new-password"
                         required
-                        minlength="8"
+                        minlength=8
                         prop:value=move || password.get()
                         on:input=move |ev| password.set(input_value(&ev))
                     />
@@ -90,19 +107,15 @@ pub fn LoginPage() -> impl IntoView {
                     >
                         {move || {
                             if busy.get() {
-                                "Entrando…"
+                                "Guardando…"
                             } else {
-                                "Entrar"
+                                "Restablecer contraseña"
                             }
                         }}
                     </button>
                 </form>
                 <p class="auth-page__switch">
-                    <A href="/forgot-password">"Olvidé mi contraseña"</A>
-                </p>
-                <p class="auth-page__switch">
-                    "¿No tenés cuenta? "
-                    <A href="/register">"Crear cuenta"</A>
+                    <A href="/forgot-password">"Solicitar un token nuevo"</A>
                 </p>
             </div>
         </section>

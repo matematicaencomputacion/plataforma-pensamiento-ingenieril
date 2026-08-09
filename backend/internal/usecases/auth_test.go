@@ -24,7 +24,97 @@ func newTestAuth(t *testing.T) *usecases.AuthService {
 	if err != nil {
 		t.Fatalf("repo: %v", err)
 	}
-	return usecases.NewAuthService(repo, crypto.NewBcryptHasher(), jwtauth.NewHS256Issuer("test-secret"))
+	return usecases.NewAuthService(
+		repo,
+		crypto.NewBcryptHasher(),
+		jwtauth.NewHS256Issuer("test-secret"),
+		usecases.AuthOptions{ExposeResetToken: true},
+	)
+}
+
+func TestForgotAndResetPassword(t *testing.T) {
+	svc := newTestAuth(t)
+	ctx := context.Background()
+
+	_, err := svc.Register(ctx, "reset@example.com", "secreto12")
+	if err != nil {
+		t.Fatalf("register: %v", err)
+	}
+
+	unknown, err := svc.ForgotPassword(ctx, "nobody@example.com")
+	if err != nil {
+		t.Fatalf("forgot unknown: %v", err)
+	}
+	if unknown.ResetToken != "" {
+		t.Fatal("unknown email must not expose token")
+	}
+	if unknown.Message == "" {
+		t.Fatal("expected generic message")
+	}
+
+	forgot, err := svc.ForgotPassword(ctx, "reset@example.com")
+	if err != nil {
+		t.Fatalf("forgot: %v", err)
+	}
+	if forgot.ResetToken == "" {
+		t.Fatal("expected exposed reset token")
+	}
+
+	_, err = svc.ResetPassword(ctx, forgot.ResetToken, "corta")
+	if !errors.Is(err, domain.ErrInvalidPassword) {
+		t.Fatalf("expected weak password error, got %v", err)
+	}
+
+	reset, err := svc.ResetPassword(ctx, forgot.ResetToken, "nuevaClave9")
+	if err != nil {
+		t.Fatalf("reset: %v", err)
+	}
+	if reset.Token == "" {
+		t.Fatal("expected session token after reset")
+	}
+
+	_, err = svc.Login(ctx, "reset@example.com", "secreto12")
+	if !errors.Is(err, domain.ErrInvalidCredentials) {
+		t.Fatalf("old password should fail, got %v", err)
+	}
+	if _, err := svc.Login(ctx, "reset@example.com", "nuevaClave9"); err != nil {
+		t.Fatalf("new password login: %v", err)
+	}
+
+	_, err = svc.ResetPassword(ctx, forgot.ResetToken, "otraClave99")
+	if !errors.Is(err, domain.ErrInvalidResetToken) {
+		t.Fatalf("reused token should fail, got %v", err)
+	}
+}
+
+func TestForgotPasswordHidesTokenWhenDisabled(t *testing.T) {
+	t.Helper()
+	db, err := sqlite.OpenDB(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	t.Cleanup(func() { _ = db.Close() })
+	repo, err := sqlite.NewUserRepository(db)
+	if err != nil {
+		t.Fatalf("repo: %v", err)
+	}
+	svc := usecases.NewAuthService(
+		repo,
+		crypto.NewBcryptHasher(),
+		jwtauth.NewHS256Issuer("test-secret"),
+		usecases.AuthOptions{ExposeResetToken: false},
+	)
+	ctx := context.Background()
+	if _, err := svc.Register(ctx, "hide@example.com", "secreto12"); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	out, err := svc.ForgotPassword(ctx, "hide@example.com")
+	if err != nil {
+		t.Fatalf("forgot: %v", err)
+	}
+	if out.ResetToken != "" {
+		t.Fatal("token must stay hidden when exposure disabled")
+	}
 }
 
 func TestRegisterAndLogin(t *testing.T) {

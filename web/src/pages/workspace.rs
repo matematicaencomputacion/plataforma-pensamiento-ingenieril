@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::components::A;
-use leptos_router::hooks::use_navigate;
+use leptos_router::hooks::{use_location, use_navigate};
+use leptos_router::NavigateOptions;
 
 use crate::session::SessionCtx;
 
@@ -8,10 +9,24 @@ use crate::session::SessionCtx;
 pub fn WorkspacePage() -> impl IntoView {
     let session = expect_context::<SessionCtx>();
     let navigate = use_navigate();
+    let location = use_location();
 
+    // Guard: after bootstrap, no live session → leave /workspace once (replace).
+    // Require hydrated `user` (not just a stored token) so orphan JWTs that
+    // `/api/me` rejected cannot keep the shell looking authenticated.
     Effect::new(move |_| {
-        if session.bootstrapped.get() && session.token.get().is_none() {
-            navigate("/login", Default::default());
+        let ready = session.bootstrapped.get();
+        let live = session.user.get().is_some();
+        let pending = session.token.get().is_some() && !live;
+        let on_workspace = location.pathname.get() == "/workspace";
+        if ready && !live && !pending && on_workspace {
+            navigate(
+                "/login",
+                NavigateOptions {
+                    replace: true,
+                    ..Default::default()
+                },
+            );
         }
     });
 
@@ -19,9 +34,17 @@ pub fn WorkspacePage() -> impl IntoView {
         <section class="workspace">
             <Show
                 when=move || session.user.get().is_some()
-                fallback=|| {
+                fallback=move || {
                     view! {
-                        <p class="workspace__muted">"Comprobando sesión…"</p>
+                        <p class="workspace__muted">
+                            {move || {
+                                if !session.bootstrapped.get() || session.token.get().is_some() {
+                                    "Comprobando sesión…"
+                                } else {
+                                    "Redirigiendo…"
+                                }
+                            }}
+                        </p>
                     }
                 }
             >

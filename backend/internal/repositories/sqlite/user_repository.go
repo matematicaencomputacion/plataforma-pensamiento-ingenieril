@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	_ "modernc.org/sqlite"
 
@@ -61,7 +62,19 @@ CREATE TABLE IF NOT EXISTS users (
 	if err != nil {
 		return err
 	}
-	return r.ensureProfileColumns()
+	if err := r.ensureProfileColumns(); err != nil {
+		return err
+	}
+	_, err = r.db.Exec(`
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id TEXT PRIMARY KEY NOT NULL,
+  user_id TEXT NOT NULL,
+  token_hash TEXT NOT NULL UNIQUE,
+  expires_at TEXT NOT NULL,
+  used_at TEXT,
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);`)
+	return err
 }
 
 func (r *UserRepository) ensureProfileColumns() error {
@@ -174,6 +187,100 @@ func (r *UserRepository) UpdateProfile(userID string, profile domain.LearnerProf
 		return repositories.ErrUserNotFound
 	}
 	return nil
+}
+
+func (r *UserRepository) UpdatePasswordHash(userID, passwordHash string) error {
+	res, err := r.db.Exec(
+		`UPDATE users SET password_hash = ? WHERE id = ?`,
+		passwordHash,
+		userID,
+	)
+	if err != nil {
+		return err
+	}
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return repositories.ErrUserNotFound
+	}
+	return nil
+}
+
+func (r *UserRepository) CreatePasswordResetToken(token repositories.PasswordResetToken) error {
+	_, err := r.db.Exec(
+		`INSERT INTO password_reset_tokens (id, user_id, token_hash, expires_at, used_at)
+		 VALUES (?, ?, ?, ?, ?)`,
+		token.ID,
+		token.UserID,
+		token.TokenHash,
+		token.ExpiresAt.UTC().Format(time.RFC3339Nano),
+		nullTime(token.UsedAt),
+	)
+	return err
+}
+
+func (r *UserRepository) GetPasswordResetTokenByHash(tokenHash string) (repositories.PasswordResetToken, error) {
+	var tok repositories.PasswordResetToken
+	var expires string
+	var used sql.NullString
+	err := r.db.QueryRow(
+		`SELECT id, user_id, token_hash, expires_at, used_at
+		 FROM password_reset_tokens WHERE token_hash = ?`,
+		tokenHash,
+	).Scan(&tok.ID, &tok.UserID, &tok.TokenHash, &expires, &used)
+	if errors.Is(err, sql.ErrNoRows) {
+		return repositories.PasswordResetToken{}, repositories.ErrResetTokenNotFound
+	}
+	if err != nil {
+		return repositories.PasswordResetToken{}, err
+	}
+	exp, err := time.Parse(time.RFC3339Nano, expires)
+	if err != nil {
+		exp, err = time.Parse(time.RFC3339, expires)
+		if err != nil {
+			return repositories.PasswordResetToken{}, fmt.Errorf("parse expires_at: %w", err)
+		}
+	}
+	tok.ExpiresAt = exp
+	if used.Valid && strings.TrimSpace(used.String) != "" {
+		u, err := time.Parse(time.RFC3339Nano, used.String)
+		if err != nil {
+			u, err = time.Parse(time.RFC3339, used.String)
+			if err != nil {
+				return repositories.PasswordResetToken{}, fmt.Errorf("parse used_at: %w", err)
+			}
+		}
+		tok.UsedAt = &u
+	}
+	return tok, nil
+}
+
+func (r *UserRepository) MarkPasswordResetTokenUsed(id string, usedAt time.Time) error {
+	res, err := r.db.Exec(
+		`UPDATE password_reset_tokens SET used_at = ? WHERE id = ? AND used_at IS NULL`,
+		usedAt.UTC().Format(time.RFC3339Nano),
+		id,
+	)
+	if err != nil {
+		return err
+	}
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return repositories.ErrResetTokenNotFound
+	}
+	return nil
+}
+
+func nullTime(t *time.Time) any {
+	if t == nil {
+		return nil
+	}
+	return t.UTC().Format(time.RFC3339Nano)
 }
 
 func (r *UserRepository) scanOne(query string, arg any) (domain.User, error) {

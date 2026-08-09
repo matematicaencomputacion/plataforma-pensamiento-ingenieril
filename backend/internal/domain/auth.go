@@ -13,6 +13,8 @@ var (
 	ErrUnauthorized = errors.New("no autorizado")
 	// ErrEmptyProfile indica un body de perfil sin campos útiles.
 	ErrEmptyProfile = errors.New("el perfil no tiene campos para guardar")
+	// ErrInvalidResetToken token ausente, usado o expirado.
+	ErrInvalidResetToken = errors.New("token de recuperación inválido o expirado")
 )
 
 // PublicUser es la proyección segura del usuario (sin hash).

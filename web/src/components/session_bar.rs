@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::components::A;
 use leptos_router::hooks::use_navigate;
+use leptos_router::NavigateOptions;
 
 use crate::auth::logout_session;
 use crate::session::SessionCtx;
@@ -48,12 +49,19 @@ pub fn SessionBar() -> impl IntoView {
                                 return;
                             }
                             logging_out.set(true);
-                            let navigate = navigate.clone();
+                            // Leave /workspace first so the auth guard does not race to /login
+                            // when we clear the session next.
+                            navigate(
+                                "/",
+                                NavigateOptions {
+                                    replace: true,
+                                    ..Default::default()
+                                },
+                            );
+                            session.clear();
                             leptos::task::spawn_local(async move {
                                 logout_session().await;
-                                session.clear();
                                 logging_out.set(false);
-                                navigate("/", Default::default());
                             });
                         }
                     }

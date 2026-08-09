@@ -25,7 +25,12 @@ func newAuthHandler(t *testing.T) *handlers.AuthHandler {
 	if err != nil {
 		t.Fatalf("repo: %v", err)
 	}
-	svc := usecases.NewAuthService(repo, crypto.NewBcryptHasher(), jwtauth.NewHS256Issuer("test-secret"))
+	svc := usecases.NewAuthService(
+		repo,
+		crypto.NewBcryptHasher(),
+		jwtauth.NewHS256Issuer("test-secret"),
+		usecases.AuthOptions{ExposeResetToken: true},
+	)
 	return handlers.NewAuthHandler(svc)
 }
 
@@ -206,5 +211,81 @@ func TestUpdateProfileHTTP(t *testing.T) {
 	h.Profile(badRec, badMethod)
 	if badRec.Code != http.StatusMethodNotAllowed {
 		t.Fatalf("DELETE expected 405, got %d", badRec.Code)
+	}
+}
+
+func TestForgotResetPasswordHTTP(t *testing.T) {
+	h := newAuthHandler(t)
+
+	regBody := []byte(`{"email":"recover@ppi.local","password":"clave1234"}`)
+	regReq := httptest.NewRequest(http.MethodPost, "/api/auth/register", bytes.NewReader(regBody))
+	regRec := httptest.NewRecorder()
+	h.Register(regRec, regReq)
+	if regRec.Code != http.StatusCreated {
+		t.Fatalf("register status %d body %s", regRec.Code, regRec.Body.String())
+	}
+
+	forgotBody := []byte(`{"email":"recover@ppi.local"}`)
+	forgotReq := httptest.NewRequest(http.MethodPost, "/api/auth/forgot-password", bytes.NewReader(forgotBody))
+	forgotRec := httptest.NewRecorder()
+	h.ForgotPassword(forgotRec, forgotReq)
+	if forgotRec.Code != http.StatusOK {
+		t.Fatalf("forgot status %d body %s", forgotRec.Code, forgotRec.Body.String())
+	}
+	var forgotResp map[string]any
+	if err := json.Unmarshal(forgotRec.Body.Bytes(), &forgotResp); err != nil {
+		t.Fatalf("decode forgot: %v", err)
+	}
+	token, _ := forgotResp["resetToken"].(string)
+	if token == "" {
+		t.Fatal("expected resetToken in DX response")
+	}
+
+	unknownBody := []byte(`{"email":"missing@ppi.local"}`)
+	unknownReq := httptest.NewRequest(http.MethodPost, "/api/auth/forgot-password", bytes.NewReader(unknownBody))
+	unknownRec := httptest.NewRecorder()
+	h.ForgotPassword(unknownRec, unknownReq)
+	if unknownRec.Code != http.StatusOK {
+		t.Fatalf("unknown forgot status %d", unknownRec.Code)
+	}
+	var unknownResp map[string]any
+	if err := json.Unmarshal(unknownRec.Body.Bytes(), &unknownResp); err != nil {
+		t.Fatalf("decode unknown: %v", err)
+	}
+	if _, ok := unknownResp["resetToken"]; ok {
+		t.Fatal("unknown email must omit resetToken")
+	}
+
+	resetPayload, _ := json.Marshal(map[string]string{
+		"token":    token,
+		"password": "nuevaClave9",
+	})
+	resetReq := httptest.NewRequest(http.MethodPost, "/api/auth/reset-password", bytes.NewReader(resetPayload))
+	resetRec := httptest.NewRecorder()
+	h.ResetPassword(resetRec, resetReq)
+	if resetRec.Code != http.StatusOK {
+		t.Fatalf("reset status %d body %s", resetRec.Code, resetRec.Body.String())
+	}
+
+	oldLogin := httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(regBody))
+	oldRec := httptest.NewRecorder()
+	h.Login(oldRec, oldLogin)
+	if oldRec.Code != http.StatusUnauthorized {
+		t.Fatalf("old password expected 401, got %d", oldRec.Code)
+	}
+
+	newBody := []byte(`{"email":"recover@ppi.local","password":"nuevaClave9"}`)
+	newLogin := httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(newBody))
+	newRec := httptest.NewRecorder()
+	h.Login(newRec, newLogin)
+	if newRec.Code != http.StatusOK {
+		t.Fatalf("new password login status %d", newRec.Code)
+	}
+
+	badReset := httptest.NewRequest(http.MethodPost, "/api/auth/reset-password", bytes.NewReader(resetPayload))
+	badRec := httptest.NewRecorder()
+	h.ResetPassword(badRec, badReset)
+	if badRec.Code != http.StatusBadRequest {
+		t.Fatalf("reused token expected 400, got %d", badRec.Code)
 	}
 }

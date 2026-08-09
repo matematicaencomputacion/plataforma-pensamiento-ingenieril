@@ -11,7 +11,9 @@ use leptos_router::components::{A, Route, Router, Routes};
 use leptos_router::path;
 
 use components::SessionBar;
-use pages::{LandingPage, LoginPage, RegisterPage, WorkspacePage};
+use pages::{
+    ForgotPasswordPage, LandingPage, LoginPage, RegisterPage, ResetPasswordPage, WorkspacePage,
+};
 use session::{SessionBootstrap, SessionCtx};
 
 fn main() {
@@ -43,6 +45,8 @@ fn App() -> impl IntoView {
                         <Route path=path!("/") view=LandingPage />
                         <Route path=path!("/login") view=LoginPage />
                         <Route path=path!("/register") view=RegisterPage />
+                        <Route path=path!("/forgot-password") view=ForgotPasswordPage />
+                        <Route path=path!("/reset-password") view=ResetPasswordPage />
                         <Route path=path!("/workspace") view=WorkspacePage />
                     </Routes>
                 </main>

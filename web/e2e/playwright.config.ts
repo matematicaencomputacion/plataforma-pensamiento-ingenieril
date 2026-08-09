@@ -17,8 +17,9 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
-  timeout: 60_000,
-  expect: { timeout: 15_000 },
+  // Cold Wasm hydrate + SQLite round-trips are slower on GHA runners.
+  timeout: process.env.CI ? 90_000 : 60_000,
+  expect: { timeout: process.env.CI ? 30_000 : 15_000 },
   reporter: process.env.CI ? [["github"], ["list"]] : "list",
   use: {
     baseURL,

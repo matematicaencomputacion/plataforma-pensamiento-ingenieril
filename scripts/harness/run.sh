@@ -107,6 +107,7 @@ start_stack() {
   export JWT_SECRET="${JWT_SECRET:-harness-jwt-secret}"
   export DATABASE_URL="${DATABASE_URL:-sqlite://./data/ppi-harness.db}"
   export LEARNER_PROFILE_LLM="${LEARNER_PROFILE_LLM:-mock}"
+  export PPI_EXPOSE_RESET_TOKEN="${PPI_EXPOSE_RESET_TOKEN:-1}"
 
   (cd backend && go build -o bin/ppi-api .)
   (cd backend && ./bin/ppi-api >"$RUN_DIR/api.log" 2>&1) &
@@ -130,15 +131,21 @@ start_stack() {
     return 1
   fi
   record "stack-trunk" "PASS"
+  # Warm the Wasm shell so the first Playwright test is not racing hydration.
+  curl -fsS "http://127.0.0.1:3001/" >/dev/null || true
+  sleep 2
 }
 
 run_web_e2e() {
   hr
   log "MODULE web-e2e"
   export PPI_E2E_BASE_URL="${PPI_E2E_BASE_URL:-http://127.0.0.1:3001}"
-  export PPI_E2E_MODE="${PPI_E2E_MODE:-register}"
-  export PPI_E2E_EMAIL="${PPI_E2E_EMAIL:-harness-$(date +%s)@example.com}"
+  # Login smoke seeds via API; MODE is retained for older specs / docs.
+  export PPI_E2E_MODE="${PPI_E2E_MODE:-login}"
   export PPI_E2E_PASSWORD="${PPI_E2E_PASSWORD:-secreto12}"
+  export PPI_EXPOSE_RESET_TOKEN="${PPI_EXPOSE_RESET_TOKEN:-1}"
+  # Optional sticky email — auth.login.spec uniquifies with a +tag on each run.
+  : "${PPI_E2E_EMAIL:=}"
 
   if [[ ! -d web/e2e/node_modules ]]; then
     (cd web/e2e && npm ci)
