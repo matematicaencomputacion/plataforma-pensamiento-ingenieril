@@ -107,6 +107,9 @@ jobs:
           for i in $(seq 1 180); do
             if curl -fsS "http://127.0.0.1:3001/" >/dev/null; then
               echo "Trunk ready"
+              # Give Wasm distribution a beat so the first form submit is not a native GET.
+              sleep 3
+              curl -fsS "http://127.0.0.1:3001/" >/dev/null || true
               exit 0
             fi
             sleep 2

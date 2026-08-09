@@ -140,11 +140,12 @@ run_web_e2e() {
   hr
   log "MODULE web-e2e"
   export PPI_E2E_BASE_URL="${PPI_E2E_BASE_URL:-http://127.0.0.1:3001}"
-  export PPI_E2E_MODE="${PPI_E2E_MODE:-register}"
-  # Always unique in register mode so a sticky PPI_E2E_EMAIL from the shell cannot 409.
-  export PPI_E2E_EMAIL="harness-$(date +%s)-${RANDOM}@example.com"
+  # Login smoke seeds via API; MODE is retained for older specs / docs.
+  export PPI_E2E_MODE="${PPI_E2E_MODE:-login}"
   export PPI_E2E_PASSWORD="${PPI_E2E_PASSWORD:-secreto12}"
   export PPI_EXPOSE_RESET_TOKEN="${PPI_EXPOSE_RESET_TOKEN:-1}"
+  # Optional sticky email — auth.login.spec uniquifies with a +tag on each run.
+  : "${PPI_E2E_EMAIL:=}"
 
   if [[ ! -d web/e2e/node_modules ]]; then
     (cd web/e2e && npm ci)
