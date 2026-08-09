@@ -116,6 +116,9 @@ func main() {
 		userRepo,
 		crypto.NewBcryptHasher(),
 		jwtauth.NewHS256Issuer(authCfg.JWTSecret),
+		usecases.AuthOptions{
+			ExposeResetToken: usecases.ResolveExposeResetToken(authCfg.JWTSecret),
+		},
 	)
 	authHandler := handlers.NewAuthHandler(authService)
 
@@ -137,6 +140,8 @@ func main() {
 	mux.HandleFunc("POST /api/auth/register", authHandler.Register)
 	mux.HandleFunc("POST /api/auth/login", authHandler.Login)
 	mux.HandleFunc("POST /api/auth/logout", authHandler.Logout)
+	mux.HandleFunc("POST /api/auth/forgot-password", authHandler.ForgotPassword)
+	mux.HandleFunc("POST /api/auth/reset-password", authHandler.ResetPassword)
 	mux.HandleFunc("GET /api/me", authHandler.Me)
 	mux.HandleFunc("/api/user/profile", authHandler.Profile)
 	mux.HandleFunc("GET /api/levels/current", levelHandler.GetCurrent)

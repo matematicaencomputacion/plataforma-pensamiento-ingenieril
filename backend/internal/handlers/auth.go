@@ -65,6 +65,51 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+type forgotPasswordRequest struct {
+	Email string `json:"email"`
+}
+
+type forgotPasswordResponse struct {
+	Message    string `json:"message"`
+	ResetToken string `json:"resetToken,omitempty"`
+}
+
+type resetPasswordRequest struct {
+	Token    string `json:"token"`
+	Password string `json:"password"`
+}
+
+func (h *AuthHandler) ForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var req forgotPasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(w, "JSON de entrada inválido", http.StatusBadRequest)
+		return
+	}
+	out, err := h.service.ForgotPassword(r.Context(), req.Email)
+	if err != nil {
+		writeAuthError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, forgotPasswordResponse{
+		Message:    out.Message,
+		ResetToken: out.ResetToken,
+	})
+}
+
+func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+	var req resetPasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(w, "JSON de entrada inválido", http.StatusBadRequest)
+		return
+	}
+	out, err := h.service.ResetPassword(r.Context(), req.Token, req.Password)
+	if err != nil {
+		writeAuthError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, authSuccessResponse{User: out.User, Token: out.Token})
+}
+
 func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	token, ok := bearerToken(r)
 	if !ok {
@@ -176,7 +221,7 @@ func bearerToken(r *http.Request) (string, bool) {
 
 func writeAuthError(w http.ResponseWriter, err error) {
 	switch {
-	case errors.Is(err, domain.ErrInvalidEmail), errors.Is(err, domain.ErrInvalidPassword), errors.Is(err, domain.ErrEmptyProfile):
+	case errors.Is(err, domain.ErrInvalidEmail), errors.Is(err, domain.ErrInvalidPassword), errors.Is(err, domain.ErrEmptyProfile), errors.Is(err, domain.ErrInvalidResetToken):
 		writeJSONError(w, err.Error(), http.StatusBadRequest)
 	case errors.Is(err, repositories.ErrEmailTaken):
 		writeJSONError(w, "email ya registrado", http.StatusConflict)

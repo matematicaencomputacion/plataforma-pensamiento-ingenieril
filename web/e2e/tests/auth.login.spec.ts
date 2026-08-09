@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { fillLeptosInput, gotoApp } from "./helpers";
 
 /**
  * Smoke: email/password auth against the Leptos shell → Go API.
@@ -38,16 +39,16 @@ test.describe("auth smoke (email/password)", () => {
     const mode = (process.env.PPI_E2E_MODE ?? "login").toLowerCase();
 
     if (mode === "register") {
-      await page.goto("/register");
+      await gotoApp(page, "/register");
       await expect(page.getByRole("heading", { name: "Crear cuenta" })).toBeVisible();
-      await page.locator("#register-email").fill(email);
-      await page.locator("#register-password").fill(password);
+      await fillLeptosInput(page, "#register-email", email);
+      await fillLeptosInput(page, "#register-password", password);
       await page.getByRole("button", { name: "Crear cuenta" }).click();
     } else {
-      await page.goto("/login");
+      await gotoApp(page, "/login");
       await expect(page.getByRole("heading", { name: "Iniciar sesión" })).toBeVisible();
-      await page.locator("#login-email").fill(email);
-      await page.locator("#login-password").fill(password);
+      await fillLeptosInput(page, "#login-email", email);
+      await fillLeptosInput(page, "#login-password", password);
       await page.getByRole("button", { name: "Entrar" }).click();
     }
 
@@ -69,7 +70,7 @@ test.describe("auth smoke (email/password)", () => {
   });
 
   test("landing exposes login and register CTAs", async ({ page }) => {
-    await page.goto("/");
+    await gotoApp(page, "/");
     await expect(page.getByRole("heading", { name: "IngenierIA" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Iniciar sesión" }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "Crear cuenta" }).first()).toBeVisible();

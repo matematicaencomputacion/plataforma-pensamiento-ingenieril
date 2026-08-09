@@ -247,6 +247,25 @@ a {
   font-size: 0.9rem;
 }
 
+.auth-form__ok {
+  margin: 0 0 0.5rem;
+  color: var(--accent, #2f6f55);
+  font-size: 0.9rem;
+}
+
+.auth-form__dev {
+  margin: 0 0 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px dashed color-mix(in srgb, var(--muted) 55%, transparent);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.auth-form__dev-link {
+  color: var(--fg);
+  text-decoration: underline;
+}
+
 .auth-form__submit {
   margin-top: 0.35rem;
   width: 100%;

@@ -28,6 +28,7 @@ jobs:
 
     env:
       JWT_SECRET: ci-e2e-only-ppi-jwt-secret
+      PPI_EXPOSE_RESET_TOKEN: "1"
       DATABASE_URL: sqlite://./data/ppi-e2e.db
       LEARNER_PROFILE_LLM: mock
       PPI_E2E_BASE_URL: http://127.0.0.1:3001

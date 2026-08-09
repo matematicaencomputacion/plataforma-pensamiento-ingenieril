@@ -5,8 +5,9 @@ use wasm_bindgen::JsCast;
 use web_sys::HtmlInputElement;
 
 use crate::api::{
-    parse_auth_error_body, AuthCredentials, AuthSuccess, AuthUser, AUTH_TOKEN_KEY, login_url,
-    logout_url, me_url, register_url,
+    forgot_password_url, parse_auth_error_body, reset_password_url, AuthCredentials, AuthSuccess,
+    AuthUser, ForgotPasswordRequest, ForgotPasswordResponse, ResetPasswordRequest, AUTH_TOKEN_KEY,
+    login_url, logout_url, me_url, register_url,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -57,6 +58,44 @@ pub async fn login_user(email: String, password: String) -> Result<AuthSuccess, 
 
 pub async fn register_user(email: String, password: String) -> Result<AuthSuccess, AuthError> {
     post_credentials(register_url(), email, password).await
+}
+
+pub async fn request_password_reset(email: String) -> Result<ForgotPasswordResponse, AuthError> {
+    let payload = ForgotPasswordRequest { email };
+    let res = Request::post(&forgot_password_url())
+        .header("Content-Type", "application/json")
+        .json(&payload)
+        .map_err(|e| AuthError::new(e.to_string()))?
+        .send()
+        .await
+        .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
+
+    if !res.ok() {
+        return Err(AuthError::new(read_error(&res).await));
+    }
+
+    res.json::<ForgotPasswordResponse>()
+        .await
+        .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
+}
+
+pub async fn reset_password(token: String, password: String) -> Result<AuthSuccess, AuthError> {
+    let payload = ResetPasswordRequest { token, password };
+    let res = Request::post(&reset_password_url())
+        .header("Content-Type", "application/json")
+        .json(&payload)
+        .map_err(|e| AuthError::new(e.to_string()))?
+        .send()
+        .await
+        .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
+
+    if !res.ok() {
+        return Err(AuthError::new(read_error(&res).await));
+    }
+
+    res.json::<AuthSuccess>()
+        .await
+        .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
 }
 
 async fn post_credentials(

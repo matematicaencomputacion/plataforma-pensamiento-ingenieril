@@ -36,6 +36,7 @@ func newTestMux(t *testing.T) http.Handler {
 		users,
 		crypto.NewBcryptHasher(),
 		jwtauth.NewHS256Issuer("integration-test-secret"),
+		usecases.AuthOptions{ExposeResetToken: true},
 	)
 	authHandler := handlers.NewAuthHandler(authSvc)
 
@@ -50,6 +51,8 @@ func newTestMux(t *testing.T) http.Handler {
 	mux.HandleFunc("POST /api/auth/register", authHandler.Register)
 	mux.HandleFunc("POST /api/auth/login", authHandler.Login)
 	mux.HandleFunc("POST /api/auth/logout", authHandler.Logout)
+	mux.HandleFunc("POST /api/auth/forgot-password", authHandler.ForgotPassword)
+	mux.HandleFunc("POST /api/auth/reset-password", authHandler.ResetPassword)
 	mux.HandleFunc("GET /api/me", authHandler.Me)
 	mux.HandleFunc("GET /api/levels/current", levelHandler.GetCurrent)
 	mux.HandleFunc("GET /api/levels/{id}", levelHandler.GetByID)
