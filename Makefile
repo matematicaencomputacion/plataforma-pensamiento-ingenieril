@@ -36,7 +36,8 @@ export CGO_ENABLED ?= 0
 GO ?= go
 GOFLAGS ?=
 
-.PHONY: help toolchain fmt vet test build run clean openspec-validate web-test web-build web-e2e ci
+.PHONY: help toolchain fmt vet test build run clean openspec-validate web-test web-build web-e2e \
+	harness harness-unit harness-integration harness-e2e ci
 
 help: ## Muestra targets disponibles
 	@awk 'BEGIN {FS = ":.*##"; printf "\nTargets PPI:\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  %-18s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -84,8 +85,24 @@ web-build: ## Build Wasm release del shell Leptos via Trunk
 web-e2e: ## Smoke Playwright auth (requiere PPI_E2E_EMAIL/PASSWORD + API :8080 + Trunk :3001)
 	@cd $(WEB_DIR)/e2e && npm test
 
+harness: ## Harness integral (unit + integration opt-in + e2e con stack) — ver TESTING.md
+	@chmod +x scripts/harness/run.sh
+	@./scripts/harness/run.sh all
+
+harness-unit: ## Solo backend-unit + web-unit con reporte por módulo
+	@chmod +x scripts/harness/run.sh
+	@./scripts/harness/run.sh unit
+
+harness-integration: ## Go integration tags (PPI_HARNESS_INTEGRATION=1)
+	@chmod +x scripts/harness/run.sh
+	@PPI_HARNESS_INTEGRATION=1 ./scripts/harness/run.sh integration
+
+harness-e2e: ## Levanta stack efímero + Playwright + teardown
+	@chmod +x scripts/harness/run.sh
+	@./scripts/harness/run.sh e2e
+
 openspec-validate: ## Valida el change PPI 1.1
 	@openspec validate ppi-1-1-foundations --no-interactive
 
-ci: fmt vet test build openspec-validate ## Pipeline local rápido (Go; web es opt-in via web-test/web-build)
+ci: fmt vet test build openspec-validate ## Pipeline local rápido (Go; web/harness son opt-in)
 	@echo ">> CI local OK — module $(MODULE)"
