@@ -3,13 +3,14 @@ target = "index.html"
 dist = "dist"
 
 [watch]
-# Keep Playwright / Cargo artifacts from retriggering Wasm rebuilds mid-session.
-ignore = ["dist", "e2e", "target"]
+# Only paths that always exist under web/. Trunk 0.21 aborts if an ignore
+# entry cannot be canonicalized (e.g. missing `target/` on a fresh CI checkout).
+ignore = ["dist", "e2e"]
 
 # Avoid colliding with the Go API on :8080 (otherwise Trunk SPA answers POST with 405).
 [serve]
 port = 3001
-address = "127.0.0.1"
+addresses = ["127.0.0.1"]
 
 # Dev-only (`trunk serve`): browser same-origin `/api/...` → Go API.
 # Trailing slashes matter for Trunk's nest_service matching (SPA fallback returns 405 on POST).

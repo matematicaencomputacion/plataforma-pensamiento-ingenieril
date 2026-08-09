@@ -102,9 +102,16 @@ jobs:
         run: |
           # Trunk 0.21 rejects NO_COLOR=1 as a clap flag value.
           unset NO_COLOR || true
+          # Pre-create dirs Trunk may ignore / write into (watch ignore must resolve).
+          mkdir -p dist
           nohup trunk serve --port 3001 --address 127.0.0.1 > /tmp/trunk.log 2>&1 &
           echo $! > /tmp/trunk.pid
           for i in $(seq 1 180); do
+            if ! kill -0 "$(cat /tmp/trunk.pid)" 2>/dev/null; then
+              echo "Trunk process exited early" >&2
+              cat /tmp/trunk.log >&2 || true
+              exit 1
+            fi
             if curl -fsS "http://127.0.0.1:3001/" >/dev/null; then
               echo "Trunk ready"
               # Give Wasm distribution a beat so the first form submit is not a native GET.
