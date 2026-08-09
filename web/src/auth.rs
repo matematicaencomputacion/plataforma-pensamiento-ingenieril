@@ -5,9 +5,10 @@ use wasm_bindgen::JsCast;
 use web_sys::HtmlInputElement;
 
 use crate::api::{
-    forgot_password_url, is_auth_rejection, parse_auth_error_body, reset_password_url,
-    AuthCredentials, AuthSuccess, AuthUser, ForgotPasswordRequest, ForgotPasswordResponse,
-    ResetPasswordRequest, AUTH_TOKEN_KEY, login_url, logout_url, me_url, register_url,
+    current_level_url, forgot_password_url, is_auth_rejection, parse_auth_error_body,
+    reset_password_url, AuthCredentials, AuthSuccess, AuthUser, ForgotPasswordRequest,
+    ForgotPasswordResponse, Level, ResetPasswordRequest, AUTH_TOKEN_KEY, login_url, logout_url,
+    me_url, register_url,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -160,6 +161,23 @@ pub async fn fetch_me(token: &str) -> Result<AuthUser, AuthError> {
 
     let res = reject_if_not_ok(res).await?;
     res.json::<AuthUser>()
+        .await
+        .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
+}
+
+/// Public curriculum entry (`GET /api/levels/current`) — no Bearer required.
+pub async fn fetch_current_level() -> Result<Level, AuthError> {
+    let res = Request::get(&current_level_url())
+        .send()
+        .await
+        .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
+
+    if !res.ok() {
+        let status = res.status();
+        return Err(AuthError::with_status(read_error(&res).await, status));
+    }
+
+    res.json::<Level>()
         .await
         .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
 }

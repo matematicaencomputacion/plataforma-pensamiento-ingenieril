@@ -31,14 +31,25 @@ test.describe("session navigation", () => {
     });
     await expect(page.locator(".session-bar__email")).toContainText(email);
 
-    await page.getByRole("link", { name: "Volver a la portada" }).click();
+    await page.getByRole("link", { name: "Portada" }).first().click();
     await page.waitForURL((url) => new URL(url).pathname === "/");
     await expect(page.getByRole("heading", { name: "IngenierIA" })).toBeVisible();
     await expect(page.locator(".session-bar__email")).toContainText(email);
+    await expect(page.getByRole("link", { name: "Ir al workspace" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Workspace" }).first()).toBeVisible();
 
     // Stay on portada — no guard should yank us back to /workspace.
     await page.waitForTimeout(1000);
     await expect(page).toHaveURL((url) => new URL(url).pathname === "/");
+
+    await page.getByRole("link", { name: "Ir al workspace" }).click();
+    await expect(page).toHaveURL(/\/workspace/);
+    await expect(page.getByRole("heading", { name: "Workspace" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Nivel actual" })).toBeVisible();
+
+    await page.getByRole("link", { name: "Portada" }).first().click();
+    await expect(page).toHaveURL((url) => new URL(url).pathname === "/");
+    await expect(page.locator(".session-bar__email")).toContainText(email);
 
     await page.getByRole("button", { name: "Salir" }).click();
     await expect(page.getByRole("link", { name: "Iniciar sesión" }).first()).toBeVisible({

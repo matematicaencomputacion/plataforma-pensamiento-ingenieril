@@ -29,6 +29,14 @@ pub fn SessionBar() -> impl IntoView {
                     }
                 }
             >
+                <nav class="session-bar__links" aria-label="Navegación de sesión">
+                    <A href="/" attr:class="session-bar__link">
+                        "Portada"
+                    </A>
+                    <A href="/workspace" attr:class="session-bar__link session-bar__link--emph">
+                        "Workspace"
+                    </A>
+                </nav>
                 <span class="session-bar__email">
                     {move || {
                         session

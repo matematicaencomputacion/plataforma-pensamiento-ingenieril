@@ -80,6 +80,11 @@ a {
   color: var(--fg);
 }
 
+.session-bar__link--active {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
 .session-bar__email {
   color: var(--muted);
   font-size: 0.9rem;
@@ -283,8 +288,12 @@ a {
 }
 
 .workspace {
-  max-width: 32rem;
-  text-align: center;
+  width: min(52rem, 100%);
+  text-align: left;
+}
+
+.workspace__header {
+  margin-bottom: 1.75rem;
 }
 
 .workspace__title {
@@ -299,7 +308,67 @@ a {
 }
 
 .workspace__user {
-  margin: 1.25rem 0;
+  margin: 1rem 0 0;
+}
+
+.workspace__grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+  .workspace__grid {
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: start;
+  }
+}
+
+.workspace__panel {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.workspace__panel-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.workspace__meta {
+  margin: 0 0 0.4rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.workspace__level-title {
+  margin: 0 0 0.6rem;
+  font-size: 1.25rem;
+}
+
+.workspace__statement {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.workspace__list {
+  margin: 0.9rem 0 0;
+  padding-left: 1.15rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.workspace__nav {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .not-found {
