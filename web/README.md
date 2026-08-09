@@ -15,9 +15,15 @@ cargo install trunk
 # Terminal A — API Go
 make run
 
-# Terminal B — UI Leptos
+# Terminal B — UI Leptos en :3001 (proxy /api → :8080; evita CORS)
 cd web && env -u NO_COLOR trunk serve
 ```
+
+El cliente usa rutas relativas (`/api/...`). `Trunk.toml` define `[[proxy]]` con
+`rewrite = "/api/"` → `http://127.0.0.1:8080/api/` (trailing slash obligatorio;
+sin él Trunk cae al SPA y responde **405** a POST).
+
+**Importante:** no levantar otro `trunk serve` en `:8080`. Ese puerto es exclusivo del API Go (`make run`). Si Trunk ocupa `:8080`, el proxy reenvía al SPA y el login/registro fallan con 405.
 
 Rutas del spike auth:
 
