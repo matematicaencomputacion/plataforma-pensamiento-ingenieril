@@ -3,7 +3,7 @@
 use leptos::prelude::*;
 
 use crate::api::AuthUser;
-use crate::auth::{clear_token, fetch_me, get_stored_token, store_token};
+use crate::auth::{fetch_me, get_stored_token, purge_auth_storage, store_token};
 
 #[derive(Clone, Copy)]
 pub struct SessionCtx {
@@ -30,8 +30,9 @@ impl SessionCtx {
         self.user.set(Some(user));
     }
 
+    /// Drop in-memory + browser storage (orphan JWT after DB wipe, logout, etc.).
     pub fn clear(&self) {
-        clear_token();
+        purge_auth_storage();
         self.token.set(None);
         self.user.set(None);
     }
@@ -42,6 +43,9 @@ impl SessionCtx {
 /// Critical ordering: restore `token` from storage **before** flipping
 /// `bootstrapped`, so route guards never observe `(bootstrapped ∧ !token)`
 /// spuriously and bounce the user (logout / home ↔ workspace thrash).
+///
+/// On `/api/me` 401/403 the bearer is treated as orphaned: storage and signals
+/// are wiped so the UI cannot look "logged in" against a wiped SQLite.
 #[component]
 pub fn SessionBootstrap() -> impl IntoView {
     let session = expect_context::<SessionCtx>();
@@ -58,10 +62,22 @@ pub fn SessionBootstrap() -> impl IntoView {
             leptos::task::spawn_local(async move {
                 match fetch_me(&token).await {
                     Ok(user) => session.user.set(Some(user)),
-                    Err(_) => session.clear(),
+                    Err(err) => {
+                        if err.is_unauthorized() {
+                            session.clear();
+                        } else {
+                            // Transient network / 5xx: drop optimistic UI session but
+                            // leave storage so a refresh can retry (fetch_me only
+                            // purges on 401/403).
+                            session.token.set(None);
+                            session.user.set(None);
+                        }
+                    }
                 }
             });
         } else {
+            // Ensure no stale key survives an interrupted clear.
+            purge_auth_storage();
             session.bootstrapped.set(true);
         }
     });

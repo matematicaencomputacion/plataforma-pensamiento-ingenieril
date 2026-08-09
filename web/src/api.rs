@@ -60,6 +60,11 @@ pub fn me_url() -> String {
     api_url("/api/me")
 }
 
+/// True when the API rejected the Bearer session (orphan / wiped DB / bad JWT).
+pub fn is_auth_rejection(status: u16) -> bool {
+    status == 401 || status == 403
+}
+
 pub fn forgot_password_url() -> String {
     api_url("/api/auth/forgot-password")
 }
@@ -159,6 +164,14 @@ mod tests {
             "credenciales inválidas"
         );
         assert_eq!(parse_auth_error_body("not-json", 500), "Error HTTP 500");
+    }
+
+    #[test]
+    fn auth_rejection_detects_unauthorized_and_forbidden() {
+        assert!(is_auth_rejection(401));
+        assert!(is_auth_rejection(403));
+        assert!(!is_auth_rejection(400));
+        assert!(!is_auth_rejection(500));
     }
 
     #[test]

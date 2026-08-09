@@ -51,4 +51,24 @@ test.describe("session navigation", () => {
     const token = await page.evaluate(() => localStorage.getItem("ppi.auth.token"));
     expect(token).toBeNull();
   });
+
+  test("orphan bearer in localStorage is purged after /api/me 401", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      // Cryptographically plausible junk — Go JWT parse / user lookup yields 401.
+      localStorage.setItem(
+        "ppi.auth.token",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvcnBoYW4ifQ.invalid",
+      );
+    });
+
+    await gotoApp(page, "/workspace");
+    await page.waitForURL(/\/login/, { timeout: 20_000 });
+    await expect(page.getByRole("heading", { name: "Iniciar sesión" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Iniciar sesión" }).first()).toBeVisible();
+    await expect(page.locator(".session-bar__email")).toHaveCount(0);
+
+    const token = await page.evaluate(() => localStorage.getItem("ppi.auth.token"));
+    expect(token).toBeNull();
+  });
 });

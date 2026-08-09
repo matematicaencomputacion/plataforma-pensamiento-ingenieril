@@ -5,21 +5,34 @@ use wasm_bindgen::JsCast;
 use web_sys::HtmlInputElement;
 
 use crate::api::{
-    forgot_password_url, parse_auth_error_body, reset_password_url, AuthCredentials, AuthSuccess,
-    AuthUser, ForgotPasswordRequest, ForgotPasswordResponse, ResetPasswordRequest, AUTH_TOKEN_KEY,
-    login_url, logout_url, me_url, register_url,
+    forgot_password_url, is_auth_rejection, parse_auth_error_body, reset_password_url,
+    AuthCredentials, AuthSuccess, AuthUser, ForgotPasswordRequest, ForgotPasswordResponse,
+    ResetPasswordRequest, AUTH_TOKEN_KEY, login_url, logout_url, me_url, register_url,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthError {
     pub message: String,
+    pub status: Option<u16>,
 }
 
 impl AuthError {
     pub fn new(message: impl Into<String>) -> Self {
         Self {
             message: message.into(),
+            status: None,
         }
+    }
+
+    pub fn with_status(message: impl Into<String>, status: u16) -> Self {
+        Self {
+            message: message.into(),
+            status: Some(status),
+        }
+    }
+
+    pub fn is_unauthorized(&self) -> bool {
+        self.status.is_some_and(is_auth_rejection)
     }
 }
 
@@ -44,12 +57,32 @@ pub fn clear_token() {
     }
 }
 
+/// Drop every residual auth key we own (local + session storage).
+pub fn purge_auth_storage() {
+    clear_token();
+    if let Some(Ok(Some(storage))) = window().map(|w| w.session_storage()) {
+        let _ = storage.remove_item(AUTH_TOKEN_KEY);
+    }
+}
+
 async fn read_error(res: &gloo_net::http::Response) -> String {
     let status = res.status();
     match res.text().await {
         Ok(body) => parse_auth_error_body(&body, status),
         Err(_) => format!("Error HTTP {status}"),
     }
+}
+
+/// If the API rejects the Bearer session, scrub storage before returning.
+async fn reject_if_not_ok(res: gloo_net::http::Response) -> Result<gloo_net::http::Response, AuthError> {
+    if res.ok() {
+        return Ok(res);
+    }
+    let status = res.status();
+    if is_auth_rejection(status) {
+        purge_auth_storage();
+    }
+    Err(AuthError::with_status(read_error(&res).await, status))
 }
 
 pub async fn login_user(email: String, password: String) -> Result<AuthSuccess, AuthError> {
@@ -70,10 +103,7 @@ pub async fn request_password_reset(email: String) -> Result<ForgotPasswordRespo
         .await
         .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
 
-    if !res.ok() {
-        return Err(AuthError::new(read_error(&res).await));
-    }
-
+    let res = reject_if_not_ok(res).await?;
     res.json::<ForgotPasswordResponse>()
         .await
         .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
@@ -89,10 +119,7 @@ pub async fn reset_password(token: String, password: String) -> Result<AuthSucce
         .await
         .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
 
-    if !res.ok() {
-        return Err(AuthError::new(read_error(&res).await));
-    }
-
+    let res = reject_if_not_ok(res).await?;
     res.json::<AuthSuccess>()
         .await
         .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
@@ -112,8 +139,11 @@ async fn post_credentials(
         .await
         .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
 
+    // Login/register 401 is "bad credentials", not an orphan Bearer session —
+    // do not scrub storage unless a stale token somehow remains.
     if !res.ok() {
-        return Err(AuthError::new(read_error(&res).await));
+        let status = res.status();
+        return Err(AuthError::with_status(read_error(&res).await, status));
     }
 
     res.json::<AuthSuccess>()
@@ -128,10 +158,7 @@ pub async fn fetch_me(token: &str) -> Result<AuthUser, AuthError> {
         .await
         .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
 
-    if !res.ok() {
-        return Err(AuthError::new(read_error(&res).await));
-    }
-
+    let res = reject_if_not_ok(res).await?;
     res.json::<AuthUser>()
         .await
         .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
@@ -144,7 +171,7 @@ pub async fn logout_session() {
         req = req.header("Authorization", &format!("Bearer {token}"));
     }
     let _ = req.send().await;
-    clear_token();
+    purge_auth_storage();
 }
 
 /// Helper for uncontrolled-looking inputs bound to signals via on:input.

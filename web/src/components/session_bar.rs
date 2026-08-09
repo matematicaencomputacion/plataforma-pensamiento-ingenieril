@@ -15,7 +15,7 @@ pub fn SessionBar() -> impl IntoView {
     view! {
         <div class="session-bar">
             <Show
-                when=move || session.user.get().is_some() || session.token.get().is_some()
+                when=move || session.user.get().is_some()
                 fallback=move || {
                     view! {
                         <nav class="session-bar__links">
@@ -35,7 +35,7 @@ pub fn SessionBar() -> impl IntoView {
                             .user
                             .get()
                             .map(|u| u.email)
-                            .unwrap_or_else(|| "Sesión…".into())
+                            .unwrap_or_default()
                     }}
                 </span>
                 <button
