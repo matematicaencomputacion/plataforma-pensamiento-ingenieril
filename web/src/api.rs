@@ -73,6 +73,21 @@ pub fn reset_password_url() -> String {
     api_url("/api/auth/reset-password")
 }
 
+pub fn current_level_url() -> String {
+    api_url("/api/levels/current")
+}
+
+/// Wire type for `GET /api/levels/current` (mirrors Go `domain.Level`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Level {
+    pub id: i32,
+    pub title: String,
+    pub statement: String,
+    pub track_type: String,
+    #[serde(default)]
+    pub evaluation_prompt: String,
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct ForgotPasswordRequest {
     pub email: String,
@@ -120,6 +135,22 @@ mod tests {
         assert_eq!(me_url(), "/api/me");
         assert_eq!(forgot_password_url(), "/api/auth/forgot-password");
         assert_eq!(reset_password_url(), "/api/auth/reset-password");
+        assert_eq!(current_level_url(), "/api/levels/current");
+    }
+
+    #[test]
+    fn level_json_matches_backend_contract() {
+        let raw = r#"{
+            "id": 1,
+            "title": "Hola mundo",
+            "statement": "Imprimí un saludo",
+            "track_type": "micro_paso",
+            "evaluation_prompt": "eval"
+        }"#;
+        let level: Level = serde_json::from_str(raw).expect("decode level");
+        assert_eq!(level.id, 1);
+        assert_eq!(level.title, "Hola mundo");
+        assert_eq!(level.track_type, "micro_paso");
     }
 
     #[test]

@@ -15,6 +15,21 @@ pub fn RegisterPage() -> impl IntoView {
     let error = RwSignal::new(String::new());
     let busy = RwSignal::new(false);
 
+    Effect::new({
+        let navigate = navigate.clone();
+        move |_| {
+            if session.bootstrapped.get() && session.user.get().is_some() {
+                navigate(
+                    "/workspace",
+                    leptos_router::NavigateOptions {
+                        replace: true,
+                        ..Default::default()
+                    },
+                );
+            }
+        }
+    });
+
     let on_submit = move |ev: web_sys::SubmitEvent| {
         ev.prevent_default();
         if busy.get_untracked() {
