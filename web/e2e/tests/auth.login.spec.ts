@@ -1,11 +1,16 @@
 import { expect, test } from "@playwright/test";
-import { fillLeptosInput, gotoApp } from "./helpers";
+import {
+  e2eTimeout,
+  fillLeptosInput,
+  gotoApp,
+  waitForAuthFormReady,
+} from "./helpers";
 
 /**
  * Smoke: email/password auth against the Leptos shell → Go API.
  *
  * Seed the account via HTTP (avoids CSR submit races on cold Wasm in CI),
- * then exercise the real login form in the browser.
+ * then exercise the real login form in the browser with explicit hydrate waits.
  *
  * Optional overrides:
  *   PPI_E2E_EMAIL / PPI_E2E_PASSWORD — fixed credentials (must not already exist
@@ -37,6 +42,7 @@ test.describe("auth smoke (email/password)", () => {
 
     const reg = await request.post("/api/auth/register", {
       data: { email: accountEmail, password },
+      timeout: e2eTimeout,
     });
     expect(
       reg.ok(),
@@ -44,16 +50,43 @@ test.describe("auth smoke (email/password)", () => {
     ).toBeTruthy();
 
     await gotoApp(page, "/login");
-    await expect(page.getByRole("heading", { name: "Iniciar sesión" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Iniciar sesión" })).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await waitForAuthFormReady(page, {
+      emailSelector: "#login-email",
+      passwordSelector: "#login-password",
+      submitName: "Entrar",
+    });
+
     await fillLeptosInput(page, "#login-email", accountEmail);
     await fillLeptosInput(page, "#login-password", password);
-    await page.getByRole("button", { name: "Entrar" }).click();
+
+    const submit = page.getByRole("button", { name: "Entrar" });
+    await expect(submit).toBeEnabled({ timeout: e2eTimeout });
+
+    const loginResponse = page.waitForResponse(
+      (res) =>
+        res.url().includes("/api/auth/login") &&
+        res.request().method() === "POST",
+      { timeout: e2eTimeout },
+    );
+
+    await submit.click();
+
+    const loginRes = await loginResponse;
+    if (!loginRes.ok()) {
+      const body = await loginRes.text().catch(() => "");
+      throw new Error(
+        `login API ${loginRes.status()}: ${body || "(empty body)"}`,
+      );
+    }
 
     await Promise.race([
-      page.waitForURL(/\/workspace/, { timeout: 20_000 }),
+      page.waitForURL(/\/workspace/, { timeout: e2eTimeout }),
       page
         .getByRole("alert")
-        .waitFor({ state: "visible", timeout: 20_000 })
+        .waitFor({ state: "visible", timeout: e2eTimeout })
         .then(async () => {
           const msg =
             (await page.getByRole("alert").textContent())?.trim() ?? "auth failed";
@@ -63,15 +96,23 @@ test.describe("auth smoke (email/password)", () => {
 
     await expect(page).toHaveURL(/\/workspace/);
     await expect(page.getByRole("heading", { name: "Workspace" })).toBeVisible({
-      timeout: 15_000,
+      timeout: e2eTimeout,
     });
-    await expect(page.locator(".session-bar__email")).toContainText(accountEmail);
+    await expect(page.locator(".session-bar__email")).toContainText(accountEmail, {
+      timeout: e2eTimeout,
+    });
   });
 
   test("landing exposes login and register CTAs", async ({ page }) => {
     await gotoApp(page, "/");
-    await expect(page.getByRole("heading", { name: "IngenierIA" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Iniciar sesión" }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: "Crear cuenta" }).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "IngenierIA" })).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await expect(page.getByRole("link", { name: "Iniciar sesión" }).first()).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await expect(page.getByRole("link", { name: "Crear cuenta" }).first()).toBeVisible({
+      timeout: e2eTimeout,
+    });
   });
 });
