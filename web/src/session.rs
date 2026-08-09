@@ -9,6 +9,7 @@ use crate::auth::{clear_token, fetch_me, get_stored_token, store_token};
 pub struct SessionCtx {
     pub token: RwSignal<Option<String>>,
     pub user: RwSignal<Option<AuthUser>>,
+    /// True after the initial localStorage restore finished (sync step).
     pub bootstrapped: RwSignal<bool>,
 }
 
@@ -37,31 +38,32 @@ impl SessionCtx {
 }
 
 /// Load token from localStorage and hydrate `/api/me` once on startup.
+///
+/// Critical ordering: restore `token` from storage **before** flipping
+/// `bootstrapped`, so route guards never observe `(bootstrapped ∧ !token)`
+/// spuriously and bounce the user (logout / home ↔ workspace thrash).
 #[component]
 pub fn SessionBootstrap() -> impl IntoView {
     let session = expect_context::<SessionCtx>();
 
     Effect::new(move |_| {
-        if session.bootstrapped.get() {
+        // Run once: do not re-subscribe to `bootstrapped` (would retrigger on set).
+        if session.bootstrapped.get_untracked() {
             return;
         }
-        session.bootstrapped.set(true);
 
-        let Some(token) = get_stored_token() else {
-            return;
-        };
-        session.token.set(Some(token.clone()));
-
-        leptos::task::spawn_local(async move {
-            match fetch_me(&token).await {
-                Ok(user) => session.user.set(Some(user)),
-                Err(_) => {
-                    clear_token();
-                    session.token.set(None);
-                    session.user.set(None);
+        if let Some(token) = get_stored_token() {
+            session.token.set(Some(token.clone()));
+            session.bootstrapped.set(true);
+            leptos::task::spawn_local(async move {
+                match fetch_me(&token).await {
+                    Ok(user) => session.user.set(Some(user)),
+                    Err(_) => session.clear(),
                 }
-            }
-        });
+            });
+        } else {
+            session.bootstrapped.set(true);
+        }
     });
 
     view! { <></> }

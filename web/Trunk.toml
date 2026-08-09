@@ -3,7 +3,8 @@ target = "index.html"
 dist = "dist"
 
 [watch]
-ignore = ["dist"]
+# Keep Playwright / Cargo artifacts from retriggering Wasm rebuilds mid-session.
+ignore = ["dist", "e2e", "target"]
 
 # Avoid colliding with the Go API on :8080 (otherwise Trunk SPA answers POST with 405).
 [serve]
