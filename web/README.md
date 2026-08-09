@@ -40,8 +40,8 @@ Targets Makefile (desde la raíz, aislados de `make test` Go):
 
 - `make web-test` — `cargo test` en `web/`
 - `make web-build` — `trunk build --release` en `web/`
+- `make web-e2e` — smoke Playwright (ver `web/e2e/README.md`; requiere `PPI_E2E_*`)
 
-## Notas
+## Harness integral
 
-- Legacy Qwik sigue en `frontend/` hasta el gate humano de cutover (OpenSpec `frontend-leptos-csr`).
-- No ejecutar código de alumnos en el servidor (ADR 002).
+Desde la raíz del monorepo: `make harness` (ver [`TESTING.md`](../TESTING.md)).

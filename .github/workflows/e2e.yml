@@ -1,0 +1,137 @@
+name: E2E Web (Playwright)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "web/**"
+      - "backend/**"
+      - ".github/workflows/e2e.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "web/**"
+      - "backend/**"
+      - ".github/workflows/e2e.yml"
+
+concurrency:
+  group: e2e-web-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  playwright:
+    name: Playwright Chromium smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      JWT_SECRET: ci-e2e-only-ppi-jwt-secret
+      DATABASE_URL: sqlite://./data/ppi-e2e.db
+      LEARNER_PROFILE_LLM: mock
+      PPI_E2E_BASE_URL: http://127.0.0.1:3001
+      PPI_E2E_MODE: register
+      # Ephemeral per-run user — no GitHub Secrets required.
+      PPI_E2E_EMAIL: e2e-${{ github.run_id }}-${{ github.run_attempt }}@example.com
+      PPI_E2E_PASSWORD: secreto12ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+
+      - name: Setup Rust (wasm32)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install Trunk
+        env:
+          TRUNK_VERSION: "0.21.14"
+        run: |
+          set -euo pipefail
+          curl -fsSL \
+            "https://github.com/trunk-rs/trunk/releases/download/v${TRUNK_VERSION}/trunk-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz
+          sudo install -m 755 trunk /usr/local/bin/trunk
+          trunk --version
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/e2e/package-lock.json
+
+      - name: Install Playwright deps
+        working-directory: web/e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Build Go API
+        working-directory: backend
+        run: |
+          mkdir -p data bin
+          go build -trimpath -ldflags="-s -w" -o bin/ppi-api .
+
+      - name: Start Go API (:8080)
+        working-directory: backend
+        run: |
+          nohup ./bin/ppi-api > /tmp/ppi-api.log 2>&1 &
+          echo $! > /tmp/ppi-api.pid
+          for i in $(seq 1 60); do
+            if curl -fsS "http://127.0.0.1:8080/api/health" >/dev/null; then
+              echo "API ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "API failed to start" >&2
+          cat /tmp/ppi-api.log >&2 || true
+          exit 1
+
+      - name: Start Trunk / Leptos (:3001)
+        working-directory: web
+        run: |
+          # Trunk 0.21 rejects NO_COLOR=1 as a clap flag value.
+          unset NO_COLOR || true
+          nohup trunk serve --port 3001 --address 127.0.0.1 > /tmp/trunk.log 2>&1 &
+          echo $! > /tmp/trunk.pid
+          for i in $(seq 1 180); do
+            if curl -fsS "http://127.0.0.1:3001/" >/dev/null; then
+              echo "Trunk ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Trunk failed to start" >&2
+          cat /tmp/trunk.log >&2 || true
+          exit 1
+
+      - name: Run Playwright smoke
+        working-directory: web/e2e
+        run: npm test
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            web/e2e/playwright-report/
+            web/e2e/test-results/
+          retention-days: 7
+
+      - name: Dump service logs on failure
+        if: failure()
+        run: |
+          echo "==== ppi-api ===="
+          cat /tmp/ppi-api.log || true
+          echo "==== trunk ===="
+          cat /tmp/trunk.log || true
