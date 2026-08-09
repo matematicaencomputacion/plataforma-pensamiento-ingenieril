@@ -4,3 +4,16 @@ dist = "dist"
 
 [watch]
 ignore = ["dist"]
+
+# Avoid colliding with the Go API on :8080.
+[serve]
+port = 3001
+
+# Dev-only (`trunk serve`): browser calls same-origin `/api/...` and Trunk
+# forwards to the Go API. Avoids CORS between :8080 (API) and the Trunk port.
+# Request `/api/auth/login` → `http://localhost:8080/api/auth/login`
+# (rewrite prefix is stripped, then backend path is re-applied).
+# Note: Trunk 0.21 has no `pass_host`; Host is set to the backend host automatically.
+[[proxy]]
+rewrite = "/api"
+backend = "http://localhost:8080/api"

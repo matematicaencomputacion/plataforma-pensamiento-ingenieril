@@ -15,9 +15,11 @@ cargo install trunk
 # Terminal A — API Go
 make run
 
-# Terminal B — UI Leptos
+# Terminal B — UI Leptos en :3001 (proxy /api → :8080; evita CORS)
 cd web && env -u NO_COLOR trunk serve
 ```
+
+El cliente usa rutas relativas (`/api/...`). `Trunk.toml` define `[[proxy]]` para reenviar esas peticiones a `http://localhost:8080/api` mientras corre `trunk serve`.
 
 Rutas del spike auth:
 

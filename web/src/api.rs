@@ -5,8 +5,11 @@
 
 use serde::{Deserialize, Serialize};
 
-/// Base URL for the Go Clean Architecture API (local default).
-pub const API_BASE_URL: &str = "http://localhost:8080";
+/// API origin for the Go backend.
+///
+/// Empty string → same-origin relative URLs (`/api/...`) so `trunk serve`'s
+/// `[[proxy]]` can forward to `http://localhost:8080` without browser CORS.
+pub const API_BASE_URL: &str = "";
 
 /// localStorage key (shared semantic with the legacy Qwik client).
 pub const AUTH_TOKEN_KEY: &str = "ppi.auth.token";
@@ -34,20 +37,25 @@ struct AuthErrorBody {
     error: Option<String>,
 }
 
+fn api_url(path: &str) -> String {
+    debug_assert!(path.starts_with('/'), "API paths must be absolute from the origin");
+    format!("{API_BASE_URL}{path}")
+}
+
 pub fn login_url() -> String {
-    format!("{API_BASE_URL}/api/auth/login")
+    api_url("/api/auth/login")
 }
 
 pub fn register_url() -> String {
-    format!("{API_BASE_URL}/api/auth/register")
+    api_url("/api/auth/register")
 }
 
 pub fn logout_url() -> String {
-    format!("{API_BASE_URL}/api/auth/logout")
+    api_url("/api/auth/logout")
 }
 
 pub fn me_url() -> String {
-    format!("{API_BASE_URL}/api/me")
+    api_url("/api/me")
 }
 
 /// Prefer API `error` field; fall back to HTTP status text.
@@ -67,17 +75,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn api_base_url_points_at_local_go_api() {
-        assert_eq!(API_BASE_URL, "http://localhost:8080");
-        assert!(API_BASE_URL.starts_with("http://"));
+    fn api_base_url_is_same_origin_for_trunk_proxy() {
+        assert_eq!(API_BASE_URL, "");
     }
 
     #[test]
-    fn auth_urls_match_go_routes() {
-        assert_eq!(login_url(), "http://localhost:8080/api/auth/login");
-        assert_eq!(register_url(), "http://localhost:8080/api/auth/register");
-        assert_eq!(logout_url(), "http://localhost:8080/api/auth/logout");
-        assert_eq!(me_url(), "http://localhost:8080/api/me");
+    fn auth_urls_are_relative_api_paths() {
+        assert_eq!(login_url(), "/api/auth/login");
+        assert_eq!(register_url(), "/api/auth/register");
+        assert_eq!(logout_url(), "/api/auth/logout");
+        assert_eq!(me_url(), "/api/me");
     }
 
     #[test]
