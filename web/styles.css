@@ -350,6 +350,45 @@ button:focus-visible {
   font-family: ui-sans-serif, system-ui, sans-serif;
 }
 
+.workspace__panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.workspace__panel-head .workspace__panel-title {
+  margin: 0;
+}
+
+.workspace__reset {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.workspace__reset:hover:not(:disabled) {
+  color: var(--fg);
+  border-color: color-mix(in srgb, var(--fg) 30%, transparent);
+}
+
+.workspace__reset:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.workspace__reset:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .workspace__meta {
   margin: 0 0 0.4rem;
   color: var(--muted);
@@ -360,6 +399,12 @@ button:focus-visible {
 .workspace__level-title {
   margin: 0 0 0.6rem;
   font-size: 1.25rem;
+}
+
+.workspace__statement-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
 }
 
 .workspace__statement {
@@ -835,6 +880,33 @@ button:focus-visible {
   flex-wrap: wrap;
   gap: 0.65rem;
   margin-bottom: 0.85rem;
+}
+
+.learn__progress-mark {
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 0 0.75rem;
+}
+
+.progress-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  border: 2px solid #3d8f6e;
+  background: color-mix(in srgb, #3d8f6e 22%, transparent);
+  color: #b8e4c2;
+  box-shadow: 0 0 0 1px color-mix(in srgb, #3d8f6e 35%, transparent);
+}
+
+.progress-check__mark {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  font-family: ui-sans-serif, system-ui, sans-serif;
 }
 
 .learn__console {

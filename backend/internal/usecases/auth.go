@@ -353,6 +353,33 @@ func (s *AuthService) CompleteProgress(
 	return out, nil
 }
 
+// ResetProgress vuelve el avance del alumno al inicio (current_level = 1).
+func (s *AuthService) ResetProgress(
+	_ context.Context,
+	bearerToken string,
+) (ProgressResult, error) {
+	userID, _, err := s.tokens.Parse(bearerToken)
+	if err != nil {
+		return ProgressResult{}, domain.ErrUnauthorized
+	}
+	if _, err := s.users.GetByID(userID); err != nil {
+		return ProgressResult{}, domain.ErrUnauthorized
+	}
+	if err := s.users.UpdateCurrentLevel(userID, 1); err != nil {
+		if errors.Is(err, repositories.ErrUserNotFound) {
+			return ProgressResult{}, domain.ErrUnauthorized
+		}
+		return ProgressResult{}, err
+	}
+	return ProgressResult{
+		LevelID:      1,
+		StepID:       "reset",
+		Passed:       false,
+		CurrentLevel: 1,
+		Advanced:     false,
+	}, nil
+}
+
 func normalizeEmail(email string) (string, error) {
 	email = strings.TrimSpace(strings.ToLower(email))
 	if email == "" {

@@ -20,6 +20,13 @@ pub const AUTH_TOKEN_KEY: &str = "ppi.auth.token";
 pub struct AuthUser {
     pub id: String,
     pub email: String,
+    /// Operational progress cursor (1 = first unlockable level).
+    #[serde(default = "default_current_level")]
+    pub current_level: i32,
+}
+
+fn default_current_level() -> i32 {
+    1
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -87,6 +94,10 @@ pub fn user_profile_url() -> String {
 
 pub fn progress_complete_url() -> String {
     api_url("/api/progress/complete")
+}
+
+pub fn progress_reset_url() -> String {
+    api_url("/api/progress/reset")
 }
 
 /// Wire request for `POST /api/progress/complete` (ADR 002: never includes student code).
@@ -267,6 +278,7 @@ mod tests {
         );
         assert_eq!(user_profile_url(), "/api/user/profile");
         assert_eq!(progress_complete_url(), "/api/progress/complete");
+        assert_eq!(progress_reset_url(), "/api/progress/reset");
     }
 
     #[test]
@@ -407,10 +419,15 @@ mod tests {
 
     #[test]
     fn auth_success_deserializes_like_go() {
-        let raw = r#"{"user":{"id":"u1","email":"a@b.com"},"token":"jwt"}"#;
+        let raw = r#"{"user":{"id":"u1","email":"a@b.com","current_level":2},"token":"jwt"}"#;
         let parsed: AuthSuccess = serde_json::from_str(raw).expect("decode");
         assert_eq!(parsed.user.id, "u1");
         assert_eq!(parsed.user.email, "a@b.com");
+        assert_eq!(parsed.user.current_level, 2);
         assert_eq!(parsed.token, "jwt");
+
+        let legacy = r#"{"user":{"id":"u1","email":"a@b.com"},"token":"jwt"}"#;
+        let parsed_legacy: AuthSuccess = serde_json::from_str(legacy).expect("decode legacy");
+        assert_eq!(parsed_legacy.user.current_level, 1);
     }
 }

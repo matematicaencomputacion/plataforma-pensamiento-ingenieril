@@ -6,12 +6,12 @@ use web_sys::{CustomEvent, CustomEventInit, HtmlInputElement, HtmlTextAreaElemen
 
 use crate::api::{
     current_level_url, forgot_password_url, is_auth_rejection, parse_auth_error_body,
-    progress_complete_url, reset_password_url, sanitize_email, synthesize_profile_url,
-    user_profile_url, AuthCredentials, AuthSuccess, AuthUser, ForgotPasswordRequest,
-    ForgotPasswordResponse, Level, ProfileSynthesis, ProgressCompleteRequest,
-    ProgressCompleteResponse, ResetPasswordRequest, SynthesizeProfileRequest, UserProfile,
-    AUTH_TOKEN_KEY, MSG_INVALID_RESPONSE, MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url,
-    register_url,
+    progress_complete_url, progress_reset_url, reset_password_url, sanitize_email,
+    synthesize_profile_url, user_profile_url, AuthCredentials, AuthSuccess, AuthUser,
+    ForgotPasswordRequest, ForgotPasswordResponse, Level, ProfileSynthesis,
+    ProgressCompleteRequest, ProgressCompleteResponse, ResetPasswordRequest,
+    SynthesizeProfileRequest, UserProfile, AUTH_TOKEN_KEY, MSG_INVALID_RESPONSE,
+    MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url, register_url,
 };
 
 /// Same-tab signal that `SessionCtx` should drop in-memory auth after a storage purge.
@@ -325,6 +325,24 @@ pub async fn complete_progress(
         .header("Accept", "application/json")
         .json(&payload)
         .map_err(request_build_error)?
+        .send()
+        .await
+        .map_err(network_unavailable)?;
+
+    let res = reject_if_not_ok(res).await?;
+    res.json::<ProgressCompleteResponse>()
+        .await
+        .map_err(invalid_response)
+}
+
+/// Reset learning progress to level 1 (clears persistent checkmarks).
+pub async fn reset_progress() -> Result<ProgressCompleteResponse, AuthError> {
+    let Some(token) = get_stored_token() else {
+        return Err(AuthError::with_status("Sesión no iniciada.", 401));
+    };
+    let res = Request::post(&progress_reset_url())
+        .header("Authorization", &format!("Bearer {token}"))
+        .header("Accept", "application/json")
         .send()
         .await
         .map_err(network_unavailable)?;

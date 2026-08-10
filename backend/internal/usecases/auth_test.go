@@ -270,6 +270,14 @@ func TestCompleteProgressAdvancesLevel(t *testing.T) {
 		t.Fatalf("second pass must not re-advance: %#v", idempotent)
 	}
 
+	reset, err := svc.ResetProgress(ctx, reg.Token)
+	if err != nil {
+		t.Fatalf("reset: %v", err)
+	}
+	if reset.CurrentLevel != 1 {
+		t.Fatalf("expected current_level=1 after reset: %#v", reset)
+	}
+
 	_, err = svc.CompleteProgress(ctx, reg.Token, 0, "x", true)
 	if !errors.Is(err, domain.ErrInvalidLevelID) {
 		t.Fatalf("want ErrInvalidLevelID, got %v", err)

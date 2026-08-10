@@ -73,4 +73,17 @@ func TestProgressCompleteHTTP(t *testing.T) {
 	if out["current_level"].(float64) != 2 {
 		t.Fatalf("expected current_level=2: %#v", out)
 	}
+
+	resetReq := httptest.NewRequest(http.MethodPost, "/api/progress/reset", nil)
+	resetReq.Header.Set("Authorization", "Bearer "+token)
+	resetRec := httptest.NewRecorder()
+	progress.Reset(resetRec, resetReq)
+	if resetRec.Code != http.StatusOK {
+		t.Fatalf("reset %d %s", resetRec.Code, resetRec.Body.String())
+	}
+	var resetOut map[string]any
+	_ = json.Unmarshal(resetRec.Body.Bytes(), &resetOut)
+	if resetOut["current_level"].(float64) != 1 {
+		t.Fatalf("expected reset to 1: %#v", resetOut)
+	}
 }

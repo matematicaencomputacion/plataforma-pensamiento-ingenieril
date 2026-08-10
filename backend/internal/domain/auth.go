@@ -23,13 +23,18 @@ var (
 
 // PublicUser es la proyección segura del usuario (sin hash).
 type PublicUser struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
+	ID           string `json:"id"`
+	Email        string `json:"email"`
+	CurrentLevel int    `json:"current_level"`
 }
 
 // ToPublic convierte User a PublicUser.
 func (u User) ToPublic() PublicUser {
-	return PublicUser{ID: u.ID, Email: u.Email}
+	level := u.CurrentLevel
+	if level <= 0 {
+		level = 1
+	}
+	return PublicUser{ID: u.ID, Email: u.Email, CurrentLevel: level}
 }
 
 // PasswordHasher abstrae el hashing de contraseñas (bcrypt en infraestructura).

@@ -35,6 +35,15 @@ impl SessionCtx {
         self.user.set(Some(user));
     }
 
+    /// Patch `current_level` on the live session user (after progress complete/reset).
+    pub fn set_current_level(&self, current_level: i32) {
+        self.user.update(|slot| {
+            if let Some(user) = slot.as_mut() {
+                user.current_level = current_level.max(1);
+            }
+        });
+    }
+
     /// Drop in-memory + browser storage (orphan JWT after DB wipe, logout, etc.).
     ///
     /// Idempotent: skips work when already cleared to avoid event feedback loops.
