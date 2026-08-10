@@ -140,13 +140,17 @@ func main() {
 	mux.HandleFunc("POST /api/progress/complete", progressHandler.Complete)
 	mux.HandleFunc("POST /api/progress/reset", progressHandler.Reset)
 
-	staticDir := resolveStaticDir()
-	handler := enableCORS(withSPA(mux, staticDir))
+	spa, spaOK := openSPARoot()
+	handler := enableCORS(withSPA(mux, spa))
+	staticLabel := "none"
+	if spaOK {
+		staticLabel = spa.source
+	}
 
 	addr := listenAddr()
 	log.Printf(
 		"servidor iniciado: escuchando en http://localhost%s (data=%s static=%s root=%s sqlite=%s)",
-		addr, dataDir, staticDir, repoRoot, sqlitePath,
+		addr, dataDir, staticLabel, repoRoot, sqlitePath,
 	)
 	if err := http.ListenAndServe(addr, handler); err != nil {
 		log.Fatalf("error al iniciar el servidor: %v", err)

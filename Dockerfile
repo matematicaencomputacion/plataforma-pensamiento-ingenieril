@@ -2,9 +2,11 @@
 # Build context: monorepo root.
 #
 # NOTE: go.mod requires Go 1.25 — do not use golang:1.22 (build fails).
+# Trunk release dist is COPIED into backend/static and go:embed'd so Cloud Run
+# cannot accidentally serve web/index.html (fuente con data-trunk).
 
 # ---- web (Wasm / Trunk) ----
-FROM rust:1-bookworm AS web-builder
+FROM --platform=linux/amd64 rust:1-bookworm AS web-builder
 
 ARG TRUNK_VERSION=0.21.14
 
@@ -25,10 +27,17 @@ COPY web/src ./src
 COPY web/index.html web/styles.css web/Trunk.toml ./
 COPY web/js ./js
 
-RUN env -u NO_COLOR trunk build --release
+# Clean slate — never ship the source index.html with data-trunk hooks.
+RUN rm -rf dist \
+    && env -u NO_COLOR trunk build --release \
+    && test -f dist/index.html \
+    && ! grep -q 'data-trunk' dist/index.html \
+    && grep -q 'import init' dist/index.html \
+    && ls dist/*.wasm >/dev/null \
+    && ls -la dist
 
-# ---- go API ----
-FROM golang:1.25-alpine AS builder
+# ---- go API (embeds Trunk dist) ----
+FROM --platform=linux/amd64 golang:1.25-alpine AS builder
 
 RUN apk add --no-cache ca-certificates git
 
@@ -38,11 +47,20 @@ COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 
 COPY backend/ ./
+# Replace placeholder static/ with Trunk release dist BEFORE compile (go:embed).
+RUN rm -rf ./static && mkdir -p ./static
+COPY --from=web-builder /src/web/dist/ ./static/
+RUN test -f static/index.html \
+    && ! grep -q 'data-trunk' static/index.html \
+    && grep -q 'import init' static/index.html \
+    && ls static/*.wasm >/dev/null \
+    && ls -la static
+
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -trimpath -ldflags="-s -w" -o /out/server .
 
 # ---- runtime ----
-FROM alpine:latest
+FROM --platform=linux/amd64 alpine:latest
 
 RUN apk add --no-cache ca-certificates tzdata \
     && adduser -D -H -u 10001 appuser
@@ -51,7 +69,12 @@ WORKDIR /app
 
 COPY --from=builder /src/data ./data
 COPY --from=builder /out/server ./server
-COPY --from=web-builder /src/web/dist ./static
+# Disk copy kept as fallback / DEBUG; primary serve path is go:embed inside server.
+COPY --from=web-builder /src/web/dist/ ./static/
+
+RUN test -f /app/static/index.html \
+    && ! grep -q 'data-trunk' /app/static/index.html \
+    && grep -q 'import init' /app/static/index.html
 
 ENV DATA_DIR=/app/data \
     STATIC_DIR=/app/static \

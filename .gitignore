@@ -20,6 +20,9 @@ data/
 
 artifacts/
 
+# Trunk dist baked into Go via Docker (never commit Wasm/assets)
+backend/static/**
+!backend/static/.gitkeep
 
 # CLI OpenSpec / toolchains locales
 .tools/

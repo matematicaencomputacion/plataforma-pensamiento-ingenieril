@@ -1,0 +1,3 @@
+# Placeholder so `go:embed all:static` works in local builds.
+# Docker/Cloud Run replaces this directory with Trunk `web/dist/` before `go build`.
+.gitkeep

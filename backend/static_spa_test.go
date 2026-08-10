@@ -13,7 +13,11 @@ import (
 func TestSPAHandler_RootAndFallback(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
-	mustWrite(t, filepath.Join(dir, "index.html"), "<!doctype html><title>spa</title>")
+	mustWrite(t, filepath.Join(dir, "index.html"), `<!doctype html><title>spa</title>
+<script type="module">
+import init, * as bindings from '/app.js';
+window.wasmBindings = bindings;
+</script>`)
 	mustWrite(t, filepath.Join(dir, "app.js"), "console.log(1)")
 	mustWrite(t, filepath.Join(dir, "favicon.ico"), "ico")
 
@@ -22,7 +26,7 @@ func TestSPAHandler_RootAndFallback(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(`{"ok":true}`))
 	})
-	handler := withSPA(mux, dir)
+	handler := withSPA(mux, spaRoot{fsys: http.Dir(dir), source: dir})
 
 	t.Run("root serves index", func(t *testing.T) {
 		rec := httptest.NewRecorder()
@@ -32,6 +36,9 @@ func TestSPAHandler_RootAndFallback(t *testing.T) {
 		}
 		if !strings.Contains(rec.Body.String(), "<title>spa</title>") {
 			t.Fatalf("body=%q", rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), "import init") {
+			t.Fatalf("expected trunk bootstrap, body=%q", rec.Body.String())
 		}
 	})
 
@@ -89,17 +96,42 @@ func TestSPAHandler_RootAndFallback(t *testing.T) {
 	})
 }
 
-func TestWithSPA_MissingIndex(t *testing.T) {
+func TestIsTrunkBuiltIndex(t *testing.T) {
+	t.Parallel()
+	source := []byte(`<link data-trunk rel="rust" /><body></body>`)
+	if isTrunkBuiltIndex(source) {
+		t.Fatal("source index with data-trunk must be rejected")
+	}
+	built := []byte(`<script type="module">import init, * as bindings from '/x.js';window.wasmBindings = bindings;</script><body></body>`)
+	if !isTrunkBuiltIndex(built) {
+		t.Fatal("trunk dist index must be accepted")
+	}
+}
+
+func TestWithSPA_MissingRoot(t *testing.T) {
 	t.Parallel()
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	})
-	h := withSPA(mux, t.TempDir())
+	h := withSPA(mux, spaRoot{})
 	rec := httptest.NewRecorder()
 	h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/", nil))
 	if rec.Code != http.StatusNotFound {
 		t.Fatalf("solo-API root should 404, got %d", rec.Code)
+	}
+}
+
+func TestOpenSPARoot_RejectsSourceDir(t *testing.T) {
+	dir := t.TempDir()
+	mustWrite(t, filepath.Join(dir, "index.html"), `<link data-trunk rel="css" href="styles.css" /><body></body>`)
+	t.Setenv("STATIC_DIR", dir)
+	body, _ := embeddedStatic.ReadFile("static/index.html")
+	if isTrunkBuiltIndex(body) {
+		t.Skip("test binary already embeds trunk dist")
+	}
+	if _, ok := openSPARoot(); ok {
+		t.Fatal("openSPARoot must not accept data-trunk source index")
 	}
 }
 
