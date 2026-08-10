@@ -1,5 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::components::A;
+
+use crate::components::BrandLink;
 use leptos_router::hooks::{use_navigate, use_query_map};
 
 use crate::auth::{input_value, reset_password};
@@ -77,9 +79,7 @@ pub fn ResetPasswordPage() -> impl IntoView {
     view! {
         <section class="auth-page">
             <div class="auth-page__card">
-                <A href="/" attr:class="auth-page__brand">
-                    "IngenierIA"
-                </A>
+                <BrandLink class="auth-page__brand" />
                 <h1 class="auth-page__title">"Nueva contraseña"</h1>
                 <p class="auth-page__lead">
                     "Elegí una contraseña de al menos 8 caracteres."

@@ -10,10 +10,10 @@ mod pages;
 mod session;
 
 use leptos::prelude::*;
-use leptos_router::components::{A, Route, Router, Routes};
+use leptos_router::components::{Route, Router, Routes};
 use leptos_router::path;
 
-use components::SessionBar;
+use components::{BrandLink, SessionBar};
 use pages::{
     ForgotPasswordPage, LandingPage, LearnPage, LoginPage, OnboardingPage, RegisterPage,
     ResetPasswordPage, WorkspacePage,
@@ -37,9 +37,7 @@ fn App() -> impl IntoView {
             <SessionBootstrap />
             <div class="shell">
                 <header class="shell__header">
-                    <A href="/" attr:class="shell__brand">
-                        "IngenierIA"
-                    </A>
+                    <BrandLink class="shell__brand" />
                     <SessionBar />
                 </header>
                 <main class="shell__main">
@@ -54,6 +52,7 @@ fn App() -> impl IntoView {
                         <Route path=path!("/workspace") view=WorkspacePage />
                         <Route path=path!("/onboarding") view=OnboardingPage />
                         <Route path=path!("/learn") view=LearnPage />
+                        <Route path=path!("/learn/:step") view=LearnPage />
                     </Routes>
                 </main>
             </div>

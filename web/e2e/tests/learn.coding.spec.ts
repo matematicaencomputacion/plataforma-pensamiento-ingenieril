@@ -65,7 +65,7 @@ test.describe("learn coding (Paso 2)", () => {
     await expect(page).toHaveURL(/\/login/, { timeout: e2eTimeout });
   });
 
-  test("validate unlocks continue then workspace", async ({ page, request }) => {
+  test("validate unlocks continue then next coding step", async ({ page, request }) => {
     const { email, password } = uniqueCreds();
     const reg = await request.post("/api/auth/register", {
       data: { email, password },
@@ -114,6 +114,9 @@ test.describe("learn coding (Paso 2)", () => {
     });
 
     await page.locator("#learn-continue").click();
-    await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
+    await expect(page).toHaveURL(/\/learn\/py-02-intro/, { timeout: e2eTimeout });
+    await expect(page.getByRole("heading", { name: "Python Intro" })).toBeVisible({
+      timeout: e2eTimeout,
+    });
   });
 });

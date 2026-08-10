@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::components::A;
 
+use crate::components::BrandMark;
 use crate::session::SessionCtx;
 
 #[component]
@@ -10,7 +11,7 @@ pub fn LandingPage() -> impl IntoView {
     view! {
         <section class="hero">
             <p class="hero__eyebrow">"Pensamiento ingenieril"</p>
-            <h1 class="hero__title">"IngenierIA"</h1>
+            <BrandMark class="hero__title" heading=true />
             <p class="hero__headline">
                 "Aprendé a programar resolviendo problemas reales, paso a paso."
             </p>
