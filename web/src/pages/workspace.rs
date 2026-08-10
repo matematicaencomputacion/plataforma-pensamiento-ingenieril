@@ -128,6 +128,9 @@ pub fn WorkspacePage() -> impl IntoView {
                 </div>
 
                 <nav class="workspace__nav" aria-label="Navegación del workspace">
+                    <A href="/onboarding" attr:class="cta cta--primary">
+                        "Empezar coaching"
+                    </A>
                     <A href="/" attr:class="cta cta--secondary">
                         "Portada"
                     </A>

@@ -12,7 +12,7 @@ export async function gotoApp(page: Page, path: string) {
     () => {
       const w = window as unknown as { wasmBindings?: unknown };
       const hasUi = !!document.querySelector(
-        "#login-email, #register-email, #forgot-email, #reset-password, .hero__title, .workspace__title",
+        "#login-email, #register-email, #forgot-email, #reset-password, .hero__title, .workspace__title, .onboarding__title",
       );
       return !!w.wasmBindings && hasUi;
     },
@@ -64,4 +64,30 @@ export async function fillLeptosInput(page: Page, selector: string, value: strin
   // Leptos redraw can wipe unbound values; confirm the signal stuck.
   await page.waitForTimeout(process.env.CI ? 200 : 50);
   await expect(input).toHaveValue(value, { timeout: e2eTimeout });
+}
+
+/**
+ * Same as {@link fillLeptosInput} for controlled `<textarea>` bindings.
+ */
+export async function fillLeptosTextarea(
+  page: Page,
+  selector: string,
+  value: string,
+) {
+  const area: Locator = page.locator(selector);
+  await expect(area).toBeVisible({ timeout: e2eTimeout });
+  await expect(area).toBeEnabled({ timeout: e2eTimeout });
+  await area.evaluate((el, v) => {
+    const node = el as HTMLTextAreaElement;
+    const desc = Object.getOwnPropertyDescriptor(
+      window.HTMLTextAreaElement.prototype,
+      "value",
+    );
+    desc?.set?.call(node, v);
+    node.dispatchEvent(new Event("input", { bubbles: true }));
+    node.dispatchEvent(new Event("change", { bubbles: true }));
+  }, value);
+  await expect(area).toHaveValue(value, { timeout: e2eTimeout });
+  await page.waitForTimeout(process.env.CI ? 200 : 50);
+  await expect(area).toHaveValue(value, { timeout: e2eTimeout });
 }

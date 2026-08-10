@@ -382,6 +382,98 @@ button:focus-visible {
   gap: 0.75rem;
 }
 
+.onboarding {
+  width: min(42rem, 100%);
+  text-align: left;
+}
+
+.onboarding__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.onboarding__header {
+  margin-bottom: 1.5rem;
+}
+
+.onboarding__title {
+  margin: 0 0 0.6rem;
+  font-size: 2rem;
+}
+
+.onboarding__lead,
+.onboarding__muted,
+.onboarding__hint {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.onboarding__prompts {
+  margin: 0 0 1.5rem;
+  padding-left: 1.15rem;
+  color: var(--fg);
+  line-height: 1.55;
+}
+
+.onboarding__prompt {
+  margin-bottom: 0.45rem;
+}
+
+.onboarding__label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.9rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.onboarding__textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 8rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: rgba(15, 28, 24, 0.45);
+  color: var(--fg);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.onboarding__textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.onboarding__actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.onboarding__actions .cta:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.onboarding__hint {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.onboarding__nav {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .not-found {
   color: var(--muted);
 }
@@ -425,7 +517,8 @@ button:focus-visible {
 
   .hero,
   .auth-page,
-  .workspace {
+  .workspace,
+  .onboarding {
     width: 100%;
     max-width: 100%;
   }
@@ -435,9 +528,15 @@ button:focus-visible {
   }
 
   .hero__ctas,
-  .workspace__nav {
+  .workspace__nav,
+  .onboarding__nav,
+  .onboarding__actions {
     flex-direction: column;
     width: 100%;
+  }
+
+  .onboarding__title {
+    font-size: 1.65rem;
   }
 
   .cta {
