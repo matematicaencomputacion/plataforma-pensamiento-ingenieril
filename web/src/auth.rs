@@ -6,9 +6,10 @@ use web_sys::{CustomEvent, CustomEventInit, HtmlInputElement, HtmlTextAreaElemen
 
 use crate::api::{
     current_level_url, forgot_password_url, is_auth_rejection, parse_auth_error_body,
-    reset_password_url, sanitize_email, AuthCredentials, AuthSuccess, AuthUser,
-    ForgotPasswordRequest, ForgotPasswordResponse, Level, ResetPasswordRequest, AUTH_TOKEN_KEY,
-    MSG_INVALID_RESPONSE, MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url, register_url,
+    reset_password_url, sanitize_email, synthesize_profile_url, AuthCredentials, AuthSuccess,
+    AuthUser, ForgotPasswordRequest, ForgotPasswordResponse, Level, ProfileSynthesis,
+    ResetPasswordRequest, SynthesizeProfileRequest, AUTH_TOKEN_KEY, MSG_INVALID_RESPONSE,
+    MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url, register_url,
 };
 
 /// Same-tab signal that `SessionCtx` should drop in-memory auth after a storage purge.
@@ -211,6 +212,43 @@ pub async fn fetch_current_level() -> Result<Level, AuthError> {
     }
 
     res.json::<Level>().await.map_err(invalid_response)
+}
+
+/// Onboarding synthesize (`POST /api/learner/profile/synthesize`) — no Bearer required.
+pub async fn synthesize_learner_profile(
+    raw_notes: String,
+    source_step_id: String,
+) -> Result<ProfileSynthesis, AuthError> {
+    let payload = SynthesizeProfileRequest {
+        raw_notes,
+        source_step_id,
+    };
+    let res = Request::post(&synthesize_profile_url())
+        .header("Content-Type", "application/json")
+        .json(&payload)
+        .map_err(request_build_error)?
+        .send()
+        .await
+        .map_err(network_unavailable)?;
+
+    if !res.ok() {
+        let status = res.status();
+        let message = if status == 400 {
+            let body = read_error(&res).await;
+            if body.contains("raw_notes") || body.contains("HTTP 400") {
+                "El relato es demasiado corto para analizar.".into()
+            } else {
+                body
+            }
+        } else {
+            read_error(&res).await
+        };
+        return Err(AuthError::with_status(message, status));
+    }
+
+    res.json::<ProfileSynthesis>()
+        .await
+        .map_err(invalid_response)
 }
 
 pub async fn logout_session() {

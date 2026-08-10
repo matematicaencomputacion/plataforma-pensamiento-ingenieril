@@ -42,3 +42,20 @@ contracts for synthesize/profile MUST remain unchanged in the shell slice.
 - **WHEN** reviewers inspect the shell PR diff
 - **THEN** there are no edits under `frontend/` and no breaking Go handler
   signature changes
+
+### Requirement: Profile synthesize from drafting notes
+The onboarding surface SHALL call `POST /api/learner/profile/synthesize` with
+`raw_notes` and `source_step_id` when the learner submits for analysis. On
+success it MUST move to a reviewing state with editable purpose, urgency,
+vision, and stack fields populated from the API JSON.
+
+#### Scenario: Happy-path analyze (mock LLM)
+- **GIVEN** an authenticated learner on `/onboarding` with notes of at least 12 unicode runes
+- **WHEN** they activate «Enviar para análisis»
+- **THEN** the UI shows analyzing feedback, then four editable profile fields
+  reflecting the synthesize response
+
+#### Scenario: Too-short notes
+- **GIVEN** notes shorter than the backend minimum
+- **WHEN** the learner attempts analysis (client guard or API 400)
+- **THEN** they remain in drafting with a clear error and do not see a completed profile builder

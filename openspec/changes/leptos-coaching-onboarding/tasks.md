@@ -9,10 +9,10 @@
 
 ## 2. Synthesize (rebanada siguiente)
 
-- [ ] 2.1 Cliente Wasm `POST /api/learner/profile/synthesize`
-- [ ] 2.2 Estados analyzing/error + transición a `reviewing`
-- [ ] 2.3 Profile builder (4 campos) editable en review
-- [ ] 2.4 Tests unitarios contratos JSON + E2E analyze con LLM mock
+- [x] 2.1 Cliente Wasm `POST /api/learner/profile/synthesize`
+- [x] 2.2 Estados analyzing/error + transición a `reviewing`
+- [x] 2.3 Profile builder (4 campos) editable en review
+- [x] 2.4 Tests unitarios contratos JSON + E2E analyze con LLM mock
 
 ## 3. Persist & continue
 
