@@ -20,7 +20,8 @@ pub const PY02_VARIABLES: CodingStep = CodingStep {
     id: "py-02-variables",
     title: "Variables (puente coding)",
     objective: "Primer micro-ejercicio de código tras el onboarding.",
-    prompt_md: "**Variables**\n\nUna variable guarda un valor. En Python se crea al asignar.\n\n**Micro-reto:**\n1. Crea `nombre` con un texto\n2. Crea `edad` con un entero\n3. Imprime ambas con `print(nombre, edad)`",
+    // Heading «Variables» se renderiza junto a los type-chips; el cuerpo empieza acá.
+    prompt_md: "Una variable guarda un valor. En Python se crea al asignar.\n\n**Micro-reto:**\n1. Crea `nombre` con un texto\n2. Crea `edad` con un entero\n3. Imprime ambas con `print(nombre, edad)`",
     starter_code: "# nombre = ...\n# edad = ...\n# print(...)\n",
     pytest: "def test_variables(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'nombre' in ns and isinstance(ns['nombre'], str)\n    assert 'edad' in ns and isinstance(ns['edad'], int)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert str(ns['nombre']) in out and str(ns['edad']) in out\n",
     hint: "nombre = \"Ana\"\nedad = 25\nprint(nombre, edad)",
@@ -84,9 +85,16 @@ mod tests {
 
     #[test]
     fn prompt_html_bold_and_code() {
-        let html = prompt_to_html("**Variables**\nUsa `print`");
-        assert!(html.contains("<strong>Variables</strong>"));
+        let html = prompt_to_html("**Micro-reto:**\nUsa `print`");
+        assert!(html.contains("<strong>Micro-reto:</strong>"));
         assert!(html.contains("<code>print</code>"));
         assert!(!html.contains("<script"));
+    }
+
+    #[test]
+    fn prompt_body_no_longer_duplicates_variables_heading() {
+        let html = prompt_to_html(first_coding_step().prompt_md);
+        assert!(html.contains("Una variable guarda un valor"));
+        assert!(!html.contains("<strong>Variables</strong>"));
     }
 }

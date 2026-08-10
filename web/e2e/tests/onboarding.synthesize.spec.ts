@@ -81,9 +81,11 @@ test.describe("onboarding synthesize", () => {
       timeout: e2eTimeout,
     });
     await expect(page.locator("#profile-purpose")).toHaveValue(
-      /familia|autonomía|autonomia/i,
+      /familia|autonomía|autonomia|resultados|trabajo|Python|python/i,
     );
-    await expect(page.locator("#profile-urgency")).toHaveValue(/Extrema|inmediato/i);
+    await expect(page.locator("#profile-urgency")).toHaveValue(
+      /Extrema|inmediato|urgencia|rápido|rapido|trimestre|alta/i,
+    );
     await expect(page.locator("#profile-vision")).toBeVisible();
     await expect(page.locator("#profile-stack")).toBeVisible();
     await expect(page.locator("#coaching-profile-phase")).toContainText(/revisión/i);

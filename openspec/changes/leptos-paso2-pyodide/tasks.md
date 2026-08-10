@@ -25,3 +25,9 @@
 - [x] 5.2 UI «Validar solución» + panel test cases + banner de éxito
 - [x] 5.3 `POST /api/progress/complete` (Bearer, sin `code`) + wire Wasm
 - [x] 5.4 E2E fail/pass + assert progreso ADR 002
+
+## 6. Variable type chips (enunciado)
+
+- [x] 6.1 Catálogo `DATA_TYPE_CHIPS` (str primero) + componente acordeón
+- [x] 6.2 Montaje bajo «Enunciado» / label Variables (blanco) antes del cuerpo del prompt
+- [x] 6.3 E2E: str → panel; switch a obj; toggle off

@@ -11,6 +11,7 @@ use leptos_router::NavigateOptions;
 
 use crate::api::Level;
 use crate::auth::{complete_progress, fetch_current_level, input_value};
+use crate::components::VariableTypeChips;
 use crate::curriculum::{first_coding_step, prompt_to_html};
 use crate::interop::pyodide::{
     check_student_code, ensure_engine, format_check_log, run_stderr_body, run_stdout_body,
@@ -267,6 +268,7 @@ pub fn LearnPage() -> impl IntoView {
                 <div class="learn__grid">
                     <section class="learn__theory" aria-label="Teoría y enunciado">
                         <h2 class="learn__section-title">"Enunciado"</h2>
+                        <VariableTypeChips />
                         <div class="learn__prompt" inner_html=prompt_html.clone()></div>
 
                         <Show when=move || level.get().is_some()>
