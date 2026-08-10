@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
@@ -139,7 +140,7 @@ func main() {
 	mux.HandleFunc("POST /api/progress/complete", progressHandler.Complete)
 	mux.HandleFunc("POST /api/progress/reset", progressHandler.Reset)
 
-	addr := ":8080"
+	addr := listenAddr()
 	log.Printf(
 		"servidor iniciado: escuchando en http://localhost%s (data=%s root=%s sqlite=%s)",
 		addr, dataDir, repoRoot, sqlitePath,
@@ -147,4 +148,16 @@ func main() {
 	if err := http.ListenAndServe(addr, enableCORS(mux)); err != nil {
 		log.Fatalf("error al iniciar el servidor: %v", err)
 	}
+}
+
+// listenAddr respeta PORT (Cloud Run) y cae a :8080 en local.
+func listenAddr() string {
+	port := strings.TrimSpace(os.Getenv("PORT"))
+	if port == "" {
+		return ":8080"
+	}
+	if strings.HasPrefix(port, ":") {
+		return port
+	}
+	return ":" + port
 }
