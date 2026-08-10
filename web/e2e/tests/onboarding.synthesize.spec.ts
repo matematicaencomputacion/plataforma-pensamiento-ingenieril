@@ -8,16 +8,13 @@ import {
 } from "./helpers";
 
 /**
- * Smoke: authenticated learner reaches Leptos `/onboarding` shell (Paso 1).
- * Full analyze coverage lives in `onboarding.synthesize.spec.ts`.
+ * Synthesize smoke against Go with LEARNER_PROFILE_LLM=mock (harness default).
  */
 
 function uniqueCreds(): { email: string; password: string } {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
   const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
-  const email =
-    process.env.PPI_E2E_EMAIL?.trim() ||
-    `e2e-onboard-${stamp}@example.com`;
+  const email = `e2e-synth-${stamp}@example.com`;
   if (password.length < 8) {
     test.skip(true, "PPI_E2E_PASSWORD must be at least 8 characters (API rule)");
     throw new Error("unreachable: short PPI_E2E_PASSWORD");
@@ -25,16 +22,15 @@ function uniqueCreds(): { email: string; password: string } {
   return { email, password };
 }
 
-test.describe("onboarding shell smoke", () => {
-  test("workspace CTA reaches drafting surface", async ({ page, request }) => {
+test.describe("onboarding synthesize", () => {
+  test("analyze fills editable profile fields (mock LLM)", async ({
+    page,
+    request,
+  }) => {
     const { email, password } = uniqueCreds();
-    const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
-    const accountEmail = email.includes("@")
-      ? email.replace(/@/, `+${stamp}@`)
-      : `e2e-onboard-${stamp}@example.com`;
 
     const reg = await request.post("/api/auth/register", {
-      data: { email: accountEmail, password },
+      data: { email, password },
       timeout: e2eTimeout,
     });
     expect(
@@ -48,9 +44,8 @@ test.describe("onboarding shell smoke", () => {
       passwordSelector: "#login-password",
       submitName: "Entrar",
     });
-    await fillLeptosInput(page, "#login-email", accountEmail);
+    await fillLeptosInput(page, "#login-email", email);
     await fillLeptosInput(page, "#login-password", password);
-
     const loginResponse = page.waitForResponse(
       (res) =>
         res.url().includes("/api/auth/login") &&
@@ -63,21 +58,34 @@ test.describe("onboarding shell smoke", () => {
 
     await page.getByRole("link", { name: "Empezar coaching" }).click();
     await expect(page).toHaveURL(/\/onboarding/, { timeout: e2eTimeout });
-    await expect(
-      page.getByRole("heading", { name: "Hola, ¿cómo estás?" }),
-    ).toBeVisible({ timeout: e2eTimeout });
 
-    const draft = "Quiero automatizar reportes; urgencia alta; visión a 5 años en datos.";
+    // Keywords tip the mock classifier (estudiante + urgencia → purpose + urgency).
+    const draft =
+      "Soy estudiante y necesito resultados rápido por urgencia en el trabajo.";
     await fillLeptosTextarea(page, "#coaching-notes", draft);
-    await expect(page.locator("#coaching-notes")).toHaveValue(draft);
 
+    const synthesizeResponse = page.waitForResponse(
+      (res) =>
+        res.url().includes("/api/learner/profile/synthesize") &&
+        res.request().method() === "POST",
+      { timeout: e2eTimeout },
+    );
+    await page.getByRole("button", { name: "Enviar para análisis" }).click();
+    const synthRes = await synthesizeResponse;
+    expect(
+      synthRes.ok(),
+      `synthesize failed: ${synthRes.status()} ${await synthRes.text()}`,
+    ).toBeTruthy();
+
+    await expect(page.locator("#profile-purpose")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await expect(page.locator("#profile-purpose")).toHaveValue(
+      /familia|autonomía|autonomia/i,
+    );
+    await expect(page.locator("#profile-urgency")).toHaveValue(/Extrema|inmediato/i);
     await expect(
-      page.getByRole("button", { name: "Enviar para análisis" }),
-    ).toBeEnabled();
-  });
-
-  test("unauthenticated /onboarding redirects to login", async ({ page }) => {
-    await gotoApp(page, "/onboarding");
-    await expect(page).toHaveURL(/\/login/, { timeout: e2eTimeout });
+      page.getByRole("button", { name: "Guardar perfil" }),
+    ).toBeDisabled();
   });
 });

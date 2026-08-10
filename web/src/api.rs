@@ -77,6 +77,33 @@ pub fn current_level_url() -> String {
     api_url("/api/levels/current")
 }
 
+pub fn synthesize_profile_url() -> String {
+    api_url("/api/learner/profile/synthesize")
+}
+
+/// Min length enforced by Go `LearnerProfileService` (unicode runes).
+pub const MIN_LEARNER_NOTES_RUNES: usize = 12;
+
+/// Wire request for `POST /api/learner/profile/synthesize`.
+#[derive(Debug, Clone, Serialize)]
+pub struct SynthesizeProfileRequest {
+    pub raw_notes: String,
+    pub source_step_id: String,
+}
+
+/// Wire response (`purpose`/`urgency`/`vision`/`stack` — Go handler names).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct ProfileSynthesis {
+    #[serde(default)]
+    pub purpose: String,
+    #[serde(default)]
+    pub urgency: String,
+    #[serde(default)]
+    pub vision: String,
+    #[serde(default)]
+    pub stack: String,
+}
+
 /// Wire type for `GET /api/levels/current` (mirrors Go `domain.Level`).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Level {
@@ -150,6 +177,31 @@ mod tests {
         assert_eq!(forgot_password_url(), "/api/auth/forgot-password");
         assert_eq!(reset_password_url(), "/api/auth/reset-password");
         assert_eq!(current_level_url(), "/api/levels/current");
+        assert_eq!(
+            synthesize_profile_url(),
+            "/api/learner/profile/synthesize"
+        );
+    }
+
+    #[test]
+    fn synthesize_json_matches_backend_contract() {
+        let req = serde_json::to_string(&SynthesizeProfileRequest {
+            raw_notes: "Soy estudiante y necesito resultados rápido por urgencia".into(),
+            source_step_id: "leptos-onboarding-v1".into(),
+        })
+        .expect("serialize synthesize");
+        assert!(req.contains("\"raw_notes\""));
+        assert!(req.contains("\"source_step_id\""));
+        assert!(!req.contains("rawNotes"));
+
+        let parsed: ProfileSynthesis = serde_json::from_str(
+            r#"{"purpose":"p","urgency":"u","vision":"v","stack":"s"}"#,
+        )
+        .expect("decode synthesis");
+        assert_eq!(parsed.purpose, "p");
+        assert_eq!(parsed.urgency, "u");
+        assert_eq!(parsed.vision, "v");
+        assert_eq!(parsed.stack, "s");
     }
 
     #[test]
