@@ -1,0 +1,5 @@
+# Wasm target flags for wasm-bindgen externref / bulk memory (Cloud Run release).
+# See: https://github.com/wasm-bindgen/wasm-bindgen/issues/4528
+
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "target-feature=+bulk-memory,+reference-types"]

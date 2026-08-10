@@ -2,6 +2,11 @@
 target = "index.html"
 dist = "dist"
 
+# Pin CLI to the same wasm-bindgen crate locked in Cargo.lock (0.2.127).
+# Mismatched CLIs produce broken externref tables at runtime.
+[tools]
+wasm_bindgen = "0.2.127"
+
 [watch]
 # Only paths that always exist under web/. Trunk 0.21 aborts if an ignore
 # entry cannot be canonicalized (e.g. missing `target/` on a fresh CI checkout).

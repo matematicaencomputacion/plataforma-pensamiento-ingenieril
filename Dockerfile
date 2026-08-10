@@ -9,20 +9,22 @@
 FROM --platform=linux/amd64 rust:1-bookworm AS web-builder
 
 ARG TRUNK_VERSION=0.21.14
+# Bookworm's apt binaryen is too old for wasm-bindgen 0.2.12x externref + wasm-opt.
+# We disable wasm-opt in index.html (data-wasm-opt="0"); binaryen is not required.
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl ca-certificates binaryen \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
     && rustup target add wasm32-unknown-unknown \
     && curl -fsSL \
       "https://github.com/trunk-rs/trunk/releases/download/v${TRUNK_VERSION}/trunk-x86_64-unknown-linux-gnu.tar.gz" \
       | tar -xz \
     && install -m 755 trunk /usr/local/bin/trunk \
-    && trunk --version \
-    && wasm-opt --version
+    && trunk --version
 
 WORKDIR /src/web
 COPY web/Cargo.toml web/Cargo.lock ./
+COPY web/.cargo ./.cargo
 COPY web/src ./src
 COPY web/index.html web/styles.css web/Trunk.toml ./
 COPY web/js ./js
