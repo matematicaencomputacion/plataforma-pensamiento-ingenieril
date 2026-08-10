@@ -3,6 +3,7 @@ package usecases_test
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
@@ -85,6 +86,59 @@ func TestForgotAndResetPassword(t *testing.T) {
 	if !errors.Is(err, domain.ErrInvalidResetToken) {
 		t.Fatalf("reused token should fail, got %v", err)
 	}
+}
+
+func TestForgotPasswordSendsMailWithLink(t *testing.T) {
+	db, err := sqlite.OpenDB(":memory:")
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	t.Cleanup(func() { _ = db.Close() })
+	repo, err := sqlite.NewUserRepository(db)
+	if err != nil {
+		t.Fatalf("repo: %v", err)
+	}
+	rec := &recordingMailer{}
+	svc := usecases.NewAuthService(
+		repo,
+		crypto.NewBcryptHasher(),
+		jwtauth.NewHS256Issuer("prod-like-secret-value"),
+		usecases.AuthOptions{
+			ExposeResetToken: false,
+			Mailer:           rec,
+			PublicAppURL:     "https://ingenieria.example",
+		},
+	)
+	ctx := context.Background()
+	if _, err := svc.Register(ctx, "mail@example.com", "secreto12"); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	out, err := svc.ForgotPassword(ctx, "mail@example.com")
+	if err != nil {
+		t.Fatalf("forgot: %v", err)
+	}
+	if out.ResetToken != "" {
+		t.Fatal("prod mode must not expose resetToken")
+	}
+	if len(rec.msgs) != 1 {
+		t.Fatalf("expected 1 mail, got %d", len(rec.msgs))
+	}
+	msg := rec.msgs[0]
+	if msg.To != "mail@example.com" {
+		t.Fatalf("to=%q", msg.To)
+	}
+	if !strings.Contains(msg.BodyText, "https://ingenieria.example/reset-password?token=") {
+		t.Fatalf("body missing reset link: %q", msg.BodyText)
+	}
+}
+
+type recordingMailer struct {
+	msgs []domain.MailMessage
+}
+
+func (r *recordingMailer) Send(_ context.Context, msg domain.MailMessage) error {
+	r.msgs = append(r.msgs, msg)
+	return nil
 }
 
 func TestForgotPasswordHidesTokenWhenDisabled(t *testing.T) {

@@ -13,9 +13,9 @@ de código de alumnos en servidor).
 - Dev/E2E: exposición opt-in del token en la respuesta forgot.
 - Tests Go del usecase/handler; smoke E2E opcional.
 
-**Non-Goals**
+**Non-Goals (original) / actualizar**
 
-- Envío de correo real.
+- ~~Envío de correo real~~ → rebanada SMTP genérica (`SMTP_*` + `APP_PUBLIC_URL`).
 - Invalidar todos los JWT existentes al reset (stateless HS256).
 
 ## Decisions
