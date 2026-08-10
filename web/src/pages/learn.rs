@@ -2,6 +2,7 @@
 //!
 //! Learner Python runs only in the browser. Go supplies level metadata via
 //! `GET /api/levels/current` (statement/title) — never executes student code.
+//! Progress is reported with `POST /api/progress/complete` (pass/fail only).
 
 use leptos::prelude::*;
 use leptos_router::components::A;
@@ -9,11 +10,11 @@ use leptos_router::hooks::{use_location, use_navigate};
 use leptos_router::NavigateOptions;
 
 use crate::api::Level;
-use crate::auth::{fetch_current_level, input_value};
+use crate::auth::{complete_progress, fetch_current_level, input_value};
 use crate::curriculum::{first_coding_step, prompt_to_html};
 use crate::interop::pyodide::{
     check_student_code, ensure_engine, format_check_log, run_stderr_body, run_stdout_body,
-    run_student_code,
+    run_student_code, CheckCase,
 };
 use crate::session::SessionCtx;
 
@@ -51,6 +52,8 @@ pub fn LearnPage() -> impl IntoView {
     let stdout = RwSignal::new(String::new());
     let stderr = RwSignal::new(String::new());
     let check_log = RwSignal::new(String::new());
+    let check_cases = RwSignal::new(Vec::<CheckCase>::new());
+    let progress_note = RwSignal::new(Option::<String>::None);
     let show_hint = RwSignal::new(false);
     let show_solution = RwSignal::new(false);
     let can_continue = RwSignal::new(false);
@@ -131,10 +134,12 @@ pub fn LearnPage() -> impl IntoView {
         }
         busy.set(true);
         can_continue.set(false);
+        progress_note.set(None);
         console_kind.set(ConsoleKind::Running);
         stdout.set(String::new());
         stderr.set(String::new());
         check_log.set(String::new());
+        check_cases.set(Vec::new());
         let source = code.get_untracked();
         leptos::task::spawn_local(async move {
             match run_student_code(source).await {
@@ -162,26 +167,57 @@ pub fn LearnPage() -> impl IntoView {
             return;
         }
         busy.set(true);
+        progress_note.set(None);
         console_kind.set(ConsoleKind::Validating);
         stdout.set(String::new());
         stderr.set(String::new());
         check_log.set(String::new());
+        check_cases.set(Vec::new());
         let source = code.get_untracked();
         let tests = first_coding_step().pytest.to_string();
+        let step_id = first_coding_step().id.to_string();
+        let level_id = level.get_untracked().map(|l| l.id).unwrap_or(1);
         leptos::task::spawn_local(async move {
             match check_student_code(source, tests).await {
                 Ok(result) => {
                     check_log.set(format_check_log(&result));
+                    check_cases.set(result.cases.clone());
                     if result.passed {
                         console_kind.set(ConsoleKind::CheckPass);
                         can_continue.set(true);
+                        match complete_progress(level_id, step_id, true).await {
+                            Ok(prog) => {
+                                if prog.advanced {
+                                    progress_note.set(Some(format!(
+                                        "Progreso guardado · nivel actual {}",
+                                        prog.current_level
+                                    )));
+                                } else {
+                                    progress_note.set(Some(
+                                        "Progreso confirmado (ya estabas por delante).".into(),
+                                    ));
+                                }
+                            }
+                            Err(err) => {
+                                progress_note.set(Some(format!(
+                                    "Checks OK en el browser, pero no se pudo guardar el avance: {}",
+                                    err.message
+                                )));
+                            }
+                        }
                     } else {
                         console_kind.set(ConsoleKind::CheckFail);
                         can_continue.set(false);
+                        let _ = complete_progress(level_id, step_id, false).await;
                     }
                 }
                 Err(err) => {
                     check_log.set(format!("=== Validar ===\n{}", err.message));
+                    check_cases.set(vec![CheckCase {
+                        name: "(runtime)".into(),
+                        passed: false,
+                        message: err.message.clone(),
+                    }]);
                     console_kind.set(ConsoleKind::CheckFail);
                     can_continue.set(false);
                 }
@@ -339,7 +375,7 @@ pub fn LearnPage() -> impl IntoView {
                                     if console_kind.get() == ConsoleKind::Validating {
                                         "Validando…"
                                     } else {
-                                        "Validar"
+                                        "Validar solución"
                                     }
                                 }}
                             </button>
@@ -378,6 +414,40 @@ pub fn LearnPage() -> impl IntoView {
                             <p class="learn__busy" role="status" aria-live="polite">
                                 "Validando checks del micro-reto en tu navegador…"
                             </p>
+                        </Show>
+
+                        <Show when=move || !check_cases.get().is_empty()>
+                            <ul
+                                id="learn-test-cases"
+                                class="learn__cases"
+                                aria-label="Resultado de test cases"
+                            >
+                                <For
+                                    each=move || check_cases.get()
+                                    key=|c| format!("{}:{}", c.name, c.passed)
+                                    children=move |c| {
+                                        let item_class = if c.passed {
+                                            "learn__case learn__case--pass"
+                                        } else {
+                                            "learn__case learn__case--fail"
+                                        };
+                                        let status = if c.passed { "pass" } else { "fail" };
+                                        let msg = c.message.clone();
+                                        let show_msg = !c.message.is_empty() && !c.passed;
+                                        view! {
+                                            <li class=item_class data-status=status>
+                                                <span class="learn__case-name">{c.name.clone()}</span>
+                                                <span class="learn__case-mark">
+                                                    {if c.passed { "pasa" } else { "falla" }}
+                                                </span>
+                                                <Show when=move || show_msg>
+                                                    <pre class="learn__case-msg">{msg.clone()}</pre>
+                                                </Show>
+                                            </li>
+                                        }
+                                    }
+                                />
+                            </ul>
                         </Show>
 
                         <div
@@ -442,8 +512,17 @@ pub fn LearnPage() -> impl IntoView {
                         </div>
 
                         <Show when=move || can_continue.get()>
-                            <p class="learn__ok" role="status">
-                                "Checks OK. Podés continuar al workspace o seguir practicando."
+                            <p
+                                id="learn-success-banner"
+                                class="learn__ok learn__ok--banner"
+                                role="status"
+                            >
+                                "¡Ejercicio completado con éxito!"
+                            </p>
+                        </Show>
+                        <Show when=move || progress_note.get().is_some()>
+                            <p class="learn__muted" role="status" id="learn-progress-note">
+                                {move || progress_note.get().unwrap_or_default()}
                             </p>
                         </Show>
                     </section>

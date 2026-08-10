@@ -19,9 +19,9 @@
 - [x] 3.2 Asset smoke: `ppi-pyodide.js` servido por Trunk
 - [x] 3.3 `make harness` PASS + PR TED vía `gh`
 
-## 4. Execution engine (rebanada 2)
+## 5. Exercise evaluation (rebanada 3)
 
-- [x] 4.1 Interop en `web/src/interop/pyodide.rs` + bodies stdout/stderr
-- [x] 4.2 Consola estructurada + «Ejecutar código» + busy copy
-- [x] 4.3 Hidratar consignas desde `GET /api/levels/current` (sin ejecutar en Go)
-- [x] 4.4 E2E `exercise.spec.ts`: Ready → print → stdout
+- [x] 5.1 Harness client-side con `cases[]` (name/passed/message) en Pyodide JS
+- [x] 5.2 UI «Validar solución» + panel test cases + banner de éxito
+- [x] 5.3 `POST /api/progress/complete` (Bearer, sin `code`) + wire Wasm
+- [x] 5.4 E2E fail/pass + assert progreso ADR 002

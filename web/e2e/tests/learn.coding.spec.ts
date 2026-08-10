@@ -90,10 +90,14 @@ test.describe("learn coding (Paso 2)", () => {
     const solution = 'nombre = "Ana"\nedad = 25\nprint(nombre, edad)\n';
     await fillLeptosTextarea(page, "#learn-editor", solution);
 
-    await page.getByRole("button", { name: "Validar" }).click();
+    await page.getByRole("button", { name: "Validar solución" }).click();
     await expect(page.locator("#learn-check-log")).toContainText(/Checks OK|PASSED|OK/i, {
       timeout: engineTimeout,
     });
+    await expect(page.locator("#learn-success-banner")).toContainText(
+      "¡Ejercicio completado con éxito!",
+      { timeout: engineTimeout },
+    );
     await expect(page.locator("#learn-continue")).toBeEnabled({
       timeout: e2eTimeout,
     });

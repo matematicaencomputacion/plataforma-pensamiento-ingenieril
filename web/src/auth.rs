@@ -6,10 +6,12 @@ use web_sys::{CustomEvent, CustomEventInit, HtmlInputElement, HtmlTextAreaElemen
 
 use crate::api::{
     current_level_url, forgot_password_url, is_auth_rejection, parse_auth_error_body,
-    reset_password_url, sanitize_email, synthesize_profile_url, user_profile_url, AuthCredentials,
-    AuthSuccess, AuthUser, ForgotPasswordRequest, ForgotPasswordResponse, Level, ProfileSynthesis,
-    ResetPasswordRequest, SynthesizeProfileRequest, UserProfile, AUTH_TOKEN_KEY,
-    MSG_INVALID_RESPONSE, MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url, register_url,
+    progress_complete_url, reset_password_url, sanitize_email, synthesize_profile_url,
+    user_profile_url, AuthCredentials, AuthSuccess, AuthUser, ForgotPasswordRequest,
+    ForgotPasswordResponse, Level, ProfileSynthesis, ProgressCompleteRequest,
+    ProgressCompleteResponse, ResetPasswordRequest, SynthesizeProfileRequest, UserProfile,
+    AUTH_TOKEN_KEY, MSG_INVALID_RESPONSE, MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url,
+    register_url,
 };
 
 /// Same-tab signal that `SessionCtx` should drop in-memory auth after a storage purge.
@@ -300,6 +302,36 @@ pub async fn put_user_profile(profile: UserProfile) -> Result<UserProfile, AuthE
     res.json::<UserProfile>()
         .await
         .map(|p| p.normalize())
+        .map_err(invalid_response)
+}
+
+/// Persist exercise progress after client-side Pyodide checks (ADR 002: no student code).
+pub async fn complete_progress(
+    level_id: i32,
+    step_id: String,
+    passed: bool,
+) -> Result<ProgressCompleteResponse, AuthError> {
+    let Some(token) = get_stored_token() else {
+        return Err(AuthError::with_status("Sesión no iniciada.", 401));
+    };
+    let payload = ProgressCompleteRequest {
+        level_id,
+        step_id,
+        passed,
+    };
+    let res = Request::post(&progress_complete_url())
+        .header("Authorization", &format!("Bearer {token}"))
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json")
+        .json(&payload)
+        .map_err(request_build_error)?
+        .send()
+        .await
+        .map_err(network_unavailable)?;
+
+    let res = reject_if_not_ok(res).await?;
+    res.json::<ProgressCompleteResponse>()
+        .await
         .map_err(invalid_response)
 }
 

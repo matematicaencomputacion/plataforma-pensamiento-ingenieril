@@ -95,13 +95,14 @@
   function buildCheckHarnessPython() {
     return [
       "import io",
+      "import json",
       "import sys",
       "import types",
       "import traceback",
       "import importlib.util",
       "",
-      "failures = []",
-      "passed = 0",
+      "cases = []",
+      "passed_count = 0",
       "",
       'spec = importlib.util.spec_from_file_location("student_tests", "test_step.py")',
       "mod = importlib.util.module_from_spec(spec)",
@@ -110,7 +111,7 @@
       "",
       "test_names = sorted(n for n in dir(mod) if n.startswith(\"test_\") and callable(getattr(mod, n)))",
       "if not test_names:",
-      '    failures.append("No se encontró ninguna función test_* en el micro-reto.")',
+      '    cases.append({"name": "(suite)", "passed": False, "message": "No se encontró ninguna función test_* en el micro-reto."})',
       "",
       "for name in test_names:",
       "    fn = getattr(mod, name)",
@@ -136,22 +137,26 @@
       '        if "capsys" in params:',
       "            kwargs[\"capsys\"] = Capsys()",
       "        fn(**kwargs)",
-      "        passed += 1",
+      "        passed_count += 1",
+      '        cases.append({"name": name, "passed": True, "message": "OK"})',
       '        print(f"PASSED {name}")',
-      "    except Exception:",
-      '        failures.append(f"FAILED {name}\\n{traceback.format_exc()}")',
+      "    except Exception as exc:",
+      "        msg = str(exc).strip() or traceback.format_exc()",
+      '        cases.append({"name": name, "passed": False, "message": msg})',
       '        print(f"FAILED {name}")',
       "    finally:",
       "        sys.stdout, sys.stderr = old_out, old_err",
       "",
-      "if failures:",
+      "failed = [c for c in cases if not c[\"passed\"]]",
+      "if failed:",
       '    print("---")',
-      "    for f in failures:",
-      "        print(f)",
+      "    for c in failed:",
+      '        print("FAILED " + c["name"] + "\\n" + c["message"])',
       "else:",
-      '    print(f"OK — {passed} test(s) passed")',
+      '    print(f"OK — {passed_count} test(s) passed")',
       "",
-      "_CHECK_PASSED = len(failures) == 0",
+      "_CHECK_PASSED = len(cases) > 0 and len(failed) == 0",
+      "_CHECK_CASES_JSON = json.dumps(cases)",
     ].join("\n");
   }
 
@@ -257,6 +262,16 @@
         )
         .then(function () {
           var passed = Boolean(py.runPython("_CHECK_PASSED"));
+          var cases = [];
+          try {
+            var raw = py.runPython("_CHECK_CASES_JSON");
+            cases = JSON.parse(String(raw));
+            if (!Array.isArray(cases)) {
+              cases = [];
+            }
+          } catch (_parseErr) {
+            cases = [];
+          }
           var joined = io.join();
           if (passed) {
             return {
@@ -265,6 +280,7 @@
               stderr: joined.stderr,
               summary: "✓ Checks OK — podés Continuar",
               details: (joined.stdout || "").trim() || "Todos los tests pasaron.",
+              cases: cases,
             };
           }
           return {
@@ -278,6 +294,7 @@
               })
               .filter(Boolean)
               .join("\n\n"),
+            cases: cases,
           };
         })
         .catch(function (err) {
@@ -295,6 +312,13 @@
             stderr: joined.stderr || message,
             summary: "✗ Error al validar — revisá la sintaxis o el runtime",
             details: details,
+            cases: [
+              {
+                name: "(runtime)",
+                passed: false,
+                message: message,
+              },
+            ],
           };
         });
     });

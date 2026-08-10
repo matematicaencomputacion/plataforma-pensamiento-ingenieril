@@ -15,6 +15,10 @@ var (
 	ErrEmptyProfile = errors.New("el perfil no tiene campos para guardar")
 	// ErrInvalidResetToken token ausente, usado o expirado.
 	ErrInvalidResetToken = errors.New("token de recuperación inválido o expirado")
+	// ErrInvalidLevelID level_id ausente o no positivo.
+	ErrInvalidLevelID = errors.New("level_id inválido")
+	// ErrInvalidStepID step_id vacío.
+	ErrInvalidStepID = errors.New("step_id inválido")
 )
 
 // PublicUser es la proyección segura del usuario (sin hash).
