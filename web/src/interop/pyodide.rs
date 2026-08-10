@@ -150,6 +150,8 @@ pub async fn check_student_code(
     call2_json("check", &code, &test_source).await
 }
 
+/// Formats a full Run transcript (parity with the JS `formatRunLog` helper).
+#[allow(dead_code)] // Kept for Qwik-parity logging / future structured export.
 pub fn format_run_log(result: &RunResult) -> String {
     let mut parts = vec!["=== Run ===".to_string()];
     let stdout = result.stdout.trim_end_matches('\n');
@@ -189,6 +191,29 @@ pub fn format_check_log(result: &CheckResult) -> String {
     parts.join("\n")
 }
 
+/// Pure stdout body for the console pane (no Run banners).
+pub fn run_stdout_body(result: &RunResult) -> String {
+    result.stdout.trim_end_matches('\n').to_string()
+}
+
+/// stderr + error message for the error pane.
+pub fn run_stderr_body(result: &RunResult) -> String {
+    let mut parts = Vec::new();
+    let stderr = result.stderr.trim_end_matches('\n');
+    if !stderr.trim().is_empty() {
+        parts.push(stderr.to_string());
+    }
+    if !result.ok {
+        if let Some(error) = &result.error {
+            let err = error.trim();
+            if !err.is_empty() && !parts.iter().any(|p| p.contains(err)) {
+                parts.push(error.clone());
+            }
+        }
+    }
+    parts.join("\n")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -216,5 +241,26 @@ mod tests {
         });
         assert!(log.contains("✓ Checks OK"));
         assert!(log.contains("OK"));
+    }
+
+    #[test]
+    fn run_bodies_split_stdout_and_stderr() {
+        let ok = RunResult {
+            ok: true,
+            stdout: "Hola IngenierIA\n".into(),
+            stderr: String::new(),
+            error: None,
+        };
+        assert_eq!(run_stdout_body(&ok), "Hola IngenierIA");
+        assert!(run_stderr_body(&ok).is_empty());
+
+        let bad = RunResult {
+            ok: false,
+            stdout: String::new(),
+            stderr: "Traceback".into(),
+            error: Some("NameError: x".into()),
+        };
+        assert!(run_stderr_body(&bad).contains("Traceback"));
+        assert!(run_stderr_body(&bad).contains("NameError"));
     }
 }

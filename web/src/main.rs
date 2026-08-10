@@ -4,8 +4,8 @@ mod api;
 mod auth;
 mod components;
 mod curriculum;
+mod interop;
 mod pages;
-mod pyodide;
 mod session;
 
 use leptos::prelude::*;
