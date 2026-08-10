@@ -114,6 +114,9 @@ test.describe("learn coding (Paso 2)", () => {
     });
 
     await page.locator("#learn-continue").click();
-    await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
+    await expect(page).toHaveURL(/\/learn\/py-02-intro/, { timeout: e2eTimeout });
+    await expect(page.getByRole("heading", { name: "Python Intro" })).toBeVisible({
+      timeout: e2eTimeout,
+    });
   });
 });
