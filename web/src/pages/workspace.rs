@@ -138,12 +138,6 @@ pub fn WorkspacePage() -> impl IntoView {
                                 {move || reset_note.get().unwrap_or_default()}
                             </p>
                         </Show>
-                        <Show when=move || level_completed(current_level.get(), 1)>
-                            <ProgressCheck
-                                id="workspace-level-check"
-                                label="Micro-paso 1 superado"
-                            />
-                        </Show>
                         <MicroStepRail current_level=current_level />
                     </section>
 
@@ -188,14 +182,17 @@ fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
             class="workspace__microsteps"
             id="workspace-microsteps"
             aria-label="Python micro-step challenges 1 to 100"
+            data-current-level=move || current_level.get().to_string()
         >
             {(1..=MICRO_STEP_COUNT)
                 .map(|n| {
+                    let badge_label = format!("Micro-paso {n} superado");
                     view! {
                         <li
                             class=move || {
                                 let cur = current_level.get();
                                 let mut class = String::from("workspace__microstep");
+                                // Done when the cursor advanced past this micro-step.
                                 if level_completed(cur, n) {
                                     class.push_str(" workspace__microstep--done");
                                 } else if cur == n {
@@ -209,6 +206,14 @@ fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
                             }
                         >
                             <span class="workspace__microstep-num">{n}</span>
+                            <Show when=move || level_completed(current_level.get(), n)>
+                                <span
+                                    class="workspace__microstep-badge"
+                                    data-testid="microstep-done-badge"
+                                >
+                                    <ProgressCheck label=badge_label.clone() />
+                                </span>
+                            </Show>
                         </li>
                     }
                 })

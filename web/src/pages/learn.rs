@@ -262,7 +262,8 @@ pub fn LearnPage() -> impl IntoView {
         let current = step.get_untracked();
         let tests = current.pytest.to_string();
         let step_key = current.id.to_string();
-        let level_id = level.get_untracked().map(|l| l.id).unwrap_or(1);
+        // Progress cursor uses the rail micro-step index (not GET /api/levels/current id).
+        let level_id = current.micro_step;
         leptos::task::spawn_local(async move {
             match check_student_code(source, tests).await {
                 Ok(result) => {
@@ -536,19 +537,14 @@ pub fn LearnPage() -> impl IntoView {
 
                         <Show when=move || {
                             can_continue.get()
-                                || level
-                                    .get()
-                                    .map(|l| {
-                                        level_completed(
-                                            session
-                                                .user
-                                                .get()
-                                                .map(|u| u.current_level)
-                                                .unwrap_or(1),
-                                            l.id,
-                                        )
-                                    })
-                                    .unwrap_or(false)
+                                || level_completed(
+                                    session
+                                        .user
+                                        .get()
+                                        .map(|u| u.current_level)
+                                        .unwrap_or(1),
+                                    step.get().micro_step,
+                                )
                         }>
                             <div class="learn__progress-mark" id="learn-progress-check">
                                 <ProgressCheck label="Ejercicio superado" />
