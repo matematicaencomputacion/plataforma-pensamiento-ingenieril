@@ -6,6 +6,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"fmt"
+	"log"
 	"net/mail"
 	"os"
 	"strings"
@@ -26,6 +28,9 @@ const defaultResetTTL = time.Hour
 type AuthOptions struct {
 	ExposeResetToken bool
 	ResetTTL         time.Duration
+	Mailer           domain.Mailer
+	// PublicAppURL origin for reset links (https://host) — required for SMTP body.
+	PublicAppURL string
 }
 
 // AuthService registro, login, recovery y usuario actual.
@@ -33,6 +38,8 @@ type AuthService struct {
 	users            repositories.UserRepository
 	hasher           domain.PasswordHasher
 	tokens           domain.TokenIssuer
+	mailer           domain.Mailer
+	publicAppURL     string
 	exposeResetToken bool
 	resetTTL         time.Duration
 	now              func() time.Time
@@ -52,10 +59,16 @@ func NewAuthService(
 	if ttl <= 0 {
 		ttl = defaultResetTTL
 	}
+	mailer := o.Mailer
+	if mailer == nil {
+		mailer = domain.NopMailer{}
+	}
 	return &AuthService{
 		users:            users,
 		hasher:           hasher,
 		tokens:           tokens,
+		mailer:           mailer,
+		publicAppURL:     strings.TrimRight(strings.TrimSpace(o.PublicAppURL), "/"),
 		exposeResetToken: o.ExposeResetToken,
 		resetTTL:         ttl,
 		now:              time.Now,
@@ -169,7 +182,8 @@ func (s *AuthService) Me(_ context.Context, bearerToken string) (domain.PublicUs
 }
 
 // ForgotPassword always returns a generic message; may include reset token for DX.
-func (s *AuthService) ForgotPassword(_ context.Context, email string) (ForgotPasswordResult, error) {
+// When a Mailer + PublicAppURL are configured, emails the reset link.
+func (s *AuthService) ForgotPassword(ctx context.Context, email string) (ForgotPasswordResult, error) {
 	const generic = "Si el correo está registrado, recibirás instrucciones para restablecer la contraseña."
 	out := ForgotPasswordResult{Message: generic}
 
@@ -198,6 +212,27 @@ func (s *AuthService) ForgotPassword(_ context.Context, email string) (ForgotPas
 	if err := s.users.CreatePasswordResetToken(tok); err != nil {
 		return ForgotPasswordResult{}, err
 	}
+
+	if s.publicAppURL != "" {
+		if _, isNop := s.mailer.(domain.NopMailer); !isNop {
+			link := fmt.Sprintf("%s/reset-password?token=%s", s.publicAppURL, raw)
+			body := fmt.Sprintf(
+				"Hola,\n\nRecibimos un pedido para restablecer tu contraseña en IngenierIA.\n\nAbrí este enlace (válido por tiempo limitado):\n%s\n\nSi no pediste este cambio, ignorá este correo.\n",
+				link,
+			)
+			if err := s.mailer.Send(ctx, domain.MailMessage{
+				To:       user.Email,
+				Subject:  "Restablecé tu contraseña — IngenierIA",
+				BodyText: body,
+			}); err != nil {
+				log.Printf("auth forgot-password: mailer error for %s: %v", user.Email, err)
+				// Still return generic message (no leak). DX may still expose token below.
+			}
+		}
+	} else if !s.exposeResetToken {
+		log.Printf("auth forgot-password: APP_PUBLIC_URL no configurado — no se armó el enlace de correo")
+	}
+
 	if s.exposeResetToken {
 		out.ResetToken = raw
 	}

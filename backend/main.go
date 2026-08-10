@@ -11,6 +11,7 @@ import (
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/keyword"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/smtpmail"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/xai"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/config"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
@@ -100,12 +101,33 @@ func main() {
 		log.Fatalf("user repo: %v", err)
 	}
 	exposeReset := usecases.ResolveExposeResetToken(authCfg.JWTSecret)
+	smtpCfg := config.LoadSMTPConfig()
+	var mailer domain.Mailer = domain.NopMailer{}
+	if smtpCfg.Enabled() {
+		client, err := smtpmail.New(smtpmail.Config{
+			Host:     smtpCfg.Host,
+			Port:     smtpCfg.Port,
+			Username: smtpCfg.Username,
+			Password: smtpCfg.Password,
+			From:     smtpCfg.From,
+		})
+		if err != nil {
+			log.Printf("WARN: SMTP configurado pero inválido (%v); sin envío de correo", err)
+		} else {
+			mailer = client
+			log.Printf("auth mailer: SMTP %s:%s from=%s public=%s", smtpCfg.Host, smtpCfg.Port, smtpCfg.From, smtpCfg.PublicAppURL)
+		}
+	} else {
+		log.Printf("auth mailer: SMTP no configurado (forgot-password no enviará correo)")
+	}
 	authService := usecases.NewAuthService(
 		userRepo,
 		crypto.NewBcryptHasher(),
 		jwtauth.NewHS256Issuer(authCfg.JWTSecret),
 		usecases.AuthOptions{
 			ExposeResetToken: exposeReset,
+			Mailer:           mailer,
+			PublicAppURL:     smtpCfg.PublicAppURL,
 		},
 	)
 	authHandler := handlers.NewAuthHandler(authService)
