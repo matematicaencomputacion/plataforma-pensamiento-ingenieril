@@ -1,5 +1,7 @@
-# Wasm target flags for wasm-bindgen externref / bulk memory (Cloud Run release).
-# See: https://github.com/wasm-bindgen/wasm-bindgen/issues/4528
+# Wasm target flags for Cloud Run release builds.
+# NOTE: do NOT force +reference-types here — wasm-bindgen 0.2.12x already manages
+# the externref table; forcing the LLVM feature made Table.grow failures worse
+# with some toolchain combinations (see wasm-bindgen#4528).
 
 [target.wasm32-unknown-unknown]
-rustflags = ["-C", "target-feature=+bulk-memory,+reference-types"]
+rustflags = ["-C", "target-feature=+bulk-memory"]

@@ -69,6 +69,11 @@ func openSPARoot() (spaRoot, bool) {
 		if err != nil {
 			log.Printf("SPA: embed Sub(static) falló: %v", err)
 		} else {
+			if stamp, err := embeddedStatic.ReadFile("static/ppi-build.txt"); err == nil {
+				log.Printf("SPA: embed stamp:\n%s", strings.TrimSpace(string(stamp)))
+			} else {
+				log.Printf("SPA: embed sin ppi-build.txt (%v)", err)
+			}
 			return spaRoot{fsys: http.FS(sub), source: "embed:static"}, true
 		}
 	}
@@ -84,6 +89,9 @@ func openSPARoot() (spaRoot, bool) {
 			log.Printf("SPA: sin dist Trunk en embed ni en %q — modo solo API", dir)
 		}
 		return spaRoot{}, false
+	}
+	if stamp, err := os.ReadFile(filepath.Join(dir, "ppi-build.txt")); err == nil {
+		log.Printf("SPA: disk stamp (%s):\n%s", dir, strings.TrimSpace(string(stamp)))
 	}
 	return spaRoot{fsys: http.Dir(dir), source: dir}, true
 }
@@ -138,8 +146,36 @@ func serveFSFile(w http.ResponseWriter, r *http.Request, fsys http.FileSystem, n
 	if !ok {
 		return false
 	}
+	setStaticCacheHeaders(w, name)
 	http.ServeContent(w, r, filepath.Base(name), stat.ModTime(), rs)
 	return true
+}
+
+func setStaticCacheHeaders(w http.ResponseWriter, name string) {
+	base := filepath.Base(name)
+	switch {
+	case base == "index.html" || base == "ppi-build.txt":
+		w.Header().Set("Cache-Control", "no-store, max-age=0, must-revalidate")
+	case strings.HasSuffix(base, ".wasm") ||
+		strings.Contains(base, "-web-") ||
+		strings.Contains(base, "styles-"):
+		// Trunk content-hashed assets
+		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	default:
+		w.Header().Set("Cache-Control", "no-cache")
+	}
+}
+
+// readSpaBuildStamp returns ppi-build.txt from embed, else disk STATIC_DIR.
+func readSpaBuildStamp() string {
+	if b, err := embeddedStatic.ReadFile("static/ppi-build.txt"); err == nil {
+		return strings.TrimSpace(string(b))
+	}
+	dir := resolveStaticDir()
+	if b, err := os.ReadFile(filepath.Join(dir, "ppi-build.txt")); err == nil {
+		return strings.TrimSpace(string(b))
+	}
+	return ""
 }
 
 func pathClean(p string) string {

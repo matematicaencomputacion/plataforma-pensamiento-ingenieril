@@ -30,8 +30,9 @@ web-sys = { version = "0.3", features = [
 ] }
 
 [profile.release]
-# Prefer size without Binaryen post-pass. wasm-opt -Oz (old Binaryen on Debian)
-# rewrites the externref table and breaks __wbindgen_init_externref_table at runtime.
-opt-level = "s"
-lto = true
-codegen-units = 1
+# Avoid LTO + size-z: they amplify wasm-bindgen externref table issues in some
+# toolchains even without Binaryen (Table.grow at __wbindgen_init_externref_table).
+# Size is still fine for Cloud Run without wasm-opt.
+opt-level = 2
+lto = false
+codegen-units = 16
