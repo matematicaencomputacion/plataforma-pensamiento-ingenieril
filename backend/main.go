@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
@@ -53,39 +52,24 @@ func resolveDataDir() string {
 	return "data"
 }
 
-func newProfileClassifier(ctx context.Context, grokCfg config.GrokConfig) (domain.ProfileClassifier, string) {
-	mode := strings.ToLower(strings.TrimSpace(os.Getenv("LEARNER_PROFILE_LLM")))
-	if mode == "" {
-		mode = "grok"
-	}
-	if mode == "mock" || mode == "keyword" {
+func newProfileClassifier(ctx context.Context) (domain.ProfileClassifier, string) {
+	llm := config.LoadLearnerLLMConfig()
+	if llm.Provider == "mock" {
 		log.Printf("clasificador de perfil: mock/keywords")
 		return keyword.NewClassifier(), "mock"
 	}
 
 	classifier, err := xai.NewClassifier(ctx, xai.Config{
-		APIKey:  grokCfg.APIKey,
-		Model:   grokCfg.Model,
-		BaseURL: grokCfg.BaseURL,
+		APIKey:  llm.APIKey,
+		Model:   llm.Model,
+		BaseURL: llm.BaseURL,
 	})
 	if err != nil {
-		log.Printf("WARN: no se pudo iniciar Grok/xAI (%v); usando mock keywords", err)
+		log.Printf("WARN: no se pudo iniciar %s (%v); usando mock keywords", llm.Provider, err)
 		return keyword.NewClassifier(), "mock-fallback"
 	}
-	log.Printf(
-		"clasificador de perfil: grok model=%s",
-		firstNonEmpty(grokCfg.Model, "grok-4.5"),
-	)
-	return classifier, "grok"
-}
-
-func firstNonEmpty(values ...string) string {
-	for _, v := range values {
-		if strings.TrimSpace(v) != "" {
-			return strings.TrimSpace(v)
-		}
-	}
-	return ""
+	log.Printf("clasificador de perfil: %s model=%s base=%s", llm.Provider, llm.Model, llm.BaseURL)
+	return classifier, llm.Provider
 }
 
 func main() {
@@ -97,7 +81,6 @@ func main() {
 
 	dataDir := resolveDataDir()
 	authCfg := config.LoadAuthConfig()
-	grokCfg := config.LoadGrokConfig()
 
 	sqlitePath := authCfg.SQLitePath()
 	if !filepath.IsAbs(sqlitePath) && sqlitePath != ":memory:" {
@@ -132,7 +115,7 @@ func main() {
 	levelService := usecases.NewLevelService(levelRepo)
 	evaluationService := usecases.NewEvaluationService(levelRepo, profileRepo)
 
-	classifier, _ := newProfileClassifier(context.Background(), grokCfg)
+	classifier, _ := newProfileClassifier(context.Background())
 	learnerProfileService := usecases.NewLearnerProfileService(classifier)
 
 	levelHandler := handlers.NewLevelHandler(levelService)

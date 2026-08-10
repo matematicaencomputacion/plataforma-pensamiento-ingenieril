@@ -130,6 +130,15 @@ pub struct ProfileSynthesis {
     pub stack: String,
 }
 
+impl ProfileSynthesis {
+    pub fn is_empty(&self) -> bool {
+        self.purpose.trim().is_empty()
+            && self.urgency.trim().is_empty()
+            && self.vision.trim().is_empty()
+            && self.stack.trim().is_empty()
+    }
+}
+
 /// Wire type for `GET|PUT /api/user/profile` (Go `domain.LearnerProfile`).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct UserProfile {

@@ -70,7 +70,7 @@ test.describe("onboarding synthesize", () => {
         res.request().method() === "POST",
       { timeout: e2eTimeout },
     );
-    await page.getByRole("button", { name: "Enviar para análisis" }).click();
+    await page.locator("#coaching-analyze").click();
     const synthRes = await synthesizeResponse;
     expect(
       synthRes.ok(),
@@ -84,6 +84,9 @@ test.describe("onboarding synthesize", () => {
       /familia|autonomía|autonomia/i,
     );
     await expect(page.locator("#profile-urgency")).toHaveValue(/Extrema|inmediato/i);
+    await expect(page.locator("#profile-vision")).toBeVisible();
+    await expect(page.locator("#profile-stack")).toBeVisible();
+    await expect(page.locator("#coaching-profile-phase")).toContainText(/revisión/i);
     await expect(
       page.getByRole("button", { name: "Guardar perfil" }),
     ).toBeEnabled();

@@ -71,9 +71,7 @@ test.describe("onboarding shell smoke", () => {
     await fillLeptosTextarea(page, "#coaching-notes", draft);
     await expect(page.locator("#coaching-notes")).toHaveValue(draft);
 
-    await expect(
-      page.getByRole("button", { name: "Enviar para análisis" }),
-    ).toBeEnabled();
+    await expect(page.locator("#coaching-analyze")).toBeEnabled();
   });
 
   test("unauthenticated /onboarding redirects to login", async ({ page }) => {

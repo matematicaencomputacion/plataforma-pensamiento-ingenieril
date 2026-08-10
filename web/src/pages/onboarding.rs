@@ -4,11 +4,13 @@ use leptos::prelude::*;
 use leptos_router::components::A;
 use leptos_router::hooks::{use_location, use_navigate};
 use leptos_router::NavigateOptions;
+use wasm_bindgen::closure::Closure;
 
 use crate::api::{ProfileSynthesis, UserProfile, MIN_LEARNER_NOTES_RUNES};
 use crate::auth::{
     fetch_user_profile, input_value, put_user_profile, synthesize_learner_profile,
 };
+use crate::interop::speech;
 use crate::session::SessionCtx;
 
 const COACHING_PROMPTS: &[&str] = &[
@@ -44,6 +46,12 @@ pub fn OnboardingPage() -> impl IntoView {
     let stack = RwSignal::new(String::new());
     let hydrate_loading = RwSignal::new(false);
     let hydrate_done = RwSignal::new(false);
+    let voice_supported = RwSignal::new(false);
+    let listening = RwSignal::new(false);
+
+    Effect::new(move |_| {
+        voice_supported.set(speech::is_supported());
+    });
 
     // Guard: after bootstrap, no live session → leave /onboarding once (replace).
     Effect::new(move |_| {
@@ -115,10 +123,59 @@ pub fn OnboardingPage() -> impl IntoView {
         })
     };
 
+    let stop_voice = move || {
+        speech::stop();
+        listening.set(false);
+    };
+
+    let on_mic = move |_| {
+        if phase.get_untracked() != CoachingPhase::Drafting {
+            return;
+        }
+        error.set(String::new());
+        if listening.get_untracked() {
+            stop_voice();
+            return;
+        }
+        if !speech::is_supported() {
+            error.set("Tu navegador no soporta dictado por voz.".into());
+            return;
+        }
+
+        let base = notes.get_untracked();
+        let on_update = Closure::wrap(Box::new(move |text: String| {
+            notes.set(text);
+        }) as Box<dyn FnMut(String)>);
+        let on_error = Closure::wrap(Box::new(move |msg: String| {
+            if !msg.trim().is_empty() {
+                error.set(msg);
+            }
+            listening.set(false);
+        }) as Box<dyn FnMut(String)>);
+        let on_end = Closure::wrap(Box::new(move || {
+            listening.set(false);
+        }) as Box<dyn FnMut()>);
+
+        match speech::start(&base, "es-AR", &on_update, &on_error, &on_end) {
+            Ok(()) => {
+                listening.set(true);
+                // Keep handlers alive for the recognition session lifetime.
+                on_update.forget();
+                on_error.forget();
+                on_end.forget();
+            }
+            Err(err) => {
+                error.set(err.message);
+                listening.set(false);
+            }
+        }
+    };
+
     let on_analyze = move |_| {
         if phase.get_untracked() == CoachingPhase::Analyzing {
             return;
         }
+        stop_voice();
         error.set(String::new());
         let raw = notes.get_untracked();
         if raw.trim().chars().count() < MIN_LEARNER_NOTES_RUNES {
@@ -129,6 +186,13 @@ pub fn OnboardingPage() -> impl IntoView {
         leptos::task::spawn_local(async move {
             let outcome = synthesize_learner_profile(raw, SOURCE_STEP_ID.to_string()).await;
             match outcome {
+                Ok(syn) if syn.is_empty() => {
+                    error.set(
+                        "La IA no pudo completar el perfil con ese relato. Ampliá tu respuesta o editá los campos a mano."
+                            .into(),
+                    );
+                    phase.set(CoachingPhase::Drafting);
+                }
                 Ok(syn) => {
                     apply_synthesis(syn);
                     error.set(String::new());
@@ -231,9 +295,42 @@ pub fn OnboardingPage() -> impl IntoView {
                     <li class="onboarding__prompt">{COACHING_PROMPTS[3]}</li>
                 </ol>
 
-                <label class="onboarding__label" for="coaching-notes">
-                    "Tu respuesta"
-                </label>
+                <div class="onboarding__notes-head">
+                    <label class="onboarding__label" for="coaching-notes">
+                        "Tu respuesta"
+                    </label>
+                    <Show when=move || voice_supported.get() && phase.get() == CoachingPhase::Drafting>
+                        <button
+                            class=move || {
+                                if listening.get() {
+                                    "onboarding__mic onboarding__mic--live"
+                                } else {
+                                    "onboarding__mic"
+                                }
+                            }
+                            type="button"
+                            id="coaching-mic"
+                            title=move || {
+                                if listening.get() {
+                                    "Detener dictado"
+                                } else {
+                                    "Dictar por voz"
+                                }
+                            }
+                            attr:aria-pressed=move || listening.get().to_string()
+                            attr:aria-label=move || {
+                                if listening.get() {
+                                    "Detener dictado por voz"
+                                } else {
+                                    "Dictar respuesta por voz"
+                                }
+                            }
+                            on:click=on_mic
+                        >
+                            {move || if listening.get() { "⏹ Escuchando" } else { "🎤 Dictar" }}
+                        </button>
+                    </Show>
+                </div>
                 <textarea
                     id="coaching-notes"
                     class="onboarding__textarea"
@@ -247,6 +344,11 @@ pub fn OnboardingPage() -> impl IntoView {
                         }
                     }
                 />
+                <Show when=move || listening.get()>
+                    <p class="onboarding__hint" role="status" aria-live="polite" id="coaching-listening">
+                        "Escuchando… hablá con naturalidad; el texto se agrega a tu respuesta."
+                    </p>
+                </Show>
 
                 <Show when=move || !error.get().is_empty()>
                     <p class="onboarding__error" role="alert" aria-live="polite">
@@ -275,18 +377,18 @@ pub fn OnboardingPage() -> impl IntoView {
                         >
                             {move || {
                                 if phase.get() == CoachingPhase::Analyzing {
-                                    "Analizando…"
+                                    "Analizando tu respuesta…"
                                 } else {
-                                    "Enviar para análisis"
+                                    "Analizar mi respuesta con IA"
                                 }
                             }}
                         </button>
-                        <p class="onboarding__hint" role="status" aria-live="polite">
+                        <p class="onboarding__hint" role="status" aria-live="polite" id="coaching-analyze-hint">
                             {move || {
                                 if phase.get() == CoachingPhase::Analyzing {
-                                    "Estamos escuchando tu relato…"
+                                    "Analizando tu respuesta… estamos resumiendo propósito, urgencia, visión y stack."
                                 } else if notes_ready() {
-                                    "Cuando envíes, IngenierIA sintetizará propósito, urgencia, visión y stack."
+                                    "Al analizar, IngenierIA completa los 4 campos de abajo para que los revises."
                                 } else {
                                     "Escribí un poco más (al menos unas pocas frases) para poder analizar."
                                 }
@@ -360,6 +462,13 @@ pub fn OnboardingPage() -> impl IntoView {
                         >
                             "Continuar al Paso 2"
                         </A>
+                        <A
+                            href="/workspace"
+                            attr:class="cta cta--secondary"
+                            attr:id="coaching-workspace"
+                        >
+                            "Ir al workspace"
+                        </A>
                         <p class="onboarding__hint" role="status">
                             "Paso 2 abre el editor Python en el navegador (Pyodide)."
                         </p>
@@ -372,11 +481,11 @@ pub fn OnboardingPage() -> impl IntoView {
                         aria-label="Resumen de perfil"
                         aria-live="polite"
                     >
-                        <p class="onboarding__profile-eyebrow">
+                        <p class="onboarding__profile-eyebrow" id="coaching-profile-phase">
                             {move || match phase.get() {
-                                CoachingPhase::Saved => "Perfil · guardado",
+                                CoachingPhase::Saved => "Perfil · guardado / actualizado",
                                 CoachingPhase::Saving => "Perfil · guardando",
-                                _ => "Perfil · revisión",
+                                _ => "Perfil · revisión / Lo que estamos escuchando",
                             }}
                         </p>
                         <h2 class="onboarding__profile-title">"Lo que estamos escuchando"</h2>
