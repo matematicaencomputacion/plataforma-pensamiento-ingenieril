@@ -143,5 +143,31 @@ test.describe("exercise evaluation (rebanada 3)", () => {
     await expect(page.locator("#learn-continue")).toBeEnabled({
       timeout: e2eTimeout,
     });
+    await expect(page.locator("#learn-validate")).toHaveAttribute(
+      "data-validate-state",
+      "passed",
+    );
+
+    // Already passed + same code → toast, no new network validate round-trip required.
+    await page.locator("#learn-validate").click();
+    await expect(page.locator("#learn-already-passed-toast")).toContainText(
+      /Ya pasaste esta prueba/i,
+    );
+    await expect(page.locator("#learn-validate")).toHaveAttribute(
+      "data-validate-state",
+      "passed",
+    );
+
+    // Edit code → 4th state invites re-validation.
+    await fillLeptosTextarea(
+      page,
+      "#learn-editor",
+      'nombre = "Ana"\nedad = 25\nprint(nombre, edad)\n# retoque\n',
+    );
+    await expect(page.locator("#learn-validate")).toHaveAttribute(
+      "data-validate-state",
+      "revalidate",
+    );
+    await expect(page.locator("#learn-validate")).toContainText("Volver a validar");
   });
 });
