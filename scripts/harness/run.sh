@@ -100,6 +100,47 @@ wait_http() {
   return 1
 }
 
+# Pin Playwright browser cache to a stable host path (Cursor/agent sandboxes
+# otherwise redirect installs into ephemeral dirs and `npx playwright test` fails
+# with "Executable doesn't exist").
+ensure_playwright_browsers() {
+  local stable
+  case "$(uname -s)" in
+    Darwin)
+      # Prefer real macOS home — $HOME may be remapped inside agent sandboxes.
+      stable="/Users/$(whoami)/Library/Caches/ms-playwright"
+      ;;
+    *)
+      stable="${XDG_CACHE_HOME:-/home/$(whoami)/.cache}/ms-playwright"
+      ;;
+  esac
+
+  # Override ephemeral / pre-injected sandbox caches unless the operator opts out.
+  if [[ "${PPI_KEEP_PLAYWRIGHT_BROWSERS_PATH:-0}" != "1" ]]; then
+    case "${PLAYWRIGHT_BROWSERS_PATH:-}" in
+      *cursor-sandbox-cache*|*"/var/folders/"*|*"/tmp/"*|*"Temp"*|"")
+        export PLAYWRIGHT_BROWSERS_PATH="$stable"
+        ;;
+    esac
+  fi
+  if [[ -z "${PLAYWRIGHT_BROWSERS_PATH:-}" ]]; then
+    export PLAYWRIGHT_BROWSERS_PATH="$stable"
+  fi
+
+  mkdir -p "$PLAYWRIGHT_BROWSERS_PATH"
+  log "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH"
+
+  if [[ ! -d web/e2e/node_modules ]]; then
+    (cd web/e2e && npm ci)
+  fi
+
+  # Idempotent: installs only what is missing for the locked Playwright version.
+  if ! (cd web/e2e && npx playwright install chromium); then
+    log "Failed to install Playwright Chromium into $PLAYWRIGHT_BROWSERS_PATH"
+    return 1
+  fi
+}
+
 start_stack() {
   hr
   log "Starting stack (API :8080, Trunk :3001)"
@@ -147,9 +188,10 @@ run_web_e2e() {
   # Optional sticky email — auth.login.spec uniquifies with a +tag on each run.
   : "${PPI_E2E_EMAIL:=}"
 
-  if [[ ! -d web/e2e/node_modules ]]; then
-    (cd web/e2e && npm ci)
-  fi
+  ensure_playwright_browsers || {
+    record "web-e2e" "FAIL"
+    return 1
+  }
 
   if (cd web/e2e && npx playwright test --reporter=list \
       | tee "$RUN_DIR/web-e2e.log"); then
@@ -172,9 +214,10 @@ run_web_journeys() {
   export PPI_EXPOSE_RESET_TOKEN="${PPI_EXPOSE_RESET_TOKEN:-1}"
   : "${PPI_E2E_EMAIL:=}"
 
-  if [[ ! -d web/e2e/node_modules ]]; then
-    (cd web/e2e && npm ci)
-  fi
+  ensure_playwright_browsers || {
+    record "web-journeys" "FAIL"
+    return 1
+  }
 
   if (cd web/e2e && npx playwright test \
       tests/journey.auth-hub.spec.ts \

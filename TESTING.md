@@ -99,6 +99,7 @@ PPI_HARNESS_INTEGRATION=1 make harness-integration
 | `PPI_E2E_*` | efímero en harness | Igual que `web/e2e/README.md` |
 | `JWT_SECRET` / `DATABASE_URL` | harness → `ppi-harness.db` | Stack efímero E2E |
 | `PPI_EXPOSE_RESET_TOKEN` | `1` en harness | DX forgot → `resetToken` |
+| `PLAYWRIGHT_BROWSERS_PATH` | cache estable del host (`/Users/<you>/Library/Caches/ms-playwright` en macOS) | El harness sobrescribe caches efímeros (`cursor-sandbox-cache`, `/var/folders`, `/tmp`) salvo `PPI_KEEP_PLAYWRIGHT_BROWSERS_PATH=1` |
 
 ## CI
 
