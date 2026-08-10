@@ -61,9 +61,12 @@ test.describe("journey auth + hub (P1→P3)", () => {
       timeout: e2eTimeout,
     });
     await expect(page.locator(".session-bar__email")).toContainText(email);
-    await expect(page.getByRole("heading", { name: "Nivel actual" })).toBeVisible({
+    await expect(
+      page.getByRole("heading", { name: "Current level micro-step" }),
+    ).toBeVisible({
       timeout: e2eTimeout,
     });
+    await expect(page.locator("#workspace-microsteps li")).toHaveCount(100);
     await expect(page.getByRole("link", { name: "Portada" }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "Workspace" }).first()).toBeVisible();
 
