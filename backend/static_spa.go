@@ -1,6 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"embed"
+	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -8,8 +12,11 @@ import (
 	"strings"
 )
 
-// resolveStaticDir returns the Trunk/Leptos dist directory.
-// Cloud Run image sets STATIC_DIR=/app/static.
+//go:embed all:static
+var embeddedStatic embed.FS
+
+// resolveStaticDir returns an on-disk Trunk dist directory for local/dev.
+// Cloud Run prefers the embedded copy baked at image build time.
 func resolveStaticDir() string {
 	if dir := strings.TrimSpace(os.Getenv("STATIC_DIR")); dir != "" {
 		return dir
@@ -17,34 +24,77 @@ func resolveStaticDir() string {
 
 	candidates := []string{
 		"static",
-		"public",
 		filepath.Join("web", "dist"),
 		filepath.Join("..", "web", "dist"),
+		"public",
 	}
 	for _, candidate := range candidates {
-		if indexExists(candidate) {
+		if isTrunkBuiltDir(candidate) {
 			return candidate
 		}
 	}
 	return "static"
 }
 
-func indexExists(dir string) bool {
-	info, err := os.Stat(filepath.Join(dir, "index.html"))
-	return err == nil && !info.IsDir()
+func indexPath(dir string) string {
+	return filepath.Join(dir, "index.html")
+}
+
+func isTrunkBuiltDir(dir string) bool {
+	body, err := os.ReadFile(indexPath(dir))
+	if err != nil {
+		return false
+	}
+	return isTrunkBuiltIndex(body)
+}
+
+// isTrunkBuiltIndex rejects the source web/index.html (data-trunk hooks) and
+// requires Trunk's Wasm bootstrap injection.
+func isTrunkBuiltIndex(body []byte) bool {
+	if len(body) == 0 || bytes.Contains(body, []byte("data-trunk")) {
+		return false
+	}
+	return bytes.Contains(body, []byte("import init")) ||
+		bytes.Contains(body, []byte("wasmBindings"))
+}
+
+type spaRoot struct {
+	fsys   http.FileSystem
+	source string
+}
+
+func openSPARoot() (spaRoot, bool) {
+	if body, err := embeddedStatic.ReadFile("static/index.html"); err == nil && isTrunkBuiltIndex(body) {
+		sub, err := fs.Sub(embeddedStatic, "static")
+		if err != nil {
+			log.Printf("SPA: embed Sub(static) falló: %v", err)
+		} else {
+			return spaRoot{fsys: http.FS(sub), source: "embed:static"}, true
+		}
+	}
+
+	dir := resolveStaticDir()
+	if !isTrunkBuiltDir(dir) {
+		if _, err := os.Stat(indexPath(dir)); err == nil {
+			log.Printf(
+				"SPA: %s/index.html NO es dist de Trunk (parece fuente data-trunk o incompleto) — no se serve SPA",
+				dir,
+			)
+		} else {
+			log.Printf("SPA: sin dist Trunk en embed ni en %q — modo solo API", dir)
+		}
+		return spaRoot{}, false
+	}
+	return spaRoot{fsys: http.Dir(dir), source: dir}, true
 }
 
 // withSPA serves Trunk assets + index.html fallback for non-/api routes.
-// API requests always go to the inner mux (unknown APIs stay JSON 404, not HTML).
-// Implemented as a wrapper to avoid Go ServeMux conflicts between
-// method-specific /api routes and a catch-all /{path...}.
-func withSPA(api http.Handler, staticDir string) http.Handler {
-	if !indexExists(staticDir) {
-		log.Printf("SPA: sin index.html en %q — modo solo API", staticDir)
+func withSPA(api http.Handler, root spaRoot) http.Handler {
+	if root.fsys == nil {
 		return api
 	}
-	log.Printf("SPA: sirviendo estáticos desde %s", staticDir)
-	spa := spaHandler(staticDir)
+	log.Printf("SPA: sirviendo estáticos desde %s", root.source)
+	spa := spaHandler(root.fsys)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/api" || strings.HasPrefix(r.URL.Path, "/api/") {
 			api.ServeHTTP(w, r)
@@ -58,32 +108,42 @@ func withSPA(api http.Handler, staticDir string) http.Handler {
 	})
 }
 
-func spaHandler(root string) http.Handler {
-	root = filepath.Clean(root)
-	index := filepath.Join(root, "index.html")
-
+func spaHandler(fsys http.FileSystem) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		path := r.URL.Path
-		rel := strings.TrimPrefix(filepath.Clean("/"+path), "/")
-		if rel == "" || rel == "." {
-			http.ServeFile(w, r, index)
-			return
+		name := strings.TrimPrefix(pathClean(r.URL.Path), "/")
+		if name != "" && name != "." {
+			if serveFSFile(w, r, fsys, name) {
+				return
+			}
 		}
-
-		full := filepath.Join(root, filepath.FromSlash(rel))
-		if !isUnderRoot(root, full) {
+		if !serveFSFile(w, r, fsys, "index.html") {
 			http.NotFound(w, r)
-			return
 		}
-
-		info, err := os.Stat(full)
-		if err == nil && !info.IsDir() {
-			http.ServeFile(w, r, full)
-			return
-		}
-
-		http.ServeFile(w, r, index)
 	})
+}
+
+func serveFSFile(w http.ResponseWriter, r *http.Request, fsys http.FileSystem, name string) bool {
+	f, err := fsys.Open(name)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+
+	stat, err := f.Stat()
+	if err != nil || stat.IsDir() {
+		return false
+	}
+
+	rs, ok := f.(io.ReadSeeker)
+	if !ok {
+		return false
+	}
+	http.ServeContent(w, r, filepath.Base(name), stat.ModTime(), rs)
+	return true
+}
+
+func pathClean(p string) string {
+	return filepath.ToSlash(filepath.Clean("/" + p))
 }
 
 func isUnderRoot(root, full string) bool {
