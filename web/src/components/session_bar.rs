@@ -57,7 +57,7 @@ pub fn SessionBar() -> impl IntoView {
                                 return;
                             }
                             logging_out.set(true);
-                            // Leave /workspace first so the auth guard does not race to /login
+                            // Leave protected routes first so auth guards do not race to /login
                             // when we clear the session next.
                             navigate(
                                 "/",

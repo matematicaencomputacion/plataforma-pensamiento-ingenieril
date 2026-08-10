@@ -2,7 +2,7 @@
 
 use gloo_net::http::Request;
 use wasm_bindgen::JsCast;
-use web_sys::{CustomEvent, CustomEventInit, HtmlInputElement};
+use web_sys::{CustomEvent, CustomEventInit, HtmlInputElement, HtmlTextAreaElement};
 
 use crate::api::{
     current_level_url, forgot_password_url, is_auth_rejection, parse_auth_error_body,
@@ -225,8 +225,14 @@ pub async fn logout_session() {
 
 /// Helper for uncontrolled-looking inputs bound to signals via on:input.
 pub fn input_value(ev: &web_sys::Event) -> String {
-    ev.target()
-        .and_then(|t| t.dyn_into::<HtmlInputElement>().ok())
-        .map(|el| el.value())
-        .unwrap_or_default()
+    let Some(target) = ev.target() else {
+        return String::new();
+    };
+    if let Ok(el) = target.clone().dyn_into::<HtmlInputElement>() {
+        return el.value();
+    }
+    if let Ok(el) = target.dyn_into::<HtmlTextAreaElement>() {
+        return el.value();
+    }
+    String::new()
 }
