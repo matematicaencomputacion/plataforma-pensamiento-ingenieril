@@ -163,6 +163,34 @@ run_web_e2e() {
   fi
 }
 
+# ADR 003: page journeys Auth+Hub (subset of playwright pack).
+run_web_journeys() {
+  hr
+  log "MODULE web-journeys (ADR 003)"
+  export PPI_E2E_BASE_URL="${PPI_E2E_BASE_URL:-http://127.0.0.1:3001}"
+  export PPI_E2E_PASSWORD="${PPI_E2E_PASSWORD:-secreto12}"
+  export PPI_EXPOSE_RESET_TOKEN="${PPI_EXPOSE_RESET_TOKEN:-1}"
+  : "${PPI_E2E_EMAIL:=}"
+
+  if [[ ! -d web/e2e/node_modules ]]; then
+    (cd web/e2e && npm ci)
+  fi
+
+  if (cd web/e2e && npx playwright test \
+      tests/journey.auth-hub.spec.ts \
+      tests/auth.validation.spec.ts \
+      tests/session.navigation.spec.ts \
+      --reporter=list | tee "$RUN_DIR/web-journeys.log"); then
+    [[ -d web/e2e/playwright-report ]] && cp -R web/e2e/playwright-report "$RUN_DIR/" || true
+    record "web-journeys" "PASS"
+  else
+    [[ -d web/e2e/playwright-report ]] && cp -R web/e2e/playwright-report "$RUN_DIR/" || true
+    [[ -d web/e2e/test-results ]] && cp -R web/e2e/test-results "$RUN_DIR/" || true
+    record "web-journeys" "FAIL"
+    return 1
+  fi
+}
+
 print_summary() {
   hr
   log "HARNESS SUMMARY  ($RUN_DIR)"
@@ -198,6 +226,11 @@ case "$MODE" in
     run_web_e2e || true
     print_summary
     ;;
+  journeys)
+    start_stack
+    run_web_journeys || true
+    print_summary
+    ;;
   all)
     fail=0
     run_backend_unit || fail=1
@@ -217,7 +250,7 @@ case "$MODE" in
     exit "$fail"
     ;;
   *)
-    log "Usage: $0 {unit|integration|e2e|all}"
+    log "Usage: $0 {unit|integration|e2e|journeys|all}"
     exit 2
     ;;
 esac

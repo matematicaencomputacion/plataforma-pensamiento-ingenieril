@@ -211,3 +211,29 @@ func TestUpdateProfile(t *testing.T) {
 		t.Fatalf("rehydrate mismatch: %+v", loaded)
 	}
 }
+
+func TestResolveExposeResetTokenEnvAndDev(t *testing.T) {
+	t.Setenv("PPI_EXPOSE_RESET_TOKEN", "")
+	t.Setenv("ENV", "")
+	t.Setenv("APP_ENV", "")
+	t.Setenv("GO_ENV", "")
+
+	if !usecases.ResolveExposeResetToken("dev-only-change-me-ppi-jwt-secret") {
+		t.Fatal("default JWT secret should expose")
+	}
+	if usecases.ResolveExposeResetToken("prod-super-secret-value") {
+		t.Fatal("unknown JWT must not expose by default")
+	}
+
+	t.Setenv("ENV", "development")
+	if !usecases.ResolveExposeResetToken("prod-super-secret-value") {
+		t.Fatal("ENV=development should expose")
+	}
+	t.Setenv("ENV", "")
+
+	t.Setenv("PPI_EXPOSE_RESET_TOKEN", "0")
+	t.Setenv("ENV", "development")
+	if usecases.ResolveExposeResetToken("dev-only-change-me-ppi-jwt-secret") {
+		t.Fatal("explicit PPI_EXPOSE_RESET_TOKEN=0 must win")
+	}
+}

@@ -2,6 +2,9 @@
 
 Harness unificado para validar **backend Go** + **frontend Leptos (unit + E2E Playwright)** desde la raíz del monorepo, con reportes por módulo y teardown del stack.
 
+> Decisión de arquitectura: **[ADR 003 — Sistema de pruebas](docs/adr/0003-sistema-de-pruebas.md)**  
+> Diagramas Mermaid de páginas: **[docs/testing/journeys.md](docs/testing/journeys.md)**
+
 ## Vista rápida
 
 ```bash
@@ -16,26 +19,29 @@ PPI_HARNESS_INTEGRATION=1 make harness-integration
 
 # Solo E2E (levanta API+Trunk, corre Playwright, apaga procesos)
 make harness-e2e
+
+# Journeys Auth+Hub P1→P3 (ADR 003)
+make harness-journeys
+
+# Unlock local human account (dev only)
+make dev-set-password EMAIL=vos@example.com PASSWORD=secreto12
 ```
 
 Reportes: `artifacts/harness/<timestamp>/` (`summary.tsv`, logs por módulo, report Playwright si falló).
 
 ## Arquitectura
 
-```
-make harness
-    │
-    ▼
-scripts/harness/run.sh
-    ├── backend-unit      →  go test ./...
-    ├── web-unit          →  cargo test (web/)
-    ├── backend-integration → go test -tags=integration ./internal/integration/...
-    │                         (SKIP salvo PPI_HARNESS_INTEGRATION=1)
-    └── web-e2e
-          ├── start Go :8080 (SQLite harness DB)
-          ├── start Trunk :3001
-          ├── playwright smoke (+ suites futuras)
-          └── cleanup PIDs (trap EXIT)
+```mermaid
+flowchart TB
+  MH[make harness*] --> RS[scripts/harness/run.sh]
+  RS --> BU[backend-unit]
+  RS --> WU[web-unit]
+  RS --> BI[backend-integration opt-in]
+  RS --> WE[web-e2e]
+  RS --> WJ[web-journeys ADR003]
+  WE --> Stack[API :8080 + Trunk :3001]
+  WJ --> Stack
+  Stack --> PW[Playwright Chromium]
 ```
 
 | Módulo | Qué valida | Dónde vive |
@@ -43,7 +49,8 @@ scripts/harness/run.sh
 | `backend-unit` | Use cases, handlers httptest, repos | `backend/**/*_test.go` |
 | `web-unit` | Contratos API / URLs Wasm | `web/` (`cargo test`) |
 | `backend-integration` | Endpoints críticos contra mux real + SQLite archivo | `backend/internal/integration/` (`//go:build integration`) |
-| `web-e2e` | Flujos de punta a punta en Chromium | `web/e2e/tests/` |
+| `web-e2e` | Pack completo Playwright | `web/e2e/tests/` |
+| `web-journeys` | Páginas 1→3 auth + hub oiladas | `journey.auth-hub` + validation + session.navigation |
 
 ## Ampliación de la batería (roadmap de suites)
 
@@ -51,10 +58,13 @@ scripts/harness/run.sh
 
 | Spec | Estado | Intención |
 |---|---|---|
-| `auth.login.spec.ts` | **Activo** | Landing CTAs + register/login → `/workspace` |
-| `auth.validation.spec.ts` | Esqueleto | Errores de formulario (password corta, email inválido, 401 genérico) |
-| `workspace.navigation.spec.ts` | Esqueleto | Sesión en header, logout → `/`, guard sin token |
-| `levels.browse.spec.ts` | Esqueleto (futuro cutover) | Listar/navegar niveles cuando el harness pedagógico esté en Leptos |
+| `journey.auth-hub.spec.ts` | **Activo** | Transversal P1→P3 + recovery + hub loop |
+| `auth.login.spec.ts` | **Activo** | Landing CTAs + login → `/workspace` |
+| `auth.reset.spec.ts` | **Activo** | Forgot → resetToken DX → workspace |
+| `auth.validation.spec.ts` | **Activo** | 401 login + password corta en register |
+| `session.navigation.spec.ts` | **Activo** | Portada autenticada ↔ workspace + orphan JWT |
+| `workspace.navigation.spec.ts` | Esqueleto | Ampliar chrome logout legacy |
+| `levels.browse.spec.ts` | Esqueleto (futuro cutover) | Listar/navegar niveles en Leptos |
 
 Convención: specs nuevos van bajo `web/e2e/tests/<dominio>.*.spec.ts`. Marcar pendientes con `test.describe.skip` hasta que el UI exista; no borrar Qwik en E2E de cutover.
 
@@ -87,16 +97,19 @@ PPI_HARNESS_INTEGRATION=1 make harness-integration
 | `PPI_HARNESS_SKIP_E2E` | `0` | `1` omite Playwright en `make harness` |
 | `PPI_HARNESS_REPORT_DIR` | `artifacts/harness` | Destino de reportes |
 | `PPI_E2E_*` | efímero en harness | Igual que `web/e2e/README.md` |
-| `JWT_SECRET` / `DATABASE_URL` | valores harness | Stack efímero E2E |
+| `JWT_SECRET` / `DATABASE_URL` | harness → `ppi-harness.db` | Stack efímero E2E |
+| `PPI_EXPOSE_RESET_TOKEN` | `1` en harness | DX forgot → `resetToken` |
 
 ## CI
 
 - Unit backend: `.github/workflows/ci.yml`
 - E2E Playwright: `.github/workflows/e2e.yml` (usuario efímero)
 - El target `make harness` es la **fuente de verdad local**; CI puede ir sumando jobs por módulo alineados a este mapa.
+- Gate de agentes: ADR 003 — no cerrar auth/nav sin journeys verdes.
 
 ## Reglas
 
 - No secretos en git (`.env.local` / GitHub Secrets / usuario efímero).
 - No borrar `frontend/` Qwik desde pruebas.
 - Código de alumnos no se ejecuta en el servidor (ADR 002).
+- Ante 409/401 locales: verificar `DATABASE_URL` y `make dev-set-password` (ver Mermaid de fallos en `docs/testing/journeys.md`).

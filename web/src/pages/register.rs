@@ -50,6 +50,9 @@ pub fn RegisterPage() -> impl IntoView {
                     navigate("/workspace", Default::default());
                 }
                 Err(err) => {
+                    if matches!(err.status, Some(401 | 409)) {
+                        session.clear();
+                    }
                     error.set(err.message);
                     busy.set(false);
                 }

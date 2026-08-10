@@ -9,6 +9,10 @@ import (
 const defaultCost = 12
 
 // BcryptHasher implementa domain.PasswordHasher.
+//
+// Each Hash() call embeds a fresh random salt inside the `$2a$…` string; the
+// salt is not derived from process state, so hashes remain comparable across
+// server restarts with CompareHashAndPassword.
 type BcryptHasher struct {
 	cost int
 }
