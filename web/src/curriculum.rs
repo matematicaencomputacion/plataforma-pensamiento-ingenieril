@@ -72,9 +72,23 @@ pub const PY04_SYNTAX: CodingStep = CodingStep {
     pytest: "def test_three_statements(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == [\n        'Hello World!',\n        'Have a good day.',\n        'Learning Python is fun!',\n    ]\n",
     hint: "Tres llamadas a print(), en ese orden exacto.",
     solution_example: "print(\"Hello World!\")\nprint(\"Have a good day.\")\nprint(\"Learning Python is fun!\")",
-    next: None,
+    next: Some("py-05-output"),
     show_type_chips: false,
     micro_step: 4,
+};
+
+pub const PY05_OUTPUT: CodingStep = CodingStep {
+    id: "py-05-output",
+    title: "Python Output",
+    objective: "Usar print() para combinar texto y números en una sola salida.",
+    prompt_md: "**Output / Print**\n\n`print()` muestra texto o valores. Podés mezclar texto y números separándolos con comas.\n\n**Micro-reto:**\n1. Imprime el texto `I am` y el número `25` en **una** llamada a `print`",
+    starter_code: "# print(...)\n",
+    pytest: "def test_output_mix(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'I am' in out and '25' in out\n",
+    hint: "print(\"I am\", 25)",
+    solution_example: "print(\"I am\", 25)",
+    next: None,
+    show_type_chips: false,
+    micro_step: 5,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -82,12 +96,22 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_INTRO,
     &PY03_GET_STARTED,
     &PY04_SYNTAX,
+    &PY05_OUTPUT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
 
 pub fn coding_step_by_id(id: &str) -> Option<&'static CodingStep> {
     CODING_STEPS.iter().copied().find(|s| s.id == id)
+}
+
+pub fn coding_step_by_micro_step(n: i32) -> Option<&'static CodingStep> {
+    CODING_STEPS.iter().copied().find(|s| s.micro_step == n)
+}
+
+/// True when the rail cell is playable (completed or current cursor).
+pub fn micro_step_unlocked(current_level: i32, n: i32) -> bool {
+    n > 0 && n <= current_level
 }
 
 pub fn coding_step_or_default(id: &str) -> &'static CodingStep {
@@ -226,6 +250,25 @@ mod tests {
                 step.micro_step
             );
         }
+    }
+
+    #[test]
+    fn py05_output_chained_from_syntax() {
+        let syntax = coding_step_by_id("py-04-syntax").expect("syntax");
+        assert_eq!(syntax.next, Some("py-05-output"));
+        let out = coding_step_by_micro_step(5).expect("py-05");
+        assert_eq!(out.id, "py-05-output");
+        assert_eq!(out.micro_step, 5);
+        assert!(out.next.is_none());
+        assert!(out.pytest.contains("test_output_mix"));
+    }
+
+    #[test]
+    fn micro_step_unlocked_uses_cursor() {
+        assert!(!micro_step_unlocked(1, 2));
+        assert!(micro_step_unlocked(5, 5));
+        assert!(micro_step_unlocked(5, 1));
+        assert!(!micro_step_unlocked(5, 6));
     }
 
     #[test]
