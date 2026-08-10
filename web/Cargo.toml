@@ -10,7 +10,7 @@ publish = false
 leptos = { version = "0.8", features = ["csr"] }
 leptos_router = { version = "0.8" }
 console_error_panic_hook = "0.1"
-wasm-bindgen = "0.2"
+wasm-bindgen = "=0.2.127"
 wasm-bindgen-futures = "0.4"
 js-sys = "0.3"
 gloo-net = { version = "0.6", features = ["http"] }
@@ -30,5 +30,8 @@ web-sys = { version = "0.3", features = [
 ] }
 
 [profile.release]
-opt-level = "z"
+# Prefer size without Binaryen post-pass. wasm-opt -Oz (old Binaryen on Debian)
+# rewrites the externref table and breaks __wbindgen_init_externref_table at runtime.
+opt-level = "s"
 lto = true
+codegen-units = 1
