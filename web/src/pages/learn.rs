@@ -381,9 +381,6 @@ pub fn LearnPage() -> impl IntoView {
                                                 {format!("Nivel operativo · {}", lvl.title)}
                                             </h3>
                                             <p class="learn__level-statement">{lvl.statement}</p>
-                                            <p class="learn__muted learn__level-note">
-                                                "Contexto desde GET /api/levels/current. La ejecución Python sigue 100% en el browser (ADR 002)."
-                                            </p>
                                         </aside>
                                     }
                                 })
