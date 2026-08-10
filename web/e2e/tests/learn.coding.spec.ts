@@ -93,6 +93,10 @@ test.describe("learn coding (Paso 2)", () => {
     );
     await page.locator("#type-chip-str").click();
     await expect(page.locator("#type-chip-panel")).toContainText(/String|Cadena/i);
+    await expect(page.locator("#learn-ident-nombre")).toHaveClass(/learn__ident--flash/);
+    await page.locator("#type-chip-int").click();
+    await expect(page.locator("#type-chip-panel")).toContainText(/Integer|entero/i);
+    await expect(page.locator("#learn-ident-edad")).toHaveClass(/learn__ident--flash/);
     await page.locator("#type-chip-obj").click();
     await expect(page.locator("#type-chip-panel")).toContainText(/Object|Objeto/i);
     await page.locator("#type-chip-obj").click();

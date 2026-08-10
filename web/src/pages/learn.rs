@@ -16,7 +16,7 @@ use crate::api::Level;
 use crate::auth::{complete_progress, fetch_current_level, input_value};
 use crate::components::{level_completed, ProgressCheck, VariableTypeChips};
 use crate::curriculum::{
-    coding_step_or_default, first_coding_step, prompt_to_html, DEFAULT_CODING_STEP_ID,
+    coding_step_or_default, first_coding_step, prompt_to_html_with_flash, DEFAULT_CODING_STEP_ID,
 };
 use crate::interop::pyodide::{
     check_student_code, ensure_engine, format_check_log, run_stderr_body, run_stdout_body,
@@ -104,6 +104,8 @@ pub fn LearnPage() -> impl IntoView {
     let already_passed_toast = RwSignal::new(Option::<String>::None);
     let level = RwSignal::new(Option::<Level>::None);
     let level_error = RwSignal::new(Option::<String>::None);
+    // Flash `nombre`/`edad` in the enunciado when exploring type chips (str/int).
+    let flash_ident = RwSignal::new(Option::<&'static str>::None);
 
     let validate_btn = Memo::new(move |_| {
         if console_kind.get() == ConsoleKind::Validating {
@@ -132,6 +134,7 @@ pub fn LearnPage() -> impl IntoView {
         can_continue.set(false);
         code_dirty_since_pass.set(false);
         already_passed_toast.set(None);
+        flash_ident.set(None);
     });
 
     Effect::new(move |_| {
@@ -357,11 +360,16 @@ pub fn LearnPage() -> impl IntoView {
                     <section class="learn__theory" aria-label="Teoría y enunciado">
                         <h2 class="learn__section-title">"Enunciado"</h2>
                         <Show when=move || step.get().show_type_chips>
-                            <VariableTypeChips />
+                            <VariableTypeChips flash_ident=flash_ident />
                         </Show>
                         <div
                             class="learn__prompt"
-                            inner_html=move || prompt_to_html(step.get().prompt_md)
+                            inner_html=move || {
+                                prompt_to_html_with_flash(
+                                    step.get().prompt_md,
+                                    flash_ident.get(),
+                                )
+                            }
                         ></div>
 
                         <Show when=move || level.get().is_some()>
