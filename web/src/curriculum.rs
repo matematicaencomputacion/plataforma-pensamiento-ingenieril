@@ -95,6 +95,11 @@ pub fn first_coding_step() -> &'static CodingStep {
 
 /// Extremely light markdown → HTML for the enunciado panel (bold + newlines).
 pub fn prompt_to_html(md: &str) -> String {
+    prompt_to_html_with_flash(md, None)
+}
+
+/// Same as [`prompt_to_html`], marking `nombre`/`edad` idents and flashing one for 5s UX.
+pub fn prompt_to_html_with_flash(md: &str, flash_ident: Option<&str>) -> String {
     let mut out = String::new();
     for line in md.lines() {
         let mut escaped = html_escape(line);
@@ -112,7 +117,7 @@ pub fn prompt_to_html(md: &str) -> String {
             if let Some(rel_end) = escaped[start + 1..].find('`') {
                 let end = start + 1 + rel_end;
                 let inner = escaped[start + 1..end].to_string();
-                let replacement = format!("<code>{inner}</code>");
+                let replacement = code_span_html(&inner, flash_ident);
                 escaped.replace_range(start..end + 1, &replacement);
             } else {
                 break;
@@ -123,6 +128,22 @@ pub fn prompt_to_html(md: &str) -> String {
         out.push_str("</p>");
     }
     out
+}
+
+fn code_span_html(inner: &str, flash_ident: Option<&str>) -> String {
+    if inner == "nombre" || inner == "edad" {
+        let flashing = flash_ident == Some(inner);
+        let class = if flashing {
+            "learn__ident learn__ident--flash"
+        } else {
+            "learn__ident"
+        };
+        format!(
+            r#"<code class="{class}" id="learn-ident-{inner}" data-ident="{inner}">{inner}</code>"#
+        )
+    } else {
+        format!("<code>{inner}</code>")
+    }
 }
 
 fn html_escape(s: &str) -> String {
@@ -163,5 +184,16 @@ mod tests {
         let html = prompt_to_html(first_coding_step().prompt_md);
         assert!(html.contains("Una variable guarda un valor"));
         assert!(!html.contains("<strong>Variables</strong>"));
+        assert!(html.contains(r#"id="learn-ident-nombre""#));
+        assert!(html.contains(r#"id="learn-ident-edad""#));
+    }
+
+    #[test]
+    fn prompt_flash_marks_nombre_only() {
+        let html = prompt_to_html_with_flash(first_coding_step().prompt_md, Some("nombre"));
+        assert!(html.contains(
+            r#"class="learn__ident learn__ident--flash" id="learn-ident-nombre""#
+        ));
+        assert!(html.contains(r#"class="learn__ident" id="learn-ident-edad""#));
     }
 }
