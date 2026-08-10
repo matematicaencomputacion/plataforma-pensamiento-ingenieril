@@ -60,15 +60,15 @@ pub fn ResetPasswordPage() -> impl IntoView {
         let navigate = navigate.clone();
 
         leptos::task::spawn_local(async move {
-            match reset_password(token_v, password_v).await {
+            let outcome = reset_password(token_v, password_v).await;
+            busy.set(false);
+            match outcome {
                 Ok(result) => {
                     session.establish(result.user, result.token);
-                    busy.set(false);
                     navigate("/workspace", Default::default());
                 }
                 Err(err) => {
                     error.set(err.message);
-                    busy.set(false);
                 }
             }
         });
@@ -111,7 +111,7 @@ pub fn ResetPasswordPage() -> impl IntoView {
                         on:input=move |ev| password.set(input_value(&ev))
                     />
                     <Show when=move || !error.get().is_empty()>
-                        <p class="auth-form__error" role="alert">
+                        <p class="auth-form__error" role="alert" aria-live="polite">
                             {move || error.get()}
                         </p>
                     </Show>
@@ -119,6 +119,7 @@ pub fn ResetPasswordPage() -> impl IntoView {
                         class="cta cta--primary auth-form__submit"
                         type="submit"
                         prop:disabled=move || busy.get()
+                        attr:aria-busy=move || busy.get().to_string()
                     >
                         {move || {
                             if busy.get() {

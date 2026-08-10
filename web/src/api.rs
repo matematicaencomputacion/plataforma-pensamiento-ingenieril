@@ -123,6 +123,15 @@ pub fn sanitize_email(email: impl AsRef<str>) -> String {
     email.as_ref().trim().to_lowercase()
 }
 
+/// User-facing copy when the browser cannot reach the Go API (offline / CORS / down).
+pub const MSG_NETWORK_UNAVAILABLE: &str =
+    "No se pudo conectar con el servidor. Revisa tu conexión.";
+
+/// User-facing copy when the API returns an unreadable body.
+pub const MSG_INVALID_RESPONSE: &str =
+    "La respuesta del servidor no es válida. Probá de nuevo.";
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -214,6 +223,12 @@ mod tests {
     fn sanitize_email_trims_and_lowercases() {
         assert_eq!(sanitize_email("  Alum@Example.COM "), "alum@example.com");
         assert_eq!(sanitize_email("ok@x.com"), "ok@x.com");
+    }
+
+    #[test]
+    fn network_copy_is_stable_for_ux() {
+        assert!(MSG_NETWORK_UNAVAILABLE.contains("conectar"));
+        assert!(MSG_INVALID_RESPONSE.contains("válida") || MSG_INVALID_RESPONSE.contains("valida"));
     }
 
     #[test]

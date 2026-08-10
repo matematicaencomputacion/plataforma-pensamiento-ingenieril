@@ -162,7 +162,11 @@ fn LevelPanel(
             }}
         </Show>
         <Show when=move || !loading.get() && level.get().is_none()>
-            <p class="workspace__muted" role="status">
+            <p
+                class="workspace__muted"
+                role=move || if error.get().is_some() { "alert" } else { "status" }
+                aria-live="polite"
+            >
                 {move || {
                     error
                         .get()
