@@ -24,6 +24,14 @@ pub struct RunResult {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct CheckCase {
+    pub name: String,
+    pub passed: bool,
+    #[serde(default)]
+    pub message: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct CheckResult {
     pub passed: bool,
     #[serde(default)]
@@ -34,6 +42,8 @@ pub struct CheckResult {
     pub summary: String,
     #[serde(default)]
     pub details: String,
+    #[serde(default)]
+    pub cases: Vec<CheckCase>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -238,9 +248,31 @@ mod tests {
             stderr: String::new(),
             summary: "✓ Checks OK".into(),
             details: "OK".into(),
+            cases: vec![CheckCase {
+                name: "test_variables".into(),
+                passed: true,
+                message: "OK".into(),
+            }],
         });
         assert!(log.contains("✓ Checks OK"));
         assert!(log.contains("OK"));
+    }
+
+    #[test]
+    fn check_result_deserializes_cases() {
+        let raw = r#"{
+            "passed": false,
+            "stdout": "",
+            "stderr": "",
+            "summary": "fail",
+            "details": "x",
+            "cases": [{"name":"test_variables","passed":false,"message":"assert failed"}]
+        }"#;
+        let parsed: CheckResult = serde_json::from_str(raw).expect("json");
+        assert!(!parsed.passed);
+        assert_eq!(parsed.cases.len(), 1);
+        assert!(!parsed.cases[0].passed);
+        assert!(parsed.cases[0].message.contains("assert"));
     }
 
     #[test]

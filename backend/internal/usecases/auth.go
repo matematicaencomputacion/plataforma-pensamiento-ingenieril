@@ -293,6 +293,66 @@ func (s *AuthService) UpdateProfile(
 	return normalized, nil
 }
 
+// ProgressResult es el avance persistido tras completar un micro-reto en el cliente.
+type ProgressResult struct {
+	LevelID      int    `json:"level_id"`
+	StepID       string `json:"step_id"`
+	Passed       bool   `json:"passed"`
+	CurrentLevel int    `json:"current_level"`
+	Advanced     bool   `json:"advanced"`
+}
+
+// CompleteProgress registra la superación de un nivel/paso (sin código Python — ADR 002).
+// Si passed=false, no muta CurrentLevel (ack del intento client-side).
+func (s *AuthService) CompleteProgress(
+	_ context.Context,
+	bearerToken string,
+	levelID int,
+	stepID string,
+	passed bool,
+) (ProgressResult, error) {
+	stepID = strings.TrimSpace(stepID)
+	if levelID <= 0 {
+		return ProgressResult{}, domain.ErrInvalidLevelID
+	}
+	if stepID == "" {
+		return ProgressResult{}, domain.ErrInvalidStepID
+	}
+
+	userID, _, err := s.tokens.Parse(bearerToken)
+	if err != nil {
+		return ProgressResult{}, domain.ErrUnauthorized
+	}
+	user, err := s.users.GetByID(userID)
+	if err != nil {
+		return ProgressResult{}, domain.ErrUnauthorized
+	}
+
+	out := ProgressResult{
+		LevelID:      levelID,
+		StepID:       stepID,
+		Passed:       passed,
+		CurrentLevel: user.CurrentLevel,
+		Advanced:     false,
+	}
+	if !passed {
+		return out, nil
+	}
+
+	next := levelID + 1
+	if user.CurrentLevel < next {
+		if err := s.users.UpdateCurrentLevel(userID, next); err != nil {
+			if errors.Is(err, repositories.ErrUserNotFound) {
+				return ProgressResult{}, domain.ErrUnauthorized
+			}
+			return ProgressResult{}, err
+		}
+		out.CurrentLevel = next
+		out.Advanced = true
+	}
+	return out, nil
+}
+
 func normalizeEmail(email string) (string, error) {
 	email = strings.TrimSpace(strings.ToLower(email))
 	if email == "" {

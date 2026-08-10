@@ -237,3 +237,45 @@ func TestResolveExposeResetTokenEnvAndDev(t *testing.T) {
 		t.Fatal("explicit PPI_EXPOSE_RESET_TOKEN=0 must win")
 	}
 }
+
+func TestCompleteProgressAdvancesLevel(t *testing.T) {
+	svc := newTestAuth(t)
+	ctx := context.Background()
+	reg, err := svc.Register(ctx, "prog@example.com", "secreto12")
+	if err != nil {
+		t.Fatalf("register: %v", err)
+	}
+
+	denied, err := svc.CompleteProgress(ctx, reg.Token, 1, "py-02-variables", false)
+	if err != nil {
+		t.Fatalf("failed attempt: %v", err)
+	}
+	if denied.Advanced || denied.CurrentLevel != 1 {
+		t.Fatalf("failed attempt must not advance: %#v", denied)
+	}
+
+	ok, err := svc.CompleteProgress(ctx, reg.Token, 1, "py-02-variables", true)
+	if err != nil {
+		t.Fatalf("pass: %v", err)
+	}
+	if !ok.Advanced || ok.CurrentLevel != 2 {
+		t.Fatalf("expected advance to 2: %#v", ok)
+	}
+
+	idempotent, err := svc.CompleteProgress(ctx, reg.Token, 1, "py-02-variables", true)
+	if err != nil {
+		t.Fatalf("idempotent: %v", err)
+	}
+	if idempotent.Advanced || idempotent.CurrentLevel != 2 {
+		t.Fatalf("second pass must not re-advance: %#v", idempotent)
+	}
+
+	_, err = svc.CompleteProgress(ctx, reg.Token, 0, "x", true)
+	if !errors.Is(err, domain.ErrInvalidLevelID) {
+		t.Fatalf("want ErrInvalidLevelID, got %v", err)
+	}
+	_, err = svc.CompleteProgress(ctx, reg.Token, 1, "  ", true)
+	if !errors.Is(err, domain.ErrInvalidStepID) {
+		t.Fatalf("want ErrInvalidStepID, got %v", err)
+	}
+}

@@ -152,12 +152,21 @@ export async function installPyodideMock(page: Page) {
           passed,
           stdout: passed
             ? "PASSED test_variables\nOK — 1 test(s) passed\n"
-            : "FAILED\n",
+            : "FAILED test_variables\n",
           stderr: "",
           summary: passed
             ? "✓ Checks OK — podés Continuar"
             : "✗ Checks fallaron — revisá el enunciado y el código",
           details: passed ? "Todos los tests pasaron." : "assert failed",
+          cases: [
+            {
+              name: "test_variables",
+              passed,
+              message: passed
+                ? "OK"
+                : "assert failed: se esperaba nombre (str), edad (int) y print(nombre, edad)",
+            },
+          ],
         };
       },
       formatRunLog: () => "",

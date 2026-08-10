@@ -765,6 +765,60 @@ button:focus-visible {
   color: var(--accent);
 }
 
+.learn__ok--banner {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-radius: 0.4rem;
+  font-weight: 600;
+}
+
+.learn__cases {
+  list-style: none;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.learn__case {
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.35rem;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.learn__case--pass {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.learn__case--fail {
+  color: #e8a0a0;
+  background: color-mix(in srgb, #b42318 18%, transparent);
+}
+
+.learn__case-name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+}
+
+.learn__case-mark {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.learn__case-msg {
+  margin: 0.4rem 0 0;
+  white-space: pre-wrap;
+  font-size: 0.8rem;
+  opacity: 0.92;
+}
+
 .learn__nav {
   margin-top: 2rem;
   display: flex;

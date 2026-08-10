@@ -54,6 +54,7 @@ func newTestMux(t *testing.T) http.Handler {
 	mux.HandleFunc("POST /api/auth/forgot-password", authHandler.ForgotPassword)
 	mux.HandleFunc("POST /api/auth/reset-password", authHandler.ResetPassword)
 	mux.HandleFunc("GET /api/me", authHandler.Me)
+	mux.HandleFunc("POST /api/progress/complete", handlers.NewProgressHandler(authSvc).Complete)
 	mux.HandleFunc("GET /api/levels/current", levelHandler.GetCurrent)
 	mux.HandleFunc("GET /api/levels/{id}", levelHandler.GetByID)
 	return mux

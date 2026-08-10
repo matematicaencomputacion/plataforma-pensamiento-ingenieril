@@ -85,6 +85,28 @@ pub fn user_profile_url() -> String {
     api_url("/api/user/profile")
 }
 
+pub fn progress_complete_url() -> String {
+    api_url("/api/progress/complete")
+}
+
+/// Wire request for `POST /api/progress/complete` (ADR 002: never includes student code).
+#[derive(Debug, Clone, Serialize)]
+pub struct ProgressCompleteRequest {
+    pub level_id: i32,
+    pub step_id: String,
+    pub passed: bool,
+}
+
+/// Wire response after client-side exercise validation.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct ProgressCompleteResponse {
+    pub level_id: i32,
+    pub step_id: String,
+    pub passed: bool,
+    pub current_level: i32,
+    pub advanced: bool,
+}
+
 /// Min length enforced by Go `LearnerProfileService` (unicode runes).
 pub const MIN_LEARNER_NOTES_RUNES: usize = 12;
 
@@ -235,6 +257,7 @@ mod tests {
             "/api/learner/profile/synthesize"
         );
         assert_eq!(user_profile_url(), "/api/user/profile");
+        assert_eq!(progress_complete_url(), "/api/progress/complete");
     }
 
     #[test]

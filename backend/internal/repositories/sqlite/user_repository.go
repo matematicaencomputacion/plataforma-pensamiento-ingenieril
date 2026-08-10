@@ -189,6 +189,25 @@ func (r *UserRepository) UpdateProfile(userID string, profile domain.LearnerProf
 	return nil
 }
 
+func (r *UserRepository) UpdateCurrentLevel(userID string, currentLevel int) error {
+	res, err := r.db.Exec(
+		`UPDATE users SET current_level = ? WHERE id = ?`,
+		currentLevel,
+		userID,
+	)
+	if err != nil {
+		return err
+	}
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return repositories.ErrUserNotFound
+	}
+	return nil
+}
+
 func (r *UserRepository) UpdatePasswordHash(userID, passwordHash string) error {
 	res, err := r.db.Exec(
 		`UPDATE users SET password_hash = ? WHERE id = ?`,
