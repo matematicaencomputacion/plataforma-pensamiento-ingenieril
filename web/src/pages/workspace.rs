@@ -3,10 +3,12 @@ use leptos_router::components::A;
 use leptos_router::hooks::{use_location, use_navigate};
 use leptos_router::NavigateOptions;
 
-use crate::api::Level;
-use crate::auth::{fetch_current_level, reset_progress};
+use crate::auth::reset_progress;
 use crate::components::{level_completed, ProgressCheck};
 use crate::session::SessionCtx;
+
+/// Placeholder rail for the upcoming Python micro-challenges (scaffold only).
+const MICRO_STEP_COUNT: i32 = 100;
 
 #[component]
 pub fn WorkspacePage() -> impl IntoView {
@@ -14,9 +16,6 @@ pub fn WorkspacePage() -> impl IntoView {
     let navigate = use_navigate();
     let location = use_location();
 
-    let level = RwSignal::new(Option::<Level>::None);
-    let level_error = RwSignal::new(Option::<String>::None);
-    let level_loading = RwSignal::new(false);
     let resetting = RwSignal::new(false);
     let reset_note = RwSignal::new(Option::<String>::None);
 
@@ -37,30 +36,6 @@ pub fn WorkspacePage() -> impl IntoView {
                 },
             );
         }
-    });
-
-    // Load the operational "nivel actual" once the session is live.
-    Effect::new(move |_| {
-        if session.user.get().is_none() {
-            return;
-        }
-        if level.get_untracked().is_some() || level_loading.get_untracked() {
-            return;
-        }
-        level_loading.set(true);
-        level_error.set(None);
-        leptos::task::spawn_local(async move {
-            match fetch_current_level().await {
-                Ok(current) => {
-                    level.set(Some(current));
-                    level_error.set(None);
-                }
-                Err(err) => {
-                    level_error.set(Some(err.message));
-                }
-            }
-            level_loading.set(false);
-        });
     });
 
     let on_reset = move |_| {
@@ -85,6 +60,14 @@ pub fn WorkspacePage() -> impl IntoView {
         });
     };
 
+    let current_level = Signal::derive(move || {
+        session
+            .user
+            .get()
+            .map(|u| u.current_level)
+            .unwrap_or(1)
+    });
+
     view! {
         <section class="workspace">
             <Show
@@ -106,7 +89,7 @@ pub fn WorkspacePage() -> impl IntoView {
                 <header class="workspace__header">
                     <h1 class="workspace__title">"Workspace"</h1>
                     <p class="workspace__lead">
-                        "Tu espacio operativo: seguí el nivel actual y movete entre portada y workspace sin perder la sesión."
+                        "Tu espacio operativo: seguí el micro-paso actual y movete entre portada y workspace sin perder la sesión."
                     </p>
                     <p class="workspace__user">
                         "Conectado como "
@@ -126,7 +109,7 @@ pub fn WorkspacePage() -> impl IntoView {
                     <section class="workspace__panel" aria-labelledby="workspace-level-heading">
                         <div class="workspace__panel-head">
                             <h2 id="workspace-level-heading" class="workspace__panel-title">
-                                "Nivel actual"
+                                "Current level micro-step"
                             </h2>
                             <button
                                 type="button"
@@ -155,18 +138,13 @@ pub fn WorkspacePage() -> impl IntoView {
                                 {move || reset_note.get().unwrap_or_default()}
                             </p>
                         </Show>
-                        <LevelPanel
-                            loading=level_loading
-                            error=level_error
-                            level=level
-                            current_level=Signal::derive(move || {
-                                session
-                                    .user
-                                    .get()
-                                    .map(|u| u.current_level)
-                                    .unwrap_or(1)
-                            })
-                        />
+                        <Show when=move || level_completed(current_level.get(), 1)>
+                            <ProgressCheck
+                                id="workspace-level-check"
+                                label="Micro-paso 1 superado"
+                            />
+                        </Show>
+                        <MicroStepRail current_level=current_level />
                     </section>
 
                     <section class="workspace__panel" aria-labelledby="workspace-path-heading">
@@ -177,7 +155,7 @@ pub fn WorkspacePage() -> impl IntoView {
                             "Module 1 — Declarative Foundations"
                         </h3>
                         <p class="workspace__statement">
-                            "Variables, tipos y foundations declarativas en Python. El enunciado vive en «Nivel actual»; el editor Pyodide del harness sigue el cutover desde el frontend legacy."
+                            "Variables, tipos y foundations declarativas en Python. Los micro-pasos 1–100 viven en «Current level micro-step»; el editor Pyodide sigue en Paso 2 · Coding."
                         </p>
                         <ul class="workspace__list">
                             <li>"Variables e enteros"</li>
@@ -204,59 +182,37 @@ pub fn WorkspacePage() -> impl IntoView {
 }
 
 #[component]
-fn LevelPanel(
-    loading: RwSignal<bool>,
-    error: RwSignal<Option<String>>,
-    level: RwSignal<Option<Level>>,
-    current_level: Signal<i32>,
-) -> impl IntoView {
+fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
     view! {
-        <Show when=move || loading.get()>
-            <p class="workspace__muted">"Cargando nivel…"</p>
-        </Show>
-        <Show when=move || !loading.get() && level.get().is_some()>
-            {move || {
-                level.get().map(|lvl| {
-                    let track = track_label(&lvl.track_type);
-                    let level_id = lvl.id;
+        <ol
+            class="workspace__microsteps"
+            id="workspace-microsteps"
+            aria-label="Python micro-step challenges 1 to 100"
+        >
+            {(1..=MICRO_STEP_COUNT)
+                .map(|n| {
                     view! {
-                        <p class="workspace__meta">
-                            {format!("#{id} · {track}", id = lvl.id, track = track)}
-                        </p>
-                        <h3 class="workspace__level-title">{lvl.title.clone()}</h3>
-                        <div class="workspace__statement-row">
-                            <Show when=move || level_completed(current_level.get(), level_id)>
-                                <ProgressCheck
-                                    id="workspace-level-check"
-                                    label="Nivel superado"
-                                />
-                            </Show>
-                            <p class="workspace__statement">{lvl.statement.clone()}</p>
-                        </div>
+                        <li
+                            class=move || {
+                                let cur = current_level.get();
+                                let mut class = String::from("workspace__microstep");
+                                if level_completed(cur, n) {
+                                    class.push_str(" workspace__microstep--done");
+                                } else if cur == n {
+                                    class.push_str(" workspace__microstep--current");
+                                }
+                                class
+                            }
+                            data-microstep=n.to_string()
+                            attr:aria-current=move || {
+                                (current_level.get() == n).then_some("step")
+                            }
+                        >
+                            <span class="workspace__microstep-num">{n}</span>
+                        </li>
                     }
                 })
-            }}
-        </Show>
-        <Show when=move || !loading.get() && level.get().is_none()>
-            <p
-                class="workspace__muted"
-                role=move || if error.get().is_some() { "alert" } else { "status" }
-                aria-live="polite"
-            >
-                {move || {
-                    error
-                        .get()
-                        .unwrap_or_else(|| "No hay un nivel cargado todavía.".into())
-                }}
-            </p>
-        </Show>
-    }
-}
-
-fn track_label(track_type: &str) -> &'static str {
-    match track_type {
-        "micro_paso" => "Micro-paso",
-        "reto_ingenieril" => "Reto ingenieril",
-        _ => "Nivel",
+                .collect_view()}
+        </ol>
     }
 }

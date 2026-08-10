@@ -449,6 +449,48 @@ button:focus-visible {
   line-height: 1.55;
 }
 
+.workspace__microsteps {
+  list-style: none;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.15rem, 1fr));
+  gap: 0.35rem;
+}
+
+.workspace__microstep {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.15rem;
+  border: 1px solid var(--border);
+  border-radius: 0.3rem;
+  background: rgba(15, 28, 24, 0.35);
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.workspace__microstep-num {
+  font-variant-numeric: tabular-nums;
+}
+
+.workspace__microstep--current {
+  color: var(--fg);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.workspace__microstep--done {
+  color: #b8e4c2;
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
 .workspace__list {
   margin: 0.9rem 0 0;
   padding-left: 1.15rem;

@@ -89,9 +89,11 @@ test.describe("persistent progress checks", () => {
     await expect(page.locator("#workspace-level-check")).toBeVisible({
       timeout: e2eTimeout,
     });
+    await expect(page.locator("#workspace-microsteps")).toBeVisible();
     await expect(
-      page.locator(".workspace__statement-row .workspace__statement"),
-    ).toContainText(/print/i);
+      page.locator('.workspace__microstep[data-microstep="1"]'),
+    ).toHaveClass(/workspace__microstep--done/);
+    await expect(page.locator("#workspace-microsteps li")).toHaveCount(100);
 
     const resetResponse = page.waitForResponse(
       (res) =>
