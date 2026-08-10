@@ -354,14 +354,14 @@ pub fn OnboardingPage() -> impl IntoView {
                             "Editar perfil"
                         </button>
                         <A
-                            href="/workspace"
+                            href="/learn"
                             attr:class="cta cta--primary"
                             attr:id="coaching-continue"
                         >
                             "Continuar al Paso 2"
                         </A>
                         <p class="onboarding__hint" role="status">
-                            "Paso 2 (Python en el browser) se monta desde el workspace mientras llega el editor Pyodide."
+                            "Paso 2 abre el editor Python en el navegador (Pyodide)."
                         </p>
                     </Show>
                 </div>

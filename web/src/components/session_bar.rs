@@ -36,6 +36,9 @@ pub fn SessionBar() -> impl IntoView {
                     <A href="/workspace" attr:class="session-bar__link session-bar__link--emph">
                         "Workspace"
                     </A>
+                    <A href="/learn" attr:class="session-bar__link">
+                        "Coding"
+                    </A>
                 </nav>
                 <span class="session-bar__email">
                     {move || {

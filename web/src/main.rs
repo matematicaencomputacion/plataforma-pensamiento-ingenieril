@@ -3,7 +3,9 @@
 mod api;
 mod auth;
 mod components;
+mod curriculum;
 mod pages;
+mod pyodide;
 mod session;
 
 use leptos::prelude::*;
@@ -12,8 +14,8 @@ use leptos_router::path;
 
 use components::SessionBar;
 use pages::{
-    ForgotPasswordPage, LandingPage, LoginPage, OnboardingPage, RegisterPage, ResetPasswordPage,
-    WorkspacePage,
+    ForgotPasswordPage, LandingPage, LearnPage, LoginPage, OnboardingPage, RegisterPage,
+    ResetPasswordPage, WorkspacePage,
 };
 use session::{SessionBootstrap, SessionCtx};
 
@@ -50,6 +52,7 @@ fn App() -> impl IntoView {
                         <Route path=path!("/reset-password") view=ResetPasswordPage />
                         <Route path=path!("/workspace") view=WorkspacePage />
                         <Route path=path!("/onboarding") view=OnboardingPage />
+                        <Route path=path!("/learn") view=LearnPage />
                     </Routes>
                 </main>
             </div>
