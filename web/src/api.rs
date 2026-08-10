@@ -81,6 +81,10 @@ pub fn synthesize_profile_url() -> String {
     api_url("/api/learner/profile/synthesize")
 }
 
+pub fn user_profile_url() -> String {
+    api_url("/api/user/profile")
+}
+
 /// Min length enforced by Go `LearnerProfileService` (unicode runes).
 pub const MIN_LEARNER_NOTES_RUNES: usize = 12;
 
@@ -102,6 +106,55 @@ pub struct ProfileSynthesis {
     pub vision: String,
     #[serde(default)]
     pub stack: String,
+}
+
+/// Wire type for `GET|PUT /api/user/profile` (Go `domain.LearnerProfile`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct UserProfile {
+    #[serde(default, rename = "lifePurpose")]
+    pub life_purpose: String,
+    #[serde(default)]
+    pub urgency: String,
+    #[serde(default, rename = "vision5Years")]
+    pub vision_5_years: String,
+    #[serde(default, rename = "techStack")]
+    pub tech_stack: String,
+}
+
+impl UserProfile {
+    pub fn is_empty(&self) -> bool {
+        self.life_purpose.trim().is_empty()
+            && self.urgency.trim().is_empty()
+            && self.vision_5_years.trim().is_empty()
+            && self.tech_stack.trim().is_empty()
+    }
+
+    pub fn normalize(self) -> Self {
+        Self {
+            life_purpose: self.life_purpose.trim().to_string(),
+            urgency: self.urgency.trim().to_string(),
+            vision_5_years: self.vision_5_years.trim().to_string(),
+            tech_stack: self.tech_stack.trim().to_string(),
+        }
+    }
+
+    pub fn from_synthesis(s: &ProfileSynthesis) -> Self {
+        Self {
+            life_purpose: s.purpose.trim().to_string(),
+            urgency: s.urgency.trim().to_string(),
+            vision_5_years: s.vision.trim().to_string(),
+            tech_stack: s.stack.trim().to_string(),
+        }
+    }
+
+    pub fn to_synthesis(&self) -> ProfileSynthesis {
+        ProfileSynthesis {
+            purpose: self.life_purpose.clone(),
+            urgency: self.urgency.clone(),
+            vision: self.vision_5_years.clone(),
+            stack: self.tech_stack.clone(),
+        }
+    }
 }
 
 /// Wire type for `GET /api/levels/current` (mirrors Go `domain.Level`).
@@ -181,6 +234,7 @@ mod tests {
             synthesize_profile_url(),
             "/api/learner/profile/synthesize"
         );
+        assert_eq!(user_profile_url(), "/api/user/profile");
     }
 
     #[test]
@@ -202,6 +256,42 @@ mod tests {
         assert_eq!(parsed.urgency, "u");
         assert_eq!(parsed.vision, "v");
         assert_eq!(parsed.stack, "s");
+    }
+
+    #[test]
+    fn user_profile_json_matches_backend_contract() {
+        let body = serde_json::to_string(
+            &UserProfile {
+                life_purpose: "Construir productos".into(),
+                urgency: "hoy".into(),
+                vision_5_years: "liderar".into(),
+                tech_stack: "go y python".into(),
+            }
+            .normalize(),
+        )
+        .expect("serialize profile");
+        assert!(body.contains("\"lifePurpose\""));
+        assert!(body.contains("\"vision5Years\""));
+        assert!(body.contains("\"techStack\""));
+        assert!(!body.contains("life_purpose"));
+
+        let parsed: UserProfile = serde_json::from_str(
+            r#"{"lifePurpose":"p","urgency":"u","vision5Years":"v","techStack":"s"}"#,
+        )
+        .expect("decode profile");
+        assert_eq!(parsed.life_purpose, "p");
+        assert_eq!(parsed.vision_5_years, "v");
+        assert_eq!(parsed.tech_stack, "s");
+        assert!(!parsed.is_empty());
+        assert!(UserProfile::default().is_empty());
+
+        let from_syn = UserProfile::from_synthesis(&ProfileSynthesis {
+            purpose: "a".into(),
+            urgency: "b".into(),
+            vision: "c".into(),
+            stack: "d".into(),
+        });
+        assert_eq!(from_syn.to_synthesis().purpose, "a");
     }
 
     #[test]

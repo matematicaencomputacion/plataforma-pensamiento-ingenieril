@@ -16,9 +16,9 @@
 
 ## 3. Persist & continue
 
-- [ ] 3.1 GET/PUT `/api/user/profile` + dirty check
-- [ ] 3.2 Estado `saved` + CTA continuar (href placeholder Paso 2)
-- [ ] 3.3 E2E persist smoke (Bearer)
+- [x] 3.1 GET/PUT `/api/user/profile` + dirty check
+- [x] 3.2 Estado `saved` + CTA continuar (href placeholder Paso 2)
+- [x] 3.3 E2E persist smoke (Bearer)
 
 ## 4. Hardening
 

@@ -59,3 +59,15 @@ vision, and stack fields populated from the API JSON.
 - **GIVEN** notes shorter than the backend minimum
 - **WHEN** the learner attempts analysis (client guard or API 400)
 - **THEN** they remain in drafting with a clear error and do not see a completed profile builder
+
+### Requirement: Persist and hydrate learner profile
+The onboarding surface SHALL load any existing profile via
+`GET /api/user/profile` (Bearer) on entry. From reviewing, «Guardar perfil»
+SHALL `PUT /api/user/profile` with `lifePurpose`, `urgency`, `vision5Years`,
+and `techStack`. On success the UI MUST enter a saved state with a clear
+continue affordance toward Paso 2 / workspace.
+
+#### Scenario: Save then reload
+- **GIVEN** an authenticated learner who synthesized and edited profile fields
+- **WHEN** they save successfully and later reopen `/onboarding`
+- **THEN** the UI shows the saved state with the previously persisted field values

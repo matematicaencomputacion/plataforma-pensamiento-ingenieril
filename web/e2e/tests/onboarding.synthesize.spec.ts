@@ -86,6 +86,6 @@ test.describe("onboarding synthesize", () => {
     await expect(page.locator("#profile-urgency")).toHaveValue(/Extrema|inmediato/i);
     await expect(
       page.getByRole("button", { name: "Guardar perfil" }),
-    ).toBeDisabled();
+    ).toBeEnabled();
   });
 });
