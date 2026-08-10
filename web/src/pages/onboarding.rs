@@ -1,12 +1,14 @@
-//! Onboarding / coaching (Paso 1) — draft → synthesize → review.
+//! Onboarding / coaching (Paso 1) — draft → synthesize → review → save.
 
 use leptos::prelude::*;
 use leptos_router::components::A;
 use leptos_router::hooks::{use_location, use_navigate};
 use leptos_router::NavigateOptions;
 
-use crate::api::{ProfileSynthesis, MIN_LEARNER_NOTES_RUNES};
-use crate::auth::{input_value, synthesize_learner_profile};
+use crate::api::{ProfileSynthesis, UserProfile, MIN_LEARNER_NOTES_RUNES};
+use crate::auth::{
+    fetch_user_profile, input_value, put_user_profile, synthesize_learner_profile,
+};
 use crate::session::SessionCtx;
 
 const COACHING_PROMPTS: &[&str] = &[
@@ -23,6 +25,8 @@ enum CoachingPhase {
     Drafting,
     Analyzing,
     Reviewing,
+    Saving,
+    Saved,
 }
 
 #[component]
@@ -38,6 +42,8 @@ pub fn OnboardingPage() -> impl IntoView {
     let urgency = RwSignal::new(String::new());
     let vision = RwSignal::new(String::new());
     let stack = RwSignal::new(String::new());
+    let hydrate_loading = RwSignal::new(false);
+    let hydrate_done = RwSignal::new(false);
 
     // Guard: after bootstrap, no live session → leave /onboarding once (replace).
     Effect::new(move |_| {
@@ -56,8 +62,57 @@ pub fn OnboardingPage() -> impl IntoView {
         }
     });
 
-    let notes_ready = move || {
-        notes.get().trim().chars().count() >= MIN_LEARNER_NOTES_RUNES
+    // Rehydrate saved profile once the session is live.
+    Effect::new(move |_| {
+        if session.user.get().is_none() {
+            return;
+        }
+        if hydrate_done.get_untracked() || hydrate_loading.get_untracked() {
+            return;
+        }
+        hydrate_loading.set(true);
+        leptos::task::spawn_local(async move {
+            match fetch_user_profile().await {
+                Ok(profile) if !profile.is_empty() => {
+                    let syn = profile.to_synthesis();
+                    purpose.set(syn.purpose);
+                    urgency.set(syn.urgency);
+                    vision.set(syn.vision);
+                    stack.set(syn.stack);
+                    error.set(String::new());
+                    phase.set(CoachingPhase::Saved);
+                }
+                Ok(_) => {
+                    // Empty profile — stay drafting.
+                }
+                Err(err) => {
+                    // Soft-fail: learner can still draft/synthesize.
+                    if err.status != Some(401) {
+                        error.set(err.message);
+                    }
+                }
+            }
+            hydrate_loading.set(false);
+            hydrate_done.set(true);
+        });
+    });
+
+    let notes_ready = move || notes.get().trim().chars().count() >= MIN_LEARNER_NOTES_RUNES;
+
+    let apply_synthesis = move |syn: ProfileSynthesis| {
+        purpose.set(syn.purpose);
+        urgency.set(syn.urgency);
+        vision.set(syn.vision);
+        stack.set(syn.stack);
+    };
+
+    let current_profile = move || {
+        UserProfile::from_synthesis(&ProfileSynthesis {
+            purpose: purpose.get_untracked(),
+            urgency: urgency.get_untracked(),
+            vision: vision.get_untracked(),
+            stack: stack.get_untracked(),
+        })
     };
 
     let on_analyze = move |_| {
@@ -72,19 +127,10 @@ pub fn OnboardingPage() -> impl IntoView {
         }
         phase.set(CoachingPhase::Analyzing);
         leptos::task::spawn_local(async move {
-            let outcome =
-                synthesize_learner_profile(raw, SOURCE_STEP_ID.to_string()).await;
+            let outcome = synthesize_learner_profile(raw, SOURCE_STEP_ID.to_string()).await;
             match outcome {
-                Ok(ProfileSynthesis {
-                    purpose: p,
-                    urgency: u,
-                    vision: v,
-                    stack: s,
-                }) => {
-                    purpose.set(p);
-                    urgency.set(u);
-                    vision.set(v);
-                    stack.set(s);
+                Ok(syn) => {
+                    apply_synthesis(syn);
                     error.set(String::new());
                     phase.set(CoachingPhase::Reviewing);
                 }
@@ -100,6 +146,51 @@ pub fn OnboardingPage() -> impl IntoView {
         error.set(String::new());
         phase.set(CoachingPhase::Drafting);
     };
+
+    let on_edit_profile = move |_| {
+        error.set(String::new());
+        phase.set(CoachingPhase::Reviewing);
+    };
+
+    let on_save = move |_| {
+        if matches!(
+            phase.get_untracked(),
+            CoachingPhase::Saving | CoachingPhase::Analyzing
+        ) {
+            return;
+        }
+        error.set(String::new());
+        let payload = current_profile();
+        if payload.is_empty() {
+            error.set(
+                "El perfil está vacío. Completá al menos un campo antes de guardar.".into(),
+            );
+            return;
+        }
+        phase.set(CoachingPhase::Saving);
+        leptos::task::spawn_local(async move {
+            match put_user_profile(payload).await {
+                Ok(saved) => {
+                    apply_synthesis(saved.to_synthesis());
+                    error.set(String::new());
+                    phase.set(CoachingPhase::Saved);
+                }
+                Err(err) => {
+                    error.set(err.message);
+                    phase.set(CoachingPhase::Reviewing);
+                }
+            }
+        });
+    };
+
+    let show_profile = move || {
+        matches!(
+            phase.get(),
+            CoachingPhase::Reviewing | CoachingPhase::Saving | CoachingPhase::Saved
+        )
+    };
+
+    let profile_editable = move || phase.get() == CoachingPhase::Reviewing;
 
     view! {
         <section class="onboarding">
@@ -119,6 +210,12 @@ pub fn OnboardingPage() -> impl IntoView {
                     }
                 }
             >
+                <Show when=move || hydrate_loading.get()>
+                    <p class="onboarding__muted" role="status" aria-live="polite">
+                        "Cargando perfil guardado…"
+                    </p>
+                </Show>
+
                 <p class="onboarding__eyebrow">"Paso 1 · Coaching"</p>
                 <header class="onboarding__header">
                     <h1 class="onboarding__title">"Hola, ¿cómo estás?"</h1>
@@ -197,10 +294,16 @@ pub fn OnboardingPage() -> impl IntoView {
                         </p>
                     </Show>
 
-                    <Show when=move || phase.get() == CoachingPhase::Reviewing>
+                    <Show when=move || {
+                        matches!(
+                            phase.get(),
+                            CoachingPhase::Reviewing | CoachingPhase::Saving
+                        )
+                    }>
                         <button
                             class="cta cta--secondary"
                             type="button"
+                            prop:disabled=move || phase.get() == CoachingPhase::Saving
                             on:click=on_back_to_draft
                         >
                             "Editar relato"
@@ -208,28 +311,83 @@ pub fn OnboardingPage() -> impl IntoView {
                         <button
                             class="cta cta--primary"
                             type="button"
-                            disabled
-                            title="Persistencia de perfil: rebanada siguiente"
-                            aria-disabled="true"
+                            id="coaching-save"
+                            prop:disabled=move || phase.get() == CoachingPhase::Saving
+                            attr:aria-busy=move || {
+                                (phase.get() == CoachingPhase::Saving).to_string()
+                            }
+                            on:click=on_save
                         >
-                            "Guardar perfil"
+                            {move || {
+                                if phase.get() == CoachingPhase::Saving {
+                                    "Guardando perfil…"
+                                } else {
+                                    "Guardar perfil"
+                                }
+                            }}
                         </button>
                         <p class="onboarding__hint" role="status" aria-live="polite">
-                            "Revisá y editá los campos. Guardar en tu cuenta llega en la próxima rebanada."
+                            {move || {
+                                if phase.get() == CoachingPhase::Saving {
+                                    "Persistiendo tu perfil en la cuenta…"
+                                } else {
+                                    "Revisá y editá los campos, después guardalos en tu cuenta."
+                                }
+                            }}
+                        </p>
+                    </Show>
+
+                    <Show when=move || phase.get() == CoachingPhase::Saved>
+                        <p
+                            class="onboarding__saved"
+                            id="coaching-saved-status"
+                            role="status"
+                            aria-live="polite"
+                        >
+                            "Perfil guardado"
+                        </p>
+                        <button
+                            class="cta cta--secondary"
+                            type="button"
+                            on:click=on_edit_profile
+                        >
+                            "Editar perfil"
+                        </button>
+                        <A
+                            href="/workspace"
+                            attr:class="cta cta--primary"
+                            attr:id="coaching-continue"
+                        >
+                            "Continuar al Paso 2"
+                        </A>
+                        <p class="onboarding__hint" role="status">
+                            "Paso 2 (Python en el browser) se monta desde el workspace mientras llega el editor Pyodide."
                         </p>
                     </Show>
                 </div>
 
-                <Show when=move || phase.get() == CoachingPhase::Reviewing>
+                <Show when=show_profile>
                     <section
                         class="onboarding__profile"
                         aria-label="Resumen de perfil"
                         aria-live="polite"
                     >
-                        <p class="onboarding__profile-eyebrow">"Perfil · revisión"</p>
+                        <p class="onboarding__profile-eyebrow">
+                            {move || match phase.get() {
+                                CoachingPhase::Saved => "Perfil · guardado",
+                                CoachingPhase::Saving => "Perfil · guardando",
+                                _ => "Perfil · revisión",
+                            }}
+                        </p>
                         <h2 class="onboarding__profile-title">"Lo que estamos escuchando"</h2>
                         <p class="onboarding__muted">
-                            "Revisá lo que dedujimos. Si no refleja tu historia, editá los campos o volvé al relato."
+                            {move || {
+                                if phase.get() == CoachingPhase::Saved {
+                                    "Perfil listo. Podés ajustar campos y guardar de nuevo, o continuar al Paso 2."
+                                } else {
+                                    "Revisá lo que dedujimos. Si no refleja tu historia, editá los campos o volvé al relato."
+                                }
+                            }}
                         </p>
 
                         <label class="onboarding__label" for="profile-purpose">
@@ -240,7 +398,12 @@ pub fn OnboardingPage() -> impl IntoView {
                             class="onboarding__field"
                             rows="2"
                             prop:value=move || purpose.get()
-                            on:input=move |ev| purpose.set(input_value(&ev))
+                            prop:readOnly=move || !profile_editable()
+                            on:input=move |ev| {
+                                if profile_editable() {
+                                    purpose.set(input_value(&ev));
+                                }
+                            }
                         />
 
                         <label class="onboarding__label" for="profile-urgency">
@@ -251,7 +414,12 @@ pub fn OnboardingPage() -> impl IntoView {
                             class="onboarding__field"
                             rows="2"
                             prop:value=move || urgency.get()
-                            on:input=move |ev| urgency.set(input_value(&ev))
+                            prop:readOnly=move || !profile_editable()
+                            on:input=move |ev| {
+                                if profile_editable() {
+                                    urgency.set(input_value(&ev));
+                                }
+                            }
                         />
 
                         <label class="onboarding__label" for="profile-vision">
@@ -262,7 +430,12 @@ pub fn OnboardingPage() -> impl IntoView {
                             class="onboarding__field"
                             rows="2"
                             prop:value=move || vision.get()
-                            on:input=move |ev| vision.set(input_value(&ev))
+                            prop:readOnly=move || !profile_editable()
+                            on:input=move |ev| {
+                                if profile_editable() {
+                                    vision.set(input_value(&ev));
+                                }
+                            }
                         />
 
                         <label class="onboarding__label" for="profile-stack">
@@ -273,7 +446,12 @@ pub fn OnboardingPage() -> impl IntoView {
                             class="onboarding__field"
                             rows="2"
                             prop:value=move || stack.get()
-                            on:input=move |ev| stack.set(input_value(&ev))
+                            prop:readOnly=move || !profile_editable()
+                            on:input=move |ev| {
+                                if profile_editable() {
+                                    stack.set(input_value(&ev));
+                                }
+                            }
                         />
                     </section>
                 </Show>

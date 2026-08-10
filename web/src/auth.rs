@@ -6,10 +6,10 @@ use web_sys::{CustomEvent, CustomEventInit, HtmlInputElement, HtmlTextAreaElemen
 
 use crate::api::{
     current_level_url, forgot_password_url, is_auth_rejection, parse_auth_error_body,
-    reset_password_url, sanitize_email, synthesize_profile_url, AuthCredentials, AuthSuccess,
-    AuthUser, ForgotPasswordRequest, ForgotPasswordResponse, Level, ProfileSynthesis,
-    ResetPasswordRequest, SynthesizeProfileRequest, AUTH_TOKEN_KEY, MSG_INVALID_RESPONSE,
-    MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url, register_url,
+    reset_password_url, sanitize_email, synthesize_profile_url, user_profile_url, AuthCredentials,
+    AuthSuccess, AuthUser, ForgotPasswordRequest, ForgotPasswordResponse, Level, ProfileSynthesis,
+    ResetPasswordRequest, SynthesizeProfileRequest, UserProfile, AUTH_TOKEN_KEY,
+    MSG_INVALID_RESPONSE, MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url, register_url,
 };
 
 /// Same-tab signal that `SessionCtx` should drop in-memory auth after a storage purge.
@@ -248,6 +248,58 @@ pub async fn synthesize_learner_profile(
 
     res.json::<ProfileSynthesis>()
         .await
+        .map_err(invalid_response)
+}
+
+/// Rehydrate coaching profile (`GET /api/user/profile`) with Bearer session.
+pub async fn fetch_user_profile() -> Result<UserProfile, AuthError> {
+    let Some(token) = get_stored_token() else {
+        return Err(AuthError::with_status("Sesión no iniciada.", 401));
+    };
+    let res = Request::get(&user_profile_url())
+        .header("Authorization", &format!("Bearer {token}"))
+        .header("Accept", "application/json")
+        .send()
+        .await
+        .map_err(network_unavailable)?;
+
+    let res = reject_if_not_ok(res).await?;
+    res.json::<UserProfile>()
+        .await
+        .map(|p| p.normalize())
+        .map_err(invalid_response)
+}
+
+/// Persist coaching profile (`PUT /api/user/profile`) with Bearer session.
+pub async fn put_user_profile(profile: UserProfile) -> Result<UserProfile, AuthError> {
+    let Some(token) = get_stored_token() else {
+        return Err(AuthError::with_status(
+            "Sesión expirada. Volvé a iniciar sesión para guardar tu perfil.",
+            401,
+        ));
+    };
+    let payload = profile.normalize();
+    if payload.is_empty() {
+        return Err(AuthError::with_status(
+            "El perfil está vacío. Completá al menos un campo antes de guardar.",
+            400,
+        ));
+    }
+
+    let res = Request::put(&user_profile_url())
+        .header("Authorization", &format!("Bearer {token}"))
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json")
+        .json(&payload)
+        .map_err(request_build_error)?
+        .send()
+        .await
+        .map_err(network_unavailable)?;
+
+    let res = reject_if_not_ok(res).await?;
+    res.json::<UserProfile>()
+        .await
+        .map(|p| p.normalize())
         .map_err(invalid_response)
 }
 
