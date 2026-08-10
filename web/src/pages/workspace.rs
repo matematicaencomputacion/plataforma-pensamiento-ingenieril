@@ -5,6 +5,7 @@ use leptos_router::NavigateOptions;
 
 use crate::auth::reset_progress;
 use crate::components::{level_completed, ProgressCheck};
+use crate::curriculum::{coding_step_by_micro_step, micro_step_unlocked};
 use crate::session::SessionCtx;
 
 /// Placeholder rail for the upcoming Python micro-challenges (scaffold only).
@@ -187,16 +188,22 @@ fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
             {(1..=MICRO_STEP_COUNT)
                 .map(|n| {
                     let badge_label = format!("Micro-paso {n} superado");
+                    let step_href = coding_step_by_micro_step(n)
+                        .map(|s| format!("/learn/{}", s.id));
                     view! {
                         <li
                             class=move || {
                                 let cur = current_level.get();
                                 let mut class = String::from("workspace__microstep");
-                                // Done when the cursor advanced past this micro-step.
                                 if level_completed(cur, n) {
                                     class.push_str(" workspace__microstep--done");
                                 } else if cur == n {
                                     class.push_str(" workspace__microstep--current");
+                                }
+                                if micro_step_unlocked(cur, n) && step_href.is_some() {
+                                    class.push_str(" workspace__microstep--open");
+                                } else {
+                                    class.push_str(" workspace__microstep--locked");
                                 }
                                 class
                             }
@@ -205,7 +212,32 @@ fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
                                 (current_level.get() == n).then_some("step")
                             }
                         >
-                            <span class="workspace__microstep-num">{n}</span>
+                            {match step_href.clone() {
+                                Some(href) => view! {
+                                    <Show
+                                        when=move || micro_step_unlocked(current_level.get(), n)
+                                        fallback=move || {
+                                            view! {
+                                                <span class="workspace__microstep-num">{n}</span>
+                                            }
+                                            .into_any()
+                                        }
+                                    >
+                                        <A
+                                            href=href.clone()
+                                            attr:class="workspace__microstep-link"
+                                            attr:id=format!("workspace-microstep-link-{n}")
+                                        >
+                                            <span class="workspace__microstep-num">{n}</span>
+                                        </A>
+                                    </Show>
+                                }
+                                .into_any(),
+                                None => view! {
+                                    <span class="workspace__microstep-num">{n}</span>
+                                }
+                                .into_any(),
+                            }}
                             <Show when=move || level_completed(current_level.get(), n)>
                                 <span
                                     class="workspace__microstep-badge"
