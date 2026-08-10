@@ -91,3 +91,82 @@ export async function fillLeptosTextarea(
   await page.waitForTimeout(process.env.CI ? 200 : 50);
   await expect(area).toHaveValue(value, { timeout: e2eTimeout });
 }
+
+/**
+ * Deterministic `window.ppiPyodide` for CI (no CDN). Install before navigation.
+ * Covers `print("…")` stdout and the py-02-variables validate heuristic.
+ */
+export async function installPyodideMock(page: Page) {
+  await page.addInitScript(() => {
+    function mockStdoutFromPrints(code: string): string {
+      const src = String(code);
+      const chunks: string[] = [];
+      const re = /print\s*\(\s*(["'])((?:\\.|(?!\1).)*)\1\s*\)/g;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(src)) !== null) {
+        chunks.push(m[2].replace(/\\n/g, "\n"));
+      }
+      if (chunks.length) {
+        return `${chunks.join("\n")}\n`;
+      }
+      return "";
+    }
+
+    const api = {
+      version: "mock",
+      ensure: async () => ({
+        status: "ready",
+        message: "Motor Python listo (mock E2E).",
+      }),
+      run: async (code: string) => {
+        try {
+          if (/\bSyntaxError\b/.test(code) && /raise/.test(code)) {
+            return {
+              ok: false,
+              stdout: "",
+              stderr: "SyntaxError: invalid syntax",
+              error: "SyntaxError: invalid syntax",
+            };
+          }
+          return {
+            ok: true,
+            stdout: mockStdoutFromPrints(code),
+            stderr: "",
+          };
+        } catch (err) {
+          return {
+            ok: false,
+            stdout: "",
+            stderr: String(err),
+            error: String(err),
+          };
+        }
+      },
+      check: async (code: string, _testSource: string) => {
+        const src = String(code);
+        const hasNombre = /nombre\s*=\s*["'].*["']/.test(src);
+        const hasEdad = /edad\s*=\s*\d+/.test(src);
+        const hasPrint = /print\s*\(\s*nombre\s*,\s*edad\s*\)/.test(src);
+        const passed = hasNombre && hasEdad && hasPrint;
+        return {
+          passed,
+          stdout: passed
+            ? "PASSED test_variables\nOK — 1 test(s) passed\n"
+            : "FAILED\n",
+          stderr: "",
+          summary: passed
+            ? "✓ Checks OK — podés Continuar"
+            : "✗ Checks fallaron — revisá el enunciado y el código",
+          details: passed ? "Todos los tests pasaron." : "assert failed",
+        };
+      },
+      formatRunLog: () => "",
+      formatCheckLog: () => "",
+      statusMessage: (s: string) => s,
+      isReady: () => true,
+      getLastError: () => null,
+    };
+    (window as unknown as { ppiPyodide: typeof api }).ppiPyodide = api;
+  });
+}
+

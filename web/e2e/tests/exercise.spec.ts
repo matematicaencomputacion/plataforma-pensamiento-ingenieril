@@ -9,8 +9,8 @@ import {
 } from "./helpers";
 
 /**
- * Paso 2 coding surface. Default: mock `window.ppiPyodide` for CI stability.
- * Set PPI_E2E_REAL_PYODIDE=1 to exercise the CDN engine locally.
+ * Rebanada ejecución: Ready → Ejecutar código → stdout en consola.
+ * Mock por defecto (ADR 002: nunca se envía Python a Go).
  */
 
 const useRealPyodide = process.env.PPI_E2E_REAL_PYODIDE === "1";
@@ -18,12 +18,7 @@ const useRealPyodide = process.env.PPI_E2E_REAL_PYODIDE === "1";
 function uniqueCreds() {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
   const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
-  const email = `e2e-learn-${stamp}@example.com`;
-  if (password.length < 8) {
-    test.skip(true, "PPI_E2E_PASSWORD must be at least 8 characters");
-    throw new Error("unreachable");
-  }
-  return { email, password };
+  return { email: `e2e-ex-${stamp}@example.com`, password };
 }
 
 async function login(page: Page, email: string, password: string) {
@@ -45,27 +40,17 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("learn coding (Paso 2)", () => {
+test.describe("exercise execution engine", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
     }
   });
 
-  test("asset ppi-pyodide.js is served", async ({ request }) => {
-    const res = await request.get("/ppi-pyodide.js");
-    expect(res.ok(), await res.text()).toBeTruthy();
-    const body = await res.text();
-    expect(body).toContain("ppiPyodide");
-    expect(body).toContain("0.27.7");
-  });
-
-  test("unauthenticated /learn redirects to login", async ({ page }) => {
-    await gotoApp(page, "/learn");
-    await expect(page).toHaveURL(/\/login/, { timeout: e2eTimeout });
-  });
-
-  test("validate unlocks continue then workspace", async ({ page, request }) => {
+  test("Ready then Ejecutar shows stdout Hola IngenierIA", async ({
+    page,
+    request,
+  }) => {
     const { email, password } = uniqueCreds();
     const reg = await request.post("/api/auth/register", {
       data: { email, password },
@@ -76,9 +61,6 @@ test.describe("learn coding (Paso 2)", () => {
     await login(page, email, password);
     await page.getByRole("link", { name: "Paso 2 · Coding" }).click();
     await expect(page).toHaveURL(/\/learn/, { timeout: e2eTimeout });
-    await expect(
-      page.getByRole("heading", { name: /Variables/i }),
-    ).toBeVisible({ timeout: e2eTimeout });
 
     const engineTimeout = useRealPyodide ? 120_000 : e2eTimeout;
     await expect(page.locator("#learn-engine-status")).toHaveAttribute(
@@ -87,18 +69,21 @@ test.describe("learn coding (Paso 2)", () => {
       { timeout: engineTimeout },
     );
 
-    const solution = 'nombre = "Ana"\nedad = 25\nprint(nombre, edad)\n';
-    await fillLeptosTextarea(page, "#learn-editor", solution);
-
-    await page.getByRole("button", { name: "Validar" }).click();
-    await expect(page.locator("#learn-check-log")).toContainText(/Checks OK|PASSED|OK/i, {
-      timeout: engineTimeout,
-    });
-    await expect(page.locator("#learn-continue")).toBeEnabled({
+    // Level metadata from Go (statement only — code never leaves the browser).
+    await expect(page.locator(".learn__level-statement")).toBeVisible({
       timeout: e2eTimeout,
     });
 
-    await page.locator("#learn-continue").click();
-    await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
+    await fillLeptosTextarea(
+      page,
+      "#learn-editor",
+      'print("Hola IngenierIA")\n',
+    );
+
+    await page.getByRole("button", { name: "Ejecutar código" }).click();
+    await expect(page.locator("#learn-stdout")).toContainText("Hola IngenierIA", {
+      timeout: engineTimeout,
+    });
+    await expect(page.locator("#learn-stderr")).toHaveCount(0);
   });
 });

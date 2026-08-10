@@ -712,6 +712,54 @@ button:focus-visible {
   color: var(--fg);
 }
 
+.learn__console--busy {
+  border-color: rgba(61, 143, 110, 0.35);
+}
+
+.learn__stdout {
+  margin: 0;
+  white-space: pre-wrap;
+  font: inherit;
+  color: inherit;
+}
+
+.learn__stderr {
+  margin: 0.75rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgba(224, 122, 106, 0.45);
+  white-space: pre-wrap;
+  font: inherit;
+  color: var(--danger);
+}
+
+.learn__busy {
+  margin: 0 0 0.65rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.learn__level {
+  margin: 1rem 0;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.learn__level-title {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+}
+
+.learn__level-statement {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.learn__level-note {
+  margin: 0.55rem 0 0;
+  font-size: 0.85rem;
+}
+
 .learn__ok {
   margin: 0.75rem 0 0;
   color: var(--accent);

@@ -1,14 +1,19 @@
 //! Paso 2 — coding micro-exercise with browser Pyodide (ADR 002).
+//!
+//! Learner Python runs only in the browser. Go supplies level metadata via
+//! `GET /api/levels/current` (statement/title) — never executes student code.
 
 use leptos::prelude::*;
 use leptos_router::components::A;
 use leptos_router::hooks::{use_location, use_navigate};
 use leptos_router::NavigateOptions;
 
-use crate::auth::input_value;
+use crate::api::Level;
+use crate::auth::{fetch_current_level, input_value};
 use crate::curriculum::{first_coding_step, prompt_to_html};
-use crate::pyodide::{
-    check_student_code, ensure_engine, format_check_log, format_run_log, run_student_code,
+use crate::interop::pyodide::{
+    check_student_code, ensure_engine, format_check_log, run_stderr_body, run_stdout_body,
+    run_student_code,
 };
 use crate::session::SessionCtx;
 
@@ -21,10 +26,14 @@ enum EngineUi {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
-enum CheckUi {
+enum ConsoleKind {
     Idle,
-    Pass,
-    Fail,
+    Running,
+    RunOk,
+    RunErr,
+    Validating,
+    CheckPass,
+    CheckFail,
 }
 
 #[component]
@@ -38,11 +47,15 @@ pub fn LearnPage() -> impl IntoView {
     let engine = RwSignal::new(EngineUi::Idle);
     let engine_msg = RwSignal::new(String::from("Motor Python en espera."));
     let busy = RwSignal::new(false);
-    let results = RwSignal::new(String::new());
-    let check_ui = RwSignal::new(CheckUi::Idle);
+    let console_kind = RwSignal::new(ConsoleKind::Idle);
+    let stdout = RwSignal::new(String::new());
+    let stderr = RwSignal::new(String::new());
+    let check_log = RwSignal::new(String::new());
     let show_hint = RwSignal::new(false);
     let show_solution = RwSignal::new(false);
     let can_continue = RwSignal::new(false);
+    let level = RwSignal::new(Option::<Level>::None);
+    let level_error = RwSignal::new(Option::<String>::None);
     let prompt_html = prompt_to_html(step.prompt_md);
 
     Effect::new(move |_| {
@@ -92,17 +105,53 @@ pub fn LearnPage() -> impl IntoView {
         });
     });
 
+    Effect::new(move |_| {
+        if session.user.get().is_none() {
+            return;
+        }
+        if level.get_untracked().is_some() || level_error.get_untracked().is_some() {
+            return;
+        }
+        leptos::task::spawn_local(async move {
+            match fetch_current_level().await {
+                Ok(current) => {
+                    level.set(Some(current));
+                    level_error.set(None);
+                }
+                Err(err) => {
+                    level_error.set(Some(err.message));
+                }
+            }
+        });
+    });
+
     let on_run = move |_| {
         if busy.get_untracked() || engine.get_untracked() != EngineUi::Ready {
             return;
         }
         busy.set(true);
-        check_ui.set(CheckUi::Idle);
+        can_continue.set(false);
+        console_kind.set(ConsoleKind::Running);
+        stdout.set(String::new());
+        stderr.set(String::new());
+        check_log.set(String::new());
         let source = code.get_untracked();
         leptos::task::spawn_local(async move {
             match run_student_code(source).await {
-                Ok(result) => results.set(format_run_log(&result)),
-                Err(err) => results.set(format!("=== Run ===\n{}", err.message)),
+                Ok(result) => {
+                    stdout.set(run_stdout_body(&result));
+                    stderr.set(run_stderr_body(&result));
+                    console_kind.set(if result.ok {
+                        ConsoleKind::RunOk
+                    } else {
+                        ConsoleKind::RunErr
+                    });
+                }
+                Err(err) => {
+                    stdout.set(String::new());
+                    stderr.set(err.message);
+                    console_kind.set(ConsoleKind::RunErr);
+                }
             }
             busy.set(false);
         });
@@ -113,23 +162,27 @@ pub fn LearnPage() -> impl IntoView {
             return;
         }
         busy.set(true);
+        console_kind.set(ConsoleKind::Validating);
+        stdout.set(String::new());
+        stderr.set(String::new());
+        check_log.set(String::new());
         let source = code.get_untracked();
         let tests = first_coding_step().pytest.to_string();
         leptos::task::spawn_local(async move {
             match check_student_code(source, tests).await {
                 Ok(result) => {
-                    results.set(format_check_log(&result));
+                    check_log.set(format_check_log(&result));
                     if result.passed {
-                        check_ui.set(CheckUi::Pass);
+                        console_kind.set(ConsoleKind::CheckPass);
                         can_continue.set(true);
                     } else {
-                        check_ui.set(CheckUi::Fail);
+                        console_kind.set(ConsoleKind::CheckFail);
                         can_continue.set(false);
                     }
                 }
                 Err(err) => {
-                    results.set(format!("=== Validar ===\n{}", err.message));
-                    check_ui.set(CheckUi::Fail);
+                    check_log.set(format!("=== Validar ===\n{}", err.message));
+                    console_kind.set(ConsoleKind::CheckFail);
                     can_continue.set(false);
                 }
             }
@@ -179,6 +232,34 @@ pub fn LearnPage() -> impl IntoView {
                     <section class="learn__theory" aria-label="Teoría y enunciado">
                         <h2 class="learn__section-title">"Enunciado"</h2>
                         <div class="learn__prompt" inner_html=prompt_html.clone()></div>
+
+                        <Show when=move || level.get().is_some()>
+                            {move || {
+                                level.get().map(|lvl| {
+                                    view! {
+                                        <aside class="learn__level" aria-label="Nivel operativo">
+                                            <h3 class="learn__level-title">
+                                                {format!("Nivel operativo · {}", lvl.title)}
+                                            </h3>
+                                            <p class="learn__level-statement">{lvl.statement}</p>
+                                            <p class="learn__muted learn__level-note">
+                                                "Contexto desde GET /api/levels/current. La ejecución Python sigue 100% en el browser (ADR 002)."
+                                            </p>
+                                        </aside>
+                                    }
+                                })
+                            }}
+                        </Show>
+                        <Show when=move || level_error.get().is_some()>
+                            <p class="learn__muted" role="status">
+                                {move || {
+                                    level_error
+                                        .get()
+                                        .unwrap_or_else(|| "No se pudo cargar el nivel operativo.".into())
+                                }}
+                            </p>
+                        </Show>
+
                         <div class="learn__aids">
                             <button
                                 class="learn__linkish"
@@ -225,7 +306,7 @@ pub fn LearnPage() -> impl IntoView {
                     </section>
 
                     <section class="learn__results" aria-label="Resultados">
-                        <h2 class="learn__section-title">"Resultados"</h2>
+                        <h2 class="learn__section-title">"Consola"</h2>
                         <div class="learn__toolbar">
                             <button
                                 class="cta cta--secondary"
@@ -234,9 +315,16 @@ pub fn LearnPage() -> impl IntoView {
                                 prop:disabled=move || {
                                     busy.get() || engine.get() != EngineUi::Ready
                                 }
+                                attr:aria-busy=move || busy.get().to_string()
                                 on:click=on_run
                             >
-                                {move || if busy.get() { "Ejecutando…" } else { "Run" }}
+                                {move || {
+                                    if console_kind.get() == ConsoleKind::Running {
+                                        "Ejecutando Python…"
+                                    } else {
+                                        "Ejecutar código"
+                                    }
+                                }}
                             </button>
                             <button
                                 class="cta cta--primary"
@@ -247,7 +335,13 @@ pub fn LearnPage() -> impl IntoView {
                                 }
                                 on:click=on_validate
                             >
-                                {move || if busy.get() { "Validando…" } else { "Validar" }}
+                                {move || {
+                                    if console_kind.get() == ConsoleKind::Validating {
+                                        "Validando…"
+                                    } else {
+                                        "Validar"
+                                    }
+                                }}
                             </button>
                             <Show
                                 when=move || can_continue.get()
@@ -274,26 +368,79 @@ pub fn LearnPage() -> impl IntoView {
                                 </A>
                             </Show>
                         </div>
-                        <pre
+
+                        <Show when=move || console_kind.get() == ConsoleKind::Running>
+                            <p class="learn__busy" id="learn-busy" role="status" aria-live="polite">
+                                "Ejecutando Python en tu navegador…"
+                            </p>
+                        </Show>
+                        <Show when=move || console_kind.get() == ConsoleKind::Validating>
+                            <p class="learn__busy" role="status" aria-live="polite">
+                                "Validando checks del micro-reto en tu navegador…"
+                            </p>
+                        </Show>
+
+                        <div
                             id="learn-console"
-                            class=move || {
-                                match check_ui.get() {
-                                    CheckUi::Pass => "learn__console learn__console--pass",
-                                    CheckUi::Fail => "learn__console learn__console--fail",
-                                    CheckUi::Idle => "learn__console",
+                            class=move || match console_kind.get() {
+                                ConsoleKind::RunOk | ConsoleKind::CheckPass => {
+                                    "learn__console learn__console--pass"
                                 }
+                                ConsoleKind::RunErr | ConsoleKind::CheckFail => {
+                                    "learn__console learn__console--fail"
+                                }
+                                ConsoleKind::Running | ConsoleKind::Validating => {
+                                    "learn__console learn__console--busy"
+                                }
+                                ConsoleKind::Idle => "learn__console",
                             }
                             aria-live="polite"
                         >
-                            {move || {
-                                let log = results.get();
-                                if log.is_empty() {
-                                    "La salida de Run / Validar aparece acá.".into()
-                                } else {
-                                    log
+                            <Show
+                                when=move || {
+                                    matches!(
+                                        console_kind.get(),
+                                        ConsoleKind::CheckPass | ConsoleKind::CheckFail
+                                    )
                                 }
-                            }}
-                        </pre>
+                                fallback=move || {
+                                    view! {
+                                        <pre id="learn-stdout" class="learn__stdout">
+                                            {move || {
+                                                let out = stdout.get();
+                                                if out.is_empty()
+                                                    && matches!(
+                                                        console_kind.get(),
+                                                        ConsoleKind::Idle
+                                                            | ConsoleKind::Running
+                                                            | ConsoleKind::Validating
+                                                    )
+                                                {
+                                                    "La salida de Ejecutar / Validar aparece acá.".into()
+                                                } else if out.is_empty()
+                                                    && console_kind.get() == ConsoleKind::RunOk
+                                                {
+                                                    "(sin salida — usá print(...) para ver texto aquí)"
+                                                        .into()
+                                                } else {
+                                                    out
+                                                }
+                                            }}
+                                        </pre>
+                                        <Show when=move || !stderr.get().is_empty()>
+                                            <pre id="learn-stderr" class="learn__stderr">
+                                                {move || stderr.get()}
+                                            </pre>
+                                        </Show>
+                                    }
+                                }
+                            >
+                                <pre id="learn-check-log" class="learn__stdout">
+                                    {move || check_log.get()}
+                                </pre>
+                            </Show>
+                        </div>
+
                         <Show when=move || can_continue.get()>
                             <p class="learn__ok" role="status">
                                 "Checks OK. Podés continuar al workspace o seguir practicando."
