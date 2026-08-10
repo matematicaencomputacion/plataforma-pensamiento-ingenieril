@@ -14,7 +14,6 @@ docs
 openspec
 scripts
 frontend
-web
 curriculum
 Makefile
 TESTING.md
@@ -23,6 +22,9 @@ TESTING.md
 **/testdata
 backend/bin
 **/node_modules
-**/dist
-**/target
 **/.DS_Store
+
+# Web: ship sources for Trunk; exclude build caches and e2e harness.
+web/target
+web/dist
+web/e2e
