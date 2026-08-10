@@ -20,6 +20,9 @@ import (
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/usecases"
 )
 
+// Set via Docker: -ldflags "-X main.ppiBuildID=<sha>".
+var ppiBuildID = "dev"
+
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -125,6 +128,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/health", handlers.Health)
+	mux.HandleFunc("GET /api/spa-build", spaBuildHandler)
 	mux.HandleFunc("POST /api/auth/register", authHandler.Register)
 	mux.HandleFunc("POST /api/auth/login", authHandler.Login)
 	mux.HandleFunc("POST /api/auth/logout", authHandler.Logout)
@@ -149,12 +153,22 @@ func main() {
 
 	addr := listenAddr()
 	log.Printf(
-		"servidor iniciado: escuchando en http://localhost%s (data=%s static=%s root=%s sqlite=%s)",
-		addr, dataDir, staticLabel, repoRoot, sqlitePath,
+		"servidor iniciado: escuchando en http://localhost%s (data=%s static=%s build=%s root=%s sqlite=%s)",
+		addr, dataDir, staticLabel, ppiBuildID, repoRoot, sqlitePath,
 	)
 	if err := http.ListenAndServe(addr, handler); err != nil {
 		log.Fatalf("error al iniciar el servidor: %v", err)
 	}
+}
+
+func spaBuildHandler(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-store")
+	stamp := readSpaBuildStamp()
+	if stamp == "" {
+		stamp = "id=" + ppiBuildID + "\n(source=ldflags-only; no ppi-build.txt)"
+	}
+	_, _ = w.Write([]byte(stamp + "\n"))
 }
 
 // listenAddr respeta PORT (Cloud Run) y cae a :8080 en local.
