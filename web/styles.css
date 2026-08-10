@@ -374,3 +374,68 @@ a {
 .not-found {
   color: var(--muted);
 }
+
+/* Narrow phones (iPhone SE / 375px): keep chrome and forms from overflowing. */
+@media (max-width: 375px) {
+  .shell__header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 0.85rem 0.9rem;
+    gap: 0.65rem;
+  }
+
+  .shell__brand {
+    font-size: 1.1rem;
+  }
+
+  .shell__main {
+    padding: 1.25rem 0.9rem 2rem;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .session-bar {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .session-bar__links {
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .session-bar__email {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: 0.8rem;
+  }
+
+  .hero,
+  .auth-page,
+  .workspace {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .auth-page__card {
+    padding: 1.1rem 0.95rem;
+  }
+
+  .hero__ctas,
+  .workspace__nav {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .cta {
+    width: 100%;
+    text-align: center;
+  }
+
+  .workspace__title {
+    font-size: 1.65rem;
+  }
+}
+

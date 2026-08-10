@@ -118,6 +118,11 @@ pub fn parse_auth_error_body(body: &str, status: u16) -> String {
     format!("Error HTTP {status}")
 }
 
+/// Normalize email before wire: trim + lowercase (mirrors Go `normalizeEmail`).
+pub fn sanitize_email(email: impl AsRef<str>) -> String {
+    email.as_ref().trim().to_lowercase()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -203,6 +208,12 @@ mod tests {
         assert!(is_auth_rejection(403));
         assert!(!is_auth_rejection(400));
         assert!(!is_auth_rejection(500));
+    }
+
+    #[test]
+    fn sanitize_email_trims_and_lowercases() {
+        assert_eq!(sanitize_email("  Alum@Example.COM "), "alum@example.com");
+        assert_eq!(sanitize_email("ok@x.com"), "ok@x.com");
     }
 
     #[test]

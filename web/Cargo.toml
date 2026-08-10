@@ -18,8 +18,11 @@ serde_json = "1"
 web-sys = { version = "0.3", features = [
   "Window",
   "Storage",
+  "StorageEvent",
   "HtmlInputElement",
   "Event",
+  "CustomEvent",
+  "CustomEventInit",
   "EventTarget",
   "SubmitEvent",
 ] }
