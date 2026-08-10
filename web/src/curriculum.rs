@@ -132,18 +132,62 @@ pub fn prompt_to_html_with_flash(md: &str, flash_ident: Option<&str>) -> String 
 
 fn code_span_html(inner: &str, flash_ident: Option<&str>) -> String {
     if inner == "nombre" || inner == "edad" {
-        let flashing = flash_ident == Some(inner);
-        let class = if flashing {
-            "learn__ident learn__ident--flash"
-        } else {
-            "learn__ident"
-        };
-        format!(
-            r#"<code class="{class}" id="learn-ident-{inner}" data-ident="{inner}">{inner}</code>"#
-        )
-    } else {
-        format!("<code>{inner}</code>")
+        // Primary occurrence (lines 1–2): keep stable DOM ids for e2e / a11y.
+        return format!(
+            r#"<code class="{}" id="learn-ident-{inner}" data-ident="{inner}">{inner}</code>"#,
+            ident_class(flash_ident == Some(inner))
+        );
     }
+    // Compound snippets (e.g. print(nombre, edad)): flash every ident occurrence.
+    format!(
+        "<code>{}</code>",
+        wrap_explore_idents(inner, flash_ident)
+    )
+}
+
+fn ident_class(flashing: bool) -> &'static str {
+    if flashing {
+        "learn__ident learn__ident--flash"
+    } else {
+        "learn__ident"
+    }
+}
+
+fn wrap_explore_idents(text: &str, flash_ident: Option<&str>) -> String {
+    const NEEDLES: &[&str] = &["nombre", "edad"];
+    let bytes = text.as_bytes();
+    let mut out = String::new();
+    let mut i = 0;
+    while i < text.len() {
+        let mut hit: Option<&str> = None;
+        for needle in NEEDLES {
+            if text[i..].starts_with(needle) {
+                let end = i + needle.len();
+                let before_ok = i == 0 || !is_ident_char(bytes[i - 1]);
+                let after_ok = end >= bytes.len() || !is_ident_char(bytes[end]);
+                if before_ok && after_ok {
+                    hit = Some(needle);
+                    break;
+                }
+            }
+        }
+        if let Some(ident) = hit {
+            out.push_str(&format!(
+                r#"<span class="{}" data-ident="{ident}">{ident}</span>"#,
+                ident_class(flash_ident == Some(ident))
+            ));
+            i += ident.len();
+        } else {
+            let ch = text[i..].chars().next().expect("char at i");
+            out.push(ch);
+            i += ch.len_utf8();
+        }
+    }
+    out
+}
+
+fn is_ident_char(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || b == b'_'
 }
 
 fn html_escape(s: &str) -> String {
@@ -186,14 +230,26 @@ mod tests {
         assert!(!html.contains("<strong>Variables</strong>"));
         assert!(html.contains(r#"id="learn-ident-nombre""#));
         assert!(html.contains(r#"id="learn-ident-edad""#));
+        // Line 3 `print(nombre, edad)` also marks both idents (no duplicate ids).
+        assert_eq!(html.matches(r#"data-ident="nombre""#).count(), 2);
+        assert_eq!(html.matches(r#"data-ident="edad""#).count(), 2);
+        assert!(html.contains("print("));
     }
 
     #[test]
-    fn prompt_flash_marks_nombre_only() {
+    fn prompt_flash_marks_nombre_on_all_occurrences() {
         let html = prompt_to_html_with_flash(first_coding_step().prompt_md, Some("nombre"));
-        assert!(html.contains(
-            r#"class="learn__ident learn__ident--flash" id="learn-ident-nombre""#
-        ));
+        assert_eq!(
+            html.matches(r#"class="learn__ident learn__ident--flash" data-ident="nombre""#)
+                .count()
+                + html
+                    .matches(
+                        r#"class="learn__ident learn__ident--flash" id="learn-ident-nombre""#
+                    )
+                    .count(),
+            2
+        );
         assert!(html.contains(r#"class="learn__ident" id="learn-ident-edad""#));
+        assert!(html.contains(r#"class="learn__ident" data-ident="edad""#));
     }
 }
