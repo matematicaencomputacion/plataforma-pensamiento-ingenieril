@@ -1,5 +1,6 @@
 mod forgot_password;
 mod landing;
+mod learn;
 mod login;
 mod onboarding;
 mod register;
@@ -8,6 +9,7 @@ mod workspace;
 
 pub use forgot_password::ForgotPasswordPage;
 pub use landing::LandingPage;
+pub use learn::LearnPage;
 pub use login::LoginPage;
 pub use onboarding::OnboardingPage;
 pub use register::RegisterPage;

@@ -131,6 +131,9 @@ pub fn WorkspacePage() -> impl IntoView {
                     <A href="/onboarding" attr:class="cta cta--primary">
                         "Empezar coaching"
                     </A>
+                    <A href="/learn" attr:class="cta cta--secondary">
+                        "Paso 2 · Coding"
+                    </A>
                     <A href="/" attr:class="cta cta--secondary">
                         "Portada"
                     </A>

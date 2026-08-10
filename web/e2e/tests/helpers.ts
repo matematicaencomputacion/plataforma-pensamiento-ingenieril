@@ -12,7 +12,7 @@ export async function gotoApp(page: Page, path: string) {
     () => {
       const w = window as unknown as { wasmBindings?: unknown };
       const hasUi = !!document.querySelector(
-        "#login-email, #register-email, #forgot-email, #reset-password, .hero__title, .workspace__title, .onboarding__title",
+        "#login-email, #register-email, #forgot-email, #reset-password, .hero__title, .workspace__title, .onboarding__title, .learn__title",
       );
       return !!w.wasmBindings && hasUi;
     },
