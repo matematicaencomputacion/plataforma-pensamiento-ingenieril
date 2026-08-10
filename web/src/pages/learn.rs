@@ -10,6 +10,7 @@ use leptos::prelude::*;
 use leptos_router::components::A;
 use leptos_router::hooks::{use_location, use_navigate, use_params_map};
 use leptos_router::NavigateOptions;
+use wasm_bindgen::JsCast;
 
 use crate::api::Level;
 use crate::auth::{complete_progress, fetch_current_level, input_value};
@@ -40,6 +41,32 @@ enum ConsoleKind {
     Validating,
     CheckPass,
     CheckFail,
+}
+
+/// Visual FSM for the «Validar solución» CTA.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ValidateBtn {
+    /// 1) Ready to validate for the first time.
+    Idle,
+    /// 2) In-flight checks.
+    Validating,
+    /// 3) Step already passed; code unchanged since last success.
+    Passed,
+    /// 4) Passed before, but editor changed → invite re-validation.
+    DirtyRevalidate,
+}
+
+fn schedule_clear_toast(toast: RwSignal<Option<String>>, ms: i32) {
+    let Some(window) = web_sys::window() else {
+        return;
+    };
+    let cb = wasm_bindgen::closure::Closure::once_into_js(move || {
+        toast.set(None);
+    });
+    let _ = window.set_timeout_with_callback_and_timeout_and_arguments_0(
+        cb.as_ref().unchecked_ref(),
+        ms,
+    );
 }
 
 #[component]
@@ -73,8 +100,21 @@ pub fn LearnPage() -> impl IntoView {
     let show_hint = RwSignal::new(false);
     let show_solution = RwSignal::new(false);
     let can_continue = RwSignal::new(false);
+    let code_dirty_since_pass = RwSignal::new(false);
+    let already_passed_toast = RwSignal::new(Option::<String>::None);
     let level = RwSignal::new(Option::<Level>::None);
     let level_error = RwSignal::new(Option::<String>::None);
+
+    let validate_btn = Memo::new(move |_| {
+        if console_kind.get() == ConsoleKind::Validating {
+            return ValidateBtn::Validating;
+        }
+        match (can_continue.get(), code_dirty_since_pass.get()) {
+            (true, true) => ValidateBtn::DirtyRevalidate,
+            (true, false) => ValidateBtn::Passed,
+            _ => ValidateBtn::Idle,
+        }
+    });
 
     // Reset editor / console when the route step changes.
     Effect::new(move |_| {
@@ -90,6 +130,8 @@ pub fn LearnPage() -> impl IntoView {
         show_hint.set(false);
         show_solution.set(false);
         can_continue.set(false);
+        code_dirty_since_pass.set(false);
+        already_passed_toast.set(None);
     });
 
     Effect::new(move |_| {
@@ -197,8 +239,17 @@ pub fn LearnPage() -> impl IntoView {
         if busy.get_untracked() || engine.get_untracked() != EngineUi::Ready {
             return;
         }
+        // Already passed + code unchanged → toast only (no re-run).
+        if can_continue.get_untracked() && !code_dirty_since_pass.get_untracked() {
+            already_passed_toast.set(Some(
+                "Ya pasaste esta prueba. Si cambiás el código, podés volver a validar.".into(),
+            ));
+            schedule_clear_toast(already_passed_toast, 5000);
+            return;
+        }
         busy.set(true);
         progress_note.set(None);
+        already_passed_toast.set(None);
         console_kind.set(ConsoleKind::Validating);
         stdout.set(String::new());
         stderr.set(String::new());
@@ -217,6 +268,7 @@ pub fn LearnPage() -> impl IntoView {
                     if result.passed {
                         console_kind.set(ConsoleKind::CheckPass);
                         can_continue.set(true);
+                        code_dirty_since_pass.set(false);
                         match complete_progress(level_id, step_key, true).await {
                             Ok(prog) => {
                                 session.set_current_level(prog.current_level);
@@ -241,6 +293,7 @@ pub fn LearnPage() -> impl IntoView {
                     } else {
                         console_kind.set(ConsoleKind::CheckFail);
                         can_continue.set(false);
+                        code_dirty_since_pass.set(false);
                         let _ = complete_progress(level_id, step_key, false).await;
                     }
                 }
@@ -253,6 +306,7 @@ pub fn LearnPage() -> impl IntoView {
                     }]);
                     console_kind.set(ConsoleKind::CheckFail);
                     can_continue.set(false);
+                    code_dirty_since_pass.set(false);
                 }
             }
             busy.set(false);
@@ -378,7 +432,12 @@ pub fn LearnPage() -> impl IntoView {
                             spellcheck="false"
                             rows="12"
                             prop:value=move || code.get()
-                            on:input=move |ev| code.set(input_value(&ev))
+                            on:input=move |ev| {
+                                code.set(input_value(&ev));
+                                if can_continue.get_untracked() {
+                                    code_dirty_since_pass.set(true);
+                                }
+                            }
                         />
                     </section>
 
@@ -404,20 +463,30 @@ pub fn LearnPage() -> impl IntoView {
                                 }}
                             </button>
                             <button
-                                class="cta cta--primary"
+                                class=move || match validate_btn.get() {
+                                    ValidateBtn::Idle => "cta cta--primary",
+                                    ValidateBtn::Validating => "cta cta--primary cta--busy",
+                                    ValidateBtn::Passed => "cta cta--passed",
+                                    ValidateBtn::DirtyRevalidate => "cta cta--revalidate",
+                                }
                                 type="button"
                                 id="learn-validate"
+                                data-validate-state=move || match validate_btn.get() {
+                                    ValidateBtn::Idle => "idle",
+                                    ValidateBtn::Validating => "validating",
+                                    ValidateBtn::Passed => "passed",
+                                    ValidateBtn::DirtyRevalidate => "revalidate",
+                                }
                                 prop:disabled=move || {
                                     busy.get() || engine.get() != EngineUi::Ready
                                 }
                                 on:click=on_validate
                             >
-                                {move || {
-                                    if console_kind.get() == ConsoleKind::Validating {
-                                        "Validando…"
-                                    } else {
-                                        "Validar solución"
-                                    }
+                                {move || match validate_btn.get() {
+                                    ValidateBtn::Validating => "Validando…",
+                                    ValidateBtn::Passed => "Prueba superada",
+                                    ValidateBtn::DirtyRevalidate => "Volver a validar",
+                                    ValidateBtn::Idle => "Validar solución",
                                 }}
                             </button>
                             <Show
@@ -594,6 +663,16 @@ pub fn LearnPage() -> impl IntoView {
                                 role="status"
                             >
                                 "¡Ejercicio completado con éxito!"
+                            </p>
+                        </Show>
+                        <Show when=move || already_passed_toast.get().is_some()>
+                            <p
+                                id="learn-already-passed-toast"
+                                class="learn__toast"
+                                role="status"
+                                aria-live="polite"
+                            >
+                                {move || already_passed_toast.get().unwrap_or_default()}
                             </p>
                         </Show>
                         <Show when=move || progress_note.get().is_some()>
