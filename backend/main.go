@@ -135,7 +135,9 @@ func main() {
 	mux.HandleFunc("GET /api/levels/{id}", levelHandler.GetByID)
 	mux.HandleFunc("POST /api/evaluate", evaluateHandler.Evaluate)
 	mux.HandleFunc("POST /api/learner/profile/synthesize", learnerProfileHandler.Synthesize)
-	mux.HandleFunc("POST /api/progress/complete", handlers.NewProgressHandler(authService).Complete)
+	progressHandler := handlers.NewProgressHandler(authService)
+	mux.HandleFunc("POST /api/progress/complete", progressHandler.Complete)
+	mux.HandleFunc("POST /api/progress/reset", progressHandler.Reset)
 
 	addr := ":8080"
 	log.Printf(

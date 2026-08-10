@@ -4,7 +4,8 @@ use leptos_router::hooks::{use_location, use_navigate};
 use leptos_router::NavigateOptions;
 
 use crate::api::Level;
-use crate::auth::fetch_current_level;
+use crate::auth::{fetch_current_level, reset_progress};
+use crate::components::{level_completed, ProgressCheck};
 use crate::session::SessionCtx;
 
 #[component]
@@ -16,6 +17,8 @@ pub fn WorkspacePage() -> impl IntoView {
     let level = RwSignal::new(Option::<Level>::None);
     let level_error = RwSignal::new(Option::<String>::None);
     let level_loading = RwSignal::new(false);
+    let resetting = RwSignal::new(false);
+    let reset_note = RwSignal::new(Option::<String>::None);
 
     // Guard: after bootstrap, no live session → leave /workspace once (replace).
     // Require hydrated `user` (not just a stored token) so orphan JWTs that
@@ -60,6 +63,28 @@ pub fn WorkspacePage() -> impl IntoView {
         });
     });
 
+    let on_reset = move |_| {
+        if resetting.get_untracked() {
+            return;
+        }
+        resetting.set(true);
+        reset_note.set(None);
+        leptos::task::spawn_local(async move {
+            match reset_progress().await {
+                Ok(prog) => {
+                    session.set_current_level(prog.current_level);
+                    reset_note.set(Some(
+                        "Avance reiniciado. Los checks verdes se borraron.".into(),
+                    ));
+                }
+                Err(err) => {
+                    reset_note.set(Some(err.message));
+                }
+            }
+            resetting.set(false);
+        });
+    };
+
     view! {
         <section class="workspace">
             <Show
@@ -99,13 +124,48 @@ pub fn WorkspacePage() -> impl IntoView {
 
                 <div class="workspace__grid">
                     <section class="workspace__panel" aria-labelledby="workspace-level-heading">
-                        <h2 id="workspace-level-heading" class="workspace__panel-title">
-                            "Nivel actual"
-                        </h2>
+                        <div class="workspace__panel-head">
+                            <h2 id="workspace-level-heading" class="workspace__panel-title">
+                                "Nivel actual"
+                            </h2>
+                            <button
+                                type="button"
+                                class="workspace__reset"
+                                id="workspace-reset-progress"
+                                prop:disabled=move || resetting.get()
+                                attr:aria-busy=move || resetting.get().to_string()
+                                on:click=on_reset
+                            >
+                                {move || {
+                                    if resetting.get() {
+                                        "Reiniciando…"
+                                    } else {
+                                        "Volver a empezar"
+                                    }
+                                }}
+                            </button>
+                        </div>
+                        <Show when=move || reset_note.get().is_some()>
+                            <p
+                                class="workspace__muted"
+                                id="workspace-reset-note"
+                                role="status"
+                                aria-live="polite"
+                            >
+                                {move || reset_note.get().unwrap_or_default()}
+                            </p>
+                        </Show>
                         <LevelPanel
                             loading=level_loading
                             error=level_error
                             level=level
+                            current_level=Signal::derive(move || {
+                                session
+                                    .user
+                                    .get()
+                                    .map(|u| u.current_level)
+                                    .unwrap_or(1)
+                            })
                         />
                     </section>
 
@@ -148,6 +208,7 @@ fn LevelPanel(
     loading: RwSignal<bool>,
     error: RwSignal<Option<String>>,
     level: RwSignal<Option<Level>>,
+    current_level: Signal<i32>,
 ) -> impl IntoView {
     view! {
         <Show when=move || loading.get()>
@@ -157,12 +218,21 @@ fn LevelPanel(
             {move || {
                 level.get().map(|lvl| {
                     let track = track_label(&lvl.track_type);
+                    let level_id = lvl.id;
                     view! {
                         <p class="workspace__meta">
                             {format!("#{id} · {track}", id = lvl.id, track = track)}
                         </p>
                         <h3 class="workspace__level-title">{lvl.title.clone()}</h3>
-                        <p class="workspace__statement">{lvl.statement.clone()}</p>
+                        <div class="workspace__statement-row">
+                            <Show when=move || level_completed(current_level.get(), level_id)>
+                                <ProgressCheck
+                                    id="workspace-level-check"
+                                    label="Nivel superado"
+                                />
+                            </Show>
+                            <p class="workspace__statement">{lvl.statement.clone()}</p>
+                        </div>
                     }
                 })
             }}

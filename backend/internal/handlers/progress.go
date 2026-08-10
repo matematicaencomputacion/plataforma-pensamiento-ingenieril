@@ -83,3 +83,24 @@ func (h *ProgressHandler) Complete(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, out)
 }
+
+// Reset procesa POST /api/progress/reset — borra checks / vuelve a nivel 1.
+func (h *ProgressHandler) Reset(w http.ResponseWriter, r *http.Request) {
+	token, ok := bearerToken(r)
+	if !ok {
+		writeJSONError(w, "no autorizado", http.StatusUnauthorized)
+		return
+	}
+
+	out, err := h.service.ResetProgress(context.Background(), token)
+	if err != nil {
+		switch {
+		case errors.Is(err, domain.ErrUnauthorized):
+			writeJSONError(w, err.Error(), http.StatusUnauthorized)
+		default:
+			writeAuthError(w, err)
+		}
+		return
+	}
+	writeJSON(w, http.StatusOK, out)
+}

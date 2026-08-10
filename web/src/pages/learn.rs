@@ -11,7 +11,7 @@ use leptos_router::NavigateOptions;
 
 use crate::api::Level;
 use crate::auth::{complete_progress, fetch_current_level, input_value};
-use crate::components::VariableTypeChips;
+use crate::components::{level_completed, ProgressCheck, VariableTypeChips};
 use crate::curriculum::{first_coding_step, prompt_to_html};
 use crate::interop::pyodide::{
     check_student_code, ensure_engine, format_check_log, run_stderr_body, run_stdout_body,
@@ -188,6 +188,7 @@ pub fn LearnPage() -> impl IntoView {
                         can_continue.set(true);
                         match complete_progress(level_id, step_id, true).await {
                             Ok(prog) => {
+                                session.set_current_level(prog.current_level);
                                 if prog.advanced {
                                     progress_note.set(Some(format!(
                                         "Progreso guardado · nivel actual {}",
@@ -406,6 +407,27 @@ pub fn LearnPage() -> impl IntoView {
                                 </A>
                             </Show>
                         </div>
+
+                        <Show when=move || {
+                            can_continue.get()
+                                || level
+                                    .get()
+                                    .map(|l| {
+                                        level_completed(
+                                            session
+                                                .user
+                                                .get()
+                                                .map(|u| u.current_level)
+                                                .unwrap_or(1),
+                                            l.id,
+                                        )
+                                    })
+                                    .unwrap_or(false)
+                        }>
+                            <div class="learn__progress-mark" id="learn-progress-check">
+                                <ProgressCheck label="Ejercicio superado" />
+                            </div>
+                        </Show>
 
                         <Show when=move || console_kind.get() == ConsoleKind::Running>
                             <p class="learn__busy" id="learn-busy" role="status" aria-live="polite">
