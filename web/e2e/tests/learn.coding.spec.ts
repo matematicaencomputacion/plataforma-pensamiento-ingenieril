@@ -87,6 +87,17 @@ test.describe("learn coding (Paso 2)", () => {
       { timeout: engineTimeout },
     );
 
+    // Type chips rail under Enunciado → Variables
+    await expect(page.locator("#learn-type-chips .type-chips__label")).toHaveText(
+      "Variables",
+    );
+    await page.locator("#type-chip-str").click();
+    await expect(page.locator("#type-chip-panel")).toContainText(/String|Cadena/i);
+    await page.locator("#type-chip-obj").click();
+    await expect(page.locator("#type-chip-panel")).toContainText(/Object|Objeto/i);
+    await page.locator("#type-chip-obj").click();
+    await expect(page.locator("#type-chip-panel")).toHaveCount(0);
+
     const solution = 'nombre = "Ana"\nedad = 25\nprint(nombre, edad)\n';
     await fillLeptosTextarea(page, "#learn-editor", solution);
 

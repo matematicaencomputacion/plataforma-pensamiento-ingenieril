@@ -4,6 +4,7 @@ mod api;
 mod auth;
 mod components;
 mod curriculum;
+mod data_types;
 mod interop;
 mod pages;
 mod session;

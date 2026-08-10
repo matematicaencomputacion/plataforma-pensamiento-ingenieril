@@ -638,6 +638,122 @@ button:focus-visible {
   font-family: ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Type chips — Variables + acronyms (Paso 2 enunciado) */
+.type-chips {
+  margin: 0 0 0.85rem;
+}
+
+.type-chips__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.55rem;
+}
+
+.type-chips__label {
+  color: var(--fg);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  margin-right: 0.15rem;
+}
+
+.type-chips__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.type-chips__btn {
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8rem;
+  font-weight: 650;
+  cursor: pointer;
+  color: var(--fg);
+  background: rgba(15, 28, 24, 0.35);
+  line-height: 1.2;
+}
+
+.type-chips__btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.type-chips__btn--str {
+  color: #9fd6ff;
+  border-color: color-mix(in srgb, #5aa8e0 45%, transparent);
+  background: color-mix(in srgb, #5aa8e0 14%, transparent);
+}
+
+.type-chips__btn--num {
+  color: #b8e4c2;
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.type-chips__btn--bool {
+  color: #f0d08a;
+  border-color: color-mix(in srgb, #d4a84b 45%, transparent);
+  background: color-mix(in srgb, #d4a84b 14%, transparent);
+}
+
+.type-chips__btn--col {
+  color: #d2c0ff;
+  border-color: color-mix(in srgb, #8f7ad6 45%, transparent);
+  background: color-mix(in srgb, #8f7ad6 14%, transparent);
+}
+
+.type-chips__btn--map {
+  color: #f2b8a8;
+  border-color: color-mix(in srgb, var(--danger) 40%, transparent);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+
+.type-chips__btn--obj {
+  color: #c9e8de;
+  border-color: color-mix(in srgb, #6eb8a0 45%, transparent);
+  background: color-mix(in srgb, #6eb8a0 14%, transparent);
+}
+
+.type-chips__btn--fn {
+  color: #e8d4a8;
+  border-color: color-mix(in srgb, #c4a56a 45%, transparent);
+  background: color-mix(in srgb, #c4a56a 14%, transparent);
+}
+
+.type-chips__btn--active {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--fg) 28%, transparent);
+  filter: brightness(1.12);
+}
+
+.type-chips__panel {
+  margin-top: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border-left: 3px solid var(--accent);
+  background: rgba(15, 28, 24, 0.4);
+  border-radius: 0 0.4rem 0.4rem 0;
+}
+
+.type-chips__panel-title {
+  margin: 0 0 0.3rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.type-chips__panel-body {
+  margin: 0;
+  color: var(--fg);
+  line-height: 1.45;
+  font-size: 0.95rem;
+}
+
 .learn__prompt {
   color: var(--fg);
   line-height: 1.55;

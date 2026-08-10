@@ -77,7 +77,8 @@ run_backend_integration() {
   fi
   export JWT_SECRET="${JWT_SECRET:-harness-jwt-secret}"
   export DATABASE_URL="${DATABASE_URL:-sqlite://./data/ppi-harness.db}"
-  export LEARNER_PROFILE_LLM="${LEARNER_PROFILE_LLM:-mock}"
+  # Always mock for integration — ignore ambient LEARNER_PROFILE_LLM=auto/cerebras.
+  export LEARNER_PROFILE_LLM=mock
   mkdir -p backend/data
   if (cd backend && go test -tags=integration ./internal/integration/... -count=1 \
       | tee "$RUN_DIR/backend-integration.log"); then
@@ -147,7 +148,8 @@ start_stack() {
   mkdir -p backend/data artifacts/harness
   export JWT_SECRET="${JWT_SECRET:-harness-jwt-secret}"
   export DATABASE_URL="${DATABASE_URL:-sqlite://./data/ppi-harness.db}"
-  export LEARNER_PROFILE_LLM="${LEARNER_PROFILE_LLM:-mock}"
+  # Deterministic E2E: always keywords, never ambient Cerebras/Grok from the parent shell.
+  export LEARNER_PROFILE_LLM=mock
   export PPI_EXPOSE_RESET_TOKEN="${PPI_EXPOSE_RESET_TOKEN:-1}"
 
   (cd backend && go build -o bin/ppi-api .)
