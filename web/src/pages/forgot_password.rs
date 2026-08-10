@@ -3,15 +3,32 @@ use leptos_router::components::A;
 use leptos_router::hooks::use_navigate;
 
 use crate::auth::{input_value, request_password_reset};
+use crate::session::SessionCtx;
 
 #[component]
 pub fn ForgotPasswordPage() -> impl IntoView {
+    let session = expect_context::<SessionCtx>();
     let navigate = use_navigate();
     let email = RwSignal::new(String::new());
     let error = RwSignal::new(String::new());
     let message = RwSignal::new(String::new());
     let reset_token = RwSignal::new(String::new());
     let busy = RwSignal::new(false);
+
+    Effect::new({
+        let navigate = navigate.clone();
+        move |_| {
+            if session.bootstrapped.get() && session.user.get().is_some() {
+                navigate(
+                    "/workspace",
+                    leptos_router::NavigateOptions {
+                        replace: true,
+                        ..Default::default()
+                    },
+                );
+            }
+        }
+    });
 
     let on_submit = move |ev: web_sys::SubmitEvent| {
         ev.prevent_default();
@@ -30,7 +47,6 @@ pub fn ForgotPasswordPage() -> impl IntoView {
                 Ok(res) => {
                     message.set(res.message);
                     if let Some(tok) = res.reset_token.filter(|t| !t.is_empty()) {
-                        // DX: backend only includes resetToken in local/dev exposure modes.
                         reset_token.set(tok.clone());
                         navigate(
                             &format!("/reset-password?token={tok}"),

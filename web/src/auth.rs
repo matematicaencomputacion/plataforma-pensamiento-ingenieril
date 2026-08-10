@@ -2,14 +2,17 @@
 
 use gloo_net::http::Request;
 use wasm_bindgen::JsCast;
-use web_sys::HtmlInputElement;
+use web_sys::{CustomEvent, CustomEventInit, HtmlInputElement};
 
 use crate::api::{
     current_level_url, forgot_password_url, is_auth_rejection, parse_auth_error_body,
-    reset_password_url, AuthCredentials, AuthSuccess, AuthUser, ForgotPasswordRequest,
-    ForgotPasswordResponse, Level, ResetPasswordRequest, AUTH_TOKEN_KEY, login_url, logout_url,
-    me_url, register_url,
+    reset_password_url, sanitize_email, AuthCredentials, AuthSuccess, AuthUser,
+    ForgotPasswordRequest, ForgotPasswordResponse, Level, ResetPasswordRequest, AUTH_TOKEN_KEY,
+    login_url, logout_url, me_url, register_url,
 };
+
+/// Same-tab signal that `SessionCtx` should drop in-memory auth after a storage purge.
+pub const AUTH_CLEARED_EVENT: &str = "ppi:auth-cleared";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthError {
@@ -41,6 +44,17 @@ fn window() -> Option<web_sys::Window> {
     web_sys::window()
 }
 
+fn dispatch_auth_cleared() {
+    let Some(window) = window() else {
+        return;
+    };
+    let mut init = CustomEventInit::new();
+    init.set_bubbles(true);
+    if let Ok(ev) = CustomEvent::new_with_event_init_dict(AUTH_CLEARED_EVENT, &init) {
+        let _ = window.dispatch_event(&ev);
+    }
+}
+
 pub fn get_stored_token() -> Option<String> {
     let storage = window()?.local_storage().ok()??;
     storage.get_item(AUTH_TOKEN_KEY).ok()?
@@ -59,11 +73,15 @@ pub fn clear_token() {
 }
 
 /// Drop every residual auth key we own (local + session storage).
+///
+/// Also notifies the same tab via [`AUTH_CLEARED_EVENT`] so `SessionCtx` signals
+/// clear immediately (the browser `storage` event only fires in *other* tabs).
 pub fn purge_auth_storage() {
     clear_token();
     if let Some(Ok(Some(storage))) = window().map(|w| w.session_storage()) {
         let _ = storage.remove_item(AUTH_TOKEN_KEY);
     }
+    dispatch_auth_cleared();
 }
 
 async fn read_error(res: &gloo_net::http::Response) -> String {
@@ -74,8 +92,11 @@ async fn read_error(res: &gloo_net::http::Response) -> String {
     }
 }
 
-/// If the API rejects the Bearer session, scrub storage before returning.
-async fn reject_if_not_ok(res: gloo_net::http::Response) -> Result<gloo_net::http::Response, AuthError> {
+/// If the API rejects the Bearer session, scrub storage (+ SessionCtx via event)
+/// before returning.
+async fn reject_if_not_ok(
+    res: gloo_net::http::Response,
+) -> Result<gloo_net::http::Response, AuthError> {
     if res.ok() {
         return Ok(res);
     }
@@ -87,15 +108,17 @@ async fn reject_if_not_ok(res: gloo_net::http::Response) -> Result<gloo_net::htt
 }
 
 pub async fn login_user(email: String, password: String) -> Result<AuthSuccess, AuthError> {
-    post_credentials(login_url(), email, password).await
+    post_credentials(login_url(), sanitize_email(email), password).await
 }
 
 pub async fn register_user(email: String, password: String) -> Result<AuthSuccess, AuthError> {
-    post_credentials(register_url(), email, password).await
+    post_credentials(register_url(), sanitize_email(email), password).await
 }
 
 pub async fn request_password_reset(email: String) -> Result<ForgotPasswordResponse, AuthError> {
-    let payload = ForgotPasswordRequest { email };
+    let payload = ForgotPasswordRequest {
+        email: sanitize_email(email),
+    };
     let res = Request::post(&forgot_password_url())
         .header("Content-Type", "application/json")
         .json(&payload)
@@ -111,7 +134,10 @@ pub async fn request_password_reset(email: String) -> Result<ForgotPasswordRespo
 }
 
 pub async fn reset_password(token: String, password: String) -> Result<AuthSuccess, AuthError> {
-    let payload = ResetPasswordRequest { token, password };
+    let payload = ResetPasswordRequest {
+        token: token.trim().to_string(),
+        password,
+    };
     let res = Request::post(&reset_password_url())
         .header("Content-Type", "application/json")
         .json(&payload)
