@@ -22,6 +22,13 @@
 
 ## 4. Hardening
 
-- [ ] 4.1 A11y/aria + network copy (paridad Rebanada 2)
-- [ ] 4.2 SpeechRecognition opcional (solo browser)
+- [x] 4.1 A11y/aria + network copy (paridad Rebanada 2) — analyze busy + mic aria
+- [x] 4.2 SpeechRecognition opcional (solo browser) vía `ppi-speech.js`
 - [ ] 4.3 Sync prompts desde seed / docs
+
+## 5. Voice + Cerebras synthesize (fix slice)
+
+- [x] 5.1 `LEARNER_PROFILE_LLM=auto` prefiere `CEREBRAS_API_KEY` (OpenAI-compat)
+- [x] 5.2 Botón micrófono + dictado en `#coaching-notes`
+- [x] 5.3 CTA «Analizar mi respuesta con IA» pobla 4 campos; vacío → error claro
+- [x] 5.4 E2E `coaching.spec.ts` synthesize → save

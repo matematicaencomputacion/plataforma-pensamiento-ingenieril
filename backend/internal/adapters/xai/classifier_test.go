@@ -54,8 +54,9 @@ func TestClassifierClassifyOK(t *testing.T) {
 func TestNewClassifierRequiresAPIKey(t *testing.T) {
 	t.Setenv("GROK_API_KEY", "")
 	t.Setenv("XAI_API_KEY", "")
+	t.Setenv("CEREBRAS_API_KEY", "")
 	_, err := xai.NewClassifier(context.Background(), xai.Config{})
 	if err == nil {
-		t.Fatal("expected error without GROK_API_KEY")
+		t.Fatal("expected error without API key")
 	}
 }

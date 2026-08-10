@@ -36,12 +36,20 @@ type Config struct {
 }
 
 func NewClassifier(_ context.Context, cfg Config) (*Classifier, error) {
-	apiKey := firstNonEmpty(cfg.APIKey, os.Getenv("GROK_API_KEY"), os.Getenv("XAI_API_KEY"))
+	apiKey := firstNonEmpty(
+		cfg.APIKey,
+		os.Getenv("GROK_API_KEY"),
+		os.Getenv("XAI_API_KEY"),
+		os.Getenv("CEREBRAS_API_KEY"),
+	)
 	if apiKey == "" {
-		return nil, fmt.Errorf("GROK_API_KEY (o XAI_API_KEY) es obligatorio para Grok")
+		return nil, fmt.Errorf("API key ausente (GROK_API_KEY / XAI_API_KEY / CEREBRAS_API_KEY)")
 	}
-	model := firstNonEmpty(cfg.Model, os.Getenv("GROK_MODEL"), defaultModel)
-	baseURL := strings.TrimRight(firstNonEmpty(cfg.BaseURL, os.Getenv("XAI_BASE_URL"), defaultBaseURL), "/")
+	model := firstNonEmpty(cfg.Model, os.Getenv("GROK_MODEL"), os.Getenv("CEREBRAS_MODEL"), defaultModel)
+	baseURL := strings.TrimRight(
+		firstNonEmpty(cfg.BaseURL, os.Getenv("XAI_BASE_URL"), os.Getenv("CEREBRAS_BASE_URL"), defaultBaseURL),
+		"/",
+	)
 
 	return &Classifier{
 		apiKey:  apiKey,
