@@ -8,7 +8,7 @@ use crate::api::{
     current_level_url, forgot_password_url, is_auth_rejection, parse_auth_error_body,
     reset_password_url, sanitize_email, AuthCredentials, AuthSuccess, AuthUser,
     ForgotPasswordRequest, ForgotPasswordResponse, Level, ResetPasswordRequest, AUTH_TOKEN_KEY,
-    login_url, logout_url, me_url, register_url,
+    MSG_INVALID_RESPONSE, MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url, register_url,
 };
 
 /// Same-tab signal that `SessionCtx` should drop in-memory auth after a storage purge.
@@ -48,7 +48,7 @@ fn dispatch_auth_cleared() {
     let Some(window) = window() else {
         return;
     };
-    let mut init = CustomEventInit::new();
+    let init = CustomEventInit::new();
     init.set_bubbles(true);
     if let Ok(ev) = CustomEvent::new_with_event_init_dict(AUTH_CLEARED_EVENT, &init) {
         let _ = window.dispatch_event(&ev);
@@ -92,6 +92,19 @@ async fn read_error(res: &gloo_net::http::Response) -> String {
     }
 }
 
+fn network_unavailable(_detail: impl std::fmt::Display) -> AuthError {
+    // Do not surface raw browser/CORS strings to the learner UI.
+    AuthError::new(MSG_NETWORK_UNAVAILABLE)
+}
+
+fn invalid_response(_detail: impl std::fmt::Display) -> AuthError {
+    AuthError::new(MSG_INVALID_RESPONSE)
+}
+
+fn request_build_error(_detail: impl std::fmt::Display) -> AuthError {
+    AuthError::new(MSG_NETWORK_UNAVAILABLE)
+}
+
 /// If the API rejects the Bearer session, scrub storage (+ SessionCtx via event)
 /// before returning.
 async fn reject_if_not_ok(
@@ -122,15 +135,15 @@ pub async fn request_password_reset(email: String) -> Result<ForgotPasswordRespo
     let res = Request::post(&forgot_password_url())
         .header("Content-Type", "application/json")
         .json(&payload)
-        .map_err(|e| AuthError::new(e.to_string()))?
+        .map_err(request_build_error)?
         .send()
         .await
-        .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
+        .map_err(network_unavailable)?;
 
     let res = reject_if_not_ok(res).await?;
     res.json::<ForgotPasswordResponse>()
         .await
-        .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
+        .map_err(invalid_response)
 }
 
 pub async fn reset_password(token: String, password: String) -> Result<AuthSuccess, AuthError> {
@@ -141,15 +154,13 @@ pub async fn reset_password(token: String, password: String) -> Result<AuthSucce
     let res = Request::post(&reset_password_url())
         .header("Content-Type", "application/json")
         .json(&payload)
-        .map_err(|e| AuthError::new(e.to_string()))?
+        .map_err(request_build_error)?
         .send()
         .await
-        .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
+        .map_err(network_unavailable)?;
 
     let res = reject_if_not_ok(res).await?;
-    res.json::<AuthSuccess>()
-        .await
-        .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
+    res.json::<AuthSuccess>().await.map_err(invalid_response)
 }
 
 async fn post_credentials(
@@ -161,10 +172,10 @@ async fn post_credentials(
     let res = Request::post(&url)
         .header("Content-Type", "application/json")
         .json(&payload)
-        .map_err(|e| AuthError::new(e.to_string()))?
+        .map_err(request_build_error)?
         .send()
         .await
-        .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
+        .map_err(network_unavailable)?;
 
     // Login/register 401 is "bad credentials", not an orphan Bearer session —
     // do not scrub storage unless a stale token somehow remains.
@@ -173,9 +184,7 @@ async fn post_credentials(
         return Err(AuthError::with_status(read_error(&res).await, status));
     }
 
-    res.json::<AuthSuccess>()
-        .await
-        .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
+    res.json::<AuthSuccess>().await.map_err(invalid_response)
 }
 
 pub async fn fetch_me(token: &str) -> Result<AuthUser, AuthError> {
@@ -183,12 +192,10 @@ pub async fn fetch_me(token: &str) -> Result<AuthUser, AuthError> {
         .header("Authorization", &format!("Bearer {token}"))
         .send()
         .await
-        .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
+        .map_err(network_unavailable)?;
 
     let res = reject_if_not_ok(res).await?;
-    res.json::<AuthUser>()
-        .await
-        .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
+    res.json::<AuthUser>().await.map_err(invalid_response)
 }
 
 /// Public curriculum entry (`GET /api/levels/current`) — no Bearer required.
@@ -196,16 +203,14 @@ pub async fn fetch_current_level() -> Result<Level, AuthError> {
     let res = Request::get(&current_level_url())
         .send()
         .await
-        .map_err(|e| AuthError::new(format!("No se pudo contactar la API: {e}")))?;
+        .map_err(network_unavailable)?;
 
     if !res.ok() {
         let status = res.status();
         return Err(AuthError::with_status(read_error(&res).await, status));
     }
 
-    res.json::<Level>()
-        .await
-        .map_err(|e| AuthError::new(format!("Respuesta inválida: {e}")))
+    res.json::<Level>().await.map_err(invalid_response)
 }
 
 pub async fn logout_session() {

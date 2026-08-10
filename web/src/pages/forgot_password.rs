@@ -43,7 +43,9 @@ pub fn ForgotPasswordPage() -> impl IntoView {
         let email_v = email.get_untracked();
         let navigate = navigate.clone();
         leptos::task::spawn_local(async move {
-            match request_password_reset(email_v).await {
+            let outcome = request_password_reset(email_v).await;
+            busy.set(false);
+            match outcome {
                 Ok(res) => {
                     message.set(res.message);
                     if let Some(tok) = res.reset_token.filter(|t| !t.is_empty()) {
@@ -53,11 +55,9 @@ pub fn ForgotPasswordPage() -> impl IntoView {
                             Default::default(),
                         );
                     }
-                    busy.set(false);
                 }
                 Err(err) => {
                     error.set(err.message);
-                    busy.set(false);
                 }
             }
         });
@@ -87,12 +87,12 @@ pub fn ForgotPasswordPage() -> impl IntoView {
                         on:input=move |ev| email.set(input_value(&ev))
                     />
                     <Show when=move || !error.get().is_empty()>
-                        <p class="auth-form__error" role="alert">
+                        <p class="auth-form__error" role="alert" aria-live="polite">
                             {move || error.get()}
                         </p>
                     </Show>
                     <Show when=move || !message.get().is_empty()>
-                        <p class="auth-form__ok" role="status">
+                        <p class="auth-form__ok" role="status" aria-live="polite">
                             {move || message.get()}
                         </p>
                     </Show>
@@ -111,6 +111,7 @@ pub fn ForgotPasswordPage() -> impl IntoView {
                         class="cta cta--primary auth-form__submit"
                         type="submit"
                         prop:disabled=move || busy.get()
+                        attr:aria-busy=move || busy.get().to_string()
                     >
                         {move || {
                             if busy.get() {
