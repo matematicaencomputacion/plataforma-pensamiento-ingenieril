@@ -36,12 +36,17 @@ impl SessionCtx {
     }
 
     /// Patch `current_level` on the live session user (after progress complete/reset).
+    /// Replaces the `Option` so derived signals (workspace rail) always re-run.
     pub fn set_current_level(&self, current_level: i32) {
-        self.user.update(|slot| {
-            if let Some(user) = slot.as_mut() {
-                user.current_level = current_level.max(1);
-            }
-        });
+        let next = current_level.max(1);
+        let Some(mut user) = self.user.get_untracked() else {
+            return;
+        };
+        if user.current_level == next {
+            return;
+        }
+        user.current_level = next;
+        self.user.set(Some(user));
     }
 
     /// Drop in-memory + browser storage (orphan JWT after DB wipe, logout, etc.).

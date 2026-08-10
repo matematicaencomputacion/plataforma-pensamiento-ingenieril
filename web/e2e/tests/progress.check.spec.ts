@@ -57,7 +57,8 @@ test.describe("persistent progress checks", () => {
     expect(reg.ok(), await reg.text()).toBeTruthy();
 
     await login(page, email, password);
-    await expect(page.locator("#workspace-level-check")).toHaveCount(0);
+    const step1 = page.locator('#workspace-microsteps [data-microstep="1"]');
+    await expect(step1.locator(".workspace__microstep-badge")).toHaveCount(0);
 
     await page.getByRole("link", { name: "Paso 2 · Coding" }).click();
     await expect(page).toHaveURL(/\/learn/, { timeout: e2eTimeout });
@@ -86,14 +87,18 @@ test.describe("persistent progress checks", () => {
 
     await page.getByLabel("Navegación del Paso 2").getByRole("link", { name: "Workspace" }).click();
     await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
-    await expect(page.locator("#workspace-level-check")).toBeVisible({
+    await expect(page.locator("#workspace-microsteps")).toBeVisible();
+    await expect(page.locator("#workspace-microsteps")).toHaveAttribute(
+      "data-current-level",
+      "2",
+    );
+    await expect(step1).toHaveClass(/workspace__microstep--done/);
+    await expect(step1.locator(".workspace__microstep-badge")).toBeVisible({
       timeout: e2eTimeout,
     });
-    await expect(page.locator("#workspace-microsteps")).toBeVisible();
-    await expect(
-      page.locator('.workspace__microstep[data-microstep="1"]'),
-    ).toHaveClass(/workspace__microstep--done/);
+    await expect(step1.locator(".progress-check")).toBeVisible();
     await expect(page.locator("#workspace-microsteps li")).toHaveCount(100);
+    await expect(page.locator("#workspace-level-check")).toHaveCount(0);
 
     const resetResponse = page.waitForResponse(
       (res) =>
@@ -103,7 +108,11 @@ test.describe("persistent progress checks", () => {
     );
     await page.locator("#workspace-reset-progress").click();
     expect((await resetResponse).ok()).toBeTruthy();
-    await expect(page.locator("#workspace-level-check")).toHaveCount(0, {
+    await expect(page.locator("#workspace-microsteps")).toHaveAttribute(
+      "data-current-level",
+      "1",
+    );
+    await expect(step1.locator(".workspace__microstep-badge")).toHaveCount(0, {
       timeout: e2eTimeout,
     });
     await expect(page.locator("#workspace-reset-note")).toContainText(/reiniciado/i);

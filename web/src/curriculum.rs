@@ -17,6 +17,8 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
+    /// 1-based index on the workspace micro-step rail (1..=100).
+    pub micro_step: i32,
 }
 
 pub const PY02_VARIABLES: CodingStep = CodingStep {
@@ -30,6 +32,7 @@ pub const PY02_VARIABLES: CodingStep = CodingStep {
     solution_example: "nombre = \"Ana\"\nedad = 25\nprint(nombre, edad)",
     next: Some("py-02-intro"),
     show_type_chips: true,
+    micro_step: 1,
 };
 
 pub const PY02_INTRO: CodingStep = CodingStep {
@@ -43,6 +46,7 @@ pub const PY02_INTRO: CodingStep = CodingStep {
     solution_example: "print(\"Hello, World!\")",
     next: Some("py-03-get-started"),
     show_type_chips: false,
+    micro_step: 2,
 };
 
 pub const PY03_GET_STARTED: CodingStep = CodingStep {
@@ -56,6 +60,7 @@ pub const PY03_GET_STARTED: CodingStep = CodingStep {
     solution_example: "print(\"Estoy aprendiendo Python\")",
     next: Some("py-04-syntax"),
     show_type_chips: false,
+    micro_step: 3,
 };
 
 pub const PY04_SYNTAX: CodingStep = CodingStep {
@@ -69,6 +74,7 @@ pub const PY04_SYNTAX: CodingStep = CodingStep {
     solution_example: "print(\"Hello World!\")\nprint(\"Have a good day.\")\nprint(\"Learning Python is fun!\")",
     next: None,
     show_type_chips: false,
+    micro_step: 4,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -206,6 +212,20 @@ mod tests {
         assert!(first_coding_step().pytest.contains("test_variables"));
         assert!(first_coding_step().starter_code.contains("nombre"));
         assert_eq!(first_coding_step().next, Some("py-02-intro"));
+        assert_eq!(first_coding_step().micro_step, 1);
+    }
+
+    #[test]
+    fn coding_steps_have_unique_micro_steps() {
+        let mut seen = std::collections::BTreeSet::new();
+        for step in CODING_STEPS {
+            assert!(step.micro_step >= 1 && step.micro_step <= 100);
+            assert!(
+                seen.insert(step.micro_step),
+                "duplicate micro_step {}",
+                step.micro_step
+            );
+        }
     }
 
     #[test]
