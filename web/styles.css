@@ -1090,11 +1090,6 @@ button:focus-visible {
   line-height: 1.5;
 }
 
-.learn__level-note {
-  margin: 0.55rem 0 0;
-  font-size: 0.85rem;
-}
-
 .learn__ok {
   margin: 0.75rem 0 0;
   color: var(--accent);
