@@ -14,4 +14,4 @@ El change original dejó el correo como non-goal; en prod con `PPI_EXPOSE_RESET_
 - Configurar secrets en Cloud Run y probar forgot
 
 ## Slide 5 — Ask
-Merge + setear SMTP en Cloud Run (y `APP_PUBLIC_URL=https://ingenieria.wecgat.com.ar`).
+Merge + setear SMTP en Cloud Run (y `APP_PUBLIC_URL=https://ingenieria.wechgat.com.ar`).
