@@ -3,16 +3,20 @@
 //! Learner Python runs only in the browser. Go supplies level metadata via
 //! `GET /api/levels/current` (statement/title) — never executes student code.
 //! Progress is reported with `POST /api/progress/complete` (pass/fail only).
+//!
+//! Routes: `/learn` (first step) and `/learn/:step` (seed step id).
 
 use leptos::prelude::*;
 use leptos_router::components::A;
-use leptos_router::hooks::{use_location, use_navigate};
+use leptos_router::hooks::{use_location, use_navigate, use_params_map};
 use leptos_router::NavigateOptions;
 
 use crate::api::Level;
 use crate::auth::{complete_progress, fetch_current_level, input_value};
 use crate::components::{level_completed, ProgressCheck, VariableTypeChips};
-use crate::curriculum::{first_coding_step, prompt_to_html};
+use crate::curriculum::{
+    coding_step_or_default, first_coding_step, prompt_to_html, DEFAULT_CODING_STEP_ID,
+};
 use crate::interop::pyodide::{
     check_student_code, ensure_engine, format_check_log, run_stderr_body, run_stdout_body,
     run_student_code, CheckCase,
@@ -43,9 +47,20 @@ pub fn LearnPage() -> impl IntoView {
     let session = expect_context::<SessionCtx>();
     let navigate = use_navigate();
     let location = use_location();
+    let params = use_params_map();
 
-    let step = first_coding_step();
-    let code = RwSignal::new(step.starter_code.to_string());
+    let step_id = Memo::new(move |_| {
+        params.with(|p| {
+            p.get("step")
+                .map(|s| s.to_string())
+                .filter(|s| !s.is_empty())
+                .unwrap_or_else(|| DEFAULT_CODING_STEP_ID.to_string())
+        })
+    });
+
+    let step = Memo::new(move |_| coding_step_or_default(&step_id.get()));
+
+    let code = RwSignal::new(first_coding_step().starter_code.to_string());
     let engine = RwSignal::new(EngineUi::Idle);
     let engine_msg = RwSignal::new(String::from("Motor Python en espera."));
     let busy = RwSignal::new(false);
@@ -60,13 +75,28 @@ pub fn LearnPage() -> impl IntoView {
     let can_continue = RwSignal::new(false);
     let level = RwSignal::new(Option::<Level>::None);
     let level_error = RwSignal::new(Option::<String>::None);
-    let prompt_html = prompt_to_html(step.prompt_md);
+
+    // Reset editor / console when the route step changes.
+    Effect::new(move |_| {
+        let s = step.get();
+        code.set(s.starter_code.to_string());
+        busy.set(false);
+        console_kind.set(ConsoleKind::Idle);
+        stdout.set(String::new());
+        stderr.set(String::new());
+        check_log.set(String::new());
+        check_cases.set(Vec::new());
+        progress_note.set(None);
+        show_hint.set(false);
+        show_solution.set(false);
+        can_continue.set(false);
+    });
 
     Effect::new(move |_| {
         let ready = session.bootstrapped.get();
         let live = session.user.get().is_some();
         let pending = session.token.get().is_some() && !live;
-        let on_learn = location.pathname.get() == "/learn";
+        let on_learn = location.pathname.get().starts_with("/learn");
         if ready && !live && !pending && on_learn {
             navigate(
                 "/login",
@@ -175,8 +205,9 @@ pub fn LearnPage() -> impl IntoView {
         check_log.set(String::new());
         check_cases.set(Vec::new());
         let source = code.get_untracked();
-        let tests = first_coding_step().pytest.to_string();
-        let step_id = first_coding_step().id.to_string();
+        let current = step.get_untracked();
+        let tests = current.pytest.to_string();
+        let step_key = current.id.to_string();
         let level_id = level.get_untracked().map(|l| l.id).unwrap_or(1);
         leptos::task::spawn_local(async move {
             match check_student_code(source, tests).await {
@@ -186,7 +217,7 @@ pub fn LearnPage() -> impl IntoView {
                     if result.passed {
                         console_kind.set(ConsoleKind::CheckPass);
                         can_continue.set(true);
-                        match complete_progress(level_id, step_id, true).await {
+                        match complete_progress(level_id, step_key, true).await {
                             Ok(prog) => {
                                 session.set_current_level(prog.current_level);
                                 if prog.advanced {
@@ -210,7 +241,7 @@ pub fn LearnPage() -> impl IntoView {
                     } else {
                         console_kind.set(ConsoleKind::CheckFail);
                         can_continue.set(false);
-                        let _ = complete_progress(level_id, step_id, false).await;
+                        let _ = complete_progress(level_id, step_key, false).await;
                     }
                 }
                 Err(err) => {
@@ -246,10 +277,12 @@ pub fn LearnPage() -> impl IntoView {
                     }
                 }
             >
-                <p class="learn__eyebrow">"Paso 2 · Coding"</p>
+                <p class="learn__eyebrow">
+                    {move || format!("Paso 2 · Coding · {}", step.get().id)}
+                </p>
                 <header class="learn__header">
-                    <h1 class="learn__title">{step.title}</h1>
-                    <p class="learn__lead">{step.objective}</p>
+                    <h1 class="learn__title">{move || step.get().title.to_string()}</h1>
+                    <p class="learn__lead">{move || step.get().objective.to_string()}</p>
                     <p
                         class="learn__engine"
                         id="learn-engine-status"
@@ -269,8 +302,13 @@ pub fn LearnPage() -> impl IntoView {
                 <div class="learn__grid">
                     <section class="learn__theory" aria-label="Teoría y enunciado">
                         <h2 class="learn__section-title">"Enunciado"</h2>
-                        <VariableTypeChips />
-                        <div class="learn__prompt" inner_html=prompt_html.clone()></div>
+                        <Show when=move || step.get().show_type_chips>
+                            <VariableTypeChips />
+                        </Show>
+                        <div
+                            class="learn__prompt"
+                            inner_html=move || prompt_to_html(step.get().prompt_md)
+                        ></div>
 
                         <Show when=move || level.get().is_some()>
                             {move || {
@@ -318,13 +356,13 @@ pub fn LearnPage() -> impl IntoView {
                         <Show when=move || show_hint.get()>
                             <aside class="learn__callout" aria-live="polite">
                                 <strong>"Pista: "</strong>
-                                {step.hint}
+                                {move || step.get().hint.to_string()}
                             </aside>
                         </Show>
                         <Show when=move || show_solution.get()>
                             <aside class="learn__callout learn__callout--solution" aria-live="polite">
                                 <strong>"Solución ejemplo:"</strong>
-                                <pre class="learn__pre">{step.solution_example}</pre>
+                                <pre class="learn__pre">{move || step.get().solution_example.to_string()}</pre>
                             </aside>
                         </Show>
                     </section>
@@ -398,13 +436,27 @@ pub fn LearnPage() -> impl IntoView {
                                     }
                                 }
                             >
-                                <A
-                                    href="/workspace"
-                                    attr:class="cta cta--primary"
-                                    attr:id="learn-continue"
-                                >
-                                    "Continuar"
-                                </A>
+                                {move || {
+                                    let next = step.get().next;
+                                    let href = match next {
+                                        Some(id) => format!("/learn/{id}"),
+                                        None => "/workspace".to_string(),
+                                    };
+                                    let label = if next.is_some() {
+                                        "Continuar al siguiente"
+                                    } else {
+                                        "Ir al workspace"
+                                    };
+                                    view! {
+                                        <A
+                                            href=href
+                                            attr:class="cta cta--primary"
+                                            attr:id="learn-continue"
+                                        >
+                                            {label}
+                                        </A>
+                                    }
+                                }}
                             </Show>
                         </div>
 

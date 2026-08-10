@@ -82,6 +82,9 @@ test.describe("persistent progress checks", () => {
     await expect(page.locator("#learn-test-cases .learn__case--pass")).toBeVisible();
 
     await page.locator("#learn-continue").click();
+    await expect(page).toHaveURL(/\/learn\/py-02-intro/, { timeout: e2eTimeout });
+
+    await page.getByLabel("Navegación del Paso 2").getByRole("link", { name: "Workspace" }).click();
     await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
     await expect(page.locator("#workspace-level-check")).toBeVisible({
       timeout: e2eTimeout,

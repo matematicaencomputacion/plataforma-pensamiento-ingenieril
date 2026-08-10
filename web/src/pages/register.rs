@@ -1,5 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::components::A;
+
+use crate::components::BrandLink;
 use leptos_router::hooks::use_navigate;
 
 use crate::auth::{input_value, register_user};
@@ -63,9 +65,7 @@ pub fn RegisterPage() -> impl IntoView {
     view! {
         <section class="auth-page">
             <div class="auth-page__card">
-                <A href="/" attr:class="auth-page__brand">
-                    "IngenierIA"
-                </A>
+                <BrandLink class="auth-page__brand" />
                 <h1 class="auth-page__title">"Crear cuenta"</h1>
                 <p class="auth-page__lead">
                     "Registrate con correo y contraseña (mínimo 8 caracteres)."
