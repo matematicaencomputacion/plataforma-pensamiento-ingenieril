@@ -22,127 +22,111 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 113,
-    id: "py-113-heap",
-    title: "DSA Heap (heapq)",
+    micro: 119,
+    id: "py-119-bellman-ford",
+    title: "DSA Bellman-Ford",
+    solution: `edges = [('A', 'B', 4), ('A', 'C', 2), ('B', 'C', -1), ('B', 'D', 5), ('C', 'D', 3)]
+nodes = ['A', 'B', 'C', 'D']
+def bellman_ford(edges, nodes, start):
+    dist = {n: float('inf') for n in nodes}
+    dist[start] = 0
+    for _ in range(len(nodes) - 1):
+        for u, v, w in edges:
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+    return dist
+print(bellman_ford(edges, nodes, 'A'))
+`,
+    nextUrl: /\/learn\/py-120-memo-fib/,
+    cursorAfter: "120",
+  },
+  {
+    micro: 120,
+    id: "py-120-memo-fib",
+    title: "DSA Memoization (Fib)",
+    solution: `memo = {}
+def fib(n):
+    if n in memo:
+        return memo[n]
+    if n <= 1:
+        return n
+    memo[n] = fib(n - 1) + fib(n - 2)
+    return memo[n]
+print(fib(6))
+`,
+    nextUrl: /\/learn\/py-121-tab-fib/,
+    cursorAfter: "121",
+  },
+  {
+    micro: 121,
+    id: "py-121-tab-fib",
+    title: "DSA Tabulation (Fib)",
+    solution: `def fib_tab(n):
+    if n <= 1:
+        return n
+    dp = [0] * (n + 1)
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[n]
+print(fib_tab(6))
+`,
+    nextUrl: /\/learn\/py-122-knapsack/,
+    cursorAfter: "122",
+  },
+  {
+    micro: 122,
+    id: "py-122-knapsack",
+    title: "DSA 0/1 Knapsack",
+    solution: `weights = [1, 3, 4]
+values = [15, 20, 30]
+def knapsack(weights, values, capacity):
+    n = len(weights)
+    dp = [[0] * (capacity + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for w in range(capacity + 1):
+            dp[i][w] = dp[i - 1][w]
+            if weights[i - 1] <= w:
+                dp[i][w] = max(dp[i][w], dp[i - 1][w - weights[i - 1]] + values[i - 1])
+    return dp[n][capacity]
+print(knapsack(weights, values, 4))
+`,
+    nextUrl: /\/learn\/py-123-euclidean/,
+    cursorAfter: "123",
+  },
+  {
+    micro: 123,
+    id: "py-123-euclidean",
+    title: "DSA Euclidean GCD",
+    solution: `def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+print(gcd(48, 18))
+`,
+    nextUrl: /\/learn\/py-124-huffman-cost/,
+    cursorAfter: "124",
+  },
+  {
+    micro: 124,
+    id: "py-124-huffman-cost",
+    title: "DSA Huffman Intro",
     solution: `import heapq
-h = []
-for x in [5, 3, 8, 1]:
-    heapq.heappush(h, x)
-while h:
-    print(heapq.heappop(h))
+def huffman_cost(freqs):
+    h = list(freqs)
+    heapq.heapify(h)
+    cost = 0
+    while len(h) > 1:
+        a = heapq.heappop(h)
+        b = heapq.heappop(h)
+        s = a + b
+        cost += s
+        heapq.heappush(h, s)
+    return cost
+print(huffman_cost([1, 1, 1, 1]))
 `,
-    nextUrl: /\/learn\/py-114-priority-queue/,
-    cursorAfter: "114",
-  },
-  {
-    micro: 114,
-    id: "py-114-priority-queue",
-    title: "DSA Priority Queue",
-    solution: `import heapq
-pq = []
-heapq.heappush(pq, (2, 'code'))
-heapq.heappush(pq, (1, 'eat'))
-heapq.heappush(pq, (3, 'sleep'))
-while pq:
-    print(heapq.heappop(pq)[1])
-`,
-    nextUrl: /\/learn\/py-115-union-find/,
-    cursorAfter: "115",
-  },
-  {
-    micro: 115,
-    id: "py-115-union-find",
-    title: "DSA Union-Find",
-    solution: `parent = [0, 1, 2, 3]
-def find(x):
-    while parent[x] != x:
-        x = parent[x]
-    return x
-def union(a, b):
-    ra, rb = find(a), find(b)
-    if ra != rb:
-        parent[rb] = ra
-union(0, 1)
-union(2, 3)
-union(1, 2)
-print(find(0) == find(3))
-`,
-    nextUrl: /\/learn\/py-116-kruskal/,
-    cursorAfter: "116",
-  },
-  {
-    micro: 116,
-    id: "py-116-kruskal",
-    title: "DSA Kruskal MST",
-    solution: `edges = [(1, 'A', 'B'), (2, 'B', 'C'), (3, 'A', 'C'), (4, 'C', 'D')]
-def kruskal(edges, nodes):
-    parent = {n: n for n in nodes}
-    def find(x):
-        while parent[x] != x:
-            x = parent[x]
-        return x
-    total = 0
-    for w, u, v in sorted(edges, key=lambda e: e[0]):
-        if find(u) != find(v):
-            parent[find(v)] = find(u)
-            total += w
-    return total
-print(kruskal(edges, ['A', 'B', 'C', 'D']))
-`,
-    nextUrl: /\/learn\/py-117-prim/,
-    cursorAfter: "117",
-  },
-  {
-    micro: 117,
-    id: "py-117-prim",
-    title: "DSA Prim MST",
-    solution: `import heapq
-graph = {'A': {'B': 1, 'C': 3}, 'B': {'A': 1, 'C': 2, 'D': 4}, 'C': {'A': 3, 'B': 2, 'D': 5}, 'D': {'B': 4, 'C': 5}}
-def prim(graph, start='A'):
-    visited = set()
-    pq = [(0, start)]
-    total = 0
-    while pq and len(visited) < len(graph):
-        w, u = heapq.heappop(pq)
-        if u in visited:
-            continue
-        visited.add(u)
-        total += w
-        for v, vw in graph[u].items():
-            if v not in visited:
-                heapq.heappush(pq, (vw, v))
-    return total
-print(prim(graph))
-`,
-    nextUrl: /\/learn\/py-118-topo-sort/,
-    cursorAfter: "118",
-  },
-  {
-    micro: 118,
-    id: "py-118-topo-sort",
-    title: "DSA Topological Sort",
-    solution: `from collections import deque
-graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}
-def topo(graph):
-    indeg = {n: 0 for n in graph}
-    for u in graph:
-        for v in graph[u]:
-            indeg[v] += 1
-    q = deque([n for n in graph if indeg[n] == 0])
-    order = []
-    while q:
-        u = q.popleft()
-        order.append(u)
-        for v in graph[u]:
-            indeg[v] -= 1
-            if indeg[v] == 0:
-                q.append(v)
-    return order
-print(topo(graph))
-`,
-    nextUrl: /\/learn\/py-119-bellman-ford/,
-    cursorAfter: "119",
+    nextUrl: /\/workspace/,
+    cursorAfter: "125",
   },
 ];
 
@@ -171,7 +155,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 113–118 · Heap / PQ / Union-Find / MST / Topo", () => {
+test.describe("micro-steps 119–124 · Bellman / DP / Euclidean / Huffman", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

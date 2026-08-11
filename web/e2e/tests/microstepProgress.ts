@@ -124,6 +124,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 116, step_id: "py-116-kruskal" },
   { level_id: 117, step_id: "py-117-prim" },
   { level_id: 118, step_id: "py-118-topo-sort" },
+  { level_id: 119, step_id: "py-119-bellman-ford" },
+  { level_id: 120, step_id: "py-120-memo-fib" },
+  { level_id: 121, step_id: "py-121-tab-fib" },
+  { level_id: 122, step_id: "py-122-knapsack" },
+  { level_id: 123, step_id: "py-123-euclidean" },
+  { level_id: 124, step_id: "py-124-huffman-cost" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
