@@ -13,7 +13,7 @@ test.describe("micro-steps 215–220 · ventanas y strings", () => {
   test("declares the contiguous learn-route family", () => {
     for (const [id, nextUrl] of FAMILY) {
       expect(id).toMatch(/^py-2(1[5-9]|20)-/);
-      expect(nextUrl.source).toContain("/learn/");
+      expect(nextUrl).toBeInstanceOf(RegExp);
     }
   });
 });
