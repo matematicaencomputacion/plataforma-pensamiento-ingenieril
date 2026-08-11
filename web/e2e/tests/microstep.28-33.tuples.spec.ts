@@ -22,71 +22,74 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 22,
-    id: "py-22-list-remove",
-    title: "Python Remove List Items",
-    solution: `thislist = ["apple", "banana", "cherry"]
-thislist.remove("banana")
-print(thislist)
+    micro: 28,
+    id: "py-28-tuples",
+    title: "Python Tuples",
+    solution: `thistuple = ("apple", "banana", "cherry")
+print(thistuple)
+print(len(thistuple))
 `,
-    nextUrl: /\/learn\/py-23-list-loop/,
-    cursorAfter: "23",
+    nextUrl: /\/learn\/py-29-tuple-access/,
+    cursorAfter: "29",
   },
   {
-    micro: 23,
-    id: "py-23-list-loop",
-    title: "Python Loop Lists",
-    solution: `thislist = ["apple", "banana", "cherry"]
-for x in thislist:
+    micro: 29,
+    id: "py-29-tuple-access",
+    title: "Python Access Tuple Items",
+    solution: `thistuple = ("apple", "banana", "cherry")
+print(thistuple[1])
+`,
+    nextUrl: /\/learn\/py-30-tuple-update/,
+    cursorAfter: "30",
+  },
+  {
+    micro: 30,
+    id: "py-30-tuple-update",
+    title: "Python Update Tuples",
+    solution: `x = ("apple", "banana", "cherry")
+y = list(x)
+y[1] = "kiwi"
+x = tuple(y)
+print(x)
+`,
+    nextUrl: /\/learn\/py-31-tuple-unpack/,
+    cursorAfter: "31",
+  },
+  {
+    micro: 31,
+    id: "py-31-tuple-unpack",
+    title: "Python Unpack Tuples",
+    solution: `fruits = ("apple", "banana", "cherry")
+(green, yellow, red) = fruits
+print(green)
+print(yellow)
+print(red)
+`,
+    nextUrl: /\/learn\/py-32-tuple-loop/,
+    cursorAfter: "32",
+  },
+  {
+    micro: 32,
+    id: "py-32-tuple-loop",
+    title: "Python Loop Tuples",
+    solution: `thistuple = ("apple", "banana", "cherry")
+for x in thistuple:
     print(x)
 `,
-    nextUrl: /\/learn\/py-24-list-comprehension/,
-    cursorAfter: "24",
+    nextUrl: /\/learn\/py-33-tuple-join/,
+    cursorAfter: "33",
   },
   {
-    micro: 24,
-    id: "py-24-list-comprehension",
-    title: "Python List Comprehension",
-    solution: `fruits = ["apple", "banana", "cherry", "kiwi", "mango"]
-newlist = [x for x in fruits if "a" in x]
-print(newlist)
+    micro: 33,
+    id: "py-33-tuple-join",
+    title: "Python Join Tuples",
+    solution: `tuple1 = ("a", "b", "c")
+tuple2 = (1, 2, 3)
+tuple3 = tuple1 + tuple2
+print(tuple3)
 `,
-    nextUrl: /\/learn\/py-25-list-sort/,
-    cursorAfter: "25",
-  },
-  {
-    micro: 25,
-    id: "py-25-list-sort",
-    title: "Python Sort Lists",
-    solution: `thislist = ["orange", "mango", "kiwi", "pineapple", "banana"]
-thislist.sort()
-print(thislist)
-`,
-    nextUrl: /\/learn\/py-26-list-copy/,
-    cursorAfter: "26",
-  },
-  {
-    micro: 26,
-    id: "py-26-list-copy",
-    title: "Python Copy Lists",
-    solution: `thislist = ["apple", "banana", "cherry"]
-mylist = thislist.copy()
-print(mylist)
-`,
-    nextUrl: /\/learn\/py-27-list-join/,
-    cursorAfter: "27",
-  },
-  {
-    micro: 27,
-    id: "py-27-list-join",
-    title: "Python Join Lists",
-    solution: `list1 = ["a", "b", "c"]
-list2 = [1, 2, 3]
-list3 = list1 + list2
-print(list3)
-`,
-    nextUrl: /\/learn\/py-28-tuples/,
-    cursorAfter: "28",
+    nextUrl: /\/workspace/,
+    cursorAfter: "34",
   },
 ];
 
@@ -115,7 +118,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 22–27 · List ops family", () => {
+test.describe("micro-steps 28–33 · Tuples family", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

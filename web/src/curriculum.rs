@@ -394,9 +394,93 @@ pub const PY27_LIST_JOIN: CodingStep = CodingStep {
     pytest: "def test_list_join(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('list1') == ['a', 'b', 'c']\n    assert ns.get('list2') == [1, 2, 3]\n    assert ns.get('list3') == ['a', 'b', 'c', 1, 2, 3]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'a' in out and '3' in out\n",
     hint: "list1 = [\"a\", \"b\", \"c\"]\nlist2 = [1, 2, 3]\nlist3 = list1 + list2\nprint(list3)",
     solution_example: "list1 = [\"a\", \"b\", \"c\"]\nlist2 = [1, 2, 3]\nlist3 = list1 + list2\nprint(list3)\n",
-    next: None,
+    next: Some("py-28-tuples"),
     show_type_chips: false,
     micro_step: 27,
+};
+
+pub const PY28_TUPLES: CodingStep = CodingStep {
+    id: "py-28-tuples",
+    title: "Python Tuples",
+    objective: "Crear una tupla, mostrarla y medir su longitud.",
+    prompt_md: "**Tuples**\n\nLas tuplas se escriben con paréntesis `()` y son inmutables.\n\n**Micro-reto:**\n1. Creá `thistuple` con `apple`, `banana` y `cherry`\n2. Imprimí `thistuple`\n3. Imprimí `len(thistuple)`",
+    starter_code: "# thistuple = ...\n# print(...)\n# print(len(...))\n",
+    pytest: "def test_tuples(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thistuple') == ('apple', 'banana', 'cherry')\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'apple' in out and '3' in out\n",
+    hint: "thistuple = (\"apple\", \"banana\", \"cherry\")\nprint(thistuple)\nprint(len(thistuple))",
+    solution_example: "thistuple = (\"apple\", \"banana\", \"cherry\")\nprint(thistuple)\nprint(len(thistuple))\n",
+    next: Some("py-29-tuple-access"),
+    show_type_chips: false,
+    micro_step: 28,
+};
+
+pub const PY29_TUPLE_ACCESS: CodingStep = CodingStep {
+    id: "py-29-tuple-access",
+    title: "Python Access Tuple Items",
+    objective: "Acceder a un ítem de tupla por índice.",
+    prompt_md: "**Access Tuple Items**\n\nLos ítems se indexan desde `0`.\n\n**Micro-reto:**\n1. Creá `thistuple` con `apple`, `banana` y `cherry`\n2. Imprimí el segundo ítem (`thistuple[1]`)",
+    starter_code: "# thistuple = ...\n# print(...)\n",
+    pytest: "def test_tuple_access(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thistuple') == ('apple', 'banana', 'cherry')\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'banana'\n",
+    hint: "thistuple = (\"apple\", \"banana\", \"cherry\")\nprint(thistuple[1])",
+    solution_example: "thistuple = (\"apple\", \"banana\", \"cherry\")\nprint(thistuple[1])\n",
+    next: Some("py-30-tuple-update"),
+    show_type_chips: false,
+    micro_step: 29,
+};
+
+pub const PY30_TUPLE_UPDATE: CodingStep = CodingStep {
+    id: "py-30-tuple-update",
+    title: "Python Update Tuples",
+    objective: "Actualizar una tupla convirtiéndola temporalmente a lista.",
+    prompt_md: "**Update Tuples**\n\nLas tuplas son inmutables; el workaround es pasar por `list()`.\n\n**Micro-reto:**\n1. Creá `x` con `apple`, `banana`, `cherry`\n2. Convertí a lista en `y`, cambiá el índice `1` a `kiwi`, y reconvertí a tupla en `x`\n3. Imprimí `x`",
+    starter_code: "# x = ...\n# y = list(x)\n# y[1] = ...\n# x = tuple(y)\n# print(x)\n",
+    pytest: "def test_tuple_update(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == ('apple', 'kiwi', 'cherry')\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'kiwi' in out\n",
+    hint: "x = (\"apple\", \"banana\", \"cherry\")\ny = list(x)\ny[1] = \"kiwi\"\nx = tuple(y)\nprint(x)",
+    solution_example: "x = (\"apple\", \"banana\", \"cherry\")\ny = list(x)\ny[1] = \"kiwi\"\nx = tuple(y)\nprint(x)\n",
+    next: Some("py-31-tuple-unpack"),
+    show_type_chips: false,
+    micro_step: 30,
+};
+
+pub const PY31_TUPLE_UNPACK: CodingStep = CodingStep {
+    id: "py-31-tuple-unpack",
+    title: "Python Unpack Tuples",
+    objective: "Desempaquetar valores de una tupla en variables.",
+    prompt_md: "**Unpack Tuples**\n\nPodés extraer valores de una tupla en variables.\n\n**Micro-reto:**\n1. Creá `fruits` con `apple`, `banana`, `cherry`\n2. Desempaquetá en `green`, `yellow`, `red`\n3. Imprimí las tres variables",
+    starter_code: "# fruits = ...\n# (green, yellow, red) = fruits\n# print(...)\n",
+    pytest: "def test_tuple_unpack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('fruits') == ('apple', 'banana', 'cherry')\n    assert ns.get('green') == 'apple'\n    assert ns.get('yellow') == 'banana'\n    assert ns.get('red') == 'cherry'\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['apple', 'banana', 'cherry']\n",
+    hint: "fruits = (\"apple\", \"banana\", \"cherry\")\n(green, yellow, red) = fruits\nprint(green)\nprint(yellow)\nprint(red)",
+    solution_example: "fruits = (\"apple\", \"banana\", \"cherry\")\n(green, yellow, red) = fruits\nprint(green)\nprint(yellow)\nprint(red)\n",
+    next: Some("py-32-tuple-loop"),
+    show_type_chips: false,
+    micro_step: 31,
+};
+
+pub const PY32_TUPLE_LOOP: CodingStep = CodingStep {
+    id: "py-32-tuple-loop",
+    title: "Python Loop Tuples",
+    objective: "Recorrer una tupla con for e imprimir cada ítem.",
+    prompt_md: "**Loop Tuples**\n\nPodés recorrer los ítems con un `for`.\n\n**Micro-reto:**\n1. Creá `thistuple` con `apple`, `banana` y `cherry`\n2. Recorré con `for x in thistuple` e imprimí cada `x`",
+    starter_code: "# thistuple = ...\n# for x in thistuple:\n#     print(x)\n",
+    pytest: "def test_tuple_loop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thistuple') == ('apple', 'banana', 'cherry')\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['apple', 'banana', 'cherry']\n",
+    hint: "thistuple = (\"apple\", \"banana\", \"cherry\")\nfor x in thistuple:\n    print(x)",
+    solution_example: "thistuple = (\"apple\", \"banana\", \"cherry\")\nfor x in thistuple:\n    print(x)\n",
+    next: Some("py-33-tuple-join"),
+    show_type_chips: false,
+    micro_step: 32,
+};
+
+pub const PY33_TUPLE_JOIN: CodingStep = CodingStep {
+    id: "py-33-tuple-join",
+    title: "Python Join Tuples",
+    objective: "Unir dos tuplas con el operador +.",
+    prompt_md: "**Join Tuples**\n\nPodés unir tuplas con `+`.\n\n**Micro-reto:**\n1. Creá `tuple1` con `a`, `b`, `c`\n2. Creá `tuple2` con `1`, `2`, `3`\n3. Creá `tuple3` como `tuple1 + tuple2`\n4. Imprimí `tuple3`",
+    starter_code: "# tuple1 = ...\n# tuple2 = ...\n# tuple3 = ...\n# print(...)\n",
+    pytest: "def test_tuple_join(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('tuple1') == ('a', 'b', 'c')\n    assert ns.get('tuple2') == (1, 2, 3)\n    assert ns.get('tuple3') == ('a', 'b', 'c', 1, 2, 3)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'a' in out and '3' in out\n",
+    hint: "tuple1 = (\"a\", \"b\", \"c\")\ntuple2 = (1, 2, 3)\ntuple3 = tuple1 + tuple2\nprint(tuple3)",
+    solution_example: "tuple1 = (\"a\", \"b\", \"c\")\ntuple2 = (1, 2, 3)\ntuple3 = tuple1 + tuple2\nprint(tuple3)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 33,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -427,6 +511,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY25_LIST_SORT,
     &PY26_LIST_COPY,
     &PY27_LIST_JOIN,
+    &PY28_TUPLES,
+    &PY29_TUPLE_ACCESS,
+    &PY30_TUPLE_UPDATE,
+    &PY31_TUPLE_UNPACK,
+    &PY32_TUPLE_LOOP,
+    &PY33_TUPLE_JOIN,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -668,10 +758,27 @@ mod tests {
             (24, "py-24-list-comprehension", Some("py-25-list-sort")),
             (25, "py-25-list-sort", Some("py-26-list-copy")),
             (26, "py-26-list-copy", Some("py-27-list-join")),
-            (27, "py-27-list-join", None),
+            (27, "py-27-list-join", Some("py-28-tuples")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("list ops step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py28_to_py33_tuples_chain() {
+        let ids = [
+            (28, "py-28-tuples", Some("py-29-tuple-access")),
+            (29, "py-29-tuple-access", Some("py-30-tuple-update")),
+            (30, "py-30-tuple-update", Some("py-31-tuple-unpack")),
+            (31, "py-31-tuple-unpack", Some("py-32-tuple-loop")),
+            (32, "py-32-tuple-loop", Some("py-33-tuple-join")),
+            (33, "py-33-tuple-join", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("tuples step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
