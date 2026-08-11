@@ -22,85 +22,73 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 58,
-    id: "py-58-init",
-    title: "Python __init__",
-    solution: `class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-p1 = Person("John", 36)
-print(p1.name)
-print(p1.age)
+    micro: 64,
+    id: "py-64-dates",
+    title: "Python Dates",
+    solution: `import datetime
+x = datetime.datetime(2020, 5, 17)
+print(x)
 `,
-    nextUrl: /\/learn\/py-59-inheritance/,
-    cursorAfter: "59",
+    nextUrl: /\/learn\/py-65-math/,
+    cursorAfter: "65",
   },
   {
-    micro: 59,
-    id: "py-59-inheritance",
-    title: "Python Inheritance",
-    solution: `class Person:
-    def __init__(self, fname, lname):
-        self.firstname = fname
-        self.lastname = lname
-    def printname(self):
-        print(self.firstname, self.lastname)
-class Student(Person):
-    pass
-x = Student("Mike", "Olsen")
-x.printname()
+    micro: 65,
+    id: "py-65-math",
+    title: "Python Math",
+    solution: `import math
+x = math.sqrt(64)
+print(x)
 `,
-    nextUrl: /\/learn\/py-60-iterators/,
-    cursorAfter: "60",
+    nextUrl: /\/learn\/py-66-json/,
+    cursorAfter: "66",
   },
   {
-    micro: 60,
-    id: "py-60-iterators",
-    title: "Python Iterators",
-    solution: `mytuple = ("apple", "banana", "cherry")
-myit = iter(mytuple)
-print(next(myit))
-print(next(myit))
-print(next(myit))
+    micro: 66,
+    id: "py-66-json",
+    title: "Python JSON",
+    solution: `import json
+x = '{"name":"John", "age":30}'
+y = json.loads(x)
+print(y["name"])
 `,
-    nextUrl: /\/learn\/py-61-polymorphism/,
-    cursorAfter: "61",
+    nextUrl: /\/learn\/py-67-regex/,
+    cursorAfter: "67",
   },
   {
-    micro: 61,
-    id: "py-61-polymorphism",
-    title: "Python Polymorphism",
-    solution: `x = "Hello World!"
-mytuple = ("apple", "banana", "cherry")
-print(len(x))
-print(len(mytuple))
+    micro: 67,
+    id: "py-67-regex",
+    title: "Python RegEx",
+    solution: `import re
+txt = "The rain in Spain"
+x = re.search("Spain", txt)
+print(x.group())
 `,
-    nextUrl: /\/learn\/py-62-scope/,
-    cursorAfter: "62",
+    nextUrl: /\/learn\/py-68-try-except/,
+    cursorAfter: "68",
   },
   {
-    micro: 62,
-    id: "py-62-scope",
-    title: "Python Scope",
-    solution: `def myfunc():
-    x = 300
+    micro: 68,
+    id: "py-68-try-except",
+    title: "Python Try Except",
+    solution: `try:
     print(x)
-myfunc()
+except:
+    print("An exception occurred")
 `,
-    nextUrl: /\/learn\/py-63-modules/,
-    cursorAfter: "63",
+    nextUrl: /\/learn\/py-69-string-formatting/,
+    cursorAfter: "69",
   },
   {
-    micro: 63,
-    id: "py-63-modules",
-    title: "Python Modules",
-    solution: `import platform
-x = platform.system()
-print(type(x).__name__)
+    micro: 69,
+    id: "py-69-string-formatting",
+    title: "Python String Formatting",
+    solution: `price = 49
+txt = f"The price is {price} dollars"
+print(txt)
 `,
-    nextUrl: /\/learn\/py-64-dates/,
-    cursorAfter: "64",
+    nextUrl: /\/workspace/,
+    cursorAfter: "70",
   },
 ];
 
@@ -129,7 +117,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 58–63 · Init / Inheritance / Iterators / Polymorphism / Scope / Modules", () => {
+test.describe("micro-steps 64–69 · Dates / Math / JSON / RegEx / TryExcept / Formatting", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
