@@ -21,6 +21,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 13, step_id: "py-13-concatenate" },
   { level_id: 14, step_id: "py-14-format-strings" },
   { level_id: 15, step_id: "py-15-escape" },
+  { level_id: 16, step_id: "py-16-booleans" },
+  { level_id: 17, step_id: "py-17-operators" },
+  { level_id: 18, step_id: "py-18-lists" },
+  { level_id: 19, step_id: "py-19-list-access" },
+  { level_id: 20, step_id: "py-20-list-change" },
+  { level_id: 21, step_id: "py-21-list-add" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

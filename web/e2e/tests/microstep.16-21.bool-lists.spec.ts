@@ -22,72 +22,67 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 10,
-    id: "py-10-strings",
-    title: "Python Strings",
-    solution: `a = "Hello, World!"
-print(a)
-print(len(a))
+    micro: 16,
+    id: "py-16-booleans",
+    title: "Python Booleans",
+    solution: `print(10 > 9)
+print(10 == 9)
+print(10 < 9)
 `,
-    nextUrl: /\/learn\/py-11-slicing/,
-    cursorAfter: "11",
+    nextUrl: /\/learn\/py-17-operators/,
+    cursorAfter: "17",
   },
   {
-    micro: 11,
-    id: "py-11-slicing",
-    title: "Python Slicing Strings",
-    solution: `b = "Hello, World!"
-slice = b[2:5]
-print(slice)
+    micro: 17,
+    id: "py-17-operators",
+    title: "Python Operators",
+    solution: `print(10 + 5)
 `,
-    nextUrl: /\/learn\/py-12-modify-strings/,
-    cursorAfter: "12",
+    nextUrl: /\/learn\/py-18-lists/,
+    cursorAfter: "18",
   },
   {
-    micro: 12,
-    id: "py-12-modify-strings",
-    title: "Python Modify Strings",
-    solution: `a = "Hello, World!"
-u = a.upper()
-l = a.lower()
-print(u)
-print(l)
+    micro: 18,
+    id: "py-18-lists",
+    title: "Python Lists",
+    solution: `thislist = ["apple", "banana", "cherry"]
+print(thislist)
+print(len(thislist))
 `,
-    nextUrl: /\/learn\/py-13-concatenate/,
-    cursorAfter: "13",
+    nextUrl: /\/learn\/py-19-list-access/,
+    cursorAfter: "19",
   },
   {
-    micro: 13,
-    id: "py-13-concatenate",
-    title: "Python String Concatenation",
-    solution: `a = "Hello"
-b = "World"
-c = a + " " + b
-print(c)
+    micro: 19,
+    id: "py-19-list-access",
+    title: "Python Access List Items",
+    solution: `thislist = ["apple", "banana", "cherry"]
+print(thislist[1])
 `,
-    nextUrl: /\/learn\/py-14-format-strings/,
-    cursorAfter: "14",
+    nextUrl: /\/learn\/py-20-list-change/,
+    cursorAfter: "20",
   },
   {
-    micro: 14,
-    id: "py-14-format-strings",
-    title: "Python Format Strings",
-    solution: `age = 36
-txt = f"My name is John, I am {age}"
-print(txt)
+    micro: 20,
+    id: "py-20-list-change",
+    title: "Python Change List Items",
+    solution: `thislist = ["apple", "banana", "cherry"]
+thislist[1] = "blackcurrant"
+print(thislist)
 `,
-    nextUrl: /\/learn\/py-15-escape/,
-    cursorAfter: "15",
+    nextUrl: /\/learn\/py-21-list-add/,
+    cursorAfter: "21",
   },
   {
-    micro: 15,
-    id: "py-15-escape",
-    title: "Python Escape Characters",
-    solution: `txt = "We are the so-called \\"Vikings\\" from the north."
-print(txt)
+    micro: 21,
+    id: "py-21-list-add",
+    title: "Python Add List Items",
+    solution: `thislist = ["apple", "banana", "cherry"]
+thislist.append("orange")
+print(thislist)
 `,
-    nextUrl: /\/learn\/py-16-booleans/,
-    cursorAfter: "16",
+    nextUrl: /\/workspace/,
+    cursorAfter: "22",
   },
 ];
 
@@ -116,7 +111,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 10–15 · W3Schools Strings family", () => {
+test.describe("micro-steps 16–21 · Booleans, Operators, Lists", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
