@@ -21,160 +21,103 @@ type FamilyStep = {
 };
 
 const FAMILY: FamilyStep[] = [
-  {
-    micro: 179,
-    id: "py-179-daily-temps",
-    title: "DSA Daily Temperatures",
-    solution: `def daily_temperatures(temps):
-    n = len(temps)
-    ans = [0] * n
-    stack = []
-    for i, t in enumerate(temps):
-        while stack and temps[stack[-1]] < t:
-            j = stack.pop()
-            ans[j] = i - j
-        stack.append(i)
-    return ans
-print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
-`,
-    nextUrl: /\/learn\/py-180-next-greater/,
-    cursorAfter: "180",
-  },
-  {
-    micro: 180,
-    id: "py-180-next-greater",
-    title: "DSA Next Greater Element",
-    solution: `def next_greater(nums):
-    n = len(nums)
-    ans = [-1] * n
-    stack = []
-    for i, x in enumerate(nums):
-        while stack and nums[stack[-1]] < x:
-            ans[stack.pop()] = x
-        stack.append(i)
-    return ans
-print(next_greater([2, 1, 2, 4, 3]))
-`,
-    nextUrl: /\/learn\/py-181-eval-rpn/,
-    cursorAfter: "181",
-  },
-  {
-    micro: 181,
-    id: "py-181-eval-rpn",
-    title: "DSA Evaluate RPN",
-    solution: `def eval_rpn(tokens):
-    stack = []
-    for t in tokens:
-        if t in '+-*/':
-            b, a = stack.pop(), stack.pop()
-            if t == '+':
-                stack.append(a + b)
-            elif t == '-':
-                stack.append(a - b)
-            elif t == '*':
-                stack.append(a * b)
+  { micro: 185, id: "py-185-first-last", title: "DSA First Last Position", solution: `def search_range(nums, target):
+    def bound(first):
+        lo, hi = 0, len(nums)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if nums[mid] > target or (first and nums[mid] == target):
+                hi = mid
             else:
-                stack.append(int(a / b))
+                lo = mid + 1
+        return lo
+    left = bound(True)
+    if left == len(nums) or nums[left] != target:
+        return [-1, -1]
+    return [left, bound(False) - 1]
+print(search_range([5, 7, 7, 8, 8, 10], 8))
+`, nextUrl: /\/learn\/py-186-peak-element/, cursorAfter: "186" },
+  { micro: 186, id: "py-186-peak-element", title: "DSA Peak Element", solution: `def find_peak_element(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] < nums[mid + 1]:
+            lo = mid + 1
         else:
-            stack.append(int(t))
-    return stack[0]
-print(eval_rpn(['2', '1', '+', '3', '*']))
-`,
-    nextUrl: /\/learn\/py-182-queue-stacks/,
-    cursorAfter: "182",
-  },
-  {
-    micro: 182,
-    id: "py-182-queue-stacks",
-    title: "DSA Queue With Stacks",
-    solution: `class MyQueue:
-    def __init__(self):
-        self.inn = []
-        self.out = []
+            hi = mid
+    return lo
+print(find_peak_element([1, 2, 3, 1]))
+`, nextUrl: /\/learn\/py-187-search-rotated/, cursorAfter: "187" },
+  { micro: 187, id: "py-187-search-rotated", title: "DSA Search Rotated Array", solution: `def search_rotated(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= nums[mid]:
+            if nums[lo] <= target < nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+    return -1
+print(search_rotated([4, 5, 6, 7, 0, 1, 2], 0))
+`, nextUrl: /\/learn\/py-188-sqrt/, cursorAfter: "188" },
+  { micro: 188, id: "py-188-sqrt", title: "DSA Sqrt Integer", solution: `def my_sqrt(x):
+    if x < 2:
+        return x
+    lo, hi = 1, x // 2
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        square = mid * mid
+        if square == x:
+            return mid
+        if square < x:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return hi
+print(my_sqrt(8))
+`, nextUrl: /\/learn\/py-189-ship-capacity/, cursorAfter: "189" },
+  { micro: 189, id: "py-189-ship-capacity", title: "DSA Ship Capacity", solution: `def ship_within_days(weights, days):
+    def feasible(capacity):
+        needed = 1
+        current = 0
+        for weight in weights:
+            if current + weight > capacity:
+                needed += 1
+                current = weight
+                if needed > days:
+                    return False
+            else:
+                current += weight
+        return True
 
-    def push(self, x):
-        self.inn.append(x)
-
-    def pop(self):
-        self.peek()
-        return self.out.pop()
-
-    def peek(self):
-        if not self.out:
-            while self.inn:
-                self.out.append(self.inn.pop())
-        return self.out[-1]
-
-    def empty(self):
-        return not self.inn and not self.out
-
-q = MyQueue()
-q.push(1)
-q.push(2)
-print([q.peek(), q.pop(), q.empty()])
-`,
-    nextUrl: /\/learn\/py-183-sliding-max/,
-    cursorAfter: "183",
-  },
-  {
-    micro: 183,
-    id: "py-183-sliding-max",
-    title: "DSA Sliding Window Maximum",
-    solution: `from collections import deque
-
-def max_sliding_window(nums, k):
-    dq = deque()
-    out = []
-    for i, x in enumerate(nums):
-        while dq and dq[0] <= i - k:
-            dq.popleft()
-        while dq and nums[dq[-1]] <= x:
-            dq.pop()
-        dq.append(i)
-        if i >= k - 1:
-            out.append(nums[dq[0]])
-    return out
-print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
-`,
-    nextUrl: /\/learn\/py-184-min-stack/,
-    cursorAfter: "184",
-  },
-  {
-    micro: 184,
-    id: "py-184-min-stack",
-    title: "DSA Min Stack",
-    solution: `class MinStack:
-    def __init__(self):
-        self.stack = []
-        self.mins = []
-
-    def push(self, val):
-        self.stack.append(val)
-        self.mins.append(val if not self.mins else min(val, self.mins[-1]))
-
-    def pop(self):
-        self.stack.pop()
-        self.mins.pop()
-
-    def top(self):
-        return self.stack[-1]
-
-    def get_min(self):
-        return self.mins[-1]
-
-s = MinStack()
-s.push(-2)
-s.push(0)
-s.push(-3)
-a = s.get_min()
-s.pop()
-b = s.top()
-c = s.get_min()
-print([a, b, c])
-`,
-    nextUrl: /\/learn\/py-185-first-last/,
-    cursorAfter: "185",
-  },
+    lo, hi = max(weights), sum(weights)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if feasible(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
+`, nextUrl: /\/learn\/py-190-min-rotated/, cursorAfter: "190" },
+  { micro: 190, id: "py-190-min-rotated", title: "DSA Min Rotated Array", solution: `def find_min_rotated(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return nums[lo]
+print(find_min_rotated([3, 4, 5, 1, 2]))
+`, nextUrl: /\/workspace/, cursorAfter: "191" },
 ];
 
 function uniqueCreds(micro: number) {

@@ -190,6 +190,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 182, step_id: "py-182-queue-stacks" },
   { level_id: 183, step_id: "py-183-sliding-max" },
   { level_id: 184, step_id: "py-184-min-stack" },
+  { level_id: 185, step_id: "py-185-first-last" },
+  { level_id: 186, step_id: "py-186-peak-element" },
+  { level_id: 187, step_id: "py-187-search-rotated" },
+  { level_id: 188, step_id: "py-188-sqrt" },
+  { level_id: 189, step_id: "py-189-ship-capacity" },
+  { level_id: 190, step_id: "py-190-min-rotated" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
