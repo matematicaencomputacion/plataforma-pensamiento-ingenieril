@@ -14,6 +14,7 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 6, step_id: "py-06-comments" },
   { level_id: 7, step_id: "py-07-data-types" },
   { level_id: 8, step_id: "py-08-numbers" },
+  { level_id: 9, step_id: "py-09-casting" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

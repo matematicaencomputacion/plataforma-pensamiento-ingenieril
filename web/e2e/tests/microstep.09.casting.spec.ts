@@ -11,18 +11,17 @@ import { unlockThroughMicroStep } from "./microstepProgress";
 
 const useRealPyodide = process.env.PPI_E2E_REAL_PYODIDE === "1";
 
-const SOLUTION = `x = 5
-y = 3.14
-z = 2 + 3j
-print(type(x))
-print(type(y))
-print(type(z))
+const SOLUTION = `x = 1
+a = float(x)
+b = str(x)
+print(a)
+print(b)
 `;
 
 function uniqueCreds() {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
   const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
-  return { email: `e2e-ms08-${stamp}@example.com`, password };
+  return { email: `e2e-ms09-${stamp}@example.com`, password };
 }
 
 async function login(page: Page, email: string, password: string) {
@@ -44,14 +43,14 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-step 8 · Python Numbers", () => {
+test.describe("micro-step 9 · Python Casting", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
     }
   });
 
-  test("rail opens numbers challenge; pass returns to workspace with badge", async ({
+  test("rail opens casting challenge; pass returns to workspace with badge", async ({
     page,
     request,
   }: {
@@ -67,22 +66,22 @@ test.describe("micro-step 8 · Python Numbers", () => {
     const regJson = (await reg.json()) as { token: string };
 
     await login(page, email, password);
-    await unlockThroughMicroStep(request, regJson.token, 7);
+    await unlockThroughMicroStep(request, regJson.token, 8);
     await page.reload();
     await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
     await expect(page.locator("#workspace-microsteps")).toHaveAttribute(
       "data-current-level",
-      "8",
+      "9",
       { timeout: e2eTimeout },
     );
 
-    await expect(page.locator("#workspace-microstep-link-8")).toBeVisible();
-    await expect(page.locator("#workspace-microstep-link-9")).toHaveCount(0);
+    await expect(page.locator("#workspace-microstep-link-9")).toBeVisible();
+    await expect(page.locator("#workspace-microstep-link-10")).toHaveCount(0);
 
-    await page.locator("#workspace-microstep-link-8").click();
-    await expect(page).toHaveURL(/\/learn\/py-08-numbers/, { timeout: e2eTimeout });
+    await page.locator("#workspace-microstep-link-9").click();
+    await expect(page).toHaveURL(/\/learn\/py-09-casting/, { timeout: e2eTimeout });
     await expect(
-      page.getByRole("heading", { name: "Python Numbers" }),
+      page.getByRole("heading", { name: "Python Casting" }),
     ).toBeVisible({ timeout: e2eTimeout });
 
     const engineTimeout = useRealPyodide ? 120_000 : e2eTimeout;
@@ -99,21 +98,13 @@ test.describe("micro-step 8 · Python Numbers", () => {
     });
 
     await page.locator("#learn-continue").click();
-    await expect(page).toHaveURL(/\/learn\/py-09-casting/, {
-      timeout: e2eTimeout,
-    });
-
-    await page
-      .getByLabel("Navegación del Paso 2")
-      .getByRole("link", { name: "Workspace" })
-      .click();
     await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
     await expect(page.locator("#workspace-microsteps")).toHaveAttribute(
       "data-current-level",
-      "9",
+      "10",
     );
-    const step8 = page.locator('#workspace-microsteps [data-microstep="8"]');
-    await expect(step8).toHaveClass(/workspace__microstep--done/);
-    await expect(step8.locator(".workspace__microstep-badge")).toBeVisible();
+    const step9 = page.locator('#workspace-microsteps [data-microstep="9"]');
+    await expect(step9).toHaveClass(/workspace__microstep--done/);
+    await expect(step9.locator(".workspace__microstep-badge")).toBeVisible();
   });
 });
