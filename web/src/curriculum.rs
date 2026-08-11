@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=100).
+    /// 1-based index on the workspace micro-step rail (1..=300).
     pub micro_step: i32,
 }
 
@@ -1416,9 +1416,93 @@ pub const PY100_HASH_COUNT: CodingStep = CodingStep {
     pytest: "def test_hash_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('counts', {}).get('apple') == 3\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '3'\n",
     hint: "mylist = [\"apple\", \"banana\", \"apple\", \"cherry\", \"banana\", \"apple\"]\ncounts = {}\nfor x in mylist:\n    counts[x] = counts.get(x, 0) + 1\nprint(counts[\"apple\"])",
     solution_example: "mylist = [\"apple\", \"banana\", \"apple\", \"cherry\", \"banana\", \"apple\"]\ncounts = {}\nfor x in mylist:\n    counts[x] = counts.get(x, 0) + 1\nprint(counts[\"apple\"])\n",
-    next: None,
+    next: Some("py-101-linked-delete"),
     show_type_chips: false,
     micro_step: 100,
+};
+
+pub const PY101_LINKED_DELETE: CodingStep = CodingStep {
+    id: "py-101-linked-delete",
+    title: "DSA Linked List Delete",
+    objective: "Borrar un nodo reconectando next.",
+    prompt_md: "**Delete a Node**\n\nAntes de borrar, conectá el nodo previo con el siguiente.\n\n**Micro-reto:**\n1. Creá `Node` y la cadena `7 -> 11 -> 3`\n2. Definí `deleteNext(node)` que elimine el nodo inmediatamente siguiente a `node`\n3. Llamá `deleteNext(node1)` (borra el `11`) y imprimí `node1.next.data`",
+    starter_code: "# class Node:\n#     ...\n# def deleteNext(node):\n#     ...\n# ...\n# print(...)\n",
+    pytest: "def test_linked_delete(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['node1'].next.data == 3\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '3'\n",
+    hint: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\ndef deleteNext(node):\n    if node.next is not None:\n        node.next = node.next.next\nnode1 = Node(7)\nnode2 = Node(11)\nnode3 = Node(3)\nnode1.next = node2\nnode2.next = node3\ndeleteNext(node1)\nprint(node1.next.data)",
+    solution_example: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\ndef deleteNext(node):\n    if node.next is not None:\n        node.next = node.next.next\nnode1 = Node(7)\nnode2 = Node(11)\nnode3 = Node(3)\nnode1.next = node2\nnode2.next = node3\ndeleteNext(node1)\nprint(node1.next.data)\n",
+    next: Some("py-102-linked-insert"),
+    show_type_chips: false,
+    micro_step: 101,
+};
+
+pub const PY102_LINKED_INSERT: CodingStep = CodingStep {
+    id: "py-102-linked-insert",
+    title: "DSA Linked List Insert",
+    objective: "Insertar un nodo después de otro.",
+    prompt_md: "**Insert a Node**\n\nAjustá los punteros `next` al insertar.\n\n**Micro-reto:**\n1. Creá la cadena `7 -> 3`\n2. Definí `insertAfter(node, newNode)` que inserte `newNode` justo después de `node`\n3. Insertá `Node(97)` después de `node1` e imprimí `node1.next.data`",
+    starter_code: "# class Node:\n#     ...\n# def insertAfter(node, newNode):\n#     ...\n# ...\n# print(...)\n",
+    pytest: "def test_linked_insert(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['node1'].next.data == 97\n    assert ns['node1'].next.next.data == 3\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '97'\n",
+    hint: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\ndef insertAfter(node, newNode):\n    newNode.next = node.next\n    node.next = newNode\nnode1 = Node(7)\nnode2 = Node(3)\nnode1.next = node2\ninsertAfter(node1, Node(97))\nprint(node1.next.data)",
+    solution_example: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\ndef insertAfter(node, newNode):\n    newNode.next = node.next\n    node.next = newNode\nnode1 = Node(7)\nnode2 = Node(3)\nnode1.next = node2\ninsertAfter(node1, Node(97))\nprint(node1.next.data)\n",
+    next: Some("py-103-merge-sort"),
+    show_type_chips: false,
+    micro_step: 102,
+};
+
+pub const PY103_MERGE_SORT: CodingStep = CodingStep {
+    id: "py-103-merge-sort",
+    title: "DSA Merge Sort",
+    objective: "Ordenar con Merge Sort recursivo.",
+    prompt_md: "**Merge Sort**\n\nDividí, ordená cada mitad y mergeá.\n\n**Micro-reto:**\n1. Implementá `merge` y `mergeSort` como en W3S\n2. Ordená `mylist = [3, 7, 6, -10, 15, 23.5, 55, -13]`\n3. Imprimí el resultado de `mergeSort(mylist)`",
+    starter_code: "# def merge(left, right):\n#     ...\n# def mergeSort(arr):\n#     ...\n# mylist = ...\n# print(...)\n",
+    pytest: "def test_merge_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '[-13, -10, 3, 6, 7, 15, 23.5, 55]'\n",
+    hint: "def merge(left, right):\n    result = []\n    i = j = 0\n    while i < len(left) and j < len(right):\n        if left[i] < right[j]:\n            result.append(left[i])\n            i += 1\n        else:\n            result.append(right[j])\n            j += 1\n    result.extend(left[i:])\n    result.extend(right[j:])\n    return result\ndef mergeSort(arr):\n    if len(arr) <= 1:\n        return arr\n    mid = len(arr) // 2\n    return merge(mergeSort(arr[:mid]), mergeSort(arr[mid:]))\nmylist = [3, 7, 6, -10, 15, 23.5, 55, -13]\nprint(mergeSort(mylist))",
+    solution_example: "def merge(left, right):\n    result = []\n    i = j = 0\n    while i < len(left) and j < len(right):\n        if left[i] < right[j]:\n            result.append(left[i])\n            i += 1\n        else:\n            result.append(right[j])\n            j += 1\n    result.extend(left[i:])\n    result.extend(right[j:])\n    return result\ndef mergeSort(arr):\n    if len(arr) <= 1:\n        return arr\n    mid = len(arr) // 2\n    return merge(mergeSort(arr[:mid]), mergeSort(arr[mid:]))\nmylist = [3, 7, 6, -10, 15, 23.5, 55, -13]\nprint(mergeSort(mylist))\n",
+    next: Some("py-104-counting-sort"),
+    show_type_chips: false,
+    micro_step: 103,
+};
+
+pub const PY104_COUNTING_SORT: CodingStep = CodingStep {
+    id: "py-104-counting-sort",
+    title: "DSA Counting Sort",
+    objective: "Ordenar enteros no negativos contando frecuencias.",
+    prompt_md: "**Counting Sort**\n\nContá cuántas veces aparece cada valor y reconstruí el array ordenado.\n\n**Micro-reto:**\n1. Definí `countingSort(arr)` para enteros `>= 0`\n2. Ordená `mylist = [4, 2, 2, 8, 3, 3, 1]`\n3. Imprimí el resultado",
+    starter_code: "# def countingSort(arr):\n#     ...\n# mylist = ...\n# print(...)\n",
+    pytest: "def test_counting_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['countingSort']([4, 2, 2, 8, 3, 3, 1]) == [1, 2, 2, 3, 3, 4, 8]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '[1, 2, 2, 3, 3, 4, 8]'\n",
+    hint: "def countingSort(arr):\n    if not arr:\n        return []\n    size = max(arr) + 1\n    count = [0] * size\n    for x in arr:\n        count[x] += 1\n    out = []\n    for value, freq in enumerate(count):\n        out.extend([value] * freq)\n    return out\nmylist = [4, 2, 2, 8, 3, 3, 1]\nprint(countingSort(mylist))",
+    solution_example: "def countingSort(arr):\n    if not arr:\n        return []\n    size = max(arr) + 1\n    count = [0] * size\n    for x in arr:\n        count[x] += 1\n    out = []\n    for value, freq in enumerate(count):\n        out.extend([value] * freq)\n    return out\nmylist = [4, 2, 2, 8, 3, 3, 1]\nprint(countingSort(mylist))\n",
+    next: Some("py-105-tree-node"),
+    show_type_chips: false,
+    micro_step: 104,
+};
+
+pub const PY105_TREE_NODE: CodingStep = CodingStep {
+    id: "py-105-tree-node",
+    title: "DSA Binary Tree Node",
+    objective: "Crear un árbol binario con left y right.",
+    prompt_md: "**Binary Trees**\n\nUn TreeNode tiene `data`, `left` y `right`.\n\n**Micro-reto:**\n1. Creá `class TreeNode` con `data`, `left=None`, `right=None`\n2. Creá `root = TreeNode(1)` con `left=TreeNode(2)` y `right=TreeNode(3)`\n3. Imprimí `root.left.data` y `root.right.data`",
+    starter_code: "# class TreeNode:\n#     ...\n# root = ...\n# print(...)\n",
+    pytest: "def test_tree_node(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['root'].data == 1\n    assert ns['root'].left.data == 2 and ns['root'].right.data == 3\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2', '3']\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\nprint(root.left.data)\nprint(root.right.data)",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\nprint(root.left.data)\nprint(root.right.data)\n",
+    next: Some("py-106-tree-preorder"),
+    show_type_chips: false,
+    micro_step: 105,
+};
+
+pub const PY106_TREE_PREORDER: CodingStep = CodingStep {
+    id: "py-106-tree-preorder",
+    title: "DSA Tree Preorder",
+    objective: "Recorrer un árbol en preorder (root-left-right).",
+    prompt_md: "**Tree Traversal (Preorder)**\n\nPreorder: visitar root, luego left, luego right.\n\n**Micro-reto:**\n1. Creá el árbol `1` con left `2` y right `3`\n2. Definí `preorder(node)` que imprima cada `data` en su propia línea\n3. Llamá `preorder(root)`",
+    starter_code: "# class TreeNode:\n#     ...\n# def preorder(node):\n#     ...\n# ...\n# preorder(root)\n",
+    pytest: "def test_tree_preorder(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['1', '2', '3']\n    assert callable(ns.get('preorder'))\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef preorder(node):\n    if node is None:\n        return\n    print(node.data)\n    preorder(node.left)\n    preorder(node.right)\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\npreorder(root)",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef preorder(node):\n    if node is None:\n        return\n    print(node.data)\n    preorder(node.left)\n    preorder(node.right)\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\npreorder(root)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 106,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1522,6 +1606,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY98_FIBONACCI,
     &PY99_QUICKSORT,
     &PY100_HASH_COUNT,
+    &PY101_LINKED_DELETE,
+    &PY102_LINKED_INSERT,
+    &PY103_MERGE_SORT,
+    &PY104_COUNTING_SORT,
+    &PY105_TREE_NODE,
+    &PY106_TREE_PREORDER,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -1668,7 +1758,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 100);
+            assert!(step.micro_step >= 1 && step.micro_step <= 300);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -1968,10 +2058,27 @@ mod tests {
             (97, "py-97-recursion", Some("py-98-fibonacci")),
             (98, "py-98-fibonacci", Some("py-99-quicksort")),
             (99, "py-99-quicksort", Some("py-100-hash-count")),
-            (100, "py-100-hash-count", None),
+            (100, "py-100-hash-count", Some("py-101-linked-delete")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("finale family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py101_to_py106_dsa_plus_chain() {
+        let ids = [
+            (101, "py-101-linked-delete", Some("py-102-linked-insert")),
+            (102, "py-102-linked-insert", Some("py-103-merge-sort")),
+            (103, "py-103-merge-sort", Some("py-104-counting-sort")),
+            (104, "py-104-counting-sort", Some("py-105-tree-node")),
+            (105, "py-105-tree-node", Some("py-106-tree-preorder")),
+            (106, "py-106-tree-preorder", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("dsa-plus family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }

@@ -22,143 +22,136 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 94,
-    id: "py-94-linked-node",
-    title: "DSA Linked List Node",
+    micro: 101,
+    id: "py-101-linked-delete",
+    title: "DSA Linked List Delete",
     solution: `class Node:
     def __init__(self, data):
         self.data = data
         self.next = None
+def deleteNext(node):
+    if node.next is not None:
+        node.next = node.next.next
 node1 = Node(7)
 node2 = Node(11)
+node3 = Node(3)
 node1.next = node2
+node2.next = node3
+deleteNext(node1)
 print(node1.next.data)
 `,
-    nextUrl: /\/learn\/py-95-linked-traverse/,
-    cursorAfter: "95",
+    nextUrl: /\/learn\/py-102-linked-insert/,
+    cursorAfter: "102",
   },
   {
-    micro: 95,
-    id: "py-95-linked-traverse",
-    title: "DSA Linked List Traverse",
+    micro: 102,
+    id: "py-102-linked-insert",
+    title: "DSA Linked List Insert",
     solution: `class Node:
     def __init__(self, data):
         self.data = data
         self.next = None
-def traverse(head):
-    current = head
-    while current:
-        print(current.data, end=" ")
-        current = current.next
-    print()
+def insertAfter(node, newNode):
+    newNode.next = node.next
+    node.next = newNode
 node1 = Node(7)
-node2 = Node(11)
-node3 = Node(3)
+node2 = Node(3)
 node1.next = node2
-node2.next = node3
-traverse(node1)
+insertAfter(node1, Node(97))
+print(node1.next.data)
 `,
-    nextUrl: /\/learn\/py-96-linked-lowest/,
-    cursorAfter: "96",
+    nextUrl: /\/learn\/py-103-merge-sort/,
+    cursorAfter: "103",
   },
   {
-    micro: 96,
-    id: "py-96-linked-lowest",
-    title: "DSA Linked List Lowest",
-    solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-def findLowestValue(head):
-    minValue = head.data
-    current = head.next
-    while current:
-        if current.data < minValue:
-            minValue = current.data
-        current = current.next
-    return minValue
-node1 = Node(7)
-node2 = Node(11)
-node3 = Node(3)
-node4 = Node(2)
-node5 = Node(9)
-node1.next = node2
-node2.next = node3
-node3.next = node4
-node4.next = node5
-print(findLowestValue(node1))
-`,
-    nextUrl: /\/learn\/py-97-recursion/,
-    cursorAfter: "97",
-  },
-  {
-    micro: 97,
-    id: "py-97-recursion",
-    title: "Python Recursion (factorial)",
-    solution: `def factorial(n):
-    if n == 1:
-        return 1
-    else:
-        return n * factorial(n - 1)
-print(factorial(5))
-`,
-    nextUrl: /\/learn\/py-98-fibonacci/,
-    cursorAfter: "98",
-  },
-  {
-    micro: 98,
-    id: "py-98-fibonacci",
-    title: "Python Recursion (Fibonacci)",
-    solution: `def fib(n):
-    if n == 0:
-        return 0
-    if n == 1:
-        return 1
-    return fib(n - 1) + fib(n - 2)
-print(fib(7))
-`,
-    nextUrl: /\/learn\/py-99-quicksort/,
-    cursorAfter: "99",
-  },
-  {
-    micro: 99,
-    id: "py-99-quicksort",
-    title: "DSA Quicksort",
-    solution: `def partition(array, low, high):
-    pivot = array[high]
-    i = low - 1
-    for j in range(low, high):
-        if array[j] <= pivot:
+    micro: 103,
+    id: "py-103-merge-sort",
+    title: "DSA Merge Sort",
+    solution: `def merge(left, right):
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
             i += 1
-            array[i], array[j] = array[j], array[i]
-    array[i+1], array[high] = array[high], array[i+1]
-    return i+1
-def quicksort(array, low=0, high=None):
-    if high is None:
-        high = len(array) - 1
-    if low < high:
-        pivot_index = partition(array, low, high)
-        quicksort(array, low, pivot_index-1)
-        quicksort(array, pivot_index+1, high)
-mylist = [64, 34, 25, 5, 22, 11, 90, 12]
-quicksort(mylist)
-print(mylist)
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+def mergeSort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    return merge(mergeSort(arr[:mid]), mergeSort(arr[mid:]))
+mylist = [3, 7, 6, -10, 15, 23.5, 55, -13]
+print(mergeSort(mylist))
 `,
-    nextUrl: /\/learn\/py-100-hash-count/,
-    cursorAfter: "100",
+    nextUrl: /\/learn\/py-104-counting-sort/,
+    cursorAfter: "104",
   },
   {
-    micro: 100,
-    id: "py-100-hash-count",
-    title: "DSA Hash Tables (count)",
-    solution: `mylist = ["apple", "banana", "apple", "cherry", "banana", "apple"]
-counts = {}
-for x in mylist:
-    counts[x] = counts.get(x, 0) + 1
-print(counts["apple"])
+    micro: 104,
+    id: "py-104-counting-sort",
+    title: "DSA Counting Sort",
+    solution: `def countingSort(arr):
+    if not arr:
+        return []
+    size = max(arr) + 1
+    count = [0] * size
+    for x in arr:
+        count[x] += 1
+    out = []
+    for value, freq in enumerate(count):
+        out.extend([value] * freq)
+    return out
+mylist = [4, 2, 2, 8, 3, 3, 1]
+print(countingSort(mylist))
 `,
-    nextUrl: /\/learn\/py-101-linked-delete/,
-    cursorAfter: "101",
+    nextUrl: /\/learn\/py-105-tree-node/,
+    cursorAfter: "105",
+  },
+  {
+    micro: 105,
+    id: "py-105-tree-node",
+    title: "DSA Binary Tree Node",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+print(root.left.data)
+print(root.right.data)
+`,
+    nextUrl: /\/learn\/py-106-tree-preorder/,
+    cursorAfter: "106",
+  },
+  {
+    micro: 106,
+    id: "py-106-tree-preorder",
+    title: "DSA Tree Preorder",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+def preorder(node):
+    if node is None:
+        return
+    print(node.data)
+    preorder(node.left)
+    preorder(node.right)
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+preorder(root)
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "107",
   },
 ];
 
@@ -187,7 +180,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 94–100 · Linked Lists / Recursion / Quicksort / Hash", () => {
+test.describe("micro-steps 101–106 · Linked ops / Merge-Counting Sort / Trees", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
@@ -223,11 +216,9 @@ test.describe("micro-steps 94–100 · Linked Lists / Recursion / Quicksort / Ha
       await expect(
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
-      if (step.micro < 100) {
-        await expect(
-          page.locator(`#workspace-microstep-link-${step.micro + 1}`),
-        ).toHaveCount(0);
-      }
+      await expect(
+        page.locator(`#workspace-microstep-link-${step.micro + 1}`),
+      ).toHaveCount(0);
 
       await page.locator(`#workspace-microstep-link-${step.micro}`).click();
       await expect(page).toHaveURL(new RegExp(`/learn/${step.id}`), {
