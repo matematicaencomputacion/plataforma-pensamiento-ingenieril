@@ -1500,9 +1500,93 @@ pub const PY106_TREE_PREORDER: CodingStep = CodingStep {
     pytest: "def test_tree_preorder(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['1', '2', '3']\n    assert callable(ns.get('preorder'))\n",
     hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef preorder(node):\n    if node is None:\n        return\n    print(node.data)\n    preorder(node.left)\n    preorder(node.right)\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\npreorder(root)",
     solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef preorder(node):\n    if node is None:\n        return\n    print(node.data)\n    preorder(node.left)\n    preorder(node.right)\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\npreorder(root)\n",
-    next: None,
+    next: Some("py-107-tree-inorder"),
     show_type_chips: false,
     micro_step: 106,
+};
+
+pub const PY107_TREE_INORDER: CodingStep = CodingStep {
+    id: "py-107-tree-inorder",
+    title: "DSA Tree Inorder",
+    objective: "Recorrer un árbol en inorder (left-root-right).",
+    prompt_md: "**Tree Traversal (Inorder)**\n\nInorder: left, luego root, luego right.\n\n**Micro-reto:**\n1. Creá el árbol `1` con left `2` y right `3`\n2. Definí `inorder(node)` que imprima cada `data` en su propia línea\n3. Llamá `inorder(root)` (salida esperada: `2`, `1`, `3`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def inorder(node):\n#     ...\n# ...\n# inorder(root)\n",
+    pytest: "def test_tree_inorder(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2', '1', '3']\n    assert callable(ns.get('inorder'))\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef inorder(node):\n    if node is None:\n        return\n    inorder(node.left)\n    print(node.data)\n    inorder(node.right)\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\ninorder(root)",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef inorder(node):\n    if node is None:\n        return\n    inorder(node.left)\n    print(node.data)\n    inorder(node.right)\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\ninorder(root)\n",
+    next: Some("py-108-tree-postorder"),
+    show_type_chips: false,
+    micro_step: 107,
+};
+
+pub const PY108_TREE_POSTORDER: CodingStep = CodingStep {
+    id: "py-108-tree-postorder",
+    title: "DSA Tree Postorder",
+    objective: "Recorrer un árbol en postorder (left-right-root).",
+    prompt_md: "**Tree Traversal (Postorder)**\n\nPostorder: left, luego right, luego root.\n\n**Micro-reto:**\n1. Creá el árbol `1` con left `2` y right `3`\n2. Definí `postorder(node)` que imprima cada `data` en su propia línea\n3. Llamá `postorder(root)` (salida esperada: `2`, `3`, `1`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def postorder(node):\n#     ...\n# ...\n# postorder(root)\n",
+    pytest: "def test_tree_postorder(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2', '3', '1']\n    assert callable(ns.get('postorder'))\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef postorder(node):\n    if node is None:\n        return\n    postorder(node.left)\n    postorder(node.right)\n    print(node.data)\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\npostorder(root)",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef postorder(node):\n    if node is None:\n        return\n    postorder(node.left)\n    postorder(node.right)\n    print(node.data)\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\npostorder(root)\n",
+    next: Some("py-109-graph-dfs"),
+    show_type_chips: false,
+    micro_step: 108,
+};
+
+pub const PY109_GRAPH_DFS: CodingStep = CodingStep {
+    id: "py-109-graph-dfs",
+    title: "DSA Graph DFS",
+    objective: "Recorrer un grafo con Depth First Search.",
+    prompt_md: "**Graphs · DFS**\n\nDFS explora tan profundo como puede antes de backtrack.\n\n**Micro-reto:**\n1. Definí el grafo `{'A': ['B', 'C'], 'B': ['D'], 'C': ['E'], 'D': [], 'E': []}`\n2. Definí `dfs(graph, node, visited=None)` que imprima cada nodo visitado en su línea\n3. Llamá `dfs(graph, 'A')` (salida: `A`, `B`, `D`, `C`, `E`)",
+    starter_code: "# graph = {...}\n# def dfs(graph, node, visited=None):\n#     ...\n# dfs(graph, 'A')\n",
+    pytest: "def test_graph_dfs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['A', 'B', 'D', 'C', 'E']\n    assert callable(ns.get('dfs'))\n",
+    hint: "graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['E'], 'D': [], 'E': []}\ndef dfs(graph, node, visited=None):\n    if visited is None:\n        visited = set()\n    if node in visited:\n        return\n    visited.add(node)\n    print(node)\n    for neighbor in graph[node]:\n        dfs(graph, neighbor, visited)\ndfs(graph, 'A')",
+    solution_example: "graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['E'], 'D': [], 'E': []}\ndef dfs(graph, node, visited=None):\n    if visited is None:\n        visited = set()\n    if node in visited:\n        return\n    visited.add(node)\n    print(node)\n    for neighbor in graph[node]:\n        dfs(graph, neighbor, visited)\ndfs(graph, 'A')\n",
+    next: Some("py-110-graph-bfs"),
+    show_type_chips: false,
+    micro_step: 109,
+};
+
+pub const PY110_GRAPH_BFS: CodingStep = CodingStep {
+    id: "py-110-graph-bfs",
+    title: "DSA Graph BFS",
+    objective: "Recorrer un grafo con Breadth First Search.",
+    prompt_md: "**Graphs · BFS**\n\nBFS visita nivel por nivel usando una cola.\n\n**Micro-reto:**\n1. Usá el mismo grafo del DFS: `A→B,C` · `B→D` · `C→E`\n2. Definí `bfs(graph, start)` que imprima cada nodo visitado en su línea\n3. Llamá `bfs(graph, 'A')` (salida: `A`, `B`, `C`, `D`, `E`)",
+    starter_code: "# from collections import deque\n# graph = {...}\n# def bfs(graph, start):\n#     ...\n# bfs(graph, 'A')\n",
+    pytest: "def test_graph_bfs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['A', 'B', 'C', 'D', 'E']\n    assert callable(ns.get('bfs'))\n",
+    hint: "from collections import deque\ngraph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['E'], 'D': [], 'E': []}\ndef bfs(graph, start):\n    visited = set([start])\n    q = deque([start])\n    while q:\n        node = q.popleft()\n        print(node)\n        for neighbor in graph[node]:\n            if neighbor not in visited:\n                visited.add(neighbor)\n                q.append(neighbor)\nbfs(graph, 'A')",
+    solution_example: "from collections import deque\ngraph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['E'], 'D': [], 'E': []}\ndef bfs(graph, start):\n    visited = set([start])\n    q = deque([start])\n    while q:\n        node = q.popleft()\n        print(node)\n        for neighbor in graph[node]:\n            if neighbor not in visited:\n                visited.add(neighbor)\n                q.append(neighbor)\nbfs(graph, 'A')\n",
+    next: Some("py-111-tree-height"),
+    show_type_chips: false,
+    micro_step: 110,
+};
+
+pub const PY111_TREE_HEIGHT: CodingStep = CodingStep {
+    id: "py-111-tree-height",
+    title: "DSA Tree Height",
+    objective: "Calcular la altura de un árbol binario.",
+    prompt_md: "**Tree Height**\n\nLa altura de un nodo es `1 + max(altura left, altura right)`. Un árbol vacío tiene altura `0`.\n\n**Micro-reto:**\n1. Creá el árbol `1` con left `2` y right `3`\n2. Definí `treeHeight(node)` recursiva\n3. Imprimí `treeHeight(root)` (debe ser `2`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def treeHeight(node):\n#     ...\n# ...\n# print(treeHeight(root))\n",
+    pytest: "def test_tree_height(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('treeHeight'))\n    assert ns['treeHeight'](ns['root']) == 2\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2']\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef treeHeight(node):\n    if node is None:\n        return 0\n    return 1 + max(treeHeight(node.left), treeHeight(node.right))\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\nprint(treeHeight(root))",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\ndef treeHeight(node):\n    if node is None:\n        return 0\n    return 1 + max(treeHeight(node.left), treeHeight(node.right))\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\nprint(treeHeight(root))\n",
+    next: Some("py-112-dijkstra"),
+    show_type_chips: false,
+    micro_step: 111,
+};
+
+pub const PY112_DIJKSTRA: CodingStep = CodingStep {
+    id: "py-112-dijkstra",
+    title: "DSA Dijkstra Intro",
+    objective: "Calcular distancias mínimas con Dijkstra (sin heap, dict).",
+    prompt_md: "**Dijkstra (intro)**\n\nDistancias mínimas desde un origen en un grafo ponderado no negativo.\n\n**Micro-reto:**\n1. Grafo: `{'A': {'B': 4, 'C': 2}, 'B': {'C': 1, 'D': 5}, 'C': {'D': 8}, 'D': {}}`\n2. Definí `dijkstra(graph, start)` que devuelva un dict de distancias\n3. Imprimí `dijkstra(graph, 'A')` (esperado: `{'A': 0, 'B': 4, 'C': 2, 'D': 9}`)",
+    starter_code: "# graph = {...}\n# def dijkstra(graph, start):\n#     ...\n# print(dijkstra(graph, 'A'))\n",
+    pytest: "def test_dijkstra(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('dijkstra'))\n    assert ns['dijkstra'](ns['graph'], 'A') == {'A': 0, 'B': 4, 'C': 2, 'D': 9}\n    out = capsys.readouterr().out\n    assert \"'A': 0\" in out and \"'B': 4\" in out and \"'C': 2\" in out and \"'D': 9\" in out\n",
+    hint: "graph = {'A': {'B': 4, 'C': 2}, 'B': {'C': 1, 'D': 5}, 'C': {'D': 8}, 'D': {}}\ndef dijkstra(graph, start):\n    dist = {n: float('inf') for n in graph}\n    dist[start] = 0\n    unvisited = set(graph)\n    while unvisited:\n        u = min(unvisited, key=lambda n: dist[n])\n        unvisited.remove(u)\n        for v, w in graph[u].items():\n            alt = dist[u] + w\n            if alt < dist[v]:\n                dist[v] = alt\n    return dist\nprint(dijkstra(graph, 'A'))",
+    solution_example: "graph = {'A': {'B': 4, 'C': 2}, 'B': {'C': 1, 'D': 5}, 'C': {'D': 8}, 'D': {}}\ndef dijkstra(graph, start):\n    dist = {n: float('inf') for n in graph}\n    dist[start] = 0\n    unvisited = set(graph)\n    while unvisited:\n        u = min(unvisited, key=lambda n: dist[n])\n        unvisited.remove(u)\n        for v, w in graph[u].items():\n            alt = dist[u] + w\n            if alt < dist[v]:\n                dist[v] = alt\n    return dist\nprint(dijkstra(graph, 'A'))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 112,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1612,6 +1696,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY104_COUNTING_SORT,
     &PY105_TREE_NODE,
     &PY106_TREE_PREORDER,
+    &PY107_TREE_INORDER,
+    &PY108_TREE_POSTORDER,
+    &PY109_GRAPH_DFS,
+    &PY110_GRAPH_BFS,
+    &PY111_TREE_HEIGHT,
+    &PY112_DIJKSTRA,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -2075,10 +2165,27 @@ mod tests {
             (103, "py-103-merge-sort", Some("py-104-counting-sort")),
             (104, "py-104-counting-sort", Some("py-105-tree-node")),
             (105, "py-105-tree-node", Some("py-106-tree-preorder")),
-            (106, "py-106-tree-preorder", None),
+            (106, "py-106-tree-preorder", Some("py-107-tree-inorder")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("dsa-plus family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py107_to_py112_trees_graphs_chain() {
+        let ids = [
+            (107, "py-107-tree-inorder", Some("py-108-tree-postorder")),
+            (108, "py-108-tree-postorder", Some("py-109-graph-dfs")),
+            (109, "py-109-graph-dfs", Some("py-110-graph-bfs")),
+            (110, "py-110-graph-bfs", Some("py-111-tree-height")),
+            (111, "py-111-tree-height", Some("py-112-dijkstra")),
+            (112, "py-112-dijkstra", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("trees-graphs family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }

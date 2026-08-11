@@ -22,136 +22,133 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 101,
-    id: "py-101-linked-delete",
-    title: "DSA Linked List Delete",
-    solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-def deleteNext(node):
-    if node.next is not None:
-        node.next = node.next.next
-node1 = Node(7)
-node2 = Node(11)
-node3 = Node(3)
-node1.next = node2
-node2.next = node3
-deleteNext(node1)
-print(node1.next.data)
-`,
-    nextUrl: /\/learn\/py-102-linked-insert/,
-    cursorAfter: "102",
-  },
-  {
-    micro: 102,
-    id: "py-102-linked-insert",
-    title: "DSA Linked List Insert",
-    solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-def insertAfter(node, newNode):
-    newNode.next = node.next
-    node.next = newNode
-node1 = Node(7)
-node2 = Node(3)
-node1.next = node2
-insertAfter(node1, Node(97))
-print(node1.next.data)
-`,
-    nextUrl: /\/learn\/py-103-merge-sort/,
-    cursorAfter: "103",
-  },
-  {
-    micro: 103,
-    id: "py-103-merge-sort",
-    title: "DSA Merge Sort",
-    solution: `def merge(left, right):
-    result = []
-    i = j = 0
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-    result.extend(left[i:])
-    result.extend(right[j:])
-    return result
-def mergeSort(arr):
-    if len(arr) <= 1:
-        return arr
-    mid = len(arr) // 2
-    return merge(mergeSort(arr[:mid]), mergeSort(arr[mid:]))
-mylist = [3, 7, 6, -10, 15, 23.5, 55, -13]
-print(mergeSort(mylist))
-`,
-    nextUrl: /\/learn\/py-104-counting-sort/,
-    cursorAfter: "104",
-  },
-  {
-    micro: 104,
-    id: "py-104-counting-sort",
-    title: "DSA Counting Sort",
-    solution: `def countingSort(arr):
-    if not arr:
-        return []
-    size = max(arr) + 1
-    count = [0] * size
-    for x in arr:
-        count[x] += 1
-    out = []
-    for value, freq in enumerate(count):
-        out.extend([value] * freq)
-    return out
-mylist = [4, 2, 2, 8, 3, 3, 1]
-print(countingSort(mylist))
-`,
-    nextUrl: /\/learn\/py-105-tree-node/,
-    cursorAfter: "105",
-  },
-  {
-    micro: 105,
-    id: "py-105-tree-node",
-    title: "DSA Binary Tree Node",
+    micro: 107,
+    id: "py-107-tree-inorder",
+    title: "DSA Tree Inorder",
     solution: `class TreeNode:
     def __init__(self, data):
         self.data = data
         self.left = None
         self.right = None
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-print(root.left.data)
-print(root.right.data)
-`,
-    nextUrl: /\/learn\/py-106-tree-preorder/,
-    cursorAfter: "106",
-  },
-  {
-    micro: 106,
-    id: "py-106-tree-preorder",
-    title: "DSA Tree Preorder",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-def preorder(node):
+def inorder(node):
     if node is None:
         return
+    inorder(node.left)
     print(node.data)
-    preorder(node.left)
-    preorder(node.right)
+    inorder(node.right)
 root = TreeNode(1)
 root.left = TreeNode(2)
 root.right = TreeNode(3)
-preorder(root)
+inorder(root)
 `,
-    nextUrl: /\/learn\/py-107-tree-inorder/,
-    cursorAfter: "107",
+    nextUrl: /\/learn\/py-108-tree-postorder/,
+    cursorAfter: "108",
+  },
+  {
+    micro: 108,
+    id: "py-108-tree-postorder",
+    title: "DSA Tree Postorder",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+def postorder(node):
+    if node is None:
+        return
+    postorder(node.left)
+    postorder(node.right)
+    print(node.data)
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+postorder(root)
+`,
+    nextUrl: /\/learn\/py-109-graph-dfs/,
+    cursorAfter: "109",
+  },
+  {
+    micro: 109,
+    id: "py-109-graph-dfs",
+    title: "DSA Graph DFS",
+    solution: `graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['E'], 'D': [], 'E': []}
+def dfs(graph, node, visited=None):
+    if visited is None:
+        visited = set()
+    if node in visited:
+        return
+    visited.add(node)
+    print(node)
+    for neighbor in graph[node]:
+        dfs(graph, neighbor, visited)
+dfs(graph, 'A')
+`,
+    nextUrl: /\/learn\/py-110-graph-bfs/,
+    cursorAfter: "110",
+  },
+  {
+    micro: 110,
+    id: "py-110-graph-bfs",
+    title: "DSA Graph BFS",
+    solution: `from collections import deque
+graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['E'], 'D': [], 'E': []}
+def bfs(graph, start):
+    visited = set([start])
+    q = deque([start])
+    while q:
+        node = q.popleft()
+        print(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                q.append(neighbor)
+bfs(graph, 'A')
+`,
+    nextUrl: /\/learn\/py-111-tree-height/,
+    cursorAfter: "111",
+  },
+  {
+    micro: 111,
+    id: "py-111-tree-height",
+    title: "DSA Tree Height",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+def treeHeight(node):
+    if node is None:
+        return 0
+    return 1 + max(treeHeight(node.left), treeHeight(node.right))
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+print(treeHeight(root))
+`,
+    nextUrl: /\/learn\/py-112-dijkstra/,
+    cursorAfter: "112",
+  },
+  {
+    micro: 112,
+    id: "py-112-dijkstra",
+    title: "DSA Dijkstra Intro",
+    solution: `graph = {'A': {'B': 4, 'C': 2}, 'B': {'C': 1, 'D': 5}, 'C': {'D': 8}, 'D': {}}
+def dijkstra(graph, start):
+    dist = {n: float('inf') for n in graph}
+    dist[start] = 0
+    unvisited = set(graph)
+    while unvisited:
+        u = min(unvisited, key=lambda n: dist[n])
+        unvisited.remove(u)
+        for v, w in graph[u].items():
+            alt = dist[u] + w
+            if alt < dist[v]:
+                dist[v] = alt
+    return dist
+print(dijkstra(graph, 'A'))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "113",
   },
 ];
 
@@ -180,7 +177,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 101–106 · Linked ops / Merge-Counting Sort / Trees", () => {
+test.describe("micro-steps 107–112 · Tree walks / Graphs / Dijkstra", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
