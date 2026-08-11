@@ -2847,6 +2847,90 @@ pub const PY202_PERFECT_SQUARES: CodingStep = CodingStep {
     show_type_chips: false,
     micro_step: 202,
 };
+pub const PY203_NUM_ISLANDS: CodingStep = CodingStep {
+    id: "py-203-num-islands",
+    title: "DSA Number of Islands",
+    objective: "Contar islas de unos con DFS/BFS en grilla.",
+    prompt_md: "**Number of Islands**\n\nCada isla es un componente 4-conectado de `\"1\"`. Al visitarla, marcála como agua.\n\n**Micro-reto:**\n1. Definí `num_islands(grid)` (podés mutar la grilla)\n2. Imprimí el resultado para la grilla del hint (esperado: `3`)",
+    starter_code: "# def num_islands(grid):\n#     ...\n# print(num_islands([[\"1\", \"1\", \"0\", \"0\", \"0\"], [\"1\", \"1\", \"0\", \"0\", \"0\"], [\"0\", \"0\", \"1\", \"0\", \"0\"], [\"0\", \"0\", \"0\", \"1\", \"1\"]]))\n",
+    pytest: "def test_num_islands(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('num_islands'))\n    g1 = [[\"1\", \"1\", \"0\", \"0\", \"0\"], [\"1\", \"1\", \"0\", \"0\", \"0\"], [\"0\", \"0\", \"1\", \"0\", \"0\"], [\"0\", \"0\", \"0\", \"1\", \"1\"]]\n    assert ns['num_islands']([row[:] for row in g1]) == 3\n    g2 = [[\"1\", \"1\", \"1\"], [\"0\", \"1\", \"0\"], [\"1\", \"1\", \"1\"]]\n    assert ns['num_islands']([row[:] for row in g2]) == 1\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
+    hint: "def num_islands(grid):\n    if not grid:\n        return 0\n    rows, cols = len(grid), len(grid[0])\n    count = 0\n\n    def dfs(i, j):\n        if i < 0 or j < 0 or i >= rows or j >= cols or grid[i][j] != \"1\":\n            return\n        grid[i][j] = \"0\"\n        dfs(i + 1, j)\n        dfs(i - 1, j)\n        dfs(i, j + 1)\n        dfs(i, j - 1)\n\n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == \"1\":\n                count += 1\n                dfs(i, j)\n    return count\n\nprint(num_islands([\n    [\"1\", \"1\", \"0\", \"0\", \"0\"],\n    [\"1\", \"1\", \"0\", \"0\", \"0\"],\n    [\"0\", \"0\", \"1\", \"0\", \"0\"],\n    [\"0\", \"0\", \"0\", \"1\", \"1\"],\n]))",
+    solution_example: "def num_islands(grid):\n    if not grid:\n        return 0\n    rows, cols = len(grid), len(grid[0])\n    count = 0\n\n    def dfs(i, j):\n        if i < 0 or j < 0 or i >= rows or j >= cols or grid[i][j] != \"1\":\n            return\n        grid[i][j] = \"0\"\n        dfs(i + 1, j)\n        dfs(i - 1, j)\n        dfs(i, j + 1)\n        dfs(i, j - 1)\n\n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == \"1\":\n                count += 1\n                dfs(i, j)\n    return count\n\nprint(num_islands([\n    [\"1\", \"1\", \"0\", \"0\", \"0\"],\n    [\"1\", \"1\", \"0\", \"0\", \"0\"],\n    [\"0\", \"0\", \"1\", \"0\", \"0\"],\n    [\"0\", \"0\", \"0\", \"1\", \"1\"],\n]))\n",
+    next: Some("py-204-clone-graph"),
+    show_type_chips: false,
+    micro_step: 203,
+};
+
+pub const PY204_CLONE_GRAPH: CodingStep = CodingStep {
+    id: "py-204-clone-graph",
+    title: "DSA Clone Graph",
+    objective: "Clonar un grafo no dirigido (nodos con neighbors).",
+    prompt_md: "**Clone Graph**\n\nBFS/DFS con un mapa `original → clon` para cablear neighbors sin ciclos infinitos.\n\n**Micro-reto:**\n1. Definí `class Node` con `val` y `neighbors`\n2. Definí `clone_graph(node)`\n3. Construí el cuadrado 1—2—3—4—1 e imprimí `sorted` de vals vecinos del clon de 1 (esperado: `[2, 4]`)",
+    starter_code: "# class Node:\n#     ...\n# def clone_graph(node):\n#     ...\n# ...\n# print(sorted(neighbor.val for neighbor in cloned.neighbors))\n",
+    pytest: "def test_clone_graph(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('clone_graph'))\n    Node = ns['Node']\n    a, b = Node(1), Node(2)\n    a.neighbors = [b]\n    b.neighbors = [a]\n    cloned = ns['clone_graph'](a)\n    assert cloned is not a\n    assert cloned.val == 1\n    assert [n.val for n in cloned.neighbors] == [2]\n    assert cloned.neighbors[0] is not b\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[2, 4]']\n",
+    hint: "from collections import deque\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.neighbors = []\n\ndef clone_graph(node):\n    if node is None:\n        return None\n    mapping = {node: Node(node.val)}\n    queue = deque([node])\n    while queue:\n        current = queue.popleft()\n        for neighbor in current.neighbors:\n            if neighbor not in mapping:\n                mapping[neighbor] = Node(neighbor.val)\n                queue.append(neighbor)\n            mapping[current].neighbors.append(mapping[neighbor])\n    return mapping[node]\n\nn1, n2, n3, n4 = Node(1), Node(2), Node(3), Node(4)\nn1.neighbors = [n2, n4]\nn2.neighbors = [n1, n3]\nn3.neighbors = [n2, n4]\nn4.neighbors = [n1, n3]\ncloned = clone_graph(n1)\nprint(sorted(neighbor.val for neighbor in cloned.neighbors))",
+    solution_example: "from collections import deque\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.neighbors = []\n\ndef clone_graph(node):\n    if node is None:\n        return None\n    mapping = {node: Node(node.val)}\n    queue = deque([node])\n    while queue:\n        current = queue.popleft()\n        for neighbor in current.neighbors:\n            if neighbor not in mapping:\n                mapping[neighbor] = Node(neighbor.val)\n                queue.append(neighbor)\n            mapping[current].neighbors.append(mapping[neighbor])\n    return mapping[node]\n\nn1, n2, n3, n4 = Node(1), Node(2), Node(3), Node(4)\nn1.neighbors = [n2, n4]\nn2.neighbors = [n1, n3]\nn3.neighbors = [n2, n4]\nn4.neighbors = [n1, n3]\ncloned = clone_graph(n1)\nprint(sorted(neighbor.val for neighbor in cloned.neighbors))\n",
+    next: Some("py-205-course-schedule"),
+    show_type_chips: false,
+    micro_step: 204,
+};
+
+pub const PY205_COURSE_SCHEDULE: CodingStep = CodingStep {
+    id: "py-205-course-schedule",
+    title: "DSA Course Schedule",
+    objective: "Detectar si el grafo de prerequisitos es acíclico (Kahn).",
+    prompt_md: "**Course Schedule**\n\nArista `prep → course`. Topo-sort por indegree; si procesás todos, no hay ciclo.\n\n**Micro-reto:**\n1. Definí `can_finish(num_courses, prerequisites)`\n2. Imprimí `can_finish(2, [[1, 0]])` (esperado: `True`)",
+    starter_code: "# from collections import defaultdict, deque\n# def can_finish(num_courses, prerequisites):\n#     ...\n# print(can_finish(2, [[1, 0]]))\n",
+    pytest: "def test_course_schedule(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('can_finish'))\n    assert ns['can_finish'](2, [[1, 0]]) is True\n    assert ns['can_finish'](2, [[1, 0], [0, 1]]) is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "from collections import defaultdict, deque\n\ndef can_finish(num_courses, prerequisites):\n    adj = defaultdict(list)\n    indeg = [0] * num_courses\n    for course, prep in prerequisites:\n        adj[prep].append(course)\n        indeg[course] += 1\n    queue = deque([i for i in range(num_courses) if indeg[i] == 0])\n    seen = 0\n    while queue:\n        node = queue.popleft()\n        seen += 1\n        for nxt in adj[node]:\n            indeg[nxt] -= 1\n            if indeg[nxt] == 0:\n                queue.append(nxt)\n    return seen == num_courses\nprint(can_finish(2, [[1, 0]]))",
+    solution_example: "from collections import defaultdict, deque\n\ndef can_finish(num_courses, prerequisites):\n    adj = defaultdict(list)\n    indeg = [0] * num_courses\n    for course, prep in prerequisites:\n        adj[prep].append(course)\n        indeg[course] += 1\n    queue = deque([i for i in range(num_courses) if indeg[i] == 0])\n    seen = 0\n    while queue:\n        node = queue.popleft()\n        seen += 1\n        for nxt in adj[node]:\n            indeg[nxt] -= 1\n            if indeg[nxt] == 0:\n                queue.append(nxt)\n    return seen == num_courses\nprint(can_finish(2, [[1, 0]]))\n",
+    next: Some("py-206-pacific-atlantic"),
+    show_type_chips: false,
+    micro_step: 205,
+};
+
+pub const PY206_PACIFIC_ATLANTIC: CodingStep = CodingStep {
+    id: "py-206-pacific-atlantic",
+    title: "DSA Pacific Atlantic",
+    objective: "Celdas que drenan a Pacífico y Atlántico (BFS inverso).",
+    prompt_md: "**Pacific Atlantic Water Flow**\n\nBFS desde ambas costas hacia adentro (solo subir o igual). Intersección ordenada.\n\n**Micro-reto:**\n1. Definí `pacific_atlantic(heights)` → lista ordenada de `[r, c]`\n2. Imprimí el resultado del grid del hint (esperado: `[[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]]`)",
+    starter_code: "# from collections import deque\n# def pacific_atlantic(heights):\n#     ...\n# print(pacific_atlantic([[1, 2, 2, 3, 5], [3, 2, 3, 4, 4], [2, 4, 5, 3, 1], [6, 7, 1, 4, 5], [5, 1, 1, 2, 4]]))\n",
+    pytest: "def test_pacific_atlantic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('pacific_atlantic'))\n    heights = [[1, 2, 2, 3, 5], [3, 2, 3, 4, 4], [2, 4, 5, 3, 1], [6, 7, 1, 4, 5], [5, 1, 1, 2, 4]]\n    assert ns['pacific_atlantic'](heights) == [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]]']\n",
+    hint: "from collections import deque\n\ndef pacific_atlantic(heights):\n    rows, cols = len(heights), len(heights[0])\n\n    def bfs(starts):\n        seen = set(starts)\n        queue = deque(starts)\n        while queue:\n            i, j = queue.popleft()\n            for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                ni, nj = i + di, j + dj\n                if (\n                    0 <= ni < rows\n                    and 0 <= nj < cols\n                    and (ni, nj) not in seen\n                    and heights[ni][nj] >= heights[i][j]\n                ):\n                    seen.add((ni, nj))\n                    queue.append((ni, nj))\n        return seen\n\n    pacific = [(i, 0) for i in range(rows)] + [(0, j) for j in range(cols)]\n    atlantic = [(i, cols - 1) for i in range(rows)] + [(rows - 1, j) for j in range(cols)]\n    both = sorted(bfs(pacific) & bfs(atlantic))\n    return [[i, j] for i, j in both]\n\nprint(pacific_atlantic([\n    [1, 2, 2, 3, 5],\n    [3, 2, 3, 4, 4],\n    [2, 4, 5, 3, 1],\n    [6, 7, 1, 4, 5],\n    [5, 1, 1, 2, 4],\n]))",
+    solution_example: "from collections import deque\n\ndef pacific_atlantic(heights):\n    rows, cols = len(heights), len(heights[0])\n\n    def bfs(starts):\n        seen = set(starts)\n        queue = deque(starts)\n        while queue:\n            i, j = queue.popleft()\n            for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                ni, nj = i + di, j + dj\n                if (\n                    0 <= ni < rows\n                    and 0 <= nj < cols\n                    and (ni, nj) not in seen\n                    and heights[ni][nj] >= heights[i][j]\n                ):\n                    seen.add((ni, nj))\n                    queue.append((ni, nj))\n        return seen\n\n    pacific = [(i, 0) for i in range(rows)] + [(0, j) for j in range(cols)]\n    atlantic = [(i, cols - 1) for i in range(rows)] + [(rows - 1, j) for j in range(cols)]\n    both = sorted(bfs(pacific) & bfs(atlantic))\n    return [[i, j] for i, j in both]\n\nprint(pacific_atlantic([\n    [1, 2, 2, 3, 5],\n    [3, 2, 3, 4, 4],\n    [2, 4, 5, 3, 1],\n    [6, 7, 1, 4, 5],\n    [5, 1, 1, 2, 4],\n]))\n",
+    next: Some("py-207-rot-oranges"),
+    show_type_chips: false,
+    micro_step: 206,
+};
+
+pub const PY207_ROT_ORANGES: CodingStep = CodingStep {
+    id: "py-207-rot-oranges",
+    title: "DSA Rotting Oranges",
+    objective: "Minutos hasta podrir todas las naranjas (multi-source BFS).",
+    prompt_md: "**Rotting Oranges**\n\nCola multi-fuente con minuto; si quedan frescas al final → `-1`.\n\n**Micro-reto:**\n1. Definí `oranges_rotting(grid)`\n2. Imprimí `oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]])` (esperado: `4`)",
+    starter_code: "# from collections import deque\n# def oranges_rotting(grid):\n#     ...\n# print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))\n",
+    pytest: "def test_rot_oranges(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('oranges_rotting'))\n    assert ns['oranges_rotting']([[2, 1, 1], [1, 1, 0], [0, 1, 1]]) == 4\n    assert ns['oranges_rotting']([[2, 1, 1], [0, 1, 1], [1, 0, 1]]) == -1\n    assert ns['oranges_rotting']([[0, 2]]) == 0\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['4']\n",
+    hint: "from collections import deque\n\ndef oranges_rotting(grid):\n    rows, cols = len(grid), len(grid[0])\n    queue = deque()\n    fresh = 0\n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == 2:\n                queue.append((i, j, 0))\n            elif grid[i][j] == 1:\n                fresh += 1\n    minutes = 0\n    while queue:\n        i, j, t = queue.popleft()\n        minutes = t\n        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n            ni, nj = i + di, j + dj\n            if 0 <= ni < rows and 0 <= nj < cols and grid[ni][nj] == 1:\n                grid[ni][nj] = 2\n                fresh -= 1\n                queue.append((ni, nj, t + 1))\n    return minutes if fresh == 0 else -1\nprint(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))",
+    solution_example: "from collections import deque\n\ndef oranges_rotting(grid):\n    rows, cols = len(grid), len(grid[0])\n    queue = deque()\n    fresh = 0\n    for i in range(rows):\n        for j in range(cols):\n            if grid[i][j] == 2:\n                queue.append((i, j, 0))\n            elif grid[i][j] == 1:\n                fresh += 1\n    minutes = 0\n    while queue:\n        i, j, t = queue.popleft()\n        minutes = t\n        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n            ni, nj = i + di, j + dj\n            if 0 <= ni < rows and 0 <= nj < cols and grid[ni][nj] == 1:\n                grid[ni][nj] = 2\n                fresh -= 1\n                queue.append((ni, nj, t + 1))\n    return minutes if fresh == 0 else -1\nprint(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))\n",
+    next: Some("py-208-word-ladder"),
+    show_type_chips: false,
+    micro_step: 207,
+};
+
+pub const PY208_WORD_LADDER: CodingStep = CodingStep {
+    id: "py-208-word-ladder",
+    title: "DSA Word Ladder Length",
+    objective: "Longitud del ladder más corto (BFS sobre vecinos 1-edit).",
+    prompt_md: "**Word Ladder**\n\nBFS desde `begin_word`; cada arista cambia una letra. Devolvé la longitud (nodos), 0 si imposible.\n\n**Micro-reto:**\n1. Definí `ladder_length(begin_word, end_word, word_list)`\n2. Imprimí `ladder_length('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog'])` (esperado: `5`)",
+    starter_code: "# from collections import deque\n# def ladder_length(begin_word, end_word, word_list):\n#     ...\n# print(ladder_length('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))\n",
+    pytest: "def test_word_ladder(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('ladder_length'))\n    assert ns['ladder_length']('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']) == 5\n    assert ns['ladder_length']('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log']) == 0\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['5']\n",
+    hint: "from collections import deque\n\ndef ladder_length(begin_word, end_word, word_list):\n    words = set(word_list)\n    if end_word not in words:\n        return 0\n    queue = deque([(begin_word, 1)])\n    while queue:\n        word, dist = queue.popleft()\n        if word == end_word:\n            return dist\n        for i in range(len(word)):\n            for ord_c in range(ord('a'), ord('z') + 1):\n                nxt = word[:i] + chr(ord_c) + word[i + 1:]\n                if nxt in words:\n                    words.remove(nxt)\n                    queue.append((nxt, dist + 1))\n    return 0\nprint(ladder_length('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))",
+    solution_example: "from collections import deque\n\ndef ladder_length(begin_word, end_word, word_list):\n    words = set(word_list)\n    if end_word not in words:\n        return 0\n    queue = deque([(begin_word, 1)])\n    while queue:\n        word, dist = queue.popleft()\n        if word == end_word:\n            return dist\n        for i in range(len(word)):\n            for ord_c in range(ord('a'), ord('z') + 1):\n                nxt = word[:i] + chr(ord_c) + word[i + 1:]\n                if nxt in words:\n                    words.remove(nxt)\n                    queue.append((nxt, dist + 1))\n    return 0\nprint(ladder_length('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 208,
+};
+
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
     &PY02_INTRO,
@@ -3050,6 +3134,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY200_MAX_PRODUCT,
     &PY201_PARTITION_SUBSET,
     &PY202_PERFECT_SQUARES,
+    &PY203_NUM_ISLANDS,
+    &PY204_CLONE_GRAPH,
+    &PY205_COURSE_SCHEDULE,
+    &PY206_PACIFIC_ATLANTIC,
+    &PY207_ROT_ORANGES,
+    &PY208_WORD_LADDER,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
