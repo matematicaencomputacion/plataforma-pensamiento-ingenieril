@@ -208,6 +208,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 200, step_id: "py-200-max-product" },
   { level_id: 201, step_id: "py-201-partition-subset" },
   { level_id: 202, step_id: "py-202-perfect-squares" },
+  { level_id: 203, step_id: "py-203-num-islands" },
+  { level_id: 204, step_id: "py-204-clone-graph" },
+  { level_id: 205, step_id: "py-205-course-schedule" },
+  { level_id: 206, step_id: "py-206-pacific-atlantic" },
+  { level_id: 207, step_id: "py-207-rot-oranges" },
+  { level_id: 208, step_id: "py-208-word-ladder" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

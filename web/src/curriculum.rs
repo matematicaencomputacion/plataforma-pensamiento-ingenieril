@@ -2843,7 +2843,7 @@ pub const PY202_PERFECT_SQUARES: CodingStep = CodingStep {
     pytest: "def test_perfect_squares(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('num_squares'))\n    assert ns['num_squares'](12) == 3\n    assert ns['num_squares'](13) == 2\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
     hint: "def num_squares(n):\n    dp = [0] + [float('inf')] * n\n    for i in range(1, n + 1):\n        j = 1\n        while j * j <= i:\n            dp[i] = min(dp[i], dp[i - j * j] + 1)\n            j += 1\n    return int(dp[n])\nprint(num_squares(12))",
     solution_example: "def num_squares(n):\n    dp = [0] + [float('inf')] * n\n    for i in range(1, n + 1):\n        j = 1\n        while j * j <= i:\n            dp[i] = min(dp[i], dp[i - j * j] + 1)\n            j += 1\n    return int(dp[n])\nprint(num_squares(12))\n",
-    next: None,
+    next: Some("py-203-num-islands"),
     show_type_chips: false,
     micro_step: 202,
 };
@@ -3741,6 +3741,24 @@ mod tests {
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("binsearch family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py203_to_py208_curriculum_chain() {
+        let ids = [
+            (202, "py-202-perfect-squares", Some("py-203-num-islands")),
+            (203, "py-203-num-islands", Some("py-204-clone-graph")),
+            (204, "py-204-clone-graph", Some("py-205-course-schedule")),
+            (205, "py-205-course-schedule", Some("py-206-pacific-atlantic")),
+            (206, "py-206-pacific-atlantic", Some("py-207-rot-oranges")),
+            (207, "py-207-rot-oranges", Some("py-208-word-ladder")),
+            (208, "py-208-word-ladder", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("curriculum family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
