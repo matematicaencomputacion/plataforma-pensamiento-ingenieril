@@ -2340,9 +2340,93 @@ pub const PY166_ROMAN_TO_INT: CodingStep = CodingStep {
     pytest: "def test_roman_to_int(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('roman_to_int'))\n    assert ns['roman_to_int']('MCMXCIV') == 1994\n    assert ns['roman_to_int']('III') == 3\n    assert ns['roman_to_int']('LVIII') == 58\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['1994']\n",
     hint: "def roman_to_int(s):\n    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}\n    total = 0\n    previous = 0\n    for symbol in reversed(s):\n        value = values[symbol]\n        if value < previous:\n            total -= value\n        else:\n            total += value\n            previous = value\n    return total\nprint(roman_to_int('MCMXCIV'))",
     solution_example: "def roman_to_int(s):\n    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}\n    total = 0\n    previous = 0\n    for symbol in reversed(s):\n        value = values[symbol]\n        if value < previous:\n            total -= value\n        else:\n            total += value\n            previous = value\n    return total\nprint(roman_to_int('MCMXCIV'))\n",
-    next: None,
+    next: Some("py-167-invert-tree"),
     show_type_chips: false,
     micro_step: 166,
+};
+
+pub const PY167_INVERT_TREE: CodingStep = CodingStep {
+    id: "py-167-invert-tree",
+    title: "DSA Invert Binary Tree",
+    objective: "Espejar un árbol binario intercambiando recursivamente left y right.",
+    prompt_md: "**Invert Binary Tree**\n\nUn `TreeNode` tiene `data`, `left` y `right` (como en py-105). Invertir = intercambiar subárboles.\n\n**Micro-reto:**\n1. Definí `class TreeNode` con `data`, `left=None`, `right=None`\n2. Definí `invert_tree(root)` que muta y devuelve la raíz\n3. Definí `level_order(root)` que devuelve la lista level-order de valores\n4. Construí el árbol `4` → left `2` (1, 3) / right `7` (6, 9)\n5. Invertí e imprimí `level_order(root)` (esperado: `[4, 7, 2, 9, 6, 3, 1]`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def invert_tree(root):\n#     ...\n# def level_order(root):\n#     ...\n# root = ...\n# ...\n# invert_tree(root)\n# print(level_order(root))\n",
+    pytest: "def test_invert_tree(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('invert_tree'))\n    assert callable(ns.get('level_order'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(4)\n    root.left = TreeNode(2)\n    root.right = TreeNode(7)\n    root.left.left = TreeNode(1)\n    root.left.right = TreeNode(3)\n    root.right.left = TreeNode(6)\n    root.right.right = TreeNode(9)\n    ns['invert_tree'](root)\n    assert ns['level_order'](root) == [4, 7, 2, 9, 6, 3, 1]\n    assert ns['invert_tree'](None) is None\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[4, 7, 2, 9, 6, 3, 1]']\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef invert_tree(root):\n    if root is None:\n        return None\n    root.left, root.right = invert_tree(root.right), invert_tree(root.left)\n    return root\n\ndef level_order(root):\n    if root is None:\n        return []\n    result = []\n    queue = [root]\n    while queue:\n        node = queue.pop(0)\n        result.append(node.data)\n        if node.left:\n            queue.append(node.left)\n        if node.right:\n            queue.append(node.right)\n    return result\n\nroot = TreeNode(4)\nroot.left = TreeNode(2)\nroot.right = TreeNode(7)\nroot.left.left = TreeNode(1)\nroot.left.right = TreeNode(3)\nroot.right.left = TreeNode(6)\nroot.right.right = TreeNode(9)\ninvert_tree(root)\nprint(level_order(root))",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef invert_tree(root):\n    if root is None:\n        return None\n    root.left, root.right = invert_tree(root.right), invert_tree(root.left)\n    return root\n\ndef level_order(root):\n    if root is None:\n        return []\n    result = []\n    queue = [root]\n    while queue:\n        node = queue.pop(0)\n        result.append(node.data)\n        if node.left:\n            queue.append(node.left)\n        if node.right:\n            queue.append(node.right)\n    return result\n\nroot = TreeNode(4)\nroot.left = TreeNode(2)\nroot.right = TreeNode(7)\nroot.left.left = TreeNode(1)\nroot.left.right = TreeNode(3)\nroot.right.left = TreeNode(6)\nroot.right.right = TreeNode(9)\ninvert_tree(root)\nprint(level_order(root))\n",
+    next: Some("py-168-same-tree"),
+    show_type_chips: false,
+    micro_step: 167,
+};
+
+pub const PY168_SAME_TREE: CodingStep = CodingStep {
+    id: "py-168-same-tree",
+    title: "DSA Same Tree",
+    objective: "Decidir si dos árboles binarios son estructuralmente idénticos.",
+    prompt_md: "**Same Tree**\n\nDos árboles son iguales si coinciden valor y forma en cada nodo.\n\n**Micro-reto:**\n1. Definí `class TreeNode` con `data`, `left=None`, `right=None`\n2. Definí `is_same_tree(p, q)`\n3. Construí dos árboles iguales `1 → left 2 / right 3`\n4. Imprimí `is_same_tree(p, q)` (esperado: `True`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def is_same_tree(p, q):\n#     ...\n# p = ...\n# q = ...\n# print(is_same_tree(p, q))\n",
+    pytest: "def test_same_tree(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_same_tree'))\n    TreeNode = ns['TreeNode']\n    p = TreeNode(1)\n    p.left = TreeNode(2)\n    p.right = TreeNode(3)\n    q = TreeNode(1)\n    q.left = TreeNode(2)\n    q.right = TreeNode(3)\n    assert ns['is_same_tree'](p, q) is True\n    other = TreeNode(1)\n    other.left = TreeNode(2)\n    assert ns['is_same_tree'](p, other) is False\n    assert ns['is_same_tree'](None, None) is True\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef is_same_tree(p, q):\n    if p is None and q is None:\n        return True\n    if p is None or q is None or p.data != q.data:\n        return False\n    return is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)\n\np = TreeNode(1)\np.left = TreeNode(2)\np.right = TreeNode(3)\nq = TreeNode(1)\nq.left = TreeNode(2)\nq.right = TreeNode(3)\nprint(is_same_tree(p, q))",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef is_same_tree(p, q):\n    if p is None and q is None:\n        return True\n    if p is None or q is None or p.data != q.data:\n        return False\n    return is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)\n\np = TreeNode(1)\np.left = TreeNode(2)\np.right = TreeNode(3)\nq = TreeNode(1)\nq.left = TreeNode(2)\nq.right = TreeNode(3)\nprint(is_same_tree(p, q))\n",
+    next: Some("py-169-max-depth"),
+    show_type_chips: false,
+    micro_step: 168,
+};
+
+pub const PY169_MAX_DEPTH: CodingStep = CodingStep {
+    id: "py-169-max-depth",
+    title: "DSA Maximum Depth",
+    objective: "Calcular la profundidad máxima de un árbol binario.",
+    prompt_md: "**Maximum Depth**\n\nLa profundidad es 1 + el máximo entre left y right; `None` vale 0.\n\n**Micro-reto:**\n1. Definí `class TreeNode` con `data`, `left=None`, `right=None`\n2. Definí `max_depth(root)`\n3. Construí el árbol clásico: `3` → left `9` / right `20` (15, 7)\n4. Imprimí `max_depth(root)` (esperado: `3`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def max_depth(root):\n#     ...\n# root = ...\n# print(max_depth(root))\n",
+    pytest: "def test_max_depth(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_depth'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(3)\n    root.left = TreeNode(9)\n    root.right = TreeNode(20)\n    root.right.left = TreeNode(15)\n    root.right.right = TreeNode(7)\n    assert ns['max_depth'](root) == 3\n    assert ns['max_depth'](None) == 0\n    leaf = TreeNode(1)\n    assert ns['max_depth'](leaf) == 1\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef max_depth(root):\n    if root is None:\n        return 0\n    return 1 + max(max_depth(root.left), max_depth(root.right))\n\nroot = TreeNode(3)\nroot.left = TreeNode(9)\nroot.right = TreeNode(20)\nroot.right.left = TreeNode(15)\nroot.right.right = TreeNode(7)\nprint(max_depth(root))",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef max_depth(root):\n    if root is None:\n        return 0\n    return 1 + max(max_depth(root.left), max_depth(root.right))\n\nroot = TreeNode(3)\nroot.left = TreeNode(9)\nroot.right = TreeNode(20)\nroot.right.left = TreeNode(15)\nroot.right.right = TreeNode(7)\nprint(max_depth(root))\n",
+    next: Some("py-170-spiral-matrix"),
+    show_type_chips: false,
+    micro_step: 169,
+};
+
+pub const PY170_SPIRAL_MATRIX: CodingStep = CodingStep {
+    id: "py-170-spiral-matrix",
+    title: "DSA Spiral Matrix",
+    objective: "Recorrer una matriz en espiral desde la esquina superior izquierda.",
+    prompt_md: "**Spiral Matrix**\n\nRecorré capas: derecha → abajo → izquierda → arriba, cerrando bordes.\n\n**Micro-reto:**\n1. Definí `spiral_order(matrix)`\n2. Devolvé la lista de valores en orden espiral\n3. Imprimí `spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]])` (esperado: `[1, 2, 3, 6, 9, 8, 7, 4, 5]`)",
+    starter_code: "# def spiral_order(matrix):\n#     ...\n# print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))\n",
+    pytest: "def test_spiral_matrix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('spiral_order'))\n    assert ns['spiral_order']([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == [1, 2, 3, 6, 9, 8, 7, 4, 5]\n    assert ns['spiral_order']([[1, 2], [3, 4]]) == [1, 2, 4, 3]\n    assert ns['spiral_order']([]) == []\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[1, 2, 3, 6, 9, 8, 7, 4, 5]']\n",
+    hint: "def spiral_order(matrix):\n    if not matrix:\n        return []\n    result = []\n    top, bottom = 0, len(matrix) - 1\n    left, right = 0, len(matrix[0]) - 1\n    while top <= bottom and left <= right:\n        for j in range(left, right + 1):\n            result.append(matrix[top][j])\n        top += 1\n        for i in range(top, bottom + 1):\n            result.append(matrix[i][right])\n        right -= 1\n        if top <= bottom:\n            for j in range(right, left - 1, -1):\n                result.append(matrix[bottom][j])\n            bottom -= 1\n        if left <= right:\n            for i in range(bottom, top - 1, -1):\n                result.append(matrix[i][left])\n            left += 1\n    return result\nprint(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))",
+    solution_example: "def spiral_order(matrix):\n    if not matrix:\n        return []\n    result = []\n    top, bottom = 0, len(matrix) - 1\n    left, right = 0, len(matrix[0]) - 1\n    while top <= bottom and left <= right:\n        for j in range(left, right + 1):\n            result.append(matrix[top][j])\n        top += 1\n        for i in range(top, bottom + 1):\n            result.append(matrix[i][right])\n        right -= 1\n        if top <= bottom:\n            for j in range(right, left - 1, -1):\n                result.append(matrix[bottom][j])\n            bottom -= 1\n        if left <= right:\n            for i in range(bottom, top - 1, -1):\n                result.append(matrix[i][left])\n            left += 1\n    return result\nprint(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))\n",
+    next: Some("py-171-set-zeroes"),
+    show_type_chips: false,
+    micro_step: 170,
+};
+
+pub const PY171_SET_ZEROES: CodingStep = CodingStep {
+    id: "py-171-set-zeroes",
+    title: "DSA Set Matrix Zeroes",
+    objective: "Si una celda es 0, poner en cero toda su fila y columna.",
+    prompt_md: "**Set Matrix Zeroes**\n\nMarcá filas/columnas que contienen un 0 y aplicá después (no en el mismo paso del scan).\n\n**Micro-reto:**\n1. Definí `set_zeroes(matrix)` que muta la matriz y la devuelve\n2. Imprimí `set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]])` (esperado: `[[1, 0, 1], [0, 0, 0], [1, 0, 1]]`)",
+    starter_code: "# def set_zeroes(matrix):\n#     ...\n# print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))\n",
+    pytest: "def test_set_zeroes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('set_zeroes'))\n    matrix = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]\n    out = ns['set_zeroes'](matrix)\n    assert out == [[1, 0, 1], [0, 0, 0], [1, 0, 1]]\n    assert matrix == [[1, 0, 1], [0, 0, 0], [1, 0, 1]]\n    other = [[0, 1], [1, 1]]\n    assert ns['set_zeroes'](other) == [[0, 0], [0, 1]]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[[1, 0, 1], [0, 0, 0], [1, 0, 1]]']\n",
+    hint: "def set_zeroes(matrix):\n    rows = set()\n    cols = set()\n    for i in range(len(matrix)):\n        for j in range(len(matrix[0])):\n            if matrix[i][j] == 0:\n                rows.add(i)\n                cols.add(j)\n    for i in range(len(matrix)):\n        for j in range(len(matrix[0])):\n            if i in rows or j in cols:\n                matrix[i][j] = 0\n    return matrix\nprint(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))",
+    solution_example: "def set_zeroes(matrix):\n    rows = set()\n    cols = set()\n    for i in range(len(matrix)):\n        for j in range(len(matrix[0])):\n            if matrix[i][j] == 0:\n                rows.add(i)\n                cols.add(j)\n    for i in range(len(matrix)):\n        for j in range(len(matrix[0])):\n            if i in rows or j in cols:\n                matrix[i][j] = 0\n    return matrix\nprint(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))\n",
+    next: Some("py-172-subsets"),
+    show_type_chips: false,
+    micro_step: 171,
+};
+
+pub const PY172_SUBSETS: CodingStep = CodingStep {
+    id: "py-172-subsets",
+    title: "DSA Subsets",
+    objective: "Generar todos los subsets de una lista de enteros distintos.",
+    prompt_md: "**Subsets**\n\nPartí de `[[]]` y, por cada número, agregá una copia de cada subset existente extendida con ese número.\n\n**Micro-reto:**\n1. Definí `subsets(nums)` que devolvé una lista de listas\n2. Imprimí `sorted(subsets([1, 2]))` (esperado: `[[], [1], [1, 2], [2]]`)",
+    starter_code: "# def subsets(nums):\n#     ...\n# print(sorted(subsets([1, 2])))\n",
+    pytest: "def test_subsets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('subsets'))\n    got = [sorted(s) for s in ns['subsets']([1, 2])]\n    assert sorted(got) == [[], [1], [1, 2], [2]]\n    got3 = [sorted(s) for s in ns['subsets']([1, 2, 3])]\n    assert sorted(got3) == [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]\n    assert ns['subsets']([]) == [[]]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[[], [1], [1, 2], [2]]']\n",
+    hint: "def subsets(nums):\n    result = [[]]\n    for n in nums:\n        result += [subset + [n] for subset in result]\n    return result\nprint(sorted(subsets([1, 2])))",
+    solution_example: "def subsets(nums):\n    result = [[]]\n    for n in nums:\n        result += [subset + [n] for subset in result]\n    return result\nprint(sorted(subsets([1, 2])))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 172,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -2512,6 +2596,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY164_VALID_PALINDROME,
     &PY165_COMMON_PREFIX,
     &PY166_ROMAN_TO_INT,
+    &PY167_INVERT_TREE,
+    &PY168_SAME_TREE,
+    &PY169_MAX_DEPTH,
+    &PY170_SPIRAL_MATRIX,
+    &PY171_SET_ZEROES,
+    &PY172_SUBSETS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -3139,17 +3229,18 @@ mod tests {
     }
 
     #[test]
-    fn py161_to_py166_lists_strings_chain() {
+    fn py167_to_py172_trees_matrix_chain() {
         let ids = [
-            (161, "py-161-reverse-list", Some("py-162-merge-sorted")),
-            (162, "py-162-merge-sorted", Some("py-163-linked-cycle")),
-            (163, "py-163-linked-cycle", Some("py-164-valid-palindrome")),
-            (164, "py-164-valid-palindrome", Some("py-165-common-prefix")),
-            (165, "py-165-common-prefix", Some("py-166-roman-to-int")),
-            (166, "py-166-roman-to-int", None),
+            (166, "py-166-roman-to-int", Some("py-167-invert-tree")),
+            (167, "py-167-invert-tree", Some("py-168-same-tree")),
+            (168, "py-168-same-tree", Some("py-169-max-depth")),
+            (169, "py-169-max-depth", Some("py-170-spiral-matrix")),
+            (170, "py-170-spiral-matrix", Some("py-171-set-zeroes")),
+            (171, "py-171-set-zeroes", Some("py-172-subsets")),
+            (172, "py-172-subsets", None),
         ];
         for (n, id, next) in ids {
-            let step = coding_step_by_micro_step(n).expect("lists-strings family step");
+            let step = coding_step_by_micro_step(n).expect("trees-matrix family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }

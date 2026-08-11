@@ -172,6 +172,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 164, step_id: "py-164-valid-palindrome" },
   { level_id: 165, step_id: "py-165-common-prefix" },
   { level_id: 166, step_id: "py-166-roman-to-int" },
+  { level_id: 167, step_id: "py-167-invert-tree" },
+  { level_id: 168, step_id: "py-168-same-tree" },
+  { level_id: 169, step_id: "py-169-max-depth" },
+  { level_id: 170, step_id: "py-170-spiral-matrix" },
+  { level_id: 171, step_id: "py-171-set-zeroes" },
+  { level_id: 172, step_id: "py-172-subsets" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
