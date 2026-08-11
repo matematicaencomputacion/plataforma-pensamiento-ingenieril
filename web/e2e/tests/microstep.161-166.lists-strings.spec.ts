@@ -22,106 +22,118 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 155,
-    id: "py-155-contains-dup",
-    title: "DSA Contains Duplicate",
-    solution: `def contains_duplicate(nums):
-    seen = set()
-    for n in nums:
-        if n in seen:
+    micro: 161,
+    id: "py-161-reverse-list",
+    title: "DSA Reverse List",
+    solution: `def reverse_list(nums: list):
+    return nums[::-1]
+print(reverse_list([1, 2, 3, 4]))
+`,
+    nextUrl: /\/learn\/py-162-merge-sorted/,
+    cursorAfter: "162",
+  },
+  {
+    micro: 162,
+    id: "py-162-merge-sorted",
+    title: "DSA Merge Sorted Lists",
+    solution: `def merge_sorted(a, b):
+    result = []
+    i = j = 0
+    while i < len(a) and j < len(b):
+        if a[i] <= b[j]:
+            result.append(a[i])
+            i += 1
+        else:
+            result.append(b[j])
+            j += 1
+    return result + a[i:] + b[j:]
+print(merge_sorted([1, 2, 4], [1, 3, 4]))
+`,
+    nextUrl: /\/learn\/py-163-linked-cycle/,
+    cursorAfter: "163",
+  },
+  {
+    micro: 163,
+    id: "py-163-linked-cycle",
+    title: "DSA Linked List Cycle",
+    solution: `class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+def has_cycle(head):
+    slow = fast = head
+    while fast is not None and fast.next is not None:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
             return True
-        seen.add(n)
     return False
-print(contains_duplicate([1, 2, 3, 1]))
+
+node1 = Node(3)
+node2 = Node(2)
+node3 = Node(0)
+node4 = Node(-4)
+node1.next = node2
+node2.next = node3
+node3.next = node4
+node4.next = node2
+print(has_cycle(node1))
 `,
-    nextUrl: /\/learn\/py-156-best-stock/,
-    cursorAfter: "156",
+    nextUrl: /\/learn\/py-164-valid-palindrome/,
+    cursorAfter: "164",
   },
   {
-    micro: 156,
-    id: "py-156-best-stock",
-    title: "DSA Best Stock Profit",
-    solution: `def max_profit(prices):
-    lowest = float('inf')
-    best = 0
-    for price in prices:
-        lowest = min(lowest, price)
-        best = max(best, price - lowest)
-    return best
-print(max_profit([7, 1, 5, 3, 6, 4]))
+    micro: 164,
+    id: "py-164-valid-palindrome",
+    title: "DSA Valid Palindrome",
+    solution: `def is_palindrome(s):
+    cleaned = ''.join(ch.casefold() for ch in s if ch.isalnum())
+    return cleaned == cleaned[::-1]
+print(is_palindrome('A man, a plan, a canal: Panama'))
 `,
-    nextUrl: /\/learn\/py-157-move-zeroes/,
-    cursorAfter: "157",
+    nextUrl: /\/learn\/py-165-common-prefix/,
+    cursorAfter: "165",
   },
   {
-    micro: 157,
-    id: "py-157-move-zeroes",
-    title: "DSA Move Zeroes",
-    solution: `def move_zeroes(nums):
-    write = 0
-    for n in nums:
-        if n != 0:
-            nums[write] = n
-            write += 1
-    for i in range(write, len(nums)):
-        nums[i] = 0
-    return nums
-print(move_zeroes([0, 1, 0, 3, 12]))
+    micro: 165,
+    id: "py-165-common-prefix",
+    title: "DSA Longest Common Prefix",
+    solution: `def longest_common_prefix(strs):
+    if not strs:
+        return ''
+    prefix = strs[0]
+    for word in strs[1:]:
+        while not word.startswith(prefix):
+            prefix = prefix[:-1]
+            if not prefix:
+                return ''
+    return prefix
+print(longest_common_prefix(['flower', 'flow', 'flight']))
 `,
-    nextUrl: /\/learn\/py-158-product-except/,
-    cursorAfter: "158",
+    nextUrl: /\/learn\/py-166-roman-to-int/,
+    cursorAfter: "166",
   },
   {
-    micro: 158,
-    id: "py-158-product-except",
-    title: "DSA Product Except Self",
-    solution: `def product_except_self(nums):
-    result = [1] * len(nums)
-    prefix = 1
-    for i, n in enumerate(nums):
-        result[i] = prefix
-        prefix *= n
-    suffix = 1
-    for i in range(len(nums) - 1, -1, -1):
-        result[i] *= suffix
-        suffix *= nums[i]
-    return result
-print(product_except_self([1, 2, 3, 4]))
+    micro: 166,
+    id: "py-166-roman-to-int",
+    title: "DSA Roman to Integer",
+    solution: `def roman_to_int(s):
+    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+    total = 0
+    previous = 0
+    for symbol in reversed(s):
+        value = values[symbol]
+        if value < previous:
+            total -= value
+        else:
+            total += value
+            previous = value
+    return total
+print(roman_to_int('MCMXCIV'))
 `,
-    nextUrl: /\/learn\/py-159-first-unique/,
-    cursorAfter: "159",
-  },
-  {
-    micro: 159,
-    id: "py-159-first-unique",
-    title: "DSA First Unique Character",
-    solution: `def first_uniq_char(s):
-    counts = {}
-    for char in s:
-        counts[char] = counts.get(char, 0) + 1
-    for i, char in enumerate(s):
-        if counts[char] == 1:
-            return i
-    return -1
-print(first_uniq_char('leetcode'))
-`,
-    nextUrl: /\/learn\/py-160-happy-number/,
-    cursorAfter: "160",
-  },
-  {
-    micro: 160,
-    id: "py-160-happy-number",
-    title: "DSA Happy Number",
-    solution: `def is_happy(n):
-    seen = set()
-    while n != 1 and n not in seen:
-        seen.add(n)
-        n = sum(int(digit) ** 2 for digit in str(n))
-    return n == 1
-print(is_happy(19))
-`,
-    nextUrl: /\/learn\/py-161-reverse-list/,
-    cursorAfter: "161",
+    nextUrl: /\/workspace/,
+    cursorAfter: "167",
   },
 ];
 
@@ -150,7 +162,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 155–160 · arrays / hash", () => {
+test.describe("micro-steps 161–166 · lists / strings", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

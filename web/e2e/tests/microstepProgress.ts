@@ -166,6 +166,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 158, step_id: "py-158-product-except" },
   { level_id: 159, step_id: "py-159-first-unique" },
   { level_id: 160, step_id: "py-160-happy-number" },
+  { level_id: 161, step_id: "py-161-reverse-list" },
+  { level_id: 162, step_id: "py-162-merge-sorted" },
+  { level_id: 163, step_id: "py-163-linked-cycle" },
+  { level_id: 164, step_id: "py-164-valid-palindrome" },
+  { level_id: 165, step_id: "py-165-common-prefix" },
+  { level_id: 166, step_id: "py-166-roman-to-int" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
