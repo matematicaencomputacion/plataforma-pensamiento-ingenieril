@@ -37,7 +37,8 @@ GO ?= go
 GOFLAGS ?=
 
 .PHONY: help toolchain fmt vet test build run clean openspec-validate web-test web-build web-e2e \
-	harness harness-unit harness-integration harness-e2e harness-journeys ci dev-set-password
+	harness harness-unit harness-integration harness-e2e harness-journeys ci dev-set-password \
+	wt-new wt-list wt-sync wt-rm wt-path
 
 help: ## Muestra targets disponibles
 	@awk 'BEGIN {FS = ":.*##"; printf "\nTargets PPI:\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  %-18s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -118,3 +119,34 @@ openspec-validate: ## Valida el change PPI 1.1
 
 ci: fmt vet test build openspec-validate ## Pipeline local rápido (Go; web/harness son opt-in)
 	@echo ">> CI local OK — module $(MODULE)"
+
+# ── Git worktrees (desarrollo asíncrono mientras CI/Playwright corre) ─────────
+# Docs: docs/dev/git-worktrees.md
+# Ejemplo: make wt-new BRANCH=feat/microsteps-155-160 BOOTSTRAP=1
+
+wt-new: ## Crea worktree hermano: make wt-new BRANCH=feat/foo [PATH=..] [BASE=origin/main] [BOOTSTRAP=1]
+	@test -n "$(BRANCH)" || (echo "BRANCH requerido (ej. feat/microsteps-155-160)" >&2; exit 2)
+	@chmod +x scripts/worktree/wt
+	@./scripts/worktree/wt new "$(BRANCH)" \
+	  $(if $(PATH),--path "$(PATH)",) \
+	  $(if $(BASE),--base "$(BASE)",) \
+	  $(if $(filter 1 true TRUE yes YES,$(BOOTSTRAP)),--bootstrap,)
+
+wt-list: ## Lista worktrees git de este repo
+	@chmod +x scripts/worktree/wt
+	@./scripts/worktree/wt list
+
+wt-sync: ## Rebase worktree sobre main: make wt-sync TARGET=feat/foo [ONTO=origin/main]
+	@test -n "$(TARGET)" || (echo "TARGET requerido (path, branch o slug)" >&2; exit 2)
+	@chmod +x scripts/worktree/wt
+	@./scripts/worktree/wt sync "$(TARGET)" $(if $(ONTO),--onto "$(ONTO)",)
+
+wt-rm: ## Elimina worktree: make wt-rm TARGET=feat/foo [FORCE=1]
+	@test -n "$(TARGET)" || (echo "TARGET requerido (path, branch o slug)" >&2; exit 2)
+	@chmod +x scripts/worktree/wt
+	@./scripts/worktree/wt rm "$(TARGET)" $(if $(filter 1 true TRUE yes YES,$(FORCE)),--force,)
+
+wt-path: ## Imprime path default del worktree: make wt-path BRANCH=feat/foo
+	@test -n "$(BRANCH)" || (echo "BRANCH requerido" >&2; exit 2)
+	@chmod +x scripts/worktree/wt
+	@./scripts/worktree/wt path "$(BRANCH)"

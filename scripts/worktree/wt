@@ -1,0 +1,300 @@
+#!/usr/bin/env bash
+# PPI Git worktree helper — parallel feature slices while CI/Playwright runs.
+# Usage (from any worktree of this repo):
+#   ./scripts/worktree/wt new feat/microsteps-155-160
+#   make wt-new BRANCH=feat/microsteps-155-160
+set -euo pipefail
+
+die() { printf 'wt: %s\n' "$*" >&2; exit 1; }
+info() { printf 'wt: %s\n' "$*"; }
+
+# Resolve the primary git common directory even when invoked from a linked worktree.
+git_common_dir() {
+  local d
+  d="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" || die "not inside a git repo"
+  printf '%s\n' "$d"
+}
+
+# Main checkout path (the "primary" worktree with .git directory, not a linked one).
+primary_root() {
+  local common
+  common="$(git_common_dir)"
+  # common is either "/path/repo/.git" or "/path/repo/.git/worktrees/name"
+  if [[ "$common" == */.git ]]; then
+    dirname "$common"
+  else
+    # linked worktree: strip /.git/worktrees/<name>
+    local g
+    g="$(dirname "$(dirname "$common")")"
+    dirname "$g"
+  fi
+}
+
+repo_basename() {
+  basename "$(primary_root)"
+}
+
+parent_dir() {
+  dirname "$(primary_root)"
+}
+
+slugify() {
+  # feat/microsteps-155-160 → microsteps-155-160
+  local s="$1"
+  s="${s#feat/}"
+  s="${s#fix/}"
+  s="${s#docs/}"
+  s="${s#wip/}"
+  s="$(printf '%s' "$s" | tr '/_' '--' | tr -cd '[:alnum:].\-')"
+  [[ -n "$s" ]] || die "empty slug from branch name"
+  printf '%s\n' "$s"
+}
+
+default_path_for_branch() {
+  local branch="$1"
+  local slug
+  slug="$(slugify "$branch")"
+  printf '%s/%s-wt-%s\n' "$(parent_dir)" "$(repo_basename)" "$slug"
+}
+
+resolve_worktree() {
+  # Accept absolute path, relative path, branch name, or wt slug suffix.
+  local arg="$1"
+  local line path
+  if [[ -d "$arg/.git" || -f "$arg/.git" ]]; then
+    (cd "$arg" && pwd)
+    return 0
+  fi
+  while IFS= read -r line; do
+    case "$line" in
+      worktree\ *)
+        path="${line#worktree }"
+        if [[ "$path" == "$arg" || "$(basename "$path")" == "$arg" || "$(basename "$path")" == *"wt-${arg}"* ]]; then
+          printf '%s\n' "$path"
+          return 0
+        fi
+        # match by checked-out branch
+        ;;
+    esac
+  done < <(git worktree list --porcelain)
+
+  # Second pass: branch name match
+  local cur_path="" cur_branch=""
+  while IFS= read -r line; do
+    case "$line" in
+      worktree\ *)
+        cur_path="${line#worktree }"
+        cur_branch=""
+        ;;
+      branch\ *)
+        cur_branch="${line#branch refs/heads/}"
+        if [[ "$cur_branch" == "$arg" ]]; then
+          printf '%s\n' "$cur_path"
+          return 0
+        fi
+        ;;
+    esac
+  done < <(git worktree list --porcelain)
+
+  die "worktree not found: $arg (try: wt list)"
+}
+
+cmd_list() {
+  git worktree list
+}
+
+cmd_new() {
+  local branch="" path="" base="origin/main" bootstrap=0
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --path)
+        path="${2:-}"; shift 2
+        ;;
+      --base)
+        base="${2:-}"; shift 2
+        ;;
+      --bootstrap)
+        bootstrap=1; shift
+        ;;
+      -h|--help)
+        cat <<'EOF'
+usage: wt new <branch> [--path DIR] [--base origin/main] [--bootstrap]
+
+Creates a new branch from --base in an isolated sibling directory:
+  ../<repo>-wt-<slug>
+
+Example:
+  ./scripts/worktree/wt new feat/microsteps-155-160 --bootstrap
+EOF
+        return 0
+        ;;
+      -*)
+        die "unknown flag: $1"
+        ;;
+      *)
+        if [[ -z "$branch" ]]; then
+          branch="$1"; shift
+        else
+          die "unexpected arg: $1"
+        fi
+        ;;
+    esac
+  done
+  [[ -n "$branch" ]] || die "branch required (e.g. feat/microsteps-155-160)"
+
+  if [[ -z "$path" ]]; then
+    path="$(default_path_for_branch "$branch")"
+  fi
+
+  info "fetching $(printf '%s' "$base" | sed 's#^origin/##') …"
+  # base like origin/main → fetch main from origin
+  local remote_ref="${base#origin/}"
+  if [[ "$base" == origin/* ]]; then
+    git fetch origin "$remote_ref"
+  else
+    git fetch origin
+  fi
+
+  if [[ -e "$path" ]]; then
+    die "path already exists: $path"
+  fi
+
+  if git show-ref --verify --quiet "refs/heads/$branch"; then
+    die "local branch already exists: $branch (checkout via: git worktree add \"$path\" \"$branch\")"
+  fi
+
+  info "adding worktree $path (branch $branch ← $base)"
+  git worktree add -b "$branch" "$path" "$base"
+  # Avoid tracking origin/main on a brand-new feature branch.
+  git -C "$path" branch --unset-upstream 2>/dev/null || true
+
+  if [[ "$bootstrap" -eq 1 ]]; then
+    info "bootstrap: web/e2e npm ci"
+    (cd "$path/web/e2e" && npm ci)
+  else
+    info "skip npm ci (pass --bootstrap once if you will run Playwright here)"
+  fi
+
+  cat <<EOF
+
+wt: ready
+  path:   $path
+  branch: $branch
+  base:   $base
+
+next:
+  cd "$path"
+  # code → make harness → push → gh pr create
+  # while GitHub CI runs, open another wt from the primary tree:
+  #   make wt-new BRANCH=feat/next-slice
+
+NOTE: only ONE make harness at a time (ports :8080 / :3001).
+EOF
+}
+
+cmd_sync() {
+  local target="${1:-}" onto="origin/main"
+  shift || true
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --onto) onto="${2:-}"; shift 2 ;;
+      *) die "unknown sync arg: $1" ;;
+    esac
+  done
+  [[ -n "$target" ]] || die "usage: wt sync <path|branch|slug> [--onto origin/main]"
+
+  local path
+  path="$(resolve_worktree "$target")"
+  info "sync $path onto $onto"
+
+  local remote_ref="${onto#origin/}"
+  if [[ "$onto" == origin/* ]]; then
+    git fetch origin "$remote_ref"
+  else
+    git fetch origin
+  fi
+
+  (
+    cd "$path"
+    local dirty
+    dirty="$(git status --porcelain)"
+    if [[ -n "$dirty" ]]; then
+      die "worktree dirty — commit or stash before sync: $path"
+    fi
+    git rebase "$onto"
+    info "rebase OK — HEAD=$(git rev-parse --short HEAD)"
+  )
+}
+
+cmd_rm() {
+  local target="${1:-}" force=0
+  shift || true
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --force|-f) force=1; shift ;;
+      *) die "unknown rm arg: $1" ;;
+    esac
+  done
+  [[ -n "$target" ]] || die "usage: wt rm <path|branch|slug> [--force]"
+
+  local path
+  path="$(resolve_worktree "$target")"
+  local primary
+  primary="$(primary_root)"
+  if [[ "$(cd "$path" && pwd)" == "$(cd "$primary" && pwd)" ]]; then
+    die "refusing to remove primary worktree: $primary"
+  fi
+
+  info "removing worktree $path"
+  if [[ "$force" -eq 1 ]]; then
+    git worktree remove --force "$path"
+  else
+    git worktree remove "$path"
+  fi
+  info "pruning stale metadata"
+  git worktree prune
+  info "local branch kept (delete with: git branch -D <branch> when mergeado)"
+}
+
+cmd_path() {
+  local branch="${1:-}"
+  [[ -n "$branch" ]] || die "usage: wt path <branch>"
+  default_path_for_branch "$branch"
+}
+
+usage() {
+  cat <<'EOF'
+PPI worktree CLI — develop the next slice while CI watches the previous PR.
+
+commands:
+  wt new <branch> [--path DIR] [--base origin/main] [--bootstrap]
+  wt list
+  wt sync <path|branch|slug> [--onto origin/main]
+  wt rm   <path|branch|slug> [--force]
+  wt path <branch>            # print default sibling path
+
+makefile:
+  make wt-new BRANCH=feat/foo [BOOTSTRAP=1]
+  make wt-list
+  make wt-sync TARGET=feat/foo
+  make wt-rm   TARGET=feat/foo
+
+see: docs/dev/git-worktrees.md
+EOF
+}
+
+main() {
+  local cmd="${1:-}"
+  shift || true
+  case "$cmd" in
+    new) cmd_new "$@" ;;
+    list|ls) cmd_list "$@" ;;
+    sync) cmd_sync "$@" ;;
+    rm|remove) cmd_rm "$@" ;;
+    path) cmd_path "$@" ;;
+    -h|--help|help|"") usage ;;
+    *) die "unknown command: $cmd (try: wt help)" ;;
+  esac
+}
+
+main "$@"

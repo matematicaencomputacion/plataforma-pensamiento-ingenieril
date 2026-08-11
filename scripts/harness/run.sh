@@ -15,9 +15,38 @@ API_PID=""
 TRUNK_PID=""
 MODULES=()
 RESULTS=()
+# One local stack at a time (:8080 API + :3001 Trunk) — critical with git worktrees.
+PORT_LOCK_FILE="${PPI_HARNESS_PORT_LOCK:-${TMPDIR:-/tmp}/ppi-harness-ports.lock}"
+PORT_LOCK_HELD=0
 
 log() { printf '%s\n' "$*"; }
 hr() { printf '%s\n' "────────────────────────────────────────"; }
+
+acquire_port_lock() {
+  if [[ -f "$PORT_LOCK_FILE" ]]; then
+    local pid
+    pid="$(cat "$PORT_LOCK_FILE" 2>/dev/null || true)"
+    if [[ -n "${pid}" ]] && kill -0 "$pid" 2>/dev/null; then
+      log "ERROR: otro harness ya usa :8080/:3001 (pid ${pid}, lock ${PORT_LOCK_FILE})."
+      log "Con worktrees: codeá en paralelo, pero corré make harness de a uno."
+      log "Ver docs/dev/git-worktrees.md"
+      return 1
+    fi
+  fi
+  printf '%s\n' "$$" >"$PORT_LOCK_FILE"
+  PORT_LOCK_HELD=1
+}
+
+release_port_lock() {
+  if [[ "$PORT_LOCK_HELD" -eq 1 && -f "$PORT_LOCK_FILE" ]]; then
+    local pid
+    pid="$(cat "$PORT_LOCK_FILE" 2>/dev/null || true)"
+    if [[ "$pid" == "$$" ]]; then
+      rm -f "$PORT_LOCK_FILE"
+    fi
+  fi
+  PORT_LOCK_HELD=0
+}
 
 cleanup() {
   local code=$?
@@ -29,6 +58,7 @@ cleanup() {
     kill "$API_PID" 2>/dev/null || true
     wait "$API_PID" 2>/dev/null || true
   fi
+  release_port_lock
   # Soft cleanup: do not wipe REPORT_DIR (artifacts are the point).
   exit "$code"
 }
@@ -145,6 +175,10 @@ ensure_playwright_browsers() {
 start_stack() {
   hr
   log "Starting stack (API :8080, Trunk :3001)"
+  acquire_port_lock || {
+    record "stack-api" "FAIL"
+    return 1
+  }
   mkdir -p backend/data artifacts/harness
   export JWT_SECRET="${JWT_SECRET:-harness-jwt-secret}"
   export DATABASE_URL="${DATABASE_URL:-sqlite://./data/ppi-harness.db}"
