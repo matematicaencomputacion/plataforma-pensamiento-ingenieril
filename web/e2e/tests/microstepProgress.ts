@@ -81,6 +81,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 73, step_id: "py-73-file-append" },
   { level_id: 74, step_id: "py-74-file-delete" },
   { level_id: 75, step_id: "py-75-user-input" },
+  { level_id: 76, step_id: "py-76-reverse-string" },
+  { level_id: 77, step_id: "py-77-remove-duplicates" },
+  { level_id: 78, step_id: "py-78-add-two-numbers" },
+  { level_id: 79, step_id: "py-79-self" },
+  { level_id: 80, step_id: "py-80-class-properties" },
+  { level_id: 81, step_id: "py-81-class-methods" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
