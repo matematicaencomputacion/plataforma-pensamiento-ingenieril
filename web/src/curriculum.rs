@@ -898,9 +898,93 @@ pub const PY63_MODULES: CodingStep = CodingStep {
     pytest: "def test_modules(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert isinstance(ns.get('x'), str)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'str'\n",
     hint: "import platform\nx = platform.system()\nprint(type(x).__name__)",
     solution_example: "import platform\nx = platform.system()\nprint(type(x).__name__)\n",
-    next: None,
+    next: Some("py-64-dates"),
     show_type_chips: false,
     micro_step: 63,
+};
+
+pub const PY64_DATES: CodingStep = CodingStep {
+    id: "py-64-dates",
+    title: "Python Dates",
+    objective: "Crear un objeto datetime con año, mes y día.",
+    prompt_md: "**Python Dates**\n\nEl módulo `datetime` trabaja con fechas.\n\n**Micro-reto:**\n1. `import datetime`\n2. Creá `x = datetime.datetime(2020, 5, 17)`\n3. Imprimí `x`",
+    starter_code: "# import datetime\n# x = ...\n# print(x)\n",
+    pytest: "def test_dates(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import datetime as _dt\n    assert ns.get('x') == _dt.datetime(2020, 5, 17)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '2020-05-17' in out\n",
+    hint: "import datetime\nx = datetime.datetime(2020, 5, 17)\nprint(x)",
+    solution_example: "import datetime\nx = datetime.datetime(2020, 5, 17)\nprint(x)\n",
+    next: Some("py-65-math"),
+    show_type_chips: false,
+    micro_step: 64,
+};
+
+pub const PY65_MATH: CodingStep = CodingStep {
+    id: "py-65-math",
+    title: "Python Math",
+    objective: "Usar math.sqrt para la raíz cuadrada.",
+    prompt_md: "**Python Math**\n\nEl módulo `math` extiende las funciones matemáticas.\n\n**Micro-reto:**\n1. `import math`\n2. Guardá en `x` el resultado de `math.sqrt(64)`\n3. Imprimí `x`",
+    starter_code: "# import math\n# x = ...\n# print(x)\n",
+    pytest: "def test_math(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 8.0\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '8.0'\n",
+    hint: "import math\nx = math.sqrt(64)\nprint(x)",
+    solution_example: "import math\nx = math.sqrt(64)\nprint(x)\n",
+    next: Some("py-66-json"),
+    show_type_chips: false,
+    micro_step: 65,
+};
+
+pub const PY66_JSON: CodingStep = CodingStep {
+    id: "py-66-json",
+    title: "Python JSON",
+    objective: "Convertir un string JSON a un dict de Python.",
+    prompt_md: "**Python JSON**\n\n`json.loads` convierte un string JSON a un objeto Python.\n\n**Micro-reto:**\n1. `import json`\n2. Creá `x` con el string JSON `{\"name\":\"John\", \"age\":30}`\n3. `y = json.loads(x)` e imprimí `y[\"name\"]`",
+    starter_code: "# import json\n# x = ...\n# y = ...\n# print(...)\n",
+    pytest: "def test_json(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('y', {}).get('name') == 'John'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'John'\n",
+    hint: "import json\nx = '{\"name\":\"John\", \"age\":30}'\ny = json.loads(x)\nprint(y[\"name\"])",
+    solution_example: "import json\nx = '{\"name\":\"John\", \"age\":30}'\ny = json.loads(x)\nprint(y[\"name\"])\n",
+    next: Some("py-67-regex"),
+    show_type_chips: false,
+    micro_step: 66,
+};
+
+pub const PY67_REGEX: CodingStep = CodingStep {
+    id: "py-67-regex",
+    title: "Python RegEx",
+    objective: "Buscar un patrón con re.search.",
+    prompt_md: "**Python RegEx**\n\nEl módulo `re` busca patrones en strings.\n\n**Micro-reto:**\n1. `import re`\n2. Creá `txt` con `The rain in Spain`\n3. `x = re.search(\"Spain\", txt)` e imprimí `x.group()`",
+    starter_code: "# import re\n# txt = ...\n# x = ...\n# print(...)\n",
+    pytest: "def test_regex(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('txt') == 'The rain in Spain'\n    assert ns['x'].group() == 'Spain'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Spain'\n",
+    hint: "import re\ntxt = \"The rain in Spain\"\nx = re.search(\"Spain\", txt)\nprint(x.group())",
+    solution_example: "import re\ntxt = \"The rain in Spain\"\nx = re.search(\"Spain\", txt)\nprint(x.group())\n",
+    next: Some("py-68-try-except"),
+    show_type_chips: false,
+    micro_step: 67,
+};
+
+pub const PY68_TRY_EXCEPT: CodingStep = CodingStep {
+    id: "py-68-try-except",
+    title: "Python Try Except",
+    objective: "Capturar un error con try/except.",
+    prompt_md: "**Try...Except**\n\n`try` prueba un bloque; `except` maneja el error.\n\n**Micro-reto:**\n1. En un `try`, ejecutá `print(x)` donde `x` no está definido\n2. En el `except`, imprimí exactamente `An exception occurred`",
+    starter_code: "# try:\n#     ...\n# except:\n#     ...\n",
+    pytest: "def test_try_except(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'An exception occurred'\n",
+    hint: "try:\n    print(x)\nexcept:\n    print(\"An exception occurred\")",
+    solution_example: "try:\n    print(x)\nexcept:\n    print(\"An exception occurred\")\n",
+    next: Some("py-69-string-formatting"),
+    show_type_chips: false,
+    micro_step: 68,
+};
+
+pub const PY69_STRING_FORMATTING: CodingStep = CodingStep {
+    id: "py-69-string-formatting",
+    title: "Python String Formatting",
+    objective: "Usar un f-string para interpolar un valor.",
+    prompt_md: "**String Formatting**\n\nLos f-strings interpolan variables en un string.\n\n**Micro-reto:**\n1. Creá `price = 49`\n2. Creá `txt = f\"The price is {price} dollars\"`\n3. Imprimí `txt`",
+    starter_code: "# price = ...\n# txt = ...\n# print(txt)\n",
+    pytest: "def test_string_formatting(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('price') == 49\n    assert ns.get('txt') == 'The price is 49 dollars'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'The price is 49 dollars'\n",
+    hint: "price = 49\ntxt = f\"The price is {price} dollars\"\nprint(txt)",
+    solution_example: "price = 49\ntxt = f\"The price is {price} dollars\"\nprint(txt)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 69,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -967,6 +1051,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY61_POLYMORPHISM,
     &PY62_SCOPE,
     &PY63_MODULES,
+    &PY64_DATES,
+    &PY65_MATH,
+    &PY66_JSON,
+    &PY67_REGEX,
+    &PY68_TRY_EXCEPT,
+    &PY69_STRING_FORMATTING,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -1310,10 +1400,27 @@ mod tests {
             (60, "py-60-iterators", Some("py-61-polymorphism")),
             (61, "py-61-polymorphism", Some("py-62-scope")),
             (62, "py-62-scope", Some("py-63-modules")),
-            (63, "py-63-modules", None),
+            (63, "py-63-modules", Some("py-64-dates")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("oop family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py64_to_py69_stdlib_chain() {
+        let ids = [
+            (64, "py-64-dates", Some("py-65-math")),
+            (65, "py-65-math", Some("py-66-json")),
+            (66, "py-66-json", Some("py-67-regex")),
+            (67, "py-67-regex", Some("py-68-try-except")),
+            (68, "py-68-try-except", Some("py-69-string-formatting")),
+            (69, "py-69-string-formatting", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("stdlib family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }

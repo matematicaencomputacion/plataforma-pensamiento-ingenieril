@@ -69,6 +69,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 61, step_id: "py-61-polymorphism" },
   { level_id: 62, step_id: "py-62-scope" },
   { level_id: 63, step_id: "py-63-modules" },
+  { level_id: 64, step_id: "py-64-dates" },
+  { level_id: 65, step_id: "py-65-math" },
+  { level_id: 66, step_id: "py-66-json" },
+  { level_id: 67, step_id: "py-67-regex" },
+  { level_id: 68, step_id: "py-68-try-except" },
+  { level_id: 69, step_id: "py-69-string-formatting" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
