@@ -15,6 +15,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 7, step_id: "py-07-data-types" },
   { level_id: 8, step_id: "py-08-numbers" },
   { level_id: 9, step_id: "py-09-casting" },
+  { level_id: 10, step_id: "py-10-strings" },
+  { level_id: 11, step_id: "py-11-slicing" },
+  { level_id: 12, step_id: "py-12-modify-strings" },
+  { level_id: 13, step_id: "py-13-concatenate" },
+  { level_id: 14, step_id: "py-14-format-strings" },
+  { level_id: 15, step_id: "py-15-escape" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

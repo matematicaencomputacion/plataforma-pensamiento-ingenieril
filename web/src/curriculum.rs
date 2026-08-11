@@ -142,9 +142,93 @@ pub const PY09_CASTING: CodingStep = CodingStep {
     pytest: "def test_casting(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 1 and isinstance(ns['x'], int)\n    assert ns.get('a') == 1.0 and isinstance(ns['a'], float)\n    assert ns.get('b') == '1' and isinstance(ns['b'], str)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '1.0' in out and '1' in out\n",
     hint: "x = 1\na = float(x)\nb = str(x)\nprint(a)\nprint(b)",
     solution_example: "x = 1\na = float(x)\nb = str(x)\nprint(a)\nprint(b)\n",
-    next: None,
+    next: Some("py-10-strings"),
     show_type_chips: false,
     micro_step: 9,
+};
+
+pub const PY10_STRINGS: CodingStep = CodingStep {
+    id: "py-10-strings",
+    title: "Python Strings",
+    objective: "Asignar un string, mostrarlo y medir su longitud con len().",
+    prompt_md: "**Strings**\n\nLos strings van entre comillas simples o dobles.\n\n**Micro-reto:**\n1. Asigná a `a` el string `Hello, World!`\n2. Imprimí `a`\n3. Imprimí la longitud de `a` con `len()`",
+    starter_code: "# a = ...\n# print(...)\n# print(len(...))\n",
+    pytest: "def test_strings(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('a') == 'Hello, World!'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'Hello, World!' in out and '13' in out\n",
+    hint: "a = \"Hello, World!\"\nprint(a)\nprint(len(a))",
+    solution_example: "a = \"Hello, World!\"\nprint(a)\nprint(len(a))\n",
+    next: Some("py-11-slicing"),
+    show_type_chips: false,
+    micro_step: 10,
+};
+
+pub const PY11_SLICING: CodingStep = CodingStep {
+    id: "py-11-slicing",
+    title: "Python Slicing Strings",
+    objective: "Extraer un rango de caracteres con la sintaxis de slice.",
+    prompt_md: "**Slicing**\n\nPodés devolver un rango con `inicio:fin` (el fin no se incluye).\n\n**Micro-reto:**\n1. Asigná a `b` el string `Hello, World!`\n2. Guardá en `slice` el resultado de `b[2:5]`\n3. Imprimí `slice`",
+    starter_code: "# b = ...\n# slice = ...\n# print(...)\n",
+    pytest: "def test_slicing(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('b') == 'Hello, World!'\n    assert ns.get('slice') == 'llo'\n    out = capsys.readouterr().out\n    assert 'llo' in out\n",
+    hint: "b = \"Hello, World!\"\nslice = b[2:5]\nprint(slice)",
+    solution_example: "b = \"Hello, World!\"\nslice = b[2:5]\nprint(slice)\n",
+    next: Some("py-12-modify-strings"),
+    show_type_chips: false,
+    micro_step: 11,
+};
+
+pub const PY12_MODIFY_STRINGS: CodingStep = CodingStep {
+    id: "py-12-modify-strings",
+    title: "Python Modify Strings",
+    objective: "Usar upper() y lower() para transformar un string.",
+    prompt_md: "**Modify Strings**\n\nPython trae métodos built-in para transformar strings.\n\n**Micro-reto:**\n1. Asigná a `a` el string `Hello, World!`\n2. Guardá en `u` el resultado de `a.upper()`\n3. Guardá en `l` el resultado de `a.lower()`\n4. Imprimí `u` y `l`",
+    starter_code: "# a = ...\n# u = ...\n# l = ...\n# print(...)\n",
+    pytest: "def test_modify_strings(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('a') == 'Hello, World!'\n    assert ns.get('u') == 'HELLO, WORLD!'\n    assert ns.get('l') == 'hello, world!'\n    out = capsys.readouterr().out\n    assert 'HELLO, WORLD!' in out and 'hello, world!' in out\n",
+    hint: "a = \"Hello, World!\"\nu = a.upper()\nl = a.lower()\nprint(u)\nprint(l)",
+    solution_example: "a = \"Hello, World!\"\nu = a.upper()\nl = a.lower()\nprint(u)\nprint(l)\n",
+    next: Some("py-13-concatenate"),
+    show_type_chips: false,
+    micro_step: 12,
+};
+
+pub const PY13_CONCATENATE: CodingStep = CodingStep {
+    id: "py-13-concatenate",
+    title: "Python String Concatenation",
+    objective: "Combinar strings con el operador +.",
+    prompt_md: "**String Concatenation**\n\nPara unir strings usá el operador `+`.\n\n**Micro-reto:**\n1. Creá `a` con `Hello`\n2. Creá `b` con `World`\n3. Creá `c` como `a + \" \" + b`\n4. Imprimí `c`",
+    starter_code: "# a = ...\n# b = ...\n# c = ...\n# print(...)\n",
+    pytest: "def test_concatenate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('a') == 'Hello'\n    assert ns.get('b') == 'World'\n    assert ns.get('c') == 'Hello World'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Hello World' or 'Hello World' in out\n",
+    hint: "a = \"Hello\"\nb = \"World\"\nc = a + \" \" + b\nprint(c)",
+    solution_example: "a = \"Hello\"\nb = \"World\"\nc = a + \" \" + b\nprint(c)\n",
+    next: Some("py-14-format-strings"),
+    show_type_chips: false,
+    micro_step: 13,
+};
+
+pub const PY14_FORMAT_STRINGS: CodingStep = CodingStep {
+    id: "py-14-format-strings",
+    title: "Python Format Strings",
+    objective: "Insertar variables en un string con f-strings.",
+    prompt_md: "**Format Strings**\n\nLas f-strings (prefijo `f`) insertan variables dentro de `{}`.\n\n**Micro-reto:**\n1. Creá `age` con el entero `36`\n2. Creá `txt` con la f-string `My name is John, I am {age}`\n3. Imprimí `txt`",
+    starter_code: "# age = ...\n# txt = ...\n# print(...)\n",
+    pytest: "def test_format_strings(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('age') == 36\n    assert ns.get('txt') == 'My name is John, I am 36'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'My name is John, I am 36' in out\n",
+    hint: "age = 36\ntxt = f\"My name is John, I am {age}\"\nprint(txt)",
+    solution_example: "age = 36\ntxt = f\"My name is John, I am {age}\"\nprint(txt)\n",
+    next: Some("py-15-escape"),
+    show_type_chips: false,
+    micro_step: 14,
+};
+
+pub const PY15_ESCAPE: CodingStep = CodingStep {
+    id: "py-15-escape",
+    title: "Python Escape Characters",
+    objective: "Insertar comillas dentro de un string con el escape \\\".",
+    prompt_md: "**Escape Characters**\n\nUna barra invertida `\\` escapa caracteres ilegales (por ejemplo comillas).\n\n**Micro-reto:**\n1. Creá `txt` con el texto `We are the so-called \"Vikings\" from the north.` usando `\\\"`\n2. Imprimí `txt`",
+    starter_code: "# txt = ...\n# print(...)\n",
+    pytest: "def test_escape(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('txt') == 'We are the so-called \"Vikings\" from the north.'\n    out = capsys.readouterr().out\n    assert 'Vikings' in out\n",
+    hint: "txt = \"We are the so-called \\\"Vikings\\\" from the north.\"\nprint(txt)",
+    solution_example: "txt = \"We are the so-called \\\"Vikings\\\" from the north.\"\nprint(txt)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 15,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -157,6 +241,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY07_DATA_TYPES,
     &PY08_NUMBERS,
     &PY09_CASTING,
+    &PY10_STRINGS,
+    &PY11_SLICING,
+    &PY12_MODIFY_STRINGS,
+    &PY13_CONCATENATE,
+    &PY14_FORMAT_STRINGS,
+    &PY15_ESCAPE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -352,8 +442,25 @@ mod tests {
     fn py09_casting_chained_from_numbers() {
         let step = coding_step_by_micro_step(9).expect("py-09");
         assert_eq!(step.id, "py-09-casting");
-        assert!(step.next.is_none());
+        assert_eq!(step.next, Some("py-10-strings"));
         assert!(step.pytest.contains("test_casting"));
+    }
+
+    #[test]
+    fn py10_to_py15_strings_family_chain() {
+        let ids = [
+            (10, "py-10-strings", Some("py-11-slicing")),
+            (11, "py-11-slicing", Some("py-12-modify-strings")),
+            (12, "py-12-modify-strings", Some("py-13-concatenate")),
+            (13, "py-13-concatenate", Some("py-14-format-strings")),
+            (14, "py-14-format-strings", Some("py-15-escape")),
+            (15, "py-15-escape", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("strings family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
     }
 
     #[test]
