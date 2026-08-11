@@ -3053,6 +3053,66 @@ pub const PY220_MULTIPLY_STRINGS: CodingStep = CodingStep {
     next: Some("py-221-insert-interval"), show_type_chips: false, micro_step: 220,
 };
 
+pub const PY221_INSERT_INTERVAL: CodingStep = CodingStep {
+    id: "py-221-insert-interval", title: "DSA Insertar Intervalo", objective: "Insertar y fusionar un intervalo ordenado.",
+    prompt_md: "**Insert Interval**\n\nDefiní `insert(intervals, new_interval)`.\n\n**Micro-reto:** imprimí `[[1, 5], [6, 9]]`.",
+    starter_code: "# def insert(intervals, new_interval):\n#     ...\n",
+    pytest: "def test_insert_interval(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['insert']([[1, 3], [6, 9]], [2, 5]) == [[1, 5], [6, 9]]\n    assert capsys.readouterr().out.strip() == '[[1, 5], [6, 9]]'\n",
+    hint: "def insert(intervals, new_interval):\n    out = []; i = 0\n    while i < len(intervals) and intervals[i][1] < new_interval[0]: out.append(intervals[i]); i += 1\n    while i < len(intervals) and intervals[i][0] <= new_interval[1]:\n        new_interval[0] = min(new_interval[0], intervals[i][0]); new_interval[1] = max(new_interval[1], intervals[i][1]); i += 1\n    return out + [new_interval] + intervals[i:]",
+    solution_example: "def insert(intervals, new_interval):\n    out = []; i = 0\n    while i < len(intervals) and intervals[i][1] < new_interval[0]: out.append(intervals[i]); i += 1\n    while i < len(intervals) and intervals[i][0] <= new_interval[1]:\n        new_interval[0] = min(new_interval[0], intervals[i][0]); new_interval[1] = max(new_interval[1], intervals[i][1]); i += 1\n    return out + [new_interval] + intervals[i:]\nprint(insert([[1, 3], [6, 9]], [2, 5]))\n",
+    next: Some("py-222-erase-overlap"), show_type_chips: false, micro_step: 221,
+};
+
+pub const PY222_ERASE_OVERLAP: CodingStep = CodingStep {
+    id: "py-222-erase-overlap", title: "DSA Eliminar Intervalos Solapados", objective: "Conservar el máximo conjunto de intervalos compatibles.",
+    prompt_md: "**Non-overlapping Intervals**\n\nDefiní `erase_overlap_intervals(intervals)` y devolvé las eliminaciones mínimas.\n\n**Micro-reto:** imprimí `1`.",
+    starter_code: "# def erase_overlap_intervals(intervals):\n#     ...\n",
+    pytest: "def test_erase_overlap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['erase_overlap_intervals']([[1, 2], [2, 3], [3, 4], [1, 3]]) == 1\n    assert ns['erase_overlap_intervals']([[1, 2], [1, 2], [1, 2]]) == 2\n    assert capsys.readouterr().out.strip() == '1'\n",
+    hint: "def erase_overlap_intervals(intervals):\n    end = float('-inf'); removed = 0\n    for start, finish in sorted(intervals, key=lambda item: item[1]):\n        if start < end: removed += 1\n        else: end = finish\n    return removed",
+    solution_example: "def erase_overlap_intervals(intervals):\n    end = float('-inf'); removed = 0\n    for start, finish in sorted(intervals, key=lambda item: item[1]):\n        if start < end: removed += 1\n        else: end = finish\n    return removed\nprint(erase_overlap_intervals([[1, 2], [2, 3], [3, 4], [1, 3]]))\n",
+    next: Some("py-223-meeting-rooms-ii"), show_type_chips: false, micro_step: 222,
+};
+
+pub const PY223_MEETING_ROOMS_II: CodingStep = CodingStep {
+    id: "py-223-meeting-rooms-ii", title: "DSA Salas de Reunión II", objective: "Calcular salas simultáneas mínimas con un heap.",
+    prompt_md: "**Meeting Rooms II**\n\nDefiní `min_meeting_rooms(intervals)`.\n\n**Micro-reto:** imprimí `2`.",
+    starter_code: "# def min_meeting_rooms(intervals):\n#     ...\n",
+    pytest: "def test_meeting_rooms_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['min_meeting_rooms']([[0, 30], [5, 10], [15, 20]]) == 2\n    assert ns['min_meeting_rooms']([[7, 10], [2, 4]]) == 1\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "import heapq\n\ndef min_meeting_rooms(intervals):\n    rooms = []\n    for start, end in sorted(intervals):\n        if rooms and rooms[0] <= start: heapq.heapreplace(rooms, end)\n        else: heapq.heappush(rooms, end)\n    return len(rooms)",
+    solution_example: "import heapq\n\ndef min_meeting_rooms(intervals):\n    rooms = []\n    for start, end in sorted(intervals):\n        if rooms and rooms[0] <= start: heapq.heapreplace(rooms, end)\n        else: heapq.heappush(rooms, end)\n    return len(rooms)\nprint(min_meeting_rooms([[0, 30], [5, 10], [15, 20]]))\n",
+    next: Some("py-224-single-number-ii"), show_type_chips: false, micro_step: 223,
+};
+
+pub const PY224_SINGLE_NUMBER_II: CodingStep = CodingStep {
+    id: "py-224-single-number-ii", title: "DSA Número Único II", objective: "Aislar el número que no aparece tres veces.",
+    prompt_md: "**Single Number II**\n\nDefiní `single_number(nums)` con la máquina de estados de bits `ones/twos`.\n\n**Micro-reto:** imprimí `3`.",
+    starter_code: "# def single_number(nums):\n#     ...\n",
+    pytest: "def test_single_number_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['single_number']([2, 2, 3, 2]) == 3\n    assert ns['single_number']([0, 1, 0, 1, 0, 1, 99]) == 99\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "def single_number(nums):\n    ones = twos = 0\n    for value in nums:\n        ones = (ones ^ value) & ~twos\n        twos = (twos ^ value) & ~ones\n    return ones",
+    solution_example: "def single_number(nums):\n    ones = twos = 0\n    for value in nums:\n        ones = (ones ^ value) & ~twos\n        twos = (twos ^ value) & ~ones\n    return ones\nprint(single_number([2, 2, 3, 2]))\n",
+    next: Some("py-225-counting-bits"), show_type_chips: false, micro_step: 224,
+};
+
+pub const PY225_COUNTING_BITS: CodingStep = CodingStep {
+    id: "py-225-counting-bits", title: "DSA Contar Bits", objective: "Calcular conteos de bits de 0 a n con programación dinámica.",
+    prompt_md: "**Counting Bits**\n\nDefiní `count_bits(n)` usando `bits[i] = bits[i >> 1] + (i & 1)`.\n\n**Micro-reto:** imprimí `[0, 1, 1, 2, 1, 2]`.",
+    starter_code: "# def count_bits(n):\n#     ...\n",
+    pytest: "def test_counting_bits(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['count_bits'](2) == [0, 1, 1]\n    assert ns['count_bits'](5) == [0, 1, 1, 2, 1, 2]\n    assert capsys.readouterr().out.strip() == '[0, 1, 1, 2, 1, 2]'\n",
+    hint: "def count_bits(n):\n    bits = [0] * (n + 1)\n    for value in range(1, n + 1): bits[value] = bits[value >> 1] + (value & 1)\n    return bits",
+    solution_example: "def count_bits(n):\n    bits = [0] * (n + 1)\n    for value in range(1, n + 1): bits[value] = bits[value >> 1] + (value & 1)\n    return bits\nprint(count_bits(5))\n",
+    next: Some("py-226-reverse-bits"), show_type_chips: false, micro_step: 225,
+};
+
+pub const PY226_REVERSE_BITS: CodingStep = CodingStep {
+    id: "py-226-reverse-bits", title: "DSA Invertir Bits", objective: "Invertir los 32 bits de un entero sin signo.",
+    prompt_md: "**Reverse Bits**\n\nDefiní `reverse_bits(n)` para una palabra de 32 bits.\n\n**Micro-reto:** imprimí `964176192` para `43261596`.",
+    starter_code: "# def reverse_bits(n):\n#     ...\n",
+    pytest: "def test_reverse_bits(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['reverse_bits'](43261596) == 964176192\n    assert ns['reverse_bits'](0) == 0\n    assert capsys.readouterr().out.strip() == '964176192'\n",
+    hint: "def reverse_bits(n):\n    out = 0\n    for _ in range(32): out = (out << 1) | (n & 1); n >>= 1\n    return out",
+    solution_example: "def reverse_bits(n):\n    out = 0\n    for _ in range(32): out = (out << 1) | (n & 1); n >>= 1\n    return out\nprint(reverse_bits(43261596))\n",
+    next: None, show_type_chips: false, micro_step: 226,
+};
+
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
     &PY02_INTRO,
@@ -3274,6 +3334,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY218_DECODE_STRING,
     &PY219_STR_COMPRESS,
     &PY220_MULTIPLY_STRINGS,
+    &PY221_INSERT_INTERVAL,
+    &PY222_ERASE_OVERLAP,
+    &PY223_MEETING_ROOMS_II,
+    &PY224_SINGLE_NUMBER_II,
+    &PY225_COUNTING_BITS,
+    &PY226_REVERSE_BITS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -3992,6 +4058,12 @@ mod tests {
             (218, "py-218-decode-string", Some("py-219-str-compress")),
             (219, "py-219-str-compress", Some("py-220-multiply-strings")),
             (220, "py-220-multiply-strings", Some("py-221-insert-interval")),
+            (221, "py-221-insert-interval", Some("py-222-erase-overlap")),
+            (222, "py-222-erase-overlap", Some("py-223-meeting-rooms-ii")),
+            (223, "py-223-meeting-rooms-ii", Some("py-224-single-number-ii")),
+            (224, "py-224-single-number-ii", Some("py-225-counting-bits")),
+            (225, "py-225-counting-bits", Some("py-226-reverse-bits")),
+            (226, "py-226-reverse-bits", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

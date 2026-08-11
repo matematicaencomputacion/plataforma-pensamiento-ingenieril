@@ -226,6 +226,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 218, step_id: "py-218-decode-string" },
   { level_id: 219, step_id: "py-219-str-compress" },
   { level_id: 220, step_id: "py-220-multiply-strings" },
+  { level_id: 221, step_id: "py-221-insert-interval" },
+  { level_id: 222, step_id: "py-222-erase-overlap" },
+  { level_id: 223, step_id: "py-223-meeting-rooms-ii" },
+  { level_id: 224, step_id: "py-224-single-number-ii" },
+  { level_id: 225, step_id: "py-225-counting-bits" },
+  { level_id: 226, step_id: "py-226-reverse-bits" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
