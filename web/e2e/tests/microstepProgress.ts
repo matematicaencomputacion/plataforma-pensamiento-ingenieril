@@ -106,6 +106,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 98, step_id: "py-98-fibonacci" },
   { level_id: 99, step_id: "py-99-quicksort" },
   { level_id: 100, step_id: "py-100-hash-count" },
+  { level_id: 101, step_id: "py-101-linked-delete" },
+  { level_id: 102, step_id: "py-102-linked-insert" },
+  { level_id: 103, step_id: "py-103-merge-sort" },
+  { level_id: 104, step_id: "py-104-counting-sort" },
+  { level_id: 105, step_id: "py-105-tree-node" },
+  { level_id: 106, step_id: "py-106-tree-preorder" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
