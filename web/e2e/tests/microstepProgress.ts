@@ -160,6 +160,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 152, step_id: "py-152-min-path-sum" },
   { level_id: 153, step_id: "py-153-decode-ways" },
   { level_id: 154, step_id: "py-154-longest-palindrome" },
+  { level_id: 155, step_id: "py-155-contains-dup" },
+  { level_id: 156, step_id: "py-156-best-stock" },
+  { level_id: 157, step_id: "py-157-move-zeroes" },
+  { level_id: 158, step_id: "py-158-product-except" },
+  { level_id: 159, step_id: "py-159-first-unique" },
+  { level_id: 160, step_id: "py-160-happy-number" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

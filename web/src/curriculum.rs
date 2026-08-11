@@ -2172,9 +2172,93 @@ pub const PY154_LONGEST_PALINDROME: CodingStep = CodingStep {
     pytest: "def test_longest_palindrome(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('longest_palindrome_len'))\n    assert ns['longest_palindrome_len']('babad') == 3\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
     hint: "def longest_palindrome_len(s):\n    def expand(l, r):\n        while l >= 0 and r < len(s) and s[l] == s[r]:\n            l -= 1\n            r += 1\n        return r - l - 1\n    best = 0\n    for i in range(len(s)):\n        best = max(best, expand(i, i), expand(i, i + 1))\n    return best\nprint(longest_palindrome_len('babad'))",
     solution_example: "def longest_palindrome_len(s):\n    def expand(l, r):\n        while l >= 0 and r < len(s) and s[l] == s[r]:\n            l -= 1\n            r += 1\n        return r - l - 1\n    best = 0\n    for i in range(len(s)):\n        best = max(best, expand(i, i), expand(i, i + 1))\n    return best\nprint(longest_palindrome_len('babad'))\n",
-    next: None,
+    next: Some("py-155-contains-dup"),
     show_type_chips: false,
     micro_step: 154,
+};
+
+pub const PY155_CONTAINS_DUP: CodingStep = CodingStep {
+    id: "py-155-contains-dup",
+    title: "DSA Contains Duplicate",
+    objective: "Detectar valores repetidos con un conjunto.",
+    prompt_md: "**Contains Duplicate**\n\nUn `set` guarda cada valor visto: si uno ya estaba, hay duplicado.\n\n**Micro-reto:**\n1. Definí `contains_duplicate(nums)`\n2. Imprimí `contains_duplicate([1, 2, 3, 1])` (esperado: `True`)",
+    starter_code: "# def contains_duplicate(nums):\n#     ...\n# print(contains_duplicate([1, 2, 3, 1]))\n",
+    pytest: "def test_contains_duplicate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('contains_duplicate'))\n    assert ns['contains_duplicate']([1, 2, 3, 1]) is True\n    assert ns['contains_duplicate']([1, 2, 3, 4]) is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "def contains_duplicate(nums):\n    seen = set()\n    for n in nums:\n        if n in seen:\n            return True\n        seen.add(n)\n    return False\nprint(contains_duplicate([1, 2, 3, 1]))",
+    solution_example: "def contains_duplicate(nums):\n    seen = set()\n    for n in nums:\n        if n in seen:\n            return True\n        seen.add(n)\n    return False\nprint(contains_duplicate([1, 2, 3, 1]))\n",
+    next: Some("py-156-best-stock"),
+    show_type_chips: false,
+    micro_step: 155,
+};
+
+pub const PY156_BEST_STOCK: CodingStep = CodingStep {
+    id: "py-156-best-stock",
+    title: "DSA Best Stock Profit",
+    objective: "Maximizar la ganancia con una compra y una venta.",
+    prompt_md: "**Best Time to Buy and Sell Stock**\n\nConservá el menor precio visto y compará la ganancia de vender hoy.\n\n**Micro-reto:**\n1. Definí `max_profit(prices)`\n2. Imprimí `max_profit([7, 1, 5, 3, 6, 4])` (esperado: `5`)",
+    starter_code: "# def max_profit(prices):\n#     ...\n# print(max_profit([7, 1, 5, 3, 6, 4]))\n",
+    pytest: "def test_max_profit(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_profit'))\n    assert ns['max_profit']([7, 1, 5, 3, 6, 4]) == 5\n    assert ns['max_profit']([7, 6, 4, 3, 1]) == 0\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['5']\n",
+    hint: "def max_profit(prices):\n    lowest = float('inf')\n    best = 0\n    for price in prices:\n        lowest = min(lowest, price)\n        best = max(best, price - lowest)\n    return best\nprint(max_profit([7, 1, 5, 3, 6, 4]))",
+    solution_example: "def max_profit(prices):\n    lowest = float('inf')\n    best = 0\n    for price in prices:\n        lowest = min(lowest, price)\n        best = max(best, price - lowest)\n    return best\nprint(max_profit([7, 1, 5, 3, 6, 4]))\n",
+    next: Some("py-157-move-zeroes"),
+    show_type_chips: false,
+    micro_step: 156,
+};
+
+pub const PY157_MOVE_ZEROES: CodingStep = CodingStep {
+    id: "py-157-move-zeroes",
+    title: "DSA Move Zeroes",
+    objective: "Mover ceros al final preservando los no-cero.",
+    prompt_md: "**Move Zeroes**\n\nEscribí los valores no-cero al frente y completá el resto con ceros.\n\n**Micro-reto:**\n1. Definí `move_zeroes(nums)` y retorná la lista mutada\n2. Imprimí `move_zeroes([0, 1, 0, 3, 12])` (esperado: `[1, 3, 12, 0, 0]`)",
+    starter_code: "# def move_zeroes(nums):\n#     ...\n# print(move_zeroes([0, 1, 0, 3, 12]))\n",
+    pytest: "def test_move_zeroes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('move_zeroes'))\n    nums = [0, 1, 0, 3, 12]\n    assert ns['move_zeroes'](nums) == [1, 3, 12, 0, 0]\n    assert nums == [1, 3, 12, 0, 0]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[1, 3, 12, 0, 0]']\n",
+    hint: "def move_zeroes(nums):\n    write = 0\n    for n in nums:\n        if n != 0:\n            nums[write] = n\n            write += 1\n    for i in range(write, len(nums)):\n        nums[i] = 0\n    return nums\nprint(move_zeroes([0, 1, 0, 3, 12]))",
+    solution_example: "def move_zeroes(nums):\n    write = 0\n    for n in nums:\n        if n != 0:\n            nums[write] = n\n            write += 1\n    for i in range(write, len(nums)):\n        nums[i] = 0\n    return nums\nprint(move_zeroes([0, 1, 0, 3, 12]))\n",
+    next: Some("py-158-product-except"),
+    show_type_chips: false,
+    micro_step: 157,
+};
+
+pub const PY158_PRODUCT_EXCEPT: CodingStep = CodingStep {
+    id: "py-158-product-except",
+    title: "DSA Product Except Self",
+    objective: "Calcular productos salvo el propio índice sin división.",
+    prompt_md: "**Product of Array Except Self**\n\nConstruí prefijos y sufijos: cada posición combina lo de antes y después, sin dividir.\n\n**Micro-reto:**\n1. Definí `product_except_self(nums)` sin división\n2. Imprimí `product_except_self([1, 2, 3, 4])` (esperado: `[24, 12, 8, 6]`)",
+    starter_code: "# def product_except_self(nums):\n#     ...\n# print(product_except_self([1, 2, 3, 4]))\n",
+    pytest: "def test_product_except_self(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('product_except_self'))\n    assert ns['product_except_self']([1, 2, 3, 4]) == [24, 12, 8, 6]\n    assert ns['product_except_self']([-1, 1, 0, -3, 3]) == [0, 0, 9, 0, 0]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[24, 12, 8, 6]']\n",
+    hint: "def product_except_self(nums):\n    result = [1] * len(nums)\n    prefix = 1\n    for i, n in enumerate(nums):\n        result[i] = prefix\n        prefix *= n\n    suffix = 1\n    for i in range(len(nums) - 1, -1, -1):\n        result[i] *= suffix\n        suffix *= nums[i]\n    return result\nprint(product_except_self([1, 2, 3, 4]))",
+    solution_example: "def product_except_self(nums):\n    result = [1] * len(nums)\n    prefix = 1\n    for i, n in enumerate(nums):\n        result[i] = prefix\n        prefix *= n\n    suffix = 1\n    for i in range(len(nums) - 1, -1, -1):\n        result[i] *= suffix\n        suffix *= nums[i]\n    return result\nprint(product_except_self([1, 2, 3, 4]))\n",
+    next: Some("py-159-first-unique"),
+    show_type_chips: false,
+    micro_step: 158,
+};
+
+pub const PY159_FIRST_UNIQUE: CodingStep = CodingStep {
+    id: "py-159-first-unique",
+    title: "DSA First Unique Character",
+    objective: "Encontrar el primer carácter cuya frecuencia sea uno.",
+    prompt_md: "**First Unique Character**\n\nContá frecuencias y recorré el string para hallar el primer carácter único.\n\n**Micro-reto:**\n1. Definí `first_uniq_char(s)`\n2. Imprimí `first_uniq_char('leetcode')` (esperado: `0`)",
+    starter_code: "# def first_uniq_char(s):\n#     ...\n# print(first_uniq_char('leetcode'))\n",
+    pytest: "def test_first_uniq_char(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('first_uniq_char'))\n    assert ns['first_uniq_char']('leetcode') == 0\n    assert ns['first_uniq_char']('loveleetcode') == 2\n    assert ns['first_uniq_char']('aabb') == -1\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['0']\n",
+    hint: "def first_uniq_char(s):\n    counts = {}\n    for char in s:\n        counts[char] = counts.get(char, 0) + 1\n    for i, char in enumerate(s):\n        if counts[char] == 1:\n            return i\n    return -1\nprint(first_uniq_char('leetcode'))",
+    solution_example: "def first_uniq_char(s):\n    counts = {}\n    for char in s:\n        counts[char] = counts.get(char, 0) + 1\n    for i, char in enumerate(s):\n        if counts[char] == 1:\n            return i\n    return -1\nprint(first_uniq_char('leetcode'))\n",
+    next: Some("py-160-happy-number"),
+    show_type_chips: false,
+    micro_step: 159,
+};
+
+pub const PY160_HAPPY_NUMBER: CodingStep = CodingStep {
+    id: "py-160-happy-number",
+    title: "DSA Happy Number",
+    objective: "Detectar si la suma de cuadrados de dígitos llega a uno.",
+    prompt_md: "**Happy Number**\n\nGuardá los valores vistos; repetir uno implica ciclo, llegar a `1` implica éxito.\n\n**Micro-reto:**\n1. Definí `is_happy(n)`\n2. Imprimí `is_happy(19)` (esperado: `True`)",
+    starter_code: "# def is_happy(n):\n#     ...\n# print(is_happy(19))\n",
+    pytest: "def test_is_happy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_happy'))\n    assert ns['is_happy'](19) is True\n    assert ns['is_happy'](2) is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "def is_happy(n):\n    seen = set()\n    while n != 1 and n not in seen:\n        seen.add(n)\n        n = sum(int(digit) ** 2 for digit in str(n))\n    return n == 1\nprint(is_happy(19))",
+    solution_example: "def is_happy(n):\n    seen = set()\n    while n != 1 and n not in seen:\n        seen.add(n)\n        n = sum(int(digit) ** 2 for digit in str(n))\n    return n == 1\nprint(is_happy(19))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 160,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -2332,6 +2416,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY152_MIN_PATH_SUM,
     &PY153_DECODE_WAYS,
     &PY154_LONGEST_PALINDROME,
+    &PY155_CONTAINS_DUP,
+    &PY156_BEST_STOCK,
+    &PY157_MOVE_ZEROES,
+    &PY158_PRODUCT_EXCEPT,
+    &PY159_FIRST_UNIQUE,
+    &PY160_HAPPY_NUMBER,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -2404,10 +2494,7 @@ fn code_span_html(inner: &str, flash_ident: Option<&str>) -> String {
         );
     }
     // Compound snippets (e.g. print(nombre, edad)): flash every ident occurrence.
-    format!(
-        "<code>{}</code>",
-        wrap_explore_idents(inner, flash_ident)
-    )
+    format!("<code>{}</code>", wrap_explore_idents(inner, flash_ident))
 }
 
 fn ident_class(flashing: bool) -> &'static str {
@@ -2931,10 +3018,31 @@ mod tests {
             (151, "py-151-word-break", Some("py-152-min-path-sum")),
             (152, "py-152-min-path-sum", Some("py-153-decode-ways")),
             (153, "py-153-decode-ways", Some("py-154-longest-palindrome")),
-            (154, "py-154-longest-palindrome", None),
+            (
+                154,
+                "py-154-longest-palindrome",
+                Some("py-155-contains-dup"),
+            ),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("dp-strings family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py155_to_py160_arrays_hash_chain() {
+        let ids = [
+            (155, "py-155-contains-dup", Some("py-156-best-stock")),
+            (156, "py-156-best-stock", Some("py-157-move-zeroes")),
+            (157, "py-157-move-zeroes", Some("py-158-product-except")),
+            (158, "py-158-product-except", Some("py-159-first-unique")),
+            (159, "py-159-first-unique", Some("py-160-happy-number")),
+            (160, "py-160-happy-number", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("arrays-hash family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
@@ -2983,9 +3091,7 @@ mod tests {
             html.matches(r#"class="learn__ident learn__ident--flash" data-ident="nombre""#)
                 .count()
                 + html
-                    .matches(
-                        r#"class="learn__ident learn__ident--flash" id="learn-ident-nombre""#
-                    )
+                    .matches(r#"class="learn__ident learn__ident--flash" id="learn-ident-nombre""#)
                     .count(),
             2
         );
