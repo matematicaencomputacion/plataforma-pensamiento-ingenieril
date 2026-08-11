@@ -154,6 +154,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 146, step_id: "py-146-majority" },
   { level_id: 147, step_id: "py-147-missing-number" },
   { level_id: 148, step_id: "py-148-single-number" },
+  { level_id: 149, step_id: "py-149-lis" },
+  { level_id: 150, step_id: "py-150-edit-distance" },
+  { level_id: 151, step_id: "py-151-word-break" },
+  { level_id: 152, step_id: "py-152-min-path-sum" },
+  { level_id: 153, step_id: "py-153-decode-ways" },
+  { level_id: 154, step_id: "py-154-longest-palindrome" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
