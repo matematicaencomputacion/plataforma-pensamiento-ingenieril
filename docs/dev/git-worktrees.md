@@ -14,6 +14,8 @@ Desde el monorepo (primary o cualquier worktree):
 
 # Equivalente Make
 make wt-new BRANCH=feat/microsteps-155-160 BOOTSTRAP=1
+# Path custom opcional (NO uses la variable Make PATH — chocaría con $PATH del shell):
+# make wt-new BRANCH=feat/foo WT_PATH=/tmp/ppi-wt-foo BOOTSTRAP=1
 ```
 
 Path por defecto:
