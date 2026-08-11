@@ -178,6 +178,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 170, step_id: "py-170-spiral-matrix" },
   { level_id: 171, step_id: "py-171-set-zeroes" },
   { level_id: 172, step_id: "py-172-subsets" },
+  { level_id: 173, step_id: "py-173-jump-game" },
+  { level_id: 174, step_id: "py-174-gas-station" },
+  { level_id: 175, step_id: "py-175-container-water" },
+  { level_id: 176, step_id: "py-176-three-sum" },
+  { level_id: 177, step_id: "py-177-trapping-rain" },
+  { level_id: 178, step_id: "py-178-group-anagrams" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
