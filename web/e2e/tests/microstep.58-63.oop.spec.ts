@@ -22,70 +22,85 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 52,
-    id: "py-52-functions",
-    title: "Python Functions",
-    solution: `def my_function():
-    print("Hello from a function")
-my_function()
+    micro: 58,
+    id: "py-58-init",
+    title: "Python __init__",
+    solution: `class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+p1 = Person("John", 36)
+print(p1.name)
+print(p1.age)
 `,
-    nextUrl: /\/learn\/py-53-function-args/,
-    cursorAfter: "53",
+    nextUrl: /\/learn\/py-59-inheritance/,
+    cursorAfter: "59",
   },
   {
-    micro: 53,
-    id: "py-53-function-args",
-    title: "Python Function Arguments",
-    solution: `def my_function(fname):
-    print(fname + " Refsnes")
-my_function("Emil")
+    micro: 59,
+    id: "py-59-inheritance",
+    title: "Python Inheritance",
+    solution: `class Person:
+    def __init__(self, fname, lname):
+        self.firstname = fname
+        self.lastname = lname
+    def printname(self):
+        print(self.firstname, self.lastname)
+class Student(Person):
+    pass
+x = Student("Mike", "Olsen")
+x.printname()
 `,
-    nextUrl: /\/learn\/py-54-function-return/,
-    cursorAfter: "54",
+    nextUrl: /\/learn\/py-60-iterators/,
+    cursorAfter: "60",
   },
   {
-    micro: 54,
-    id: "py-54-function-return",
-    title: "Python Function Return",
-    solution: `def my_function(x):
-    return 5 * x
-print(my_function(3))
+    micro: 60,
+    id: "py-60-iterators",
+    title: "Python Iterators",
+    solution: `mytuple = ("apple", "banana", "cherry")
+myit = iter(mytuple)
+print(next(myit))
+print(next(myit))
+print(next(myit))
 `,
-    nextUrl: /\/learn\/py-55-lambda/,
-    cursorAfter: "55",
+    nextUrl: /\/learn\/py-61-polymorphism/,
+    cursorAfter: "61",
   },
   {
-    micro: 55,
-    id: "py-55-lambda",
-    title: "Python Lambda",
-    solution: `x = lambda a : a + 10
-print(x(5))
+    micro: 61,
+    id: "py-61-polymorphism",
+    title: "Python Polymorphism",
+    solution: `x = "Hello World!"
+mytuple = ("apple", "banana", "cherry")
+print(len(x))
+print(len(mytuple))
 `,
-    nextUrl: /\/learn\/py-56-arrays/,
-    cursorAfter: "56",
+    nextUrl: /\/learn\/py-62-scope/,
+    cursorAfter: "62",
   },
   {
-    micro: 56,
-    id: "py-56-arrays",
-    title: "Python Arrays",
-    solution: `cars = ["Ford", "Volvo", "BMW"]
-cars.append("Honda")
-print(len(cars))
+    micro: 62,
+    id: "py-62-scope",
+    title: "Python Scope",
+    solution: `def myfunc():
+    x = 300
+    print(x)
+myfunc()
 `,
-    nextUrl: /\/learn\/py-57-classes/,
-    cursorAfter: "57",
+    nextUrl: /\/learn\/py-63-modules/,
+    cursorAfter: "63",
   },
   {
-    micro: 57,
-    id: "py-57-classes",
-    title: "Python Classes/Objects",
-    solution: `class MyClass:
-    x = 5
-p1 = MyClass()
-print(p1.x)
+    micro: 63,
+    id: "py-63-modules",
+    title: "Python Modules",
+    solution: `import platform
+x = platform.system()
+print(type(x).__name__)
 `,
-    nextUrl: /\/learn\/py-58-init/,
-    cursorAfter: "58",
+    nextUrl: /\/workspace/,
+    cursorAfter: "64",
   },
 ];
 
@@ -114,7 +129,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 52–57 · Functions / Lambda / Arrays / Classes", () => {
+test.describe("micro-steps 58–63 · Init / Inheritance / Iterators / Polymorphism / Scope / Modules", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

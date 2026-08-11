@@ -814,9 +814,93 @@ pub const PY57_CLASSES: CodingStep = CodingStep {
     pytest: "def test_classes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['p1'].x == 5\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '5'\n",
     hint: "class MyClass:\n    x = 5\np1 = MyClass()\nprint(p1.x)",
     solution_example: "class MyClass:\n    x = 5\np1 = MyClass()\nprint(p1.x)\n",
-    next: None,
+    next: Some("py-58-init"),
     show_type_chips: false,
     micro_step: 57,
+};
+
+pub const PY58_INIT: CodingStep = CodingStep {
+    id: "py-58-init",
+    title: "Python __init__",
+    objective: "Inicializar propiedades de un object con __init__.",
+    prompt_md: "**The __init__() Function**\n\n`__init__` se ejecuta al crear un object.\n\n**Micro-reto:**\n1. Creá la clase `Person` con `__init__(self, name, age)` que asigne `self.name` y `self.age`\n2. Creá `p1 = Person(\"John\", 36)`\n3. Imprimí `p1.name` y `p1.age`",
+    starter_code: "# class Person:\n#     def __init__(...):\n#         ...\n# p1 = ...\n# print(...)\n",
+    pytest: "def test_init(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['p1'].name == 'John' and ns['p1'].age == 36\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['John', '36']\n",
+    hint: "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\np1 = Person(\"John\", 36)\nprint(p1.name)\nprint(p1.age)",
+    solution_example: "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\np1 = Person(\"John\", 36)\nprint(p1.name)\nprint(p1.age)\n",
+    next: Some("py-59-inheritance"),
+    show_type_chips: false,
+    micro_step: 58,
+};
+
+pub const PY59_INHERITANCE: CodingStep = CodingStep {
+    id: "py-59-inheritance",
+    title: "Python Inheritance",
+    objective: "Heredar métodos de una clase padre.",
+    prompt_md: "**Inheritance**\n\nUna child class hereda de una parent class.\n\n**Micro-reto:**\n1. Creá `Person` con `__init__(self, fname, lname)` y método `printname`\n2. Creá `Student(Person)` con `pass`\n3. Creá `x = Student(\"Mike\", \"Olsen\")` y llamá `x.printname()`",
+    starter_code: "# class Person:\n#     ...\n# class Student(Person):\n#     pass\n# x = ...\n# x.printname()\n",
+    pytest: "def test_inheritance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert type(ns['x']).__name__ == 'Student'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Mike Olsen'\n",
+    hint: "class Person:\n    def __init__(self, fname, lname):\n        self.firstname = fname\n        self.lastname = lname\n    def printname(self):\n        print(self.firstname, self.lastname)\nclass Student(Person):\n    pass\nx = Student(\"Mike\", \"Olsen\")\nx.printname()",
+    solution_example: "class Person:\n    def __init__(self, fname, lname):\n        self.firstname = fname\n        self.lastname = lname\n    def printname(self):\n        print(self.firstname, self.lastname)\nclass Student(Person):\n    pass\nx = Student(\"Mike\", \"Olsen\")\nx.printname()\n",
+    next: Some("py-60-iterators"),
+    show_type_chips: false,
+    micro_step: 59,
+};
+
+pub const PY60_ITERATORS: CodingStep = CodingStep {
+    id: "py-60-iterators",
+    title: "Python Iterators",
+    objective: "Obtener un iterator y avanzar con next().",
+    prompt_md: "**Iterators**\n\n`iter()` crea un iterator; `next()` obtiene el siguiente valor.\n\n**Micro-reto:**\n1. Creá `mytuple` con `apple`, `banana`, `cherry`\n2. Creá `myit = iter(mytuple)`\n3. Imprimí `next(myit)` tres veces",
+    starter_code: "# mytuple = ...\n# myit = ...\n# print(next(...))\n",
+    pytest: "def test_iterators(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('mytuple') == ('apple', 'banana', 'cherry')\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['apple', 'banana', 'cherry']\n",
+    hint: "mytuple = (\"apple\", \"banana\", \"cherry\")\nmyit = iter(mytuple)\nprint(next(myit))\nprint(next(myit))\nprint(next(myit))",
+    solution_example: "mytuple = (\"apple\", \"banana\", \"cherry\")\nmyit = iter(mytuple)\nprint(next(myit))\nprint(next(myit))\nprint(next(myit))\n",
+    next: Some("py-61-polymorphism"),
+    show_type_chips: false,
+    micro_step: 60,
+};
+
+pub const PY61_POLYMORPHISM: CodingStep = CodingStep {
+    id: "py-61-polymorphism",
+    title: "Python Polymorphism",
+    objective: "Usar len() sobre distintos tipos (polimorfismo).",
+    prompt_md: "**Polymorphism**\n\n`len()` funciona con strings, tuples y dictionaries.\n\n**Micro-reto:**\n1. Creá `x` con el string `Hello World!`\n2. Creá `mytuple` con `apple`, `banana`, `cherry`\n3. Imprimí `len(x)` y `len(mytuple)`",
+    starter_code: "# x = ...\n# mytuple = ...\n# print(len(...))\n",
+    pytest: "def test_polymorphism(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 'Hello World!'\n    assert ns.get('mytuple') == ('apple', 'banana', 'cherry')\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['12', '3']\n",
+    hint: "x = \"Hello World!\"\nmytuple = (\"apple\", \"banana\", \"cherry\")\nprint(len(x))\nprint(len(mytuple))",
+    solution_example: "x = \"Hello World!\"\nmytuple = (\"apple\", \"banana\", \"cherry\")\nprint(len(x))\nprint(len(mytuple))\n",
+    next: Some("py-62-scope"),
+    show_type_chips: false,
+    micro_step: 61,
+};
+
+pub const PY62_SCOPE: CodingStep = CodingStep {
+    id: "py-62-scope",
+    title: "Python Scope",
+    objective: "Usar una variable local dentro de una función.",
+    prompt_md: "**Scope**\n\nUna variable creada dentro de una función es local a esa función.\n\n**Micro-reto:**\n1. Definí `myfunc` que cree `x = 300` e imprima `x`\n2. Llamá `myfunc()`",
+    starter_code: "# def myfunc():\n#     ...\n# myfunc()\n",
+    pytest: "def test_scope(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '300'\n",
+    hint: "def myfunc():\n    x = 300\n    print(x)\nmyfunc()",
+    solution_example: "def myfunc():\n    x = 300\n    print(x)\nmyfunc()\n",
+    next: Some("py-63-modules"),
+    show_type_chips: false,
+    micro_step: 62,
+};
+
+pub const PY63_MODULES: CodingStep = CodingStep {
+    id: "py-63-modules",
+    title: "Python Modules",
+    objective: "Importar un módulo built-in y usarlo.",
+    prompt_md: "**Modules**\n\nPodés importar módulos built-in como `platform`.\n\n**Micro-reto:**\n1. `import platform`\n2. Guardá en `x` el resultado de `platform.system()`\n3. Imprimí `type(x).__name__` (debe ser `str`)",
+    starter_code: "# import platform\n# x = ...\n# print(...)\n",
+    pytest: "def test_modules(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert isinstance(ns.get('x'), str)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'str'\n",
+    hint: "import platform\nx = platform.system()\nprint(type(x).__name__)",
+    solution_example: "import platform\nx = platform.system()\nprint(type(x).__name__)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 63,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -877,6 +961,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY55_LAMBDA,
     &PY56_ARRAYS,
     &PY57_CLASSES,
+    &PY58_INIT,
+    &PY59_INHERITANCE,
+    &PY60_ITERATORS,
+    &PY61_POLYMORPHISM,
+    &PY62_SCOPE,
+    &PY63_MODULES,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -1203,10 +1293,27 @@ mod tests {
             (54, "py-54-function-return", Some("py-55-lambda")),
             (55, "py-55-lambda", Some("py-56-arrays")),
             (56, "py-56-arrays", Some("py-57-classes")),
-            (57, "py-57-classes", None),
+            (57, "py-57-classes", Some("py-58-init")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("functions/classes step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py58_to_py63_oop_chain() {
+        let ids = [
+            (58, "py-58-init", Some("py-59-inheritance")),
+            (59, "py-59-inheritance", Some("py-60-iterators")),
+            (60, "py-60-iterators", Some("py-61-polymorphism")),
+            (61, "py-61-polymorphism", Some("py-62-scope")),
+            (62, "py-62-scope", Some("py-63-modules")),
+            (63, "py-63-modules", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("oop family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
