@@ -2256,9 +2256,93 @@ pub const PY160_HAPPY_NUMBER: CodingStep = CodingStep {
     pytest: "def test_is_happy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_happy'))\n    assert ns['is_happy'](19) is True\n    assert ns['is_happy'](2) is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
     hint: "def is_happy(n):\n    seen = set()\n    while n != 1 and n not in seen:\n        seen.add(n)\n        n = sum(int(digit) ** 2 for digit in str(n))\n    return n == 1\nprint(is_happy(19))",
     solution_example: "def is_happy(n):\n    seen = set()\n    while n != 1 and n not in seen:\n        seen.add(n)\n        n = sum(int(digit) ** 2 for digit in str(n))\n    return n == 1\nprint(is_happy(19))\n",
-    next: None,
+    next: Some("py-161-reverse-list"),
     show_type_chips: false,
     micro_step: 160,
+};
+
+pub const PY161_REVERSE_LIST: CodingStep = CodingStep {
+    id: "py-161-reverse-list",
+    title: "DSA Reverse List",
+    objective: "Invertir una lista devolviendo sus elementos en orden inverso.",
+    prompt_md: "**Reverse List**\n\nDevolvé una nueva lista con los elementos en orden inverso.\n\n**Micro-reto:**\n1. Definí `reverse_list(nums: list)`\n2. Devolvé la lista invertida sin modificar `nums`\n3. Imprimí `reverse_list([1, 2, 3, 4])` (esperado: `[4, 3, 2, 1]`)",
+    starter_code: "# def reverse_list(nums: list):\n#     ...\n# print(reverse_list([1, 2, 3, 4]))\n",
+    pytest: "def test_reverse_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('reverse_list'))\n    nums = [1, 2, 3, 4]\n    assert ns['reverse_list'](nums) == [4, 3, 2, 1]\n    assert nums == [1, 2, 3, 4]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[4, 3, 2, 1]']\n",
+    hint: "def reverse_list(nums: list):\n    return nums[::-1]\nprint(reverse_list([1, 2, 3, 4]))",
+    solution_example: "def reverse_list(nums: list):\n    return nums[::-1]\nprint(reverse_list([1, 2, 3, 4]))\n",
+    next: Some("py-162-merge-sorted"),
+    show_type_chips: false,
+    micro_step: 161,
+};
+
+pub const PY162_MERGE_SORTED: CodingStep = CodingStep {
+    id: "py-162-merge-sorted",
+    title: "DSA Merge Sorted Lists",
+    objective: "Unir dos listas ordenadas preservando el orden ascendente.",
+    prompt_md: "**Merge Sorted Lists**\n\nUsá dos índices: elegí el menor elemento disponible de cada lista.\n\n**Micro-reto:**\n1. Definí `merge_sorted(a, b)`\n2. Devolvé una nueva lista ordenada\n3. Imprimí `merge_sorted([1, 2, 4], [1, 3, 4])` (esperado: `[1, 1, 2, 3, 4, 4]`)",
+    starter_code: "# def merge_sorted(a, b):\n#     ...\n# print(merge_sorted([1, 2, 4], [1, 3, 4]))\n",
+    pytest: "def test_merge_sorted(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('merge_sorted'))\n    assert ns['merge_sorted']([1, 2, 4], [1, 3, 4]) == [1, 1, 2, 3, 4, 4]\n    assert ns['merge_sorted']([], [2]) == [2]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[1, 1, 2, 3, 4, 4]']\n",
+    hint: "def merge_sorted(a, b):\n    result = []\n    i = j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            result.append(a[i])\n            i += 1\n        else:\n            result.append(b[j])\n            j += 1\n    return result + a[i:] + b[j:]\nprint(merge_sorted([1, 2, 4], [1, 3, 4]))",
+    solution_example: "def merge_sorted(a, b):\n    result = []\n    i = j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            result.append(a[i])\n            i += 1\n        else:\n            result.append(b[j])\n            j += 1\n    return result + a[i:] + b[j:]\nprint(merge_sorted([1, 2, 4], [1, 3, 4]))\n",
+    next: Some("py-163-linked-cycle"),
+    show_type_chips: false,
+    micro_step: 162,
+};
+
+pub const PY163_LINKED_CYCLE: CodingStep = CodingStep {
+    id: "py-163-linked-cycle",
+    title: "DSA Linked List Cycle",
+    objective: "Detectar un ciclo en nodos enlazados con los punteros lento y rápido.",
+    prompt_md: "**Linked List Cycle**\n\nUsá Floyd: `slow` avanza un nodo y `fast` dos. Si se encuentran, hay ciclo.\n\n**Micro-reto:**\n1. Definí `class Node` con `data` y `next`\n2. Definí `has_cycle(head)`\n3. Construí `3 -> 2 -> 0 -> -4` y conectá `-4.next` con el nodo `2`\n4. Imprimí `has_cycle(node1)` (esperado: `True`)",
+    starter_code: "# class Node:\n#     ...\n# def has_cycle(head):\n#     ...\n# node1 = ...\n# ...\n# print(has_cycle(node1))\n",
+    pytest: "def test_linked_cycle(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('has_cycle'))\n    assert ns['has_cycle'](ns['node1']) is True\n    no_cycle = ns['Node'](1)\n    no_cycle.next = ns['Node'](2)\n    assert ns['has_cycle'](no_cycle) is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef has_cycle(head):\n    slow = fast = head\n    while fast is not None and fast.next is not None:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            return True\n    return False\n\nnode1 = Node(3)\nnode2 = Node(2)\nnode3 = Node(0)\nnode4 = Node(-4)\nnode1.next = node2\nnode2.next = node3\nnode3.next = node4\nnode4.next = node2\nprint(has_cycle(node1))",
+    solution_example: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef has_cycle(head):\n    slow = fast = head\n    while fast is not None and fast.next is not None:\n        slow = slow.next\n        fast = fast.next.next\n        if slow is fast:\n            return True\n    return False\n\nnode1 = Node(3)\nnode2 = Node(2)\nnode3 = Node(0)\nnode4 = Node(-4)\nnode1.next = node2\nnode2.next = node3\nnode3.next = node4\nnode4.next = node2\nprint(has_cycle(node1))\n",
+    next: Some("py-164-valid-palindrome"),
+    show_type_chips: false,
+    micro_step: 163,
+};
+
+pub const PY164_VALID_PALINDROME: CodingStep = CodingStep {
+    id: "py-164-valid-palindrome",
+    title: "DSA Valid Palindrome",
+    objective: "Verificar un palíndromo ignorando caracteres no alfanuméricos y mayúsculas.",
+    prompt_md: "**Valid Palindrome**\n\nFiltrá solo caracteres alfanuméricos, compará sin distinguir mayúsculas y minúsculas.\n\n**Micro-reto:**\n1. Definí `is_palindrome(s)`\n2. Ignorá espacios, puntuación y case\n3. Imprimí `is_palindrome('A man, a plan, a canal: Panama')` (esperado: `True`)",
+    starter_code: "# def is_palindrome(s):\n#     ...\n# print(is_palindrome('A man, a plan, a canal: Panama'))\n",
+    pytest: "def test_valid_palindrome(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_palindrome'))\n    assert ns['is_palindrome']('A man, a plan, a canal: Panama') is True\n    assert ns['is_palindrome']('race a car') is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "def is_palindrome(s):\n    cleaned = ''.join(ch.casefold() for ch in s if ch.isalnum())\n    return cleaned == cleaned[::-1]\nprint(is_palindrome('A man, a plan, a canal: Panama'))",
+    solution_example: "def is_palindrome(s):\n    cleaned = ''.join(ch.casefold() for ch in s if ch.isalnum())\n    return cleaned == cleaned[::-1]\nprint(is_palindrome('A man, a plan, a canal: Panama'))\n",
+    next: Some("py-165-common-prefix"),
+    show_type_chips: false,
+    micro_step: 164,
+};
+
+pub const PY165_COMMON_PREFIX: CodingStep = CodingStep {
+    id: "py-165-common-prefix",
+    title: "DSA Longest Common Prefix",
+    objective: "Encontrar el prefijo compartido más largo entre strings.",
+    prompt_md: "**Longest Common Prefix**\n\nPartí del primer string y acortalo hasta que todos compartan el prefijo.\n\n**Micro-reto:**\n1. Definí `longest_common_prefix(strs)`\n2. Devolvé `''` si no hay prefijo o la lista está vacía\n3. Imprimí `longest_common_prefix(['flower', 'flow', 'flight'])` (esperado: `fl`)",
+    starter_code: "# def longest_common_prefix(strs):\n#     ...\n# print(longest_common_prefix(['flower', 'flow', 'flight']))\n",
+    pytest: "def test_common_prefix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('longest_common_prefix'))\n    assert ns['longest_common_prefix'](['flower', 'flow', 'flight']) == 'fl'\n    assert ns['longest_common_prefix'](['dog', 'racecar', 'car']) == ''\n    assert ns['longest_common_prefix']([]) == ''\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['fl']\n",
+    hint: "def longest_common_prefix(strs):\n    if not strs:\n        return ''\n    prefix = strs[0]\n    for word in strs[1:]:\n        while not word.startswith(prefix):\n            prefix = prefix[:-1]\n            if not prefix:\n                return ''\n    return prefix\nprint(longest_common_prefix(['flower', 'flow', 'flight']))",
+    solution_example: "def longest_common_prefix(strs):\n    if not strs:\n        return ''\n    prefix = strs[0]\n    for word in strs[1:]:\n        while not word.startswith(prefix):\n            prefix = prefix[:-1]\n            if not prefix:\n                return ''\n    return prefix\nprint(longest_common_prefix(['flower', 'flow', 'flight']))\n",
+    next: Some("py-166-roman-to-int"),
+    show_type_chips: false,
+    micro_step: 165,
+};
+
+pub const PY166_ROMAN_TO_INT: CodingStep = CodingStep {
+    id: "py-166-roman-to-int",
+    title: "DSA Roman to Integer",
+    objective: "Convertir un número romano aplicando la regla sustractiva.",
+    prompt_md: "**Roman to Integer**\n\nRecorré de derecha a izquierda: restá un símbolo menor si aparece antes de uno mayor.\n\n**Micro-reto:**\n1. Definí `roman_to_int(s)`\n2. Usá los valores `I, V, X, L, C, D, M`\n3. Imprimí `roman_to_int('MCMXCIV')` (esperado: `1994`)",
+    starter_code: "# def roman_to_int(s):\n#     ...\n# print(roman_to_int('MCMXCIV'))\n",
+    pytest: "def test_roman_to_int(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('roman_to_int'))\n    assert ns['roman_to_int']('MCMXCIV') == 1994\n    assert ns['roman_to_int']('III') == 3\n    assert ns['roman_to_int']('LVIII') == 58\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['1994']\n",
+    hint: "def roman_to_int(s):\n    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}\n    total = 0\n    previous = 0\n    for symbol in reversed(s):\n        value = values[symbol]\n        if value < previous:\n            total -= value\n        else:\n            total += value\n            previous = value\n    return total\nprint(roman_to_int('MCMXCIV'))",
+    solution_example: "def roman_to_int(s):\n    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}\n    total = 0\n    previous = 0\n    for symbol in reversed(s):\n        value = values[symbol]\n        if value < previous:\n            total -= value\n        else:\n            total += value\n            previous = value\n    return total\nprint(roman_to_int('MCMXCIV'))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 166,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -2422,6 +2506,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY158_PRODUCT_EXCEPT,
     &PY159_FIRST_UNIQUE,
     &PY160_HAPPY_NUMBER,
+    &PY161_REVERSE_LIST,
+    &PY162_MERGE_SORTED,
+    &PY163_LINKED_CYCLE,
+    &PY164_VALID_PALINDROME,
+    &PY165_COMMON_PREFIX,
+    &PY166_ROMAN_TO_INT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -3039,10 +3129,27 @@ mod tests {
             (157, "py-157-move-zeroes", Some("py-158-product-except")),
             (158, "py-158-product-except", Some("py-159-first-unique")),
             (159, "py-159-first-unique", Some("py-160-happy-number")),
-            (160, "py-160-happy-number", None),
+            (160, "py-160-happy-number", Some("py-161-reverse-list")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("arrays-hash family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py161_to_py166_lists_strings_chain() {
+        let ids = [
+            (161, "py-161-reverse-list", Some("py-162-merge-sorted")),
+            (162, "py-162-merge-sorted", Some("py-163-linked-cycle")),
+            (163, "py-163-linked-cycle", Some("py-164-valid-palindrome")),
+            (164, "py-164-valid-palindrome", Some("py-165-common-prefix")),
+            (165, "py-165-common-prefix", Some("py-166-roman-to-int")),
+            (166, "py-166-roman-to-int", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("lists-strings family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
