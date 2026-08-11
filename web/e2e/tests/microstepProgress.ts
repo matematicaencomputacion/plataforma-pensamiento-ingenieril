@@ -93,6 +93,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 85, step_id: "py-85-queue-peek" },
   { level_id: 86, step_id: "py-86-stack-class" },
   { level_id: 87, step_id: "py-87-queue-class" },
+  { level_id: 88, step_id: "py-88-linear-in" },
+  { level_id: 89, step_id: "py-89-linear-search" },
+  { level_id: 90, step_id: "py-90-bubble-sort" },
+  { level_id: 91, step_id: "py-91-binary-search" },
+  { level_id: 92, step_id: "py-92-selection-sort" },
+  { level_id: 93, step_id: "py-93-insertion-sort" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

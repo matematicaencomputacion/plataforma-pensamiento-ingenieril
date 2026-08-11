@@ -22,96 +22,106 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 82,
-    id: "py-82-stack",
-    title: "DSA Stack (list)",
-    solution: `stack = []
-stack.append('A')
-stack.append('B')
-stack.append('C')
-print(stack.pop())
+    micro: 88,
+    id: "py-88-linear-in",
+    title: "DSA Linear Search (in)",
+    solution: `mylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]
+if 4 in mylist:
+    print("Found!")
+else:
+    print("Not found!")
 `,
-    nextUrl: /\/learn\/py-83-stack-peek/,
-    cursorAfter: "83",
+    nextUrl: /\/learn\/py-89-linear-search/,
+    cursorAfter: "89",
   },
   {
-    micro: 83,
-    id: "py-83-stack-peek",
-    title: "DSA Stack Peek",
-    solution: `stack = []
-stack.append('A')
-stack.append('B')
-stack.append('C')
-top = stack[-1]
-print(top)
+    micro: 89,
+    id: "py-89-linear-search",
+    title: "DSA Linear Search Index",
+    solution: `def linearSearch(arr, targetVal):
+    for i in range(len(arr)):
+        if arr[i] == targetVal:
+            return i
+    return -1
+mylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]
+x = 4
+print(linearSearch(mylist, x))
 `,
-    nextUrl: /\/learn\/py-84-queue/,
-    cursorAfter: "84",
+    nextUrl: /\/learn\/py-90-bubble-sort/,
+    cursorAfter: "90",
   },
   {
-    micro: 84,
-    id: "py-84-queue",
-    title: "DSA Queue (list)",
-    solution: `queue = []
-queue.append('A')
-queue.append('B')
-queue.append('C')
-print(queue.pop(0))
+    micro: 90,
+    id: "py-90-bubble-sort",
+    title: "DSA Bubble Sort",
+    solution: `mylist = [64, 34, 25, 12, 22, 11, 90, 5]
+n = len(mylist)
+for i in range(n-1):
+    for j in range(n-i-1):
+        if mylist[j] > mylist[j+1]:
+            mylist[j], mylist[j+1] = mylist[j+1], mylist[j]
+print(mylist)
 `,
-    nextUrl: /\/learn\/py-85-queue-peek/,
-    cursorAfter: "85",
+    nextUrl: /\/learn\/py-91-binary-search/,
+    cursorAfter: "91",
   },
   {
-    micro: 85,
-    id: "py-85-queue-peek",
-    title: "DSA Queue Peek",
-    solution: `queue = []
-queue.append('A')
-queue.append('B')
-queue.append('C')
-front = queue[0]
-print(front)
+    micro: 91,
+    id: "py-91-binary-search",
+    title: "DSA Binary Search",
+    solution: `def binarySearch(arr, targetVal):
+    left = 0
+    right = len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == targetVal:
+            return mid
+        if arr[mid] < targetVal:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+mylist = [1, 3, 5, 7, 9, 11, 13, 15]
+x = 11
+print(binarySearch(mylist, x))
 `,
-    nextUrl: /\/learn\/py-86-stack-class/,
-    cursorAfter: "86",
+    nextUrl: /\/learn\/py-92-selection-sort/,
+    cursorAfter: "92",
   },
   {
-    micro: 86,
-    id: "py-86-stack-class",
-    title: "DSA Stack Class",
-    solution: `class Stack:
-    def __init__(self):
-        self.stack = []
-    def push(self, element):
-        self.stack.append(element)
-    def pop(self):
-        return self.stack.pop()
-myStack = Stack()
-myStack.push('A')
-myStack.push('B')
-print(myStack.pop())
+    micro: 92,
+    id: "py-92-selection-sort",
+    title: "DSA Selection Sort",
+    solution: `mylist = [64, 34, 25, 12, 22, 11, 90, 5]
+n = len(mylist)
+for i in range(n):
+    min_idx = i
+    for j in range(i+1, n):
+        if mylist[j] < mylist[min_idx]:
+            min_idx = j
+    mylist[i], mylist[min_idx] = mylist[min_idx], mylist[i]
+print(mylist)
 `,
-    nextUrl: /\/learn\/py-87-queue-class/,
-    cursorAfter: "87",
+    nextUrl: /\/learn\/py-93-insertion-sort/,
+    cursorAfter: "93",
   },
   {
-    micro: 87,
-    id: "py-87-queue-class",
-    title: "DSA Queue Class",
-    solution: `class Queue:
-    def __init__(self):
-        self.queue = []
-    def enqueue(self, element):
-        self.queue.append(element)
-    def dequeue(self):
-        return self.queue.pop(0)
-myQueue = Queue()
-myQueue.enqueue('A')
-myQueue.enqueue('B')
-print(myQueue.dequeue())
+    micro: 93,
+    id: "py-93-insertion-sort",
+    title: "DSA Insertion Sort",
+    solution: `mylist = [64, 34, 25, 12, 22, 11, 90, 5]
+n = len(mylist)
+for i in range(1, n):
+    key = mylist[i]
+    j = i - 1
+    while j >= 0 and mylist[j] > key:
+        mylist[j + 1] = mylist[j]
+        j -= 1
+    mylist[j + 1] = key
+print(mylist)
 `,
-    nextUrl: /\/learn\/py-88-linear-in/,
-    cursorAfter: "88",
+    nextUrl: /\/workspace/,
+    cursorAfter: "94",
   },
 ];
 
@@ -140,7 +150,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 82–87 · DSA Stacks & Queues", () => {
+test.describe("micro-steps 88–93 · DSA Search & Sort", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
