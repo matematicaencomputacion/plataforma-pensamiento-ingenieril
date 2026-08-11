@@ -220,6 +220,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 212, step_id: "py-212-randomized-set" },
   { level_id: 213, step_id: "py-213-time-kv" },
   { level_id: 214, step_id: "py-214-snapshot-array" },
+  { level_id: 215, step_id: "py-215-min-window" },
+  { level_id: 216, step_id: "py-216-char-replace" },
+  { level_id: 217, step_id: "py-217-find-anagrams" },
+  { level_id: 218, step_id: "py-218-decode-string" },
+  { level_id: 219, step_id: "py-219-str-compress" },
+  { level_id: 220, step_id: "py-220-multiply-strings" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

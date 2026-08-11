@@ -2993,6 +2993,66 @@ pub const PY214_SNAPSHOT_ARRAY: CodingStep = CodingStep {
     next: Some("py-215-min-window"), show_type_chips: false, micro_step: 214,
 };
 
+pub const PY215_MIN_WINDOW: CodingStep = CodingStep {
+    id: "py-215-min-window", title: "DSA Ventana Mínima", objective: "Encontrar el substring mínimo que cubre todos los caracteres requeridos.",
+    prompt_md: "**Minimum Window Substring**\n\nDefiní `min_window(s, t)` con ventana deslizante y conteos.\n\n**Micro-reto:** imprimí `BANC` para `ADOBECODEBANC` y `ABC`.",
+    starter_code: "# def min_window(s, t):\n#     ...\n",
+    pytest: "def test_min_window(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['min_window']('ADOBECODEBANC', 'ABC') == 'BANC'\n    assert ns['min_window']('a', 'aa') == ''\n    assert capsys.readouterr().out.strip() == 'BANC'\n",
+    hint: "from collections import Counter\n\ndef min_window(s, t):\n    need = Counter(t); missing = len(t); left = start = end = 0\n    for right, char in enumerate(s, 1):\n        if need[char] > 0: missing -= 1\n        need[char] -= 1\n        if not missing:\n            while left < right and need[s[left]] < 0: need[s[left]] += 1; left += 1\n            if not end or right - left <= end - start: start, end = left, right\n            need[s[left]] += 1; missing += 1; left += 1\n    return s[start:end]",
+    solution_example: "from collections import Counter\n\ndef min_window(s, t):\n    need = Counter(t); missing = len(t); left = start = end = 0\n    for right, char in enumerate(s, 1):\n        if need[char] > 0: missing -= 1\n        need[char] -= 1\n        if not missing:\n            while left < right and need[s[left]] < 0: need[s[left]] += 1; left += 1\n            if not end or right - left <= end - start: start, end = left, right\n            need[s[left]] += 1; missing += 1; left += 1\n    return s[start:end]\nprint(min_window('ADOBECODEBANC', 'ABC'))\n",
+    next: Some("py-216-char-replace"), show_type_chips: false, micro_step: 215,
+};
+
+pub const PY216_CHAR_REPLACE: CodingStep = CodingStep {
+    id: "py-216-char-replace", title: "DSA Reemplazo de Caracteres", objective: "Maximizar una ventana uniforme con hasta k reemplazos.",
+    prompt_md: "**Longest Repeating Character Replacement**\n\nDefiní `character_replacement(s, k)`.\n\n**Micro-reto:** imprimí `4` para `AABABBA`, `k=1`.",
+    starter_code: "# def character_replacement(s, k):\n#     ...\n",
+    pytest: "def test_char_replace(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['character_replacement']('ABAB', 2) == 4\n    assert ns['character_replacement']('AABABBA', 1) == 4\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "from collections import defaultdict\n\ndef character_replacement(s, k):\n    counts = defaultdict(int); left = best = most = 0\n    for right, char in enumerate(s):\n        counts[char] += 1; most = max(most, counts[char])\n        while right - left + 1 - most > k: counts[s[left]] -= 1; left += 1\n        best = max(best, right - left + 1)\n    return best",
+    solution_example: "from collections import defaultdict\n\ndef character_replacement(s, k):\n    counts = defaultdict(int); left = best = most = 0\n    for right, char in enumerate(s):\n        counts[char] += 1; most = max(most, counts[char])\n        while right - left + 1 - most > k: counts[s[left]] -= 1; left += 1\n        best = max(best, right - left + 1)\n    return best\nprint(character_replacement('AABABBA', 1))\n",
+    next: Some("py-217-find-anagrams"), show_type_chips: false, micro_step: 216,
+};
+
+pub const PY217_FIND_ANAGRAMS: CodingStep = CodingStep {
+    id: "py-217-find-anagrams", title: "DSA Encontrar Anagramas", objective: "Detectar todas las posiciones de una permutación mediante ventana deslizante.",
+    prompt_md: "**Find All Anagrams**\n\nDefiní `find_anagrams(s, p)` y devolvé índices iniciales.\n\n**Micro-reto:** imprimí `[0, 6]` para `cbaebabacd`, `abc`.",
+    starter_code: "# def find_anagrams(s, p):\n#     ...\n",
+    pytest: "def test_find_anagrams(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['find_anagrams']('cbaebabacd', 'abc') == [0, 6]\n    assert ns['find_anagrams']('abab', 'ab') == [0, 1, 2]\n    assert capsys.readouterr().out.strip() == '[0, 6]'\n",
+    hint: "from collections import Counter\n\ndef find_anagrams(s, p):\n    need = Counter(p); window = Counter(); out = []\n    for i, char in enumerate(s):\n        window[char] += 1\n        if i >= len(p):\n            old = s[i - len(p)]; window[old] -= 1\n            if not window[old]: del window[old]\n        if window == need: out.append(i - len(p) + 1)\n    return out",
+    solution_example: "from collections import Counter\n\ndef find_anagrams(s, p):\n    need = Counter(p); window = Counter(); out = []\n    for i, char in enumerate(s):\n        window[char] += 1\n        if i >= len(p):\n            old = s[i - len(p)]; window[old] -= 1\n            if not window[old]: del window[old]\n        if window == need: out.append(i - len(p) + 1)\n    return out\nprint(find_anagrams('cbaebabacd', 'abc'))\n",
+    next: Some("py-218-decode-string"), show_type_chips: false, micro_step: 217,
+};
+
+pub const PY218_DECODE_STRING: CodingStep = CodingStep {
+    id: "py-218-decode-string", title: "DSA Decodificar String", objective: "Expandir repeticiones anidadas con una pila.",
+    prompt_md: "**Decode String**\n\nDefiní `decode_string(s)` para expresiones como `3[a2[c]]`.\n\n**Micro-reto:** imprimí `accaccacc`.",
+    starter_code: "# def decode_string(s):\n#     ...\n",
+    pytest: "def test_decode_string(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['decode_string']('3[a]2[bc]') == 'aaabcbc'\n    assert ns['decode_string']('3[a2[c]]') == 'accaccacc'\n    assert capsys.readouterr().out.strip() == 'accaccacc'\n",
+    hint: "def decode_string(s):\n    stack = []; current = ''; number = 0\n    for char in s:\n        if char.isdigit(): number = number * 10 + int(char)\n        elif char == '[': stack.append((current, number)); current = ''; number = 0\n        elif char == ']': previous, repeat = stack.pop(); current = previous + current * repeat\n        else: current += char\n    return current",
+    solution_example: "def decode_string(s):\n    stack = []; current = ''; number = 0\n    for char in s:\n        if char.isdigit(): number = number * 10 + int(char)\n        elif char == '[': stack.append((current, number)); current = ''; number = 0\n        elif char == ']': previous, repeat = stack.pop(); current = previous + current * repeat\n        else: current += char\n    return current\nprint(decode_string('3[a2[c]]'))\n",
+    next: Some("py-219-str-compress"), show_type_chips: false, micro_step: 218,
+};
+
+pub const PY219_STR_COMPRESS: CodingStep = CodingStep {
+    id: "py-219-str-compress", title: "DSA Comprimir String", objective: "Comprimir una lista de caracteres in situ.",
+    prompt_md: "**String Compression**\n\nDefiní `compress(chars)`: mutá la lista y devolvé la longitud nueva.\n\n**Micro-reto:** imprimí `6` para `aabbccc`.",
+    starter_code: "# def compress(chars):\n#     ...\n",
+    pytest: "def test_str_compress(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    chars = list('aabbccc'); assert ns['compress'](chars) == 6 and ''.join(chars[:6]) == 'a2b2c3'\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "def compress(chars):\n    write = read = 0\n    while read < len(chars):\n        char = chars[read]; start = read\n        while read < len(chars) and chars[read] == char: read += 1\n        chars[write] = char; write += 1\n        for digit in str(read - start): chars[write] = digit; write += 1\n    return write",
+    solution_example: "def compress(chars):\n    write = read = 0\n    while read < len(chars):\n        char = chars[read]; start = read\n        while read < len(chars) and chars[read] == char: read += 1\n        chars[write] = char; write += 1\n        for digit in str(read - start): chars[write] = digit; write += 1\n    return write\nchars = list('aabbccc'); print(compress(chars))\n",
+    next: Some("py-220-multiply-strings"), show_type_chips: false, micro_step: 219,
+};
+
+pub const PY220_MULTIPLY_STRINGS: CodingStep = CodingStep {
+    id: "py-220-multiply-strings", title: "DSA Multiplicar Strings", objective: "Multiplicar enteros no negativos representados como strings.",
+    prompt_md: "**Multiply Strings**\n\nDefiní `multiply(num1, num2)` sin convertir los operandos completos a enteros.\n\n**Micro-reto:** imprimí `56088` para `123` × `456`.",
+    starter_code: "# def multiply(num1, num2):\n#     ...\n",
+    pytest: "def test_multiply_strings(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['multiply']('2', '3') == '6'\n    assert ns['multiply']('123', '456') == '56088'\n    assert capsys.readouterr().out.strip() == '56088'\n",
+    hint: "def multiply(num1, num2):\n    if num1 == '0' or num2 == '0': return '0'\n    digits = [0] * (len(num1) + len(num2))\n    for i, left in enumerate(reversed(num1)):\n        for j, right in enumerate(reversed(num2)):\n            digits[i + j] += int(left) * int(right)\n            digits[i + j + 1] += digits[i + j] // 10; digits[i + j] %= 10\n    return ''.join(map(str, digits[::-1])).lstrip('0')",
+    solution_example: "def multiply(num1, num2):\n    if num1 == '0' or num2 == '0': return '0'\n    digits = [0] * (len(num1) + len(num2))\n    for i, left in enumerate(reversed(num1)):\n        for j, right in enumerate(reversed(num2)):\n            digits[i + j] += int(left) * int(right)\n            digits[i + j + 1] += digits[i + j] // 10; digits[i + j] %= 10\n    return ''.join(map(str, digits[::-1])).lstrip('0')\nprint(multiply('123', '456'))\n",
+    next: Some("py-221-insert-interval"), show_type_chips: false, micro_step: 220,
+};
+
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
     &PY02_INTRO,
@@ -3208,6 +3268,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY212_RANDOMIZED_SET,
     &PY213_TIME_KV,
     &PY214_SNAPSHOT_ARRAY,
+    &PY215_MIN_WINDOW,
+    &PY216_CHAR_REPLACE,
+    &PY217_FIND_ANAGRAMS,
+    &PY218_DECODE_STRING,
+    &PY219_STR_COMPRESS,
+    &PY220_MULTIPLY_STRINGS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -3920,6 +3986,12 @@ mod tests {
             (212, "py-212-randomized-set", Some("py-213-time-kv")),
             (213, "py-213-time-kv", Some("py-214-snapshot-array")),
             (214, "py-214-snapshot-array", Some("py-215-min-window")),
+            (215, "py-215-min-window", Some("py-216-char-replace")),
+            (216, "py-216-char-replace", Some("py-217-find-anagrams")),
+            (217, "py-217-find-anagrams", Some("py-218-decode-string")),
+            (218, "py-218-decode-string", Some("py-219-str-compress")),
+            (219, "py-219-str-compress", Some("py-220-multiply-strings")),
+            (220, "py-220-multiply-strings", Some("py-221-insert-interval")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
