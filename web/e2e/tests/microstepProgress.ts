@@ -142,6 +142,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 134, step_id: "py-134-nqueens-count" },
   { level_id: 135, step_id: "py-135-trie" },
   { level_id: 136, step_id: "py-136-bit-count" },
+  { level_id: 137, step_id: "py-137-kadane" },
+  { level_id: 138, step_id: "py-138-merge-intervals" },
+  { level_id: 139, step_id: "py-139-lower-bound" },
+  { level_id: 140, step_id: "py-140-rotate-matrix" },
+  { level_id: 141, step_id: "py-141-valid-parens" },
+  { level_id: 142, step_id: "py-142-anagram" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
