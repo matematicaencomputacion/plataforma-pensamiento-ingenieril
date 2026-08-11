@@ -22,119 +22,130 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 125,
-    id: "py-125-greedy-coin",
-    title: "DSA Greedy Coin",
-    solution: `def greedy_coin(coins, amount):
-    coins = sorted(coins, reverse=True)
+    micro: 131,
+    id: "py-131-two-pointers",
+    title: "DSA Two Pointers",
+    solution: `def two_sum(nums, target):
+    left, right = 0, len(nums) - 1
+    while left < right:
+        s = nums[left] + nums[right]
+        if s == target:
+            return (left, right)
+        if s < target:
+            left += 1
+        else:
+            right -= 1
+    return None
+print(two_sum([2, 7, 11, 15], 9))
+`,
+    nextUrl: /\/learn\/py-132-sliding-window/,
+    cursorAfter: "132",
+  },
+  {
+    micro: 132,
+    id: "py-132-sliding-window",
+    title: "DSA Sliding Window",
+    solution: `def max_window(nums, k):
+    window = sum(nums[:k])
+    best = window
+    for i in range(k, len(nums)):
+        window += nums[i] - nums[i - k]
+        best = max(best, window)
+    return best
+print(max_window([2, 1, 5, 1, 3, 2], 3))
+`,
+    nextUrl: /\/learn\/py-133-permutations/,
+    cursorAfter: "133",
+  },
+  {
+    micro: 133,
+    id: "py-133-permutations",
+    title: "DSA Permutations",
+    solution: `def permute(nums):
+    res = []
+    def bt(path, unused):
+        if not unused:
+            res.append(path[:])
+            return
+        for i, x in enumerate(unused):
+            path.append(x)
+            bt(path, unused[:i] + unused[i + 1:])
+            path.pop()
+    bt([], list(nums))
+    return res
+print(sorted(permute([1, 2, 3])))
+`,
+    nextUrl: /\/learn\/py-134-nqueens-count/,
+    cursorAfter: "134",
+  },
+  {
+    micro: 134,
+    id: "py-134-nqueens-count",
+    title: "DSA N-Queens Count",
+    solution: `def nqueens_count(n):
+    cols = set()
+    diag1 = set()
+    diag2 = set()
+    def bt(row):
+        if row == n:
+            return 1
+        total = 0
+        for c in range(n):
+            if c in cols or row - c in diag1 or row + c in diag2:
+                continue
+            cols.add(c); diag1.add(row - c); diag2.add(row + c)
+            total += bt(row + 1)
+            cols.remove(c); diag1.remove(row - c); diag2.remove(row + c)
+        return total
+    return bt(0)
+print(nqueens_count(4))
+`,
+    nextUrl: /\/learn\/py-135-trie/,
+    cursorAfter: "135",
+  },
+  {
+    micro: 135,
+    id: "py-135-trie",
+    title: "DSA Trie",
+    solution: `class Trie:
+    def __init__(self):
+        self.root = {}
+    def insert(self, word):
+        node = self.root
+        for ch in word:
+            node = node.setdefault(ch, {})
+        node['#'] = True
+    def search(self, word):
+        node = self.root
+        for ch in word:
+            if ch not in node:
+                return False
+            node = node[ch]
+        return '#' in node
+t = Trie()
+t.insert('cat')
+t.insert('car')
+print(t.search('cat'))
+print(t.search('car'))
+print(t.search('cap'))
+`,
+    nextUrl: /\/learn\/py-136-bit-count/,
+    cursorAfter: "136",
+  },
+  {
+    micro: 136,
+    id: "py-136-bit-count",
+    title: "DSA Bit Count",
+    solution: `def bit_count(n):
     count = 0
-    for c in coins:
-        count += amount // c
-        amount %= c
+    while n:
+        n &= n - 1
+        count += 1
     return count
-print(greedy_coin([25, 10, 5, 1], 63))
+print(bit_count(13))
 `,
-    nextUrl: /\/learn\/py-126-activity-select/,
-    cursorAfter: "126",
-  },
-  {
-    micro: 126,
-    id: "py-126-activity-select",
-    title: "DSA Activity Selection",
-    solution: `def activity_select(intervals):
-    intervals = sorted(intervals, key=lambda x: x[1])
-    picked = []
-    end = -1
-    for s, e in intervals:
-        if s >= end:
-            picked.append((s, e))
-            end = e
-    return picked
-print(activity_select([(1, 4), (3, 5), (0, 6), (5, 7), (8, 9), (5, 9)]))
-`,
-    nextUrl: /\/learn\/py-127-tsp-nearest/,
-    cursorAfter: "127",
-  },
-  {
-    micro: 127,
-    id: "py-127-tsp-nearest",
-    title: "DSA TSP Nearest Neighbor",
-    solution: `distances = [[0, 2, 9, 10], [1, 0, 6, 4], [15, 7, 0, 8], [6, 3, 12, 0]]
-def nearest_neighbor_tsp(distances):
-    n = len(distances)
-    visited = [False] * n
-    route = [0]
-    visited[0] = True
-    total = 0
-    for _ in range(1, n):
-        last = route[-1]
-        nearest = min((i for i in range(n) if not visited[i]), key=lambda i: distances[last][i])
-        total += distances[last][nearest]
-        route.append(nearest)
-        visited[nearest] = True
-    total += distances[route[-1]][0]
-    route.append(0)
-    return route, total
-route, total = nearest_neighbor_tsp(distances)
-print(total)
-`,
-    nextUrl: /\/learn\/py-128-lcs/,
-    cursorAfter: "128",
-  },
-  {
-    micro: 128,
-    id: "py-128-lcs",
-    title: "DSA LCS",
-    solution: `def lcs(a, b):
-    m, n = len(a), len(b)
-    dp = [[0] * (n + 1) for _ in range(m + 1)]
-    for i in range(1, m + 1):
-        for j in range(1, n + 1):
-            if a[i - 1] == b[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1] + 1
-            else:
-                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
-    return dp[m][n]
-print(lcs('ABCBDAB', 'BDCABA'))
-`,
-    nextUrl: /\/learn\/py-129-coin-change-dp/,
-    cursorAfter: "129",
-  },
-  {
-    micro: 129,
-    id: "py-129-coin-change-dp",
-    title: "DSA Coin Change DP",
-    solution: `def coin_change(coins, amount):
-    dp = [0] + [float('inf')] * amount
-    for a in range(1, amount + 1):
-        for c in coins:
-            if c <= a:
-                dp[a] = min(dp[a], dp[a - c] + 1)
-    return int(dp[amount]) if dp[amount] != float('inf') else -1
-print(coin_change([1, 3, 4], 6))
-`,
-    nextUrl: /\/learn\/py-130-floyd-warshall/,
-    cursorAfter: "130",
-  },
-  {
-    micro: 130,
-    id: "py-130-floyd-warshall",
-    title: "DSA Floyd-Warshall",
-    solution: `INF = 999
-graph = [[0, 3, INF, 7], [8, 0, 2, INF], [5, INF, 0, 1], [2, INF, INF, 0]]
-def floyd(graph):
-    n = len(graph)
-    dist = [row[:] for row in graph]
-    for k in range(n):
-        for i in range(n):
-            for j in range(n):
-                if dist[i][k] + dist[k][j] < dist[i][j]:
-                    dist[i][j] = dist[i][k] + dist[k][j]
-    return dist
-print(floyd(graph)[0])
-`,
-    nextUrl: /\/learn\/py-131-two-pointers/,
-    cursorAfter: "131",
+    nextUrl: /\/workspace/,
+    cursorAfter: "137",
   },
 ];
 
@@ -163,7 +174,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 125–130 · Greedy / TSP / LCS / Coin DP / Floyd", () => {
+test.describe("micro-steps 131–136 · Two pointers / window / backtrack / trie / bits", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

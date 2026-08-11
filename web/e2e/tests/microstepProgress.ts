@@ -136,6 +136,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 128, step_id: "py-128-lcs" },
   { level_id: 129, step_id: "py-129-coin-change-dp" },
   { level_id: 130, step_id: "py-130-floyd-warshall" },
+  { level_id: 131, step_id: "py-131-two-pointers" },
+  { level_id: 132, step_id: "py-132-sliding-window" },
+  { level_id: 133, step_id: "py-133-permutations" },
+  { level_id: 134, step_id: "py-134-nqueens-count" },
+  { level_id: 135, step_id: "py-135-trie" },
+  { level_id: 136, step_id: "py-136-bit-count" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
