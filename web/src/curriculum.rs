@@ -1318,9 +1318,107 @@ pub const PY93_INSERTION_SORT: CodingStep = CodingStep {
     pytest: "def test_insertion_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('mylist') == [5, 11, 12, 22, 25, 34, 64, 90]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '[5, 11, 12, 22, 25, 34, 64, 90]'\n",
     hint: "mylist = [64, 34, 25, 12, 22, 11, 90, 5]\nn = len(mylist)\nfor i in range(1, n):\n    key = mylist[i]\n    j = i - 1\n    while j >= 0 and mylist[j] > key:\n        mylist[j + 1] = mylist[j]\n        j -= 1\n    mylist[j + 1] = key\nprint(mylist)",
     solution_example: "mylist = [64, 34, 25, 12, 22, 11, 90, 5]\nn = len(mylist)\nfor i in range(1, n):\n    key = mylist[i]\n    j = i - 1\n    while j >= 0 and mylist[j] > key:\n        mylist[j + 1] = mylist[j]\n        j -= 1\n    mylist[j + 1] = key\nprint(mylist)\n",
-    next: None,
+    next: Some("py-94-linked-node"),
     show_type_chips: false,
     micro_step: 93,
+};
+
+pub const PY94_LINKED_NODE: CodingStep = CodingStep {
+    id: "py-94-linked-node",
+    title: "DSA Linked List Node",
+    objective: "Crear nodos y enlazarlos con next.",
+    prompt_md: "**Linked Lists**\n\nCada Node guarda `data` y un puntero `next`.\n\n**Micro-reto:**\n1. Creá `class Node` con `__init__(self, data)` que asigne `self.data` y `self.next = None`\n2. Creá `node1 = Node(7)` y `node2 = Node(11)`\n3. Enlazá `node1.next = node2` e imprimí `node1.next.data`",
+    starter_code: "# class Node:\n#     ...\n# node1 = ...\n# node2 = ...\n# ...\n# print(...)\n",
+    pytest: "def test_linked_node(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['node1'].data == 7 and ns['node2'].data == 11\n    assert ns['node1'].next is ns['node2']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '11'\n",
+    hint: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\nnode1 = Node(7)\nnode2 = Node(11)\nnode1.next = node2\nprint(node1.next.data)",
+    solution_example: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\nnode1 = Node(7)\nnode2 = Node(11)\nnode1.next = node2\nprint(node1.next.data)\n",
+    next: Some("py-95-linked-traverse"),
+    show_type_chips: false,
+    micro_step: 94,
+};
+
+pub const PY95_LINKED_TRAVERSE: CodingStep = CodingStep {
+    id: "py-95-linked-traverse",
+    title: "DSA Linked List Traverse",
+    objective: "Recorrer una linked list e imprimir los valores.",
+    prompt_md: "**Traversal**\n\nSeguí `next` desde el head hasta `None`.\n\n**Micro-reto:**\n1. Creá `Node` como antes\n2. Definí `traverse(head)` que imprima cada `data` separado por espacio\n3. Enlazá `7 -> 11 -> 3` y llamá `traverse(node1)`",
+    starter_code: "# class Node:\n#     ...\n# def traverse(head):\n#     ...\n# ...\n# traverse(node1)\n",
+    pytest: "def test_linked_traverse(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '7 11 3'\n",
+    hint: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\ndef traverse(head):\n    current = head\n    while current:\n        print(current.data, end=\" \")\n        current = current.next\n    print()\nnode1 = Node(7)\nnode2 = Node(11)\nnode3 = Node(3)\nnode1.next = node2\nnode2.next = node3\ntraverse(node1)",
+    solution_example: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\ndef traverse(head):\n    current = head\n    while current:\n        print(current.data, end=\" \")\n        current = current.next\n    print()\nnode1 = Node(7)\nnode2 = Node(11)\nnode3 = Node(3)\nnode1.next = node2\nnode2.next = node3\ntraverse(node1)\n",
+    next: Some("py-96-linked-lowest"),
+    show_type_chips: false,
+    micro_step: 95,
+};
+
+pub const PY96_LINKED_LOWEST: CodingStep = CodingStep {
+    id: "py-96-linked-lowest",
+    title: "DSA Linked List Lowest",
+    objective: "Encontrar el valor mínimo en una linked list.",
+    prompt_md: "**Find Lowest Value**\n\nRecorré la lista y guardá el mínimo.\n\n**Micro-reto:**\n1. Creá `Node` y la cadena `7 -> 11 -> 3 -> 2 -> 9`\n2. Definí `findLowestValue(head)` que devuelva el mínimo\n3. Imprimí `findLowestValue(node1)`",
+    starter_code: "# class Node:\n#     ...\n# def findLowestValue(head):\n#     ...\n# ...\n# print(...)\n",
+    pytest: "def test_linked_lowest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['findLowestValue'](ns['node1']) == 2\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '2'\n",
+    hint: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\ndef findLowestValue(head):\n    minValue = head.data\n    current = head.next\n    while current:\n        if current.data < minValue:\n            minValue = current.data\n        current = current.next\n    return minValue\nnode1 = Node(7)\nnode2 = Node(11)\nnode3 = Node(3)\nnode4 = Node(2)\nnode5 = Node(9)\nnode1.next = node2\nnode2.next = node3\nnode3.next = node4\nnode4.next = node5\nprint(findLowestValue(node1))",
+    solution_example: "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\ndef findLowestValue(head):\n    minValue = head.data\n    current = head.next\n    while current:\n        if current.data < minValue:\n            minValue = current.data\n        current = current.next\n    return minValue\nnode1 = Node(7)\nnode2 = Node(11)\nnode3 = Node(3)\nnode4 = Node(2)\nnode5 = Node(9)\nnode1.next = node2\nnode2.next = node3\nnode3.next = node4\nnode4.next = node5\nprint(findLowestValue(node1))\n",
+    next: Some("py-97-recursion"),
+    show_type_chips: false,
+    micro_step: 96,
+};
+
+pub const PY97_RECURSION: CodingStep = CodingStep {
+    id: "py-97-recursion",
+    title: "Python Recursion (factorial)",
+    objective: "Calcular factorial con una función recursiva.",
+    prompt_md: "**Recursion**\n\nUna función recursiva se llama a sí misma.\n\n**Micro-reto:**\n1. Definí `factorial(n)` que devuelva `1` si `n == 1`, si no `n * factorial(n - 1)`\n2. Imprimí `factorial(5)`",
+    starter_code: "# def factorial(n):\n#     ...\n# print(...)\n",
+    pytest: "def test_recursion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['factorial'](5) == 120\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '120'\n",
+    hint: "def factorial(n):\n    if n == 1:\n        return 1\n    else:\n        return n * factorial(n - 1)\nprint(factorial(5))",
+    solution_example: "def factorial(n):\n    if n == 1:\n        return 1\n    else:\n        return n * factorial(n - 1)\nprint(factorial(5))\n",
+    next: Some("py-98-fibonacci"),
+    show_type_chips: false,
+    micro_step: 97,
+};
+
+pub const PY98_FIBONACCI: CodingStep = CodingStep {
+    id: "py-98-fibonacci",
+    title: "Python Recursion (Fibonacci)",
+    objective: "Calcular Fibonacci con recursion.",
+    prompt_md: "**Fibonacci**\n\n`fib(n) = fib(n-1) + fib(n-2)` con base `0` y `1`.\n\n**Micro-reto:**\n1. Definí `fib(n)` recursivo (`n == 0` → `0`, `n == 1` → `1`)\n2. Imprimí `fib(7)`",
+    starter_code: "# def fib(n):\n#     ...\n# print(...)\n",
+    pytest: "def test_fibonacci(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['fib'](7) == 13\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '13'\n",
+    hint: "def fib(n):\n    if n == 0:\n        return 0\n    if n == 1:\n        return 1\n    return fib(n - 1) + fib(n - 2)\nprint(fib(7))",
+    solution_example: "def fib(n):\n    if n == 0:\n        return 0\n    if n == 1:\n        return 1\n    return fib(n - 1) + fib(n - 2)\nprint(fib(7))\n",
+    next: Some("py-99-quicksort"),
+    show_type_chips: false,
+    micro_step: 98,
+};
+
+pub const PY99_QUICKSORT: CodingStep = CodingStep {
+    id: "py-99-quicksort",
+    title: "DSA Quicksort",
+    objective: "Ordenar una list con Quicksort recursivo.",
+    prompt_md: "**Quicksort**\n\nParticioná alrededor de un pivot y ordená recursivamente.\n\n**Micro-reto:**\n1. Implementá `partition` y `quicksort` como en W3S (pivot = último)\n2. Ordená `mylist = [64, 34, 25, 5, 22, 11, 90, 12]`\n3. Imprimí `mylist`",
+    starter_code: "# def partition(array, low, high):\n#     ...\n# def quicksort(array, low=0, high=None):\n#     ...\n# mylist = ...\n# quicksort(mylist)\n# print(mylist)\n",
+    pytest: "def test_quicksort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('mylist') == [5, 11, 12, 22, 25, 34, 64, 90]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '[5, 11, 12, 22, 25, 34, 64, 90]'\n",
+    hint: "def partition(array, low, high):\n    pivot = array[high]\n    i = low - 1\n    for j in range(low, high):\n        if array[j] <= pivot:\n            i += 1\n            array[i], array[j] = array[j], array[i]\n    array[i+1], array[high] = array[high], array[i+1]\n    return i+1\ndef quicksort(array, low=0, high=None):\n    if high is None:\n        high = len(array) - 1\n    if low < high:\n        pivot_index = partition(array, low, high)\n        quicksort(array, low, pivot_index-1)\n        quicksort(array, pivot_index+1, high)\nmylist = [64, 34, 25, 5, 22, 11, 90, 12]\nquicksort(mylist)\nprint(mylist)",
+    solution_example: "def partition(array, low, high):\n    pivot = array[high]\n    i = low - 1\n    for j in range(low, high):\n        if array[j] <= pivot:\n            i += 1\n            array[i], array[j] = array[j], array[i]\n    array[i+1], array[high] = array[high], array[i+1]\n    return i+1\ndef quicksort(array, low=0, high=None):\n    if high is None:\n        high = len(array) - 1\n    if low < high:\n        pivot_index = partition(array, low, high)\n        quicksort(array, low, pivot_index-1)\n        quicksort(array, pivot_index+1, high)\nmylist = [64, 34, 25, 5, 22, 11, 90, 12]\nquicksort(mylist)\nprint(mylist)\n",
+    next: Some("py-100-hash-count"),
+    show_type_chips: false,
+    micro_step: 99,
+};
+
+pub const PY100_HASH_COUNT: CodingStep = CodingStep {
+    id: "py-100-hash-count",
+    title: "DSA Hash Tables (count)",
+    objective: "Contar frecuencias con un dict (hash table).",
+    prompt_md: "**Hash Tables**\n\nEn Python, un `dict` es la hash table práctica para contar.\n\n**Micro-reto:**\n1. Creá `mylist = [\"apple\", \"banana\", \"apple\", \"cherry\", \"banana\", \"apple\"]`\n2. Contá apariciones en `counts` (dict)\n3. Imprimí `counts[\"apple\"]`",
+    starter_code: "# mylist = ...\n# counts = {}\n# for x in mylist:\n#     ...\n# print(...)\n",
+    pytest: "def test_hash_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('counts', {}).get('apple') == 3\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '3'\n",
+    hint: "mylist = [\"apple\", \"banana\", \"apple\", \"cherry\", \"banana\", \"apple\"]\ncounts = {}\nfor x in mylist:\n    counts[x] = counts.get(x, 0) + 1\nprint(counts[\"apple\"])",
+    solution_example: "mylist = [\"apple\", \"banana\", \"apple\", \"cherry\", \"banana\", \"apple\"]\ncounts = {}\nfor x in mylist:\n    counts[x] = counts.get(x, 0) + 1\nprint(counts[\"apple\"])\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 100,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1417,6 +1515,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY91_BINARY_SEARCH,
     &PY92_SELECTION_SORT,
     &PY93_INSERTION_SORT,
+    &PY94_LINKED_NODE,
+    &PY95_LINKED_TRAVERSE,
+    &PY96_LINKED_LOWEST,
+    &PY97_RECURSION,
+    &PY98_FIBONACCI,
+    &PY99_QUICKSORT,
+    &PY100_HASH_COUNT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -1845,10 +1950,28 @@ mod tests {
             (90, "py-90-bubble-sort", Some("py-91-binary-search")),
             (91, "py-91-binary-search", Some("py-92-selection-sort")),
             (92, "py-92-selection-sort", Some("py-93-insertion-sort")),
-            (93, "py-93-insertion-sort", None),
+            (93, "py-93-insertion-sort", Some("py-94-linked-node")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("algorithms family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py94_to_py100_finale_chain() {
+        let ids = [
+            (94, "py-94-linked-node", Some("py-95-linked-traverse")),
+            (95, "py-95-linked-traverse", Some("py-96-linked-lowest")),
+            (96, "py-96-linked-lowest", Some("py-97-recursion")),
+            (97, "py-97-recursion", Some("py-98-fibonacci")),
+            (98, "py-98-fibonacci", Some("py-99-quicksort")),
+            (99, "py-99-quicksort", Some("py-100-hash-count")),
+            (100, "py-100-hash-count", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("finale family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }

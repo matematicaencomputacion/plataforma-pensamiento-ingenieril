@@ -99,6 +99,13 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 91, step_id: "py-91-binary-search" },
   { level_id: 92, step_id: "py-92-selection-sort" },
   { level_id: 93, step_id: "py-93-insertion-sort" },
+  { level_id: 94, step_id: "py-94-linked-node" },
+  { level_id: 95, step_id: "py-95-linked-traverse" },
+  { level_id: 96, step_id: "py-96-linked-lowest" },
+  { level_id: 97, step_id: "py-97-recursion" },
+  { level_id: 98, step_id: "py-98-fibonacci" },
+  { level_id: 99, step_id: "py-99-quicksort" },
+  { level_id: 100, step_id: "py-100-hash-count" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

@@ -22,106 +22,143 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 88,
-    id: "py-88-linear-in",
-    title: "DSA Linear Search (in)",
-    solution: `mylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]
-if 4 in mylist:
-    print("Found!")
-else:
-    print("Not found!")
+    micro: 94,
+    id: "py-94-linked-node",
+    title: "DSA Linked List Node",
+    solution: `class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+node1 = Node(7)
+node2 = Node(11)
+node1.next = node2
+print(node1.next.data)
 `,
-    nextUrl: /\/learn\/py-89-linear-search/,
-    cursorAfter: "89",
+    nextUrl: /\/learn\/py-95-linked-traverse/,
+    cursorAfter: "95",
   },
   {
-    micro: 89,
-    id: "py-89-linear-search",
-    title: "DSA Linear Search Index",
-    solution: `def linearSearch(arr, targetVal):
-    for i in range(len(arr)):
-        if arr[i] == targetVal:
-            return i
-    return -1
-mylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]
-x = 4
-print(linearSearch(mylist, x))
+    micro: 95,
+    id: "py-95-linked-traverse",
+    title: "DSA Linked List Traverse",
+    solution: `class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+def traverse(head):
+    current = head
+    while current:
+        print(current.data, end=" ")
+        current = current.next
+    print()
+node1 = Node(7)
+node2 = Node(11)
+node3 = Node(3)
+node1.next = node2
+node2.next = node3
+traverse(node1)
 `,
-    nextUrl: /\/learn\/py-90-bubble-sort/,
-    cursorAfter: "90",
+    nextUrl: /\/learn\/py-96-linked-lowest/,
+    cursorAfter: "96",
   },
   {
-    micro: 90,
-    id: "py-90-bubble-sort",
-    title: "DSA Bubble Sort",
-    solution: `mylist = [64, 34, 25, 12, 22, 11, 90, 5]
-n = len(mylist)
-for i in range(n-1):
-    for j in range(n-i-1):
-        if mylist[j] > mylist[j+1]:
-            mylist[j], mylist[j+1] = mylist[j+1], mylist[j]
+    micro: 96,
+    id: "py-96-linked-lowest",
+    title: "DSA Linked List Lowest",
+    solution: `class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+def findLowestValue(head):
+    minValue = head.data
+    current = head.next
+    while current:
+        if current.data < minValue:
+            minValue = current.data
+        current = current.next
+    return minValue
+node1 = Node(7)
+node2 = Node(11)
+node3 = Node(3)
+node4 = Node(2)
+node5 = Node(9)
+node1.next = node2
+node2.next = node3
+node3.next = node4
+node4.next = node5
+print(findLowestValue(node1))
+`,
+    nextUrl: /\/learn\/py-97-recursion/,
+    cursorAfter: "97",
+  },
+  {
+    micro: 97,
+    id: "py-97-recursion",
+    title: "Python Recursion (factorial)",
+    solution: `def factorial(n):
+    if n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+print(factorial(5))
+`,
+    nextUrl: /\/learn\/py-98-fibonacci/,
+    cursorAfter: "98",
+  },
+  {
+    micro: 98,
+    id: "py-98-fibonacci",
+    title: "Python Recursion (Fibonacci)",
+    solution: `def fib(n):
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib(n - 1) + fib(n - 2)
+print(fib(7))
+`,
+    nextUrl: /\/learn\/py-99-quicksort/,
+    cursorAfter: "99",
+  },
+  {
+    micro: 99,
+    id: "py-99-quicksort",
+    title: "DSA Quicksort",
+    solution: `def partition(array, low, high):
+    pivot = array[high]
+    i = low - 1
+    for j in range(low, high):
+        if array[j] <= pivot:
+            i += 1
+            array[i], array[j] = array[j], array[i]
+    array[i+1], array[high] = array[high], array[i+1]
+    return i+1
+def quicksort(array, low=0, high=None):
+    if high is None:
+        high = len(array) - 1
+    if low < high:
+        pivot_index = partition(array, low, high)
+        quicksort(array, low, pivot_index-1)
+        quicksort(array, pivot_index+1, high)
+mylist = [64, 34, 25, 5, 22, 11, 90, 12]
+quicksort(mylist)
 print(mylist)
 `,
-    nextUrl: /\/learn\/py-91-binary-search/,
-    cursorAfter: "91",
+    nextUrl: /\/learn\/py-100-hash-count/,
+    cursorAfter: "100",
   },
   {
-    micro: 91,
-    id: "py-91-binary-search",
-    title: "DSA Binary Search",
-    solution: `def binarySearch(arr, targetVal):
-    left = 0
-    right = len(arr) - 1
-    while left <= right:
-        mid = (left + right) // 2
-        if arr[mid] == targetVal:
-            return mid
-        if arr[mid] < targetVal:
-            left = mid + 1
-        else:
-            right = mid - 1
-    return -1
-mylist = [1, 3, 5, 7, 9, 11, 13, 15]
-x = 11
-print(binarySearch(mylist, x))
+    micro: 100,
+    id: "py-100-hash-count",
+    title: "DSA Hash Tables (count)",
+    solution: `mylist = ["apple", "banana", "apple", "cherry", "banana", "apple"]
+counts = {}
+for x in mylist:
+    counts[x] = counts.get(x, 0) + 1
+print(counts["apple"])
 `,
-    nextUrl: /\/learn\/py-92-selection-sort/,
-    cursorAfter: "92",
-  },
-  {
-    micro: 92,
-    id: "py-92-selection-sort",
-    title: "DSA Selection Sort",
-    solution: `mylist = [64, 34, 25, 12, 22, 11, 90, 5]
-n = len(mylist)
-for i in range(n):
-    min_idx = i
-    for j in range(i+1, n):
-        if mylist[j] < mylist[min_idx]:
-            min_idx = j
-    mylist[i], mylist[min_idx] = mylist[min_idx], mylist[i]
-print(mylist)
-`,
-    nextUrl: /\/learn\/py-93-insertion-sort/,
-    cursorAfter: "93",
-  },
-  {
-    micro: 93,
-    id: "py-93-insertion-sort",
-    title: "DSA Insertion Sort",
-    solution: `mylist = [64, 34, 25, 12, 22, 11, 90, 5]
-n = len(mylist)
-for i in range(1, n):
-    key = mylist[i]
-    j = i - 1
-    while j >= 0 and mylist[j] > key:
-        mylist[j + 1] = mylist[j]
-        j -= 1
-    mylist[j + 1] = key
-print(mylist)
-`,
-    nextUrl: /\/learn\/py-94-linked-node/,
-    cursorAfter: "94",
+    nextUrl: /\/workspace/,
+    cursorAfter: "101",
   },
 ];
 
@@ -150,7 +187,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 88–93 · DSA Search & Sort", () => {
+test.describe("micro-steps 94–100 · Linked Lists / Recursion / Quicksort / Hash", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
@@ -186,9 +223,11 @@ test.describe("micro-steps 88–93 · DSA Search & Sort", () => {
       await expect(
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
-      await expect(
-        page.locator(`#workspace-microstep-link-${step.micro + 1}`),
-      ).toHaveCount(0);
+      if (step.micro < 100) {
+        await expect(
+          page.locator(`#workspace-microstep-link-${step.micro + 1}`),
+        ).toHaveCount(0);
+      }
 
       await page.locator(`#workspace-microstep-link-${step.micro}`).click();
       await expect(page).toHaveURL(new RegExp(`/learn/${step.id}`), {
