@@ -1668,9 +1668,93 @@ pub const PY118_TOPO_SORT: CodingStep = CodingStep {
     pytest: "def test_topo_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('topo'))\n    assert ns['topo'](ns['graph']) == ['A', 'B', 'C', 'D']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert \"'A'\" in out and \"'B'\" in out and \"'C'\" in out and \"'D'\" in out\n",
     hint: "from collections import deque\ngraph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}\ndef topo(graph):\n    indeg = {n: 0 for n in graph}\n    for u in graph:\n        for v in graph[u]:\n            indeg[v] += 1\n    q = deque([n for n in graph if indeg[n] == 0])\n    order = []\n    while q:\n        u = q.popleft()\n        order.append(u)\n        for v in graph[u]:\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                q.append(v)\n    return order\nprint(topo(graph))",
     solution_example: "from collections import deque\ngraph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}\ndef topo(graph):\n    indeg = {n: 0 for n in graph}\n    for u in graph:\n        for v in graph[u]:\n            indeg[v] += 1\n    q = deque([n for n in graph if indeg[n] == 0])\n    order = []\n    while q:\n        u = q.popleft()\n        order.append(u)\n        for v in graph[u]:\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                q.append(v)\n    return order\nprint(topo(graph))\n",
-    next: None,
+    next: Some("py-119-bellman-ford"),
     show_type_chips: false,
     micro_step: 118,
+};
+
+pub const PY119_BELLMAN_FORD: CodingStep = CodingStep {
+    id: "py-119-bellman-ford",
+    title: "DSA Bellman-Ford",
+    objective: "Calcular distancias con Bellman-Ford (aristas negativas OK).",
+    prompt_md: "**Bellman-Ford**\n\nRelajá todas las aristas `V-1` veces; admite pesos negativos.\n\n**Micro-reto:**\n1. `edges = [('A','B',4), ('A','C',2), ('B','C',-1), ('B','D',5), ('C','D',3)]`\n2. Definí `bellman_ford(edges, nodes, start)` → dict de distancias\n3. Imprimí desde `'A'` (esperado: `A:0 B:4 C:2 D:5`)",
+    starter_code: "# edges = [...]\n# nodes = ['A', 'B', 'C', 'D']\n# def bellman_ford(edges, nodes, start):\n#     ...\n# print(bellman_ford(edges, nodes, 'A'))\n",
+    pytest: "def test_bellman_ford(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('bellman_ford'))\n    assert ns['bellman_ford'](ns['edges'], ns['nodes'], 'A') == {'A': 0, 'B': 4, 'C': 2, 'D': 5}\n    out = capsys.readouterr().out\n    assert \"'A': 0\" in out and \"'B': 4\" in out and \"'C': 2\" in out and \"'D': 5\" in out\n",
+    hint: "edges = [('A', 'B', 4), ('A', 'C', 2), ('B', 'C', -1), ('B', 'D', 5), ('C', 'D', 3)]\nnodes = ['A', 'B', 'C', 'D']\ndef bellman_ford(edges, nodes, start):\n    dist = {n: float('inf') for n in nodes}\n    dist[start] = 0\n    for _ in range(len(nodes) - 1):\n        for u, v, w in edges:\n            if dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    return dist\nprint(bellman_ford(edges, nodes, 'A'))",
+    solution_example: "edges = [('A', 'B', 4), ('A', 'C', 2), ('B', 'C', -1), ('B', 'D', 5), ('C', 'D', 3)]\nnodes = ['A', 'B', 'C', 'D']\ndef bellman_ford(edges, nodes, start):\n    dist = {n: float('inf') for n in nodes}\n    dist[start] = 0\n    for _ in range(len(nodes) - 1):\n        for u, v, w in edges:\n            if dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    return dist\nprint(bellman_ford(edges, nodes, 'A'))\n",
+    next: Some("py-120-memo-fib"),
+    show_type_chips: false,
+    micro_step: 119,
+};
+
+pub const PY120_MEMO_FIB: CodingStep = CodingStep {
+    id: "py-120-memo-fib",
+    title: "DSA Memoization (Fib)",
+    objective: "Calcular Fibonacci con memoization (top-down).",
+    prompt_md: "**Memoization**\n\nGuardá subproblemas en un dict para no recomputar.\n\n**Micro-reto:**\n1. Definí `fib(n)` con `memo = {}`\n2. Imprimí `fib(6)` (esperado: `8`)",
+    starter_code: "# memo = {}\n# def fib(n):\n#     ...\n# print(fib(6))\n",
+    pytest: "def test_memo_fib(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('fib'))\n    assert ns['fib'](6) == 8\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['8']\n",
+    hint: "memo = {}\ndef fib(n):\n    if n in memo:\n        return memo[n]\n    if n <= 1:\n        return n\n    memo[n] = fib(n - 1) + fib(n - 2)\n    return memo[n]\nprint(fib(6))",
+    solution_example: "memo = {}\ndef fib(n):\n    if n in memo:\n        return memo[n]\n    if n <= 1:\n        return n\n    memo[n] = fib(n - 1) + fib(n - 2)\n    return memo[n]\nprint(fib(6))\n",
+    next: Some("py-121-tab-fib"),
+    show_type_chips: false,
+    micro_step: 120,
+};
+
+pub const PY121_TAB_FIB: CodingStep = CodingStep {
+    id: "py-121-tab-fib",
+    title: "DSA Tabulation (Fib)",
+    objective: "Calcular Fibonacci con tabulación (bottom-up).",
+    prompt_md: "**Tabulation**\n\nLlená una tabla `dp` desde lo más chico hacia `n`.\n\n**Micro-reto:**\n1. Definí `fib_tab(n)` con array/lista DP\n2. Imprimí `fib_tab(6)` (esperado: `8`)",
+    starter_code: "# def fib_tab(n):\n#     ...\n# print(fib_tab(6))\n",
+    pytest: "def test_tab_fib(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('fib_tab'))\n    assert ns['fib_tab'](6) == 8\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['8']\n",
+    hint: "def fib_tab(n):\n    if n <= 1:\n        return n\n    dp = [0] * (n + 1)\n    dp[1] = 1\n    for i in range(2, n + 1):\n        dp[i] = dp[i - 1] + dp[i - 2]\n    return dp[n]\nprint(fib_tab(6))",
+    solution_example: "def fib_tab(n):\n    if n <= 1:\n        return n\n    dp = [0] * (n + 1)\n    dp[1] = 1\n    for i in range(2, n + 1):\n        dp[i] = dp[i - 1] + dp[i - 2]\n    return dp[n]\nprint(fib_tab(6))\n",
+    next: Some("py-122-knapsack"),
+    show_type_chips: false,
+    micro_step: 121,
+};
+
+pub const PY122_KNAPSACK: CodingStep = CodingStep {
+    id: "py-122-knapsack",
+    title: "DSA 0/1 Knapsack",
+    objective: "Maximizar valor bajo un peso límite (tabla DP).",
+    prompt_md: "**0/1 Knapsack**\n\nCada ítem se toma o no; DP `dp[i][w]`.\n\n**Micro-reto:**\n1. `weights = [1, 3, 4]`, `values = [15, 20, 30]`, `capacity = 4`\n2. Definí `knapsack(weights, values, capacity)`\n3. Imprimí el valor óptimo (esperado: `35`)",
+    starter_code: "# weights = [1, 3, 4]\n# values = [15, 20, 30]\n# def knapsack(weights, values, capacity):\n#     ...\n# print(knapsack(weights, values, 4))\n",
+    pytest: "def test_knapsack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('knapsack'))\n    assert ns['knapsack'](ns['weights'], ns['values'], 4) == 35\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['35']\n",
+    hint: "weights = [1, 3, 4]\nvalues = [15, 20, 30]\ndef knapsack(weights, values, capacity):\n    n = len(weights)\n    dp = [[0] * (capacity + 1) for _ in range(n + 1)]\n    for i in range(1, n + 1):\n        for w in range(capacity + 1):\n            dp[i][w] = dp[i - 1][w]\n            if weights[i - 1] <= w:\n                dp[i][w] = max(dp[i][w], dp[i - 1][w - weights[i - 1]] + values[i - 1])\n    return dp[n][capacity]\nprint(knapsack(weights, values, 4))",
+    solution_example: "weights = [1, 3, 4]\nvalues = [15, 20, 30]\ndef knapsack(weights, values, capacity):\n    n = len(weights)\n    dp = [[0] * (capacity + 1) for _ in range(n + 1)]\n    for i in range(1, n + 1):\n        for w in range(capacity + 1):\n            dp[i][w] = dp[i - 1][w]\n            if weights[i - 1] <= w:\n                dp[i][w] = max(dp[i][w], dp[i - 1][w - weights[i - 1]] + values[i - 1])\n    return dp[n][capacity]\nprint(knapsack(weights, values, 4))\n",
+    next: Some("py-123-euclidean"),
+    show_type_chips: false,
+    micro_step: 122,
+};
+
+pub const PY123_EUCLIDEAN: CodingStep = CodingStep {
+    id: "py-123-euclidean",
+    title: "DSA Euclidean GCD",
+    objective: "Calcular el MCD con el algoritmo de Euclides.",
+    prompt_md: "**Euclidean Algorithm**\n\n`gcd(a, b) = gcd(b, a % b)` hasta `b == 0`.\n\n**Micro-reto:**\n1. Definí `gcd(a, b)`\n2. Imprimí `gcd(48, 18)` (esperado: `6`)",
+    starter_code: "# def gcd(a, b):\n#     ...\n# print(gcd(48, 18))\n",
+    pytest: "def test_euclidean(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('gcd'))\n    assert ns['gcd'](48, 18) == 6\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['6']\n",
+    hint: "def gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a\nprint(gcd(48, 18))",
+    solution_example: "def gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a\nprint(gcd(48, 18))\n",
+    next: Some("py-124-huffman-cost"),
+    show_type_chips: false,
+    micro_step: 123,
+};
+
+pub const PY124_HUFFMAN_COST: CodingStep = CodingStep {
+    id: "py-124-huffman-cost",
+    title: "DSA Huffman Intro",
+    objective: "Sumar el costo de fusionar frecuencias (intro Huffman).",
+    prompt_md: "**Huffman (intro)**\n\nSacá los dos menores, sumalos, reinsertá; el costo es la suma de cada fusión.\n\n**Micro-reto:**\n1. Definí `huffman_cost(freqs)` usando `heapq`\n2. Imprimí `huffman_cost([1, 1, 1, 1])` (esperado: `8`)",
+    starter_code: "# import heapq\n# def huffman_cost(freqs):\n#     ...\n# print(huffman_cost([1, 1, 1, 1]))\n",
+    pytest: "def test_huffman_cost(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('huffman_cost'))\n    assert ns['huffman_cost']([1, 1, 1, 1]) == 8\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['8']\n",
+    hint: "import heapq\ndef huffman_cost(freqs):\n    h = list(freqs)\n    heapq.heapify(h)\n    cost = 0\n    while len(h) > 1:\n        a = heapq.heappop(h)\n        b = heapq.heappop(h)\n        s = a + b\n        cost += s\n        heapq.heappush(h, s)\n    return cost\nprint(huffman_cost([1, 1, 1, 1]))",
+    solution_example: "import heapq\ndef huffman_cost(freqs):\n    h = list(freqs)\n    heapq.heapify(h)\n    cost = 0\n    while len(h) > 1:\n        a = heapq.heappop(h)\n        b = heapq.heappop(h)\n        s = a + b\n        cost += s\n        heapq.heappush(h, s)\n    return cost\nprint(huffman_cost([1, 1, 1, 1]))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 124,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1792,6 +1876,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY116_KRUSKAL,
     &PY117_PRIM,
     &PY118_TOPO_SORT,
+    &PY119_BELLMAN_FORD,
+    &PY120_MEMO_FIB,
+    &PY121_TAB_FIB,
+    &PY122_KNAPSACK,
+    &PY123_EUCLIDEAN,
+    &PY124_HUFFMAN_COST,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -2289,10 +2379,27 @@ mod tests {
             (115, "py-115-union-find", Some("py-116-kruskal")),
             (116, "py-116-kruskal", Some("py-117-prim")),
             (117, "py-117-prim", Some("py-118-topo-sort")),
-            (118, "py-118-topo-sort", None),
+            (118, "py-118-topo-sort", Some("py-119-bellman-ford")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("heaps-graphs family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py119_to_py124_dp_paths_chain() {
+        let ids = [
+            (119, "py-119-bellman-ford", Some("py-120-memo-fib")),
+            (120, "py-120-memo-fib", Some("py-121-tab-fib")),
+            (121, "py-121-tab-fib", Some("py-122-knapsack")),
+            (122, "py-122-knapsack", Some("py-123-euclidean")),
+            (123, "py-123-euclidean", Some("py-124-huffman-cost")),
+            (124, "py-124-huffman-cost", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("dp-paths family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
