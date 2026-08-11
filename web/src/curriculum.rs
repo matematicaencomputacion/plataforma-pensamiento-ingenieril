@@ -2677,10 +2677,179 @@ pub const PY190_MIN_ROTATED: CodingStep = CodingStep {
     pytest: "def test_min_rotated(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_min_rotated'))\n    assert ns['find_min_rotated']([3, 4, 5, 1, 2]) == 1\n    assert ns['find_min_rotated']([4, 5, 6, 7, 0, 1, 2]) == 0\n    assert ns['find_min_rotated']([11, 13, 15, 17]) == 11\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['1']\n",
     hint: "def find_min_rotated(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[hi]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return nums[lo]\nprint(find_min_rotated([3, 4, 5, 1, 2]))",
     solution_example: "def find_min_rotated(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[hi]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return nums[lo]\nprint(find_min_rotated([3, 4, 5, 1, 2]))\n",
-    next: None,
+    next: Some("py-191-kth-largest"),
     show_type_chips: false,
     micro_step: 190,
 };
+
+pub const PY191_KTH_LARGEST: CodingStep = CodingStep {
+    id: "py-191-kth-largest",
+    title: "DSA Kth Largest Element",
+    objective: "Encontrar el k-ésimo mayor con un min-heap de tamaño k.",
+    prompt_md: "**Kth Largest Element**\n\nMantené un min-heap con los `k` valores más grandes; su raíz es la respuesta.\n\n**Micro-reto:**\n1. Definí `find_kth_largest(nums, k)`\n2. Imprimí `find_kth_largest([3, 2, 1, 5, 6, 4], 2)` (esperado: `5`)",
+    starter_code: "# def find_kth_largest(nums, k):\n#     ...\n# print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))\n",
+    pytest: "def test_kth_largest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_kth_largest'))\n    assert ns['find_kth_largest']([3, 2, 1, 5, 6, 4], 2) == 5\n    assert ns['find_kth_largest']([3, 2, 3, 1, 2, 4, 5, 5, 6], 4) == 4\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['5']\n",
+    hint: "import heapq\n\ndef find_kth_largest(nums, k):\n    return heapq.nlargest(k, nums)[-1]\nprint(find_kth_largest([3, 2, 1, 5, 6, 4], 2))",
+    solution_example: "import heapq\n\ndef find_kth_largest(nums, k):\n    return heapq.nlargest(k, nums)[-1]\nprint(find_kth_largest([3, 2, 1, 5, 6, 4], 2))\n",
+    next: Some("py-192-top-k-frequent"),
+    show_type_chips: false,
+    micro_step: 191,
+};
+
+pub const PY192_TOP_K_FREQUENT: CodingStep = CodingStep {
+    id: "py-192-top-k-frequent",
+    title: "DSA Top K Frequent",
+    objective: "Extraer los k elementos más frecuentes con heap.",
+    prompt_md: "**Top K Frequent Elements**\n\nContá ocurrencias y usá un heap para elegir los `k` más frecuentes. Para salida estable, imprimí el resultado ordenado.\n\n**Micro-reto:**\n1. Definí `top_k_frequent(nums, k)`\n2. Imprimí `sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2))` (esperado: `[1, 2]`)",
+    starter_code: "# def top_k_frequent(nums, k):\n#     ...\n# print(sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)))\n",
+    pytest: "def test_top_k_frequent(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('top_k_frequent'))\n    assert set(ns['top_k_frequent']([1, 1, 1, 2, 2, 3], 2)) == {1, 2}\n    assert set(ns['top_k_frequent']([4, 4, 5], 1)) == {4}\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['[1, 2]']\n",
+    hint: "from collections import Counter\nimport heapq\n\ndef top_k_frequent(nums, k):\n    return [value for value, _ in heapq.nlargest(k, Counter(nums).items(), key=lambda item: item[1])]\nprint(sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)))",
+    solution_example: "from collections import Counter\nimport heapq\n\ndef top_k_frequent(nums, k):\n    return [value for value, _ in heapq.nlargest(k, Counter(nums).items(), key=lambda item: item[1])]\nprint(sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)))\n",
+    next: Some("py-193-merge-k-lists"),
+    show_type_chips: false,
+    micro_step: 192,
+};
+
+pub const PY193_MERGE_K_LISTS: CodingStep = CodingStep {
+    id: "py-193-merge-k-lists",
+    title: "DSA Merge K Sorted Lists",
+    objective: "Fusionar k listas ordenadas con un min-heap.",
+    prompt_md: "**Merge K Sorted Lists**\n\nCada entrada es una lista de números ordenados. Poné el primer elemento de cada lista en un min-heap.\n\n**Micro-reto:**\n1. Definí `merge_k_lists(lists)`\n2. Imprimí `merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]])` (esperado: `[1, 1, 2, 3, 4, 4, 5, 6]`)",
+    starter_code: "# def merge_k_lists(lists):\n#     ...\n# print(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))\n",
+    pytest: "def test_merge_k_lists(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('merge_k_lists'))\n    assert ns['merge_k_lists']([[1, 4, 5], [1, 3, 4], [2, 6]]) == [1, 1, 2, 3, 4, 4, 5, 6]\n    assert ns['merge_k_lists']([[], [1], []]) == [1]\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['[1, 1, 2, 3, 4, 4, 5, 6]']\n",
+    hint: "import heapq\n\ndef merge_k_lists(lists):\n    heap = [(row[0], i, 0) for i, row in enumerate(lists) if row]\n    heapq.heapify(heap)\n    merged = []\n    while heap:\n        value, row, col = heapq.heappop(heap)\n        merged.append(value)\n        if col + 1 < len(lists[row]):\n            heapq.heappush(heap, (lists[row][col + 1], row, col + 1))\n    return merged\nprint(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))",
+    solution_example: "import heapq\n\ndef merge_k_lists(lists):\n    heap = [(row[0], i, 0) for i, row in enumerate(lists) if row]\n    heapq.heapify(heap)\n    merged = []\n    while heap:\n        value, row, col = heapq.heappop(heap)\n        merged.append(value)\n        if col + 1 < len(lists[row]):\n            heapq.heappush(heap, (lists[row][col + 1], row, col + 1))\n    return merged\nprint(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))\n",
+    next: Some("py-194-can-attend-meetings"),
+    show_type_chips: false,
+    micro_step: 193,
+};
+
+pub const PY194_CAN_ATTEND_MEETINGS: CodingStep = CodingStep {
+    id: "py-194-can-attend-meetings",
+    title: "DSA Can Attend Meetings",
+    objective: "Detectar solapamientos de intervalos después de ordenar.",
+    prompt_md: "**Meeting Rooms**\n\nOrdená por inicio y compará el inicio actual con el fin anterior.\n\n**Micro-reto:**\n1. Definí `can_attend_meetings(intervals)`\n2. Imprimí `can_attend_meetings([[0, 30], [5, 10], [15, 20]])` (esperado: `False`)",
+    starter_code: "# def can_attend_meetings(intervals):\n#     ...\n# print(can_attend_meetings([[0, 30], [5, 10], [15, 20]]))\n",
+    pytest: "def test_can_attend_meetings(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('can_attend_meetings'))\n    assert ns['can_attend_meetings']([[0, 30], [5, 10], [15, 20]]) is False\n    assert ns['can_attend_meetings']([[7, 10], [2, 4]]) is True\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['False']\n",
+    hint: "def can_attend_meetings(intervals):\n    intervals = sorted(intervals)\n    return all(intervals[i - 1][1] <= intervals[i][0] for i in range(1, len(intervals)))\nprint(can_attend_meetings([[0, 30], [5, 10], [15, 20]]))",
+    solution_example: "def can_attend_meetings(intervals):\n    intervals = sorted(intervals)\n    return all(intervals[i - 1][1] <= intervals[i][0] for i in range(1, len(intervals)))\nprint(can_attend_meetings([[0, 30], [5, 10], [15, 20]]))\n",
+    next: Some("py-195-nth-ugly"),
+    show_type_chips: false,
+    micro_step: 194,
+};
+
+pub const PY195_NTH_UGLY: CodingStep = CodingStep {
+    id: "py-195-nth-ugly",
+    title: "DSA Nth Ugly Number",
+    objective: "Generar números feos con factores 2, 3 y 5.",
+    prompt_md: "**Ugly Number II**\n\nUn número feo solo tiene factores primos 2, 3 y 5. Usá tres punteros para generar la secuencia sin duplicados.\n\n**Micro-reto:**\n1. Definí `nth_ugly_number(n)`\n2. Imprimí `nth_ugly_number(10)` (esperado: `12`)",
+    starter_code: "# def nth_ugly_number(n):\n#     ...\n# print(nth_ugly_number(10))\n",
+    pytest: "def test_nth_ugly_number(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('nth_ugly_number'))\n    assert ns['nth_ugly_number'](1) == 1\n    assert ns['nth_ugly_number'](10) == 12\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['12']\n",
+    hint: "def nth_ugly_number(n):\n    ugly = [1]\n    i2 = i3 = i5 = 0\n    while len(ugly) < n:\n        candidate = min(ugly[i2] * 2, ugly[i3] * 3, ugly[i5] * 5)\n        ugly.append(candidate)\n        if candidate == ugly[i2] * 2: i2 += 1\n        if candidate == ugly[i3] * 3: i3 += 1\n        if candidate == ugly[i5] * 5: i5 += 1\n    return ugly[-1]\nprint(nth_ugly_number(10))",
+    solution_example: "def nth_ugly_number(n):\n    ugly = [1]\n    i2 = i3 = i5 = 0\n    while len(ugly) < n:\n        candidate = min(ugly[i2] * 2, ugly[i3] * 3, ugly[i5] * 5)\n        ugly.append(candidate)\n        if candidate == ugly[i2] * 2: i2 += 1\n        if candidate == ugly[i3] * 3: i3 += 1\n        if candidate == ugly[i5] * 5: i5 += 1\n    return ugly[-1]\nprint(nth_ugly_number(10))\n",
+    next: Some("py-196-k-closest"),
+    show_type_chips: false,
+    micro_step: 195,
+};
+
+pub const PY196_K_CLOSEST: CodingStep = CodingStep {
+    id: "py-196-k-closest",
+    title: "DSA K Closest Points",
+    objective: "Elegir los k puntos más cercanos al origen.",
+    prompt_md: "**K Closest Points to Origin**\n\nUsá distancia al cuadrado (`x*x + y*y`) y un heap. Para salida estable, imprimí los puntos ordenados.\n\n**Micro-reto:**\n1. Definí `k_closest(points, k)`\n2. Imprimí `sorted(k_closest([[1, 3], [-2, 2], [5, 8]], 2))` (esperado: `[[-2, 2], [1, 3]]`)",
+    starter_code: "# def k_closest(points, k):\n#     ...\n# print(sorted(k_closest([[1, 3], [-2, 2], [5, 8]], 2)))\n",
+    pytest: "def test_k_closest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('k_closest'))\n    assert sorted(ns['k_closest']([[1, 3], [-2, 2], [5, 8]], 2)) == [[-2, 2], [1, 3]]\n    assert ns['k_closest']([[3, 3], [5, -1], [-2, 4]], 1) == [[3, 3]]\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['[[-2, 2], [1, 3]]']\n",
+    hint: "import heapq\n\ndef k_closest(points, k):\n    return heapq.nsmallest(k, points, key=lambda point: point[0] ** 2 + point[1] ** 2)\nprint(sorted(k_closest([[1, 3], [-2, 2], [5, 8]], 2)))",
+    solution_example: "import heapq\n\ndef k_closest(points, k):\n    return heapq.nsmallest(k, points, key=lambda point: point[0] ** 2 + point[1] ** 2)\nprint(sorted(k_closest([[1, 3], [-2, 2], [5, 8]], 2)))\n",
+    next: Some("py-197-coin-change-ii"),
+    show_type_chips: false,
+    micro_step: 196,
+};
+
+pub const PY197_COIN_CHANGE_II: CodingStep = CodingStep {
+    id: "py-197-coin-change-ii",
+    title: "DP Coin Change II",
+    objective: "Contar combinaciones de monedas que forman un monto.",
+    prompt_md: "**Coin Change II**\n\n`dp[amount]` cuenta combinaciones. Iterá monedas primero para no contar permutaciones.\n\n**Micro-reto:**\n1. Definí `change(amount, coins)`\n2. Imprimí `change(5, [1, 2, 5])` (esperado: `4`)",
+    starter_code: "# def change(amount, coins):\n#     ...\n# print(change(5, [1, 2, 5]))\n",
+    pytest: "def test_coin_change_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('change'))\n    assert ns['change'](5, [1, 2, 5]) == 4\n    assert ns['change'](3, [2]) == 0\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['4']\n",
+    hint: "def change(amount, coins):\n    dp = [0] * (amount + 1)\n    dp[0] = 1\n    for coin in coins:\n        for value in range(coin, amount + 1):\n            dp[value] += dp[value - coin]\n    return dp[amount]\nprint(change(5, [1, 2, 5]))",
+    solution_example: "def change(amount, coins):\n    dp = [0] * (amount + 1)\n    dp[0] = 1\n    for coin in coins:\n        for value in range(coin, amount + 1):\n            dp[value] += dp[value - coin]\n    return dp[amount]\nprint(change(5, [1, 2, 5]))\n",
+    next: Some("py-198-rob-circular"),
+    show_type_chips: false,
+    micro_step: 197,
+};
+
+pub const PY198_ROB_CIRCULAR: CodingStep = CodingStep {
+    id: "py-198-rob-circular",
+    title: "DP House Robber II",
+    objective: "Maximizar el robo cuando la primera y última casa son vecinas.",
+    prompt_md: "**House Robber II**\n\nNo podés tomar primera y última juntas: resolvé los casos sin la última y sin la primera.\n\n**Micro-reto:**\n1. Definí `rob_circular(nums)`\n2. Imprimí `rob_circular([2, 3, 2])` (esperado: `3`)",
+    starter_code: "# def rob_circular(nums):\n#     ...\n# print(rob_circular([2, 3, 2]))\n",
+    pytest: "def test_rob_circular(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('rob_circular'))\n    assert ns['rob_circular']([2, 3, 2]) == 3\n    assert ns['rob_circular']([1, 2, 3, 1]) == 4\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['3']\n",
+    hint: "def rob_circular(nums):\n    def rob_line(houses):\n        prev2 = prev1 = 0\n        for value in houses:\n            prev2, prev1 = prev1, max(prev1, prev2 + value)\n        return prev1\n    if len(nums) <= 1:\n        return nums[0] if nums else 0\n    return max(rob_line(nums[:-1]), rob_line(nums[1:]))\nprint(rob_circular([2, 3, 2]))",
+    solution_example: "def rob_circular(nums):\n    def rob_line(houses):\n        prev2 = prev1 = 0\n        for value in houses:\n            prev2, prev1 = prev1, max(prev1, prev2 + value)\n        return prev1\n    if len(nums) <= 1:\n        return nums[0] if nums else 0\n    return max(rob_line(nums[:-1]), rob_line(nums[1:]))\nprint(rob_circular([2, 3, 2]))\n",
+    next: Some("py-199-unique-paths-obstacles"),
+    show_type_chips: false,
+    micro_step: 198,
+};
+
+pub const PY199_UNIQUE_PATHS_OBSTACLES: CodingStep = CodingStep {
+    id: "py-199-unique-paths-obstacles",
+    title: "DP Unique Paths Obstacles",
+    objective: "Contar caminos evitando obstáculos en una grilla.",
+    prompt_md: "**Unique Paths II**\n\nUn `1` bloquea la celda. Reutilizá una fila DP: desde arriba + desde la izquierda.\n\n**Micro-reto:**\n1. Definí `unique_paths_with_obstacles(grid)`\n2. Imprimí `unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]])` (esperado: `2`)",
+    starter_code: "# def unique_paths_with_obstacles(grid):\n#     ...\n# print(unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]]))\n",
+    pytest: "def test_unique_paths_obstacles(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('unique_paths_with_obstacles'))\n    assert ns['unique_paths_with_obstacles']([[0, 0, 0], [0, 1, 0], [0, 0, 0]]) == 2\n    assert ns['unique_paths_with_obstacles']([[0, 1], [0, 0]]) == 1\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['2']\n",
+    hint: "def unique_paths_with_obstacles(grid):\n    cols = len(grid[0])\n    dp = [0] * cols\n    dp[0] = 1\n    for row in grid:\n        for col, cell in enumerate(row):\n            if cell:\n                dp[col] = 0\n            elif col:\n                dp[col] += dp[col - 1]\n    return dp[-1]\nprint(unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]]))",
+    solution_example: "def unique_paths_with_obstacles(grid):\n    cols = len(grid[0])\n    dp = [0] * cols\n    dp[0] = 1\n    for row in grid:\n        for col, cell in enumerate(row):\n            if cell:\n                dp[col] = 0\n            elif col:\n                dp[col] += dp[col - 1]\n    return dp[-1]\nprint(unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]]))\n",
+    next: Some("py-200-lcs-length"),
+    show_type_chips: false,
+    micro_step: 199,
+};
+
+pub const PY200_LCS_LENGTH: CodingStep = CodingStep {
+    id: "py-200-lcs-length",
+    title: "DP Longest Common Subsequence",
+    objective: "Calcular la longitud de la subsecuencia común más larga.",
+    prompt_md: "**Longest Common Subsequence**\n\nSi los caracteres coinciden, sumá uno a la diagonal; si no, elegí el mejor vecino.\n\n**Micro-reto:**\n1. Definí `lcs_length(text1, text2)`\n2. Imprimí `lcs_length('abcde', 'ace')` (esperado: `3`)",
+    starter_code: "# def lcs_length(text1, text2):\n#     ...\n# print(lcs_length('abcde', 'ace'))\n",
+    pytest: "def test_lcs_length(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('lcs_length'))\n    assert ns['lcs_length']('abcde', 'ace') == 3\n    assert ns['lcs_length']('abc', 'abc') == 3\n    assert ns['lcs_length']('abc', 'def') == 0\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['3']\n",
+    hint: "def lcs_length(text1, text2):\n    dp = [0] * (len(text2) + 1)\n    for left in text1:\n        previous = 0\n        for j, right in enumerate(text2, 1):\n            saved = dp[j]\n            if left == right:\n                dp[j] = previous + 1\n            else:\n                dp[j] = max(dp[j], dp[j - 1])\n            previous = saved\n    return dp[-1]\nprint(lcs_length('abcde', 'ace'))",
+    solution_example: "def lcs_length(text1, text2):\n    dp = [0] * (len(text2) + 1)\n    for left in text1:\n        previous = 0\n        for j, right in enumerate(text2, 1):\n            saved = dp[j]\n            if left == right:\n                dp[j] = previous + 1\n            else:\n                dp[j] = max(dp[j], dp[j - 1])\n            previous = saved\n    return dp[-1]\nprint(lcs_length('abcde', 'ace'))\n",
+    next: Some("py-201-can-partition"),
+    show_type_chips: false,
+    micro_step: 200,
+};
+
+pub const PY201_CAN_PARTITION: CodingStep = CodingStep {
+    id: "py-201-can-partition",
+    title: "DP Partition Equal Subset",
+    objective: "Decidir si un array puede dividirse en dos sumas iguales.",
+    prompt_md: "**Partition Equal Subset Sum**\n\nSi la suma total es impar no hay solución. Si es par, buscá alcanzar la mitad con DP booleana.\n\n**Micro-reto:**\n1. Definí `can_partition(nums)`\n2. Imprimí `can_partition([1, 5, 11, 5])` (esperado: `True`)",
+    starter_code: "# def can_partition(nums):\n#     ...\n# print(can_partition([1, 5, 11, 5]))\n",
+    pytest: "def test_can_partition(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('can_partition'))\n    assert ns['can_partition']([1, 5, 11, 5]) is True\n    assert ns['can_partition']([1, 2, 3, 5]) is False\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['True']\n",
+    hint: "def can_partition(nums):\n    total = sum(nums)\n    if total % 2:\n        return False\n    target = total // 2\n    possible = {0}\n    for value in nums:\n        possible |= {current + value for current in possible if current + value <= target}\n    return target in possible\nprint(can_partition([1, 5, 11, 5]))",
+    solution_example: "def can_partition(nums):\n    total = sum(nums)\n    if total % 2:\n        return False\n    target = total // 2\n    possible = {0}\n    for value in nums:\n        possible |= {current + value for current in possible if current + value <= target}\n    return target in possible\nprint(can_partition([1, 5, 11, 5]))\n",
+    next: Some("py-202-num-squares"),
+    show_type_chips: false,
+    micro_step: 201,
+};
+
+pub const PY202_NUM_SQUARES: CodingStep = CodingStep {
+    id: "py-202-num-squares",
+    title: "DP Perfect Squares",
+    objective: "Minimizar la cantidad de cuadrados perfectos que suman n.",
+    prompt_md: "**Perfect Squares**\n\nPara cada valor, probá restar cada cuadrado perfecto menor o igual; DP guarda el mínimo.\n\n**Micro-reto:**\n1. Definí `num_squares(n)`\n2. Imprimí `num_squares(12)` (esperado: `3`)",
+    starter_code: "# def num_squares(n):\n#     ...\n# print(num_squares(12))\n",
+    pytest: "def test_num_squares(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('num_squares'))\n    assert ns['num_squares'](12) == 3\n    assert ns['num_squares'](13) == 2\n    assert [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()] == ['3']\n",
+    hint: "def num_squares(n):\n    dp = [0] + [n] * n\n    for value in range(1, n + 1):\n        square = 1\n        while square * square <= value:\n            dp[value] = min(dp[value], dp[value - square * square] + 1)\n            square += 1\n    return dp[n]\nprint(num_squares(12))",
+    solution_example: "def num_squares(n):\n    dp = [0] + [n] * n\n    for value in range(1, n + 1):\n        square = 1\n        while square * square <= value:\n            dp[value] = min(dp[value], dp[value - square * square] + 1)\n            square += 1\n    return dp[n]\nprint(num_squares(12))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 202,
+};
+
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
     &PY02_INTRO,
@@ -2872,6 +3041,18 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY188_SQRT,
     &PY189_SHIP_CAPACITY,
     &PY190_MIN_ROTATED,
+    &PY191_KTH_LARGEST,
+    &PY192_TOP_K_FREQUENT,
+    &PY193_MERGE_K_LISTS,
+    &PY194_CAN_ATTEND_MEETINGS,
+    &PY195_NTH_UGLY,
+    &PY196_K_CLOSEST,
+    &PY197_COIN_CHANGE_II,
+    &PY198_ROB_CIRCULAR,
+    &PY199_UNIQUE_PATHS_OBSTACLES,
+    &PY200_LCS_LENGTH,
+    &PY201_CAN_PARTITION,
+    &PY202_NUM_SQUARES,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -3533,7 +3714,6 @@ mod tests {
         }
     }
 
-
     #[test]
     fn py179_to_py184_stacks_chain() {
         let ids = [
@@ -3559,10 +3739,45 @@ mod tests {
             (187, "py-187-search-rotated", Some("py-188-sqrt")),
             (188, "py-188-sqrt", Some("py-189-ship-capacity")),
             (189, "py-189-ship-capacity", Some("py-190-min-rotated")),
-            (190, "py-190-min-rotated", None),
+            (190, "py-190-min-rotated", Some("py-191-kth-largest")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("binsearch family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py191_to_py202_heaps_and_dp_chain() {
+        let ids = [
+            (191, "py-191-kth-largest", Some("py-192-top-k-frequent")),
+            (192, "py-192-top-k-frequent", Some("py-193-merge-k-lists")),
+            (
+                193,
+                "py-193-merge-k-lists",
+                Some("py-194-can-attend-meetings"),
+            ),
+            (194, "py-194-can-attend-meetings", Some("py-195-nth-ugly")),
+            (195, "py-195-nth-ugly", Some("py-196-k-closest")),
+            (196, "py-196-k-closest", Some("py-197-coin-change-ii")),
+            (197, "py-197-coin-change-ii", Some("py-198-rob-circular")),
+            (
+                198,
+                "py-198-rob-circular",
+                Some("py-199-unique-paths-obstacles"),
+            ),
+            (
+                199,
+                "py-199-unique-paths-obstacles",
+                Some("py-200-lcs-length"),
+            ),
+            (200, "py-200-lcs-length", Some("py-201-can-partition")),
+            (201, "py-201-can-partition", Some("py-202-num-squares")),
+            (202, "py-202-num-squares", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("heaps/dp family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
