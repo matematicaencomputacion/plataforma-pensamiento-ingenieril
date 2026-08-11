@@ -139,7 +139,7 @@ print(decode_ways('226'))
     return best
 print(longest_palindrome_len('babad'))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-155-contains-dup/,
     cursorAfter: "155",
   },
 ];
