@@ -100,9 +100,23 @@ pub const PY06_COMMENTS: CodingStep = CodingStep {
     pytest: "def test_comments(capsys):\n    src = open('solution.py', encoding='utf-8').read()\n    assert 'This is a comment' in src\n    assert any(\n        ln.lstrip().startswith('#') and 'print(\"This should not run\")' in ln\n        for ln in src.splitlines()\n    )\n    assert ('\"\"\"' in src) or (\"'''\" in src)\n    low = src.lower()\n    assert 'this is' in low and 'multiline' in low and 'comment' in low\n    exec(compile(src, 'solution.py', 'exec'))\n    assert 'This should not run' not in capsys.readouterr().out\n",
     hint: "# This is a comment\n# print(\"This should not run\")\n\"\"\"This is\na multiline\ncomment\"\"\"",
     solution_example: "# This is a comment\n# print(\"This should not run\")\n\"\"\"This is\na multiline\ncomment\"\"\"\n",
-    next: None,
+    next: Some("py-07-data-types"),
     show_type_chips: false,
     micro_step: 6,
+};
+
+pub const PY07_DATA_TYPES: CodingStep = CodingStep {
+    id: "py-07-data-types",
+    title: "Python Data Types",
+    objective: "Crear variables de distintos tipos y revelar su tipo con type().",
+    prompt_md: "**Data Types**\n\nPython asigna el tipo al crear la variable. `type()` muestra el tipo de un valor.\n\n**Micro-reto:**\n1. Creá `x` con el valor `5`\n2. Creá `y` con el valor `3.14`\n3. Creá `z` con el valor `\"Hello\"`\n4. Imprimí el tipo de cada variable con `type()`",
+    starter_code: "# x = ...\n# y = ...\n# z = ...\n# print(type(...))\n",
+    pytest: "def test_data_types(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 5 and isinstance(ns['x'], int)\n    assert ns.get('y') == 3.14 and isinstance(ns['y'], float)\n    assert ns.get('z') == 'Hello' and isinstance(ns['z'], str)\n    out = capsys.readouterr().out\n    assert 'int' in out and 'float' in out and 'str' in out\n",
+    hint: "x = 5\ny = 3.14\nz = \"Hello\"\nprint(type(x))\nprint(type(y))\nprint(type(z))",
+    solution_example: "x = 5\ny = 3.14\nz = \"Hello\"\nprint(type(x))\nprint(type(y))\nprint(type(z))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 7,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -112,6 +126,7 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY04_SYNTAX,
     &PY05_OUTPUT,
     &PY06_COMMENTS,
+    &PY07_DATA_TYPES,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -282,9 +297,17 @@ mod tests {
     fn py06_comments_chained_from_output() {
         let comments = coding_step_by_micro_step(6).expect("py-06");
         assert_eq!(comments.id, "py-06-comments");
-        assert!(comments.next.is_none());
+        assert_eq!(comments.next, Some("py-07-data-types"));
         assert!(comments.pytest.contains("test_comments"));
         assert!(comments.starter_code.contains("This should not run"));
+    }
+
+    #[test]
+    fn py07_data_types_chained_from_comments() {
+        let step = coding_step_by_micro_step(7).expect("py-07");
+        assert_eq!(step.id, "py-07-data-types");
+        assert!(step.next.is_none());
+        assert!(step.pytest.contains("test_data_types"));
     }
 
     #[test]
