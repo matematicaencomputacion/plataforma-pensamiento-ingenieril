@@ -123,12 +123,13 @@ ci: fmt vet test build openspec-validate ## Pipeline local rápido (Go; web/harn
 # ── Git worktrees (desarrollo asíncrono mientras CI/Playwright corre) ─────────
 # Docs: docs/dev/git-worktrees.md
 # Ejemplo: make wt-new BRANCH=feat/microsteps-155-160 BOOTSTRAP=1
+# IMPORTANT: use WT_PATH (never PATH — Make/env PATH would override).
 
-wt-new: ## Crea worktree hermano: make wt-new BRANCH=feat/foo [PATH=..] [BASE=origin/main] [BOOTSTRAP=1]
+wt-new: ## Crea worktree hermano: make wt-new BRANCH=feat/foo [WT_PATH=..] [BASE=origin/main] [BOOTSTRAP=1]
 	@test -n "$(BRANCH)" || (echo "BRANCH requerido (ej. feat/microsteps-155-160)" >&2; exit 2)
 	@chmod +x scripts/worktree/wt
 	@./scripts/worktree/wt new "$(BRANCH)" \
-	  $(if $(PATH),--path "$(PATH)",) \
+	  $(if $(WT_PATH),--path "$(WT_PATH)",) \
 	  $(if $(BASE),--base "$(BASE)",) \
 	  $(if $(filter 1 true TRUE yes YES,$(BOOTSTRAP)),--bootstrap,)
 
