@@ -226,9 +226,93 @@ pub const PY15_ESCAPE: CodingStep = CodingStep {
     pytest: "def test_escape(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('txt') == 'We are the so-called \"Vikings\" from the north.'\n    out = capsys.readouterr().out\n    assert 'Vikings' in out\n",
     hint: "txt = \"We are the so-called \\\"Vikings\\\" from the north.\"\nprint(txt)",
     solution_example: "txt = \"We are the so-called \\\"Vikings\\\" from the north.\"\nprint(txt)\n",
-    next: None,
+    next: Some("py-16-booleans"),
     show_type_chips: false,
     micro_step: 15,
+};
+
+pub const PY16_BOOLEANS: CodingStep = CodingStep {
+    id: "py-16-booleans",
+    title: "Python Booleans",
+    objective: "Evaluar comparaciones y obtener True o False.",
+    prompt_md: "**Booleans**\n\nUna comparación en Python devuelve `True` o `False`.\n\n**Micro-reto:**\n1. Imprimí el resultado de `10 > 9`\n2. Imprimí el resultado de `10 == 9`\n3. Imprimí el resultado de `10 < 9`",
+    starter_code: "# print(...)\n",
+    pytest: "def test_booleans(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True', 'False', 'False']\n",
+    hint: "print(10 > 9)\nprint(10 == 9)\nprint(10 < 9)",
+    solution_example: "print(10 > 9)\nprint(10 == 9)\nprint(10 < 9)\n",
+    next: Some("py-17-operators"),
+    show_type_chips: false,
+    micro_step: 16,
+};
+
+pub const PY17_OPERATORS: CodingStep = CodingStep {
+    id: "py-17-operators",
+    title: "Python Operators",
+    objective: "Usar el operador + para sumar valores.",
+    prompt_md: "**Operators**\n\nLos operadores realizan operaciones sobre variables y valores.\n\n**Micro-reto:**\n1. Imprimí el resultado de `10 + 5`",
+    starter_code: "# print(...)\n",
+    pytest: "def test_operators(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '15'\n",
+    hint: "print(10 + 5)",
+    solution_example: "print(10 + 5)\n",
+    next: Some("py-18-lists"),
+    show_type_chips: false,
+    micro_step: 17,
+};
+
+pub const PY18_LISTS: CodingStep = CodingStep {
+    id: "py-18-lists",
+    title: "Python Lists",
+    objective: "Crear una lista, mostrarla y medir su longitud.",
+    prompt_md: "**Lists**\n\nLas listas se crean con corchetes `[]`.\n\n**Micro-reto:**\n1. Creá `thislist` con `apple`, `banana` y `cherry`\n2. Imprimí `thislist`\n3. Imprimí `len(thislist)`",
+    starter_code: "# thislist = ...\n# print(...)\n# print(len(...))\n",
+    pytest: "def test_lists(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thislist') == ['apple', 'banana', 'cherry']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'apple' in out and 'banana' in out and 'cherry' in out and '3' in out\n",
+    hint: "thislist = [\"apple\", \"banana\", \"cherry\"]\nprint(thislist)\nprint(len(thislist))",
+    solution_example: "thislist = [\"apple\", \"banana\", \"cherry\"]\nprint(thislist)\nprint(len(thislist))\n",
+    next: Some("py-19-list-access"),
+    show_type_chips: false,
+    micro_step: 18,
+};
+
+pub const PY19_LIST_ACCESS: CodingStep = CodingStep {
+    id: "py-19-list-access",
+    title: "Python Access List Items",
+    objective: "Acceder a un ítem de lista por índice.",
+    prompt_md: "**Access List Items**\n\nLos ítems se indexan desde `0`.\n\n**Micro-reto:**\n1. Creá `thislist` con `apple`, `banana` y `cherry`\n2. Imprimí el segundo ítem (`thislist[1]`)",
+    starter_code: "# thislist = ...\n# print(...)\n",
+    pytest: "def test_list_access(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thislist') == ['apple', 'banana', 'cherry']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'banana'\n",
+    hint: "thislist = [\"apple\", \"banana\", \"cherry\"]\nprint(thislist[1])",
+    solution_example: "thislist = [\"apple\", \"banana\", \"cherry\"]\nprint(thislist[1])\n",
+    next: Some("py-20-list-change"),
+    show_type_chips: false,
+    micro_step: 19,
+};
+
+pub const PY20_LIST_CHANGE: CodingStep = CodingStep {
+    id: "py-20-list-change",
+    title: "Python Change List Items",
+    objective: "Cambiar el valor de un ítem de lista por índice.",
+    prompt_md: "**Change List Items**\n\nPara cambiar un ítem, asigná un nuevo valor en su índice.\n\n**Micro-reto:**\n1. Creá `thislist` con `apple`, `banana` y `cherry`\n2. Cambiá el segundo ítem a `blackcurrant`\n3. Imprimí `thislist`",
+    starter_code: "# thislist = ...\n# thislist[...] = ...\n# print(...)\n",
+    pytest: "def test_list_change(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thislist') == ['apple', 'blackcurrant', 'cherry']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'blackcurrant' in out\n",
+    hint: "thislist = [\"apple\", \"banana\", \"cherry\"]\nthislist[1] = \"blackcurrant\"\nprint(thislist)",
+    solution_example: "thislist = [\"apple\", \"banana\", \"cherry\"]\nthislist[1] = \"blackcurrant\"\nprint(thislist)\n",
+    next: Some("py-21-list-add"),
+    show_type_chips: false,
+    micro_step: 20,
+};
+
+pub const PY21_LIST_ADD: CodingStep = CodingStep {
+    id: "py-21-list-add",
+    title: "Python Add List Items",
+    objective: "Agregar un ítem al final de la lista con append().",
+    prompt_md: "**Add List Items**\n\n`append()` agrega un ítem al final de la lista.\n\n**Micro-reto:**\n1. Creá `thislist` con `apple`, `banana` y `cherry`\n2. Agregá `orange` con `append()`\n3. Imprimí `thislist`",
+    starter_code: "# thislist = ...\n# thislist.append(...)\n# print(...)\n",
+    pytest: "def test_list_add(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thislist') == ['apple', 'banana', 'cherry', 'orange']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'orange' in out\n",
+    hint: "thislist = [\"apple\", \"banana\", \"cherry\"]\nthislist.append(\"orange\")\nprint(thislist)",
+    solution_example: "thislist = [\"apple\", \"banana\", \"cherry\"]\nthislist.append(\"orange\")\nprint(thislist)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 21,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -247,6 +331,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY13_CONCATENATE,
     &PY14_FORMAT_STRINGS,
     &PY15_ESCAPE,
+    &PY16_BOOLEANS,
+    &PY17_OPERATORS,
+    &PY18_LISTS,
+    &PY19_LIST_ACCESS,
+    &PY20_LIST_CHANGE,
+    &PY21_LIST_ADD,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -454,10 +544,27 @@ mod tests {
             (12, "py-12-modify-strings", Some("py-13-concatenate")),
             (13, "py-13-concatenate", Some("py-14-format-strings")),
             (14, "py-14-format-strings", Some("py-15-escape")),
-            (15, "py-15-escape", None),
+            (15, "py-15-escape", Some("py-16-booleans")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("strings family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py16_to_py21_bool_ops_lists_chain() {
+        let ids = [
+            (16, "py-16-booleans", Some("py-17-operators")),
+            (17, "py-17-operators", Some("py-18-lists")),
+            (18, "py-18-lists", Some("py-19-list-access")),
+            (19, "py-19-list-access", Some("py-20-list-change")),
+            (20, "py-20-list-change", Some("py-21-list-add")),
+            (21, "py-21-list-add", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("bool/ops/lists step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
