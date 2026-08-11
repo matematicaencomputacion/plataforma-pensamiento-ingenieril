@@ -117,7 +117,7 @@ print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
             hi = mid
     return nums[lo]
 print(find_min_rotated([3, 4, 5, 1, 2]))
-`, nextUrl: /\/workspace/, cursorAfter: "191" },
+`, nextUrl: /\/learn\/py-191-kth-largest/, cursorAfter: "191" },
 ];
 
 function uniqueCreds(micro: number) {

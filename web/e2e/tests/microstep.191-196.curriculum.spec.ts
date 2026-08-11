@@ -26,14 +26,14 @@ const FAMILY: FamilyStep[] = [
 def find_kth_largest(nums, k):
     return heapq.nlargest(k, nums)[-1]
 print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
-`, nextUrl: /\\/learn\\/py-192-top-k-frequent/, cursorAfter: "192" },
+`, nextUrl: /\/learn\/py-192-top-k-frequent/, cursorAfter: "192" },
   { micro: 192, id: "py-192-top-k-frequent", title: "DSA Top K Frequent", solution: `from collections import Counter
 
 def top_k_frequent(nums, k):
     counts = Counter(nums)
     return sorted(n for n, _ in counts.most_common(k))
 print(top_k_frequent([1, 1, 1, 2, 2, 3], 2))
-`, nextUrl: /\\/learn\\/py-193-merge-k-lists/, cursorAfter: "193" },
+`, nextUrl: /\/learn\/py-193-merge-k-lists/, cursorAfter: "193" },
   { micro: 193, id: "py-193-merge-k-lists", title: "DSA Merge K Lists", solution: `import heapq
 
 def merge_k_lists(lists):
@@ -49,7 +49,7 @@ def merge_k_lists(lists):
             heapq.heappush(heap, (lists[list_i][idx + 1], list_i, idx + 1))
     return result
 print(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))
-`, nextUrl: /\\/learn\\/py-194-meeting-rooms/, cursorAfter: "194" },
+`, nextUrl: /\/learn\/py-194-meeting-rooms/, cursorAfter: "194" },
   { micro: 194, id: "py-194-meeting-rooms", title: "DSA Meeting Rooms", solution: `def can_attend_meetings(intervals):
     intervals = sorted(intervals)
     for i in range(1, len(intervals)):
@@ -57,7 +57,7 @@ print(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))
             return False
     return True
 print(can_attend_meetings([[0, 30], [5, 10], [15, 20]]))
-`, nextUrl: /\\/learn\\/py-195-ugly-number/, cursorAfter: "195" },
+`, nextUrl: /\/learn\/py-195-ugly-number/, cursorAfter: "195" },
   { micro: 195, id: "py-195-ugly-number", title: "DSA Ugly Number", solution: `def nth_ugly_number(n):
     ugly = [1]
     i2 = i3 = i5 = 0
@@ -73,12 +73,12 @@ print(can_attend_meetings([[0, 30], [5, 10], [15, 20]]))
             i5 += 1
     return ugly[-1]
 print(nth_ugly_number(10))
-`, nextUrl: /\\/learn\\/py-196-k-closest/, cursorAfter: "196" },
+`, nextUrl: /\/learn\/py-196-k-closest/, cursorAfter: "196" },
   { micro: 196, id: "py-196-k-closest", title: "DSA K Closest Points", solution: `def k_closest(points, k):
     chosen = sorted(points, key=lambda p: p[0] * p[0] + p[1] * p[1])[:k]
     return sorted(chosen)
 print(k_closest([[1, 3], [-2, 2], [2, -2]], 2))
-`, nextUrl: /\\/workspace/, cursorAfter: "197" },
+`, nextUrl: /\/learn\/py-197-coin-change-ii/, cursorAfter: "197" },
 ];
 
 function uniqueCreds(micro: number) {

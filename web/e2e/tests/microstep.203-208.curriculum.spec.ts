@@ -49,7 +49,7 @@ print(num_islands([
     ["0", "0", "1", "0", "0"],
     ["0", "0", "0", "1", "1"],
 ]))
-`, nextUrl: /\/learn\/py-204-[^/]+/, cursorAfter: "204" },
+`, nextUrl: /\/learn\/py-204-/, cursorAfter: "204" },
   { micro: 204, id: "py-204-clone-graph", title: "DSA Clone Graph", solution: `from collections import deque
 
 class Node:
@@ -78,7 +78,7 @@ n3.neighbors = [n2, n4]
 n4.neighbors = [n1, n3]
 cloned = clone_graph(n1)
 print(sorted(neighbor.val for neighbor in cloned.neighbors))
-`, nextUrl: /\/learn\/py-205-[^/]+/, cursorAfter: "205" },
+`, nextUrl: /\/learn\/py-205-/, cursorAfter: "205" },
   { micro: 205, id: "py-205-course-schedule", title: "DSA Course Schedule", solution: `from collections import defaultdict, deque
 
 def can_finish(num_courses, prerequisites):
@@ -98,7 +98,7 @@ def can_finish(num_courses, prerequisites):
                 queue.append(nxt)
     return seen == num_courses
 print(can_finish(2, [[1, 0]]))
-`, nextUrl: /\/learn\/py-206-[^/]+/, cursorAfter: "206" },
+`, nextUrl: /\/learn\/py-206-/, cursorAfter: "206" },
   { micro: 206, id: "py-206-pacific-atlantic", title: "DSA Pacific Atlantic", solution: `from collections import deque
 
 def pacific_atlantic(heights):
@@ -133,7 +133,7 @@ print(pacific_atlantic([
     [6, 7, 1, 4, 5],
     [5, 1, 1, 2, 4],
 ]))
-`, nextUrl: /\/learn\/py-207-[^/]+/, cursorAfter: "207" },
+`, nextUrl: /\/learn\/py-207-/, cursorAfter: "207" },
   { micro: 207, id: "py-207-rot-oranges", title: "DSA Rotting Oranges", solution: `from collections import deque
 
 def oranges_rotting(grid):
@@ -158,7 +158,7 @@ def oranges_rotting(grid):
                 queue.append((ni, nj, t + 1))
     return minutes if fresh == 0 else -1
 print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
-`, nextUrl: /\/learn\/py-208-[^/]+/, cursorAfter: "208" },
+`, nextUrl: /\/learn\/py-208-/, cursorAfter: "208" },
   { micro: 208, id: "py-208-word-ladder", title: "DSA Word Ladder Length", solution: `from collections import deque
 
 def ladder_length(begin_word, end_word, word_list):
@@ -178,7 +178,7 @@ def ladder_length(begin_word, end_word, word_list):
                     queue.append((nxt, dist + 1))
     return 0
 print(ladder_length('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))
-`, nextUrl: /\/workspace/, cursorAfter: "209" },
+`, nextUrl: /\/learn\/py-209-lru-cache/, cursorAfter: "209" },
 ];
 
 function uniqueCreds(micro: number) {

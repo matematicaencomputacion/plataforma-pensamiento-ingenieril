@@ -29,7 +29,7 @@ const FAMILY: FamilyStep[] = [
             dp[a] += dp[a - coin]
     return dp[amount]
 print(coin_change_ways(5, [1, 2, 5]))
-`, nextUrl: /\\/learn\\/py-198-house-robber-ii/, cursorAfter: "198" },
+`, nextUrl: /\/learn\/py-198-house-robber-ii/, cursorAfter: "198" },
   { micro: 198, id: "py-198-house-robber-ii", title: "DSA House Robber II", solution: `def rob_circular(nums):
     def rob_line(arr):
         prev = cur = 0
@@ -42,7 +42,7 @@ print(coin_change_ways(5, [1, 2, 5]))
         return nums[0]
     return max(rob_line(nums[:-1]), rob_line(nums[1:]))
 print(rob_circular([2, 3, 2]))
-`, nextUrl: /\\/learn\\/py-199-unique-paths-ii/, cursorAfter: "199" },
+`, nextUrl: /\/learn\/py-199-unique-paths-ii/, cursorAfter: "199" },
   { micro: 199, id: "py-199-unique-paths-ii", title: "DSA Unique Paths II", solution: `def unique_paths_with_obstacles(obstacle_grid):
     m, n = len(obstacle_grid), len(obstacle_grid[0])
     dp = [[0] * n for _ in range(m)]
@@ -61,7 +61,7 @@ print(rob_circular([2, 3, 2]))
             dp[i][j] = from_up + from_left
     return dp[-1][-1]
 print(unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]]))
-`, nextUrl: /\\/learn\\/py-200-max-product/, cursorAfter: "200" },
+`, nextUrl: /\/learn\/py-200-max-product/, cursorAfter: "200" },
   { micro: 200, id: "py-200-max-product", title: "DSA Max Product Subarray", solution: `def max_product(nums):
     best = imax = imin = nums[0]
     for value in nums[1:]:
@@ -71,7 +71,7 @@ print(unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]]))
         best = max(best, imax)
     return best
 print(max_product([2, 3, -2, 4]))
-`, nextUrl: /\\/learn\\/py-201-partition-subset/, cursorAfter: "201" },
+`, nextUrl: /\/learn\/py-201-partition-subset/, cursorAfter: "201" },
   { micro: 201, id: "py-201-partition-subset", title: "DSA Partition Equal Subset", solution: `def can_partition(nums):
     total = sum(nums)
     if total % 2:
@@ -82,7 +82,7 @@ print(max_product([2, 3, -2, 4]))
         reachable |= reachable << value
     return bool(reachable & (1 << target))
 print(can_partition([1, 5, 11, 5]))
-`, nextUrl: /\\/learn\\/py-202-perfect-squares/, cursorAfter: "202" },
+`, nextUrl: /\/learn\/py-202-perfect-squares/, cursorAfter: "202" },
   { micro: 202, id: "py-202-perfect-squares", title: "DSA Perfect Squares", solution: `def num_squares(n):
     dp = [0] + [float('inf')] * n
     for i in range(1, n + 1):
@@ -92,7 +92,7 @@ print(can_partition([1, 5, 11, 5]))
             j += 1
     return int(dp[n])
 print(num_squares(12))
-`, nextUrl: /\\/workspace/, cursorAfter: "203" },
+`, nextUrl: /\/learn\/py-203-num-islands/, cursorAfter: "203" },
 ];
 
 function uniqueCreds(micro: number) {

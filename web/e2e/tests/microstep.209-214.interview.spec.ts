@@ -15,12 +15,12 @@ type FamilyStep = {
 };
 
 const FAMILY: FamilyStep[] = [
-  { micro: 209, id: "py-209-lru-cache", title: "DSA Caché LRU", nextUrl: /\/learn\/py-210-basic-calc/ },
-  { micro: 210, id: "py-210-basic-calc", title: "DSA Calculadora Básica", nextUrl: /\/learn\/py-211-encode-decode/ },
-  { micro: 211, id: "py-211-encode-decode", title: "DSA Codificar y Decodificar Strings", nextUrl: /\/learn\/py-212-randomized-set/ },
-  { micro: 212, id: "py-212-randomized-set", title: "DSA Conjunto Aleatorio", nextUrl: /\/learn\/py-213-time-kv/ },
-  { micro: 213, id: "py-213-time-kv", title: "DSA Mapa Clave-Valor Temporal", nextUrl: /\/learn\/py-214-snapshot-array/ },
-  { micro: 214, id: "py-214-snapshot-array", title: "DSA Array de Instantáneas", nextUrl: /\/learn\/py-215-min-window/ },
+  { micro: 209, id: "py-209-lru-cache", title: "DSA Caché LRU", nextUrl: /\/learn\/py-210-basic-calc/,
+  { micro: 210, id: "py-210-basic-calc", title: "DSA Calculadora Básica", nextUrl: /\/learn\/py-211-encode-decode/,
+  { micro: 211, id: "py-211-encode-decode", title: "DSA Codificar y Decodificar Strings", nextUrl: /\/learn\/py-212-randomized-set/,
+  { micro: 212, id: "py-212-randomized-set", title: "DSA Conjunto Aleatorio", nextUrl: /\/learn\/py-213-time-kv/,
+  { micro: 213, id: "py-213-time-kv", title: "DSA Mapa Clave-Valor Temporal", nextUrl: /\/learn\/py-214-snapshot-array/,
+  { micro: 214, id: "py-214-snapshot-array", title: "DSA Array de Instantáneas", nextUrl: /\/learn\/py-215-min-window/,
 ];
 
 function uniqueCreds(micro: number) {
