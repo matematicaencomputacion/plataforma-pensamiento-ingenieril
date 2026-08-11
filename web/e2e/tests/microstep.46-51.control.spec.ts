@@ -22,68 +22,78 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 40,
-    id: "py-40-dictionaries",
-    title: "Python Dictionaries",
+    micro: 46,
+    id: "py-46-dict-copy",
+    title: "Python Copy Dictionaries",
     solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
-print(len(thisdict))
+mydict = thisdict.copy()
+print(mydict["brand"])
 `,
-    nextUrl: /\/learn\/py-41-dict-access/,
-    cursorAfter: "41",
+    nextUrl: /\/learn\/py-47-dict-nested/,
+    cursorAfter: "47",
   },
   {
-    micro: 41,
-    id: "py-41-dict-access",
-    title: "Python Access Dictionary Items",
-    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
-print(thisdict["model"])
+    micro: 47,
+    id: "py-47-dict-nested",
+    title: "Python Nested Dictionaries",
+    solution: `myfamily = {
+  "child1": {"name": "Emil", "year": 2004},
+  "child2": {"name": "Tobias", "year": 2007},
+  "child3": {"name": "Linus", "year": 2011}
+}
+print(myfamily["child2"]["name"])
 `,
-    nextUrl: /\/learn\/py-42-dict-change/,
-    cursorAfter: "42",
+    nextUrl: /\/learn\/py-48-if/,
+    cursorAfter: "48",
   },
   {
-    micro: 42,
-    id: "py-42-dict-change",
-    title: "Python Change Dictionary Items",
-    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
-thisdict["year"] = 2018
-print(thisdict["year"])
+    micro: 48,
+    id: "py-48-if",
+    title: "Python If Statement",
+    solution: `a = 33
+b = 200
+if b > a:
+    print("b is greater than a")
 `,
-    nextUrl: /\/learn\/py-43-dict-add/,
-    cursorAfter: "43",
+    nextUrl: /\/learn\/py-49-elif/,
+    cursorAfter: "49",
   },
   {
-    micro: 43,
-    id: "py-43-dict-add",
-    title: "Python Add Dictionary Items",
-    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
-thisdict["color"] = "red"
-print(thisdict["color"])
+    micro: 49,
+    id: "py-49-elif",
+    title: "Python Elif",
+    solution: `a = 33
+b = 33
+if b > a:
+    print("b is greater than a")
+elif a == b:
+    print("a and b are equal")
 `,
-    nextUrl: /\/learn\/py-44-dict-remove/,
-    cursorAfter: "44",
+    nextUrl: /\/learn\/py-50-while/,
+    cursorAfter: "50",
   },
   {
-    micro: 44,
-    id: "py-44-dict-remove",
-    title: "Python Remove Dictionary Items",
-    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
-thisdict.pop("model")
-print("model" in thisdict)
+    micro: 50,
+    id: "py-50-while",
+    title: "Python While Loops",
+    solution: `i = 1
+while i < 6:
+    print(i)
+    i += 1
 `,
-    nextUrl: /\/learn\/py-45-dict-loop/,
-    cursorAfter: "45",
+    nextUrl: /\/learn\/py-51-for/,
+    cursorAfter: "51",
   },
   {
-    micro: 45,
-    id: "py-45-dict-loop",
-    title: "Python Loop Dictionaries",
-    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
-for x in thisdict:
+    micro: 51,
+    id: "py-51-for",
+    title: "Python For Loops",
+    solution: `fruits = ["apple", "banana", "cherry"]
+for x in fruits:
     print(x)
 `,
-    nextUrl: /\/learn\/py-46-dict-copy/,
-    cursorAfter: "46",
+    nextUrl: /\/workspace/,
+    cursorAfter: "52",
   },
 ];
 
@@ -112,7 +122,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 40–45 · Dictionaries family", () => {
+test.describe("micro-steps 46–51 · control flow family", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

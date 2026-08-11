@@ -646,9 +646,93 @@ pub const PY45_DICT_LOOP: CodingStep = CodingStep {
     pytest: "def test_dict_loop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisdict') == {'brand': 'Ford', 'model': 'Mustang', 'year': 1964}\n    lines = {ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()}\n    assert lines == {'brand', 'model', 'year'}\n",
     hint: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nfor x in thisdict:\n    print(x)",
     solution_example: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nfor x in thisdict:\n    print(x)\n",
-    next: None,
+    next: Some("py-46-dict-copy"),
     show_type_chips: false,
     micro_step: 45,
+};
+
+pub const PY46_DICT_COPY: CodingStep = CodingStep {
+    id: "py-46-dict-copy",
+    title: "Python Copy Dictionaries",
+    objective: "Copiar un dictionary con copy().",
+    prompt_md: "**Copy Dictionaries**\n\n`dict2 = dict1` solo crea una referencia. Usá `copy()`.\n\n**Micro-reto:**\n1. Creá `thisdict` con `brand`=`Ford`, `model`=`Mustang`, `year`=`1964`\n2. Creá `mydict` con `thisdict.copy()`\n3. Imprimí `mydict[\"brand\"]`",
+    starter_code: "# thisdict = {...}\n# mydict = ...\n# print(...)\n",
+    pytest: "def test_dict_copy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisdict') == {'brand': 'Ford', 'model': 'Mustang', 'year': 1964}\n    assert ns.get('mydict') == {'brand': 'Ford', 'model': 'Mustang', 'year': 1964}\n    assert ns.get('mydict') is not ns.get('thisdict')\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Ford'\n",
+    hint: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nmydict = thisdict.copy()\nprint(mydict[\"brand\"])",
+    solution_example: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nmydict = thisdict.copy()\nprint(mydict[\"brand\"])\n",
+    next: Some("py-47-dict-nested"),
+    show_type_chips: false,
+    micro_step: 46,
+};
+
+pub const PY47_DICT_NESTED: CodingStep = CodingStep {
+    id: "py-47-dict-nested",
+    title: "Python Nested Dictionaries",
+    objective: "Acceder a un valor en un dictionary anidado.",
+    prompt_md: "**Nested Dictionaries**\n\nUn dictionary puede contener otros dictionaries.\n\n**Micro-reto:**\n1. Creá `myfamily` con `child1`, `child2` y `child3` (nombres Emil/Tobias/Linus y años 2004/2007/2011)\n2. Imprimí `myfamily[\"child2\"][\"name\"]`",
+    starter_code: "# myfamily = {...}\n# print(...)\n",
+    pytest: "def test_dict_nested(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    fam = ns.get('myfamily')\n    assert isinstance(fam, dict)\n    assert fam['child2']['name'] == 'Tobias'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Tobias'\n",
+    hint: "myfamily = {\n  \"child1\": {\"name\": \"Emil\", \"year\": 2004},\n  \"child2\": {\"name\": \"Tobias\", \"year\": 2007},\n  \"child3\": {\"name\": \"Linus\", \"year\": 2011}\n}\nprint(myfamily[\"child2\"][\"name\"])",
+    solution_example: "myfamily = {\n  \"child1\": {\"name\": \"Emil\", \"year\": 2004},\n  \"child2\": {\"name\": \"Tobias\", \"year\": 2007},\n  \"child3\": {\"name\": \"Linus\", \"year\": 2011}\n}\nprint(myfamily[\"child2\"][\"name\"])\n",
+    next: Some("py-48-if"),
+    show_type_chips: false,
+    micro_step: 47,
+};
+
+pub const PY48_IF: CodingStep = CodingStep {
+    id: "py-48-if",
+    title: "Python If Statement",
+    objective: "Usar if para ejecutar código cuando una condición es True.",
+    prompt_md: "**If Statement**\n\n`if` ejecuta un bloque cuando la condición es verdadera.\n\n**Micro-reto:**\n1. Creá `a` con `33` y `b` con `200`\n2. Si `b > a`, imprimí `b is greater than a`",
+    starter_code: "# a = ...\n# b = ...\n# if ...:\n#     print(...)\n",
+    pytest: "def test_if(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('a') == 33 and ns.get('b') == 200\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'b is greater than a'\n",
+    hint: "a = 33\nb = 200\nif b > a:\n    print(\"b is greater than a\")",
+    solution_example: "a = 33\nb = 200\nif b > a:\n    print(\"b is greater than a\")\n",
+    next: Some("py-49-elif"),
+    show_type_chips: false,
+    micro_step: 48,
+};
+
+pub const PY49_ELIF: CodingStep = CodingStep {
+    id: "py-49-elif",
+    title: "Python Elif",
+    objective: "Usar elif para una condición alternativa.",
+    prompt_md: "**Elif**\n\n`elif` se evalúa si el `if` anterior fue falso.\n\n**Micro-reto:**\n1. Creá `a` con `33` y `b` con `33`\n2. Si `b > a` imprimí `b is greater than a`\n3. Sino, si `a == b`, imprimí `a and b are equal`",
+    starter_code: "# a = ...\n# b = ...\n# if ...:\n#     ...\n# elif ...:\n#     ...\n",
+    pytest: "def test_elif(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('a') == 33 and ns.get('b') == 33\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'a and b are equal'\n",
+    hint: "a = 33\nb = 33\nif b > a:\n    print(\"b is greater than a\")\nelif a == b:\n    print(\"a and b are equal\")",
+    solution_example: "a = 33\nb = 33\nif b > a:\n    print(\"b is greater than a\")\nelif a == b:\n    print(\"a and b are equal\")\n",
+    next: Some("py-50-while"),
+    show_type_chips: false,
+    micro_step: 49,
+};
+
+pub const PY50_WHILE: CodingStep = CodingStep {
+    id: "py-50-while",
+    title: "Python While Loops",
+    objective: "Repetir con while mientras la condición sea True.",
+    prompt_md: "**While Loops**\n\n`while` ejecuta un bloque mientras la condición sea verdadera.\n\n**Micro-reto:**\n1. Inicializá `i` en `1`\n2. Mientras `i < 6`, imprimí `i` e incrementá `i`",
+    starter_code: "# i = ...\n# while ...:\n#     print(i)\n#     i += 1\n",
+    pytest: "def test_while(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['1', '2', '3', '4', '5']\n",
+    hint: "i = 1\nwhile i < 6:\n    print(i)\n    i += 1",
+    solution_example: "i = 1\nwhile i < 6:\n    print(i)\n    i += 1\n",
+    next: Some("py-51-for"),
+    show_type_chips: false,
+    micro_step: 50,
+};
+
+pub const PY51_FOR: CodingStep = CodingStep {
+    id: "py-51-for",
+    title: "Python For Loops",
+    objective: "Iterar una lista con for.",
+    prompt_md: "**For Loops**\n\n`for` itera sobre una secuencia.\n\n**Micro-reto:**\n1. Creá `fruits` con `apple`, `banana`, `cherry`\n2. Recorré con `for x in fruits` e imprimí cada `x`",
+    starter_code: "# fruits = ...\n# for x in fruits:\n#     print(x)\n",
+    pytest: "def test_for(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('fruits') == ['apple', 'banana', 'cherry']\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['apple', 'banana', 'cherry']\n",
+    hint: "fruits = [\"apple\", \"banana\", \"cherry\"]\nfor x in fruits:\n    print(x)",
+    solution_example: "fruits = [\"apple\", \"banana\", \"cherry\"]\nfor x in fruits:\n    print(x)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 51,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -697,6 +781,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY43_DICT_ADD,
     &PY44_DICT_REMOVE,
     &PY45_DICT_LOOP,
+    &PY46_DICT_COPY,
+    &PY47_DICT_NESTED,
+    &PY48_IF,
+    &PY49_ELIF,
+    &PY50_WHILE,
+    &PY51_FOR,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -989,10 +1079,27 @@ mod tests {
             (42, "py-42-dict-change", Some("py-43-dict-add")),
             (43, "py-43-dict-add", Some("py-44-dict-remove")),
             (44, "py-44-dict-remove", Some("py-45-dict-loop")),
-            (45, "py-45-dict-loop", None),
+            (45, "py-45-dict-loop", Some("py-46-dict-copy")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("dicts step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py46_to_py51_control_flow_chain() {
+        let ids = [
+            (46, "py-46-dict-copy", Some("py-47-dict-nested")),
+            (47, "py-47-dict-nested", Some("py-48-if")),
+            (48, "py-48-if", Some("py-49-elif")),
+            (49, "py-49-elif", Some("py-50-while")),
+            (50, "py-50-while", Some("py-51-for")),
+            (51, "py-51-for", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("control flow step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
