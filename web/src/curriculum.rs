@@ -114,9 +114,23 @@ pub const PY07_DATA_TYPES: CodingStep = CodingStep {
     pytest: "def test_data_types(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 5 and isinstance(ns['x'], int)\n    assert ns.get('y') == 3.14 and isinstance(ns['y'], float)\n    assert ns.get('z') == 'Hello' and isinstance(ns['z'], str)\n    out = capsys.readouterr().out\n    assert 'int' in out and 'float' in out and 'str' in out\n",
     hint: "x = 5\ny = 3.14\nz = \"Hello\"\nprint(type(x))\nprint(type(y))\nprint(type(z))",
     solution_example: "x = 5\ny = 3.14\nz = \"Hello\"\nprint(type(x))\nprint(type(y))\nprint(type(z))\n",
-    next: None,
+    next: Some("py-08-numbers"),
     show_type_chips: false,
     micro_step: 7,
+};
+
+pub const PY08_NUMBERS: CodingStep = CodingStep {
+    id: "py-08-numbers",
+    title: "Python Numbers",
+    objective: "Crear int, float y complex, y mostrar su tipo con type().",
+    prompt_md: "**Numbers**\n\nPython tiene tres tipos numéricos: `int`, `float` y `complex`.\n\n**Micro-reto:**\n1. Creá `x` con el entero `5`\n2. Creá `y` con el float `3.14`\n3. Creá `z` con el complejo `2+3j`\n4. Imprimí el tipo de cada variable con `type()`",
+    starter_code: "# x = ...\n# y = ...\n# z = ...\n# print(type(...))\n",
+    pytest: "def test_numbers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 5 and isinstance(ns['x'], int)\n    assert ns.get('y') == 3.14 and isinstance(ns['y'], float)\n    assert ns.get('z') == (2 + 3j) and isinstance(ns['z'], complex)\n    out = capsys.readouterr().out\n    assert 'int' in out and 'float' in out and 'complex' in out\n",
+    hint: "x = 5\ny = 3.14\nz = 2 + 3j\nprint(type(x))\nprint(type(y))\nprint(type(z))",
+    solution_example: "x = 5\ny = 3.14\nz = 2 + 3j\nprint(type(x))\nprint(type(y))\nprint(type(z))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 8,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -127,6 +141,7 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY05_OUTPUT,
     &PY06_COMMENTS,
     &PY07_DATA_TYPES,
+    &PY08_NUMBERS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -306,8 +321,16 @@ mod tests {
     fn py07_data_types_chained_from_comments() {
         let step = coding_step_by_micro_step(7).expect("py-07");
         assert_eq!(step.id, "py-07-data-types");
-        assert!(step.next.is_none());
+        assert_eq!(step.next, Some("py-08-numbers"));
         assert!(step.pytest.contains("test_data_types"));
+    }
+
+    #[test]
+    fn py08_numbers_chained_from_data_types() {
+        let step = coding_step_by_micro_step(8).expect("py-08");
+        assert_eq!(step.id, "py-08-numbers");
+        assert!(step.next.is_none());
+        assert!(step.pytest.contains("test_numbers"));
     }
 
     #[test]
