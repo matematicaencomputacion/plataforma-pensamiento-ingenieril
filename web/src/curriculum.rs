@@ -562,9 +562,93 @@ pub const PY39_SET_JOIN: CodingStep = CodingStep {
     pytest: "def test_set_join(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('set1') == {'a', 'b', 'c'}\n    assert ns.get('set2') == {1, 2, 3}\n    assert ns.get('set3') == {'a', 'b', 'c', 1, 2, 3}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '6'\n",
     hint: "set1 = {\"a\", \"b\", \"c\"}\nset2 = {1, 2, 3}\nset3 = set1.union(set2)\nprint(len(set3))",
     solution_example: "set1 = {\"a\", \"b\", \"c\"}\nset2 = {1, 2, 3}\nset3 = set1.union(set2)\nprint(len(set3))\n",
-    next: None,
+    next: Some("py-40-dictionaries"),
     show_type_chips: false,
     micro_step: 39,
+};
+
+pub const PY40_DICTIONARIES: CodingStep = CodingStep {
+    id: "py-40-dictionaries",
+    title: "Python Dictionaries",
+    objective: "Crear un dictionary y medir su longitud con len().",
+    prompt_md: "**Dictionaries**\n\nLos dictionaries guardan pares `clave:valor` entre llaves `{}`.\n\n**Micro-reto:**\n1. Creá `thisdict` con `brand`=`Ford`, `model`=`Mustang`, `year`=`1964`\n2. Imprimí `len(thisdict)`",
+    starter_code: "# thisdict = {...}\n# print(len(...))\n",
+    pytest: "def test_dictionaries(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisdict') == {'brand': 'Ford', 'model': 'Mustang', 'year': 1964}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '3'\n",
+    hint: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nprint(len(thisdict))",
+    solution_example: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nprint(len(thisdict))\n",
+    next: Some("py-41-dict-access"),
+    show_type_chips: false,
+    micro_step: 40,
+};
+
+pub const PY41_DICT_ACCESS: CodingStep = CodingStep {
+    id: "py-41-dict-access",
+    title: "Python Access Dictionary Items",
+    objective: "Acceder al valor de una clave con corchetes.",
+    prompt_md: "**Access Dictionary Items**\n\nAccedé a un valor con `dict[\"clave\"]`.\n\n**Micro-reto:**\n1. Creá `thisdict` con `brand`=`Ford`, `model`=`Mustang`, `year`=`1964`\n2. Imprimí `thisdict[\"model\"]`",
+    starter_code: "# thisdict = {...}\n# print(...)\n",
+    pytest: "def test_dict_access(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisdict') == {'brand': 'Ford', 'model': 'Mustang', 'year': 1964}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Mustang'\n",
+    hint: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nprint(thisdict[\"model\"])",
+    solution_example: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nprint(thisdict[\"model\"])\n",
+    next: Some("py-42-dict-change"),
+    show_type_chips: false,
+    micro_step: 41,
+};
+
+pub const PY42_DICT_CHANGE: CodingStep = CodingStep {
+    id: "py-42-dict-change",
+    title: "Python Change Dictionary Items",
+    objective: "Cambiar el valor de una clave existente.",
+    prompt_md: "**Change Dictionary Items**\n\nAsigná un nuevo valor a una clave existente.\n\n**Micro-reto:**\n1. Creá `thisdict` con `brand`=`Ford`, `model`=`Mustang`, `year`=`1964`\n2. Cambiá `year` a `2018`\n3. Imprimí `thisdict[\"year\"]`",
+    starter_code: "# thisdict = {...}\n# thisdict[\"year\"] = ...\n# print(...)\n",
+    pytest: "def test_dict_change(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisdict') == {'brand': 'Ford', 'model': 'Mustang', 'year': 2018}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '2018'\n",
+    hint: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nthisdict[\"year\"] = 2018\nprint(thisdict[\"year\"])",
+    solution_example: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nthisdict[\"year\"] = 2018\nprint(thisdict[\"year\"])\n",
+    next: Some("py-43-dict-add"),
+    show_type_chips: false,
+    micro_step: 42,
+};
+
+pub const PY43_DICT_ADD: CodingStep = CodingStep {
+    id: "py-43-dict-add",
+    title: "Python Add Dictionary Items",
+    objective: "Agregar un par clave:valor nuevo al dictionary.",
+    prompt_md: "**Add Dictionary Items**\n\nAgregá una clave nueva asignándole un valor.\n\n**Micro-reto:**\n1. Creá `thisdict` con `brand`=`Ford`, `model`=`Mustang`, `year`=`1964`\n2. Agregá `color`=`red`\n3. Imprimí `thisdict[\"color\"]`",
+    starter_code: "# thisdict = {...}\n# thisdict[\"color\"] = ...\n# print(...)\n",
+    pytest: "def test_dict_add(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisdict') == {'brand': 'Ford', 'model': 'Mustang', 'year': 1964, 'color': 'red'}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'red'\n",
+    hint: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nthisdict[\"color\"] = \"red\"\nprint(thisdict[\"color\"])",
+    solution_example: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nthisdict[\"color\"] = \"red\"\nprint(thisdict[\"color\"])\n",
+    next: Some("py-44-dict-remove"),
+    show_type_chips: false,
+    micro_step: 43,
+};
+
+pub const PY44_DICT_REMOVE: CodingStep = CodingStep {
+    id: "py-44-dict-remove",
+    title: "Python Remove Dictionary Items",
+    objective: "Eliminar una clave con pop().",
+    prompt_md: "**Remove Dictionary Items**\n\n`pop()` elimina el ítem con la clave indicada.\n\n**Micro-reto:**\n1. Creá `thisdict` con `brand`=`Ford`, `model`=`Mustang`, `year`=`1964`\n2. Remové `model` con `pop()`\n3. Imprimí `\"model\" in thisdict`",
+    starter_code: "# thisdict = {...}\n# thisdict.pop(...)\n# print(...)\n",
+    pytest: "def test_dict_remove(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisdict') == {'brand': 'Ford', 'year': 1964}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'False'\n",
+    hint: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nthisdict.pop(\"model\")\nprint(\"model\" in thisdict)",
+    solution_example: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nthisdict.pop(\"model\")\nprint(\"model\" in thisdict)\n",
+    next: Some("py-45-dict-loop"),
+    show_type_chips: false,
+    micro_step: 44,
+};
+
+pub const PY45_DICT_LOOP: CodingStep = CodingStep {
+    id: "py-45-dict-loop",
+    title: "Python Loop Dictionaries",
+    objective: "Recorrer las claves de un dictionary con for.",
+    prompt_md: "**Loop Dictionaries**\n\nAl recorrer un dictionary con `for`, obtenés las claves.\n\n**Micro-reto:**\n1. Creá `thisdict` con `brand`=`Ford`, `model`=`Mustang`, `year`=`1964`\n2. Recorré con `for x in thisdict` e imprimí cada `x`",
+    starter_code: "# thisdict = {...}\n# for x in thisdict:\n#     print(x)\n",
+    pytest: "def test_dict_loop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisdict') == {'brand': 'Ford', 'model': 'Mustang', 'year': 1964}\n    lines = {ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()}\n    assert lines == {'brand', 'model', 'year'}\n",
+    hint: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nfor x in thisdict:\n    print(x)",
+    solution_example: "thisdict = {\"brand\": \"Ford\", \"model\": \"Mustang\", \"year\": 1964}\nfor x in thisdict:\n    print(x)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 45,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -607,6 +691,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY37_SET_REMOVE,
     &PY38_SET_LOOP,
     &PY39_SET_JOIN,
+    &PY40_DICTIONARIES,
+    &PY41_DICT_ACCESS,
+    &PY42_DICT_CHANGE,
+    &PY43_DICT_ADD,
+    &PY44_DICT_REMOVE,
+    &PY45_DICT_LOOP,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -882,10 +972,27 @@ mod tests {
             (36, "py-36-set-add", Some("py-37-set-remove")),
             (37, "py-37-set-remove", Some("py-38-set-loop")),
             (38, "py-38-set-loop", Some("py-39-set-join")),
-            (39, "py-39-set-join", None),
+            (39, "py-39-set-join", Some("py-40-dictionaries")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("sets step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py40_to_py45_dicts_chain() {
+        let ids = [
+            (40, "py-40-dictionaries", Some("py-41-dict-access")),
+            (41, "py-41-dict-access", Some("py-42-dict-change")),
+            (42, "py-42-dict-change", Some("py-43-dict-add")),
+            (43, "py-43-dict-add", Some("py-44-dict-remove")),
+            (44, "py-44-dict-remove", Some("py-45-dict-loop")),
+            (45, "py-45-dict-loop", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("dicts step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
