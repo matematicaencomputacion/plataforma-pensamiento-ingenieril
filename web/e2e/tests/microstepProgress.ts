@@ -51,6 +51,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 43, step_id: "py-43-dict-add" },
   { level_id: 44, step_id: "py-44-dict-remove" },
   { level_id: 45, step_id: "py-45-dict-loop" },
+  { level_id: 46, step_id: "py-46-dict-copy" },
+  { level_id: 47, step_id: "py-47-dict-nested" },
+  { level_id: 48, step_id: "py-48-if" },
+  { level_id: 49, step_id: "py-49-elif" },
+  { level_id: 50, step_id: "py-50-while" },
+  { level_id: 51, step_id: "py-51-for" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
