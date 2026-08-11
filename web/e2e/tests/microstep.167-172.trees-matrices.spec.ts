@@ -181,7 +181,7 @@ print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
     return result
 print(sorted(subsets([1, 2])))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-173-jump-game/,
     cursorAfter: "173",
   },
 ];
