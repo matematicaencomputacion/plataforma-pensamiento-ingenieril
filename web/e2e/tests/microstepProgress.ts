@@ -33,6 +33,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 25, step_id: "py-25-list-sort" },
   { level_id: 26, step_id: "py-26-list-copy" },
   { level_id: 27, step_id: "py-27-list-join" },
+  { level_id: 28, step_id: "py-28-tuples" },
+  { level_id: 29, step_id: "py-29-tuple-access" },
+  { level_id: 30, step_id: "py-30-tuple-update" },
+  { level_id: 31, step_id: "py-31-tuple-unpack" },
+  { level_id: 32, step_id: "py-32-tuple-loop" },
+  { level_id: 33, step_id: "py-33-tuple-join" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
