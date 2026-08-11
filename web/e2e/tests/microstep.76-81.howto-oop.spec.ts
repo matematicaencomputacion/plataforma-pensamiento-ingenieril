@@ -22,75 +22,82 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 70,
-    id: "py-70-file-write",
-    title: "Python Write Files",
-    solution: `with open("demofile.txt", "w") as f:
-    f.write("Hello! Welcome to demofile.txt")
+    micro: 76,
+    id: "py-76-reverse-string",
+    title: "How To Reverse a String",
+    solution: `txt = "Hello World"[::-1]
+print(txt)
 `,
-    nextUrl: /\/learn\/py-71-file-read/,
-    cursorAfter: "71",
+    nextUrl: /\/learn\/py-77-remove-duplicates/,
+    cursorAfter: "77",
   },
   {
-    micro: 71,
-    id: "py-71-file-read",
-    title: "Python Read Files",
-    solution: `with open("demofile.txt", "w") as f:
-    f.write("Hello Python")
-with open("demofile.txt") as f:
-    print(f.read())
+    micro: 77,
+    id: "py-77-remove-duplicates",
+    title: "How To Remove List Duplicates",
+    solution: `mylist = ["a", "b", "a", "c", "c"]
+mylist = list(set(mylist))
+print(sorted(mylist))
 `,
-    nextUrl: /\/learn\/py-72-file-readline/,
-    cursorAfter: "72",
+    nextUrl: /\/learn\/py-78-add-two-numbers/,
+    cursorAfter: "78",
   },
   {
-    micro: 72,
-    id: "py-72-file-readline",
-    title: "Python File Readline",
-    solution: `with open("demofile.txt", "w") as f:
-    f.write("First\\nSecond\\n")
-with open("demofile.txt") as f:
-    print(f.readline().strip())
+    micro: 78,
+    id: "py-78-add-two-numbers",
+    title: "How To Add Two Numbers",
+    solution: `x = 5
+y = 10
+z = x + y
+print(z)
 `,
-    nextUrl: /\/learn\/py-73-file-append/,
-    cursorAfter: "73",
+    nextUrl: /\/learn\/py-79-self/,
+    cursorAfter: "79",
   },
   {
-    micro: 73,
-    id: "py-73-file-append",
-    title: "Python File Append",
-    solution: `with open("demofile.txt", "w") as f:
-    f.write("Hello")
-with open("demofile.txt", "a") as f:
-    f.write(" World")
-with open("demofile.txt") as f:
-    print(f.read())
+    micro: 79,
+    id: "py-79-self",
+    title: "Python self Parameter",
+    solution: `class Person:
+    def __init__(self, name):
+        self.name = name
+    def myfunc(self):
+        print("Hello my name is " + self.name)
+p1 = Person("John")
+p1.myfunc()
 `,
-    nextUrl: /\/learn\/py-74-file-delete/,
-    cursorAfter: "74",
+    nextUrl: /\/learn\/py-80-class-properties/,
+    cursorAfter: "80",
   },
   {
-    micro: 74,
-    id: "py-74-file-delete",
-    title: "Python Delete Files",
-    solution: `import os
-with open("demofile.txt", "w") as f:
-    f.write("bye")
-os.remove("demofile.txt")
-print(os.path.exists("demofile.txt"))
+    micro: 80,
+    id: "py-80-class-properties",
+    title: "Python Class Properties",
+    solution: `class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+p1 = Person("John", 36)
+p1.age = 40
+print(p1.age)
 `,
-    nextUrl: /\/learn\/py-75-user-input/,
-    cursorAfter: "75",
+    nextUrl: /\/learn\/py-81-class-methods/,
+    cursorAfter: "81",
   },
   {
-    micro: 75,
-    id: "py-75-user-input",
-    title: "Python User Input",
-    solution: `username = "Alice"
-print("Hello, " + username)
+    micro: 81,
+    id: "py-81-class-methods",
+    title: "Python Class Methods",
+    solution: `class Person:
+    def __init__(self, name):
+        self.name = name
+    def greet(self):
+        print("Hi, I am " + self.name)
+p1 = Person("Emil")
+p1.greet()
 `,
-    nextUrl: /\/learn\/py-76-reverse-string/,
-    cursorAfter: "76",
+    nextUrl: /\/workspace/,
+    cursorAfter: "82",
   },
 ];
 
@@ -119,7 +126,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 70–75 · File Handling + User Input", () => {
+test.describe("micro-steps 76–81 · How To + OOP leftovers", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

@@ -1066,9 +1066,93 @@ pub const PY75_USER_INPUT: CodingStep = CodingStep {
     pytest: "def test_user_input(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('username') == 'Alice'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Hello, Alice'\n",
     hint: "username = \"Alice\"\nprint(\"Hello, \" + username)",
     solution_example: "username = \"Alice\"\nprint(\"Hello, \" + username)\n",
-    next: None,
+    next: Some("py-76-reverse-string"),
     show_type_chips: false,
     micro_step: 75,
+};
+
+pub const PY76_REVERSE_STRING: CodingStep = CodingStep {
+    id: "py-76-reverse-string",
+    title: "How To Reverse a String",
+    objective: "Invertir un string con slicing [::-1].",
+    prompt_md: "**How to Reverse a String**\n\nNo hay función built-in; usá slicing con paso `-1`.\n\n**Micro-reto:**\n1. Creá `txt = \"Hello World\"[::-1]`\n2. Imprimí `txt`",
+    starter_code: "# txt = ...\n# print(txt)\n",
+    pytest: "def test_reverse_string(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('txt') == 'dlroW olleH'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'dlroW olleH'\n",
+    hint: "txt = \"Hello World\"[::-1]\nprint(txt)",
+    solution_example: "txt = \"Hello World\"[::-1]\nprint(txt)\n",
+    next: Some("py-77-remove-duplicates"),
+    show_type_chips: false,
+    micro_step: 76,
+};
+
+pub const PY77_REMOVE_DUPLICATES: CodingStep = CodingStep {
+    id: "py-77-remove-duplicates",
+    title: "How To Remove List Duplicates",
+    objective: "Eliminar duplicados convirtiendo a set y de vuelta a list.",
+    prompt_md: "**Remove List Duplicates**\n\nUn `set` no permite duplicados.\n\n**Micro-reto:**\n1. Creá `mylist` con `a`, `b`, `a`, `c`, `c`\n2. Convertí a set y de nuevo a list en `mylist`\n3. Imprimí `sorted(mylist)`",
+    starter_code: "# mylist = ...\n# mylist = list(set(mylist))\n# print(...)\n",
+    pytest: "def test_remove_duplicates(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert sorted(ns.get('mylist', [])) == ['a', 'b', 'c']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == \"['a', 'b', 'c']\"\n",
+    hint: "mylist = [\"a\", \"b\", \"a\", \"c\", \"c\"]\nmylist = list(set(mylist))\nprint(sorted(mylist))",
+    solution_example: "mylist = [\"a\", \"b\", \"a\", \"c\", \"c\"]\nmylist = list(set(mylist))\nprint(sorted(mylist))\n",
+    next: Some("py-78-add-two-numbers"),
+    show_type_chips: false,
+    micro_step: 77,
+};
+
+pub const PY78_ADD_TWO_NUMBERS: CodingStep = CodingStep {
+    id: "py-78-add-two-numbers",
+    title: "How To Add Two Numbers",
+    objective: "Sumar dos números e imprimir el resultado.",
+    prompt_md: "**Add Two Numbers**\n\nSumá dos variables numéricas.\n\n**Micro-reto:**\n1. Creá `x = 5` y `y = 10`\n2. Guardá la suma en `z`\n3. Imprimí `z`",
+    starter_code: "# x = ...\n# y = ...\n# z = ...\n# print(z)\n",
+    pytest: "def test_add_two_numbers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('z') == 15\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '15'\n",
+    hint: "x = 5\ny = 10\nz = x + y\nprint(z)",
+    solution_example: "x = 5\ny = 10\nz = x + y\nprint(z)\n",
+    next: Some("py-79-self"),
+    show_type_chips: false,
+    micro_step: 78,
+};
+
+pub const PY79_SELF: CodingStep = CodingStep {
+    id: "py-79-self",
+    title: "Python self Parameter",
+    objective: "Usar self para acceder a propiedades del object.",
+    prompt_md: "**The self Parameter**\n\n`self` es una referencia a la instancia actual.\n\n**Micro-reto:**\n1. Creá la clase `Person` con `__init__(self, name)` que asigne `self.name = name`\n2. Agregá método `myfunc(self)` que imprima `Hello my name is` seguido de `self.name`\n3. Creá `p1 = Person(\"John\")` y llamá `p1.myfunc()`",
+    starter_code: "# class Person:\n#     ...\n# p1 = ...\n# p1.myfunc()\n",
+    pytest: "def test_self(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['p1'].name == 'John'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Hello my name is John'\n",
+    hint: "class Person:\n    def __init__(self, name):\n        self.name = name\n    def myfunc(self):\n        print(\"Hello my name is \" + self.name)\np1 = Person(\"John\")\np1.myfunc()",
+    solution_example: "class Person:\n    def __init__(self, name):\n        self.name = name\n    def myfunc(self):\n        print(\"Hello my name is \" + self.name)\np1 = Person(\"John\")\np1.myfunc()\n",
+    next: Some("py-80-class-properties"),
+    show_type_chips: false,
+    micro_step: 79,
+};
+
+pub const PY80_CLASS_PROPERTIES: CodingStep = CodingStep {
+    id: "py-80-class-properties",
+    title: "Python Class Properties",
+    objective: "Modificar una propiedad de un object.",
+    prompt_md: "**Modify Object Properties**\n\nPodés cambiar propiedades después de crear el object.\n\n**Micro-reto:**\n1. Creá `Person` con `__init__(self, name, age)`\n2. Creá `p1 = Person(\"John\", 36)`\n3. Cambiá `p1.age = 40` e imprimí `p1.age`",
+    starter_code: "# class Person:\n#     ...\n# p1 = ...\n# p1.age = ...\n# print(...)\n",
+    pytest: "def test_class_properties(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['p1'].age == 40\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '40'\n",
+    hint: "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\np1 = Person(\"John\", 36)\np1.age = 40\nprint(p1.age)",
+    solution_example: "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\np1 = Person(\"John\", 36)\np1.age = 40\nprint(p1.age)\n",
+    next: Some("py-81-class-methods"),
+    show_type_chips: false,
+    micro_step: 80,
+};
+
+pub const PY81_CLASS_METHODS: CodingStep = CodingStep {
+    id: "py-81-class-methods",
+    title: "Python Class Methods",
+    objective: "Definir e invocar un método de instancia.",
+    prompt_md: "**Object Methods**\n\nLos métodos son funciones que pertenecen al object.\n\n**Micro-reto:**\n1. Creá `Person` con `__init__(self, name)` y método `greet(self)` que imprima `Hi, I am` + `self.name`\n2. Creá `p1 = Person(\"Emil\")` y llamá `p1.greet()`",
+    starter_code: "# class Person:\n#     ...\n# p1 = ...\n# p1.greet()\n",
+    pytest: "def test_class_methods(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['p1'].name == 'Emil'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Hi, I am Emil'\n",
+    hint: "class Person:\n    def __init__(self, name):\n        self.name = name\n    def greet(self):\n        print(\"Hi, I am \" + self.name)\np1 = Person(\"Emil\")\np1.greet()",
+    solution_example: "class Person:\n    def __init__(self, name):\n        self.name = name\n    def greet(self):\n        print(\"Hi, I am \" + self.name)\np1 = Person(\"Emil\")\np1.greet()\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 81,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1147,6 +1231,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY73_FILE_APPEND,
     &PY74_FILE_DELETE,
     &PY75_USER_INPUT,
+    &PY76_REVERSE_STRING,
+    &PY77_REMOVE_DUPLICATES,
+    &PY78_ADD_TWO_NUMBERS,
+    &PY79_SELF,
+    &PY80_CLASS_PROPERTIES,
+    &PY81_CLASS_METHODS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -1524,10 +1614,27 @@ mod tests {
             (72, "py-72-file-readline", Some("py-73-file-append")),
             (73, "py-73-file-append", Some("py-74-file-delete")),
             (74, "py-74-file-delete", Some("py-75-user-input")),
-            (75, "py-75-user-input", None),
+            (75, "py-75-user-input", Some("py-76-reverse-string")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("files family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py76_to_py81_howto_oop_chain() {
+        let ids = [
+            (76, "py-76-reverse-string", Some("py-77-remove-duplicates")),
+            (77, "py-77-remove-duplicates", Some("py-78-add-two-numbers")),
+            (78, "py-78-add-two-numbers", Some("py-79-self")),
+            (79, "py-79-self", Some("py-80-class-properties")),
+            (80, "py-80-class-properties", Some("py-81-class-methods")),
+            (81, "py-81-class-methods", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("howto/oop family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
