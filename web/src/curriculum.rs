@@ -2004,9 +2004,93 @@ pub const PY142_ANAGRAM: CodingStep = CodingStep {
     pytest: "def test_anagram(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_anagram'))\n    assert ns['is_anagram']('listen', 'silent') is True\n    assert ns['is_anagram']('hello', 'world') is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True', 'False']\n",
     hint: "from collections import Counter\ndef is_anagram(a, b):\n    return Counter(a) == Counter(b)\nprint(is_anagram('listen', 'silent'))\nprint(is_anagram('hello', 'world'))",
     solution_example: "from collections import Counter\ndef is_anagram(a, b):\n    return Counter(a) == Counter(b)\nprint(is_anagram('listen', 'silent'))\nprint(is_anagram('hello', 'world'))\n",
-    next: None,
+    next: Some("py-143-climb-stairs"),
     show_type_chips: false,
     micro_step: 142,
+};
+
+pub const PY143_CLIMB_STAIRS: CodingStep = CodingStep {
+    id: "py-143-climb-stairs",
+    title: "DSA Climb Stairs",
+    objective: "Contar formas de subir n escalones (1 o 2).",
+    prompt_md: "**Climbing Stairs**\n\n`ways(n) = ways(n-1) + ways(n-2)`.\n\n**Micro-reto:**\n1. Definí `climb_stairs(n)`\n2. Imprimí `climb_stairs(5)` (esperado: `8`)",
+    starter_code: "# def climb_stairs(n):\n#     ...\n# print(climb_stairs(5))\n",
+    pytest: "def test_climb_stairs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('climb_stairs'))\n    assert ns['climb_stairs'](5) == 8\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['8']\n",
+    hint: "def climb_stairs(n):\n    if n <= 2:\n        return n\n    a, b = 1, 2\n    for _ in range(3, n + 1):\n        a, b = b, a + b\n    return b\nprint(climb_stairs(5))",
+    solution_example: "def climb_stairs(n):\n    if n <= 2:\n        return n\n    a, b = 1, 2\n    for _ in range(3, n + 1):\n        a, b = b, a + b\n    return b\nprint(climb_stairs(5))\n",
+    next: Some("py-144-house-robber"),
+    show_type_chips: false,
+    micro_step: 143,
+};
+
+pub const PY144_HOUSE_ROBBER: CodingStep = CodingStep {
+    id: "py-144-house-robber",
+    title: "DSA House Robber",
+    objective: "Máximo botín sin robar casas adyacentes.",
+    prompt_md: "**House Robber**\n\n`dp[i] = max(dp[i-1], dp[i-2] + nums[i])`.\n\n**Micro-reto:**\n1. Definí `rob(nums)`\n2. Imprimí `rob([2, 7, 9, 3, 1])` (esperado: `12`)",
+    starter_code: "# def rob(nums):\n#     ...\n# print(rob([2, 7, 9, 3, 1]))\n",
+    pytest: "def test_house_robber(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('rob'))\n    assert ns['rob']([2, 7, 9, 3, 1]) == 12\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['12']\n",
+    hint: "def rob(nums):\n    prev2 = prev1 = 0\n    for x in nums:\n        prev2, prev1 = prev1, max(prev1, prev2 + x)\n    return prev1\nprint(rob([2, 7, 9, 3, 1]))",
+    solution_example: "def rob(nums):\n    prev2 = prev1 = 0\n    for x in nums:\n        prev2, prev1 = prev1, max(prev1, prev2 + x)\n    return prev1\nprint(rob([2, 7, 9, 3, 1]))\n",
+    next: Some("py-145-unique-paths"),
+    show_type_chips: false,
+    micro_step: 144,
+};
+
+pub const PY145_UNIQUE_PATHS: CodingStep = CodingStep {
+    id: "py-145-unique-paths",
+    title: "DSA Unique Paths",
+    objective: "Caminos en grilla m×n solo derecha/abajo.",
+    prompt_md: "**Unique Paths**\n\n`dp[i][j] = dp[i-1][j] + dp[i][j-1]`.\n\n**Micro-reto:**\n1. Definí `unique_paths(m, n)`\n2. Imprimí `unique_paths(3, 7)` (esperado: `28`)",
+    starter_code: "# def unique_paths(m, n):\n#     ...\n# print(unique_paths(3, 7))\n",
+    pytest: "def test_unique_paths(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('unique_paths'))\n    assert ns['unique_paths'](3, 7) == 28\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['28']\n",
+    hint: "def unique_paths(m, n):\n    dp = [[1] * n for _ in range(m)]\n    for i in range(1, m):\n        for j in range(1, n):\n            dp[i][j] = dp[i - 1][j] + dp[i][j - 1]\n    return dp[-1][-1]\nprint(unique_paths(3, 7))",
+    solution_example: "def unique_paths(m, n):\n    dp = [[1] * n for _ in range(m)]\n    for i in range(1, m):\n        for j in range(1, n):\n            dp[i][j] = dp[i - 1][j] + dp[i][j - 1]\n    return dp[-1][-1]\nprint(unique_paths(3, 7))\n",
+    next: Some("py-146-majority"),
+    show_type_chips: false,
+    micro_step: 145,
+};
+
+pub const PY146_MAJORITY: CodingStep = CodingStep {
+    id: "py-146-majority",
+    title: "DSA Majority Element",
+    objective: "Encontrar el elemento mayoritario (Boyer-Moore).",
+    prompt_md: "**Majority Element**\n\nVoto: si count==0 tomá candidato; ±1 según match.\n\n**Micro-reto:**\n1. Definí `majority(nums)`\n2. Imprimí `majority([2, 2, 1, 1, 1, 2, 2])` (esperado: `2`)",
+    starter_code: "# def majority(nums):\n#     ...\n# print(majority([2, 2, 1, 1, 1, 2, 2]))\n",
+    pytest: "def test_majority(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('majority'))\n    assert ns['majority']([2, 2, 1, 1, 1, 2, 2]) == 2\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2']\n",
+    hint: "def majority(nums):\n    cand = None\n    count = 0\n    for x in nums:\n        if count == 0:\n            cand = x\n        count += 1 if x == cand else -1\n    return cand\nprint(majority([2, 2, 1, 1, 1, 2, 2]))",
+    solution_example: "def majority(nums):\n    cand = None\n    count = 0\n    for x in nums:\n        if count == 0:\n            cand = x\n        count += 1 if x == cand else -1\n    return cand\nprint(majority([2, 2, 1, 1, 1, 2, 2]))\n",
+    next: Some("py-147-missing-number"),
+    show_type_chips: false,
+    micro_step: 146,
+};
+
+pub const PY147_MISSING_NUMBER: CodingStep = CodingStep {
+    id: "py-147-missing-number",
+    title: "DSA Missing Number",
+    objective: "Hallar el faltante en 0..n con XOR.",
+    prompt_md: "**Missing Number**\n\nXOR de índices y valores cancela pares; queda el faltante.\n\n**Micro-reto:**\n1. Definí `missing_number(nums)` para nums con n números de `0..n`\n2. Imprimí `missing_number([3, 0, 1])` (esperado: `2`)",
+    starter_code: "# def missing_number(nums):\n#     ...\n# print(missing_number([3, 0, 1]))\n",
+    pytest: "def test_missing_number(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('missing_number'))\n    assert ns['missing_number']([3, 0, 1]) == 2\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2']\n",
+    hint: "def missing_number(nums):\n    missing = len(nums)\n    for i, x in enumerate(nums):\n        missing ^= i ^ x\n    return missing\nprint(missing_number([3, 0, 1]))",
+    solution_example: "def missing_number(nums):\n    missing = len(nums)\n    for i, x in enumerate(nums):\n        missing ^= i ^ x\n    return missing\nprint(missing_number([3, 0, 1]))\n",
+    next: Some("py-148-single-number"),
+    show_type_chips: false,
+    micro_step: 147,
+};
+
+pub const PY148_SINGLE_NUMBER: CodingStep = CodingStep {
+    id: "py-148-single-number",
+    title: "DSA Single Number",
+    objective: "Hallar el único no-duplicado con XOR.",
+    prompt_md: "**Single Number**\n\n`a ^ a = 0`; XOR de todos deja el único.\n\n**Micro-reto:**\n1. Definí `single_number(nums)`\n2. Imprimí `single_number([4, 1, 2, 1, 2])` (esperado: `4`)",
+    starter_code: "# def single_number(nums):\n#     ...\n# print(single_number([4, 1, 2, 1, 2]))\n",
+    pytest: "def test_single_number(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('single_number'))\n    assert ns['single_number']([4, 1, 2, 1, 2]) == 4\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['4']\n",
+    hint: "def single_number(nums):\n    x = 0\n    for n in nums:\n        x ^= n\n    return x\nprint(single_number([4, 1, 2, 1, 2]))",
+    solution_example: "def single_number(nums):\n    x = 0\n    for n in nums:\n        x ^= n\n    return x\nprint(single_number([4, 1, 2, 1, 2]))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 148,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -2152,6 +2236,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY140_ROTATE_MATRIX,
     &PY141_VALID_PARENS,
     &PY142_ANAGRAM,
+    &PY143_CLIMB_STAIRS,
+    &PY144_HOUSE_ROBBER,
+    &PY145_UNIQUE_PATHS,
+    &PY146_MAJORITY,
+    &PY147_MISSING_NUMBER,
+    &PY148_SINGLE_NUMBER,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -2717,10 +2807,27 @@ mod tests {
             (139, "py-139-lower-bound", Some("py-140-rotate-matrix")),
             (140, "py-140-rotate-matrix", Some("py-141-valid-parens")),
             (141, "py-141-valid-parens", Some("py-142-anagram")),
-            (142, "py-142-anagram", None),
+            (142, "py-142-anagram", Some("py-143-climb-stairs")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("patterns family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py143_to_py148_more_patterns_chain() {
+        let ids = [
+            (143, "py-143-climb-stairs", Some("py-144-house-robber")),
+            (144, "py-144-house-robber", Some("py-145-unique-paths")),
+            (145, "py-145-unique-paths", Some("py-146-majority")),
+            (146, "py-146-majority", Some("py-147-missing-number")),
+            (147, "py-147-missing-number", Some("py-148-single-number")),
+            (148, "py-148-single-number", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("more-patterns family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
