@@ -2760,9 +2760,92 @@ pub const PY196_K_CLOSEST: CodingStep = CodingStep {
     pytest: "def test_k_closest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('k_closest'))\n    assert ns['k_closest']([[1, 3], [-2, 2], [2, -2]], 2) == [[-2, 2], [2, -2]]\n    assert ns['k_closest']([[0, 1]], 1) == [[0, 1]]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[[-2, 2], [2, -2]]']\n",
     hint: "def k_closest(points, k):\n    chosen = sorted(points, key=lambda p: p[0] * p[0] + p[1] * p[1])[:k]\n    return sorted(chosen)\nprint(k_closest([[1, 3], [-2, 2], [2, -2]], 2))",
     solution_example: "def k_closest(points, k):\n    chosen = sorted(points, key=lambda p: p[0] * p[0] + p[1] * p[1])[:k]\n    return sorted(chosen)\nprint(k_closest([[1, 3], [-2, 2], [2, -2]], 2))\n",
-    next: None,
+    next: Some("py-197-coin-change-ii"),
     show_type_chips: false,
     micro_step: 196,
+};
+pub const PY197_COIN_CHANGE_II: CodingStep = CodingStep {
+    id: "py-197-coin-change-ii",
+    title: "DSA Coin Change II",
+    objective: "Contar combinaciones de monedas (no mínimo: eso es py-129).",
+    prompt_md: "**Coin Change II**\n\n`dp[a] += dp[a - coin]` iterando monedas afuera (combinaciones, no permutaciones).\n\n**Micro-reto:**\n1. Definí `coin_change_ways(amount, coins)`\n2. Imprimí `coin_change_ways(5, [1, 2, 5])` (esperado: `4`)",
+    starter_code: "# def coin_change_ways(amount, coins):\n#     ...\n# print(coin_change_ways(5, [1, 2, 5]))\n",
+    pytest: "def test_coin_change_ways(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('coin_change_ways'))\n    assert ns['coin_change_ways'](5, [1, 2, 5]) == 4\n    assert ns['coin_change_ways'](3, [2]) == 0\n    assert ns['coin_change_ways'](10, [10]) == 1\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['4']\n",
+    hint: "def coin_change_ways(amount, coins):\n    dp = [0] * (amount + 1)\n    dp[0] = 1\n    for coin in coins:\n        for a in range(coin, amount + 1):\n            dp[a] += dp[a - coin]\n    return dp[amount]\nprint(coin_change_ways(5, [1, 2, 5]))",
+    solution_example: "def coin_change_ways(amount, coins):\n    dp = [0] * (amount + 1)\n    dp[0] = 1\n    for coin in coins:\n        for a in range(coin, amount + 1):\n            dp[a] += dp[a - coin]\n    return dp[amount]\nprint(coin_change_ways(5, [1, 2, 5]))\n",
+    next: Some("py-198-house-robber-ii"),
+    show_type_chips: false,
+    micro_step: 197,
+};
+
+pub const PY198_HOUSE_ROBBER_II: CodingStep = CodingStep {
+    id: "py-198-house-robber-ii",
+    title: "DSA House Robber II",
+    objective: "House robber en círculo (excluir primera o última).",
+    prompt_md: "**House Robber II**\n\nCasas en círculo: resolvé dos líneas (`nums[:-1]` y `nums[1:]`) y quedate con el máximo.\n\n**Micro-reto:**\n1. Definí `rob_circular(nums)`\n2. Imprimí `rob_circular([2, 3, 2])` (esperado: `3`)",
+    starter_code: "# def rob_circular(nums):\n#     ...\n# print(rob_circular([2, 3, 2]))\n",
+    pytest: "def test_house_robber_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('rob_circular'))\n    assert ns['rob_circular']([2, 3, 2]) == 3\n    assert ns['rob_circular']([1, 2, 3, 1]) == 4\n    assert ns['rob_circular']([1]) == 1\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
+    hint: "def rob_circular(nums):\n    def rob_line(arr):\n        prev = cur = 0\n        for value in arr:\n            prev, cur = cur, max(cur, prev + value)\n        return cur\n    if not nums:\n        return 0\n    if len(nums) == 1:\n        return nums[0]\n    return max(rob_line(nums[:-1]), rob_line(nums[1:]))\nprint(rob_circular([2, 3, 2]))",
+    solution_example: "def rob_circular(nums):\n    def rob_line(arr):\n        prev = cur = 0\n        for value in arr:\n            prev, cur = cur, max(cur, prev + value)\n        return cur\n    if not nums:\n        return 0\n    if len(nums) == 1:\n        return nums[0]\n    return max(rob_line(nums[:-1]), rob_line(nums[1:]))\nprint(rob_circular([2, 3, 2]))\n",
+    next: Some("py-199-unique-paths-ii"),
+    show_type_chips: false,
+    micro_step: 198,
+};
+
+pub const PY199_UNIQUE_PATHS_II: CodingStep = CodingStep {
+    id: "py-199-unique-paths-ii",
+    title: "DSA Unique Paths II",
+    objective: "Caminos en grilla con obstáculos.",
+    prompt_md: "**Unique Paths II**\n\nIgual que unique paths, pero celdas con `1` aportan 0 caminos.\n\n**Micro-reto:**\n1. Definí `unique_paths_with_obstacles(obstacle_grid)`\n2. Imprimí `unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]])` (esperado: `2`)",
+    starter_code: "# def unique_paths_with_obstacles(obstacle_grid):\n#     ...\n# print(unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]]))\n",
+    pytest: "def test_unique_paths_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('unique_paths_with_obstacles'))\n    assert ns['unique_paths_with_obstacles']([[0, 0, 0], [0, 1, 0], [0, 0, 0]]) == 2\n    assert ns['unique_paths_with_obstacles']([[0, 1], [0, 0]]) == 1\n    assert ns['unique_paths_with_obstacles']([[1]]) == 0\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2']\n",
+    hint: "def unique_paths_with_obstacles(obstacle_grid):\n    m, n = len(obstacle_grid), len(obstacle_grid[0])\n    dp = [[0] * n for _ in range(m)]\n    if obstacle_grid[0][0] == 1:\n        return 0\n    dp[0][0] = 1\n    for i in range(m):\n        for j in range(n):\n            if obstacle_grid[i][j] == 1:\n                dp[i][j] = 0\n                continue\n            if i == 0 and j == 0:\n                continue\n            from_up = dp[i - 1][j] if i else 0\n            from_left = dp[i][j - 1] if j else 0\n            dp[i][j] = from_up + from_left\n    return dp[-1][-1]\nprint(unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]]))",
+    solution_example: "def unique_paths_with_obstacles(obstacle_grid):\n    m, n = len(obstacle_grid), len(obstacle_grid[0])\n    dp = [[0] * n for _ in range(m)]\n    if obstacle_grid[0][0] == 1:\n        return 0\n    dp[0][0] = 1\n    for i in range(m):\n        for j in range(n):\n            if obstacle_grid[i][j] == 1:\n                dp[i][j] = 0\n                continue\n            if i == 0 and j == 0:\n                continue\n            from_up = dp[i - 1][j] if i else 0\n            from_left = dp[i][j - 1] if j else 0\n            dp[i][j] = from_up + from_left\n    return dp[-1][-1]\nprint(unique_paths_with_obstacles([[0, 0, 0], [0, 1, 0], [0, 0, 0]]))\n",
+    next: Some("py-200-max-product"),
+    show_type_chips: false,
+    micro_step: 199,
+};
+
+pub const PY200_MAX_PRODUCT: CodingStep = CodingStep {
+    id: "py-200-max-product",
+    title: "DSA Max Product Subarray",
+    objective: "Máximo producto de subarray contiguo (track min/max).",
+    prompt_md: "**Maximum Product Subarray**\n\nLlevá producto máximo y mínimo vigentes: un negativo puede voltear el mínimo en máximo.\n\n**Micro-reto:**\n1. Definí `max_product(nums)`\n2. Imprimí `max_product([2, 3, -2, 4])` (esperado: `6`)",
+    starter_code: "# def max_product(nums):\n#     ...\n# print(max_product([2, 3, -2, 4]))\n",
+    pytest: "def test_max_product(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_product'))\n    assert ns['max_product']([2, 3, -2, 4]) == 6\n    assert ns['max_product']([-2, 0, -1]) == 0\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['6']\n",
+    hint: "def max_product(nums):\n    best = imax = imin = nums[0]\n    for value in nums[1:]:\n        candidates = (value, imax * value, imin * value)\n        imax = max(candidates)\n        imin = min(candidates)\n        best = max(best, imax)\n    return best\nprint(max_product([2, 3, -2, 4]))",
+    solution_example: "def max_product(nums):\n    best = imax = imin = nums[0]\n    for value in nums[1:]:\n        candidates = (value, imax * value, imin * value)\n        imax = max(candidates)\n        imin = min(candidates)\n        best = max(best, imax)\n    return best\nprint(max_product([2, 3, -2, 4]))\n",
+    next: Some("py-201-partition-subset"),
+    show_type_chips: false,
+    micro_step: 200,
+};
+
+pub const PY201_PARTITION_SUBSET: CodingStep = CodingStep {
+    id: "py-201-partition-subset",
+    title: "DSA Partition Equal Subset",
+    objective: "¿Se puede particionar en dos subsets con la misma suma?",
+    prompt_md: "**Partition Equal Subset Sum**\n\nTarget = suma/2; DP de alcanzábilidad (bitset o bool array).\n\n**Micro-reto:**\n1. Definí `can_partition(nums)`\n2. Imprimí `can_partition([1, 5, 11, 5])` (esperado: `True`)",
+    starter_code: "# def can_partition(nums):\n#     ...\n# print(can_partition([1, 5, 11, 5]))\n",
+    pytest: "def test_partition_subset(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('can_partition'))\n    assert ns['can_partition']([1, 5, 11, 5]) is True\n    assert ns['can_partition']([1, 2, 3, 5]) is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "def can_partition(nums):\n    total = sum(nums)\n    if total % 2:\n        return False\n    target = total // 2\n    reachable = 1\n    for value in nums:\n        reachable |= reachable << value\n    return bool(reachable & (1 << target))\nprint(can_partition([1, 5, 11, 5]))",
+    solution_example: "def can_partition(nums):\n    total = sum(nums)\n    if total % 2:\n        return False\n    target = total // 2\n    reachable = 1\n    for value in nums:\n        reachable |= reachable << value\n    return bool(reachable & (1 << target))\nprint(can_partition([1, 5, 11, 5]))\n",
+    next: Some("py-202-perfect-squares"),
+    show_type_chips: false,
+    micro_step: 201,
+};
+
+pub const PY202_PERFECT_SQUARES: CodingStep = CodingStep {
+    id: "py-202-perfect-squares",
+    title: "DSA Perfect Squares",
+    objective: "Mínima cantidad de cuadrados perfectos que suman n.",
+    prompt_md: "**Perfect Squares**\n\n`dp[i] = min(dp[i - j²] + 1)` para todo `j² <= i`.\n\n**Micro-reto:**\n1. Definí `num_squares(n)`\n2. Imprimí `num_squares(12)` (esperado: `3`)",
+    starter_code: "# def num_squares(n):\n#     ...\n# print(num_squares(12))\n",
+    pytest: "def test_perfect_squares(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('num_squares'))\n    assert ns['num_squares'](12) == 3\n    assert ns['num_squares'](13) == 2\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
+    hint: "def num_squares(n):\n    dp = [0] + [float('inf')] * n\n    for i in range(1, n + 1):\n        j = 1\n        while j * j <= i:\n            dp[i] = min(dp[i], dp[i - j * j] + 1)\n            j += 1\n    return int(dp[n])\nprint(num_squares(12))",
+    solution_example: "def num_squares(n):\n    dp = [0] + [float('inf')] * n\n    for i in range(1, n + 1):\n        j = 1\n        while j * j <= i:\n            dp[i] = min(dp[i], dp[i - j * j] + 1)\n            j += 1\n    return int(dp[n])\nprint(num_squares(12))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 202,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -2961,6 +3044,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY194_MEETING_ROOMS,
     &PY195_UGLY_NUMBER,
     &PY196_K_CLOSEST,
+    &PY197_COIN_CHANGE_II,
+    &PY198_HOUSE_ROBBER_II,
+    &PY199_UNIQUE_PATHS_II,
+    &PY200_MAX_PRODUCT,
+    &PY201_PARTITION_SUBSET,
+    &PY202_PERFECT_SQUARES,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
