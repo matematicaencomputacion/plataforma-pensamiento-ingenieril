@@ -2593,11 +2593,94 @@ pub const PY184_MIN_STACK: CodingStep = CodingStep {
     pytest: "def test_min_stack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    s = ns['MinStack']()\n    s.push(-2)\n    s.push(0)\n    s.push(-3)\n    assert s.get_min() == -3\n    s.pop()\n    assert s.top() == 0\n    assert s.get_min() == -2\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[-3, 0, -2]']\n",
     hint: "class MinStack:\n    def __init__(self):\n        self.stack = []\n        self.mins = []\n\n    def push(self, val):\n        self.stack.append(val)\n        self.mins.append(val if not self.mins else min(val, self.mins[-1]))\n\n    def pop(self):\n        self.stack.pop()\n        self.mins.pop()\n\n    def top(self):\n        return self.stack[-1]\n\n    def get_min(self):\n        return self.mins[-1]\n\ns = MinStack()\ns.push(-2)\ns.push(0)\ns.push(-3)\na = s.get_min()\ns.pop()\nb = s.top()\nc = s.get_min()\nprint([a, b, c])",
     solution_example: "class MinStack:\n    def __init__(self):\n        self.stack = []\n        self.mins = []\n\n    def push(self, val):\n        self.stack.append(val)\n        self.mins.append(val if not self.mins else min(val, self.mins[-1]))\n\n    def pop(self):\n        self.stack.pop()\n        self.mins.pop()\n\n    def top(self):\n        return self.stack[-1]\n\n    def get_min(self):\n        return self.mins[-1]\n\ns = MinStack()\ns.push(-2)\ns.push(0)\ns.push(-3)\na = s.get_min()\ns.pop()\nb = s.top()\nc = s.get_min()\nprint([a, b, c])\n",
-    next: None,
+    next: Some("py-185-first-last"),
     show_type_chips: false,
     micro_step: 184,
 };
 
+pub const PY185_FIRST_LAST: CodingStep = CodingStep {
+    id: "py-185-first-last",
+    title: "DSA First Last Position",
+    objective: "Primera y última posición de un target en un array ordenado.",
+    prompt_md: "**Find First and Last Position**\n\nDos binary searches (lower/upper bound) sobre el mismo array ordenado.\n\n**Micro-reto:**\n1. Definí `search_range(nums, target)` → `[lo, hi]` o `[-1, -1]`\n2. Imprimí `search_range([5, 7, 7, 8, 8, 10], 8)` (esperado: `[3, 4]`)",
+    starter_code: "# def search_range(nums, target):\n#     ...\n# print(search_range([5, 7, 7, 8, 8, 10], 8))\n",
+    pytest: "def test_search_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('search_range'))\n    assert ns['search_range']([5, 7, 7, 8, 8, 10], 8) == [3, 4]\n    assert ns['search_range']([5, 7, 7, 8, 8, 10], 6) == [-1, -1]\n    assert ns['search_range']([], 0) == [-1, -1]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[3, 4]']\n",
+    hint: "def search_range(nums, target):\n    def bound(first):\n        lo, hi = 0, len(nums)\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if nums[mid] > target or (first and nums[mid] == target):\n                hi = mid\n            else:\n                lo = mid + 1\n        return lo\n    left = bound(True)\n    if left == len(nums) or nums[left] != target:\n        return [-1, -1]\n    return [left, bound(False) - 1]\nprint(search_range([5, 7, 7, 8, 8, 10], 8))",
+    solution_example: "def search_range(nums, target):\n    def bound(first):\n        lo, hi = 0, len(nums)\n        while lo < hi:\n            mid = (lo + hi) // 2\n            if nums[mid] > target or (first and nums[mid] == target):\n                hi = mid\n            else:\n                lo = mid + 1\n        return lo\n    left = bound(True)\n    if left == len(nums) or nums[left] != target:\n        return [-1, -1]\n    return [left, bound(False) - 1]\nprint(search_range([5, 7, 7, 8, 8, 10], 8))\n",
+    next: Some("py-186-peak-element"),
+    show_type_chips: false,
+    micro_step: 185,
+};
+
+pub const PY186_PEAK_ELEMENT: CodingStep = CodingStep {
+    id: "py-186-peak-element",
+    title: "DSA Peak Element",
+    objective: "Encontrar un índice pico con binary search en O(log n).",
+    prompt_md: "**Find Peak Element**\n\nSi `nums[mid] < nums[mid+1]`, el pico está a la derecha; si no, a la izquierda (incluido mid).\n\n**Micro-reto:**\n1. Definí `find_peak_element(nums)` → índice de un pico\n2. Imprimí `find_peak_element([1, 2, 3, 1])` (esperado: `2`)",
+    starter_code: "# def find_peak_element(nums):\n#     ...\n# print(find_peak_element([1, 2, 3, 1]))\n",
+    pytest: "def test_peak_element(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_peak_element'))\n    assert ns['find_peak_element']([1, 2, 3, 1]) == 2\n    assert ns['find_peak_element']([1, 2, 1, 3, 5, 6, 4]) in (1, 5)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2']\n",
+    hint: "def find_peak_element(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < nums[mid + 1]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\nprint(find_peak_element([1, 2, 3, 1]))",
+    solution_example: "def find_peak_element(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < nums[mid + 1]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\nprint(find_peak_element([1, 2, 3, 1]))\n",
+    next: Some("py-187-search-rotated"),
+    show_type_chips: false,
+    micro_step: 186,
+};
+
+pub const PY187_SEARCH_ROTATED: CodingStep = CodingStep {
+    id: "py-187-search-rotated",
+    title: "DSA Search Rotated Array",
+    objective: "Buscar en un array rotado ordenado en O(log n).",
+    prompt_md: "**Search in Rotated Sorted Array**\n\nIdentificá qué mitad está ordenada y descartá la otra según el target.\n\n**Micro-reto:**\n1. Definí `search_rotated(nums, target)`\n2. Imprimí `search_rotated([4, 5, 6, 7, 0, 1, 2], 0)` (esperado: `4`)",
+    starter_code: "# def search_rotated(nums, target):\n#     ...\n# print(search_rotated([4, 5, 6, 7, 0, 1, 2], 0))\n",
+    pytest: "def test_search_rotated(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('search_rotated'))\n    assert ns['search_rotated']([4, 5, 6, 7, 0, 1, 2], 0) == 4\n    assert ns['search_rotated']([4, 5, 6, 7, 0, 1, 2], 3) == -1\n    assert ns['search_rotated']([1], 0) == -1\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['4']\n",
+    hint: "def search_rotated(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[lo] <= nums[mid]:\n            if nums[lo] <= target < nums[mid]:\n                hi = mid - 1\n            else:\n                lo = mid + 1\n        else:\n            if nums[mid] < target <= nums[hi]:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n    return -1\nprint(search_rotated([4, 5, 6, 7, 0, 1, 2], 0))",
+    solution_example: "def search_rotated(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[lo] <= nums[mid]:\n            if nums[lo] <= target < nums[mid]:\n                hi = mid - 1\n            else:\n                lo = mid + 1\n        else:\n            if nums[mid] < target <= nums[hi]:\n                lo = mid + 1\n            else:\n                hi = mid - 1\n    return -1\nprint(search_rotated([4, 5, 6, 7, 0, 1, 2], 0))\n",
+    next: Some("py-188-sqrt"),
+    show_type_chips: false,
+    micro_step: 187,
+};
+
+pub const PY188_SQRT: CodingStep = CodingStep {
+    id: "py-188-sqrt",
+    title: "DSA Sqrt Integer",
+    objective: "Raíz entera por binary search (piso de sqrt).",
+    prompt_md: "**Sqrt(x)**\n\nBuscá el mayor entero `m` con `m*m <= x`.\n\n**Micro-reto:**\n1. Definí `my_sqrt(x)`\n2. Imprimí `my_sqrt(8)` (esperado: `2`)",
+    starter_code: "# def my_sqrt(x):\n#     ...\n# print(my_sqrt(8))\n",
+    pytest: "def test_my_sqrt(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('my_sqrt'))\n    assert ns['my_sqrt'](8) == 2\n    assert ns['my_sqrt'](4) == 2\n    assert ns['my_sqrt'](0) == 0\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2']\n",
+    hint: "def my_sqrt(x):\n    if x < 2:\n        return x\n    lo, hi = 1, x // 2\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        square = mid * mid\n        if square == x:\n            return mid\n        if square < x:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return hi\nprint(my_sqrt(8))",
+    solution_example: "def my_sqrt(x):\n    if x < 2:\n        return x\n    lo, hi = 1, x // 2\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        square = mid * mid\n        if square == x:\n            return mid\n        if square < x:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return hi\nprint(my_sqrt(8))\n",
+    next: Some("py-189-ship-capacity"),
+    show_type_chips: false,
+    micro_step: 188,
+};
+
+pub const PY189_SHIP_CAPACITY: CodingStep = CodingStep {
+    id: "py-189-ship-capacity",
+    title: "DSA Ship Capacity",
+    objective: "Capacidad mínima del barco para despachar en D días (binary search on answer).",
+    prompt_md: "**Capacity To Ship Packages Within D Days**\n\nBinary search sobre la capacidad: lo = max(peso), hi = suma.\n\n**Micro-reto:**\n1. Definí `ship_within_days(weights, days)`\n2. Imprimí `ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5)` (esperado: `15`)",
+    starter_code: "# def ship_within_days(weights, days):\n#     ...\n# print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))\n",
+    pytest: "def test_ship_capacity(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('ship_within_days'))\n    assert ns['ship_within_days']([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5) == 15\n    assert ns['ship_within_days']([3, 2, 2, 4, 1, 4], 3) == 6\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['15']\n",
+    hint: "def ship_within_days(weights, days):\n    def feasible(capacity):\n        needed = 1\n        current = 0\n        for weight in weights:\n            if current + weight > capacity:\n                needed += 1\n                current = weight\n                if needed > days:\n                    return False\n            else:\n                current += weight\n        return True\n\n    lo, hi = max(weights), sum(weights)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if feasible(mid):\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\nprint(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))",
+    solution_example: "def ship_within_days(weights, days):\n    def feasible(capacity):\n        needed = 1\n        current = 0\n        for weight in weights:\n            if current + weight > capacity:\n                needed += 1\n                current = weight\n                if needed > days:\n                    return False\n            else:\n                current += weight\n        return True\n\n    lo, hi = max(weights), sum(weights)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if feasible(mid):\n            hi = mid\n        else:\n            lo = mid + 1\n    return lo\nprint(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))\n",
+    next: Some("py-190-min-rotated"),
+    show_type_chips: false,
+    micro_step: 189,
+};
+
+pub const PY190_MIN_ROTATED: CodingStep = CodingStep {
+    id: "py-190-min-rotated",
+    title: "DSA Min Rotated Array",
+    objective: "Mínimo en array rotado ordenado (sin search_insert: ya cubierto por lower_bound).",
+    prompt_md: "**Find Minimum in Rotated Sorted Array**\n\nSi `nums[mid] > nums[hi]`, el mínimo está a la derecha; si no, a la izquierda (incluido mid).\n\n**Micro-reto:**\n1. Definí `find_min_rotated(nums)`\n2. Imprimí `find_min_rotated([3, 4, 5, 1, 2])` (esperado: `1`)",
+    starter_code: "# def find_min_rotated(nums):\n#     ...\n# print(find_min_rotated([3, 4, 5, 1, 2]))\n",
+    pytest: "def test_min_rotated(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_min_rotated'))\n    assert ns['find_min_rotated']([3, 4, 5, 1, 2]) == 1\n    assert ns['find_min_rotated']([4, 5, 6, 7, 0, 1, 2]) == 0\n    assert ns['find_min_rotated']([11, 13, 15, 17]) == 11\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['1']\n",
+    hint: "def find_min_rotated(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[hi]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return nums[lo]\nprint(find_min_rotated([3, 4, 5, 1, 2]))",
+    solution_example: "def find_min_rotated(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[hi]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return nums[lo]\nprint(find_min_rotated([3, 4, 5, 1, 2]))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 190,
+};
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
     &PY02_INTRO,
@@ -2783,6 +2866,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY182_QUEUE_STACKS,
     &PY183_SLIDING_MAX,
     &PY184_MIN_STACK,
+    &PY185_FIRST_LAST,
+    &PY186_PEAK_ELEMENT,
+    &PY187_SEARCH_ROTATED,
+    &PY188_SQRT,
+    &PY189_SHIP_CAPACITY,
+    &PY190_MIN_ROTATED,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
