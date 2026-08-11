@@ -2088,9 +2088,93 @@ pub const PY148_SINGLE_NUMBER: CodingStep = CodingStep {
     pytest: "def test_single_number(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('single_number'))\n    assert ns['single_number']([4, 1, 2, 1, 2]) == 4\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['4']\n",
     hint: "def single_number(nums):\n    x = 0\n    for n in nums:\n        x ^= n\n    return x\nprint(single_number([4, 1, 2, 1, 2]))",
     solution_example: "def single_number(nums):\n    x = 0\n    for n in nums:\n        x ^= n\n    return x\nprint(single_number([4, 1, 2, 1, 2]))\n",
-    next: None,
+    next: Some("py-149-lis"),
     show_type_chips: false,
     micro_step: 148,
+};
+
+pub const PY149_LIS: CodingStep = CodingStep {
+    id: "py-149-lis",
+    title: "DSA LIS Length",
+    objective: "Longitud de la Longest Increasing Subsequence (DP O(n²)).",
+    prompt_md: "**LIS**\n\n`dp[i] = 1 + max(dp[j])` para j < i con nums[j] < nums[i].\n\n**Micro-reto:**\n1. Definí `lis_length(nums)`\n2. Imprimí `lis_length([10, 9, 2, 5, 3, 7, 101, 18])` (esperado: `4`)",
+    starter_code: "# def lis_length(nums):\n#     ...\n# print(lis_length([10, 9, 2, 5, 3, 7, 101, 18]))\n",
+    pytest: "def test_lis(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('lis_length'))\n    assert ns['lis_length']([10, 9, 2, 5, 3, 7, 101, 18]) == 4\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['4']\n",
+    hint: "def lis_length(nums):\n    if not nums:\n        return 0\n    dp = [1] * len(nums)\n    for i in range(len(nums)):\n        for j in range(i):\n            if nums[j] < nums[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp)\nprint(lis_length([10, 9, 2, 5, 3, 7, 101, 18]))",
+    solution_example: "def lis_length(nums):\n    if not nums:\n        return 0\n    dp = [1] * len(nums)\n    for i in range(len(nums)):\n        for j in range(i):\n            if nums[j] < nums[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp)\nprint(lis_length([10, 9, 2, 5, 3, 7, 101, 18]))\n",
+    next: Some("py-150-edit-distance"),
+    show_type_chips: false,
+    micro_step: 149,
+};
+
+pub const PY150_EDIT_DISTANCE: CodingStep = CodingStep {
+    id: "py-150-edit-distance",
+    title: "DSA Edit Distance",
+    objective: "Distancia de Levenshtein (insert/delete/replace).",
+    prompt_md: "**Edit Distance**\n\nDP clásico sobre dos strings.\n\n**Micro-reto:**\n1. Definí `edit_distance(a, b)`\n2. Imprimí `edit_distance('horse', 'ros')` (esperado: `3`)",
+    starter_code: "# def edit_distance(a, b):\n#     ...\n# print(edit_distance('horse', 'ros'))\n",
+    pytest: "def test_edit_distance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('edit_distance'))\n    assert ns['edit_distance']('horse', 'ros') == 3\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
+    hint: "def edit_distance(a, b):\n    m, n = len(a), len(b)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1):\n        dp[i][0] = i\n    for j in range(n + 1):\n        dp[0][j] = j\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1]\n            else:\n                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])\n    return dp[m][n]\nprint(edit_distance('horse', 'ros'))",
+    solution_example: "def edit_distance(a, b):\n    m, n = len(a), len(b)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1):\n        dp[i][0] = i\n    for j in range(n + 1):\n        dp[0][j] = j\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1]\n            else:\n                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])\n    return dp[m][n]\nprint(edit_distance('horse', 'ros'))\n",
+    next: Some("py-151-word-break"),
+    show_type_chips: false,
+    micro_step: 150,
+};
+
+pub const PY151_WORD_BREAK: CodingStep = CodingStep {
+    id: "py-151-word-break",
+    title: "DSA Word Break",
+    objective: "¿Se puede segmentar s con palabras del dict?",
+    prompt_md: "**Word Break**\n\n`dp[i]` true si algún corte j < i con dp[j] y s[j:i] en el dict.\n\n**Micro-reto:**\n1. Definí `word_break(s, word_dict)`\n2. Imprimí `word_break('leetcode', ['leet', 'code'])` (esperado: `True`)",
+    starter_code: "# def word_break(s, word_dict):\n#     ...\n# print(word_break('leetcode', ['leet', 'code']))\n",
+    pytest: "def test_word_break(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('word_break'))\n    assert ns['word_break']('leetcode', ['leet', 'code']) is True\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "def word_break(s, word_dict):\n    words = set(word_dict)\n    dp = [False] * (len(s) + 1)\n    dp[0] = True\n    for i in range(1, len(s) + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in words:\n                dp[i] = True\n                break\n    return dp[-1]\nprint(word_break('leetcode', ['leet', 'code']))",
+    solution_example: "def word_break(s, word_dict):\n    words = set(word_dict)\n    dp = [False] * (len(s) + 1)\n    dp[0] = True\n    for i in range(1, len(s) + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in words:\n                dp[i] = True\n                break\n    return dp[-1]\nprint(word_break('leetcode', ['leet', 'code']))\n",
+    next: Some("py-152-min-path-sum"),
+    show_type_chips: false,
+    micro_step: 151,
+};
+
+pub const PY152_MIN_PATH_SUM: CodingStep = CodingStep {
+    id: "py-152-min-path-sum",
+    title: "DSA Min Path Sum",
+    objective: "Camino mínimo en grilla solo derecha/abajo.",
+    prompt_md: "**Min Path Sum**\n\n`dp[i][j] = grid[i][j] + min(arriba, izquierda)`.\n\n**Micro-reto:**\n1. Definí `min_path_sum(grid)`\n2. Imprimí con `[[1,3,1],[1,5,1],[4,2,1]]` (esperado: `7`)",
+    starter_code: "# def min_path_sum(grid):\n#     ...\n# print(min_path_sum([[1, 3, 1], [1, 5, 1], [4, 2, 1]]))\n",
+    pytest: "def test_min_path_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('min_path_sum'))\n    assert ns['min_path_sum']([[1, 3, 1], [1, 5, 1], [4, 2, 1]]) == 7\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['7']\n",
+    hint: "def min_path_sum(grid):\n    m, n = len(grid), len(grid[0])\n    dp = [row[:] for row in grid]\n    for i in range(1, m):\n        dp[i][0] += dp[i - 1][0]\n    for j in range(1, n):\n        dp[0][j] += dp[0][j - 1]\n    for i in range(1, m):\n        for j in range(1, n):\n            dp[i][j] += min(dp[i - 1][j], dp[i][j - 1])\n    return dp[-1][-1]\nprint(min_path_sum([[1, 3, 1], [1, 5, 1], [4, 2, 1]]))",
+    solution_example: "def min_path_sum(grid):\n    m, n = len(grid), len(grid[0])\n    dp = [row[:] for row in grid]\n    for i in range(1, m):\n        dp[i][0] += dp[i - 1][0]\n    for j in range(1, n):\n        dp[0][j] += dp[0][j - 1]\n    for i in range(1, m):\n        for j in range(1, n):\n            dp[i][j] += min(dp[i - 1][j], dp[i][j - 1])\n    return dp[-1][-1]\nprint(min_path_sum([[1, 3, 1], [1, 5, 1], [4, 2, 1]]))\n",
+    next: Some("py-153-decode-ways"),
+    show_type_chips: false,
+    micro_step: 152,
+};
+
+pub const PY153_DECODE_WAYS: CodingStep = CodingStep {
+    id: "py-153-decode-ways",
+    title: "DSA Decode Ways",
+    objective: "Formas de decodificar dígitos a letras A-Z (1..26).",
+    prompt_md: "**Decode Ways**\n\nDP: single digit válido y/o par 10–26.\n\n**Micro-reto:**\n1. Definí `decode_ways(s)`\n2. Imprimí `decode_ways('226')` (esperado: `3`)",
+    starter_code: "# def decode_ways(s):\n#     ...\n# print(decode_ways('226'))\n",
+    pytest: "def test_decode_ways(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('decode_ways'))\n    assert ns['decode_ways']('226') == 3\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
+    hint: "def decode_ways(s):\n    if not s or s[0] == '0':\n        return 0\n    n = len(s)\n    dp = [0] * (n + 1)\n    dp[0] = dp[1] = 1\n    for i in range(2, n + 1):\n        if s[i - 1] != '0':\n            dp[i] += dp[i - 1]\n        two = int(s[i - 2:i])\n        if 10 <= two <= 26:\n            dp[i] += dp[i - 2]\n    return dp[n]\nprint(decode_ways('226'))",
+    solution_example: "def decode_ways(s):\n    if not s or s[0] == '0':\n        return 0\n    n = len(s)\n    dp = [0] * (n + 1)\n    dp[0] = dp[1] = 1\n    for i in range(2, n + 1):\n        if s[i - 1] != '0':\n            dp[i] += dp[i - 1]\n        two = int(s[i - 2:i])\n        if 10 <= two <= 26:\n            dp[i] += dp[i - 2]\n    return dp[n]\nprint(decode_ways('226'))\n",
+    next: Some("py-154-longest-palindrome"),
+    show_type_chips: false,
+    micro_step: 153,
+};
+
+pub const PY154_LONGEST_PALINDROME: CodingStep = CodingStep {
+    id: "py-154-longest-palindrome",
+    title: "DSA Longest Palindrome",
+    objective: "Longitud del palíndromo más largo expandiendo desde centros.",
+    prompt_md: "**Longest Palindromic Substring (length)**\n\nExpandí alrededor de cada centro (impar y par).\n\n**Micro-reto:**\n1. Definí `longest_palindrome_len(s)`\n2. Imprimí `longest_palindrome_len('babad')` (esperado: `3`)",
+    starter_code: "# def longest_palindrome_len(s):\n#     ...\n# print(longest_palindrome_len('babad'))\n",
+    pytest: "def test_longest_palindrome(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('longest_palindrome_len'))\n    assert ns['longest_palindrome_len']('babad') == 3\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
+    hint: "def longest_palindrome_len(s):\n    def expand(l, r):\n        while l >= 0 and r < len(s) and s[l] == s[r]:\n            l -= 1\n            r += 1\n        return r - l - 1\n    best = 0\n    for i in range(len(s)):\n        best = max(best, expand(i, i), expand(i, i + 1))\n    return best\nprint(longest_palindrome_len('babad'))",
+    solution_example: "def longest_palindrome_len(s):\n    def expand(l, r):\n        while l >= 0 and r < len(s) and s[l] == s[r]:\n            l -= 1\n            r += 1\n        return r - l - 1\n    best = 0\n    for i in range(len(s)):\n        best = max(best, expand(i, i), expand(i, i + 1))\n    return best\nprint(longest_palindrome_len('babad'))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 154,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -2242,6 +2326,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY146_MAJORITY,
     &PY147_MISSING_NUMBER,
     &PY148_SINGLE_NUMBER,
+    &PY149_LIS,
+    &PY150_EDIT_DISTANCE,
+    &PY151_WORD_BREAK,
+    &PY152_MIN_PATH_SUM,
+    &PY153_DECODE_WAYS,
+    &PY154_LONGEST_PALINDROME,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -2824,10 +2914,27 @@ mod tests {
             (145, "py-145-unique-paths", Some("py-146-majority")),
             (146, "py-146-majority", Some("py-147-missing-number")),
             (147, "py-147-missing-number", Some("py-148-single-number")),
-            (148, "py-148-single-number", None),
+            (148, "py-148-single-number", Some("py-149-lis")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("more-patterns family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py149_to_py154_dp_strings_chain() {
+        let ids = [
+            (149, "py-149-lis", Some("py-150-edit-distance")),
+            (150, "py-150-edit-distance", Some("py-151-word-break")),
+            (151, "py-151-word-break", Some("py-152-min-path-sum")),
+            (152, "py-152-min-path-sum", Some("py-153-decode-ways")),
+            (153, "py-153-decode-ways", Some("py-154-longest-palindrome")),
+            (154, "py-154-longest-palindrome", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("dp-strings family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
