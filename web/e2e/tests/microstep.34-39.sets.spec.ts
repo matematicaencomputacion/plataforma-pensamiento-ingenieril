@@ -22,74 +22,69 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 28,
-    id: "py-28-tuples",
-    title: "Python Tuples",
-    solution: `thistuple = ("apple", "banana", "cherry")
-print(thistuple)
-print(len(thistuple))
+    micro: 34,
+    id: "py-34-sets",
+    title: "Python Sets",
+    solution: `thisset = {"apple", "banana", "cherry"}
+print(len(thisset))
 `,
-    nextUrl: /\/learn\/py-29-tuple-access/,
-    cursorAfter: "29",
+    nextUrl: /\/learn\/py-35-set-access/,
+    cursorAfter: "35",
   },
   {
-    micro: 29,
-    id: "py-29-tuple-access",
-    title: "Python Access Tuple Items",
-    solution: `thistuple = ("apple", "banana", "cherry")
-print(thistuple[1])
+    micro: 35,
+    id: "py-35-set-access",
+    title: "Python Access Set Items",
+    solution: `thisset = {"apple", "banana", "cherry"}
+print("banana" in thisset)
 `,
-    nextUrl: /\/learn\/py-30-tuple-update/,
-    cursorAfter: "30",
+    nextUrl: /\/learn\/py-36-set-add/,
+    cursorAfter: "36",
   },
   {
-    micro: 30,
-    id: "py-30-tuple-update",
-    title: "Python Update Tuples",
-    solution: `x = ("apple", "banana", "cherry")
-y = list(x)
-y[1] = "kiwi"
-x = tuple(y)
-print(x)
+    micro: 36,
+    id: "py-36-set-add",
+    title: "Python Add Set Items",
+    solution: `thisset = {"apple", "banana", "cherry"}
+thisset.add("orange")
+print("orange" in thisset)
 `,
-    nextUrl: /\/learn\/py-31-tuple-unpack/,
-    cursorAfter: "31",
+    nextUrl: /\/learn\/py-37-set-remove/,
+    cursorAfter: "37",
   },
   {
-    micro: 31,
-    id: "py-31-tuple-unpack",
-    title: "Python Unpack Tuples",
-    solution: `fruits = ("apple", "banana", "cherry")
-(green, yellow, red) = fruits
-print(green)
-print(yellow)
-print(red)
+    micro: 37,
+    id: "py-37-set-remove",
+    title: "Python Remove Set Items",
+    solution: `thisset = {"apple", "banana", "cherry"}
+thisset.remove("banana")
+print("banana" in thisset)
 `,
-    nextUrl: /\/learn\/py-32-tuple-loop/,
-    cursorAfter: "32",
+    nextUrl: /\/learn\/py-38-set-loop/,
+    cursorAfter: "38",
   },
   {
-    micro: 32,
-    id: "py-32-tuple-loop",
-    title: "Python Loop Tuples",
-    solution: `thistuple = ("apple", "banana", "cherry")
-for x in thistuple:
+    micro: 38,
+    id: "py-38-set-loop",
+    title: "Python Loop Sets",
+    solution: `thisset = {"apple", "banana", "cherry"}
+for x in thisset:
     print(x)
 `,
-    nextUrl: /\/learn\/py-33-tuple-join/,
-    cursorAfter: "33",
+    nextUrl: /\/learn\/py-39-set-join/,
+    cursorAfter: "39",
   },
   {
-    micro: 33,
-    id: "py-33-tuple-join",
-    title: "Python Join Tuples",
-    solution: `tuple1 = ("a", "b", "c")
-tuple2 = (1, 2, 3)
-tuple3 = tuple1 + tuple2
-print(tuple3)
+    micro: 39,
+    id: "py-39-set-join",
+    title: "Python Join Sets",
+    solution: `set1 = {"a", "b", "c"}
+set2 = {1, 2, 3}
+set3 = set1.union(set2)
+print(len(set3))
 `,
-    nextUrl: /\/learn\/py-34-sets/,
-    cursorAfter: "34",
+    nextUrl: /\/workspace/,
+    cursorAfter: "40",
   },
 ];
 
@@ -118,7 +113,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 28–33 · Tuples family", () => {
+test.describe("micro-steps 34–39 · Sets family", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

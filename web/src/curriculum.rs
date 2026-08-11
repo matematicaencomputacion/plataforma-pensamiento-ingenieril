@@ -478,9 +478,93 @@ pub const PY33_TUPLE_JOIN: CodingStep = CodingStep {
     pytest: "def test_tuple_join(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('tuple1') == ('a', 'b', 'c')\n    assert ns.get('tuple2') == (1, 2, 3)\n    assert ns.get('tuple3') == ('a', 'b', 'c', 1, 2, 3)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'a' in out and '3' in out\n",
     hint: "tuple1 = (\"a\", \"b\", \"c\")\ntuple2 = (1, 2, 3)\ntuple3 = tuple1 + tuple2\nprint(tuple3)",
     solution_example: "tuple1 = (\"a\", \"b\", \"c\")\ntuple2 = (1, 2, 3)\ntuple3 = tuple1 + tuple2\nprint(tuple3)\n",
-    next: None,
+    next: Some("py-34-sets"),
     show_type_chips: false,
     micro_step: 33,
+};
+
+pub const PY34_SETS: CodingStep = CodingStep {
+    id: "py-34-sets",
+    title: "Python Sets",
+    objective: "Crear un set y medir su longitud con len().",
+    prompt_md: "**Sets**\n\nLos sets usan llaves `{}` y no permiten duplicados.\n\n**Micro-reto:**\n1. Creá `thisset` con `apple`, `banana` y `cherry`\n2. Imprimí `len(thisset)`",
+    starter_code: "# thisset = ...\n# print(len(...))\n",
+    pytest: "def test_sets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisset') == {'apple', 'banana', 'cherry'}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '3'\n",
+    hint: "thisset = {\"apple\", \"banana\", \"cherry\"}\nprint(len(thisset))",
+    solution_example: "thisset = {\"apple\", \"banana\", \"cherry\"}\nprint(len(thisset))\n",
+    next: Some("py-35-set-access"),
+    show_type_chips: false,
+    micro_step: 34,
+};
+
+pub const PY35_SET_ACCESS: CodingStep = CodingStep {
+    id: "py-35-set-access",
+    title: "Python Access Set Items",
+    objective: "Comprobar pertenencia en un set con in.",
+    prompt_md: "**Access Set Items**\n\nNo hay índice; usá `in` para preguntar si un valor está presente.\n\n**Micro-reto:**\n1. Creá `thisset` con `apple`, `banana` y `cherry`\n2. Imprimí el resultado de `\"banana\" in thisset`",
+    starter_code: "# thisset = ...\n# print(... in ...)\n",
+    pytest: "def test_set_access(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisset') == {'apple', 'banana', 'cherry'}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'True'\n",
+    hint: "thisset = {\"apple\", \"banana\", \"cherry\"}\nprint(\"banana\" in thisset)",
+    solution_example: "thisset = {\"apple\", \"banana\", \"cherry\"}\nprint(\"banana\" in thisset)\n",
+    next: Some("py-36-set-add"),
+    show_type_chips: false,
+    micro_step: 35,
+};
+
+pub const PY36_SET_ADD: CodingStep = CodingStep {
+    id: "py-36-set-add",
+    title: "Python Add Set Items",
+    objective: "Agregar un ítem al set con add().",
+    prompt_md: "**Add Set Items**\n\n`add()` agrega un ítem al set.\n\n**Micro-reto:**\n1. Creá `thisset` con `apple`, `banana` y `cherry`\n2. Agregá `orange` con `add()`\n3. Imprimí `\"orange\" in thisset`",
+    starter_code: "# thisset = ...\n# thisset.add(...)\n# print(...)\n",
+    pytest: "def test_set_add(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisset') == {'apple', 'banana', 'cherry', 'orange'}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'True'\n",
+    hint: "thisset = {\"apple\", \"banana\", \"cherry\"}\nthisset.add(\"orange\")\nprint(\"orange\" in thisset)",
+    solution_example: "thisset = {\"apple\", \"banana\", \"cherry\"}\nthisset.add(\"orange\")\nprint(\"orange\" in thisset)\n",
+    next: Some("py-37-set-remove"),
+    show_type_chips: false,
+    micro_step: 36,
+};
+
+pub const PY37_SET_REMOVE: CodingStep = CodingStep {
+    id: "py-37-set-remove",
+    title: "Python Remove Set Items",
+    objective: "Eliminar un ítem del set con remove().",
+    prompt_md: "**Remove Set Items**\n\n`remove()` elimina el ítem indicado.\n\n**Micro-reto:**\n1. Creá `thisset` con `apple`, `banana` y `cherry`\n2. Remové `banana` con `remove()`\n3. Imprimí `\"banana\" in thisset`",
+    starter_code: "# thisset = ...\n# thisset.remove(...)\n# print(...)\n",
+    pytest: "def test_set_remove(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisset') == {'apple', 'cherry'}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'False'\n",
+    hint: "thisset = {\"apple\", \"banana\", \"cherry\"}\nthisset.remove(\"banana\")\nprint(\"banana\" in thisset)",
+    solution_example: "thisset = {\"apple\", \"banana\", \"cherry\"}\nthisset.remove(\"banana\")\nprint(\"banana\" in thisset)\n",
+    next: Some("py-38-set-loop"),
+    show_type_chips: false,
+    micro_step: 37,
+};
+
+pub const PY38_SET_LOOP: CodingStep = CodingStep {
+    id: "py-38-set-loop",
+    title: "Python Loop Sets",
+    objective: "Recorrer un set con for e imprimir cada ítem.",
+    prompt_md: "**Loop Sets**\n\nPodés recorrer los ítems con un `for`.\n\n**Micro-reto:**\n1. Creá `thisset` con `apple`, `banana` y `cherry`\n2. Recorré con `for x in thisset` e imprimí cada `x`",
+    starter_code: "# thisset = ...\n# for x in thisset:\n#     print(x)\n",
+    pytest: "def test_set_loop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thisset') == {'apple', 'banana', 'cherry'}\n    lines = {ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()}\n    assert lines == {'apple', 'banana', 'cherry'}\n",
+    hint: "thisset = {\"apple\", \"banana\", \"cherry\"}\nfor x in thisset:\n    print(x)",
+    solution_example: "thisset = {\"apple\", \"banana\", \"cherry\"}\nfor x in thisset:\n    print(x)\n",
+    next: Some("py-39-set-join"),
+    show_type_chips: false,
+    micro_step: 38,
+};
+
+pub const PY39_SET_JOIN: CodingStep = CodingStep {
+    id: "py-39-set-join",
+    title: "Python Join Sets",
+    objective: "Unir dos sets con union().",
+    prompt_md: "**Join Sets**\n\n`union()` devuelve un set nuevo con ítems de ambos.\n\n**Micro-reto:**\n1. Creá `set1` con `a`, `b`, `c`\n2. Creá `set2` con `1`, `2`, `3`\n3. Creá `set3` como `set1.union(set2)`\n4. Imprimí `len(set3)`",
+    starter_code: "# set1 = ...\n# set2 = ...\n# set3 = ...\n# print(len(...))\n",
+    pytest: "def test_set_join(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('set1') == {'a', 'b', 'c'}\n    assert ns.get('set2') == {1, 2, 3}\n    assert ns.get('set3') == {'a', 'b', 'c', 1, 2, 3}\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '6'\n",
+    hint: "set1 = {\"a\", \"b\", \"c\"}\nset2 = {1, 2, 3}\nset3 = set1.union(set2)\nprint(len(set3))",
+    solution_example: "set1 = {\"a\", \"b\", \"c\"}\nset2 = {1, 2, 3}\nset3 = set1.union(set2)\nprint(len(set3))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 39,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -517,6 +601,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY31_TUPLE_UNPACK,
     &PY32_TUPLE_LOOP,
     &PY33_TUPLE_JOIN,
+    &PY34_SETS,
+    &PY35_SET_ACCESS,
+    &PY36_SET_ADD,
+    &PY37_SET_REMOVE,
+    &PY38_SET_LOOP,
+    &PY39_SET_JOIN,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -775,10 +865,27 @@ mod tests {
             (30, "py-30-tuple-update", Some("py-31-tuple-unpack")),
             (31, "py-31-tuple-unpack", Some("py-32-tuple-loop")),
             (32, "py-32-tuple-loop", Some("py-33-tuple-join")),
-            (33, "py-33-tuple-join", None),
+            (33, "py-33-tuple-join", Some("py-34-sets")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("tuples step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py34_to_py39_sets_chain() {
+        let ids = [
+            (34, "py-34-sets", Some("py-35-set-access")),
+            (35, "py-35-set-access", Some("py-36-set-add")),
+            (36, "py-36-set-add", Some("py-37-set-remove")),
+            (37, "py-37-set-remove", Some("py-38-set-loop")),
+            (38, "py-38-set-loop", Some("py-39-set-join")),
+            (39, "py-39-set-join", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("sets step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
