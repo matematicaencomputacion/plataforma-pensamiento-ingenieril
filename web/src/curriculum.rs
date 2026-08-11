@@ -982,9 +982,93 @@ pub const PY69_STRING_FORMATTING: CodingStep = CodingStep {
     pytest: "def test_string_formatting(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('price') == 49\n    assert ns.get('txt') == 'The price is 49 dollars'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'The price is 49 dollars'\n",
     hint: "price = 49\ntxt = f\"The price is {price} dollars\"\nprint(txt)",
     solution_example: "price = 49\ntxt = f\"The price is {price} dollars\"\nprint(txt)\n",
-    next: None,
+    next: Some("py-70-file-write"),
     show_type_chips: false,
     micro_step: 69,
+};
+
+pub const PY70_FILE_WRITE: CodingStep = CodingStep {
+    id: "py-70-file-write",
+    title: "Python Write Files",
+    objective: "Crear un archivo de texto con open(..., \"w\").",
+    prompt_md: "**Write/Create Files**\n\n`open(nombre, \"w\")` crea o sobrescribe un archivo.\n\n**Micro-reto:**\n1. Abrí `demofile.txt` en modo `\"w\"`\n2. Escribí exactamente `Hello! Welcome to demofile.txt`\n3. Cerrá el archivo (o usá `with`)",
+    starter_code: "# with open(\"demofile.txt\", \"w\") as f:\n#     ...\n",
+    pytest: "def test_file_write():\n    exec(open('solution.py', encoding='utf-8').read())\n    with open('demofile.txt', encoding='utf-8') as f:\n        assert f.read() == 'Hello! Welcome to demofile.txt'\n",
+    hint: "with open(\"demofile.txt\", \"w\") as f:\n    f.write(\"Hello! Welcome to demofile.txt\")",
+    solution_example: "with open(\"demofile.txt\", \"w\") as f:\n    f.write(\"Hello! Welcome to demofile.txt\")\n",
+    next: Some("py-71-file-read"),
+    show_type_chips: false,
+    micro_step: 70,
+};
+
+pub const PY71_FILE_READ: CodingStep = CodingStep {
+    id: "py-71-file-read",
+    title: "Python Read Files",
+    objective: "Leer el contenido completo de un archivo.",
+    prompt_md: "**Read Files**\n\n`f.read()` devuelve todo el texto del archivo.\n\n**Micro-reto:**\n1. Creá `demofile.txt` con contenido `Hello Python`\n2. Abrilo y imprimí `f.read()`",
+    starter_code: "# with open(\"demofile.txt\", \"w\") as f:\n#     ...\n# with open(\"demofile.txt\") as f:\n#     print(...)\n",
+    pytest: "def test_file_read(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Hello Python'\n",
+    hint: "with open(\"demofile.txt\", \"w\") as f:\n    f.write(\"Hello Python\")\nwith open(\"demofile.txt\") as f:\n    print(f.read())",
+    solution_example: "with open(\"demofile.txt\", \"w\") as f:\n    f.write(\"Hello Python\")\nwith open(\"demofile.txt\") as f:\n    print(f.read())\n",
+    next: Some("py-72-file-readline"),
+    show_type_chips: false,
+    micro_step: 71,
+};
+
+pub const PY72_FILE_READLINE: CodingStep = CodingStep {
+    id: "py-72-file-readline",
+    title: "Python File Readline",
+    objective: "Leer la primera línea con readline().",
+    prompt_md: "**Read Lines**\n\n`readline()` lee una línea del archivo.\n\n**Micro-reto:**\n1. Creá `demofile.txt` con dos líneas: `First` y `Second` (con salto de línea entre ellas)\n2. Abrilo e imprimí `f.readline().strip()`",
+    starter_code: "# with open(\"demofile.txt\", \"w\") as f:\n#     ...\n# with open(\"demofile.txt\") as f:\n#     print(...)\n",
+    pytest: "def test_file_readline(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'First'\n",
+    hint: "with open(\"demofile.txt\", \"w\") as f:\n    f.write(\"First\\nSecond\\n\")\nwith open(\"demofile.txt\") as f:\n    print(f.readline().strip())",
+    solution_example: "with open(\"demofile.txt\", \"w\") as f:\n    f.write(\"First\\nSecond\\n\")\nwith open(\"demofile.txt\") as f:\n    print(f.readline().strip())\n",
+    next: Some("py-73-file-append"),
+    show_type_chips: false,
+    micro_step: 72,
+};
+
+pub const PY73_FILE_APPEND: CodingStep = CodingStep {
+    id: "py-73-file-append",
+    title: "Python File Append",
+    objective: "Agregar texto al final con modo a.",
+    prompt_md: "**Append Files**\n\nEl modo `\"a\"` agrega texto al final sin borrar lo existente.\n\n**Micro-reto:**\n1. Creá `demofile.txt` con `Hello`\n2. Abrilo en modo `\"a\"` y agregá ` World`\n3. Leé e imprimí el contenido completo",
+    starter_code: "# with open(\"demofile.txt\", \"w\") as f:\n#     ...\n# with open(\"demofile.txt\", \"a\") as f:\n#     ...\n# with open(\"demofile.txt\") as f:\n#     print(...)\n",
+    pytest: "def test_file_append(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Hello World'\n",
+    hint: "with open(\"demofile.txt\", \"w\") as f:\n    f.write(\"Hello\")\nwith open(\"demofile.txt\", \"a\") as f:\n    f.write(\" World\")\nwith open(\"demofile.txt\") as f:\n    print(f.read())",
+    solution_example: "with open(\"demofile.txt\", \"w\") as f:\n    f.write(\"Hello\")\nwith open(\"demofile.txt\", \"a\") as f:\n    f.write(\" World\")\nwith open(\"demofile.txt\") as f:\n    print(f.read())\n",
+    next: Some("py-74-file-delete"),
+    show_type_chips: false,
+    micro_step: 73,
+};
+
+pub const PY74_FILE_DELETE: CodingStep = CodingStep {
+    id: "py-74-file-delete",
+    title: "Python Delete Files",
+    objective: "Borrar un archivo con os.remove.",
+    prompt_md: "**Delete Files**\n\n`os.remove(path)` elimina un archivo.\n\n**Micro-reto:**\n1. `import os`\n2. Creá `demofile.txt` con cualquier contenido\n3. Borrálo con `os.remove(\"demofile.txt\")`\n4. Imprimí `os.path.exists(\"demofile.txt\")`",
+    starter_code: "# import os\n# ...\n# print(...)\n",
+    pytest: "def test_file_delete(capsys):\n    import os\n    exec(open('solution.py', encoding='utf-8').read())\n    assert not os.path.exists('demofile.txt')\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'False'\n",
+    hint: "import os\nwith open(\"demofile.txt\", \"w\") as f:\n    f.write(\"bye\")\nos.remove(\"demofile.txt\")\nprint(os.path.exists(\"demofile.txt\"))",
+    solution_example: "import os\nwith open(\"demofile.txt\", \"w\") as f:\n    f.write(\"bye\")\nos.remove(\"demofile.txt\")\nprint(os.path.exists(\"demofile.txt\"))\n",
+    next: Some("py-75-user-input"),
+    show_type_chips: false,
+    micro_step: 74,
+};
+
+pub const PY75_USER_INPUT: CodingStep = CodingStep {
+    id: "py-75-user-input",
+    title: "Python User Input",
+    objective: "Guardar un valor como si viniera de input() y usarlo.",
+    prompt_md: "**User Input**\n\nEn la plataforma no hay teclado interactivo; simulamos `input()` asignando el valor.\n\n**Micro-reto:**\n1. Asigná `username = \"Alice\"` (como si viniera de `input()`)\n2. Imprimí `Hello, ` seguido de `username` (concatená o f-string)\n\nResultado esperado: `Hello, Alice`",
+    starter_code: "# username = ...\n# print(...)\n",
+    pytest: "def test_user_input(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('username') == 'Alice'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Hello, Alice'\n",
+    hint: "username = \"Alice\"\nprint(\"Hello, \" + username)",
+    solution_example: "username = \"Alice\"\nprint(\"Hello, \" + username)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 75,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1057,6 +1141,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY67_REGEX,
     &PY68_TRY_EXCEPT,
     &PY69_STRING_FORMATTING,
+    &PY70_FILE_WRITE,
+    &PY71_FILE_READ,
+    &PY72_FILE_READLINE,
+    &PY73_FILE_APPEND,
+    &PY74_FILE_DELETE,
+    &PY75_USER_INPUT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -1417,10 +1507,27 @@ mod tests {
             (66, "py-66-json", Some("py-67-regex")),
             (67, "py-67-regex", Some("py-68-try-except")),
             (68, "py-68-try-except", Some("py-69-string-formatting")),
-            (69, "py-69-string-formatting", None),
+            (69, "py-69-string-formatting", Some("py-70-file-write")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("stdlib family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py70_to_py75_files_chain() {
+        let ids = [
+            (70, "py-70-file-write", Some("py-71-file-read")),
+            (71, "py-71-file-read", Some("py-72-file-readline")),
+            (72, "py-72-file-readline", Some("py-73-file-append")),
+            (73, "py-73-file-append", Some("py-74-file-delete")),
+            (74, "py-74-file-delete", Some("py-75-user-input")),
+            (75, "py-75-user-input", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("files family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
