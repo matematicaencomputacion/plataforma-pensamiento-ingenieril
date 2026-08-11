@@ -22,118 +22,167 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 161,
-    id: "py-161-reverse-list",
-    title: "DSA Reverse List",
-    solution: `def reverse_list(nums: list):
-    return nums[::-1]
-print(reverse_list([1, 2, 3, 4]))
-`,
-    nextUrl: /\/learn\/py-162-merge-sorted/,
-    cursorAfter: "162",
-  },
-  {
-    micro: 162,
-    id: "py-162-merge-sorted",
-    title: "DSA Merge Sorted Lists",
-    solution: `def merge_sorted(a, b):
-    result = []
-    i = j = 0
-    while i < len(a) and j < len(b):
-        if a[i] <= b[j]:
-            result.append(a[i])
-            i += 1
-        else:
-            result.append(b[j])
-            j += 1
-    return result + a[i:] + b[j:]
-print(merge_sorted([1, 2, 4], [1, 3, 4]))
-`,
-    nextUrl: /\/learn\/py-163-linked-cycle/,
-    cursorAfter: "163",
-  },
-  {
-    micro: 163,
-    id: "py-163-linked-cycle",
-    title: "DSA Linked List Cycle",
-    solution: `class Node:
+    micro: 167,
+    id: "py-167-invert-tree",
+    title: "DSA Invert Binary Tree",
+    solution: `class TreeNode:
     def __init__(self, data):
         self.data = data
-        self.next = None
+        self.left = None
+        self.right = None
 
-def has_cycle(head):
-    slow = fast = head
-    while fast is not None and fast.next is not None:
-        slow = slow.next
-        fast = fast.next.next
-        if slow is fast:
-            return True
-    return False
+def invert_tree(root):
+    if root is None:
+        return None
+    root.left, root.right = invert_tree(root.right), invert_tree(root.left)
+    return root
 
-node1 = Node(3)
-node2 = Node(2)
-node3 = Node(0)
-node4 = Node(-4)
-node1.next = node2
-node2.next = node3
-node3.next = node4
-node4.next = node2
-print(has_cycle(node1))
+def level_order(root):
+    if root is None:
+        return []
+    result = []
+    queue = [root]
+    while queue:
+        node = queue.pop(0)
+        result.append(node.data)
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    return result
+
+root = TreeNode(4)
+root.left = TreeNode(2)
+root.right = TreeNode(7)
+root.left.left = TreeNode(1)
+root.left.right = TreeNode(3)
+root.right.left = TreeNode(6)
+root.right.right = TreeNode(9)
+invert_tree(root)
+print(level_order(root))
 `,
-    nextUrl: /\/learn\/py-164-valid-palindrome/,
-    cursorAfter: "164",
+    nextUrl: /\/learn\/py-168-same-tree/,
+    cursorAfter: "168",
   },
   {
-    micro: 164,
-    id: "py-164-valid-palindrome",
-    title: "DSA Valid Palindrome",
-    solution: `def is_palindrome(s):
-    cleaned = ''.join(ch.casefold() for ch in s if ch.isalnum())
-    return cleaned == cleaned[::-1]
-print(is_palindrome('A man, a plan, a canal: Panama'))
+    micro: 168,
+    id: "py-168-same-tree",
+    title: "DSA Same Tree",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def is_same_tree(p, q):
+    if p is None and q is None:
+        return True
+    if p is None or q is None or p.data != q.data:
+        return False
+    return is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
+
+p = TreeNode(1)
+p.left = TreeNode(2)
+p.right = TreeNode(3)
+q = TreeNode(1)
+q.left = TreeNode(2)
+q.right = TreeNode(3)
+print(is_same_tree(p, q))
 `,
-    nextUrl: /\/learn\/py-165-common-prefix/,
-    cursorAfter: "165",
+    nextUrl: /\/learn\/py-169-max-depth/,
+    cursorAfter: "169",
   },
   {
-    micro: 165,
-    id: "py-165-common-prefix",
-    title: "DSA Longest Common Prefix",
-    solution: `def longest_common_prefix(strs):
-    if not strs:
-        return ''
-    prefix = strs[0]
-    for word in strs[1:]:
-        while not word.startswith(prefix):
-            prefix = prefix[:-1]
-            if not prefix:
-                return ''
-    return prefix
-print(longest_common_prefix(['flower', 'flow', 'flight']))
+    micro: 169,
+    id: "py-169-max-depth",
+    title: "DSA Maximum Depth",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def max_depth(root):
+    if root is None:
+        return 0
+    return 1 + max(max_depth(root.left), max_depth(root.right))
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(max_depth(root))
 `,
-    nextUrl: /\/learn\/py-166-roman-to-int/,
-    cursorAfter: "166",
+    nextUrl: /\/learn\/py-170-spiral-matrix/,
+    cursorAfter: "170",
   },
   {
-    micro: 166,
-    id: "py-166-roman-to-int",
-    title: "DSA Roman to Integer",
-    solution: `def roman_to_int(s):
-    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
-    total = 0
-    previous = 0
-    for symbol in reversed(s):
-        value = values[symbol]
-        if value < previous:
-            total -= value
-        else:
-            total += value
-            previous = value
-    return total
-print(roman_to_int('MCMXCIV'))
+    micro: 170,
+    id: "py-170-spiral-matrix",
+    title: "DSA Spiral Matrix",
+    solution: `def spiral_order(matrix):
+    if not matrix:
+        return []
+    result = []
+    top, bottom = 0, len(matrix) - 1
+    left, right = 0, len(matrix[0]) - 1
+    while top <= bottom and left <= right:
+        for j in range(left, right + 1):
+            result.append(matrix[top][j])
+        top += 1
+        for i in range(top, bottom + 1):
+            result.append(matrix[i][right])
+        right -= 1
+        if top <= bottom:
+            for j in range(right, left - 1, -1):
+                result.append(matrix[bottom][j])
+            bottom -= 1
+        if left <= right:
+            for i in range(bottom, top - 1, -1):
+                result.append(matrix[i][left])
+            left += 1
+    return result
+print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
 `,
-    nextUrl: /\/learn\/py-167-invert-tree/,
-    cursorAfter: "167",
+    nextUrl: /\/learn\/py-171-set-zeroes/,
+    cursorAfter: "171",
+  },
+  {
+    micro: 171,
+    id: "py-171-set-zeroes",
+    title: "DSA Set Matrix Zeroes",
+    solution: `def set_zeroes(matrix):
+    rows = set()
+    cols = set()
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if matrix[i][j] == 0:
+                rows.add(i)
+                cols.add(j)
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if i in rows or j in cols:
+                matrix[i][j] = 0
+    return matrix
+print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
+`,
+    nextUrl: /\/learn\/py-172-subsets/,
+    cursorAfter: "172",
+  },
+  {
+    micro: 172,
+    id: "py-172-subsets",
+    title: "DSA Subsets",
+    solution: `def subsets(nums):
+    result = [[]]
+    for n in nums:
+        result += [subset + [n] for subset in result]
+    return result
+print(sorted(subsets([1, 2])))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "173",
   },
 ];
 
@@ -162,7 +211,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 161–166 · lists / strings", () => {
+test.describe("micro-steps 167–172 · trees / matrices", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
