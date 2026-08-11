@@ -128,9 +128,23 @@ pub const PY08_NUMBERS: CodingStep = CodingStep {
     pytest: "def test_numbers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 5 and isinstance(ns['x'], int)\n    assert ns.get('y') == 3.14 and isinstance(ns['y'], float)\n    assert ns.get('z') == (2 + 3j) and isinstance(ns['z'], complex)\n    out = capsys.readouterr().out\n    assert 'int' in out and 'float' in out and 'complex' in out\n",
     hint: "x = 5\ny = 3.14\nz = 2 + 3j\nprint(type(x))\nprint(type(y))\nprint(type(z))",
     solution_example: "x = 5\ny = 3.14\nz = 2 + 3j\nprint(type(x))\nprint(type(y))\nprint(type(z))\n",
-    next: None,
+    next: Some("py-09-casting"),
     show_type_chips: false,
     micro_step: 8,
+};
+
+pub const PY09_CASTING: CodingStep = CodingStep {
+    id: "py-09-casting",
+    title: "Python Casting",
+    objective: "Convertir tipos con float() y str(), y mostrar el resultado.",
+    prompt_md: "**Casting**\n\nPodés forzar un tipo con constructores como `int()`, `float()` y `str()`.\n\n**Micro-reto:**\n1. Creá `x` con el valor entero `1`\n2. Convertí `x` a float y guardalo en `a`\n3. Convertí `x` a string y guardalo en `b`\n4. Imprimí `a` y `b`",
+    starter_code: "# x = ...\n# a = ...\n# b = ...\n# print(...)\n",
+    pytest: "def test_casting(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('x') == 1 and isinstance(ns['x'], int)\n    assert ns.get('a') == 1.0 and isinstance(ns['a'], float)\n    assert ns.get('b') == '1' and isinstance(ns['b'], str)\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '1.0' in out and '1' in out\n",
+    hint: "x = 1\na = float(x)\nb = str(x)\nprint(a)\nprint(b)",
+    solution_example: "x = 1\na = float(x)\nb = str(x)\nprint(a)\nprint(b)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 9,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -142,6 +156,7 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY06_COMMENTS,
     &PY07_DATA_TYPES,
     &PY08_NUMBERS,
+    &PY09_CASTING,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -329,8 +344,16 @@ mod tests {
     fn py08_numbers_chained_from_data_types() {
         let step = coding_step_by_micro_step(8).expect("py-08");
         assert_eq!(step.id, "py-08-numbers");
-        assert!(step.next.is_none());
+        assert_eq!(step.next, Some("py-09-casting"));
         assert!(step.pytest.contains("test_numbers"));
+    }
+
+    #[test]
+    fn py09_casting_chained_from_numbers() {
+        let step = coding_step_by_micro_step(9).expect("py-09");
+        assert_eq!(step.id, "py-09-casting");
+        assert!(step.next.is_none());
+        assert!(step.pytest.contains("test_casting"));
     }
 
     #[test]
