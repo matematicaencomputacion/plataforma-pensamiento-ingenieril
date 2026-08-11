@@ -22,130 +22,105 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 131,
-    id: "py-131-two-pointers",
-    title: "DSA Two Pointers",
-    solution: `def two_sum(nums, target):
-    left, right = 0, len(nums) - 1
-    while left < right:
-        s = nums[left] + nums[right]
-        if s == target:
-            return (left, right)
-        if s < target:
-            left += 1
-        else:
-            right -= 1
-    return None
-print(two_sum([2, 7, 11, 15], 9))
-`,
-    nextUrl: /\/learn\/py-132-sliding-window/,
-    cursorAfter: "132",
-  },
-  {
-    micro: 132,
-    id: "py-132-sliding-window",
-    title: "DSA Sliding Window",
-    solution: `def max_window(nums, k):
-    window = sum(nums[:k])
-    best = window
-    for i in range(k, len(nums)):
-        window += nums[i] - nums[i - k]
-        best = max(best, window)
+    micro: 137,
+    id: "py-137-kadane",
+    title: "DSA Kadane",
+    solution: `def max_subarray(nums):
+    best = cur = nums[0]
+    for x in nums[1:]:
+        cur = max(x, cur + x)
+        best = max(best, cur)
     return best
-print(max_window([2, 1, 5, 1, 3, 2], 3))
+print(max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))
 `,
-    nextUrl: /\/learn\/py-133-permutations/,
-    cursorAfter: "133",
+    nextUrl: /\/learn\/py-138-merge-intervals/,
+    cursorAfter: "138",
   },
   {
-    micro: 133,
-    id: "py-133-permutations",
-    title: "DSA Permutations",
-    solution: `def permute(nums):
-    res = []
-    def bt(path, unused):
-        if not unused:
-            res.append(path[:])
-            return
-        for i, x in enumerate(unused):
-            path.append(x)
-            bt(path, unused[:i] + unused[i + 1:])
-            path.pop()
-    bt([], list(nums))
-    return res
-print(sorted(permute([1, 2, 3])))
+    micro: 138,
+    id: "py-138-merge-intervals",
+    title: "DSA Merge Intervals",
+    solution: `def merge_intervals(intervals):
+    intervals = sorted(intervals, key=lambda x: x[0])
+    out = [intervals[0][:]]
+    for s, e in intervals[1:]:
+        if s <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], e)
+        else:
+            out.append([s, e])
+    return out
+print(merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]))
 `,
-    nextUrl: /\/learn\/py-134-nqueens-count/,
-    cursorAfter: "134",
+    nextUrl: /\/learn\/py-139-lower-bound/,
+    cursorAfter: "139",
   },
   {
-    micro: 134,
-    id: "py-134-nqueens-count",
-    title: "DSA N-Queens Count",
-    solution: `def nqueens_count(n):
-    cols = set()
-    diag1 = set()
-    diag2 = set()
-    def bt(row):
-        if row == n:
-            return 1
-        total = 0
-        for c in range(n):
-            if c in cols or row - c in diag1 or row + c in diag2:
-                continue
-            cols.add(c); diag1.add(row - c); diag2.add(row + c)
-            total += bt(row + 1)
-            cols.remove(c); diag1.remove(row - c); diag2.remove(row + c)
-        return total
-    return bt(0)
-print(nqueens_count(4))
+    micro: 139,
+    id: "py-139-lower-bound",
+    title: "DSA Lower Bound",
+    solution: `def lower_bound(nums, target):
+    lo, hi = 0, len(nums)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+print(lower_bound([1, 3, 3, 5, 7], 3))
 `,
-    nextUrl: /\/learn\/py-135-trie/,
-    cursorAfter: "135",
+    nextUrl: /\/learn\/py-140-rotate-matrix/,
+    cursorAfter: "140",
   },
   {
-    micro: 135,
-    id: "py-135-trie",
-    title: "DSA Trie",
-    solution: `class Trie:
-    def __init__(self):
-        self.root = {}
-    def insert(self, word):
-        node = self.root
-        for ch in word:
-            node = node.setdefault(ch, {})
-        node['#'] = True
-    def search(self, word):
-        node = self.root
-        for ch in word:
-            if ch not in node:
-                return False
-            node = node[ch]
-        return '#' in node
-t = Trie()
-t.insert('cat')
-t.insert('car')
-print(t.search('cat'))
-print(t.search('car'))
-print(t.search('cap'))
+    micro: 140,
+    id: "py-140-rotate-matrix",
+    title: "DSA Rotate Matrix",
+    solution: `def rotate(matrix):
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i + 1, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    for row in matrix:
+        row.reverse()
+    return matrix
+m = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+print(rotate(m))
 `,
-    nextUrl: /\/learn\/py-136-bit-count/,
-    cursorAfter: "136",
+    nextUrl: /\/learn\/py-141-valid-parens/,
+    cursorAfter: "141",
   },
   {
-    micro: 136,
-    id: "py-136-bit-count",
-    title: "DSA Bit Count",
-    solution: `def bit_count(n):
-    count = 0
-    while n:
-        n &= n - 1
-        count += 1
-    return count
-print(bit_count(13))
+    micro: 141,
+    id: "py-141-valid-parens",
+    title: "DSA Valid Parentheses",
+    solution: `def valid_parens(s):
+    pairs = {')': '(', ']': '[', '}': '{'}
+    stack = []
+    for ch in s:
+        if ch in '([{':
+            stack.append(ch)
+        elif not stack or stack.pop() != pairs[ch]:
+            return False
+    return not stack
+print(valid_parens('()[]{}'))
+print(valid_parens('(]'))
 `,
-    nextUrl: /\/learn\/py-137-kadane/,
-    cursorAfter: "137",
+    nextUrl: /\/learn\/py-142-anagram/,
+    cursorAfter: "142",
+  },
+  {
+    micro: 142,
+    id: "py-142-anagram",
+    title: "DSA Anagram Check",
+    solution: `from collections import Counter
+def is_anagram(a, b):
+    return Counter(a) == Counter(b)
+print(is_anagram('listen', 'silent'))
+print(is_anagram('hello', 'world'))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "143",
   },
 ];
 
@@ -174,7 +149,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 131–136 · Two pointers / window / backtrack / trie / bits", () => {
+test.describe("micro-steps 137–142 · Kadane / intervals / binary / matrix / parens", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

@@ -1920,9 +1920,93 @@ pub const PY136_BIT_COUNT: CodingStep = CodingStep {
     pytest: "def test_bit_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('bit_count'))\n    assert ns['bit_count'](13) == 3\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
     hint: "def bit_count(n):\n    count = 0\n    while n:\n        n &= n - 1\n        count += 1\n    return count\nprint(bit_count(13))",
     solution_example: "def bit_count(n):\n    count = 0\n    while n:\n        n &= n - 1\n        count += 1\n    return count\nprint(bit_count(13))\n",
-    next: None,
+    next: Some("py-137-kadane"),
     show_type_chips: false,
     micro_step: 136,
+};
+
+pub const PY137_KADANE: CodingStep = CodingStep {
+    id: "py-137-kadane",
+    title: "DSA Kadane",
+    objective: "Máxima suma de subarray contiguo (Kadane).",
+    prompt_md: "**Kadane**\n\nMantené `best` y `cur`; si `cur` cae bajo 0, reiniciá.\n\n**Micro-reto:**\n1. Definí `max_subarray(nums)`\n2. Imprimí `max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4])` (esperado: `6`)",
+    starter_code: "# def max_subarray(nums):\n#     ...\n# print(max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))\n",
+    pytest: "def test_kadane(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_subarray'))\n    assert ns['max_subarray']([-2, 1, -3, 4, -1, 2, 1, -5, 4]) == 6\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['6']\n",
+    hint: "def max_subarray(nums):\n    best = cur = nums[0]\n    for x in nums[1:]:\n        cur = max(x, cur + x)\n        best = max(best, cur)\n    return best\nprint(max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))",
+    solution_example: "def max_subarray(nums):\n    best = cur = nums[0]\n    for x in nums[1:]:\n        cur = max(x, cur + x)\n        best = max(best, cur)\n    return best\nprint(max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))\n",
+    next: Some("py-138-merge-intervals"),
+    show_type_chips: false,
+    micro_step: 137,
+};
+
+pub const PY138_MERGE_INTERVALS: CodingStep = CodingStep {
+    id: "py-138-merge-intervals",
+    title: "DSA Merge Intervals",
+    objective: "Fusionar intervalos solapados.",
+    prompt_md: "**Merge Intervals**\n\nOrdená por inicio y extendé el último si se solapa.\n\n**Micro-reto:**\n1. Definí `merge_intervals(intervals)`\n2. Imprimí `merge_intervals([[1,3],[2,6],[8,10],[15,18]])` (esperado: `[[1, 6], [8, 10], [15, 18]]`)",
+    starter_code: "# def merge_intervals(intervals):\n#     ...\n# print(merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]))\n",
+    pytest: "def test_merge_intervals(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('merge_intervals'))\n    assert ns['merge_intervals']([[1, 3], [2, 6], [8, 10], [15, 18]]) == [[1, 6], [8, 10], [15, 18]]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '[1, 6]' in out and '[8, 10]' in out and '[15, 18]' in out\n",
+    hint: "def merge_intervals(intervals):\n    intervals = sorted(intervals, key=lambda x: x[0])\n    out = [intervals[0][:]]\n    for s, e in intervals[1:]:\n        if s <= out[-1][1]:\n            out[-1][1] = max(out[-1][1], e)\n        else:\n            out.append([s, e])\n    return out\nprint(merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]))",
+    solution_example: "def merge_intervals(intervals):\n    intervals = sorted(intervals, key=lambda x: x[0])\n    out = [intervals[0][:]]\n    for s, e in intervals[1:]:\n        if s <= out[-1][1]:\n            out[-1][1] = max(out[-1][1], e)\n        else:\n            out.append([s, e])\n    return out\nprint(merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]))\n",
+    next: Some("py-139-lower-bound"),
+    show_type_chips: false,
+    micro_step: 138,
+};
+
+pub const PY139_LOWER_BOUND: CodingStep = CodingStep {
+    id: "py-139-lower-bound",
+    title: "DSA Lower Bound",
+    objective: "Primer índice donde nums[i] >= target (binary search).",
+    prompt_md: "**Lower Bound**\n\nBinary search del primer elemento ≥ target.\n\n**Micro-reto:**\n1. Definí `lower_bound(nums, target)`\n2. Imprimí `lower_bound([1, 3, 3, 5, 7], 3)` (esperado: `1`)",
+    starter_code: "# def lower_bound(nums, target):\n#     ...\n# print(lower_bound([1, 3, 3, 5, 7], 3))\n",
+    pytest: "def test_lower_bound(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('lower_bound'))\n    assert ns['lower_bound']([1, 3, 3, 5, 7], 3) == 1\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['1']\n",
+    hint: "def lower_bound(nums, target):\n    lo, hi = 0, len(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\nprint(lower_bound([1, 3, 3, 5, 7], 3))",
+    solution_example: "def lower_bound(nums, target):\n    lo, hi = 0, len(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\nprint(lower_bound([1, 3, 3, 5, 7], 3))\n",
+    next: Some("py-140-rotate-matrix"),
+    show_type_chips: false,
+    micro_step: 139,
+};
+
+pub const PY140_ROTATE_MATRIX: CodingStep = CodingStep {
+    id: "py-140-rotate-matrix",
+    title: "DSA Rotate Matrix",
+    objective: "Rotar una matriz cuadrada 90° en sentido horario.",
+    prompt_md: "**Rotate Matrix**\n\nTraspuesta + reverse de cada fila = rotación 90° CW.\n\n**Micro-reto:**\n1. Definí `rotate(matrix)` in-place (modifica y también devolvé)\n2. Con `[[1,2,3],[4,5,6],[7,8,9]]` imprimí el resultado (esperado: `[[7, 4, 1], [8, 5, 2], [9, 6, 3]]`)",
+    starter_code: "# def rotate(matrix):\n#     ...\n# m = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\n# print(rotate(m))\n",
+    pytest: "def test_rotate_matrix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('rotate'))\n    assert ns['m'] == [[7, 4, 1], [8, 5, 2], [9, 6, 3]]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '[7, 4, 1]' in out and '[9, 6, 3]' in out\n",
+    hint: "def rotate(matrix):\n    n = len(matrix)\n    for i in range(n):\n        for j in range(i + 1, n):\n            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]\n    for row in matrix:\n        row.reverse()\n    return matrix\nm = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\nprint(rotate(m))",
+    solution_example: "def rotate(matrix):\n    n = len(matrix)\n    for i in range(n):\n        for j in range(i + 1, n):\n            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]\n    for row in matrix:\n        row.reverse()\n    return matrix\nm = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\nprint(rotate(m))\n",
+    next: Some("py-141-valid-parens"),
+    show_type_chips: false,
+    micro_step: 140,
+};
+
+pub const PY141_VALID_PARENS: CodingStep = CodingStep {
+    id: "py-141-valid-parens",
+    title: "DSA Valid Parentheses",
+    objective: "Validar paréntesis/brackets balanceados con stack.",
+    prompt_md: "**Valid Parentheses**\n\nPush opens; pop must match el cierre.\n\n**Micro-reto:**\n1. Definí `valid_parens(s)` → bool\n2. Imprimí `valid_parens('()[]{}')` y `valid_parens('(]')` (esperado: `True` / `False`)",
+    starter_code: "# def valid_parens(s):\n#     ...\n# print(valid_parens('()[]{}'))\n# print(valid_parens('(]'))\n",
+    pytest: "def test_valid_parens(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('valid_parens'))\n    assert ns['valid_parens']('()[]{}') is True\n    assert ns['valid_parens']('(]') is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True', 'False']\n",
+    hint: "def valid_parens(s):\n    pairs = {')': '(', ']': '[', '}': '{'}\n    stack = []\n    for ch in s:\n        if ch in '([{':\n            stack.append(ch)\n        elif not stack or stack.pop() != pairs[ch]:\n            return False\n    return not stack\nprint(valid_parens('()[]{}'))\nprint(valid_parens('(]'))",
+    solution_example: "def valid_parens(s):\n    pairs = {')': '(', ']': '[', '}': '{'}\n    stack = []\n    for ch in s:\n        if ch in '([{':\n            stack.append(ch)\n        elif not stack or stack.pop() != pairs[ch]:\n            return False\n    return not stack\nprint(valid_parens('()[]{}'))\nprint(valid_parens('(]'))\n",
+    next: Some("py-142-anagram"),
+    show_type_chips: false,
+    micro_step: 141,
+};
+
+pub const PY142_ANAGRAM: CodingStep = CodingStep {
+    id: "py-142-anagram",
+    title: "DSA Anagram Check",
+    objective: "Decidir si dos strings son anagramas (conteo).",
+    prompt_md: "**Anagram**\n\nMisma frecuencia de caracteres.\n\n**Micro-reto:**\n1. Definí `is_anagram(a, b)`\n2. Imprimí `is_anagram('listen', 'silent')` y `is_anagram('hello', 'world')`",
+    starter_code: "# def is_anagram(a, b):\n#     ...\n# print(is_anagram('listen', 'silent'))\n# print(is_anagram('hello', 'world'))\n",
+    pytest: "def test_anagram(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_anagram'))\n    assert ns['is_anagram']('listen', 'silent') is True\n    assert ns['is_anagram']('hello', 'world') is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True', 'False']\n",
+    hint: "from collections import Counter\ndef is_anagram(a, b):\n    return Counter(a) == Counter(b)\nprint(is_anagram('listen', 'silent'))\nprint(is_anagram('hello', 'world'))",
+    solution_example: "from collections import Counter\ndef is_anagram(a, b):\n    return Counter(a) == Counter(b)\nprint(is_anagram('listen', 'silent'))\nprint(is_anagram('hello', 'world'))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 142,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -2062,6 +2146,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY134_NQUEENS_COUNT,
     &PY135_TRIE,
     &PY136_BIT_COUNT,
+    &PY137_KADANE,
+    &PY138_MERGE_INTERVALS,
+    &PY139_LOWER_BOUND,
+    &PY140_ROTATE_MATRIX,
+    &PY141_VALID_PARENS,
+    &PY142_ANAGRAM,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -2610,10 +2700,27 @@ mod tests {
             (133, "py-133-permutations", Some("py-134-nqueens-count")),
             (134, "py-134-nqueens-count", Some("py-135-trie")),
             (135, "py-135-trie", Some("py-136-bit-count")),
-            (136, "py-136-bit-count", None),
+            (136, "py-136-bit-count", Some("py-137-kadane")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("backtrack-strings family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py137_to_py142_patterns_chain() {
+        let ids = [
+            (137, "py-137-kadane", Some("py-138-merge-intervals")),
+            (138, "py-138-merge-intervals", Some("py-139-lower-bound")),
+            (139, "py-139-lower-bound", Some("py-140-rotate-matrix")),
+            (140, "py-140-rotate-matrix", Some("py-141-valid-parens")),
+            (141, "py-141-valid-parens", Some("py-142-anagram")),
+            (142, "py-142-anagram", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("patterns family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
