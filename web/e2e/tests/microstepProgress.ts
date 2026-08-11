@@ -196,6 +196,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 188, step_id: "py-188-sqrt" },
   { level_id: 189, step_id: "py-189-ship-capacity" },
   { level_id: 190, step_id: "py-190-min-rotated" },
+  { level_id: 191, step_id: "py-191-kth-largest" },
+  { level_id: 192, step_id: "py-192-top-k-frequent" },
+  { level_id: 193, step_id: "py-193-merge-k-lists" },
+  { level_id: 194, step_id: "py-194-meeting-rooms" },
+  { level_id: 195, step_id: "py-195-ugly-number" },
+  { level_id: 196, step_id: "py-196-k-closest" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
