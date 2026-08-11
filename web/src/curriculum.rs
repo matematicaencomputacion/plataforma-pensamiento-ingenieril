@@ -1150,9 +1150,93 @@ pub const PY81_CLASS_METHODS: CodingStep = CodingStep {
     pytest: "def test_class_methods(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['p1'].name == 'Emil'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Hi, I am Emil'\n",
     hint: "class Person:\n    def __init__(self, name):\n        self.name = name\n    def greet(self):\n        print(\"Hi, I am \" + self.name)\np1 = Person(\"Emil\")\np1.greet()",
     solution_example: "class Person:\n    def __init__(self, name):\n        self.name = name\n    def greet(self):\n        print(\"Hi, I am \" + self.name)\np1 = Person(\"Emil\")\np1.greet()\n",
-    next: None,
+    next: Some("py-82-stack"),
     show_type_chips: false,
     micro_step: 81,
+};
+
+pub const PY82_STACK: CodingStep = CodingStep {
+    id: "py-82-stack",
+    title: "DSA Stack (list)",
+    objective: "Usar una list como stack LIFO (append/pop).",
+    prompt_md: "**Stacks**\n\nUna stack es LIFO: último en entrar, primero en salir.\n\n**Micro-reto:**\n1. Creá `stack = []`\n2. Hacé `append` de `A`, `B`, `C`\n3. Imprimí `stack.pop()`",
+    starter_code: "# stack = []\n# ...\n# print(...)\n",
+    pytest: "def test_stack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('stack') == ['A', 'B']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'C'\n",
+    hint: "stack = []\nstack.append('A')\nstack.append('B')\nstack.append('C')\nprint(stack.pop())",
+    solution_example: "stack = []\nstack.append('A')\nstack.append('B')\nstack.append('C')\nprint(stack.pop())\n",
+    next: Some("py-83-stack-peek"),
+    show_type_chips: false,
+    micro_step: 82,
+};
+
+pub const PY83_STACK_PEEK: CodingStep = CodingStep {
+    id: "py-83-stack-peek",
+    title: "DSA Stack Peek",
+    objective: "Mirar el tope de la stack sin hacer pop.",
+    prompt_md: "**Stack Peek**\n\nPeek mira el último elemento sin removerlo (`stack[-1]`).\n\n**Micro-reto:**\n1. Creá `stack` con `A`, `B`, `C` vía append\n2. Guardá en `top` el peek `stack[-1]`\n3. Imprimí `top`",
+    starter_code: "# stack = []\n# ...\n# top = ...\n# print(top)\n",
+    pytest: "def test_stack_peek(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('stack') == ['A', 'B', 'C']\n    assert ns.get('top') == 'C'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'C'\n",
+    hint: "stack = []\nstack.append('A')\nstack.append('B')\nstack.append('C')\ntop = stack[-1]\nprint(top)",
+    solution_example: "stack = []\nstack.append('A')\nstack.append('B')\nstack.append('C')\ntop = stack[-1]\nprint(top)\n",
+    next: Some("py-84-queue"),
+    show_type_chips: false,
+    micro_step: 83,
+};
+
+pub const PY84_QUEUE: CodingStep = CodingStep {
+    id: "py-84-queue",
+    title: "DSA Queue (list)",
+    objective: "Usar una list como queue FIFO (append/pop(0)).",
+    prompt_md: "**Queues**\n\nUna queue es FIFO: primero en entrar, primero en salir.\n\n**Micro-reto:**\n1. Creá `queue = []`\n2. Encolá `A`, `B`, `C` con append\n3. Imprimí `queue.pop(0)`",
+    starter_code: "# queue = []\n# ...\n# print(...)\n",
+    pytest: "def test_queue(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('queue') == ['B', 'C']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'A'\n",
+    hint: "queue = []\nqueue.append('A')\nqueue.append('B')\nqueue.append('C')\nprint(queue.pop(0))",
+    solution_example: "queue = []\nqueue.append('A')\nqueue.append('B')\nqueue.append('C')\nprint(queue.pop(0))\n",
+    next: Some("py-85-queue-peek"),
+    show_type_chips: false,
+    micro_step: 84,
+};
+
+pub const PY85_QUEUE_PEEK: CodingStep = CodingStep {
+    id: "py-85-queue-peek",
+    title: "DSA Queue Peek",
+    objective: "Mirar el frente de la queue sin dequeue.",
+    prompt_md: "**Queue Peek**\n\nPeek mira el primer elemento (`queue[0]`).\n\n**Micro-reto:**\n1. Creá `queue` con `A`, `B`, `C`\n2. Guardá en `front` el peek `queue[0]`\n3. Imprimí `front`",
+    starter_code: "# queue = []\n# ...\n# front = ...\n# print(front)\n",
+    pytest: "def test_queue_peek(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('queue') == ['A', 'B', 'C']\n    assert ns.get('front') == 'A'\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'A'\n",
+    hint: "queue = []\nqueue.append('A')\nqueue.append('B')\nqueue.append('C')\nfront = queue[0]\nprint(front)",
+    solution_example: "queue = []\nqueue.append('A')\nqueue.append('B')\nqueue.append('C')\nfront = queue[0]\nprint(front)\n",
+    next: Some("py-86-stack-class"),
+    show_type_chips: false,
+    micro_step: 85,
+};
+
+pub const PY86_STACK_CLASS: CodingStep = CodingStep {
+    id: "py-86-stack-class",
+    title: "DSA Stack Class",
+    objective: "Implementar push/pop en una clase Stack.",
+    prompt_md: "**Stack Class**\n\nEncapsulá la stack en una clase.\n\n**Micro-reto:**\n1. Creá `class Stack` con `__init__` que haga `self.stack = []`\n2. Métodos `push(self, element)` (append) y `pop(self)` (pop)\n3. Creá `myStack`, hacé push de `A` y `B`, imprimí `myStack.pop()`",
+    starter_code: "# class Stack:\n#     ...\n# myStack = Stack()\n# ...\n# print(...)\n",
+    pytest: "def test_stack_class(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['myStack'].stack == ['A']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'B'\n",
+    hint: "class Stack:\n    def __init__(self):\n        self.stack = []\n    def push(self, element):\n        self.stack.append(element)\n    def pop(self):\n        return self.stack.pop()\nmyStack = Stack()\nmyStack.push('A')\nmyStack.push('B')\nprint(myStack.pop())",
+    solution_example: "class Stack:\n    def __init__(self):\n        self.stack = []\n    def push(self, element):\n        self.stack.append(element)\n    def pop(self):\n        return self.stack.pop()\nmyStack = Stack()\nmyStack.push('A')\nmyStack.push('B')\nprint(myStack.pop())\n",
+    next: Some("py-87-queue-class"),
+    show_type_chips: false,
+    micro_step: 86,
+};
+
+pub const PY87_QUEUE_CLASS: CodingStep = CodingStep {
+    id: "py-87-queue-class",
+    title: "DSA Queue Class",
+    objective: "Implementar enqueue/dequeue en una clase Queue.",
+    prompt_md: "**Queue Class**\n\nEncapsulá la queue en una clase.\n\n**Micro-reto:**\n1. Creá `class Queue` con `self.queue = []`\n2. `enqueue` con append; `dequeue` con `pop(0)`\n3. Creá `myQueue`, encolá `A` y `B`, imprimí `myQueue.dequeue()`",
+    starter_code: "# class Queue:\n#     ...\n# myQueue = Queue()\n# ...\n# print(...)\n",
+    pytest: "def test_queue_class(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['myQueue'].queue == ['B']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'A'\n",
+    hint: "class Queue:\n    def __init__(self):\n        self.queue = []\n    def enqueue(self, element):\n        self.queue.append(element)\n    def dequeue(self):\n        return self.queue.pop(0)\nmyQueue = Queue()\nmyQueue.enqueue('A')\nmyQueue.enqueue('B')\nprint(myQueue.dequeue())",
+    solution_example: "class Queue:\n    def __init__(self):\n        self.queue = []\n    def enqueue(self, element):\n        self.queue.append(element)\n    def dequeue(self):\n        return self.queue.pop(0)\nmyQueue = Queue()\nmyQueue.enqueue('A')\nmyQueue.enqueue('B')\nprint(myQueue.dequeue())\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 87,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1237,6 +1321,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY79_SELF,
     &PY80_CLASS_PROPERTIES,
     &PY81_CLASS_METHODS,
+    &PY82_STACK,
+    &PY83_STACK_PEEK,
+    &PY84_QUEUE,
+    &PY85_QUEUE_PEEK,
+    &PY86_STACK_CLASS,
+    &PY87_QUEUE_CLASS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -1631,10 +1721,27 @@ mod tests {
             (78, "py-78-add-two-numbers", Some("py-79-self")),
             (79, "py-79-self", Some("py-80-class-properties")),
             (80, "py-80-class-properties", Some("py-81-class-methods")),
-            (81, "py-81-class-methods", None),
+            (81, "py-81-class-methods", Some("py-82-stack")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("howto/oop family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py82_to_py87_dsa_chain() {
+        let ids = [
+            (82, "py-82-stack", Some("py-83-stack-peek")),
+            (83, "py-83-stack-peek", Some("py-84-queue")),
+            (84, "py-84-queue", Some("py-85-queue-peek")),
+            (85, "py-85-queue-peek", Some("py-86-stack-class")),
+            (86, "py-86-stack-class", Some("py-87-queue-class")),
+            (87, "py-87-queue-class", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("dsa family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }

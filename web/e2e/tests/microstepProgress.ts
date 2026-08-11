@@ -87,6 +87,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 79, step_id: "py-79-self" },
   { level_id: 80, step_id: "py-80-class-properties" },
   { level_id: 81, step_id: "py-81-class-methods" },
+  { level_id: 82, step_id: "py-82-stack" },
+  { level_id: 83, step_id: "py-83-stack-peek" },
+  { level_id: 84, step_id: "py-84-queue" },
+  { level_id: 85, step_id: "py-85-queue-peek" },
+  { level_id: 86, step_id: "py-86-stack-class" },
+  { level_id: 87, step_id: "py-87-queue-class" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

@@ -22,82 +22,96 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 76,
-    id: "py-76-reverse-string",
-    title: "How To Reverse a String",
-    solution: `txt = "Hello World"[::-1]
-print(txt)
+    micro: 82,
+    id: "py-82-stack",
+    title: "DSA Stack (list)",
+    solution: `stack = []
+stack.append('A')
+stack.append('B')
+stack.append('C')
+print(stack.pop())
 `,
-    nextUrl: /\/learn\/py-77-remove-duplicates/,
-    cursorAfter: "77",
+    nextUrl: /\/learn\/py-83-stack-peek/,
+    cursorAfter: "83",
   },
   {
-    micro: 77,
-    id: "py-77-remove-duplicates",
-    title: "How To Remove List Duplicates",
-    solution: `mylist = ["a", "b", "a", "c", "c"]
-mylist = list(set(mylist))
-print(sorted(mylist))
+    micro: 83,
+    id: "py-83-stack-peek",
+    title: "DSA Stack Peek",
+    solution: `stack = []
+stack.append('A')
+stack.append('B')
+stack.append('C')
+top = stack[-1]
+print(top)
 `,
-    nextUrl: /\/learn\/py-78-add-two-numbers/,
-    cursorAfter: "78",
+    nextUrl: /\/learn\/py-84-queue/,
+    cursorAfter: "84",
   },
   {
-    micro: 78,
-    id: "py-78-add-two-numbers",
-    title: "How To Add Two Numbers",
-    solution: `x = 5
-y = 10
-z = x + y
-print(z)
+    micro: 84,
+    id: "py-84-queue",
+    title: "DSA Queue (list)",
+    solution: `queue = []
+queue.append('A')
+queue.append('B')
+queue.append('C')
+print(queue.pop(0))
 `,
-    nextUrl: /\/learn\/py-79-self/,
-    cursorAfter: "79",
+    nextUrl: /\/learn\/py-85-queue-peek/,
+    cursorAfter: "85",
   },
   {
-    micro: 79,
-    id: "py-79-self",
-    title: "Python self Parameter",
-    solution: `class Person:
-    def __init__(self, name):
-        self.name = name
-    def myfunc(self):
-        print("Hello my name is " + self.name)
-p1 = Person("John")
-p1.myfunc()
+    micro: 85,
+    id: "py-85-queue-peek",
+    title: "DSA Queue Peek",
+    solution: `queue = []
+queue.append('A')
+queue.append('B')
+queue.append('C')
+front = queue[0]
+print(front)
 `,
-    nextUrl: /\/learn\/py-80-class-properties/,
-    cursorAfter: "80",
+    nextUrl: /\/learn\/py-86-stack-class/,
+    cursorAfter: "86",
   },
   {
-    micro: 80,
-    id: "py-80-class-properties",
-    title: "Python Class Properties",
-    solution: `class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-p1 = Person("John", 36)
-p1.age = 40
-print(p1.age)
+    micro: 86,
+    id: "py-86-stack-class",
+    title: "DSA Stack Class",
+    solution: `class Stack:
+    def __init__(self):
+        self.stack = []
+    def push(self, element):
+        self.stack.append(element)
+    def pop(self):
+        return self.stack.pop()
+myStack = Stack()
+myStack.push('A')
+myStack.push('B')
+print(myStack.pop())
 `,
-    nextUrl: /\/learn\/py-81-class-methods/,
-    cursorAfter: "81",
+    nextUrl: /\/learn\/py-87-queue-class/,
+    cursorAfter: "87",
   },
   {
-    micro: 81,
-    id: "py-81-class-methods",
-    title: "Python Class Methods",
-    solution: `class Person:
-    def __init__(self, name):
-        self.name = name
-    def greet(self):
-        print("Hi, I am " + self.name)
-p1 = Person("Emil")
-p1.greet()
+    micro: 87,
+    id: "py-87-queue-class",
+    title: "DSA Queue Class",
+    solution: `class Queue:
+    def __init__(self):
+        self.queue = []
+    def enqueue(self, element):
+        self.queue.append(element)
+    def dequeue(self):
+        return self.queue.pop(0)
+myQueue = Queue()
+myQueue.enqueue('A')
+myQueue.enqueue('B')
+print(myQueue.dequeue())
 `,
-    nextUrl: /\/learn\/py-82-stack/,
-    cursorAfter: "82",
+    nextUrl: /\/workspace/,
+    cursorAfter: "88",
   },
 ];
 
@@ -126,7 +140,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 76–81 · How To + OOP leftovers", () => {
+test.describe("micro-steps 82–87 · DSA Stacks & Queues", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
