@@ -45,6 +45,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 37, step_id: "py-37-set-remove" },
   { level_id: 38, step_id: "py-38-set-loop" },
   { level_id: 39, step_id: "py-39-set-join" },
+  { level_id: 40, step_id: "py-40-dictionaries" },
+  { level_id: 41, step_id: "py-41-dict-access" },
+  { level_id: 42, step_id: "py-42-dict-change" },
+  { level_id: 43, step_id: "py-43-dict-add" },
+  { level_id: 44, step_id: "py-44-dict-remove" },
+  { level_id: 45, step_id: "py-45-dict-loop" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

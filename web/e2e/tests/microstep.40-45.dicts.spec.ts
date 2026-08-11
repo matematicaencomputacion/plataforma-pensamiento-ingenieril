@@ -22,69 +22,68 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 34,
-    id: "py-34-sets",
-    title: "Python Sets",
-    solution: `thisset = {"apple", "banana", "cherry"}
-print(len(thisset))
+    micro: 40,
+    id: "py-40-dictionaries",
+    title: "Python Dictionaries",
+    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
+print(len(thisdict))
 `,
-    nextUrl: /\/learn\/py-35-set-access/,
-    cursorAfter: "35",
+    nextUrl: /\/learn\/py-41-dict-access/,
+    cursorAfter: "41",
   },
   {
-    micro: 35,
-    id: "py-35-set-access",
-    title: "Python Access Set Items",
-    solution: `thisset = {"apple", "banana", "cherry"}
-print("banana" in thisset)
+    micro: 41,
+    id: "py-41-dict-access",
+    title: "Python Access Dictionary Items",
+    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
+print(thisdict["model"])
 `,
-    nextUrl: /\/learn\/py-36-set-add/,
-    cursorAfter: "36",
+    nextUrl: /\/learn\/py-42-dict-change/,
+    cursorAfter: "42",
   },
   {
-    micro: 36,
-    id: "py-36-set-add",
-    title: "Python Add Set Items",
-    solution: `thisset = {"apple", "banana", "cherry"}
-thisset.add("orange")
-print("orange" in thisset)
+    micro: 42,
+    id: "py-42-dict-change",
+    title: "Python Change Dictionary Items",
+    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
+thisdict["year"] = 2018
+print(thisdict["year"])
 `,
-    nextUrl: /\/learn\/py-37-set-remove/,
-    cursorAfter: "37",
+    nextUrl: /\/learn\/py-43-dict-add/,
+    cursorAfter: "43",
   },
   {
-    micro: 37,
-    id: "py-37-set-remove",
-    title: "Python Remove Set Items",
-    solution: `thisset = {"apple", "banana", "cherry"}
-thisset.remove("banana")
-print("banana" in thisset)
+    micro: 43,
+    id: "py-43-dict-add",
+    title: "Python Add Dictionary Items",
+    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
+thisdict["color"] = "red"
+print(thisdict["color"])
 `,
-    nextUrl: /\/learn\/py-38-set-loop/,
-    cursorAfter: "38",
+    nextUrl: /\/learn\/py-44-dict-remove/,
+    cursorAfter: "44",
   },
   {
-    micro: 38,
-    id: "py-38-set-loop",
-    title: "Python Loop Sets",
-    solution: `thisset = {"apple", "banana", "cherry"}
-for x in thisset:
+    micro: 44,
+    id: "py-44-dict-remove",
+    title: "Python Remove Dictionary Items",
+    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
+thisdict.pop("model")
+print("model" in thisdict)
+`,
+    nextUrl: /\/learn\/py-45-dict-loop/,
+    cursorAfter: "45",
+  },
+  {
+    micro: 45,
+    id: "py-45-dict-loop",
+    title: "Python Loop Dictionaries",
+    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
+for x in thisdict:
     print(x)
 `,
-    nextUrl: /\/learn\/py-39-set-join/,
-    cursorAfter: "39",
-  },
-  {
-    micro: 39,
-    id: "py-39-set-join",
-    title: "Python Join Sets",
-    solution: `set1 = {"a", "b", "c"}
-set2 = {1, 2, 3}
-set3 = set1.union(set2)
-print(len(set3))
-`,
-    nextUrl: /\/learn\/py-40-dictionaries/,
-    cursorAfter: "40",
+    nextUrl: /\/workspace/,
+    cursorAfter: "46",
   },
 ];
 
@@ -113,7 +112,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 34–39 · Sets family", () => {
+test.describe("micro-steps 40–45 · Dictionaries family", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
