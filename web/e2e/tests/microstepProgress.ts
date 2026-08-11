@@ -202,6 +202,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 194, step_id: "py-194-meeting-rooms" },
   { level_id: 195, step_id: "py-195-ugly-number" },
   { level_id: 196, step_id: "py-196-k-closest" },
+  { level_id: 197, step_id: "py-197-coin-change-ii" },
+  { level_id: 198, step_id: "py-198-house-robber-ii" },
+  { level_id: 199, step_id: "py-199-unique-paths-ii" },
+  { level_id: 200, step_id: "py-200-max-product" },
+  { level_id: 201, step_id: "py-201-partition-subset" },
+  { level_id: 202, step_id: "py-202-perfect-squares" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
