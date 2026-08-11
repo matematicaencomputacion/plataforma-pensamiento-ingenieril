@@ -184,6 +184,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 176, step_id: "py-176-three-sum" },
   { level_id: 177, step_id: "py-177-trapping-rain" },
   { level_id: 178, step_id: "py-178-group-anagrams" },
+  { level_id: 179, step_id: "py-179-daily-temps" },
+  { level_id: 180, step_id: "py-180-next-greater" },
+  { level_id: 181, step_id: "py-181-eval-rpn" },
+  { level_id: 182, step_id: "py-182-queue-stacks" },
+  { level_id: 183, step_id: "py-183-sliding-max" },
+  { level_id: 184, step_id: "py-184-min-stack" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

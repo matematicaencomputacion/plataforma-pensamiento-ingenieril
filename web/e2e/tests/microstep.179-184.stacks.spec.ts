@@ -22,133 +22,158 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 173,
-    id: "py-173-jump-game",
-    title: "DSA Jump Game",
-    solution: `def can_jump(nums):
-    reach = 0
-    for i, n in enumerate(nums):
-        if i > reach:
-            return False
-        reach = max(reach, i + n)
-    return True
-print(can_jump([2, 3, 1, 1, 4]))
+    micro: 179,
+    id: "py-179-daily-temps",
+    title: "DSA Daily Temperatures",
+    solution: `def daily_temperatures(temps):
+    n = len(temps)
+    ans = [0] * n
+    stack = []
+    for i, t in enumerate(temps):
+        while stack and temps[stack[-1]] < t:
+            j = stack.pop()
+            ans[j] = i - j
+        stack.append(i)
+    return ans
+print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
 `,
-    nextUrl: /\/learn\/py-174-gas-station/,
-    cursorAfter: "174",
+    nextUrl: /\/learn\/py-180-next-greater/,
+    cursorAfter: "180",
   },
   {
-    micro: 174,
-    id: "py-174-gas-station",
-    title: "DSA Gas Station",
-    solution: `def can_complete_circuit(gas, cost):
-    if sum(gas) < sum(cost):
-        return -1
-    tank = 0
-    start = 0
-    for i in range(len(gas)):
-        tank += gas[i] - cost[i]
-        if tank < 0:
-            tank = 0
-            start = i + 1
-    return start
-print(can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]))
+    micro: 180,
+    id: "py-180-next-greater",
+    title: "DSA Next Greater Element",
+    solution: `def next_greater(nums):
+    n = len(nums)
+    ans = [-1] * n
+    stack = []
+    for i, x in enumerate(nums):
+        while stack and nums[stack[-1]] < x:
+            ans[stack.pop()] = x
+        stack.append(i)
+    return ans
+print(next_greater([2, 1, 2, 4, 3]))
 `,
-    nextUrl: /\/learn\/py-175-container-water/,
-    cursorAfter: "175",
+    nextUrl: /\/learn\/py-181-eval-rpn/,
+    cursorAfter: "181",
   },
   {
-    micro: 175,
-    id: "py-175-container-water",
-    title: "DSA Container With Most Water",
-    solution: `def max_area(height):
-    left, right = 0, len(height) - 1
-    best = 0
-    while left < right:
-        best = max(best, min(height[left], height[right]) * (right - left))
-        if height[left] < height[right]:
-            left += 1
+    micro: 181,
+    id: "py-181-eval-rpn",
+    title: "DSA Evaluate RPN",
+    solution: `def eval_rpn(tokens):
+    stack = []
+    for t in tokens:
+        if t in '+-*/':
+            b, a = stack.pop(), stack.pop()
+            if t == '+':
+                stack.append(a + b)
+            elif t == '-':
+                stack.append(a - b)
+            elif t == '*':
+                stack.append(a * b)
+            else:
+                stack.append(int(a / b))
         else:
-            right -= 1
-    return best
-print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))
+            stack.append(int(t))
+    return stack[0]
+print(eval_rpn(['2', '1', '+', '3', '*']))
 `,
-    nextUrl: /\/learn\/py-176-three-sum/,
-    cursorAfter: "176",
+    nextUrl: /\/learn\/py-182-queue-stacks/,
+    cursorAfter: "182",
   },
   {
-    micro: 176,
-    id: "py-176-three-sum",
-    title: "DSA 3Sum",
-    solution: `def three_sum(nums):
-    nums = sorted(nums)
-    result = []
-    for i in range(len(nums)):
-        if i and nums[i] == nums[i - 1]:
-            continue
-        lo, hi = i + 1, len(nums) - 1
-        while lo < hi:
-            total = nums[i] + nums[lo] + nums[hi]
-            if total == 0:
-                result.append([nums[i], nums[lo], nums[hi]])
-                lo += 1
-                hi -= 1
-                while lo < hi and nums[lo] == nums[lo - 1]:
-                    lo += 1
-                while lo < hi and nums[hi] == nums[hi + 1]:
-                    hi -= 1
-            elif total < 0:
-                lo += 1
-            else:
-                hi -= 1
-    return result
-print(three_sum([-1, 0, 1, 2, -1, -4]))
+    micro: 182,
+    id: "py-182-queue-stacks",
+    title: "DSA Queue With Stacks",
+    solution: `class MyQueue:
+    def __init__(self):
+        self.inn = []
+        self.out = []
+
+    def push(self, x):
+        self.inn.append(x)
+
+    def pop(self):
+        self.peek()
+        return self.out.pop()
+
+    def peek(self):
+        if not self.out:
+            while self.inn:
+                self.out.append(self.inn.pop())
+        return self.out[-1]
+
+    def empty(self):
+        return not self.inn and not self.out
+
+q = MyQueue()
+q.push(1)
+q.push(2)
+print([q.peek(), q.pop(), q.empty()])
 `,
-    nextUrl: /\/learn\/py-177-trapping-rain/,
-    cursorAfter: "177",
+    nextUrl: /\/learn\/py-183-sliding-max/,
+    cursorAfter: "183",
   },
   {
-    micro: 177,
-    id: "py-177-trapping-rain",
-    title: "DSA Trapping Rain Water",
-    solution: `def trap(height):
-    if not height:
-        return 0
-    left, right = 0, len(height) - 1
-    left_max = right_max = water = 0
-    while left < right:
-        if height[left] < height[right]:
-            if height[left] >= left_max:
-                left_max = height[left]
-            else:
-                water += left_max - height[left]
-            left += 1
-        else:
-            if height[right] >= right_max:
-                right_max = height[right]
-            else:
-                water += right_max - height[right]
-            right -= 1
-    return water
-print(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))
+    micro: 183,
+    id: "py-183-sliding-max",
+    title: "DSA Sliding Window Maximum",
+    solution: `from collections import deque
+
+def max_sliding_window(nums, k):
+    dq = deque()
+    out = []
+    for i, x in enumerate(nums):
+        while dq and dq[0] <= i - k:
+            dq.popleft()
+        while dq and nums[dq[-1]] <= x:
+            dq.pop()
+        dq.append(i)
+        if i >= k - 1:
+            out.append(nums[dq[0]])
+    return out
+print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
 `,
-    nextUrl: /\/learn\/py-178-group-anagrams/,
-    cursorAfter: "178",
+    nextUrl: /\/learn\/py-184-min-stack/,
+    cursorAfter: "184",
   },
   {
-    micro: 178,
-    id: "py-178-group-anagrams",
-    title: "DSA Group Anagrams",
-    solution: `def group_anagrams(strs):
-    groups = {}
-    for s in strs:
-        key = ''.join(sorted(s))
-        groups.setdefault(key, []).append(s)
-    return list(groups.values())
-print(sorted([sorted(g) for g in group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])]))
+    micro: 184,
+    id: "py-184-min-stack",
+    title: "DSA Min Stack",
+    solution: `class MinStack:
+    def __init__(self):
+        self.stack = []
+        self.mins = []
+
+    def push(self, val):
+        self.stack.append(val)
+        self.mins.append(val if not self.mins else min(val, self.mins[-1]))
+
+    def pop(self):
+        self.stack.pop()
+        self.mins.pop()
+
+    def top(self):
+        return self.stack[-1]
+
+    def get_min(self):
+        return self.mins[-1]
+
+s = MinStack()
+s.push(-2)
+s.push(0)
+s.push(-3)
+a = s.get_min()
+s.pop()
+b = s.top()
+c = s.get_min()
+print([a, b, c])
 `,
-    nextUrl: /\/learn\/py-179-daily-temps/,
-    cursorAfter: "179",
+    nextUrl: /\/workspace/,
+    cursorAfter: "185",
   },
 ];
 
@@ -177,7 +202,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 173–178 · jump / gas / water / 3sum / rain / anagrams", () => {
+test.describe("micro-steps 179–184 · stacks / deque", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
