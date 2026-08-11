@@ -4037,7 +4037,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py214_curriculum_chain() {
+    fn py203_to_py226_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
