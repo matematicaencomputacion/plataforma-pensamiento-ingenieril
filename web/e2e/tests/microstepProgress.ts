@@ -63,6 +63,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 55, step_id: "py-55-lambda" },
   { level_id: 56, step_id: "py-56-arrays" },
   { level_id: 57, step_id: "py-57-classes" },
+  { level_id: 58, step_id: "py-58-init" },
+  { level_id: 59, step_id: "py-59-inheritance" },
+  { level_id: 60, step_id: "py-60-iterators" },
+  { level_id: 61, step_id: "py-61-polymorphism" },
+  { level_id: 62, step_id: "py-62-scope" },
+  { level_id: 63, step_id: "py-63-modules" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
