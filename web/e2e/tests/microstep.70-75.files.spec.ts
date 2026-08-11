@@ -22,73 +22,75 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 64,
-    id: "py-64-dates",
-    title: "Python Dates",
-    solution: `import datetime
-x = datetime.datetime(2020, 5, 17)
-print(x)
+    micro: 70,
+    id: "py-70-file-write",
+    title: "Python Write Files",
+    solution: `with open("demofile.txt", "w") as f:
+    f.write("Hello! Welcome to demofile.txt")
 `,
-    nextUrl: /\/learn\/py-65-math/,
-    cursorAfter: "65",
+    nextUrl: /\/learn\/py-71-file-read/,
+    cursorAfter: "71",
   },
   {
-    micro: 65,
-    id: "py-65-math",
-    title: "Python Math",
-    solution: `import math
-x = math.sqrt(64)
-print(x)
+    micro: 71,
+    id: "py-71-file-read",
+    title: "Python Read Files",
+    solution: `with open("demofile.txt", "w") as f:
+    f.write("Hello Python")
+with open("demofile.txt") as f:
+    print(f.read())
 `,
-    nextUrl: /\/learn\/py-66-json/,
-    cursorAfter: "66",
+    nextUrl: /\/learn\/py-72-file-readline/,
+    cursorAfter: "72",
   },
   {
-    micro: 66,
-    id: "py-66-json",
-    title: "Python JSON",
-    solution: `import json
-x = '{"name":"John", "age":30}'
-y = json.loads(x)
-print(y["name"])
+    micro: 72,
+    id: "py-72-file-readline",
+    title: "Python File Readline",
+    solution: `with open("demofile.txt", "w") as f:
+    f.write("First\\nSecond\\n")
+with open("demofile.txt") as f:
+    print(f.readline().strip())
 `,
-    nextUrl: /\/learn\/py-67-regex/,
-    cursorAfter: "67",
+    nextUrl: /\/learn\/py-73-file-append/,
+    cursorAfter: "73",
   },
   {
-    micro: 67,
-    id: "py-67-regex",
-    title: "Python RegEx",
-    solution: `import re
-txt = "The rain in Spain"
-x = re.search("Spain", txt)
-print(x.group())
+    micro: 73,
+    id: "py-73-file-append",
+    title: "Python File Append",
+    solution: `with open("demofile.txt", "w") as f:
+    f.write("Hello")
+with open("demofile.txt", "a") as f:
+    f.write(" World")
+with open("demofile.txt") as f:
+    print(f.read())
 `,
-    nextUrl: /\/learn\/py-68-try-except/,
-    cursorAfter: "68",
+    nextUrl: /\/learn\/py-74-file-delete/,
+    cursorAfter: "74",
   },
   {
-    micro: 68,
-    id: "py-68-try-except",
-    title: "Python Try Except",
-    solution: `try:
-    print(x)
-except:
-    print("An exception occurred")
+    micro: 74,
+    id: "py-74-file-delete",
+    title: "Python Delete Files",
+    solution: `import os
+with open("demofile.txt", "w") as f:
+    f.write("bye")
+os.remove("demofile.txt")
+print(os.path.exists("demofile.txt"))
 `,
-    nextUrl: /\/learn\/py-69-string-formatting/,
-    cursorAfter: "69",
+    nextUrl: /\/learn\/py-75-user-input/,
+    cursorAfter: "75",
   },
   {
-    micro: 69,
-    id: "py-69-string-formatting",
-    title: "Python String Formatting",
-    solution: `price = 49
-txt = f"The price is {price} dollars"
-print(txt)
+    micro: 75,
+    id: "py-75-user-input",
+    title: "Python User Input",
+    solution: `username = "Alice"
+print("Hello, " + username)
 `,
-    nextUrl: /\/learn\/py-70-file-write/,
-    cursorAfter: "70",
+    nextUrl: /\/workspace/,
+    cursorAfter: "76",
   },
 ];
 
@@ -117,7 +119,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 64–69 · Dates / Math / JSON / RegEx / TryExcept / Formatting", () => {
+test.describe("micro-steps 70–75 · File Handling + User Input", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

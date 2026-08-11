@@ -75,6 +75,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 67, step_id: "py-67-regex" },
   { level_id: 68, step_id: "py-68-try-except" },
   { level_id: 69, step_id: "py-69-string-formatting" },
+  { level_id: 70, step_id: "py-70-file-write" },
+  { level_id: 71, step_id: "py-71-file-read" },
+  { level_id: 72, step_id: "py-72-file-readline" },
+  { level_id: 73, step_id: "py-73-file-append" },
+  { level_id: 74, step_id: "py-74-file-delete" },
+  { level_id: 75, step_id: "py-75-user-input" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
