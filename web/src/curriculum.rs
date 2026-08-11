@@ -4027,7 +4027,7 @@ mod tests {
             (187, "py-187-search-rotated", Some("py-188-sqrt")),
             (188, "py-188-sqrt", Some("py-189-ship-capacity")),
             (189, "py-189-ship-capacity", Some("py-190-min-rotated")),
-            (190, "py-190-min-rotated", None),
+            (190, "py-190-min-rotated", Some("py-191-kth-largest")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("binsearch family step");
