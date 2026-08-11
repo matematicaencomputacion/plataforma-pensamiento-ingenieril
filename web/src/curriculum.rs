@@ -2509,9 +2509,93 @@ pub const PY178_GROUP_ANAGRAMS: CodingStep = CodingStep {
     pytest: "def test_group_anagrams(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('group_anagrams'))\n    groups = [sorted(g) for g in ns['group_anagrams'](['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])]\n    assert sorted(groups) == [['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]\n    assert sorted([sorted(g) for g in ns['group_anagrams']([''])]) == [['']]\n    assert sorted([sorted(g) for g in ns['group_anagrams'](['a'])]) == [['a']]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == [\"[['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]\"]\n",
     hint: "def group_anagrams(strs):\n    groups = {}\n    for s in strs:\n        key = ''.join(sorted(s))\n        groups.setdefault(key, []).append(s)\n    return list(groups.values())\nprint(sorted([sorted(g) for g in group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])]))",
     solution_example: "def group_anagrams(strs):\n    groups = {}\n    for s in strs:\n        key = ''.join(sorted(s))\n        groups.setdefault(key, []).append(s)\n    return list(groups.values())\nprint(sorted([sorted(g) for g in group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])]))\n",
-    next: None,
+    next: Some("py-179-daily-temps"),
     show_type_chips: false,
     micro_step: 178,
+};
+
+pub const PY179_DAILY_TEMPS: CodingStep = CodingStep {
+    id: "py-179-daily-temps",
+    title: "DSA Daily Temperatures",
+    objective: "Días hasta una temperatura más cálida (mono-stack).",
+    prompt_md: "**Daily Temperatures**\n\nStack monotónico decreciente de índices.\n\n**Micro-reto:**\n1. Definí `daily_temperatures(temps)`\n2. Imprimí `daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73])` (esperado: `[1, 1, 4, 2, 1, 1, 0, 0]`)",
+    starter_code: "# def daily_temperatures(temps):\n#     n = len(temps)\n#     ans = [0] * n\n#     stack = []\n#     for i, t in enumerate(temps):\n#         while stack and temps[stack[-1]] < t:\n#             j = stack.pop()\n#             ans[j] = i - j\n#         stack.append(i)\n#     return ans\n# print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))\n",
+    pytest: "def test_daily_temperatures(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('daily_temperatures'))\n    assert ns['daily_temperatures']([73, 74, 75, 71, 69, 72, 76, 73]) == [1, 1, 4, 2, 1, 1, 0, 0]\n    assert ns['daily_temperatures']([30, 40, 50, 60]) == [1, 1, 1, 0]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[1, 1, 4, 2, 1, 1, 0, 0]']\n",
+    hint: "def daily_temperatures(temps):\n    n = len(temps)\n    ans = [0] * n\n    stack = []\n    for i, t in enumerate(temps):\n        while stack and temps[stack[-1]] < t:\n            j = stack.pop()\n            ans[j] = i - j\n        stack.append(i)\n    return ans\nprint(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))",
+    solution_example: "def daily_temperatures(temps):\n    n = len(temps)\n    ans = [0] * n\n    stack = []\n    for i, t in enumerate(temps):\n        while stack and temps[stack[-1]] < t:\n            j = stack.pop()\n            ans[j] = i - j\n        stack.append(i)\n    return ans\nprint(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))\n",
+    next: Some("py-180-next-greater"),
+    show_type_chips: false,
+    micro_step: 179,
+};
+
+pub const PY180_NEXT_GREATER: CodingStep = CodingStep {
+    id: "py-180-next-greater",
+    title: "DSA Next Greater Element",
+    objective: "Próximo mayor a la derecha con stack monotónico.",
+    prompt_md: "**Next Greater Element**\n\nPara cada índice, el primer valor mayor a la derecha (o -1).\n\n**Micro-reto:**\n1. Definí `next_greater(nums)`\n2. Imprimí `next_greater([2, 1, 2, 4, 3])` (esperado: `[4, 2, 4, -1, -1]`)",
+    starter_code: "# def next_greater(nums):\n#     n = len(nums)\n#     ans = [-1] * n\n#     stack = []\n#     for i, x in enumerate(nums):\n#         while stack and nums[stack[-1]] < x:\n#             ans[stack.pop()] = x\n#         stack.append(i)\n#     return ans\n# print(next_greater([2, 1, 2, 4, 3]))\n",
+    pytest: "def test_next_greater(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('next_greater'))\n    assert ns['next_greater']([2, 1, 2, 4, 3]) == [4, 2, 4, -1, -1]\n    assert ns['next_greater']([1, 2, 3]) == [2, 3, -1]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[4, 2, 4, -1, -1]']\n",
+    hint: "def next_greater(nums):\n    n = len(nums)\n    ans = [-1] * n\n    stack = []\n    for i, x in enumerate(nums):\n        while stack and nums[stack[-1]] < x:\n            ans[stack.pop()] = x\n        stack.append(i)\n    return ans\nprint(next_greater([2, 1, 2, 4, 3]))",
+    solution_example: "def next_greater(nums):\n    n = len(nums)\n    ans = [-1] * n\n    stack = []\n    for i, x in enumerate(nums):\n        while stack and nums[stack[-1]] < x:\n            ans[stack.pop()] = x\n        stack.append(i)\n    return ans\nprint(next_greater([2, 1, 2, 4, 3]))\n",
+    next: Some("py-181-eval-rpn"),
+    show_type_chips: false,
+    micro_step: 180,
+};
+
+pub const PY181_EVAL_RPN: CodingStep = CodingStep {
+    id: "py-181-eval-rpn",
+    title: "DSA Evaluate RPN",
+    objective: "Evaluar expresión en notación polaca inversa con stack.",
+    prompt_md: "**Evaluate Reverse Polish Notation**\n\nOperá con stack; división trunca hacia 0.\n\n**Micro-reto:**\n1. Definí `eval_rpn(tokens)`\n2. Imprimí `eval_rpn(['2', '1', '+', '3', '*'])` (esperado: `9`)",
+    starter_code: "# def eval_rpn(tokens):\n#     stack = []\n#     for t in tokens:\n#         if t in '+-*/':\n#             b, a = stack.pop(), stack.pop()\n#             if t == '+':\n#                 stack.append(a + b)\n#             elif t == '-':\n#                 stack.append(a - b)\n#             elif t == '*':\n#                 stack.append(a * b)\n#             else:\n#                 stack.append(int(a / b))\n#         else:\n#             stack.append(int(t))\n#     return stack[0]\n# print(eval_rpn(['2', '1', '+', '3', '*']))\n",
+    pytest: "def test_eval_rpn(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('eval_rpn'))\n    assert ns['eval_rpn'](['2', '1', '+', '3', '*']) == 9\n    assert ns['eval_rpn'](['4', '13', '5', '/', '+']) == 6\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['9']\n",
+    hint: "def eval_rpn(tokens):\n    stack = []\n    for t in tokens:\n        if t in '+-*/':\n            b, a = stack.pop(), stack.pop()\n            if t == '+':\n                stack.append(a + b)\n            elif t == '-':\n                stack.append(a - b)\n            elif t == '*':\n                stack.append(a * b)\n            else:\n                stack.append(int(a / b))\n        else:\n            stack.append(int(t))\n    return stack[0]\nprint(eval_rpn(['2', '1', '+', '3', '*']))",
+    solution_example: "def eval_rpn(tokens):\n    stack = []\n    for t in tokens:\n        if t in '+-*/':\n            b, a = stack.pop(), stack.pop()\n            if t == '+':\n                stack.append(a + b)\n            elif t == '-':\n                stack.append(a - b)\n            elif t == '*':\n                stack.append(a * b)\n            else:\n                stack.append(int(a / b))\n        else:\n            stack.append(int(t))\n    return stack[0]\nprint(eval_rpn(['2', '1', '+', '3', '*']))\n",
+    next: Some("py-182-queue-stacks"),
+    show_type_chips: false,
+    micro_step: 181,
+};
+
+pub const PY182_QUEUE_STACKS: CodingStep = CodingStep {
+    id: "py-182-queue-stacks",
+    title: "DSA Queue With Stacks",
+    objective: "Implementar cola FIFO con dos stacks.",
+    prompt_md: "**Implement Queue using Stacks**\n\n`push` en stack in; `pop`/`peek` desde out (volcá when empty).\n\n**Micro-reto:**\n1. Definí `class MyQueue` con `push`, `pop`, `peek`, `empty`\n2. Ejecutá push(1), push(2) e imprimí `[peek(), pop(), empty()]` (esperado: `[1, 1, False]`)",
+    starter_code: "# class MyQueue:\n#     def __init__(self):\n#         self.inn = []\n#         self.out = []\n# \n#     def push(self, x):\n#         self.inn.append(x)\n# \n#     def pop(self):\n#         self.peek()\n#         return self.out.pop()\n# \n#     def peek(self):\n#         if not self.out:\n#             while self.inn:\n#                 self.out.append(self.inn.pop())\n#         return self.out[-1]\n# \n#     def empty(self):\n#         return not self.inn and not self.out\n# \n# q = MyQueue()\n# q.push(1)\n# q.push(2)\n# print([q.peek(), q.pop(), q.empty()])\n",
+    pytest: "def test_queue_stacks(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'MyQueue' in ns\n    q = ns['MyQueue']()\n    q.push(1)\n    q.push(2)\n    assert q.peek() == 1\n    assert q.pop() == 1\n    assert q.empty() is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[1, 1, False]']\n",
+    hint: "class MyQueue:\n    def __init__(self):\n        self.inn = []\n        self.out = []\n\n    def push(self, x):\n        self.inn.append(x)\n\n    def pop(self):\n        self.peek()\n        return self.out.pop()\n\n    def peek(self):\n        if not self.out:\n            while self.inn:\n                self.out.append(self.inn.pop())\n        return self.out[-1]\n\n    def empty(self):\n        return not self.inn and not self.out\n\nq = MyQueue()\nq.push(1)\nq.push(2)\nprint([q.peek(), q.pop(), q.empty()])",
+    solution_example: "class MyQueue:\n    def __init__(self):\n        self.inn = []\n        self.out = []\n\n    def push(self, x):\n        self.inn.append(x)\n\n    def pop(self):\n        self.peek()\n        return self.out.pop()\n\n    def peek(self):\n        if not self.out:\n            while self.inn:\n                self.out.append(self.inn.pop())\n        return self.out[-1]\n\n    def empty(self):\n        return not self.inn and not self.out\n\nq = MyQueue()\nq.push(1)\nq.push(2)\nprint([q.peek(), q.pop(), q.empty()])\n",
+    next: Some("py-183-sliding-max"),
+    show_type_chips: false,
+    micro_step: 182,
+};
+
+pub const PY183_SLIDING_MAX: CodingStep = CodingStep {
+    id: "py-183-sliding-max",
+    title: "DSA Sliding Window Maximum",
+    objective: "Máximo de cada ventana de tamaño k (deque).",
+    prompt_md: "**Sliding Window Maximum**\n\nDeque de índices decreciente en valor.\n\n**Micro-reto:**\n1. Definí `max_sliding_window(nums, k)`\n2. Imprimí `max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3)` (esperado: `[3, 3, 5, 5, 6, 7]`)",
+    starter_code: "# from collections import deque\n# \n# def max_sliding_window(nums, k):\n#     dq = deque()\n#     out = []\n#     for i, x in enumerate(nums):\n#         while dq and dq[0] <= i - k:\n#             dq.popleft()\n#         while dq and nums[dq[-1]] <= x:\n#             dq.pop()\n#         dq.append(i)\n#         if i >= k - 1:\n#             out.append(nums[dq[0]])\n#     return out\n# print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))\n",
+    pytest: "def test_max_sliding_window(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_sliding_window'))\n    assert ns['max_sliding_window']([1, 3, -1, -3, 5, 3, 6, 7], 3) == [3, 3, 5, 5, 6, 7]\n    assert ns['max_sliding_window']([1], 1) == [1]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[3, 3, 5, 5, 6, 7]']\n",
+    hint: "from collections import deque\n\ndef max_sliding_window(nums, k):\n    dq = deque()\n    out = []\n    for i, x in enumerate(nums):\n        while dq and dq[0] <= i - k:\n            dq.popleft()\n        while dq and nums[dq[-1]] <= x:\n            dq.pop()\n        dq.append(i)\n        if i >= k - 1:\n            out.append(nums[dq[0]])\n    return out\nprint(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))",
+    solution_example: "from collections import deque\n\ndef max_sliding_window(nums, k):\n    dq = deque()\n    out = []\n    for i, x in enumerate(nums):\n        while dq and dq[0] <= i - k:\n            dq.popleft()\n        while dq and nums[dq[-1]] <= x:\n            dq.pop()\n        dq.append(i)\n        if i >= k - 1:\n            out.append(nums[dq[0]])\n    return out\nprint(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))\n",
+    next: Some("py-184-min-stack"),
+    show_type_chips: false,
+    micro_step: 183,
+};
+
+pub const PY184_MIN_STACK: CodingStep = CodingStep {
+    id: "py-184-min-stack",
+    title: "DSA Min Stack",
+    objective: "Stack con getMin en O(1) con stack auxiliar.",
+    prompt_md: "**Min Stack**\n\nMantené un stack de mínimos paralelos.\n\n**Micro-reto:**\n1. Definí `class MinStack` con `push`, `pop`, `top`, `get_min`\n2. push(-2), push(0), push(-3); imprimí `[get_min(), top tras pop, get_min]` tras esa secuencia (esperado: `[-3, 0, -2]`)",
+    starter_code: "# class MinStack:\n#     def __init__(self):\n#         self.stack = []\n#         self.mins = []\n# \n#     def push(self, val):\n#         self.stack.append(val)\n#         self.mins.append(val if not self.mins else min(val, self.mins[-1]))\n# \n#     def pop(self):\n#         self.stack.pop()\n#         self.mins.pop()\n# \n#     def top(self):\n#         return self.stack[-1]\n# \n#     def get_min(self):\n#         return self.mins[-1]\n# \n# s = MinStack()\n# s.push(-2)\n# s.push(0)\n# s.push(-3)\n# a = s.get_min()\n# s.pop()\n# b = s.top()\n# c = s.get_min()\n# print([a, b, c])\n",
+    pytest: "def test_min_stack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    s = ns['MinStack']()\n    s.push(-2)\n    s.push(0)\n    s.push(-3)\n    assert s.get_min() == -3\n    s.pop()\n    assert s.top() == 0\n    assert s.get_min() == -2\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[-3, 0, -2]']\n",
+    hint: "class MinStack:\n    def __init__(self):\n        self.stack = []\n        self.mins = []\n\n    def push(self, val):\n        self.stack.append(val)\n        self.mins.append(val if not self.mins else min(val, self.mins[-1]))\n\n    def pop(self):\n        self.stack.pop()\n        self.mins.pop()\n\n    def top(self):\n        return self.stack[-1]\n\n    def get_min(self):\n        return self.mins[-1]\n\ns = MinStack()\ns.push(-2)\ns.push(0)\ns.push(-3)\na = s.get_min()\ns.pop()\nb = s.top()\nc = s.get_min()\nprint([a, b, c])",
+    solution_example: "class MinStack:\n    def __init__(self):\n        self.stack = []\n        self.mins = []\n\n    def push(self, val):\n        self.stack.append(val)\n        self.mins.append(val if not self.mins else min(val, self.mins[-1]))\n\n    def pop(self):\n        self.stack.pop()\n        self.mins.pop()\n\n    def top(self):\n        return self.stack[-1]\n\n    def get_min(self):\n        return self.mins[-1]\n\ns = MinStack()\ns.push(-2)\ns.push(0)\ns.push(-3)\na = s.get_min()\ns.pop()\nb = s.top()\nc = s.get_min()\nprint([a, b, c])\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 184,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -2693,6 +2777,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY176_THREE_SUM,
     &PY177_TRAPPING_RAIN,
     &PY178_GROUP_ANAGRAMS,
+    &PY179_DAILY_TEMPS,
+    &PY180_NEXT_GREATER,
+    &PY181_EVAL_RPN,
+    &PY182_QUEUE_STACKS,
+    &PY183_SLIDING_MAX,
+    &PY184_MIN_STACK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -3345,10 +3435,28 @@ mod tests {
             (175, "py-175-container-water", Some("py-176-three-sum")),
             (176, "py-176-three-sum", Some("py-177-trapping-rain")),
             (177, "py-177-trapping-rain", Some("py-178-group-anagrams")),
-            (178, "py-178-group-anagrams", None),
+            (178, "py-178-group-anagrams", Some("py-179-daily-temps")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("greedy/two-pointers family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+
+    #[test]
+    fn py179_to_py184_stacks_chain() {
+        let ids = [
+            (179, "py-179-daily-temps", Some("py-180-next-greater")),
+            (180, "py-180-next-greater", Some("py-181-eval-rpn")),
+            (181, "py-181-eval-rpn", Some("py-182-queue-stacks")),
+            (182, "py-182-queue-stacks", Some("py-183-sliding-max")),
+            (183, "py-183-sliding-max", Some("py-184-min-stack")),
+            (184, "py-184-min-stack", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("stacks family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
