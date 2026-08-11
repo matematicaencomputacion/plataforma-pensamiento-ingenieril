@@ -22,167 +22,133 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 167,
-    id: "py-167-invert-tree",
-    title: "DSA Invert Binary Tree",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-
-def invert_tree(root):
-    if root is None:
-        return None
-    root.left, root.right = invert_tree(root.right), invert_tree(root.left)
-    return root
-
-def level_order(root):
-    if root is None:
-        return []
-    result = []
-    queue = [root]
-    while queue:
-        node = queue.pop(0)
-        result.append(node.data)
-        if node.left:
-            queue.append(node.left)
-        if node.right:
-            queue.append(node.right)
-    return result
-
-root = TreeNode(4)
-root.left = TreeNode(2)
-root.right = TreeNode(7)
-root.left.left = TreeNode(1)
-root.left.right = TreeNode(3)
-root.right.left = TreeNode(6)
-root.right.right = TreeNode(9)
-invert_tree(root)
-print(level_order(root))
+    micro: 173,
+    id: "py-173-jump-game",
+    title: "DSA Jump Game",
+    solution: `def can_jump(nums):
+    reach = 0
+    for i, n in enumerate(nums):
+        if i > reach:
+            return False
+        reach = max(reach, i + n)
+    return True
+print(can_jump([2, 3, 1, 1, 4]))
 `,
-    nextUrl: /\/learn\/py-168-same-tree/,
-    cursorAfter: "168",
+    nextUrl: /\/learn\/py-174-gas-station/,
+    cursorAfter: "174",
   },
   {
-    micro: 168,
-    id: "py-168-same-tree",
-    title: "DSA Same Tree",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-
-def is_same_tree(p, q):
-    if p is None and q is None:
-        return True
-    if p is None or q is None or p.data != q.data:
-        return False
-    return is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
-
-p = TreeNode(1)
-p.left = TreeNode(2)
-p.right = TreeNode(3)
-q = TreeNode(1)
-q.left = TreeNode(2)
-q.right = TreeNode(3)
-print(is_same_tree(p, q))
+    micro: 174,
+    id: "py-174-gas-station",
+    title: "DSA Gas Station",
+    solution: `def can_complete_circuit(gas, cost):
+    if sum(gas) < sum(cost):
+        return -1
+    tank = 0
+    start = 0
+    for i in range(len(gas)):
+        tank += gas[i] - cost[i]
+        if tank < 0:
+            tank = 0
+            start = i + 1
+    return start
+print(can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]))
 `,
-    nextUrl: /\/learn\/py-169-max-depth/,
-    cursorAfter: "169",
+    nextUrl: /\/learn\/py-175-container-water/,
+    cursorAfter: "175",
   },
   {
-    micro: 169,
-    id: "py-169-max-depth",
-    title: "DSA Maximum Depth",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-
-def max_depth(root):
-    if root is None:
-        return 0
-    return 1 + max(max_depth(root.left), max_depth(root.right))
-
-root = TreeNode(3)
-root.left = TreeNode(9)
-root.right = TreeNode(20)
-root.right.left = TreeNode(15)
-root.right.right = TreeNode(7)
-print(max_depth(root))
-`,
-    nextUrl: /\/learn\/py-170-spiral-matrix/,
-    cursorAfter: "170",
-  },
-  {
-    micro: 170,
-    id: "py-170-spiral-matrix",
-    title: "DSA Spiral Matrix",
-    solution: `def spiral_order(matrix):
-    if not matrix:
-        return []
-    result = []
-    top, bottom = 0, len(matrix) - 1
-    left, right = 0, len(matrix[0]) - 1
-    while top <= bottom and left <= right:
-        for j in range(left, right + 1):
-            result.append(matrix[top][j])
-        top += 1
-        for i in range(top, bottom + 1):
-            result.append(matrix[i][right])
-        right -= 1
-        if top <= bottom:
-            for j in range(right, left - 1, -1):
-                result.append(matrix[bottom][j])
-            bottom -= 1
-        if left <= right:
-            for i in range(bottom, top - 1, -1):
-                result.append(matrix[i][left])
+    micro: 175,
+    id: "py-175-container-water",
+    title: "DSA Container With Most Water",
+    solution: `def max_area(height):
+    left, right = 0, len(height) - 1
+    best = 0
+    while left < right:
+        best = max(best, min(height[left], height[right]) * (right - left))
+        if height[left] < height[right]:
             left += 1
-    return result
-print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+        else:
+            right -= 1
+    return best
+print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))
 `,
-    nextUrl: /\/learn\/py-171-set-zeroes/,
-    cursorAfter: "171",
+    nextUrl: /\/learn\/py-176-three-sum/,
+    cursorAfter: "176",
   },
   {
-    micro: 171,
-    id: "py-171-set-zeroes",
-    title: "DSA Set Matrix Zeroes",
-    solution: `def set_zeroes(matrix):
-    rows = set()
-    cols = set()
-    for i in range(len(matrix)):
-        for j in range(len(matrix[0])):
-            if matrix[i][j] == 0:
-                rows.add(i)
-                cols.add(j)
-    for i in range(len(matrix)):
-        for j in range(len(matrix[0])):
-            if i in rows or j in cols:
-                matrix[i][j] = 0
-    return matrix
-print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
+    micro: 176,
+    id: "py-176-three-sum",
+    title: "DSA 3Sum",
+    solution: `def three_sum(nums):
+    nums = sorted(nums)
+    result = []
+    for i in range(len(nums)):
+        if i and nums[i] == nums[i - 1]:
+            continue
+        lo, hi = i + 1, len(nums) - 1
+        while lo < hi:
+            total = nums[i] + nums[lo] + nums[hi]
+            if total == 0:
+                result.append([nums[i], nums[lo], nums[hi]])
+                lo += 1
+                hi -= 1
+                while lo < hi and nums[lo] == nums[lo - 1]:
+                    lo += 1
+                while lo < hi and nums[hi] == nums[hi + 1]:
+                    hi -= 1
+            elif total < 0:
+                lo += 1
+            else:
+                hi -= 1
+    return result
+print(three_sum([-1, 0, 1, 2, -1, -4]))
 `,
-    nextUrl: /\/learn\/py-172-subsets/,
-    cursorAfter: "172",
+    nextUrl: /\/learn\/py-177-trapping-rain/,
+    cursorAfter: "177",
   },
   {
-    micro: 172,
-    id: "py-172-subsets",
-    title: "DSA Subsets",
-    solution: `def subsets(nums):
-    result = [[]]
-    for n in nums:
-        result += [subset + [n] for subset in result]
-    return result
-print(sorted(subsets([1, 2])))
+    micro: 177,
+    id: "py-177-trapping-rain",
+    title: "DSA Trapping Rain Water",
+    solution: `def trap(height):
+    if not height:
+        return 0
+    left, right = 0, len(height) - 1
+    left_max = right_max = water = 0
+    while left < right:
+        if height[left] < height[right]:
+            if height[left] >= left_max:
+                left_max = height[left]
+            else:
+                water += left_max - height[left]
+            left += 1
+        else:
+            if height[right] >= right_max:
+                right_max = height[right]
+            else:
+                water += right_max - height[right]
+            right -= 1
+    return water
+print(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))
 `,
-    nextUrl: /\/learn\/py-173-jump-game/,
-    cursorAfter: "173",
+    nextUrl: /\/learn\/py-178-group-anagrams/,
+    cursorAfter: "178",
+  },
+  {
+    micro: 178,
+    id: "py-178-group-anagrams",
+    title: "DSA Group Anagrams",
+    solution: `def group_anagrams(strs):
+    groups = {}
+    for s in strs:
+        key = ''.join(sorted(s))
+        groups.setdefault(key, []).append(s)
+    return list(groups.values())
+print(sorted([sorted(g) for g in group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])]))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "179",
   },
 ];
 
@@ -211,7 +177,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 167–172 · trees / matrices", () => {
+test.describe("micro-steps 173–178 · jump / gas / water / 3sum / rain / anagrams", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

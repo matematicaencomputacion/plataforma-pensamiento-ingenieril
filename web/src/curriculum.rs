@@ -2424,9 +2424,94 @@ pub const PY172_SUBSETS: CodingStep = CodingStep {
     pytest: "def test_subsets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('subsets'))\n    got = [sorted(s) for s in ns['subsets']([1, 2])]\n    assert sorted(got) == [[], [1], [1, 2], [2]]\n    got3 = [sorted(s) for s in ns['subsets']([1, 2, 3])]\n    assert sorted(got3) == [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]\n    assert ns['subsets']([]) == [[]]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[[], [1], [1, 2], [2]]']\n",
     hint: "def subsets(nums):\n    result = [[]]\n    for n in nums:\n        result += [subset + [n] for subset in result]\n    return result\nprint(sorted(subsets([1, 2])))",
     solution_example: "def subsets(nums):\n    result = [[]]\n    for n in nums:\n        result += [subset + [n] for subset in result]\n    return result\nprint(sorted(subsets([1, 2])))\n",
-    next: None,
+    next: Some("py-173-jump-game"),
     show_type_chips: false,
     micro_step: 172,
+};
+
+pub const PY173_JUMP_GAME: CodingStep = CodingStep {
+    id: "py-173-jump-game",
+    title: "DSA Jump Game",
+    objective: "Decidir si se puede llegar al último índice con saltos máximos.",
+    prompt_md: "**Jump Game**\n\nLlevá el alcance máximo (`reach`) y avanzá solo mientras `i <= reach`.\n\n**Micro-reto:**\n1. Definí `can_jump(nums)`\n2. Devolvé `True` si podés llegar al final\n3. Imprimí `can_jump([2, 3, 1, 1, 4])` (esperado: `True`)",
+    starter_code: "# def can_jump(nums):\n#     ...\n# print(can_jump([2, 3, 1, 1, 4]))\n",
+    pytest: "def test_jump_game(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('can_jump'))\n    assert ns['can_jump']([2, 3, 1, 1, 4]) is True\n    assert ns['can_jump']([3, 2, 1, 0, 4]) is False\n    assert ns['can_jump']([0]) is True\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "def can_jump(nums):\n    reach = 0\n    for i, n in enumerate(nums):\n        if i > reach:\n            return False\n        reach = max(reach, i + n)\n    return True\nprint(can_jump([2, 3, 1, 1, 4]))",
+    solution_example: "def can_jump(nums):\n    reach = 0\n    for i, n in enumerate(nums):\n        if i > reach:\n            return False\n        reach = max(reach, i + n)\n    return True\nprint(can_jump([2, 3, 1, 1, 4]))\n",
+    next: Some("py-174-gas-station"),
+    show_type_chips: false,
+    micro_step: 173,
+};
+
+pub const PY174_GAS_STATION: CodingStep = CodingStep {
+    id: "py-174-gas-station",
+    title: "DSA Gas Station",
+    objective: "Encontrar el índice de partida para completar el circuito de gas.",
+    prompt_md: "**Gas Station**\n\nSi el total de gas es insuficiente, devolvé `-1`. Si no, el único start válido es donde el tank deja de ir negativo.\n\n**Micro-reto:**\n1. Definí `can_complete_circuit(gas, cost)`\n2. Imprimí `can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2])` (esperado: `3`)",
+    starter_code: "# def can_complete_circuit(gas, cost):\n#     ...\n# print(can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]))\n",
+    pytest: "def test_gas_station(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('can_complete_circuit'))\n    assert ns['can_complete_circuit']([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]) == 3\n    assert ns['can_complete_circuit']([2, 3, 4], [3, 4, 3]) == -1\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
+    hint: "def can_complete_circuit(gas, cost):\n    if sum(gas) < sum(cost):\n        return -1\n    tank = 0\n    start = 0\n    for i in range(len(gas)):\n        tank += gas[i] - cost[i]\n        if tank < 0:\n            tank = 0\n            start = i + 1\n    return start\nprint(can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]))",
+    solution_example: "def can_complete_circuit(gas, cost):\n    if sum(gas) < sum(cost):\n        return -1\n    tank = 0\n    start = 0\n    for i in range(len(gas)):\n        tank += gas[i] - cost[i]\n        if tank < 0:\n            tank = 0\n            start = i + 1\n    return start\nprint(can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]))\n",
+    next: Some("py-175-container-water"),
+    show_type_chips: false,
+    micro_step: 174,
+};
+
+pub const PY175_CONTAINER_WATER: CodingStep = CodingStep {
+    id: "py-175-container-water",
+    title: "DSA Container With Most Water",
+    objective: "Maximizar el área entre dos líneas con dos punteros.",
+    prompt_md: "**Container With Most Water**\n\nEmpezá en los extremos: mové el puntero de menor altura.\n\n**Micro-reto:**\n1. Definí `max_area(height)`\n2. Imprimí `max_area([1, 8, 6, 2, 5, 4, 8, 3, 7])` (esperado: `49`)",
+    starter_code: "# def max_area(height):\n#     ...\n# print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))\n",
+    pytest: "def test_container_water(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_area'))\n    assert ns['max_area']([1, 8, 6, 2, 5, 4, 8, 3, 7]) == 49\n    assert ns['max_area']([1, 1]) == 1\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['49']\n",
+    hint: "def max_area(height):\n    left, right = 0, len(height) - 1\n    best = 0\n    while left < right:\n        best = max(best, min(height[left], height[right]) * (right - left))\n        if height[left] < height[right]:\n            left += 1\n        else:\n            right -= 1\n    return best\nprint(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))",
+    solution_example: "def max_area(height):\n    left, right = 0, len(height) - 1\n    best = 0\n    while left < right:\n        best = max(best, min(height[left], height[right]) * (right - left))\n        if height[left] < height[right]:\n            left += 1\n        else:\n            right -= 1\n    return best\nprint(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))\n",
+    next: Some("py-176-three-sum"),
+    show_type_chips: false,
+    micro_step: 175,
+};
+
+pub const PY176_THREE_SUM: CodingStep = CodingStep {
+    id: "py-176-three-sum",
+    title: "DSA 3Sum",
+    objective: "Encontrar triplets únicos que sumen cero.",
+    prompt_md: "**3Sum**\n\nOrdená, fijá un índice y usá two-pointers; saltá duplicados.\n\n**Micro-reto:**\n1. Definí `three_sum(nums)` que devolvé triplets ordenados y únicos\n2. Imprimí `three_sum([-1, 0, 1, 2, -1, -4])` (esperado: `[[-1, -1, 2], [-1, 0, 1]]`)",
+    starter_code: "# def three_sum(nums):\n#     ...\n# print(three_sum([-1, 0, 1, 2, -1, -4]))\n",
+    pytest: "def test_three_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('three_sum'))\n    assert ns['three_sum']([-1, 0, 1, 2, -1, -4]) == [[-1, -1, 2], [-1, 0, 1]]\n    assert ns['three_sum']([0, 1, 1]) == []\n    assert ns['three_sum']([0, 0, 0]) == [[0, 0, 0]]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['[[-1, -1, 2], [-1, 0, 1]]']\n",
+    hint: "def three_sum(nums):\n    nums = sorted(nums)\n    result = []\n    for i in range(len(nums)):\n        if i and nums[i] == nums[i - 1]:\n            continue\n        lo, hi = i + 1, len(nums) - 1\n        while lo < hi:\n            total = nums[i] + nums[lo] + nums[hi]\n            if total == 0:\n                result.append([nums[i], nums[lo], nums[hi]])\n                lo += 1\n                hi -= 1\n                while lo < hi and nums[lo] == nums[lo - 1]:\n                    lo += 1\n                while lo < hi and nums[hi] == nums[hi + 1]:\n                    hi -= 1\n            elif total < 0:\n                lo += 1\n            else:\n                hi -= 1\n    return result\nprint(three_sum([-1, 0, 1, 2, -1, -4]))",
+    solution_example: "def three_sum(nums):\n    nums = sorted(nums)\n    result = []\n    for i in range(len(nums)):\n        if i and nums[i] == nums[i - 1]:\n            continue\n        lo, hi = i + 1, len(nums) - 1\n        while lo < hi:\n            total = nums[i] + nums[lo] + nums[hi]\n            if total == 0:\n                result.append([nums[i], nums[lo], nums[hi]])\n                lo += 1\n                hi -= 1\n                while lo < hi and nums[lo] == nums[lo - 1]:\n                    lo += 1\n                while lo < hi and nums[hi] == nums[hi + 1]:\n                    hi -= 1\n            elif total < 0:\n                lo += 1\n            else:
+                hi -= 1\n    return result\nprint(three_sum([-1, 0, 1, 2, -1, -4]))\n",
+    next: Some("py-177-trapping-rain"),
+    show_type_chips: false,
+    micro_step: 176,
+};
+
+pub const PY177_TRAPPING_RAIN: CodingStep = CodingStep {
+    id: "py-177-trapping-rain",
+    title: "DSA Trapping Rain Water",
+    objective: "Calcular cuánta agua queda atrapada entre barras.",
+    prompt_md: "**Trapping Rain Water**\n\nDos punteros + máximos laterales: el agua en un lado es `max_lado - altura`.\n\n**Micro-reto:**\n1. Definí `trap(height)`\n2. Imprimí `trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])` (esperado: `6`)",
+    starter_code: "# def trap(height):\n#     ...\n# print(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))\n",
+    pytest: "def test_trapping_rain(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('trap'))\n    assert ns['trap']([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]) == 6\n    assert ns['trap']([4, 2, 0, 3, 2, 5]) == 9\n    assert ns['trap']([]) == 0\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['6']\n",
+    hint: "def trap(height):\n    if not height:\n        return 0\n    left, right = 0, len(height) - 1\n    left_max = right_max = water = 0\n    while left < right:\n        if height[left] < height[right]:\n            if height[left] >= left_max:\n                left_max = height[left]\n            else:\n                water += left_max - height[left]\n            left += 1\n        else:\n            if height[right] >= right_max:\n                right_max = height[right]\n            else:\n                water += right_max - height[right]\n            right -= 1\n    return water\nprint(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))",
+    solution_example: "def trap(height):\n    if not height:\n        return 0\n    left, right = 0, len(height) - 1\n    left_max = right_max = water = 0\n    while left < right:\n        if height[left] < height[right]:\n            if height[left] >= left_max:\n                left_max = height[left]\n            else:\n                water += left_max - height[left]\n            left += 1\n        else:\n            if height[right] >= right_max:\n                right_max = height[right]\n            else:\n                water += right_max - height[right]\n            right -= 1\n    return water\nprint(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))\n",
+    next: Some("py-178-group-anagrams"),
+    show_type_chips: false,
+    micro_step: 177,
+};
+
+pub const PY178_GROUP_ANAGRAMS: CodingStep = CodingStep {
+    id: "py-178-group-anagrams",
+    title: "DSA Group Anagrams",
+    objective: "Agrupar strings que son anagramas entre sí.",
+    prompt_md: "**Group Anagrams**\n\nUsá la firma ordenada de cada string como clave del grupo.\n\n**Micro-reto:**\n1. Definí `group_anagrams(strs)`\n2. Imprimí `sorted([sorted(g) for g in group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])])` (esperado: `[['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]`)",
+    starter_code: "# def group_anagrams(strs):\n#     ...\n# print(sorted([sorted(g) for g in group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])]))\n",
+    pytest: "def test_group_anagrams(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('group_anagrams'))\n    groups = [sorted(g) for g in ns['group_anagrams'](['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])]\n    assert sorted(groups) == [['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]\n    assert sorted([sorted(g) for g in ns['group_anagrams']([''])]) == [['']]\n    assert sorted([sorted(g) for g in ns['group_anagrams'](['a'])]) == [['a']]\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == [\"[['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]\"]\n",
+    hint: "def group_anagrams(strs):\n    groups = {}\n    for s in strs:\n        key = ''.join(sorted(s))\n        groups.setdefault(key, []).append(s)\n    return list(groups.values())\nprint(sorted([sorted(g) for g in group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])]))",
+    solution_example: "def group_anagrams(strs):\n    groups = {}\n    for s in strs:\n        key = ''.join(sorted(s))\n        groups.setdefault(key, []).append(s)\n    return list(groups.values())\nprint(sorted([sorted(g) for g in group_anagrams(['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])]))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 178,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -2602,6 +2687,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY170_SPIRAL_MATRIX,
     &PY171_SET_ZEROES,
     &PY172_SUBSETS,
+    &PY173_JUMP_GAME,
+    &PY174_GAS_STATION,
+    &PY175_CONTAINER_WATER,
+    &PY176_THREE_SUM,
+    &PY177_TRAPPING_RAIN,
+    &PY178_GROUP_ANAGRAMS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -3237,10 +3328,27 @@ mod tests {
             (169, "py-169-max-depth", Some("py-170-spiral-matrix")),
             (170, "py-170-spiral-matrix", Some("py-171-set-zeroes")),
             (171, "py-171-set-zeroes", Some("py-172-subsets")),
-            (172, "py-172-subsets", None),
+            (172, "py-172-subsets", Some("py-173-jump-game")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("trees-matrix family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py173_to_py178_greedy_twopointers_chain() {
+        let ids = [
+            (173, "py-173-jump-game", Some("py-174-gas-station")),
+            (174, "py-174-gas-station", Some("py-175-container-water")),
+            (175, "py-175-container-water", Some("py-176-three-sum")),
+            (176, "py-176-three-sum", Some("py-177-trapping-rain")),
+            (177, "py-177-trapping-rain", Some("py-178-group-anagrams")),
+            (178, "py-178-group-anagrams", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("greedy/two-pointers family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
