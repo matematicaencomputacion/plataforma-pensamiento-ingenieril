@@ -3542,10 +3542,27 @@ mod tests {
             (181, "py-181-eval-rpn", Some("py-182-queue-stacks")),
             (182, "py-182-queue-stacks", Some("py-183-sliding-max")),
             (183, "py-183-sliding-max", Some("py-184-min-stack")),
-            (184, "py-184-min-stack", None),
+            (184, "py-184-min-stack", Some("py-185-first-last")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("stacks family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py185_to_py190_binsearch_chain() {
+        let ids = [
+            (185, "py-185-first-last", Some("py-186-peak-element")),
+            (186, "py-186-peak-element", Some("py-187-search-rotated")),
+            (187, "py-187-search-rotated", Some("py-188-sqrt")),
+            (188, "py-188-sqrt", Some("py-189-ship-capacity")),
+            (189, "py-189-ship-capacity", Some("py-190-min-rotated")),
+            (190, "py-190-min-rotated", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("binsearch family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }

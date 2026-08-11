@@ -36,7 +36,7 @@ const FAMILY: FamilyStep[] = [
         return [-1, -1]
     return [left, bound(False) - 1]
 print(search_range([5, 7, 7, 8, 8, 10], 8))
-`, nextUrl: /\\/learn\\/py-186-peak-element/, cursorAfter: "186" },
+`, nextUrl: /\/learn\/py-186-peak-element/, cursorAfter: "186" },
   { micro: 186, id: "py-186-peak-element", title: "DSA Peak Element", solution: `def find_peak_element(nums):
     lo, hi = 0, len(nums) - 1
     while lo < hi:
@@ -47,7 +47,7 @@ print(search_range([5, 7, 7, 8, 8, 10], 8))
             hi = mid
     return lo
 print(find_peak_element([1, 2, 3, 1]))
-`, nextUrl: /\\/learn\\/py-187-search-rotated/, cursorAfter: "187" },
+`, nextUrl: /\/learn\/py-187-search-rotated/, cursorAfter: "187" },
   { micro: 187, id: "py-187-search-rotated", title: "DSA Search Rotated Array", solution: `def search_rotated(nums, target):
     lo, hi = 0, len(nums) - 1
     while lo <= hi:
@@ -66,7 +66,7 @@ print(find_peak_element([1, 2, 3, 1]))
                 hi = mid - 1
     return -1
 print(search_rotated([4, 5, 6, 7, 0, 1, 2], 0))
-`, nextUrl: /\\/learn\\/py-188-sqrt/, cursorAfter: "188" },
+`, nextUrl: /\/learn\/py-188-sqrt/, cursorAfter: "188" },
   { micro: 188, id: "py-188-sqrt", title: "DSA Sqrt Integer", solution: `def my_sqrt(x):
     if x < 2:
         return x
@@ -82,7 +82,7 @@ print(search_rotated([4, 5, 6, 7, 0, 1, 2], 0))
             hi = mid - 1
     return hi
 print(my_sqrt(8))
-`, nextUrl: /\\/learn\\/py-189-ship-capacity/, cursorAfter: "189" },
+`, nextUrl: /\/learn\/py-189-ship-capacity/, cursorAfter: "189" },
   { micro: 189, id: "py-189-ship-capacity", title: "DSA Ship Capacity", solution: `def ship_within_days(weights, days):
     def feasible(capacity):
         needed = 1
@@ -106,7 +106,7 @@ print(my_sqrt(8))
             lo = mid + 1
     return lo
 print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
-`, nextUrl: /\\/learn\\/py-190-min-rotated/, cursorAfter: "190" },
+`, nextUrl: /\/learn\/py-190-min-rotated/, cursorAfter: "190" },
   { micro: 190, id: "py-190-min-rotated", title: "DSA Min Rotated Array", solution: `def find_min_rotated(nums):
     lo, hi = 0, len(nums) - 1
     while lo < hi:
@@ -117,7 +117,7 @@ print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
             hi = mid
     return nums[lo]
 print(find_min_rotated([3, 4, 5, 1, 2]))
-`, nextUrl: /\\/workspace/, cursorAfter: "191" },
+`, nextUrl: /\/workspace/, cursorAfter: "191" },
 ];
 
 function uniqueCreds(micro: number) {
