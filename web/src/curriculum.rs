@@ -1836,9 +1836,93 @@ pub const PY130_FLOYD_WARSHALL: CodingStep = CodingStep {
     pytest: "def test_floyd_warshall(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('floyd'))\n    assert ns['floyd'](ns['graph'])[0] == [0, 3, 5, 6]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '[0, 3, 5, 6]' in out\n",
     hint: "INF = 999\ngraph = [[0, 3, INF, 7], [8, 0, 2, INF], [5, INF, 0, 1], [2, INF, INF, 0]]\ndef floyd(graph):\n    n = len(graph)\n    dist = [row[:] for row in graph]\n    for k in range(n):\n        for i in range(n):\n            for j in range(n):\n                if dist[i][k] + dist[k][j] < dist[i][j]:\n                    dist[i][j] = dist[i][k] + dist[k][j]\n    return dist\nprint(floyd(graph)[0])",
     solution_example: "INF = 999\ngraph = [[0, 3, INF, 7], [8, 0, 2, INF], [5, INF, 0, 1], [2, INF, INF, 0]]\ndef floyd(graph):\n    n = len(graph)\n    dist = [row[:] for row in graph]\n    for k in range(n):\n        for i in range(n):\n            for j in range(n):\n                if dist[i][k] + dist[k][j] < dist[i][j]:\n                    dist[i][j] = dist[i][k] + dist[k][j]\n    return dist\nprint(floyd(graph)[0])\n",
-    next: None,
+    next: Some("py-131-two-pointers"),
     show_type_chips: false,
     micro_step: 130,
+};
+
+pub const PY131_TWO_POINTERS: CodingStep = CodingStep {
+    id: "py-131-two-pointers",
+    title: "DSA Two Pointers",
+    objective: "Encontrar un par con suma objetivo en una lista ordenada.",
+    prompt_md: "**Two Pointers**\n\nEn array ordenado, mové left/right según la suma.\n\n**Micro-reto:**\n1. Definí `two_sum(nums, target)` → tupla de índices o `None`\n2. Imprimí `two_sum([2, 7, 11, 15], 9)` (esperado: `(0, 1)`)",
+    starter_code: "# def two_sum(nums, target):\n#     ...\n# print(two_sum([2, 7, 11, 15], 9))\n",
+    pytest: "def test_two_pointers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('two_sum'))\n    assert ns['two_sum']([2, 7, 11, 15], 9) == (0, 1)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['(0, 1)']\n",
+    hint: "def two_sum(nums, target):\n    left, right = 0, len(nums) - 1\n    while left < right:\n        s = nums[left] + nums[right]\n        if s == target:\n            return (left, right)\n        if s < target:\n            left += 1\n        else:\n            right -= 1\n    return None\nprint(two_sum([2, 7, 11, 15], 9))",
+    solution_example: "def two_sum(nums, target):\n    left, right = 0, len(nums) - 1\n    while left < right:\n        s = nums[left] + nums[right]\n        if s == target:\n            return (left, right)\n        if s < target:\n            left += 1\n        else:\n            right -= 1\n    return None\nprint(two_sum([2, 7, 11, 15], 9))\n",
+    next: Some("py-132-sliding-window"),
+    show_type_chips: false,
+    micro_step: 131,
+};
+
+pub const PY132_SLIDING_WINDOW: CodingStep = CodingStep {
+    id: "py-132-sliding-window",
+    title: "DSA Sliding Window",
+    objective: "Máxima suma de una ventana fija de tamaño k.",
+    prompt_md: "**Sliding Window**\n\nMantené la suma de k elementos y avanzá restando el que sale.\n\n**Micro-reto:**\n1. Definí `max_window(nums, k)`\n2. Imprimí `max_window([2, 1, 5, 1, 3, 2], 3)` (esperado: `9`)",
+    starter_code: "# def max_window(nums, k):\n#     ...\n# print(max_window([2, 1, 5, 1, 3, 2], 3))\n",
+    pytest: "def test_sliding_window(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_window'))\n    assert ns['max_window']([2, 1, 5, 1, 3, 2], 3) == 9\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['9']\n",
+    hint: "def max_window(nums, k):\n    window = sum(nums[:k])\n    best = window\n    for i in range(k, len(nums)):\n        window += nums[i] - nums[i - k]\n        best = max(best, window)\n    return best\nprint(max_window([2, 1, 5, 1, 3, 2], 3))",
+    solution_example: "def max_window(nums, k):\n    window = sum(nums[:k])\n    best = window\n    for i in range(k, len(nums)):\n        window += nums[i] - nums[i - k]\n        best = max(best, window)\n    return best\nprint(max_window([2, 1, 5, 1, 3, 2], 3))\n",
+    next: Some("py-133-permutations"),
+    show_type_chips: false,
+    micro_step: 132,
+};
+
+pub const PY133_PERMUTATIONS: CodingStep = CodingStep {
+    id: "py-133-permutations",
+    title: "DSA Permutations",
+    objective: "Generar permutaciones con backtracking.",
+    prompt_md: "**Backtracking · Permutations**\n\nConstruí el path y backtrackeá al sacar el último elemento.\n\n**Micro-reto:**\n1. Definí `permute(nums)` → lista de permutaciones\n2. Imprimí `sorted(permute([1, 2, 3]))` (esperado: `[[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]`)",
+    starter_code: "# def permute(nums):\n#     ...\n# print(sorted(permute([1, 2, 3])))\n",
+    pytest: "def test_permutations(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('permute'))\n    assert sorted(ns['permute']([1, 2, 3])) == [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '[1, 2, 3]' in out and '[3, 2, 1]' in out\n",
+    hint: "def permute(nums):\n    res = []\n    def bt(path, unused):\n        if not unused:\n            res.append(path[:])\n            return\n        for i, x in enumerate(unused):\n            path.append(x)\n            bt(path, unused[:i] + unused[i + 1:])\n            path.pop()\n    bt([], list(nums))\n    return res\nprint(sorted(permute([1, 2, 3])))",
+    solution_example: "def permute(nums):\n    res = []\n    def bt(path, unused):\n        if not unused:\n            res.append(path[:])\n            return\n        for i, x in enumerate(unused):\n            path.append(x)\n            bt(path, unused[:i] + unused[i + 1:])\n            path.pop()\n    bt([], list(nums))\n    return res\nprint(sorted(permute([1, 2, 3])))\n",
+    next: Some("py-134-nqueens-count"),
+    show_type_chips: false,
+    micro_step: 133,
+};
+
+pub const PY134_NQUEENS_COUNT: CodingStep = CodingStep {
+    id: "py-134-nqueens-count",
+    title: "DSA N-Queens Count",
+    objective: "Contar soluciones al problema de las N reinas.",
+    prompt_md: "**N-Queens**\n\nColocá n reinas sin atacarse; contá soluciones válidas.\n\n**Micro-reto:**\n1. Definí `nqueens_count(n)`\n2. Imprimí `nqueens_count(4)` (esperado: `2`)",
+    starter_code: "# def nqueens_count(n):\n#     ...\n# print(nqueens_count(4))\n",
+    pytest: "def test_nqueens_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('nqueens_count'))\n    assert ns['nqueens_count'](4) == 2\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2']\n",
+    hint: "def nqueens_count(n):\n    cols = set()\n    diag1 = set()\n    diag2 = set()\n    def bt(row):\n        if row == n:\n            return 1\n        total = 0\n        for c in range(n):\n            if c in cols or row - c in diag1 or row + c in diag2:\n                continue\n            cols.add(c); diag1.add(row - c); diag2.add(row + c)\n            total += bt(row + 1)\n            cols.remove(c); diag1.remove(row - c); diag2.remove(row + c)\n        return total\n    return bt(0)\nprint(nqueens_count(4))",
+    solution_example: "def nqueens_count(n):\n    cols = set()\n    diag1 = set()\n    diag2 = set()\n    def bt(row):\n        if row == n:\n            return 1\n        total = 0\n        for c in range(n):\n            if c in cols or row - c in diag1 or row + c in diag2:\n                continue\n            cols.add(c); diag1.add(row - c); diag2.add(row + c)\n            total += bt(row + 1)\n            cols.remove(c); diag1.remove(row - c); diag2.remove(row + c)\n        return total\n    return bt(0)\nprint(nqueens_count(4))\n",
+    next: Some("py-135-trie"),
+    show_type_chips: false,
+    micro_step: 134,
+};
+
+pub const PY135_TRIE: CodingStep = CodingStep {
+    id: "py-135-trie",
+    title: "DSA Trie",
+    objective: "Insertar y buscar palabras en un Trie.",
+    prompt_md: "**Trie (prefix tree)**\n\nCada nodo es un dict de hijos; `end` marca fin de palabra.\n\n**Micro-reto:**\n1. Definí `Trie` con `insert(word)` y `search(word)`\n2. Insertá `cat` y `car`; imprimí `search('cat')`, `search('car')`, `search('cap')`",
+    starter_code: "# class Trie:\n#     ...\n# t = Trie()\n# ...\n# print(...)\n",
+    pytest: "def test_trie(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 't' in ns\n    assert ns['t'].search('cat') is True\n    assert ns['t'].search('car') is True\n    assert ns['t'].search('cap') is False\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True', 'True', 'False']\n",
+    hint: "class Trie:\n    def __init__(self):\n        self.root = {}\n    def insert(self, word):\n        node = self.root\n        for ch in word:\n            node = node.setdefault(ch, {})\n        node['#'] = True\n    def search(self, word):\n        node = self.root\n        for ch in word:\n            if ch not in node:\n                return False\n            node = node[ch]\n        return '#' in node\nt = Trie()\nt.insert('cat')\nt.insert('car')\nprint(t.search('cat'))\nprint(t.search('car'))\nprint(t.search('cap'))",
+    solution_example: "class Trie:\n    def __init__(self):\n        self.root = {}\n    def insert(self, word):\n        node = self.root\n        for ch in word:\n            node = node.setdefault(ch, {})\n        node['#'] = True\n    def search(self, word):\n        node = self.root\n        for ch in word:\n            if ch not in node:\n                return False\n            node = node[ch]\n        return '#' in node\nt = Trie()\nt.insert('cat')\nt.insert('car')\nprint(t.search('cat'))\nprint(t.search('car'))\nprint(t.search('cap'))\n",
+    next: Some("py-136-bit-count"),
+    show_type_chips: false,
+    micro_step: 135,
+};
+
+pub const PY136_BIT_COUNT: CodingStep = CodingStep {
+    id: "py-136-bit-count",
+    title: "DSA Bit Count",
+    objective: "Contar bits en 1 con Brian Kernighan (n &= n-1).",
+    prompt_md: "**Bit Count**\n\nCada `n = n & (n - 1)` apaga el bit 1 menos significativo.\n\n**Micro-reto:**\n1. Definí `bit_count(n)`\n2. Imprimí `bit_count(13)` (esperado: `3`, porque `1101`)",
+    starter_code: "# def bit_count(n):\n#     ...\n# print(bit_count(13))\n",
+    pytest: "def test_bit_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('bit_count'))\n    assert ns['bit_count'](13) == 3\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['3']\n",
+    hint: "def bit_count(n):\n    count = 0\n    while n:\n        n &= n - 1\n        count += 1\n    return count\nprint(bit_count(13))",
+    solution_example: "def bit_count(n):\n    count = 0\n    while n:\n        n &= n - 1\n        count += 1\n    return count\nprint(bit_count(13))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 136,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1972,6 +2056,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY128_LCS,
     &PY129_COIN_CHANGE_DP,
     &PY130_FLOYD_WARSHALL,
+    &PY131_TWO_POINTERS,
+    &PY132_SLIDING_WINDOW,
+    &PY133_PERMUTATIONS,
+    &PY134_NQUEENS_COUNT,
+    &PY135_TRIE,
+    &PY136_BIT_COUNT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -2503,10 +2593,27 @@ mod tests {
             (127, "py-127-tsp-nearest", Some("py-128-lcs")),
             (128, "py-128-lcs", Some("py-129-coin-change-dp")),
             (129, "py-129-coin-change-dp", Some("py-130-floyd-warshall")),
-            (130, "py-130-floyd-warshall", None),
+            (130, "py-130-floyd-warshall", Some("py-131-two-pointers")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("greedy-dp family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py131_to_py136_backtrack_strings_chain() {
+        let ids = [
+            (131, "py-131-two-pointers", Some("py-132-sliding-window")),
+            (132, "py-132-sliding-window", Some("py-133-permutations")),
+            (133, "py-133-permutations", Some("py-134-nqueens-count")),
+            (134, "py-134-nqueens-count", Some("py-135-trie")),
+            (135, "py-135-trie", Some("py-136-bit-count")),
+            (136, "py-136-bit-count", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("backtrack-strings family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
