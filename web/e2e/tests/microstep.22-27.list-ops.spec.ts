@@ -22,67 +22,71 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 16,
-    id: "py-16-booleans",
-    title: "Python Booleans",
-    solution: `print(10 > 9)
-print(10 == 9)
-print(10 < 9)
-`,
-    nextUrl: /\/learn\/py-17-operators/,
-    cursorAfter: "17",
-  },
-  {
-    micro: 17,
-    id: "py-17-operators",
-    title: "Python Operators",
-    solution: `print(10 + 5)
-`,
-    nextUrl: /\/learn\/py-18-lists/,
-    cursorAfter: "18",
-  },
-  {
-    micro: 18,
-    id: "py-18-lists",
-    title: "Python Lists",
+    micro: 22,
+    id: "py-22-list-remove",
+    title: "Python Remove List Items",
     solution: `thislist = ["apple", "banana", "cherry"]
-print(thislist)
-print(len(thislist))
-`,
-    nextUrl: /\/learn\/py-19-list-access/,
-    cursorAfter: "19",
-  },
-  {
-    micro: 19,
-    id: "py-19-list-access",
-    title: "Python Access List Items",
-    solution: `thislist = ["apple", "banana", "cherry"]
-print(thislist[1])
-`,
-    nextUrl: /\/learn\/py-20-list-change/,
-    cursorAfter: "20",
-  },
-  {
-    micro: 20,
-    id: "py-20-list-change",
-    title: "Python Change List Items",
-    solution: `thislist = ["apple", "banana", "cherry"]
-thislist[1] = "blackcurrant"
+thislist.remove("banana")
 print(thislist)
 `,
-    nextUrl: /\/learn\/py-21-list-add/,
-    cursorAfter: "21",
+    nextUrl: /\/learn\/py-23-list-loop/,
+    cursorAfter: "23",
   },
   {
-    micro: 21,
-    id: "py-21-list-add",
-    title: "Python Add List Items",
+    micro: 23,
+    id: "py-23-list-loop",
+    title: "Python Loop Lists",
     solution: `thislist = ["apple", "banana", "cherry"]
-thislist.append("orange")
+for x in thislist:
+    print(x)
+`,
+    nextUrl: /\/learn\/py-24-list-comprehension/,
+    cursorAfter: "24",
+  },
+  {
+    micro: 24,
+    id: "py-24-list-comprehension",
+    title: "Python List Comprehension",
+    solution: `fruits = ["apple", "banana", "cherry", "kiwi", "mango"]
+newlist = [x for x in fruits if "a" in x]
+print(newlist)
+`,
+    nextUrl: /\/learn\/py-25-list-sort/,
+    cursorAfter: "25",
+  },
+  {
+    micro: 25,
+    id: "py-25-list-sort",
+    title: "Python Sort Lists",
+    solution: `thislist = ["orange", "mango", "kiwi", "pineapple", "banana"]
+thislist.sort()
 print(thislist)
 `,
-    nextUrl: /\/learn\/py-22-list-remove/,
-    cursorAfter: "22",
+    nextUrl: /\/learn\/py-26-list-copy/,
+    cursorAfter: "26",
+  },
+  {
+    micro: 26,
+    id: "py-26-list-copy",
+    title: "Python Copy Lists",
+    solution: `thislist = ["apple", "banana", "cherry"]
+mylist = thislist.copy()
+print(mylist)
+`,
+    nextUrl: /\/learn\/py-27-list-join/,
+    cursorAfter: "27",
+  },
+  {
+    micro: 27,
+    id: "py-27-list-join",
+    title: "Python Join Lists",
+    solution: `list1 = ["a", "b", "c"]
+list2 = [1, 2, 3]
+list3 = list1 + list2
+print(list3)
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "28",
   },
 ];
 
@@ -111,7 +115,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 16–21 · Booleans, Operators, Lists", () => {
+test.describe("micro-steps 22–27 · List ops family", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

@@ -310,9 +310,93 @@ pub const PY21_LIST_ADD: CodingStep = CodingStep {
     pytest: "def test_list_add(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thislist') == ['apple', 'banana', 'cherry', 'orange']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'orange' in out\n",
     hint: "thislist = [\"apple\", \"banana\", \"cherry\"]\nthislist.append(\"orange\")\nprint(thislist)",
     solution_example: "thislist = [\"apple\", \"banana\", \"cherry\"]\nthislist.append(\"orange\")\nprint(thislist)\n",
-    next: None,
+    next: Some("py-22-list-remove"),
     show_type_chips: false,
     micro_step: 21,
+};
+
+pub const PY22_LIST_REMOVE: CodingStep = CodingStep {
+    id: "py-22-list-remove",
+    title: "Python Remove List Items",
+    objective: "Eliminar un ítem de la lista con remove().",
+    prompt_md: "**Remove List Items**\n\n`remove()` elimina el ítem indicado (primera ocurrencia).\n\n**Micro-reto:**\n1. Creá `thislist` con `apple`, `banana` y `cherry`\n2. Remové `banana` con `remove()`\n3. Imprimí `thislist`",
+    starter_code: "# thislist = ...\n# thislist.remove(...)\n# print(...)\n",
+    pytest: "def test_list_remove(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thislist') == ['apple', 'cherry']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'banana' not in out and 'apple' in out and 'cherry' in out\n",
+    hint: "thislist = [\"apple\", \"banana\", \"cherry\"]\nthislist.remove(\"banana\")\nprint(thislist)",
+    solution_example: "thislist = [\"apple\", \"banana\", \"cherry\"]\nthislist.remove(\"banana\")\nprint(thislist)\n",
+    next: Some("py-23-list-loop"),
+    show_type_chips: false,
+    micro_step: 22,
+};
+
+pub const PY23_LIST_LOOP: CodingStep = CodingStep {
+    id: "py-23-list-loop",
+    title: "Python Loop Lists",
+    objective: "Recorrer una lista con un for e imprimir cada ítem.",
+    prompt_md: "**Loop Lists**\n\nPodés recorrer los ítems con un `for`.\n\n**Micro-reto:**\n1. Creá `thislist` con `apple`, `banana` y `cherry`\n2. Recorré la lista con `for x in thislist` e imprimí cada `x`",
+    starter_code: "# thislist = ...\n# for x in thislist:\n#     print(x)\n",
+    pytest: "def test_list_loop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thislist') == ['apple', 'banana', 'cherry']\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['apple', 'banana', 'cherry']\n",
+    hint: "thislist = [\"apple\", \"banana\", \"cherry\"]\nfor x in thislist:\n    print(x)",
+    solution_example: "thislist = [\"apple\", \"banana\", \"cherry\"]\nfor x in thislist:\n    print(x)\n",
+    next: Some("py-24-list-comprehension"),
+    show_type_chips: false,
+    micro_step: 23,
+};
+
+pub const PY24_LIST_COMPREHENSION: CodingStep = CodingStep {
+    id: "py-24-list-comprehension",
+    title: "Python List Comprehension",
+    objective: "Crear una lista filtrada con list comprehension.",
+    prompt_md: "**List Comprehension**\n\nSintaxis corta para crear una lista nueva a partir de otra.\n\n**Micro-reto:**\n1. Creá `fruits` con `apple`, `banana`, `cherry`, `kiwi`, `mango`\n2. Creá `newlist` con comprehension: ítems de `fruits` que contienen la letra `a`\n3. Imprimí `newlist`",
+    starter_code: "# fruits = ...\n# newlist = [...]\n# print(...)\n",
+    pytest: "def test_list_comprehension(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('fruits') == ['apple', 'banana', 'cherry', 'kiwi', 'mango']\n    assert ns.get('newlist') == ['apple', 'banana', 'mango']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'apple' in out and 'banana' in out and 'mango' in out\n",
+    hint: "fruits = [\"apple\", \"banana\", \"cherry\", \"kiwi\", \"mango\"]\nnewlist = [x for x in fruits if \"a\" in x]\nprint(newlist)",
+    solution_example: "fruits = [\"apple\", \"banana\", \"cherry\", \"kiwi\", \"mango\"]\nnewlist = [x for x in fruits if \"a\" in x]\nprint(newlist)\n",
+    next: Some("py-25-list-sort"),
+    show_type_chips: false,
+    micro_step: 24,
+};
+
+pub const PY25_LIST_SORT: CodingStep = CodingStep {
+    id: "py-25-list-sort",
+    title: "Python Sort Lists",
+    objective: "Ordenar una lista alfabéticamente con sort().",
+    prompt_md: "**Sort Lists**\n\n`sort()` ordena la lista alfanuméricamente (ascendente por defecto).\n\n**Micro-reto:**\n1. Creá `thislist` con `orange`, `mango`, `kiwi`, `pineapple`, `banana`\n2. Ordenála con `sort()`\n3. Imprimí `thislist`",
+    starter_code: "# thislist = ...\n# thislist.sort()\n# print(...)\n",
+    pytest: "def test_list_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thislist') == ['banana', 'kiwi', 'mango', 'orange', 'pineapple']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'banana' in out and 'pineapple' in out\n",
+    hint: "thislist = [\"orange\", \"mango\", \"kiwi\", \"pineapple\", \"banana\"]\nthislist.sort()\nprint(thislist)",
+    solution_example: "thislist = [\"orange\", \"mango\", \"kiwi\", \"pineapple\", \"banana\"]\nthislist.sort()\nprint(thislist)\n",
+    next: Some("py-26-list-copy"),
+    show_type_chips: false,
+    micro_step: 25,
+};
+
+pub const PY26_LIST_COPY: CodingStep = CodingStep {
+    id: "py-26-list-copy",
+    title: "Python Copy Lists",
+    objective: "Copiar una lista con el método copy().",
+    prompt_md: "**Copy Lists**\n\n`list2 = list1` solo crea una referencia. Usá `copy()` para una copia real.\n\n**Micro-reto:**\n1. Creá `thislist` con `apple`, `banana` y `cherry`\n2. Creá `mylist` como copia con `thislist.copy()`\n3. Imprimí `mylist`",
+    starter_code: "# thislist = ...\n# mylist = ...\n# print(...)\n",
+    pytest: "def test_list_copy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('thislist') == ['apple', 'banana', 'cherry']\n    assert ns.get('mylist') == ['apple', 'banana', 'cherry']\n    assert ns.get('mylist') is not ns.get('thislist')\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'apple' in out\n",
+    hint: "thislist = [\"apple\", \"banana\", \"cherry\"]\nmylist = thislist.copy()\nprint(mylist)",
+    solution_example: "thislist = [\"apple\", \"banana\", \"cherry\"]\nmylist = thislist.copy()\nprint(mylist)\n",
+    next: Some("py-27-list-join"),
+    show_type_chips: false,
+    micro_step: 26,
+};
+
+pub const PY27_LIST_JOIN: CodingStep = CodingStep {
+    id: "py-27-list-join",
+    title: "Python Join Lists",
+    objective: "Unir dos listas con el operador +.",
+    prompt_md: "**Join Lists**\n\nPodés unir listas con `+`.\n\n**Micro-reto:**\n1. Creá `list1` con `a`, `b`, `c`\n2. Creá `list2` con `1`, `2`, `3`\n3. Creá `list3` como `list1 + list2`\n4. Imprimí `list3`",
+    starter_code: "# list1 = ...\n# list2 = ...\n# list3 = ...\n# print(...)\n",
+    pytest: "def test_list_join(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('list1') == ['a', 'b', 'c']\n    assert ns.get('list2') == [1, 2, 3]\n    assert ns.get('list3') == ['a', 'b', 'c', 1, 2, 3]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'a' in out and '3' in out\n",
+    hint: "list1 = [\"a\", \"b\", \"c\"]\nlist2 = [1, 2, 3]\nlist3 = list1 + list2\nprint(list3)",
+    solution_example: "list1 = [\"a\", \"b\", \"c\"]\nlist2 = [1, 2, 3]\nlist3 = list1 + list2\nprint(list3)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 27,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -337,6 +421,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY19_LIST_ACCESS,
     &PY20_LIST_CHANGE,
     &PY21_LIST_ADD,
+    &PY22_LIST_REMOVE,
+    &PY23_LIST_LOOP,
+    &PY24_LIST_COMPREHENSION,
+    &PY25_LIST_SORT,
+    &PY26_LIST_COPY,
+    &PY27_LIST_JOIN,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -561,10 +651,27 @@ mod tests {
             (18, "py-18-lists", Some("py-19-list-access")),
             (19, "py-19-list-access", Some("py-20-list-change")),
             (20, "py-20-list-change", Some("py-21-list-add")),
-            (21, "py-21-list-add", None),
+            (21, "py-21-list-add", Some("py-22-list-remove")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("bool/ops/lists step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py22_to_py27_list_ops_chain() {
+        let ids = [
+            (22, "py-22-list-remove", Some("py-23-list-loop")),
+            (23, "py-23-list-loop", Some("py-24-list-comprehension")),
+            (24, "py-24-list-comprehension", Some("py-25-list-sort")),
+            (25, "py-25-list-sort", Some("py-26-list-copy")),
+            (26, "py-26-list-copy", Some("py-27-list-join")),
+            (27, "py-27-list-join", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("list ops step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
