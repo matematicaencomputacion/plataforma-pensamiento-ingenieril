@@ -1584,9 +1584,93 @@ pub const PY112_DIJKSTRA: CodingStep = CodingStep {
     pytest: "def test_dijkstra(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('dijkstra'))\n    assert ns['dijkstra'](ns['graph'], 'A') == {'A': 0, 'B': 4, 'C': 2, 'D': 9}\n    out = capsys.readouterr().out\n    assert \"'A': 0\" in out and \"'B': 4\" in out and \"'C': 2\" in out and \"'D': 9\" in out\n",
     hint: "graph = {'A': {'B': 4, 'C': 2}, 'B': {'C': 1, 'D': 5}, 'C': {'D': 8}, 'D': {}}\ndef dijkstra(graph, start):\n    dist = {n: float('inf') for n in graph}\n    dist[start] = 0\n    unvisited = set(graph)\n    while unvisited:\n        u = min(unvisited, key=lambda n: dist[n])\n        unvisited.remove(u)\n        for v, w in graph[u].items():\n            alt = dist[u] + w\n            if alt < dist[v]:\n                dist[v] = alt\n    return dist\nprint(dijkstra(graph, 'A'))",
     solution_example: "graph = {'A': {'B': 4, 'C': 2}, 'B': {'C': 1, 'D': 5}, 'C': {'D': 8}, 'D': {}}\ndef dijkstra(graph, start):\n    dist = {n: float('inf') for n in graph}\n    dist[start] = 0\n    unvisited = set(graph)\n    while unvisited:\n        u = min(unvisited, key=lambda n: dist[n])\n        unvisited.remove(u)\n        for v, w in graph[u].items():\n            alt = dist[u] + w\n            if alt < dist[v]:\n                dist[v] = alt\n    return dist\nprint(dijkstra(graph, 'A'))\n",
-    next: None,
+    next: Some("py-113-heap"),
     show_type_chips: false,
     micro_step: 112,
+};
+
+pub const PY113_HEAP: CodingStep = CodingStep {
+    id: "py-113-heap",
+    title: "DSA Heap (heapq)",
+    objective: "Usar un min-heap con heapq (push/pop).",
+    prompt_md: "**Heaps**\n\nUn min-heap saca siempre el menor con `heappop`.\n\n**Micro-reto:**\n1. Importá `heapq`\n2. Hacé push de `5`, `3`, `8`, `1`\n3. Hacé pop hasta vaciar e imprimí cada valor en su línea (salida: `1`, `3`, `5`, `8`)",
+    starter_code: "# import heapq\n# h = []\n# ...\n",
+    pytest: "def test_heap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['1', '3', '5', '8']\n",
+    hint: "import heapq\nh = []\nfor x in [5, 3, 8, 1]:\n    heapq.heappush(h, x)\nwhile h:\n    print(heapq.heappop(h))",
+    solution_example: "import heapq\nh = []\nfor x in [5, 3, 8, 1]:\n    heapq.heappush(h, x)\nwhile h:\n    print(heapq.heappop(h))\n",
+    next: Some("py-114-priority-queue"),
+    show_type_chips: false,
+    micro_step: 113,
+};
+
+pub const PY114_PRIORITY_QUEUE: CodingStep = CodingStep {
+    id: "py-114-priority-queue",
+    title: "DSA Priority Queue",
+    objective: "Priorizar tareas con un heap de tuplas (prioridad, tarea).",
+    prompt_md: "**Priority Queue**\n\nEn Python se modela con `heapq` y tuplas `(prioridad, valor)`.\n\n**Micro-reto:**\n1. Encolá `(2, 'code')`, `(1, 'eat')`, `(3, 'sleep')`\n2. Desencolá e imprimí solo el nombre de cada tarea (salida: `eat`, `code`, `sleep`)",
+    starter_code: "# import heapq\n# pq = []\n# ...\n",
+    pytest: "def test_priority_queue(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['eat', 'code', 'sleep']\n",
+    hint: "import heapq\npq = []\nheapq.heappush(pq, (2, 'code'))\nheapq.heappush(pq, (1, 'eat'))\nheapq.heappush(pq, (3, 'sleep'))\nwhile pq:\n    print(heapq.heappop(pq)[1])",
+    solution_example: "import heapq\npq = []\nheapq.heappush(pq, (2, 'code'))\nheapq.heappush(pq, (1, 'eat'))\nheapq.heappush(pq, (3, 'sleep'))\nwhile pq:\n    print(heapq.heappop(pq)[1])\n",
+    next: Some("py-115-union-find"),
+    show_type_chips: false,
+    micro_step: 114,
+};
+
+pub const PY115_UNION_FIND: CodingStep = CodingStep {
+    id: "py-115-union-find",
+    title: "DSA Union-Find",
+    objective: "Implementar find/union (disjoint set) sobre parent[].",
+    prompt_md: "**Union-Find**\n\nDetecta componentes conexas: `find` sigue al root; `union` fusiona trees.\n\n**Micro-reto:**\n1. `parent = [0, 1, 2, 3]`\n2. Definí `find(x)` y `union(a, b)`\n3. Hacé `union(0,1)`, `union(2,3)`, `union(1,2)` e imprimí `find(0) == find(3)`",
+    starter_code: "# parent = [0, 1, 2, 3]\n# def find(x):\n#     ...\n# def union(a, b):\n#     ...\n# ...\n# print(...)\n",
+    pytest: "def test_union_find(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find')) and callable(ns.get('union'))\n    assert ns['find'](0) == ns['find'](3)\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['True']\n",
+    hint: "parent = [0, 1, 2, 3]\ndef find(x):\n    while parent[x] != x:\n        x = parent[x]\n    return x\ndef union(a, b):\n    ra, rb = find(a), find(b)\n    if ra != rb:\n        parent[rb] = ra\nunion(0, 1)\nunion(2, 3)\nunion(1, 2)\nprint(find(0) == find(3))",
+    solution_example: "parent = [0, 1, 2, 3]\ndef find(x):\n    while parent[x] != x:\n        x = parent[x]\n    return x\ndef union(a, b):\n    ra, rb = find(a), find(b)\n    if ra != rb:\n        parent[rb] = ra\nunion(0, 1)\nunion(2, 3)\nunion(1, 2)\nprint(find(0) == find(3))\n",
+    next: Some("py-116-kruskal"),
+    show_type_chips: false,
+    micro_step: 115,
+};
+
+pub const PY116_KRUSKAL: CodingStep = CodingStep {
+    id: "py-116-kruskal",
+    title: "DSA Kruskal MST",
+    objective: "Calcular el peso del MST con Kruskal + Union-Find.",
+    prompt_md: "**Kruskal**\n\nOrdená aristas por peso y uní extremos si no forman ciclo.\n\n**Micro-reto:**\n1. `edges = [(1, 'A', 'B'), (2, 'B', 'C'), (3, 'A', 'C'), (4, 'C', 'D')]`\n2. Definí `kruskal(edges, nodes)` que devuelva el peso total del MST\n3. Imprimí `kruskal(edges, ['A', 'B', 'C', 'D'])` (esperado: `7`)",
+    starter_code: "# edges = [...]\n# def kruskal(edges, nodes):\n#     ...\n# print(kruskal(edges, ['A', 'B', 'C', 'D']))\n",
+    pytest: "def test_kruskal(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('kruskal'))\n    assert ns['kruskal'](ns['edges'], ['A', 'B', 'C', 'D']) == 7\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['7']\n",
+    hint: "edges = [(1, 'A', 'B'), (2, 'B', 'C'), (3, 'A', 'C'), (4, 'C', 'D')]\ndef kruskal(edges, nodes):\n    parent = {n: n for n in nodes}\n    def find(x):\n        while parent[x] != x:\n            x = parent[x]\n        return x\n    total = 0\n    for w, u, v in sorted(edges, key=lambda e: e[0]):\n        if find(u) != find(v):\n            parent[find(v)] = find(u)\n            total += w\n    return total\nprint(kruskal(edges, ['A', 'B', 'C', 'D']))",
+    solution_example: "edges = [(1, 'A', 'B'), (2, 'B', 'C'), (3, 'A', 'C'), (4, 'C', 'D')]\ndef kruskal(edges, nodes):\n    parent = {n: n for n in nodes}\n    def find(x):\n        while parent[x] != x:\n            x = parent[x]\n        return x\n    total = 0\n    for w, u, v in sorted(edges, key=lambda e: e[0]):\n        if find(u) != find(v):\n            parent[find(v)] = find(u)\n            total += w\n    return total\nprint(kruskal(edges, ['A', 'B', 'C', 'D']))\n",
+    next: Some("py-117-prim"),
+    show_type_chips: false,
+    micro_step: 116,
+};
+
+pub const PY117_PRIM: CodingStep = CodingStep {
+    id: "py-117-prim",
+    title: "DSA Prim MST",
+    objective: "Calcular el peso del MST creciendo desde un vértice (Prim + heap).",
+    prompt_md: "**Prim**\n\nDesde un start, sumá la arista más barata hacia un nodo no visitado.\n\n**Micro-reto:**\n1. Grafo no dirigido ponderado A–B–C–D (pesos como en el hint)\n2. Definí `prim(graph, start='A')` que devuelva el peso del MST\n3. Imprimí el resultado (esperado: `7`)",
+    starter_code: "# import heapq\n# graph = {...}\n# def prim(graph, start='A'):\n#     ...\n# print(prim(graph))\n",
+    pytest: "def test_prim(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('prim'))\n    assert ns['prim'](ns['graph']) == 7\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['7']\n",
+    hint: "import heapq\ngraph = {'A': {'B': 1, 'C': 3}, 'B': {'A': 1, 'C': 2, 'D': 4}, 'C': {'A': 3, 'B': 2, 'D': 5}, 'D': {'B': 4, 'C': 5}}\ndef prim(graph, start='A'):\n    visited = set()\n    pq = [(0, start)]\n    total = 0\n    while pq and len(visited) < len(graph):\n        w, u = heapq.heappop(pq)\n        if u in visited:\n            continue\n        visited.add(u)\n        total += w\n        for v, vw in graph[u].items():\n            if v not in visited:\n                heapq.heappush(pq, (vw, v))\n    return total\nprint(prim(graph))",
+    solution_example: "import heapq\ngraph = {'A': {'B': 1, 'C': 3}, 'B': {'A': 1, 'C': 2, 'D': 4}, 'C': {'A': 3, 'B': 2, 'D': 5}, 'D': {'B': 4, 'C': 5}}\ndef prim(graph, start='A'):\n    visited = set()\n    pq = [(0, start)]\n    total = 0\n    while pq and len(visited) < len(graph):\n        w, u = heapq.heappop(pq)\n        if u in visited:\n            continue\n        visited.add(u)\n        total += w\n        for v, vw in graph[u].items():\n            if v not in visited:\n                heapq.heappush(pq, (vw, v))\n    return total\nprint(prim(graph))\n",
+    next: Some("py-118-topo-sort"),
+    show_type_chips: false,
+    micro_step: 117,
+};
+
+pub const PY118_TOPO_SORT: CodingStep = CodingStep {
+    id: "py-118-topo-sort",
+    title: "DSA Topological Sort",
+    objective: "Ordenar un DAG con Kahn (indegree + cola).",
+    prompt_md: "**Topological Sort**\n\nEn un DAG, Kahn saca nodos con indegree 0.\n\n**Micro-reto:**\n1. `graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}`\n2. Definí `topo(graph)` que devuelva la lista ordenada\n3. Imprimí `topo(graph)` (esperado: `['A', 'B', 'C', 'D']`)",
+    starter_code: "# from collections import deque\n# graph = {...}\n# def topo(graph):\n#     ...\n# print(topo(graph))\n",
+    pytest: "def test_topo_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('topo'))\n    assert ns['topo'](ns['graph']) == ['A', 'B', 'C', 'D']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert \"'A'\" in out and \"'B'\" in out and \"'C'\" in out and \"'D'\" in out\n",
+    hint: "from collections import deque\ngraph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}\ndef topo(graph):\n    indeg = {n: 0 for n in graph}\n    for u in graph:\n        for v in graph[u]:\n            indeg[v] += 1\n    q = deque([n for n in graph if indeg[n] == 0])\n    order = []\n    while q:\n        u = q.popleft()\n        order.append(u)\n        for v in graph[u]:\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                q.append(v)\n    return order\nprint(topo(graph))",
+    solution_example: "from collections import deque\ngraph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}\ndef topo(graph):\n    indeg = {n: 0 for n in graph}\n    for u in graph:\n        for v in graph[u]:\n            indeg[v] += 1\n    q = deque([n for n in graph if indeg[n] == 0])\n    order = []\n    while q:\n        u = q.popleft()\n        order.append(u)\n        for v in graph[u]:\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                q.append(v)\n    return order\nprint(topo(graph))\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 118,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1702,6 +1786,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY110_GRAPH_BFS,
     &PY111_TREE_HEIGHT,
     &PY112_DIJKSTRA,
+    &PY113_HEAP,
+    &PY114_PRIORITY_QUEUE,
+    &PY115_UNION_FIND,
+    &PY116_KRUSKAL,
+    &PY117_PRIM,
+    &PY118_TOPO_SORT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -2182,10 +2272,27 @@ mod tests {
             (109, "py-109-graph-dfs", Some("py-110-graph-bfs")),
             (110, "py-110-graph-bfs", Some("py-111-tree-height")),
             (111, "py-111-tree-height", Some("py-112-dijkstra")),
-            (112, "py-112-dijkstra", None),
+            (112, "py-112-dijkstra", Some("py-113-heap")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("trees-graphs family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py113_to_py118_heaps_graphs_chain() {
+        let ids = [
+            (113, "py-113-heap", Some("py-114-priority-queue")),
+            (114, "py-114-priority-queue", Some("py-115-union-find")),
+            (115, "py-115-union-find", Some("py-116-kruskal")),
+            (116, "py-116-kruskal", Some("py-117-prim")),
+            (117, "py-117-prim", Some("py-118-topo-sort")),
+            (118, "py-118-topo-sort", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("heaps-graphs family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }

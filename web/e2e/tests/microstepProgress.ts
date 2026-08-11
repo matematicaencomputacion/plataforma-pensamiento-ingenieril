@@ -118,6 +118,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 110, step_id: "py-110-graph-bfs" },
   { level_id: 111, step_id: "py-111-tree-height" },
   { level_id: 112, step_id: "py-112-dijkstra" },
+  { level_id: 113, step_id: "py-113-heap" },
+  { level_id: 114, step_id: "py-114-priority-queue" },
+  { level_id: 115, step_id: "py-115-union-find" },
+  { level_id: 116, step_id: "py-116-kruskal" },
+  { level_id: 117, step_id: "py-117-prim" },
+  { level_id: 118, step_id: "py-118-topo-sort" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

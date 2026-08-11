@@ -22,133 +22,127 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 107,
-    id: "py-107-tree-inorder",
-    title: "DSA Tree Inorder",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-def inorder(node):
-    if node is None:
-        return
-    inorder(node.left)
-    print(node.data)
-    inorder(node.right)
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-inorder(root)
+    micro: 113,
+    id: "py-113-heap",
+    title: "DSA Heap (heapq)",
+    solution: `import heapq
+h = []
+for x in [5, 3, 8, 1]:
+    heapq.heappush(h, x)
+while h:
+    print(heapq.heappop(h))
 `,
-    nextUrl: /\/learn\/py-108-tree-postorder/,
-    cursorAfter: "108",
+    nextUrl: /\/learn\/py-114-priority-queue/,
+    cursorAfter: "114",
   },
   {
-    micro: 108,
-    id: "py-108-tree-postorder",
-    title: "DSA Tree Postorder",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-def postorder(node):
-    if node is None:
-        return
-    postorder(node.left)
-    postorder(node.right)
-    print(node.data)
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-postorder(root)
+    micro: 114,
+    id: "py-114-priority-queue",
+    title: "DSA Priority Queue",
+    solution: `import heapq
+pq = []
+heapq.heappush(pq, (2, 'code'))
+heapq.heappush(pq, (1, 'eat'))
+heapq.heappush(pq, (3, 'sleep'))
+while pq:
+    print(heapq.heappop(pq)[1])
 `,
-    nextUrl: /\/learn\/py-109-graph-dfs/,
-    cursorAfter: "109",
+    nextUrl: /\/learn\/py-115-union-find/,
+    cursorAfter: "115",
   },
   {
-    micro: 109,
-    id: "py-109-graph-dfs",
-    title: "DSA Graph DFS",
-    solution: `graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['E'], 'D': [], 'E': []}
-def dfs(graph, node, visited=None):
-    if visited is None:
-        visited = set()
-    if node in visited:
-        return
-    visited.add(node)
-    print(node)
-    for neighbor in graph[node]:
-        dfs(graph, neighbor, visited)
-dfs(graph, 'A')
+    micro: 115,
+    id: "py-115-union-find",
+    title: "DSA Union-Find",
+    solution: `parent = [0, 1, 2, 3]
+def find(x):
+    while parent[x] != x:
+        x = parent[x]
+    return x
+def union(a, b):
+    ra, rb = find(a), find(b)
+    if ra != rb:
+        parent[rb] = ra
+union(0, 1)
+union(2, 3)
+union(1, 2)
+print(find(0) == find(3))
 `,
-    nextUrl: /\/learn\/py-110-graph-bfs/,
-    cursorAfter: "110",
+    nextUrl: /\/learn\/py-116-kruskal/,
+    cursorAfter: "116",
   },
   {
-    micro: 110,
-    id: "py-110-graph-bfs",
-    title: "DSA Graph BFS",
+    micro: 116,
+    id: "py-116-kruskal",
+    title: "DSA Kruskal MST",
+    solution: `edges = [(1, 'A', 'B'), (2, 'B', 'C'), (3, 'A', 'C'), (4, 'C', 'D')]
+def kruskal(edges, nodes):
+    parent = {n: n for n in nodes}
+    def find(x):
+        while parent[x] != x:
+            x = parent[x]
+        return x
+    total = 0
+    for w, u, v in sorted(edges, key=lambda e: e[0]):
+        if find(u) != find(v):
+            parent[find(v)] = find(u)
+            total += w
+    return total
+print(kruskal(edges, ['A', 'B', 'C', 'D']))
+`,
+    nextUrl: /\/learn\/py-117-prim/,
+    cursorAfter: "117",
+  },
+  {
+    micro: 117,
+    id: "py-117-prim",
+    title: "DSA Prim MST",
+    solution: `import heapq
+graph = {'A': {'B': 1, 'C': 3}, 'B': {'A': 1, 'C': 2, 'D': 4}, 'C': {'A': 3, 'B': 2, 'D': 5}, 'D': {'B': 4, 'C': 5}}
+def prim(graph, start='A'):
+    visited = set()
+    pq = [(0, start)]
+    total = 0
+    while pq and len(visited) < len(graph):
+        w, u = heapq.heappop(pq)
+        if u in visited:
+            continue
+        visited.add(u)
+        total += w
+        for v, vw in graph[u].items():
+            if v not in visited:
+                heapq.heappush(pq, (vw, v))
+    return total
+print(prim(graph))
+`,
+    nextUrl: /\/learn\/py-118-topo-sort/,
+    cursorAfter: "118",
+  },
+  {
+    micro: 118,
+    id: "py-118-topo-sort",
+    title: "DSA Topological Sort",
     solution: `from collections import deque
-graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['E'], 'D': [], 'E': []}
-def bfs(graph, start):
-    visited = set([start])
-    q = deque([start])
+graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}
+def topo(graph):
+    indeg = {n: 0 for n in graph}
+    for u in graph:
+        for v in graph[u]:
+            indeg[v] += 1
+    q = deque([n for n in graph if indeg[n] == 0])
+    order = []
     while q:
-        node = q.popleft()
-        print(node)
-        for neighbor in graph[node]:
-            if neighbor not in visited:
-                visited.add(neighbor)
-                q.append(neighbor)
-bfs(graph, 'A')
+        u = q.popleft()
+        order.append(u)
+        for v in graph[u]:
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                q.append(v)
+    return order
+print(topo(graph))
 `,
-    nextUrl: /\/learn\/py-111-tree-height/,
-    cursorAfter: "111",
-  },
-  {
-    micro: 111,
-    id: "py-111-tree-height",
-    title: "DSA Tree Height",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-def treeHeight(node):
-    if node is None:
-        return 0
-    return 1 + max(treeHeight(node.left), treeHeight(node.right))
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-print(treeHeight(root))
-`,
-    nextUrl: /\/learn\/py-112-dijkstra/,
-    cursorAfter: "112",
-  },
-  {
-    micro: 112,
-    id: "py-112-dijkstra",
-    title: "DSA Dijkstra Intro",
-    solution: `graph = {'A': {'B': 4, 'C': 2}, 'B': {'C': 1, 'D': 5}, 'C': {'D': 8}, 'D': {}}
-def dijkstra(graph, start):
-    dist = {n: float('inf') for n in graph}
-    dist[start] = 0
-    unvisited = set(graph)
-    while unvisited:
-        u = min(unvisited, key=lambda n: dist[n])
-        unvisited.remove(u)
-        for v, w in graph[u].items():
-            alt = dist[u] + w
-            if alt < dist[v]:
-                dist[v] = alt
-    return dist
-print(dijkstra(graph, 'A'))
-`,
-    nextUrl: /\/learn\/py-113-heap/,
-    cursorAfter: "113",
+    nextUrl: /\/workspace/,
+    cursorAfter: "119",
   },
 ];
 
@@ -177,7 +171,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 107–112 · Tree walks / Graphs / Dijkstra", () => {
+test.describe("micro-steps 113–118 · Heap / PQ / Union-Find / MST / Topo", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
