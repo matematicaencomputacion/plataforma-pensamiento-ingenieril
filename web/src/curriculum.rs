@@ -730,9 +730,93 @@ pub const PY51_FOR: CodingStep = CodingStep {
     pytest: "def test_for(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('fruits') == ['apple', 'banana', 'cherry']\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['apple', 'banana', 'cherry']\n",
     hint: "fruits = [\"apple\", \"banana\", \"cherry\"]\nfor x in fruits:\n    print(x)",
     solution_example: "fruits = [\"apple\", \"banana\", \"cherry\"]\nfor x in fruits:\n    print(x)\n",
-    next: None,
+    next: Some("py-52-functions"),
     show_type_chips: false,
     micro_step: 51,
+};
+
+pub const PY52_FUNCTIONS: CodingStep = CodingStep {
+    id: "py-52-functions",
+    title: "Python Functions",
+    objective: "Definir una función con def y llamarla.",
+    prompt_md: "**Functions**\n\nUna función se define con `def` y se ejecuta al llamarla.\n\n**Micro-reto:**\n1. Definí `my_function` que imprima `Hello from a function`\n2. Llamá `my_function()`",
+    starter_code: "# def my_function():\n#     ...\n# my_function()\n",
+    pytest: "def test_functions(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Hello from a function'\n",
+    hint: "def my_function():\n    print(\"Hello from a function\")\nmy_function()",
+    solution_example: "def my_function():\n    print(\"Hello from a function\")\nmy_function()\n",
+    next: Some("py-53-function-args"),
+    show_type_chips: false,
+    micro_step: 52,
+};
+
+pub const PY53_FUNCTION_ARGS: CodingStep = CodingStep {
+    id: "py-53-function-args",
+    title: "Python Function Arguments",
+    objective: "Pasar un argumento a una función.",
+    prompt_md: "**Function Arguments**\n\nPodés pasar información a la función como argumentos.\n\n**Micro-reto:**\n1. Definí `my_function(fname)` que imprima `fname + \" Refsnes\"`\n2. Llamá `my_function(\"Emil\")`",
+    starter_code: "# def my_function(fname):\n#     ...\n# my_function(...)\n",
+    pytest: "def test_function_args(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Emil Refsnes'\n",
+    hint: "def my_function(fname):\n    print(fname + \" Refsnes\")\nmy_function(\"Emil\")",
+    solution_example: "def my_function(fname):\n    print(fname + \" Refsnes\")\nmy_function(\"Emil\")\n",
+    next: Some("py-54-function-return"),
+    show_type_chips: false,
+    micro_step: 53,
+};
+
+pub const PY54_FUNCTION_RETURN: CodingStep = CodingStep {
+    id: "py-54-function-return",
+    title: "Python Function Return",
+    objective: "Devolver un valor con return.",
+    prompt_md: "**Return Values**\n\n`return` envía un resultado al código que llamó la función.\n\n**Micro-reto:**\n1. Definí `my_function(x)` que retorne `5 * x`\n2. Imprimí `my_function(3)`",
+    starter_code: "# def my_function(x):\n#     return ...\n# print(...)\n",
+    pytest: "def test_function_return(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['my_function'](3) == 15\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '15'\n",
+    hint: "def my_function(x):\n    return 5 * x\nprint(my_function(3))",
+    solution_example: "def my_function(x):\n    return 5 * x\nprint(my_function(3))\n",
+    next: Some("py-55-lambda"),
+    show_type_chips: false,
+    micro_step: 54,
+};
+
+pub const PY55_LAMBDA: CodingStep = CodingStep {
+    id: "py-55-lambda",
+    title: "Python Lambda",
+    objective: "Crear una función anónima con lambda.",
+    prompt_md: "**Lambda**\n\n`lambda` crea una función pequeña de una sola expresión.\n\n**Micro-reto:**\n1. Creá `x` como `lambda a : a + 10`\n2. Imprimí `x(5)`",
+    starter_code: "# x = lambda ...\n# print(...)\n",
+    pytest: "def test_lambda(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['x'](5) == 15\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '15'\n",
+    hint: "x = lambda a : a + 10\nprint(x(5))",
+    solution_example: "x = lambda a : a + 10\nprint(x(5))\n",
+    next: Some("py-56-arrays"),
+    show_type_chips: false,
+    micro_step: 55,
+};
+
+pub const PY56_ARRAYS: CodingStep = CodingStep {
+    id: "py-56-arrays",
+    title: "Python Arrays",
+    objective: "Usar una list como array: acceso, append y len.",
+    prompt_md: "**Arrays**\n\nPython no tiene arrays nativos; se usan lists.\n\n**Micro-reto:**\n1. Creá `cars` con `Ford`, `Volvo`, `BMW`\n2. Agregá `Honda` con `append()`\n3. Imprimí `len(cars)`",
+    starter_code: "# cars = ...\n# cars.append(...)\n# print(len(...))\n",
+    pytest: "def test_arrays(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('cars') == ['Ford', 'Volvo', 'BMW', 'Honda']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '4'\n",
+    hint: "cars = [\"Ford\", \"Volvo\", \"BMW\"]\ncars.append(\"Honda\")\nprint(len(cars))",
+    solution_example: "cars = [\"Ford\", \"Volvo\", \"BMW\"]\ncars.append(\"Honda\")\nprint(len(cars))\n",
+    next: Some("py-57-classes"),
+    show_type_chips: false,
+    micro_step: 56,
+};
+
+pub const PY57_CLASSES: CodingStep = CodingStep {
+    id: "py-57-classes",
+    title: "Python Classes/Objects",
+    objective: "Crear una clase, un objeto y leer una propiedad.",
+    prompt_md: "**Classes/Objects**\n\nUna class es un blueprint; un object es una instancia.\n\n**Micro-reto:**\n1. Creá la clase `MyClass` con propiedad `x = 5`\n2. Creá el object `p1 = MyClass()`\n3. Imprimí `p1.x`",
+    starter_code: "# class MyClass:\n#     x = ...\n# p1 = ...\n# print(...)\n",
+    pytest: "def test_classes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['p1'].x == 5\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '5'\n",
+    hint: "class MyClass:\n    x = 5\np1 = MyClass()\nprint(p1.x)",
+    solution_example: "class MyClass:\n    x = 5\np1 = MyClass()\nprint(p1.x)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 57,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -787,6 +871,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY49_ELIF,
     &PY50_WHILE,
     &PY51_FOR,
+    &PY52_FUNCTIONS,
+    &PY53_FUNCTION_ARGS,
+    &PY54_FUNCTION_RETURN,
+    &PY55_LAMBDA,
+    &PY56_ARRAYS,
+    &PY57_CLASSES,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -1096,10 +1186,27 @@ mod tests {
             (48, "py-48-if", Some("py-49-elif")),
             (49, "py-49-elif", Some("py-50-while")),
             (50, "py-50-while", Some("py-51-for")),
-            (51, "py-51-for", None),
+            (51, "py-51-for", Some("py-52-functions")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("control flow step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py52_to_py57_functions_classes_chain() {
+        let ids = [
+            (52, "py-52-functions", Some("py-53-function-args")),
+            (53, "py-53-function-args", Some("py-54-function-return")),
+            (54, "py-54-function-return", Some("py-55-lambda")),
+            (55, "py-55-lambda", Some("py-56-arrays")),
+            (56, "py-56-arrays", Some("py-57-classes")),
+            (57, "py-57-classes", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("functions/classes step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }

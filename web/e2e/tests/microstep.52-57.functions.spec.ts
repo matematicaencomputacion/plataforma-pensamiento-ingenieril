@@ -22,78 +22,70 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 46,
-    id: "py-46-dict-copy",
-    title: "Python Copy Dictionaries",
-    solution: `thisdict = {"brand": "Ford", "model": "Mustang", "year": 1964}
-mydict = thisdict.copy()
-print(mydict["brand"])
+    micro: 52,
+    id: "py-52-functions",
+    title: "Python Functions",
+    solution: `def my_function():
+    print("Hello from a function")
+my_function()
 `,
-    nextUrl: /\/learn\/py-47-dict-nested/,
-    cursorAfter: "47",
+    nextUrl: /\/learn\/py-53-function-args/,
+    cursorAfter: "53",
   },
   {
-    micro: 47,
-    id: "py-47-dict-nested",
-    title: "Python Nested Dictionaries",
-    solution: `myfamily = {
-  "child1": {"name": "Emil", "year": 2004},
-  "child2": {"name": "Tobias", "year": 2007},
-  "child3": {"name": "Linus", "year": 2011}
-}
-print(myfamily["child2"]["name"])
+    micro: 53,
+    id: "py-53-function-args",
+    title: "Python Function Arguments",
+    solution: `def my_function(fname):
+    print(fname + " Refsnes")
+my_function("Emil")
 `,
-    nextUrl: /\/learn\/py-48-if/,
-    cursorAfter: "48",
+    nextUrl: /\/learn\/py-54-function-return/,
+    cursorAfter: "54",
   },
   {
-    micro: 48,
-    id: "py-48-if",
-    title: "Python If Statement",
-    solution: `a = 33
-b = 200
-if b > a:
-    print("b is greater than a")
+    micro: 54,
+    id: "py-54-function-return",
+    title: "Python Function Return",
+    solution: `def my_function(x):
+    return 5 * x
+print(my_function(3))
 `,
-    nextUrl: /\/learn\/py-49-elif/,
-    cursorAfter: "49",
+    nextUrl: /\/learn\/py-55-lambda/,
+    cursorAfter: "55",
   },
   {
-    micro: 49,
-    id: "py-49-elif",
-    title: "Python Elif",
-    solution: `a = 33
-b = 33
-if b > a:
-    print("b is greater than a")
-elif a == b:
-    print("a and b are equal")
+    micro: 55,
+    id: "py-55-lambda",
+    title: "Python Lambda",
+    solution: `x = lambda a : a + 10
+print(x(5))
 `,
-    nextUrl: /\/learn\/py-50-while/,
-    cursorAfter: "50",
+    nextUrl: /\/learn\/py-56-arrays/,
+    cursorAfter: "56",
   },
   {
-    micro: 50,
-    id: "py-50-while",
-    title: "Python While Loops",
-    solution: `i = 1
-while i < 6:
-    print(i)
-    i += 1
+    micro: 56,
+    id: "py-56-arrays",
+    title: "Python Arrays",
+    solution: `cars = ["Ford", "Volvo", "BMW"]
+cars.append("Honda")
+print(len(cars))
 `,
-    nextUrl: /\/learn\/py-51-for/,
-    cursorAfter: "51",
+    nextUrl: /\/learn\/py-57-classes/,
+    cursorAfter: "57",
   },
   {
-    micro: 51,
-    id: "py-51-for",
-    title: "Python For Loops",
-    solution: `fruits = ["apple", "banana", "cherry"]
-for x in fruits:
-    print(x)
+    micro: 57,
+    id: "py-57-classes",
+    title: "Python Classes/Objects",
+    solution: `class MyClass:
+    x = 5
+p1 = MyClass()
+print(p1.x)
 `,
-    nextUrl: /\/learn\/py-52-functions/,
-    cursorAfter: "52",
+    nextUrl: /\/workspace/,
+    cursorAfter: "58",
   },
 ];
 
@@ -122,7 +114,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 46–51 · control flow family", () => {
+test.describe("micro-steps 52–57 · Functions / Lambda / Arrays / Classes", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

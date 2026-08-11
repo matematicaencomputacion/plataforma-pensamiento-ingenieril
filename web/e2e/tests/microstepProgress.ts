@@ -57,6 +57,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 49, step_id: "py-49-elif" },
   { level_id: 50, step_id: "py-50-while" },
   { level_id: 51, step_id: "py-51-for" },
+  { level_id: 52, step_id: "py-52-functions" },
+  { level_id: 53, step_id: "py-53-function-args" },
+  { level_id: 54, step_id: "py-54-function-return" },
+  { level_id: 55, step_id: "py-55-lambda" },
+  { level_id: 56, step_id: "py-56-arrays" },
+  { level_id: 57, step_id: "py-57-classes" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
