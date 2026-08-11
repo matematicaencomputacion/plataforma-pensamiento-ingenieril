@@ -22,105 +22,94 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 137,
-    id: "py-137-kadane",
-    title: "DSA Kadane",
-    solution: `def max_subarray(nums):
-    best = cur = nums[0]
-    for x in nums[1:]:
-        cur = max(x, cur + x)
-        best = max(best, cur)
-    return best
-print(max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))
+    micro: 143,
+    id: "py-143-climb-stairs",
+    title: "DSA Climb Stairs",
+    solution: `def climb_stairs(n):
+    if n <= 2:
+        return n
+    a, b = 1, 2
+    for _ in range(3, n + 1):
+        a, b = b, a + b
+    return b
+print(climb_stairs(5))
 `,
-    nextUrl: /\/learn\/py-138-merge-intervals/,
-    cursorAfter: "138",
+    nextUrl: /\/learn\/py-144-house-robber/,
+    cursorAfter: "144",
   },
   {
-    micro: 138,
-    id: "py-138-merge-intervals",
-    title: "DSA Merge Intervals",
-    solution: `def merge_intervals(intervals):
-    intervals = sorted(intervals, key=lambda x: x[0])
-    out = [intervals[0][:]]
-    for s, e in intervals[1:]:
-        if s <= out[-1][1]:
-            out[-1][1] = max(out[-1][1], e)
-        else:
-            out.append([s, e])
-    return out
-print(merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]))
+    micro: 144,
+    id: "py-144-house-robber",
+    title: "DSA House Robber",
+    solution: `def rob(nums):
+    prev2 = prev1 = 0
+    for x in nums:
+        prev2, prev1 = prev1, max(prev1, prev2 + x)
+    return prev1
+print(rob([2, 7, 9, 3, 1]))
 `,
-    nextUrl: /\/learn\/py-139-lower-bound/,
-    cursorAfter: "139",
+    nextUrl: /\/learn\/py-145-unique-paths/,
+    cursorAfter: "145",
   },
   {
-    micro: 139,
-    id: "py-139-lower-bound",
-    title: "DSA Lower Bound",
-    solution: `def lower_bound(nums, target):
-    lo, hi = 0, len(nums)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if nums[mid] < target:
-            lo = mid + 1
-        else:
-            hi = mid
-    return lo
-print(lower_bound([1, 3, 3, 5, 7], 3))
+    micro: 145,
+    id: "py-145-unique-paths",
+    title: "DSA Unique Paths",
+    solution: `def unique_paths(m, n):
+    dp = [[1] * n for _ in range(m)]
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+    return dp[-1][-1]
+print(unique_paths(3, 7))
 `,
-    nextUrl: /\/learn\/py-140-rotate-matrix/,
-    cursorAfter: "140",
+    nextUrl: /\/learn\/py-146-majority/,
+    cursorAfter: "146",
   },
   {
-    micro: 140,
-    id: "py-140-rotate-matrix",
-    title: "DSA Rotate Matrix",
-    solution: `def rotate(matrix):
-    n = len(matrix)
-    for i in range(n):
-        for j in range(i + 1, n):
-            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
-    for row in matrix:
-        row.reverse()
-    return matrix
-m = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-print(rotate(m))
+    micro: 146,
+    id: "py-146-majority",
+    title: "DSA Majority Element",
+    solution: `def majority(nums):
+    cand = None
+    count = 0
+    for x in nums:
+        if count == 0:
+            cand = x
+        count += 1 if x == cand else -1
+    return cand
+print(majority([2, 2, 1, 1, 1, 2, 2]))
 `,
-    nextUrl: /\/learn\/py-141-valid-parens/,
-    cursorAfter: "141",
+    nextUrl: /\/learn\/py-147-missing-number/,
+    cursorAfter: "147",
   },
   {
-    micro: 141,
-    id: "py-141-valid-parens",
-    title: "DSA Valid Parentheses",
-    solution: `def valid_parens(s):
-    pairs = {')': '(', ']': '[', '}': '{'}
-    stack = []
-    for ch in s:
-        if ch in '([{':
-            stack.append(ch)
-        elif not stack or stack.pop() != pairs[ch]:
-            return False
-    return not stack
-print(valid_parens('()[]{}'))
-print(valid_parens('(]'))
+    micro: 147,
+    id: "py-147-missing-number",
+    title: "DSA Missing Number",
+    solution: `def missing_number(nums):
+    missing = len(nums)
+    for i, x in enumerate(nums):
+        missing ^= i ^ x
+    return missing
+print(missing_number([3, 0, 1]))
 `,
-    nextUrl: /\/learn\/py-142-anagram/,
-    cursorAfter: "142",
+    nextUrl: /\/learn\/py-148-single-number/,
+    cursorAfter: "148",
   },
   {
-    micro: 142,
-    id: "py-142-anagram",
-    title: "DSA Anagram Check",
-    solution: `from collections import Counter
-def is_anagram(a, b):
-    return Counter(a) == Counter(b)
-print(is_anagram('listen', 'silent'))
-print(is_anagram('hello', 'world'))
+    micro: 148,
+    id: "py-148-single-number",
+    title: "DSA Single Number",
+    solution: `def single_number(nums):
+    x = 0
+    for n in nums:
+        x ^= n
+    return x
+print(single_number([4, 1, 2, 1, 2]))
 `,
-    nextUrl: /\/learn\/py-143-climb-stairs/,
-    cursorAfter: "143",
+    nextUrl: /\/workspace/,
+    cursorAfter: "149",
   },
 ];
 
@@ -149,7 +138,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 137–142 · Kadane / intervals / binary / matrix / parens", () => {
+test.describe("micro-steps 143–148 · stairs / robber / paths / voting / XOR", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

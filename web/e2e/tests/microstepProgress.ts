@@ -148,6 +148,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 140, step_id: "py-140-rotate-matrix" },
   { level_id: 141, step_id: "py-141-valid-parens" },
   { level_id: 142, step_id: "py-142-anagram" },
+  { level_id: 143, step_id: "py-143-climb-stairs" },
+  { level_id: 144, step_id: "py-144-house-robber" },
+  { level_id: 145, step_id: "py-145-unique-paths" },
+  { level_id: 146, step_id: "py-146-majority" },
+  { level_id: 147, step_id: "py-147-missing-number" },
+  { level_id: 148, step_id: "py-148-single-number" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
