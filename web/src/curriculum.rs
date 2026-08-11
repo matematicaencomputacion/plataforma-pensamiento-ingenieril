@@ -2926,9 +2926,71 @@ pub const PY208_WORD_LADDER: CodingStep = CodingStep {
     pytest: "def test_word_ladder(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('ladder_length'))\n    assert ns['ladder_length']('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']) == 5\n    assert ns['ladder_length']('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log']) == 0\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['5']\n",
     hint: "from collections import deque\n\ndef ladder_length(begin_word, end_word, word_list):\n    words = set(word_list)\n    if end_word not in words:\n        return 0\n    queue = deque([(begin_word, 1)])\n    while queue:\n        word, dist = queue.popleft()\n        if word == end_word:\n            return dist\n        for i in range(len(word)):\n            for ord_c in range(ord('a'), ord('z') + 1):\n                nxt = word[:i] + chr(ord_c) + word[i + 1:]\n                if nxt in words:\n                    words.remove(nxt)\n                    queue.append((nxt, dist + 1))\n    return 0\nprint(ladder_length('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))",
     solution_example: "from collections import deque\n\ndef ladder_length(begin_word, end_word, word_list):\n    words = set(word_list)\n    if end_word not in words:\n        return 0\n    queue = deque([(begin_word, 1)])\n    while queue:\n        word, dist = queue.popleft()\n        if word == end_word:\n            return dist\n        for i in range(len(word)):\n            for ord_c in range(ord('a'), ord('z') + 1):\n                nxt = word[:i] + chr(ord_c) + word[i + 1:]\n                if nxt in words:\n                    words.remove(nxt)\n                    queue.append((nxt, dist + 1))\n    return 0\nprint(ladder_length('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']))\n",
-    next: None,
+    next: Some("py-209-lru-cache"),
     show_type_chips: false,
     micro_step: 208,
+};
+
+pub const PY209_LRU_CACHE: CodingStep = CodingStep {
+    id: "py-209-lru-cache",
+    title: "DSA Caché LRU",
+    objective: "Implementar una caché de capacidad fija que descarte la clave menos usada recientemente.",
+    prompt_md: "**LRU Cache**\n\nDefiní `LRUCache(capacity)` con `get(key)` y `put(key, value)`. Un `get` exitoso también actualiza el uso.\n\n**Micro-reto:** imprimí `[1, -1, -1, 3, 4]` para la secuencia clásica.",
+    starter_code: "# class LRUCache:\n#     ...\n",
+    pytest: "def test_lru_cache(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    cache = ns['LRUCache'](2)\n    cache.put(1, 1); cache.put(2, 2)\n    assert cache.get(1) == 1\n    cache.put(3, 3)\n    assert cache.get(2) == -1\n    cache.put(4, 4)\n    assert [cache.get(1), cache.get(3), cache.get(4)] == [-1, 3, 4]\n    assert capsys.readouterr().out.strip() == '[1, -1, -1, 3, 4]'\n",
+    hint: "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity): self.capacity, self.data = capacity, OrderedDict()\n    def get(self, key):\n        if key not in self.data: return -1\n        self.data.move_to_end(key); return self.data[key]\n    def put(self, key, value):\n        if key in self.data: self.data.move_to_end(key)\n        self.data[key] = value\n        if len(self.data) > self.capacity: self.data.popitem(last=False)",
+    solution_example: "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity): self.capacity, self.data = capacity, OrderedDict()\n    def get(self, key):\n        if key not in self.data: return -1\n        self.data.move_to_end(key); return self.data[key]\n    def put(self, key, value):\n        if key in self.data: self.data.move_to_end(key)\n        self.data[key] = value\n        if len(self.data) > self.capacity: self.data.popitem(last=False)\nc = LRUCache(2); c.put(1, 1); c.put(2, 2); a = c.get(1); c.put(3, 3); b = c.get(2); c.put(4, 4)\nprint([a, b, c.get(1), c.get(3), c.get(4)])\n",
+    next: Some("py-210-basic-calc"), show_type_chips: false, micro_step: 209,
+};
+
+pub const PY210_BASIC_CALC: CodingStep = CodingStep {
+    id: "py-210-basic-calc", title: "DSA Calculadora Básica", objective: "Evaluar sumas y restas con espacios.",
+    prompt_md: "**Basic Calculator**\n\nDefiní `calculate(s)` para expresiones con enteros, `+`, `-` y espacios.\n\n**Micro-reto:** imprimí `calculate(' 2-1 + 2 ')`.",
+    starter_code: "# def calculate(s):\n#     ...\n",
+    pytest: "def test_basic_calc(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['calculate']('1 + 1') == 2\n    assert ns['calculate'](' 2-1 + 2 ') == 3\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "def calculate(s):\n    total = number = 0; sign = 1\n    for char in s + '+':\n        if char.isdigit(): number = number * 10 + int(char)\n        elif char in '+-': total += sign * number; number = 0; sign = 1 if char == '+' else -1\n    return total",
+    solution_example: "def calculate(s):\n    total = number = 0; sign = 1\n    for char in s + '+':\n        if char.isdigit(): number = number * 10 + int(char)\n        elif char in '+-': total += sign * number; number = 0; sign = 1 if char == '+' else -1\n    return total\nprint(calculate(' 2-1 + 2 '))\n",
+    next: Some("py-211-encode-decode"), show_type_chips: false, micro_step: 210,
+};
+
+pub const PY211_ENCODE_DECODE: CodingStep = CodingStep {
+    id: "py-211-encode-decode", title: "DSA Codificar y Decodificar Strings", objective: "Serializar una lista de strings sin ambigüedad.",
+    prompt_md: "**Encode / Decode**\n\nDefiní `encode(strs)` y `decode(data)` con prefijos de longitud.\n\n**Micro-reto:** imprimí el roundtrip de `['hello', 'world']`.",
+    starter_code: "# def encode(strs): ...\n# def decode(data): ...\n",
+    pytest: "def test_encode_decode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['decode'](ns['encode'](['', 'a#b', 'world'])) == ['', 'a#b', 'world']\n    assert capsys.readouterr().out.strip() == \"['hello', 'world']\"\n",
+    hint: "def encode(strs): return ''.join(f'{len(word)}#{word}' for word in strs)\ndef decode(data):\n    out = []; i = 0\n    while i < len(data):\n        j = data.index('#', i); size = int(data[i:j]); i = j + 1\n        out.append(data[i:i + size]); i += size\n    return out",
+    solution_example: "def encode(strs): return ''.join(f'{len(word)}#{word}' for word in strs)\ndef decode(data):\n    out = []; i = 0\n    while i < len(data):\n        j = data.index('#', i); size = int(data[i:j]); i = j + 1\n        out.append(data[i:i + size]); i += size\n    return out\nprint(decode(encode(['hello', 'world'])))\n",
+    next: Some("py-212-randomized-set"), show_type_chips: false, micro_step: 211,
+};
+
+pub const PY212_RANDOMIZED_SET: CodingStep = CodingStep {
+    id: "py-212-randomized-set", title: "DSA Conjunto Aleatorio", objective: "Insertar, eliminar y elegir en O(1) promedio.",
+    prompt_md: "**Randomized Set**\n\nDefiní `RandomizedSet` con `insert`, `remove` y `get_random`. Usá una lista y un mapa de índices.\n\n**Micro-reto:** la única clave restante hace determinista `get_random()`.",
+    starter_code: "# class RandomizedSet:\n#     ...\n",
+    pytest: "def test_randomized_set(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    values = ns['RandomizedSet']()\n    assert values.insert(1) and values.insert(2) and not values.insert(1)\n    assert values.remove(1) and values.get_random() == 2\n    assert capsys.readouterr().out.strip() == '[True, True, False, True, 2]'\n",
+    hint: "import random\n\nclass RandomizedSet:\n    def __init__(self): self.values, self.positions = [], {}\n    def insert(self, value):\n        if value in self.positions: return False\n        self.positions[value] = len(self.values); self.values.append(value); return True\n    def remove(self, value):\n        if value not in self.positions: return False\n        i = self.positions.pop(value); last = self.values.pop()\n        if i < len(self.values): self.values[i] = last; self.positions[last] = i\n        return True\n    def get_random(self): return random.choice(self.values)",
+    solution_example: "import random\n\nclass RandomizedSet:\n    def __init__(self): self.values, self.positions = [], {}\n    def insert(self, value):\n        if value in self.positions: return False\n        self.positions[value] = len(self.values); self.values.append(value); return True\n    def remove(self, value):\n        if value not in self.positions: return False\n        i = self.positions.pop(value); last = self.values.pop()\n        if i < len(self.values): self.values[i] = last; self.positions[last] = i\n        return True\n    def get_random(self): return random.choice(self.values)\nr = RandomizedSet(); print([r.insert(1), r.insert(2), r.insert(1), r.remove(1), r.get_random()])\n",
+    next: Some("py-213-time-kv"), show_type_chips: false, micro_step: 212,
+};
+
+pub const PY213_TIME_KV: CodingStep = CodingStep {
+    id: "py-213-time-kv", title: "DSA Mapa Clave-Valor Temporal", objective: "Buscar el valor más reciente anterior a un timestamp.",
+    prompt_md: "**Time Based Key-Value Store**\n\nDefiní `TimeMap` con `set` y `get` usando búsqueda binaria.\n\n**Micro-reto:** imprimí `bar`, `bar` y `bar2` para el ejemplo clásico.",
+    starter_code: "# class TimeMap:\n#     ...\n",
+    pytest: "def test_time_kv(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    tm = ns['TimeMap'](); tm.set('foo', 'bar', 1); tm.set('foo', 'bar2', 4)\n    assert [tm.get('foo', 1), tm.get('foo', 3), tm.get('foo', 4), tm.get('x', 9)] == ['bar', 'bar', 'bar2', '']\n    assert capsys.readouterr().out.strip() == \"['bar', 'bar', 'bar2']\"\n",
+    hint: "from bisect import bisect_right\n\nclass TimeMap:\n    def __init__(self): self.data = {}\n    def set(self, key, value, timestamp): self.data.setdefault(key, []).append((timestamp, value))\n    def get(self, key, timestamp):\n        values = self.data.get(key, []); i = bisect_right(values, (timestamp, chr(0x10ffff))) - 1\n        return values[i][1] if i >= 0 else ''",
+    solution_example: "from bisect import bisect_right\n\nclass TimeMap:\n    def __init__(self): self.data = {}\n    def set(self, key, value, timestamp): self.data.setdefault(key, []).append((timestamp, value))\n    def get(self, key, timestamp):\n        values = self.data.get(key, []); i = bisect_right(values, (timestamp, chr(0x10ffff))) - 1\n        return values[i][1] if i >= 0 else ''\nt = TimeMap(); t.set('foo', 'bar', 1); a = t.get('foo', 1); b = t.get('foo', 3); t.set('foo', 'bar2', 4); print([a, b, t.get('foo', 4)])\n",
+    next: Some("py-214-snapshot-array"), show_type_chips: false, micro_step: 213,
+};
+
+pub const PY214_SNAPSHOT_ARRAY: CodingStep = CodingStep {
+    id: "py-214-snapshot-array", title: "DSA Array de Instantáneas", objective: "Consultar valores históricos por identificador de snapshot.",
+    prompt_md: "**Snapshot Array**\n\nDefiní `SnapshotArray(length)` con `set`, `snap` y `get`.\n\n**Micro-reto:** imprimí el valor guardado en el primer snapshot.",
+    starter_code: "# class SnapshotArray:\n#     ...\n",
+    pytest: "def test_snapshot_array(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    array = ns['SnapshotArray'](3); array.set(0, 5); snap = array.snap(); array.set(0, 6)\n    assert snap == 0 and array.get(0, 0) == 5 and array.get(1, 0) == 0\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "from bisect import bisect_right\n\nclass SnapshotArray:\n    def __init__(self, length): self.history, self.snap_id = [[(0, 0)] for _ in range(length)], 0\n    def set(self, index, val): self.history[index].append((self.snap_id, val))\n    def snap(self): self.snap_id += 1; return self.snap_id - 1\n    def get(self, index, snap_id):\n        values = self.history[index]; return values[bisect_right(values, (snap_id, float('inf'))) - 1][1]",
+    solution_example: "from bisect import bisect_right\n\nclass SnapshotArray:\n    def __init__(self, length): self.history, self.snap_id = [[(0, 0)] for _ in range(length)], 0\n    def set(self, index, val): self.history[index].append((self.snap_id, val))\n    def snap(self): self.snap_id += 1; return self.snap_id - 1\n    def get(self, index, snap_id):\n        values = self.history[index]; return values[bisect_right(values, (snap_id, float('inf'))) - 1][1]\na = SnapshotArray(3); a.set(0, 5); snap = a.snap(); a.set(0, 6); print(a.get(0, snap))\n",
+    next: Some("py-215-min-window"), show_type_chips: false, micro_step: 214,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3140,6 +3202,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY206_PACIFIC_ATLANTIC,
     &PY207_ROT_ORANGES,
     &PY208_WORD_LADDER,
+    &PY209_LRU_CACHE,
+    &PY210_BASIC_CALC,
+    &PY211_ENCODE_DECODE,
+    &PY212_RANDOMIZED_SET,
+    &PY213_TIME_KV,
+    &PY214_SNAPSHOT_ARRAY,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -3837,7 +3905,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py208_curriculum_chain() {
+    fn py203_to_py214_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -3845,7 +3913,13 @@ mod tests {
             (205, "py-205-course-schedule", Some("py-206-pacific-atlantic")),
             (206, "py-206-pacific-atlantic", Some("py-207-rot-oranges")),
             (207, "py-207-rot-oranges", Some("py-208-word-ladder")),
-            (208, "py-208-word-ladder", None),
+            (208, "py-208-word-ladder", Some("py-209-lru-cache")),
+            (209, "py-209-lru-cache", Some("py-210-basic-calc")),
+            (210, "py-210-basic-calc", Some("py-211-encode-decode")),
+            (211, "py-211-encode-decode", Some("py-212-randomized-set")),
+            (212, "py-212-randomized-set", Some("py-213-time-kv")),
+            (213, "py-213-time-kv", Some("py-214-snapshot-array")),
+            (214, "py-214-snapshot-array", Some("py-215-min-window")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

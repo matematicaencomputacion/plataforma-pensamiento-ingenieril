@@ -214,6 +214,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 206, step_id: "py-206-pacific-atlantic" },
   { level_id: 207, step_id: "py-207-rot-oranges" },
   { level_id: 208, step_id: "py-208-word-ladder" },
+  { level_id: 209, step_id: "py-209-lru-cache" },
+  { level_id: 210, step_id: "py-210-basic-calc" },
+  { level_id: 211, step_id: "py-211-encode-decode" },
+  { level_id: 212, step_id: "py-212-randomized-set" },
+  { level_id: 213, step_id: "py-213-time-kv" },
+  { level_id: 214, step_id: "py-214-snapshot-array" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
