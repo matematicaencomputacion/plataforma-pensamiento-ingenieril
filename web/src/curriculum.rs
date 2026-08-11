@@ -86,9 +86,23 @@ pub const PY05_OUTPUT: CodingStep = CodingStep {
     pytest: "def test_output_mix(capsys):\n    exec(open('solution.py', encoding='utf-8').read())\n    out = ' '.join(capsys.readouterr().out.split())\n    assert 'I am' in out and '25' in out\n",
     hint: "print(\"I am\", 25)",
     solution_example: "print(\"I am\", 25)",
-    next: None,
+    next: Some("py-06-comments"),
     show_type_chips: false,
     micro_step: 5,
+};
+
+pub const PY06_COMMENTS: CodingStep = CodingStep {
+    id: "py-06-comments",
+    title: "Python Comments",
+    objective: "Documentar código con comentarios de línea y multilínea, y desactivar líneas temporales.",
+    prompt_md: "**Comments**\n\nLos comentarios empiezan con `#`. También podés usar un string multilínea con comillas triples como comentario.\n\n**Micro-reto:**\n1. Agregá un comentario de una línea que diga exactamente `This is a comment`\n2. Comentá la línea `print(\"This should not run\")` para que **no** se ejecute\n3. Agregá un comentario multilínea (comillas triples) que contenga `This is`, `a multiline` y `comment`",
+    starter_code: "# Completá el micro-reto\n\nprint(\"This should not run\")\n",
+    pytest: "def test_comments(capsys):\n    src = open('solution.py', encoding='utf-8').read()\n    assert 'This is a comment' in src\n    assert any(\n        ln.lstrip().startswith('#') and 'print(\"This should not run\")' in ln\n        for ln in src.splitlines()\n    )\n    assert ('\"\"\"' in src) or (\"'''\" in src)\n    low = src.lower()\n    assert 'this is' in low and 'multiline' in low and 'comment' in low\n    exec(compile(src, 'solution.py', 'exec'))\n    assert 'This should not run' not in capsys.readouterr().out\n",
+    hint: "# This is a comment\n# print(\"This should not run\")\n\"\"\"This is\na multiline\ncomment\"\"\"",
+    solution_example: "# This is a comment\n# print(\"This should not run\")\n\"\"\"This is\na multiline\ncomment\"\"\"\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 6,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -97,6 +111,7 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY03_GET_STARTED,
     &PY04_SYNTAX,
     &PY05_OUTPUT,
+    &PY06_COMMENTS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -259,8 +274,17 @@ mod tests {
         let out = coding_step_by_micro_step(5).expect("py-05");
         assert_eq!(out.id, "py-05-output");
         assert_eq!(out.micro_step, 5);
-        assert!(out.next.is_none());
+        assert_eq!(out.next, Some("py-06-comments"));
         assert!(out.pytest.contains("test_output_mix"));
+    }
+
+    #[test]
+    fn py06_comments_chained_from_output() {
+        let comments = coding_step_by_micro_step(6).expect("py-06");
+        assert_eq!(comments.id, "py-06-comments");
+        assert!(comments.next.is_none());
+        assert!(comments.pytest.contains("test_comments"));
+        assert!(comments.starter_code.contains("This should not run"));
     }
 
     #[test]
