@@ -112,6 +112,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 104, step_id: "py-104-counting-sort" },
   { level_id: 105, step_id: "py-105-tree-node" },
   { level_id: 106, step_id: "py-106-tree-preorder" },
+  { level_id: 107, step_id: "py-107-tree-inorder" },
+  { level_id: 108, step_id: "py-108-tree-postorder" },
+  { level_id: 109, step_id: "py-109-graph-dfs" },
+  { level_id: 110, step_id: "py-110-graph-bfs" },
+  { level_id: 111, step_id: "py-111-tree-height" },
+  { level_id: 112, step_id: "py-112-dijkstra" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
