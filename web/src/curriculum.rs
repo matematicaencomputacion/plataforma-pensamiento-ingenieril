@@ -1234,9 +1234,93 @@ pub const PY87_QUEUE_CLASS: CodingStep = CodingStep {
     pytest: "def test_queue_class(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['myQueue'].queue == ['B']\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'A'\n",
     hint: "class Queue:\n    def __init__(self):\n        self.queue = []\n    def enqueue(self, element):\n        self.queue.append(element)\n    def dequeue(self):\n        return self.queue.pop(0)\nmyQueue = Queue()\nmyQueue.enqueue('A')\nmyQueue.enqueue('B')\nprint(myQueue.dequeue())",
     solution_example: "class Queue:\n    def __init__(self):\n        self.queue = []\n    def enqueue(self, element):\n        self.queue.append(element)\n    def dequeue(self):\n        return self.queue.pop(0)\nmyQueue = Queue()\nmyQueue.enqueue('A')\nmyQueue.enqueue('B')\nprint(myQueue.dequeue())\n",
-    next: None,
+    next: Some("py-88-linear-in"),
     show_type_chips: false,
     micro_step: 87,
+};
+
+pub const PY88_LINEAR_IN: CodingStep = CodingStep {
+    id: "py-88-linear-in",
+    title: "DSA Linear Search (in)",
+    objective: "Comprobar pertenencia con el operador in.",
+    prompt_md: "**Linear Search**\n\nLa forma rápida de chequear si un valor existe es el operador `in`.\n\n**Micro-reto:**\n1. Creá `mylist` con `3, 7, 2, 9, 5, 1, 8, 4, 6`\n2. Si `4` está en `mylist`, imprimí `Found!`; si no, `Not found!`",
+    starter_code: "# mylist = ...\n# if ...:\n#     ...\n",
+    pytest: "def test_linear_in(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('mylist') == [3, 7, 2, 9, 5, 1, 8, 4, 6]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == 'Found!'\n",
+    hint: "mylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]\nif 4 in mylist:\n    print(\"Found!\")\nelse:\n    print(\"Not found!\")",
+    solution_example: "mylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]\nif 4 in mylist:\n    print(\"Found!\")\nelse:\n    print(\"Not found!\")\n",
+    next: Some("py-89-linear-search"),
+    show_type_chips: false,
+    micro_step: 88,
+};
+
+pub const PY89_LINEAR_SEARCH: CodingStep = CodingStep {
+    id: "py-89-linear-search",
+    title: "DSA Linear Search Index",
+    objective: "Devolver el índice del target con linear search.",
+    prompt_md: "**Linear Search (index)**\n\nRecorré el array y devolvé el índice del valor buscado.\n\n**Micro-reto:**\n1. Definí `linearSearch(arr, targetVal)` que recorra `arr` y devuelva el índice o `-1`\n2. Con `mylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]` y `x = 4`\n3. Imprimí `linearSearch(mylist, x)`",
+    starter_code: "# def linearSearch(arr, targetVal):\n#     ...\n# mylist = ...\n# print(...)\n",
+    pytest: "def test_linear_search(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['linearSearch']([3, 7, 2, 9, 5, 1, 8, 4, 6], 4) == 7\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '7'\n",
+    hint: "def linearSearch(arr, targetVal):\n    for i in range(len(arr)):\n        if arr[i] == targetVal:\n            return i\n    return -1\nmylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]\nx = 4\nprint(linearSearch(mylist, x))",
+    solution_example: "def linearSearch(arr, targetVal):\n    for i in range(len(arr)):\n        if arr[i] == targetVal:\n            return i\n    return -1\nmylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]\nx = 4\nprint(linearSearch(mylist, x))\n",
+    next: Some("py-90-bubble-sort"),
+    show_type_chips: false,
+    micro_step: 89,
+};
+
+pub const PY90_BUBBLE_SORT: CodingStep = CodingStep {
+    id: "py-90-bubble-sort",
+    title: "DSA Bubble Sort",
+    objective: "Ordenar una list con Bubble Sort.",
+    prompt_md: "**Bubble Sort**\n\nCompará pares vecinos e intercambiá si están desordenados.\n\n**Micro-reto:**\n1. Creá `mylist = [64, 34, 25, 12, 22, 11, 90, 5]`\n2. Implementá Bubble Sort (doble loop con swap)\n3. Imprimí `mylist`",
+    starter_code: "# mylist = ...\n# n = len(mylist)\n# for i in range(n-1):\n#     ...\n# print(mylist)\n",
+    pytest: "def test_bubble_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('mylist') == [5, 11, 12, 22, 25, 34, 64, 90]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '[5, 11, 12, 22, 25, 34, 64, 90]'\n",
+    hint: "mylist = [64, 34, 25, 12, 22, 11, 90, 5]\nn = len(mylist)\nfor i in range(n-1):\n    for j in range(n-i-1):\n        if mylist[j] > mylist[j+1]:\n            mylist[j], mylist[j+1] = mylist[j+1], mylist[j]\nprint(mylist)",
+    solution_example: "mylist = [64, 34, 25, 12, 22, 11, 90, 5]\nn = len(mylist)\nfor i in range(n-1):\n    for j in range(n-i-1):\n        if mylist[j] > mylist[j+1]:\n            mylist[j], mylist[j+1] = mylist[j+1], mylist[j]\nprint(mylist)\n",
+    next: Some("py-91-binary-search"),
+    show_type_chips: false,
+    micro_step: 90,
+};
+
+pub const PY91_BINARY_SEARCH: CodingStep = CodingStep {
+    id: "py-91-binary-search",
+    title: "DSA Binary Search",
+    objective: "Buscar en un array ordenado con binary search.",
+    prompt_md: "**Binary Search**\n\nEn un array ordenado, mirá el medio y descartá mitad.\n\n**Micro-reto:**\n1. Definí `binarySearch(arr, targetVal)` que devuelva el índice o `-1`\n2. Usá `mylist = [1, 3, 5, 7, 9, 11, 13, 15]` y `x = 11`\n3. Imprimí `binarySearch(mylist, x)`",
+    starter_code: "# def binarySearch(arr, targetVal):\n#     ...\n# mylist = ...\n# print(...)\n",
+    pytest: "def test_binary_search(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['binarySearch']([1, 3, 5, 7, 9, 11, 13, 15], 11) == 5\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '5'\n",
+    hint: "def binarySearch(arr, targetVal):\n    left = 0\n    right = len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == targetVal:\n            return mid\n        if arr[mid] < targetVal:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1\nmylist = [1, 3, 5, 7, 9, 11, 13, 15]\nx = 11\nprint(binarySearch(mylist, x))",
+    solution_example: "def binarySearch(arr, targetVal):\n    left = 0\n    right = len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == targetVal:\n            return mid\n        if arr[mid] < targetVal:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1\nmylist = [1, 3, 5, 7, 9, 11, 13, 15]\nx = 11\nprint(binarySearch(mylist, x))\n",
+    next: Some("py-92-selection-sort"),
+    show_type_chips: false,
+    micro_step: 91,
+};
+
+pub const PY92_SELECTION_SORT: CodingStep = CodingStep {
+    id: "py-92-selection-sort",
+    title: "DSA Selection Sort",
+    objective: "Ordenar eligiendo el mínimo en cada pasada.",
+    prompt_md: "**Selection Sort**\n\nEn cada pasada, ubicá el mínimo del resto y swapéalo al frente.\n\n**Micro-reto:**\n1. Creá `mylist = [64, 34, 25, 12, 22, 11, 90, 5]`\n2. Implementá Selection Sort\n3. Imprimí `mylist`",
+    starter_code: "# mylist = ...\n# n = len(mylist)\n# for i in range(n):\n#     ...\n# print(mylist)\n",
+    pytest: "def test_selection_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('mylist') == [5, 11, 12, 22, 25, 34, 64, 90]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '[5, 11, 12, 22, 25, 34, 64, 90]'\n",
+    hint: "mylist = [64, 34, 25, 12, 22, 11, 90, 5]\nn = len(mylist)\nfor i in range(n):\n    min_idx = i\n    for j in range(i+1, n):\n        if mylist[j] < mylist[min_idx]:\n            min_idx = j\n    mylist[i], mylist[min_idx] = mylist[min_idx], mylist[i]\nprint(mylist)",
+    solution_example: "mylist = [64, 34, 25, 12, 22, 11, 90, 5]\nn = len(mylist)\nfor i in range(n):\n    min_idx = i\n    for j in range(i+1, n):\n        if mylist[j] < mylist[min_idx]:\n            min_idx = j\n    mylist[i], mylist[min_idx] = mylist[min_idx], mylist[i]\nprint(mylist)\n",
+    next: Some("py-93-insertion-sort"),
+    show_type_chips: false,
+    micro_step: 92,
+};
+
+pub const PY93_INSERTION_SORT: CodingStep = CodingStep {
+    id: "py-93-insertion-sort",
+    title: "DSA Insertion Sort",
+    objective: "Ordenar insertando cada elemento en su lugar.",
+    prompt_md: "**Insertion Sort**\n\nInsertá cada valor en la posición correcta del prefijo ordenado.\n\n**Micro-reto:**\n1. Creá `mylist = [64, 34, 25, 12, 22, 11, 90, 5]`\n2. Implementá Insertion Sort\n3. Imprimí `mylist`",
+    starter_code: "# mylist = ...\n# n = len(mylist)\n# for i in range(1, n):\n#     ...\n# print(mylist)\n",
+    pytest: "def test_insertion_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns.get('mylist') == [5, 11, 12, 22, 25, 34, 64, 90]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert out == '[5, 11, 12, 22, 25, 34, 64, 90]'\n",
+    hint: "mylist = [64, 34, 25, 12, 22, 11, 90, 5]\nn = len(mylist)\nfor i in range(1, n):\n    key = mylist[i]\n    j = i - 1\n    while j >= 0 and mylist[j] > key:\n        mylist[j + 1] = mylist[j]\n        j -= 1\n    mylist[j + 1] = key\nprint(mylist)",
+    solution_example: "mylist = [64, 34, 25, 12, 22, 11, 90, 5]\nn = len(mylist)\nfor i in range(1, n):\n    key = mylist[i]\n    j = i - 1\n    while j >= 0 and mylist[j] > key:\n        mylist[j + 1] = mylist[j]\n        j -= 1\n    mylist[j + 1] = key\nprint(mylist)\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 93,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1327,6 +1411,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY85_QUEUE_PEEK,
     &PY86_STACK_CLASS,
     &PY87_QUEUE_CLASS,
+    &PY88_LINEAR_IN,
+    &PY89_LINEAR_SEARCH,
+    &PY90_BUBBLE_SORT,
+    &PY91_BINARY_SEARCH,
+    &PY92_SELECTION_SORT,
+    &PY93_INSERTION_SORT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -1738,10 +1828,27 @@ mod tests {
             (84, "py-84-queue", Some("py-85-queue-peek")),
             (85, "py-85-queue-peek", Some("py-86-stack-class")),
             (86, "py-86-stack-class", Some("py-87-queue-class")),
-            (87, "py-87-queue-class", None),
+            (87, "py-87-queue-class", Some("py-88-linear-in")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("dsa family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py88_to_py93_algorithms_chain() {
+        let ids = [
+            (88, "py-88-linear-in", Some("py-89-linear-search")),
+            (89, "py-89-linear-search", Some("py-90-bubble-sort")),
+            (90, "py-90-bubble-sort", Some("py-91-binary-search")),
+            (91, "py-91-binary-search", Some("py-92-selection-sort")),
+            (92, "py-92-selection-sort", Some("py-93-insertion-sort")),
+            (93, "py-93-insertion-sort", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("algorithms family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
