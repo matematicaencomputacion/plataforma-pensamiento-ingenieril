@@ -22,111 +22,119 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 119,
-    id: "py-119-bellman-ford",
-    title: "DSA Bellman-Ford",
-    solution: `edges = [('A', 'B', 4), ('A', 'C', 2), ('B', 'C', -1), ('B', 'D', 5), ('C', 'D', 3)]
-nodes = ['A', 'B', 'C', 'D']
-def bellman_ford(edges, nodes, start):
-    dist = {n: float('inf') for n in nodes}
-    dist[start] = 0
-    for _ in range(len(nodes) - 1):
-        for u, v, w in edges:
-            if dist[u] + w < dist[v]:
-                dist[v] = dist[u] + w
+    micro: 125,
+    id: "py-125-greedy-coin",
+    title: "DSA Greedy Coin",
+    solution: `def greedy_coin(coins, amount):
+    coins = sorted(coins, reverse=True)
+    count = 0
+    for c in coins:
+        count += amount // c
+        amount %= c
+    return count
+print(greedy_coin([25, 10, 5, 1], 63))
+`,
+    nextUrl: /\/learn\/py-126-activity-select/,
+    cursorAfter: "126",
+  },
+  {
+    micro: 126,
+    id: "py-126-activity-select",
+    title: "DSA Activity Selection",
+    solution: `def activity_select(intervals):
+    intervals = sorted(intervals, key=lambda x: x[1])
+    picked = []
+    end = -1
+    for s, e in intervals:
+        if s >= end:
+            picked.append((s, e))
+            end = e
+    return picked
+print(activity_select([(1, 4), (3, 5), (0, 6), (5, 7), (8, 9), (5, 9)]))
+`,
+    nextUrl: /\/learn\/py-127-tsp-nearest/,
+    cursorAfter: "127",
+  },
+  {
+    micro: 127,
+    id: "py-127-tsp-nearest",
+    title: "DSA TSP Nearest Neighbor",
+    solution: `distances = [[0, 2, 9, 10], [1, 0, 6, 4], [15, 7, 0, 8], [6, 3, 12, 0]]
+def nearest_neighbor_tsp(distances):
+    n = len(distances)
+    visited = [False] * n
+    route = [0]
+    visited[0] = True
+    total = 0
+    for _ in range(1, n):
+        last = route[-1]
+        nearest = min((i for i in range(n) if not visited[i]), key=lambda i: distances[last][i])
+        total += distances[last][nearest]
+        route.append(nearest)
+        visited[nearest] = True
+    total += distances[route[-1]][0]
+    route.append(0)
+    return route, total
+route, total = nearest_neighbor_tsp(distances)
+print(total)
+`,
+    nextUrl: /\/learn\/py-128-lcs/,
+    cursorAfter: "128",
+  },
+  {
+    micro: 128,
+    id: "py-128-lcs",
+    title: "DSA LCS",
+    solution: `def lcs(a, b):
+    m, n = len(a), len(b)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if a[i - 1] == b[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    return dp[m][n]
+print(lcs('ABCBDAB', 'BDCABA'))
+`,
+    nextUrl: /\/learn\/py-129-coin-change-dp/,
+    cursorAfter: "129",
+  },
+  {
+    micro: 129,
+    id: "py-129-coin-change-dp",
+    title: "DSA Coin Change DP",
+    solution: `def coin_change(coins, amount):
+    dp = [0] + [float('inf')] * amount
+    for a in range(1, amount + 1):
+        for c in coins:
+            if c <= a:
+                dp[a] = min(dp[a], dp[a - c] + 1)
+    return int(dp[amount]) if dp[amount] != float('inf') else -1
+print(coin_change([1, 3, 4], 6))
+`,
+    nextUrl: /\/learn\/py-130-floyd-warshall/,
+    cursorAfter: "130",
+  },
+  {
+    micro: 130,
+    id: "py-130-floyd-warshall",
+    title: "DSA Floyd-Warshall",
+    solution: `INF = 999
+graph = [[0, 3, INF, 7], [8, 0, 2, INF], [5, INF, 0, 1], [2, INF, INF, 0]]
+def floyd(graph):
+    n = len(graph)
+    dist = [row[:] for row in graph]
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
     return dist
-print(bellman_ford(edges, nodes, 'A'))
+print(floyd(graph)[0])
 `,
-    nextUrl: /\/learn\/py-120-memo-fib/,
-    cursorAfter: "120",
-  },
-  {
-    micro: 120,
-    id: "py-120-memo-fib",
-    title: "DSA Memoization (Fib)",
-    solution: `memo = {}
-def fib(n):
-    if n in memo:
-        return memo[n]
-    if n <= 1:
-        return n
-    memo[n] = fib(n - 1) + fib(n - 2)
-    return memo[n]
-print(fib(6))
-`,
-    nextUrl: /\/learn\/py-121-tab-fib/,
-    cursorAfter: "121",
-  },
-  {
-    micro: 121,
-    id: "py-121-tab-fib",
-    title: "DSA Tabulation (Fib)",
-    solution: `def fib_tab(n):
-    if n <= 1:
-        return n
-    dp = [0] * (n + 1)
-    dp[1] = 1
-    for i in range(2, n + 1):
-        dp[i] = dp[i - 1] + dp[i - 2]
-    return dp[n]
-print(fib_tab(6))
-`,
-    nextUrl: /\/learn\/py-122-knapsack/,
-    cursorAfter: "122",
-  },
-  {
-    micro: 122,
-    id: "py-122-knapsack",
-    title: "DSA 0/1 Knapsack",
-    solution: `weights = [1, 3, 4]
-values = [15, 20, 30]
-def knapsack(weights, values, capacity):
-    n = len(weights)
-    dp = [[0] * (capacity + 1) for _ in range(n + 1)]
-    for i in range(1, n + 1):
-        for w in range(capacity + 1):
-            dp[i][w] = dp[i - 1][w]
-            if weights[i - 1] <= w:
-                dp[i][w] = max(dp[i][w], dp[i - 1][w - weights[i - 1]] + values[i - 1])
-    return dp[n][capacity]
-print(knapsack(weights, values, 4))
-`,
-    nextUrl: /\/learn\/py-123-euclidean/,
-    cursorAfter: "123",
-  },
-  {
-    micro: 123,
-    id: "py-123-euclidean",
-    title: "DSA Euclidean GCD",
-    solution: `def gcd(a, b):
-    while b:
-        a, b = b, a % b
-    return a
-print(gcd(48, 18))
-`,
-    nextUrl: /\/learn\/py-124-huffman-cost/,
-    cursorAfter: "124",
-  },
-  {
-    micro: 124,
-    id: "py-124-huffman-cost",
-    title: "DSA Huffman Intro",
-    solution: `import heapq
-def huffman_cost(freqs):
-    h = list(freqs)
-    heapq.heapify(h)
-    cost = 0
-    while len(h) > 1:
-        a = heapq.heappop(h)
-        b = heapq.heappop(h)
-        s = a + b
-        cost += s
-        heapq.heappush(h, s)
-    return cost
-print(huffman_cost([1, 1, 1, 1]))
-`,
-    nextUrl: /\/learn\/py-125-greedy-coin/,
-    cursorAfter: "125",
+    nextUrl: /\/workspace/,
+    cursorAfter: "131",
   },
 ];
 
@@ -155,7 +163,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 119–124 · Bellman / DP / Euclidean / Huffman", () => {
+test.describe("micro-steps 125–130 · Greedy / TSP / LCS / Coin DP / Floyd", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

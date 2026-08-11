@@ -130,6 +130,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 122, step_id: "py-122-knapsack" },
   { level_id: 123, step_id: "py-123-euclidean" },
   { level_id: 124, step_id: "py-124-huffman-cost" },
+  { level_id: 125, step_id: "py-125-greedy-coin" },
+  { level_id: 126, step_id: "py-126-activity-select" },
+  { level_id: 127, step_id: "py-127-tsp-nearest" },
+  { level_id: 128, step_id: "py-128-lcs" },
+  { level_id: 129, step_id: "py-129-coin-change-dp" },
+  { level_id: 130, step_id: "py-130-floyd-warshall" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

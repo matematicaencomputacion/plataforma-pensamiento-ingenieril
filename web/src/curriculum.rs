@@ -1752,9 +1752,93 @@ pub const PY124_HUFFMAN_COST: CodingStep = CodingStep {
     pytest: "def test_huffman_cost(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('huffman_cost'))\n    assert ns['huffman_cost']([1, 1, 1, 1]) == 8\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['8']\n",
     hint: "import heapq\ndef huffman_cost(freqs):\n    h = list(freqs)\n    heapq.heapify(h)\n    cost = 0\n    while len(h) > 1:\n        a = heapq.heappop(h)\n        b = heapq.heappop(h)\n        s = a + b\n        cost += s\n        heapq.heappush(h, s)\n    return cost\nprint(huffman_cost([1, 1, 1, 1]))",
     solution_example: "import heapq\ndef huffman_cost(freqs):\n    h = list(freqs)\n    heapq.heapify(h)\n    cost = 0\n    while len(h) > 1:\n        a = heapq.heappop(h)\n        b = heapq.heappop(h)\n        s = a + b\n        cost += s\n        heapq.heappush(h, s)\n    return cost\nprint(huffman_cost([1, 1, 1, 1]))\n",
-    next: None,
+    next: Some("py-125-greedy-coin"),
     show_type_chips: false,
     micro_step: 124,
+};
+
+pub const PY125_GREEDY_COIN: CodingStep = CodingStep {
+    id: "py-125-greedy-coin",
+    title: "DSA Greedy Coin",
+    objective: "Cambiar monto con monedas greedy (denominaciones canónicas).",
+    prompt_md: "**Greedy Coin Change**\n\nTomá siempre la moneda más grande que quepa.\n\n**Micro-reto:**\n1. Definí `greedy_coin(coins, amount)` que devuelva la cantidad de monedas\n2. Imprimí `greedy_coin([25, 10, 5, 1], 63)` (esperado: `6`)",
+    starter_code: "# def greedy_coin(coins, amount):\n#     ...\n# print(greedy_coin([25, 10, 5, 1], 63))\n",
+    pytest: "def test_greedy_coin(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('greedy_coin'))\n    assert ns['greedy_coin']([25, 10, 5, 1], 63) == 6\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['6']\n",
+    hint: "def greedy_coin(coins, amount):\n    coins = sorted(coins, reverse=True)\n    count = 0\n    for c in coins:\n        count += amount // c\n        amount %= c\n    return count\nprint(greedy_coin([25, 10, 5, 1], 63))",
+    solution_example: "def greedy_coin(coins, amount):\n    coins = sorted(coins, reverse=True)\n    count = 0\n    for c in coins:\n        count += amount // c\n        amount %= c\n    return count\nprint(greedy_coin([25, 10, 5, 1], 63))\n",
+    next: Some("py-126-activity-select"),
+    show_type_chips: false,
+    micro_step: 125,
+};
+
+pub const PY126_ACTIVITY_SELECT: CodingStep = CodingStep {
+    id: "py-126-activity-select",
+    title: "DSA Activity Selection",
+    objective: "Elegir el máximo de actividades sin solapamiento (greedy por fin).",
+    prompt_md: "**Activity Selection**\n\nOrdená por tiempo de fin y tomá la siguiente que empiece ≥ fin actual.\n\n**Micro-reto:**\n1. Definí `activity_select(intervals)` → lista de pares elegidos\n2. Con `[(1,4),(3,5),(0,6),(5,7),(8,9),(5,9)]` imprimí el resultado (esperado: `[(1, 4), (5, 7), (8, 9)]`)",
+    starter_code: "# def activity_select(intervals):\n#     ...\n# print(activity_select([(1, 4), (3, 5), (0, 6), (5, 7), (8, 9), (5, 9)]))\n",
+    pytest: "def test_activity_select(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('activity_select'))\n    assert ns['activity_select']([(1, 4), (3, 5), (0, 6), (5, 7), (8, 9), (5, 9)]) == [(1, 4), (5, 7), (8, 9)]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '(1, 4)' in out and '(5, 7)' in out and '(8, 9)' in out\n",
+    hint: "def activity_select(intervals):\n    intervals = sorted(intervals, key=lambda x: x[1])\n    picked = []\n    end = -1\n    for s, e in intervals:\n        if s >= end:\n            picked.append((s, e))\n            end = e\n    return picked\nprint(activity_select([(1, 4), (3, 5), (0, 6), (5, 7), (8, 9), (5, 9)]))",
+    solution_example: "def activity_select(intervals):\n    intervals = sorted(intervals, key=lambda x: x[1])\n    picked = []\n    end = -1\n    for s, e in intervals:\n        if s >= end:\n            picked.append((s, e))\n            end = e\n    return picked\nprint(activity_select([(1, 4), (3, 5), (0, 6), (5, 7), (8, 9), (5, 9)]))\n",
+    next: Some("py-127-tsp-nearest"),
+    show_type_chips: false,
+    micro_step: 126,
+};
+
+pub const PY127_TSP_NEAREST: CodingStep = CodingStep {
+    id: "py-127-tsp-nearest",
+    title: "DSA TSP Nearest Neighbor",
+    objective: "Aproximar TSP con nearest-neighbor (greedy).",
+    prompt_md: "**Traveling Salesman (nearest neighbor)**\n\nDesde 0, siempre visitá la ciudad no visitada más cercana y volvé al origen.\n\n**Micro-reto:**\n1. Matrix 4×4 como en el hint\n2. Definí `nearest_neighbor_tsp(distances)` → `(route, total)`\n3. Imprimí `total` (esperado: `33`)",
+    starter_code: "# distances = [...]\n# def nearest_neighbor_tsp(distances):\n#     ...\n# route, total = nearest_neighbor_tsp(distances)\n# print(total)\n",
+    pytest: "def test_tsp_nearest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('nearest_neighbor_tsp'))\n    route, total = ns['nearest_neighbor_tsp'](ns['distances'])\n    assert total == 33\n    assert route[0] == 0 and route[-1] == 0\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['33']\n",
+    hint: "distances = [[0, 2, 9, 10], [1, 0, 6, 4], [15, 7, 0, 8], [6, 3, 12, 0]]\ndef nearest_neighbor_tsp(distances):\n    n = len(distances)\n    visited = [False] * n\n    route = [0]\n    visited[0] = True\n    total = 0\n    for _ in range(1, n):\n        last = route[-1]\n        nearest = min((i for i in range(n) if not visited[i]), key=lambda i: distances[last][i])\n        total += distances[last][nearest]\n        route.append(nearest)\n        visited[nearest] = True\n    total += distances[route[-1]][0]\n    route.append(0)\n    return route, total\nroute, total = nearest_neighbor_tsp(distances)\nprint(total)",
+    solution_example: "distances = [[0, 2, 9, 10], [1, 0, 6, 4], [15, 7, 0, 8], [6, 3, 12, 0]]\ndef nearest_neighbor_tsp(distances):\n    n = len(distances)\n    visited = [False] * n\n    route = [0]\n    visited[0] = True\n    total = 0\n    for _ in range(1, n):\n        last = route[-1]\n        nearest = min((i for i in range(n) if not visited[i]), key=lambda i: distances[last][i])\n        total += distances[last][nearest]\n        route.append(nearest)\n        visited[nearest] = True\n    total += distances[route[-1]][0]\n    route.append(0)\n    return route, total\nroute, total = nearest_neighbor_tsp(distances)\nprint(total)\n",
+    next: Some("py-128-lcs"),
+    show_type_chips: false,
+    micro_step: 127,
+};
+
+pub const PY128_LCS: CodingStep = CodingStep {
+    id: "py-128-lcs",
+    title: "DSA LCS",
+    objective: "Calcular la longitud de la Longest Common Subsequence.",
+    prompt_md: "**Longest Common Subsequence**\n\nDP: si `a[i]==b[j]` sumá 1 al diagonal; si no, tomá el max del vecino.\n\n**Micro-reto:**\n1. Definí `lcs(a, b)` → longitud\n2. Imprimí `lcs('ABCBDAB', 'BDCABA')` (esperado: `4`)",
+    starter_code: "# def lcs(a, b):\n#     ...\n# print(lcs('ABCBDAB', 'BDCABA'))\n",
+    pytest: "def test_lcs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('lcs'))\n    assert ns['lcs']('ABCBDAB', 'BDCABA') == 4\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['4']\n",
+    hint: "def lcs(a, b):\n    m, n = len(a), len(b)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1] + 1\n            else:\n                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n    return dp[m][n]\nprint(lcs('ABCBDAB', 'BDCABA'))",
+    solution_example: "def lcs(a, b):\n    m, n = len(a), len(b)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1] + 1\n            else:\n                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n    return dp[m][n]\nprint(lcs('ABCBDAB', 'BDCABA'))\n",
+    next: Some("py-129-coin-change-dp"),
+    show_type_chips: false,
+    micro_step: 128,
+};
+
+pub const PY129_COIN_CHANGE_DP: CodingStep = CodingStep {
+    id: "py-129-coin-change-dp",
+    title: "DSA Coin Change DP",
+    objective: "Mínimo de monedas con DP (denominaciones no canónicas).",
+    prompt_md: "**Coin Change (DP)**\n\n`dp[a] = min(dp[a - c] + 1)` para cada moneda.\n\n**Micro-reto:**\n1. Definí `coin_change(coins, amount)`\n2. Imprimí `coin_change([1, 3, 4], 6)` (esperado: `2`)",
+    starter_code: "# def coin_change(coins, amount):\n#     ...\n# print(coin_change([1, 3, 4], 6))\n",
+    pytest: "def test_coin_change_dp(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('coin_change'))\n    assert ns['coin_change']([1, 3, 4], 6) == 2\n    lines = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert lines == ['2']\n",
+    hint: "def coin_change(coins, amount):\n    dp = [0] + [float('inf')] * amount\n    for a in range(1, amount + 1):\n        for c in coins:\n            if c <= a:\n                dp[a] = min(dp[a], dp[a - c] + 1)\n    return int(dp[amount]) if dp[amount] != float('inf') else -1\nprint(coin_change([1, 3, 4], 6))",
+    solution_example: "def coin_change(coins, amount):\n    dp = [0] + [float('inf')] * amount\n    for a in range(1, amount + 1):\n        for c in coins:\n            if c <= a:\n                dp[a] = min(dp[a], dp[a - c] + 1)\n    return int(dp[amount]) if dp[amount] != float('inf') else -1\nprint(coin_change([1, 3, 4], 6))\n",
+    next: Some("py-130-floyd-warshall"),
+    show_type_chips: false,
+    micro_step: 129,
+};
+
+pub const PY130_FLOYD_WARSHALL: CodingStep = CodingStep {
+    id: "py-130-floyd-warshall",
+    title: "DSA Floyd-Warshall",
+    objective: "Calcular todas las distancias mínimas entre pares (APSP).",
+    prompt_md: "**Floyd-Warshall**\n\nPara cada `k`, relajá `dist[i][j]` vía `k`.\n\n**Micro-reto:**\n1. Matriz `INF=999` como en el hint\n2. Definí `floyd(graph)` → matriz de distancias\n3. Imprimí la fila `0` (esperado: `[0, 3, 5, 6]`)",
+    starter_code: "# INF = 999\n# graph = [...]\n# def floyd(graph):\n#     ...\n# print(floyd(graph)[0])\n",
+    pytest: "def test_floyd_warshall(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('floyd'))\n    assert ns['floyd'](ns['graph'])[0] == [0, 3, 5, 6]\n    out = ' '.join(capsys.readouterr().out.split())\n    assert '[0, 3, 5, 6]' in out\n",
+    hint: "INF = 999\ngraph = [[0, 3, INF, 7], [8, 0, 2, INF], [5, INF, 0, 1], [2, INF, INF, 0]]\ndef floyd(graph):\n    n = len(graph)\n    dist = [row[:] for row in graph]\n    for k in range(n):\n        for i in range(n):\n            for j in range(n):\n                if dist[i][k] + dist[k][j] < dist[i][j]:\n                    dist[i][j] = dist[i][k] + dist[k][j]\n    return dist\nprint(floyd(graph)[0])",
+    solution_example: "INF = 999\ngraph = [[0, 3, INF, 7], [8, 0, 2, INF], [5, INF, 0, 1], [2, INF, INF, 0]]\ndef floyd(graph):\n    n = len(graph)\n    dist = [row[:] for row in graph]\n    for k in range(n):\n        for i in range(n):\n            for j in range(n):\n                if dist[i][k] + dist[k][j] < dist[i][j]:\n                    dist[i][j] = dist[i][k] + dist[k][j]\n    return dist\nprint(floyd(graph)[0])\n",
+    next: None,
+    show_type_chips: false,
+    micro_step: 130,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -1882,6 +1966,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY122_KNAPSACK,
     &PY123_EUCLIDEAN,
     &PY124_HUFFMAN_COST,
+    &PY125_GREEDY_COIN,
+    &PY126_ACTIVITY_SELECT,
+    &PY127_TSP_NEAREST,
+    &PY128_LCS,
+    &PY129_COIN_CHANGE_DP,
+    &PY130_FLOYD_WARSHALL,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -2396,10 +2486,27 @@ mod tests {
             (121, "py-121-tab-fib", Some("py-122-knapsack")),
             (122, "py-122-knapsack", Some("py-123-euclidean")),
             (123, "py-123-euclidean", Some("py-124-huffman-cost")),
-            (124, "py-124-huffman-cost", None),
+            (124, "py-124-huffman-cost", Some("py-125-greedy-coin")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("dp-paths family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py125_to_py130_greedy_dp_chain() {
+        let ids = [
+            (125, "py-125-greedy-coin", Some("py-126-activity-select")),
+            (126, "py-126-activity-select", Some("py-127-tsp-nearest")),
+            (127, "py-127-tsp-nearest", Some("py-128-lcs")),
+            (128, "py-128-lcs", Some("py-129-coin-change-dp")),
+            (129, "py-129-coin-change-dp", Some("py-130-floyd-warshall")),
+            (130, "py-130-floyd-warshall", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("greedy-dp family step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
