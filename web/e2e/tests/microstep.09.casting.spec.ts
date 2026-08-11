@@ -98,6 +98,14 @@ test.describe("micro-step 9 · Python Casting", () => {
     });
 
     await page.locator("#learn-continue").click();
+    await expect(page).toHaveURL(/\/learn\/py-10-strings/, {
+      timeout: e2eTimeout,
+    });
+
+    await page
+      .getByLabel("Navegación del Paso 2")
+      .getByRole("link", { name: "Workspace" })
+      .click();
     await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
     await expect(page.locator("#workspace-microsteps")).toHaveAttribute(
       "data-current-level",
