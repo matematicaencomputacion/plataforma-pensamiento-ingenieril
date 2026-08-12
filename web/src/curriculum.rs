@@ -3470,7 +3470,67 @@ pub const PY262_LARGEST_RECT: CodingStep = CodingStep {
     pytest: "def test_largest_rect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('largest_rectangle'))\n    assert ns['largest_rectangle']([2, 1, 5, 6, 2, 3]) == 10\n    assert ns['largest_rectangle']([2, 4]) == 4\n    assert ns['largest_rectangle']([1]) == 1\n    assert capsys.readouterr().out.strip() == '10'\n",
     hint: "def largest_rectangle(heights):\n    stack = []; best = 0\n    for i, h in enumerate(heights + [0]):\n        while stack and heights[stack[-1]] > h:\n            height = heights[stack.pop()]\n            width = i if not stack else i - stack[-1] - 1\n            best = max(best, height * width)\n        stack.append(i)\n    return best\nprint(largest_rectangle([2, 1, 5, 6, 2, 3]))",
     solution_example: "def largest_rectangle(heights):\n    stack = []; best = 0\n    for i, h in enumerate(heights + [0]):\n        while stack and heights[stack[-1]] > h:\n            height = heights[stack.pop()]\n            width = i if not stack else i - stack[-1] - 1\n            best = max(best, height * width)\n        stack.append(i)\n    return best\nprint(largest_rectangle([2, 1, 5, 6, 2, 3]))\n",
-    next: None, show_type_chips: false, micro_step: 262,
+    next: Some("py-263-open-lock"), show_type_chips: false, micro_step: 262,
+};
+
+pub const PY263_OPEN_LOCK: CodingStep = CodingStep {
+    id: "py-263-open-lock", title: "DSA Open the Lock", objective: "Abrir un candado de 4 dígitos con BFS evitando deadends.",
+    prompt_md: "**Open the Lock**\n\nBFS desde `\"0000\"`; cada giro ±1 en un dígito. Distinto de py-208 (word ladder sobre diccionario).\n\n**Micro-reto:**\n1. Definí `open_lock(deadends, target)`\n2. deadends `['0201','0101','0102','1212','2002']`, target `'0202'`; imprimí pasos (esperado: `6`)",
+    starter_code: "# from collections import deque\n# def open_lock(deadends, target):\n#     ...\n# print(open_lock(['0201', '0101', '0102', '1212', '2002'], '0202'))\n",
+    pytest: "def test_open_lock(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('open_lock'))\n    assert ns['open_lock'](['0201', '0101', '0102', '1212', '2002'], '0202') == 6\n    assert ns['open_lock'](['8888'], '0009') == 1\n    assert ns['open_lock'](['8887', '8889', '8878', '8898', '8788', '8988', '7888', '9888'], '8888') == -1\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "from collections import deque\n\ndef open_lock(deadends, target):\n    dead = set(deadends)\n    if '0000' in dead: return -1\n    q = deque([('0000', 0)]); seen = {'0000'}\n    while q:\n        cur, dist = q.popleft()\n        if cur == target: return dist\n        for i in range(4):\n            for d in (-1, 1):\n                nxt = cur[:i] + str((int(cur[i]) + d) % 10) + cur[i+1:]\n                if nxt not in seen and nxt not in dead:\n                    seen.add(nxt); q.append((nxt, dist + 1))\n    return -1\nprint(open_lock(['0201', '0101', '0102', '1212', '2002'], '0202'))",
+    solution_example: "from collections import deque\n\ndef open_lock(deadends, target):\n    dead = set(deadends)\n    if '0000' in dead: return -1\n    q = deque([('0000', 0)]); seen = {'0000'}\n    while q:\n        cur, dist = q.popleft()\n        if cur == target: return dist\n        for i in range(4):\n            for d in (-1, 1):\n                nxt = cur[:i] + str((int(cur[i]) + d) % 10) + cur[i+1:]\n                if nxt not in seen and nxt not in dead:\n                    seen.add(nxt); q.append((nxt, dist + 1))\n    return -1\nprint(open_lock(['0201', '0101', '0102', '1212', '2002'], '0202'))\n",
+    next: Some("py-264-shortest-binary"), show_type_chips: false, micro_step: 263,
+};
+
+pub const PY264_SHORTEST_BINARY: CodingStep = CodingStep {
+    id: "py-264-shortest-binary", title: "DSA Shortest Binary Path", objective: "Camino más corto en grilla binaria (8 direcciones) con BFS.",
+    prompt_md: "**Shortest Path in Binary Matrix**\n\nBFS 8-dir desde `(0,0)` hasta `(n-1,n-1)` solo por celdas `0`. Distinto de py-207 (rotting multi-fuente).\n\n**Micro-reto:**\n1. Definí `shortest_path_binary(grid)`\n2. `[[0,1],[1,0]]`; imprimí longitud (esperado: `2`)",
+    starter_code: "# from collections import deque\n# def shortest_path_binary(grid):\n#     ...\n# print(shortest_path_binary([[0, 1], [1, 0]]))\n",
+    pytest: "def test_shortest_binary(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('shortest_path_binary'))\n    assert ns['shortest_path_binary']([[0, 1], [1, 0]]) == 2\n    assert ns['shortest_path_binary']([[0, 0, 0], [1, 1, 0], [1, 1, 0]]) == 4\n    assert ns['shortest_path_binary']([[1, 0], [1, 0]]) == -1\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "from collections import deque\n\ndef shortest_path_binary(grid):\n    n = len(grid)\n    if grid[0][0] or grid[n-1][n-1]: return -1\n    q = deque([(0, 0, 1)]); grid[0][0] = 1\n    dirs = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]\n    while q:\n        r, c, dist = q.popleft()\n        if r == n-1 and c == n-1: return dist\n        for dr, dc in dirs:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0:\n                grid[nr][nc] = 1; q.append((nr, nc, dist + 1))\n    return -1\nprint(shortest_path_binary([[0, 1], [1, 0]]))",
+    solution_example: "from collections import deque\n\ndef shortest_path_binary(grid):\n    n = len(grid)\n    if grid[0][0] or grid[n-1][n-1]: return -1\n    q = deque([(0, 0, 1)]); grid[0][0] = 1\n    dirs = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]\n    while q:\n        r, c, dist = q.popleft()\n        if r == n-1 and c == n-1: return dist\n        for dr, dc in dirs:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0:\n                grid[nr][nc] = 1; q.append((nr, nc, dist + 1))\n    return -1\nprint(shortest_path_binary([[0, 1], [1, 0]]))\n",
+    next: Some("py-265-walls-gates"), show_type_chips: false, micro_step: 264,
+};
+
+pub const PY265_WALLS_GATES: CodingStep = CodingStep {
+    id: "py-265-walls-gates", title: "DSA Walls and Gates", objective: "Rellenar distancias a la puerta más cercana con BFS multi-fuente.",
+    prompt_md: "**Walls and Gates**\n\n`INF=2147483647` = habitación vacía, `0` = puerta, `-1` = muro. Distinto de py-206 (pacific atlantic DFS).\n\n**Micro-reto:**\n1. Definí `walls_and_gates(rooms)` in-place\n2. Grilla clásica 4×4; imprimí `rooms` tras el fill",
+    starter_code: "# from collections import deque\n# INF = 2147483647\n# def walls_and_gates(rooms):\n#     ...\n# rooms = [[INF, -1, 0, INF], [INF, INF, INF, -1], [INF, -1, INF, -1], [0, -1, INF, INF]]\n# walls_and_gates(rooms)\n# print(rooms)\n",
+    pytest: "def test_walls_gates(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('walls_and_gates'))\n    INF = 2147483647\n    rooms = [[INF, -1, 0, INF], [INF, INF, INF, -1], [INF, -1, INF, -1], [0, -1, INF, INF]]\n    ns['walls_and_gates'](rooms)\n    assert rooms == [[3, -1, 0, 1], [2, 2, 1, -1], [1, -1, 2, -1], [0, -1, 3, 4]]\n    assert capsys.readouterr().out.strip() == '[[3, -1, 0, 1], [2, 2, 1, -1], [1, -1, 2, -1], [0, -1, 3, 4]]'\n",
+    hint: "from collections import deque\n\nINF = 2147483647\n\ndef walls_and_gates(rooms):\n    if not rooms: return\n    rows, cols = len(rooms), len(rooms[0])\n    q = deque()\n    for i in range(rows):\n        for j in range(cols):\n            if rooms[i][j] == 0: q.append((i, j))\n    while q:\n        r, c = q.popleft()\n        for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)):\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols and rooms[nr][nc] == INF:\n                rooms[nr][nc] = rooms[r][c] + 1; q.append((nr, nc))\nrooms = [[INF, -1, 0, INF], [INF, INF, INF, -1], [INF, -1, INF, -1], [0, -1, INF, INF]]\nwalls_and_gates(rooms)\nprint(rooms)",
+    solution_example: "from collections import deque\n\nINF = 2147483647\n\ndef walls_and_gates(rooms):\n    if not rooms: return\n    rows, cols = len(rooms), len(rooms[0])\n    q = deque()\n    for i in range(rows):\n        for j in range(cols):\n            if rooms[i][j] == 0: q.append((i, j))\n    while q:\n        r, c = q.popleft()\n        for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)):\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols and rooms[nr][nc] == INF:\n                rooms[nr][nc] = rooms[r][c] + 1; q.append((nr, nc))\nrooms = [[INF, -1, 0, INF], [INF, INF, INF, -1], [INF, -1, INF, -1], [0, -1, INF, INF]]\nwalls_and_gates(rooms)\nprint(rooms)\n",
+    next: Some("py-266-circular-queue"), show_type_chips: false, micro_step: 265,
+};
+
+pub const PY266_CIRCULAR_QUEUE: CodingStep = CodingStep {
+    id: "py-266-circular-queue", title: "DSA Circular Queue", objective: "Implementar una cola circular de capacidad fija.",
+    prompt_md: "**Design Circular Queue**\n\nClase `MyCircularQueue(k)` con `en_queue`, `de_queue`, `front`, `rear`, `is_empty`, `is_full`. Distinto de py-182 (cola con dos stacks).\n\n**Micro-reto:**\n1. Capacidad `3`; secuencia clásica; imprimí `[True, True, True, False, 3, True, True, True, 4]`",
+    starter_code: "# class MyCircularQueue:\n#     ...\n# q = MyCircularQueue(3)\n# print([q.en_queue(1), q.en_queue(2), q.en_queue(3), q.en_queue(4), q.rear(), q.is_full(), q.de_queue(), q.en_queue(4), q.rear()])\n",
+    pytest: "def test_circular_queue(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    q = ns['MyCircularQueue'](3)\n    assert q.en_queue(1) is True\n    assert q.en_queue(2) is True\n    assert q.en_queue(3) is True\n    assert q.en_queue(4) is False\n    assert q.rear() == 3\n    assert q.is_full() is True\n    assert q.de_queue() is True\n    assert q.en_queue(4) is True\n    assert q.rear() == 4\n    assert capsys.readouterr().out.strip() == '[True, True, True, False, 3, True, True, True, 4]'\n",
+    hint: "class MyCircularQueue:\n    def __init__(self, k):\n        self.data = [0] * k; self.k = k; self.head = 0; self.size = 0\n    def en_queue(self, value):\n        if self.is_full(): return False\n        self.data[(self.head + self.size) % self.k] = value; self.size += 1; return True\n    def de_queue(self):\n        if self.is_empty(): return False\n        self.head = (self.head + 1) % self.k; self.size -= 1; return True\n    def front(self):\n        return -1 if self.is_empty() else self.data[self.head]\n    def rear(self):\n        return -1 if self.is_empty() else self.data[(self.head + self.size - 1) % self.k]\n    def is_empty(self): return self.size == 0\n    def is_full(self): return self.size == self.k\nq = MyCircularQueue(3)\nprint([q.en_queue(1), q.en_queue(2), q.en_queue(3), q.en_queue(4), q.rear(), q.is_full(), q.de_queue(), q.en_queue(4), q.rear()])",
+    solution_example: "class MyCircularQueue:\n    def __init__(self, k):\n        self.data = [0] * k; self.k = k; self.head = 0; self.size = 0\n    def en_queue(self, value):\n        if self.is_full(): return False\n        self.data[(self.head + self.size) % self.k] = value; self.size += 1; return True\n    def de_queue(self):\n        if self.is_empty(): return False\n        self.head = (self.head + 1) % self.k; self.size -= 1; return True\n    def front(self):\n        return -1 if self.is_empty() else self.data[self.head]\n    def rear(self):\n        return -1 if self.is_empty() else self.data[(self.head + self.size - 1) % self.k]\n    def is_empty(self): return self.size == 0\n    def is_full(self): return self.size == self.k\nq = MyCircularQueue(3)\nprint([q.en_queue(1), q.en_queue(2), q.en_queue(3), q.en_queue(4), q.rear(), q.is_full(), q.de_queue(), q.en_queue(4), q.rear()])\n",
+    next: Some("py-267-recent-counter"), show_type_chips: false, micro_step: 266,
+};
+
+pub const PY267_RECENT_COUNTER: CodingStep = CodingStep {
+    id: "py-267-recent-counter", title: "DSA Recent Counter", objective: "Contar pings en la ventana deslizante de los últimos 3000 ms.",
+    prompt_md: "**Number of Recent Calls**\n\nCola de timestamps; descartá los fuera de `[t-3000, t]`. Distinto de py-183 (sliding max).\n\n**Micro-reto:**\n1. Clase `RecentCounter` con `ping(t)`\n2. Pings `1, 100, 3001, 3002`; imprimí `[1, 2, 3, 3]`",
+    starter_code: "# from collections import deque\n# class RecentCounter:\n#     ...\n",
+    pytest: "def test_recent_counter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    c = ns['RecentCounter']()\n    assert [c.ping(1), c.ping(100), c.ping(3001), c.ping(3002)] == [1, 2, 3, 3]\n    assert capsys.readouterr().out.strip() == '[1, 2, 3, 3]'\n",
+    hint: "from collections import deque\n\nclass RecentCounter:\n    def __init__(self):\n        self.q = deque()\n    def ping(self, t):\n        self.q.append(t)\n        while self.q[0] < t - 3000:\n            self.q.popleft()\n        return len(self.q)\nc = RecentCounter()\nprint([c.ping(1), c.ping(100), c.ping(3001), c.ping(3002)])",
+    solution_example: "from collections import deque\n\nclass RecentCounter:\n    def __init__(self):\n        self.q = deque()\n    def ping(self, t):\n        self.q.append(t)\n        while self.q[0] < t - 3000:\n            self.q.popleft()\n        return len(self.q)\nc = RecentCounter()\nprint([c.ping(1), c.ping(100), c.ping(3001), c.ping(3002)])\n",
+    next: Some("py-268-time-tickets"), show_type_chips: false, micro_step: 267,
+};
+
+pub const PY268_TIME_TICKETS: CodingStep = CodingStep {
+    id: "py-268-time-tickets", title: "DSA Time Needed Tickets", objective: "Simular la cola de tickets hasta que la persona k termine.",
+    prompt_md: "**Time Needed to Buy Tickets**\n\nCada turno compra 1 ticket; quien llega a 0 sale. Distinto de py-84 (queue list básica).\n\n**Micro-reto:**\n1. Definí `time_required(tickets, k)`\n2. `tickets=[2,3,2]`, `k=2`; imprimí tiempo (esperado: `6`)",
+    starter_code: "# def time_required(tickets, k):\n#     ...\n# print(time_required([2, 3, 2], 2))\n",
+    pytest: "def test_time_tickets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('time_required'))\n    assert ns['time_required']([2, 3, 2], 2) == 6\n    assert ns['time_required']([5, 1, 1, 1], 0) == 8\n    assert ns['time_required']([1], 0) == 1\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "def time_required(tickets, k):\n    time = 0\n    for i, t in enumerate(tickets):\n        if i <= k: time += min(t, tickets[k])\n        else: time += min(t, tickets[k] - 1)\n    return time\nprint(time_required([2, 3, 2], 2))",
+    solution_example: "def time_required(tickets, k):\n    time = 0\n    for i, t in enumerate(tickets):\n        if i <= k: time += min(t, tickets[k])\n        else: time += min(t, tickets[k] - 1)\n    return time\nprint(time_required([2, 3, 2], 2))\n",
+    next: None, show_type_chips: false, micro_step: 268,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3736,6 +3796,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY260_CALC_II,
     &PY261_CAR_FLEET,
     &PY262_LARGEST_RECT,
+    &PY263_OPEN_LOCK,
+    &PY264_SHORTEST_BINARY,
+    &PY265_WALLS_GATES,
+    &PY266_CIRCULAR_QUEUE,
+    &PY267_RECENT_COUNTER,
+    &PY268_TIME_TICKETS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4433,7 +4499,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py262_curriculum_chain() {
+    fn py203_to_py268_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4495,7 +4561,13 @@ mod tests {
             (259, "py-259-simplify-path", Some("py-260-calc-ii")),
             (260, "py-260-calc-ii", Some("py-261-car-fleet")),
             (261, "py-261-car-fleet", Some("py-262-largest-rect")),
-            (262, "py-262-largest-rect", None),
+            (262, "py-262-largest-rect", Some("py-263-open-lock")),
+            (263, "py-263-open-lock", Some("py-264-shortest-binary")),
+            (264, "py-264-shortest-binary", Some("py-265-walls-gates")),
+            (265, "py-265-walls-gates", Some("py-266-circular-queue")),
+            (266, "py-266-circular-queue", Some("py-267-recent-counter")),
+            (267, "py-267-recent-counter", Some("py-268-time-tickets")),
+            (268, "py-268-time-tickets", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

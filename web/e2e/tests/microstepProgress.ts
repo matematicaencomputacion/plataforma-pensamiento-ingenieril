@@ -268,6 +268,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 260, step_id: "py-260-calc-ii" },
   { level_id: 261, step_id: "py-261-car-fleet" },
   { level_id: 262, step_id: "py-262-largest-rect" },
+  { level_id: 263, step_id: "py-263-open-lock" },
+  { level_id: 264, step_id: "py-264-shortest-binary" },
+  { level_id: 265, step_id: "py-265-walls-gates" },
+  { level_id: 266, step_id: "py-266-circular-queue" },
+  { level_id: 267, step_id: "py-267-recent-counter" },
+  { level_id: 268, step_id: "py-268-time-tickets" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
