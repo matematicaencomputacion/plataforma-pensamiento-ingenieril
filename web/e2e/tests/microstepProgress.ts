@@ -244,6 +244,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 236, step_id: "py-236-add-binary" },
   { level_id: 237, step_id: "py-237-my-pow" },
   { level_id: 238, step_id: "py-238-trailing-zeroes" },
+  { level_id: 239, step_id: "py-239-tree-diameter" },
+  { level_id: 240, step_id: "py-240-lca" },
+  { level_id: 241, step_id: "py-241-path-sum" },
+  { level_id: 242, step_id: "py-242-right-side" },
+  { level_id: 243, step_id: "py-243-flatten-tree" },
+  { level_id: 244, step_id: "py-244-validate-bst" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

@@ -3230,7 +3230,67 @@ pub const PY238_TRAILING_ZEROES: CodingStep = CodingStep {
     pytest: "def test_trailing_zeroes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('trailing_zeroes'))\n    assert ns['trailing_zeroes'](3) == 0\n    assert ns['trailing_zeroes'](5) == 1\n    assert ns['trailing_zeroes'](25) == 6\n    assert capsys.readouterr().out.strip() == '6'\n",
     hint: "def trailing_zeroes(n):\n    zeros = 0\n    while n:\n        n //= 5\n        zeros += n\n    return zeros",
     solution_example: "def trailing_zeroes(n):\n    zeros = 0\n    while n:\n        n //= 5\n        zeros += n\n    return zeros\nprint(trailing_zeroes(25))\n",
-    next: None, show_type_chips: false, micro_step: 238,
+    next: Some("py-239-tree-diameter"), show_type_chips: false, micro_step: 238,
+};
+
+pub const PY239_TREE_DIAMETER: CodingStep = CodingStep {
+    id: "py-239-tree-diameter", title: "DSA Tree Diameter", objective: "Calcular el diámetro de un árbol binario (aristas del camino más largo).",
+    prompt_md: "**Diameter of Binary Tree**\n\nEn cada nodo, el mejor camino local es `left_depth + right_depth`; trackeá el máximo.\n\n**Micro-reto:**\n1. Definí `class TreeNode` y `diameter_of_binary_tree(root)`\n2. Construí `1` → left `2` (4, 5) / right `3`\n3. Imprimí el diámetro (esperado: `3`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def diameter_of_binary_tree(root):\n#     ...\n# root = ...\n# print(diameter_of_binary_tree(root))\n",
+    pytest: "def test_tree_diameter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('diameter_of_binary_tree'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(1)\n    root.left = TreeNode(2)\n    root.right = TreeNode(3)\n    root.left.left = TreeNode(4)\n    root.left.right = TreeNode(5)\n    assert ns['diameter_of_binary_tree'](root) == 3\n    assert ns['diameter_of_binary_tree'](None) == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef diameter_of_binary_tree(root):\n    best = [0]\n    def depth(node):\n        if node is None: return 0\n        left = depth(node.left); right = depth(node.right)\n        best[0] = max(best[0], left + right)\n        return 1 + max(left, right)\n    depth(root)\n    return best[0]",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef diameter_of_binary_tree(root):\n    best = [0]\n    def depth(node):\n        if node is None: return 0\n        left = depth(node.left); right = depth(node.right)\n        best[0] = max(best[0], left + right)\n        return 1 + max(left, right)\n    depth(root)\n    return best[0]\n\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\nroot.left.left = TreeNode(4)\nroot.left.right = TreeNode(5)\nprint(diameter_of_binary_tree(root))\n",
+    next: Some("py-240-lca"), show_type_chips: false, micro_step: 239,
+};
+
+pub const PY240_LCA: CodingStep = CodingStep {
+    id: "py-240-lca", title: "DSA Lowest Common Ancestor", objective: "Encontrar el ancestro común más bajo de dos nodos en un árbol binario.",
+    prompt_md: "**Lowest Common Ancestor**\n\nSi `p` y `q` caen en subárboles distintos, el nodo actual es el LCA.\n\n**Micro-reto:**\n1. Definí `lowest_common_ancestor(root, p, q)`\n2. Árbol `3` → left `5` / right `1`; imprimí `.data` del LCA de `5` y `1` (esperado: `3`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def lowest_common_ancestor(root, p, q):\n#     ...\n# root = ...\n# print(lowest_common_ancestor(root, root.left, root.right).data)\n",
+    pytest: "def test_lca(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('lowest_common_ancestor'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(3)\n    root.left = TreeNode(5)\n    root.right = TreeNode(1)\n    assert ns['lowest_common_ancestor'](root, root.left, root.right).data == 3\n    assert ns['lowest_common_ancestor'](root, root.left, root.left).data == 5\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef lowest_common_ancestor(root, p, q):\n    if root is None or root is p or root is q:\n        return root\n    left = lowest_common_ancestor(root.left, p, q)\n    right = lowest_common_ancestor(root.right, p, q)\n    if left and right:\n        return root\n    return left or right",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef lowest_common_ancestor(root, p, q):\n    if root is None or root is p or root is q:\n        return root\n    left = lowest_common_ancestor(root.left, p, q)\n    right = lowest_common_ancestor(root.right, p, q)\n    if left and right:\n        return root\n    return left or right\n\nroot = TreeNode(3)\nroot.left = TreeNode(5)\nroot.right = TreeNode(1)\nprint(lowest_common_ancestor(root, root.left, root.right).data)\n",
+    next: Some("py-241-path-sum"), show_type_chips: false, micro_step: 240,
+};
+
+pub const PY241_PATH_SUM: CodingStep = CodingStep {
+    id: "py-241-path-sum", title: "DSA Path Sum", objective: "Decidir si existe un camino raíz→hoja con suma exacta.",
+    prompt_md: "**Path Sum**\n\nRestá `root.data` al target y preguntá a left/right; en hoja compará igualdad.\n\n**Micro-reto:**\n1. Definí `has_path_sum(root, target)`\n2. Árbol clásico de LeetCode 112; imprimí `has_path_sum(root, 22)` (esperado: `True`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def has_path_sum(root, target):\n#     ...\n# root = ...\n# print(has_path_sum(root, 22))\n",
+    pytest: "def test_path_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('has_path_sum'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(5)\n    root.left = TreeNode(4)\n    root.right = TreeNode(8)\n    root.left.left = TreeNode(11)\n    root.left.left.left = TreeNode(7)\n    root.left.left.right = TreeNode(2)\n    root.right.left = TreeNode(13)\n    root.right.right = TreeNode(4)\n    root.right.right.right = TreeNode(1)\n    assert ns['has_path_sum'](root, 22) is True\n    assert ns['has_path_sum'](root, 100) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef has_path_sum(root, target):\n    if root is None: return False\n    if root.left is None and root.right is None:\n        return root.data == target\n    return has_path_sum(root.left, target - root.data) or has_path_sum(root.right, target - root.data)",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef has_path_sum(root, target):\n    if root is None: return False\n    if root.left is None and root.right is None:\n        return root.data == target\n    return has_path_sum(root.left, target - root.data) or has_path_sum(root.right, target - root.data)\n\nroot = TreeNode(5)\nroot.left = TreeNode(4)\nroot.right = TreeNode(8)\nroot.left.left = TreeNode(11)\nroot.left.left.left = TreeNode(7)\nroot.left.left.right = TreeNode(2)\nroot.right.left = TreeNode(13)\nroot.right.right = TreeNode(4)\nroot.right.right.right = TreeNode(1)\nprint(has_path_sum(root, 22))\n",
+    next: Some("py-242-right-side"), show_type_chips: false, micro_step: 241,
+};
+
+pub const PY242_RIGHT_SIDE: CodingStep = CodingStep {
+    id: "py-242-right-side", title: "DSA Right Side View", objective: "Devolver los valores visibles desde la derecha nivel a nivel.",
+    prompt_md: "**Binary Tree Right Side View**\n\nBFS por niveles; guardá el último nodo de cada nivel.\n\n**Micro-reto:**\n1. Definí `right_side_view(root)`\n2. Árbol `1` → left `2` (right 5) / right `3` (right 4); imprimí la vista (esperado: `[1, 3, 4]`)",
+    starter_code: "# from collections import deque\n# class TreeNode:\n#     ...\n# def right_side_view(root):\n#     ...\n# root = ...\n# print(right_side_view(root))\n",
+    pytest: "def test_right_side(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('right_side_view'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(1)\n    root.left = TreeNode(2)\n    root.right = TreeNode(3)\n    root.left.right = TreeNode(5)\n    root.right.right = TreeNode(4)\n    assert ns['right_side_view'](root) == [1, 3, 4]\n    assert ns['right_side_view'](None) == []\n    assert capsys.readouterr().out.strip() == '[1, 3, 4]'\n",
+    hint: "from collections import deque\n\nclass TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef right_side_view(root):\n    if root is None: return []\n    out = []\n    queue = deque([root])\n    while queue:\n        last = None\n        for _ in range(len(queue)):\n            node = queue.popleft()\n            last = node.data\n            if node.left: queue.append(node.left)\n            if node.right: queue.append(node.right)\n        out.append(last)\n    return out",
+    solution_example: "from collections import deque\n\nclass TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef right_side_view(root):\n    if root is None: return []\n    out = []\n    queue = deque([root])\n    while queue:\n        last = None\n        for _ in range(len(queue)):\n            node = queue.popleft()\n            last = node.data\n            if node.left: queue.append(node.left)\n            if node.right: queue.append(node.right)\n        out.append(last)\n    return out\n\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\nroot.left.right = TreeNode(5)\nroot.right.right = TreeNode(4)\nprint(right_side_view(root))\n",
+    next: Some("py-243-flatten-tree"), show_type_chips: false, micro_step: 242,
+};
+
+pub const PY243_FLATTEN_TREE: CodingStep = CodingStep {
+    id: "py-243-flatten-tree", title: "DSA Flatten Tree", objective: "Aplanar un árbol binario a una lista enlazada preorder usando right.",
+    prompt_md: "**Flatten Binary Tree to Linked List**\n\nSi hay left, colgá el right al predecesor derecho del left y mové left a right.\n\n**Micro-reto:**\n1. Definí `flatten(root)` (in-place)\n2. Árbol `1` → left `2` (3, 4) / right `5` (6); imprimí valores por `right` (esperado: `[1, 2, 3, 4, 5, 6]`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def flatten(root):\n#     ...\n# root = ...\n# flatten(root)\n# ...\n# print(values)\n",
+    pytest: "def test_flatten_tree(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('flatten'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(1)\n    root.left = TreeNode(2)\n    root.right = TreeNode(5)\n    root.left.left = TreeNode(3)\n    root.left.right = TreeNode(4)\n    root.right.right = TreeNode(6)\n    ns['flatten'](root)\n    values = []\n    cur = root\n    while cur:\n        assert cur.left is None\n        values.append(cur.data)\n        cur = cur.right\n    assert values == [1, 2, 3, 4, 5, 6]\n    assert capsys.readouterr().out.strip() == '[1, 2, 3, 4, 5, 6]'\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef flatten(root):\n    while root:\n        if root.left:\n            pred = root.left\n            while pred.right:\n                pred = pred.right\n            pred.right = root.right\n            root.right = root.left\n            root.left = None\n        root = root.right",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef flatten(root):\n    while root:\n        if root.left:\n            pred = root.left\n            while pred.right:\n                pred = pred.right\n            pred.right = root.right\n            root.right = root.left\n            root.left = None\n        root = root.right\n\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(5)\nroot.left.left = TreeNode(3)\nroot.left.right = TreeNode(4)\nroot.right.right = TreeNode(6)\nflatten(root)\nvalues = []\ncur = root\nwhile cur:\n    values.append(cur.data)\n    cur = cur.right\nprint(values)\n",
+    next: Some("py-244-validate-bst"), show_type_chips: false, micro_step: 243,
+};
+
+pub const PY244_VALIDATE_BST: CodingStep = CodingStep {
+    id: "py-244-validate-bst", title: "DSA Validate BST", objective: "Validar si un árbol binario es un BST con rangos (lo, hi).",
+    prompt_md: "**Validate Binary Search Tree**\n\nCada nodo debe vivir en `(lo, hi)` estricto; propagá el rango a left/right.\n\n**Micro-reto:**\n1. Definí `is_valid_bst(root)`\n2. Árbol `2` → left `1` / right `3`; imprimí `True`",
+    starter_code: "# class TreeNode:\n#     ...\n# def is_valid_bst(root):\n#     ...\n# root = ...\n# print(is_valid_bst(root))\n",
+    pytest: "def test_validate_bst(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_valid_bst'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(2)\n    root.left = TreeNode(1)\n    root.right = TreeNode(3)\n    assert ns['is_valid_bst'](root) is True\n    bad = TreeNode(5)\n    bad.left = TreeNode(1)\n    bad.right = TreeNode(4)\n    bad.right.left = TreeNode(3)\n    bad.right.right = TreeNode(6)\n    assert ns['is_valid_bst'](bad) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef is_valid_bst(root):\n    def valid(node, lo, hi):\n        if node is None: return True\n        if not (lo < node.data < hi): return False\n        return valid(node.left, lo, node.data) and valid(node.right, node.data, hi)\n    return valid(root, float('-inf'), float('inf'))",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef is_valid_bst(root):\n    def valid(node, lo, hi):\n        if node is None: return True\n        if not (lo < node.data < hi): return False\n        return valid(node.left, lo, node.data) and valid(node.right, node.data, hi)\n    return valid(root, float('-inf'), float('inf'))\n\nroot = TreeNode(2)\nroot.left = TreeNode(1)\nroot.right = TreeNode(3)\nprint(is_valid_bst(root))\n",
+    next: None, show_type_chips: false, micro_step: 244,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3472,6 +3532,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY236_ADD_BINARY,
     &PY237_MY_POW,
     &PY238_TRAILING_ZEROES,
+    &PY239_TREE_DIAMETER,
+    &PY240_LCA,
+    &PY241_PATH_SUM,
+    &PY242_RIGHT_SIDE,
+    &PY243_FLATTEN_TREE,
+    &PY244_VALIDATE_BST,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4169,7 +4235,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py238_curriculum_chain() {
+    fn py203_to_py244_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4207,7 +4273,13 @@ mod tests {
             (235, "py-235-plus-one", Some("py-236-add-binary")),
             (236, "py-236-add-binary", Some("py-237-my-pow")),
             (237, "py-237-my-pow", Some("py-238-trailing-zeroes")),
-            (238, "py-238-trailing-zeroes", None),
+            (238, "py-238-trailing-zeroes", Some("py-239-tree-diameter")),
+            (239, "py-239-tree-diameter", Some("py-240-lca")),
+            (240, "py-240-lca", Some("py-241-path-sum")),
+            (241, "py-241-path-sum", Some("py-242-right-side")),
+            (242, "py-242-right-side", Some("py-243-flatten-tree")),
+            (243, "py-243-flatten-tree", Some("py-244-validate-bst")),
+            (244, "py-244-validate-bst", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
