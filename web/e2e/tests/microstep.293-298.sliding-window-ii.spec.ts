@@ -22,155 +22,154 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 287,
-    id: "py-287-koko-bananas",
-    title: "DSA Koko Bananas",
-    solution: `def min_eating_speed(piles, h):
-    def hours(k):
-        return sum((p + k - 1) // k for p in piles)
-    lo, hi = 1, max(piles)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if hours(mid) <= h:
-            hi = mid
-        else:
-            lo = mid + 1
-    return lo
+    micro: 293,
+    id: "py-293-fruit-baskets",
+    title: "DSA Fruit Baskets",
+    solution: `from collections import defaultdict
 
-print(min_eating_speed([3, 6, 7, 11], 8))
+def total_fruit(fruits):
+    count = defaultdict(int)
+    left = best = 0
+    for right, f in enumerate(fruits):
+        count[f] += 1
+        while len(count) > 2:
+            count[fruits[left]] -= 1
+            if count[fruits[left]] == 0:
+                del count[fruits[left]]
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+
+print(total_fruit([1, 2, 1]))
 `,
-    nextUrl: /\/learn\/py-288-split-array/,
-    cursorAfter: "288",
+    nextUrl: /\/learn\/py-294-product-less-k/,
+    cursorAfter: "294",
   },
   {
-    micro: 288,
-    id: "py-288-split-array",
-    title: "DSA Split Array Largest",
-    solution: `def split_array(nums, m):
-    def needed(limit):
-        parts = 1
-        cur = 0
-        for x in nums:
-            if cur + x > limit:
-                parts += 1
-                cur = x
-            else:
-                cur += x
-        return parts
-    lo, hi = max(nums), sum(nums)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if needed(mid) <= m:
-            hi = mid
-        else:
-            lo = mid + 1
-    return lo
+    micro: 294,
+    id: "py-294-product-less-k",
+    title: "DSA Product Less Than K",
+    solution: `def num_subarray_product_less_than_k(nums, k):
+    if k <= 1:
+        return 0
+    prod = 1
+    left = ans = 0
+    for right, x in enumerate(nums):
+        prod *= x
+        while prod >= k:
+            prod //= nums[left]
+            left += 1
+        ans += right - left + 1
+    return ans
 
-print(split_array([7, 2, 5, 10, 8], 2))
+print(num_subarray_product_less_than_k([10, 5, 2, 6], 100))
 `,
-    nextUrl: /\/learn\/py-289-median-two/,
-    cursorAfter: "289",
+    nextUrl: /\/learn\/py-295-ones-iii/,
+    cursorAfter: "295",
   },
   {
-    micro: 289,
-    id: "py-289-median-two",
-    title: "DSA Median Two Arrays",
-    solution: `def find_median_sorted(nums1, nums2):
-    if len(nums1) > len(nums2):
-        return find_median_sorted(nums2, nums1)
-    m, n = len(nums1), len(nums2)
-    lo, hi = 0, m
-    while lo <= hi:
-        i = (lo + hi) // 2
-        j = (m + n + 1) // 2 - i
-        left1 = float("-inf") if i == 0 else nums1[i - 1]
-        right1 = float("inf") if i == m else nums1[i]
-        left2 = float("-inf") if j == 0 else nums2[j - 1]
-        right2 = float("inf") if j == n else nums2[j]
-        if left1 <= right2 and left2 <= right1:
-            if (m + n) % 2:
-                return float(max(left1, left2))
-            return (max(left1, left2) + min(right1, right2)) / 2.0
-        elif left1 > right2:
-            hi = i - 1
-        else:
-            lo = i + 1
-    return 0.0
+    micro: 295,
+    id: "py-295-ones-iii",
+    title: "DSA Max Consecutive Ones III",
+    solution: `def longest_ones(nums, k):
+    left = zeros = best = 0
+    for right, x in enumerate(nums):
+        if x == 0:
+            zeros += 1
+        while zeros > k:
+            if nums[left] == 0:
+                zeros -= 1
+            left += 1
+        best = max(best, right - left + 1)
+    return best
 
-print(find_median_sorted([1, 3], [2]))
+print(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))
 `,
-    nextUrl: /\/learn\/py-290-search-2d-ii/,
-    cursorAfter: "290",
+    nextUrl: /\/learn\/py-296-k-distinct/,
+    cursorAfter: "296",
   },
   {
-    micro: 290,
-    id: "py-290-search-2d-ii",
-    title: "DSA Search 2D II",
-    solution: `def search_matrix(matrix, target):
-    if not matrix or not matrix[0]:
-        return False
-    r, c = 0, len(matrix[0]) - 1
-    while r < len(matrix) and c >= 0:
-        if matrix[r][c] == target:
+    micro: 296,
+    id: "py-296-k-distinct",
+    title: "DSA Longest K Distinct",
+    solution: `from collections import defaultdict
+
+def length_of_longest_substring_k_distinct(s, k):
+    if k == 0:
+        return 0
+    count = defaultdict(int)
+    left = best = 0
+    for right, ch in enumerate(s):
+        count[ch] += 1
+        while len(count) > k:
+            count[s[left]] -= 1
+            if count[s[left]] == 0:
+                del count[s[left]]
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+
+print(length_of_longest_substring_k_distinct("eceba", 2))
+`,
+    nextUrl: /\/learn\/py-297-check-inclusion/,
+    cursorAfter: "297",
+  },
+  {
+    micro: 297,
+    id: "py-297-check-inclusion",
+    title: "DSA Check Inclusion",
+    solution: `from collections import Counter
+
+def check_inclusion(s1, s2):
+    need = Counter(s1)
+    n = len(s1)
+    window = Counter()
+    for i, ch in enumerate(s2):
+        window[ch] += 1
+        if i >= n:
+            old = s2[i - n]
+            window[old] -= 1
+            if not window[old]:
+                del window[old]
+        if window == need:
             return True
-        if matrix[r][c] > target:
-            c -= 1
-        else:
-            r += 1
     return False
 
-matrix = [[1, 4, 7, 11, 15], [2, 5, 8, 12, 19], [3, 6, 9, 16, 22], [10, 13, 14, 17, 24], [18, 21, 23, 26, 30]]
-print(search_matrix(matrix, 5))
+print(check_inclusion("ab", "eidbaooo"))
 `,
-    nextUrl: /\/learn\/py-291-find-duplicate/,
-    cursorAfter: "291",
+    nextUrl: /\/learn\/py-298-sort-colors/,
+    cursorAfter: "298",
   },
   {
-    micro: 291,
-    id: "py-291-find-duplicate",
-    title: "DSA Find Duplicate",
-    solution: `def find_duplicate(nums):
-    slow = fast = nums[0]
-    while True:
-        slow = nums[slow]
-        fast = nums[nums[fast]]
-        if slow == fast:
-            break
-    slow = nums[0]
-    while slow != fast:
-        slow = nums[slow]
-        fast = nums[fast]
-    return slow
-
-print(find_duplicate([1, 3, 4, 2, 2]))
-`,
-    nextUrl: /\/learn\/py-292-first-bad/,
-    cursorAfter: "292",
-  },
-  {
-    micro: 292,
-    id: "py-292-first-bad",
-    title: "DSA First Bad Version",
-    solution: `def first_bad_version(n, is_bad):
-    lo, hi = 1, n
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if is_bad(mid):
-            hi = mid
+    micro: 298,
+    id: "py-298-sort-colors",
+    title: "DSA Sort Colors",
+    solution: `def sort_colors(nums):
+    lo = mid = 0
+    hi = len(nums) - 1
+    while mid <= hi:
+        if nums[mid] == 0:
+            nums[lo], nums[mid] = nums[mid], nums[lo]
+            lo += 1
+            mid += 1
+        elif nums[mid] == 1:
+            mid += 1
         else:
-            lo = mid + 1
-    return lo
+            nums[mid], nums[hi] = nums[hi], nums[mid]
+            hi -= 1
 
-print(first_bad_version(5, lambda v: v >= 4))
+nums = [2, 0, 2, 1, 1, 0]
+sort_colors(nums)
+print(nums)
 `,
-    nextUrl: /\/learn\/py-293-fruit-baskets/,
-    cursorAfter: "293",
+    nextUrl: /\/workspace/,
+    cursorAfter: "299",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-28[7-9]-|^py-29[0-2]-/);
+    expect(step.id).toMatch(/^py-29[3-8]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -200,7 +199,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 287–292 · binary search II", () => {
+test.describe("micro-steps 293–298 · sliding window II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
