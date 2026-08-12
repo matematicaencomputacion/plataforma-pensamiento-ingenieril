@@ -298,6 +298,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 290, step_id: "py-290-search-2d-ii" },
   { level_id: 291, step_id: "py-291-find-duplicate" },
   { level_id: 292, step_id: "py-292-first-bad" },
+  { level_id: 293, step_id: "py-293-fruit-baskets" },
+  { level_id: 294, step_id: "py-294-product-less-k" },
+  { level_id: 295, step_id: "py-295-ones-iii" },
+  { level_id: 296, step_id: "py-296-k-distinct" },
+  { level_id: 297, step_id: "py-297-check-inclusion" },
+  { level_id: 298, step_id: "py-298-sort-colors" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

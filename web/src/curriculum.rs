@@ -3770,7 +3770,67 @@ pub const PY292_FIRST_BAD: CodingStep = CodingStep {
     pytest: "def test_first_bad(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('first_bad_version'))\n    assert ns['first_bad_version'](5, lambda v: v >= 4) == 4\n    assert ns['first_bad_version'](1, lambda v: v >= 1) == 1\n    assert ns['first_bad_version'](3, lambda v: v >= 2) == 2\n    assert capsys.readouterr().out.strip() == '4'\n",
     hint: "def first_bad_version(n, is_bad):\n    lo, hi = 1, n\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if is_bad(mid): hi = mid\n        else: lo = mid + 1\n    return lo\nprint(first_bad_version(5, lambda v: v >= 4))",
     solution_example: "def first_bad_version(n, is_bad):\n    lo, hi = 1, n\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if is_bad(mid): hi = mid\n        else: lo = mid + 1\n    return lo\nprint(first_bad_version(5, lambda v: v >= 4))\n",
-    next: None, show_type_chips: false, micro_step: 292,
+    next: Some("py-293-fruit-baskets"), show_type_chips: false, micro_step: 292,
+};
+
+pub const PY293_FRUIT_BASKETS: CodingStep = CodingStep {
+    id: "py-293-fruit-baskets", title: "DSA Fruit Baskets", objective: "Máxima ventana con a lo sumo 2 tipos de fruta.",
+    prompt_md: "**Fruit Into Baskets**\n\nSliding window + mapa de tipos. Distinto de py-216 (k reemplazos).\n\n**Micro-reto:**\n1. Definí `total_fruit(fruits)`\n2. `[1,2,1]`; imprimí (esperado: `3`)",
+    starter_code: "# def total_fruit(fruits):\n#     ...\n# print(total_fruit([1, 2, 1]))\n",
+    pytest: "def test_fruit_baskets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('total_fruit'))\n    assert ns['total_fruit']([1, 2, 1]) == 3\n    assert ns['total_fruit']([0, 1, 2, 2]) == 3\n    assert ns['total_fruit']([1, 2, 3, 2, 2]) == 4\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "from collections import defaultdict\n\ndef total_fruit(fruits):\n    count = defaultdict(int); left = best = 0\n    for right, f in enumerate(fruits):\n        count[f] += 1\n        while len(count) > 2:\n            count[fruits[left]] -= 1\n            if count[fruits[left]] == 0: del count[fruits[left]]\n            left += 1\n        best = max(best, right - left + 1)\n    return best\nprint(total_fruit([1, 2, 1]))",
+    solution_example: "from collections import defaultdict\n\ndef total_fruit(fruits):\n    count = defaultdict(int); left = best = 0\n    for right, f in enumerate(fruits):\n        count[f] += 1\n        while len(count) > 2:\n            count[fruits[left]] -= 1\n            if count[fruits[left]] == 0: del count[fruits[left]]\n            left += 1\n        best = max(best, right - left + 1)\n    return best\nprint(total_fruit([1, 2, 1]))\n",
+    next: Some("py-294-product-less-k"), show_type_chips: false, micro_step: 293,
+};
+
+pub const PY294_PRODUCT_LESS_K: CodingStep = CodingStep {
+    id: "py-294-product-less-k", title: "DSA Product Less Than K", objective: "Contar subarrays contiguos cuyo producto es estrictamente < k.",
+    prompt_md: "**Subarray Product Less Than K**\n\nVentana con producto acumulado. Distinto de py-132 (suma máxima fija).\n\n**Micro-reto:**\n1. Definí `num_subarray_product_less_than_k(nums, k)`\n2. nums=`[10,5,2,6]`, k=`100`; imprimí (esperado: `8`)",
+    starter_code: "# def num_subarray_product_less_than_k(nums, k):\n#     ...\n# print(num_subarray_product_less_than_k([10, 5, 2, 6], 100))\n",
+    pytest: "def test_product_less_k(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('num_subarray_product_less_than_k'))\n    assert ns['num_subarray_product_less_than_k']([10, 5, 2, 6], 100) == 8\n    assert ns['num_subarray_product_less_than_k']([1, 2, 3], 0) == 0\n    assert ns['num_subarray_product_less_than_k']([1, 1, 1], 1) == 0\n    assert capsys.readouterr().out.strip() == '8'\n",
+    hint: "def num_subarray_product_less_than_k(nums, k):\n    if k <= 1: return 0\n    prod = 1; left = ans = 0\n    for right, x in enumerate(nums):\n        prod *= x\n        while prod >= k:\n            prod //= nums[left]; left += 1\n        ans += right - left + 1\n    return ans\nprint(num_subarray_product_less_than_k([10, 5, 2, 6], 100))",
+    solution_example: "def num_subarray_product_less_than_k(nums, k):\n    if k <= 1: return 0\n    prod = 1; left = ans = 0\n    for right, x in enumerate(nums):\n        prod *= x\n        while prod >= k:\n            prod //= nums[left]; left += 1\n        ans += right - left + 1\n    return ans\nprint(num_subarray_product_less_than_k([10, 5, 2, 6], 100))\n",
+    next: Some("py-295-ones-iii"), show_type_chips: false, micro_step: 294,
+};
+
+pub const PY295_ONES_III: CodingStep = CodingStep {
+    id: "py-295-ones-iii", title: "DSA Max Consecutive Ones III", objective: "Máxima racha de 1s permitiendo voltear hasta k ceros.",
+    prompt_md: "**Max Consecutive Ones III**\n\nVentana donde `zeros <= k`. Distinto de py-216 (letras con reemplazo).\n\n**Micro-reto:**\n1. Definí `longest_ones(nums, k)`\n2. nums=`[1,1,1,0,0,0,1,1,1,1,0]`, k=`2`; imprimí (esperado: `6`)",
+    starter_code: "# def longest_ones(nums, k):\n#     ...\n# print(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))\n",
+    pytest: "def test_ones_iii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('longest_ones'))\n    assert ns['longest_ones']([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2) == 6\n    assert ns['longest_ones']([0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1], 3) == 10\n    assert ns['longest_ones']([1, 1, 1], 0) == 3\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "def longest_ones(nums, k):\n    left = zeros = best = 0\n    for right, x in enumerate(nums):\n        if x == 0: zeros += 1\n        while zeros > k:\n            if nums[left] == 0: zeros -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best\nprint(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))",
+    solution_example: "def longest_ones(nums, k):\n    left = zeros = best = 0\n    for right, x in enumerate(nums):\n        if x == 0: zeros += 1\n        while zeros > k:\n            if nums[left] == 0: zeros -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best\nprint(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))\n",
+    next: Some("py-296-k-distinct"), show_type_chips: false, micro_step: 295,
+};
+
+pub const PY296_K_DISTINCT: CodingStep = CodingStep {
+    id: "py-296-k-distinct", title: "DSA Longest K Distinct", objective: "Longitud de la substring más larga con exactamente k caracteres distintos.",
+    prompt_md: "**Longest Substring with At Most K Distinct**\n\nUsamos *at most* k (variante clásica de entrevista). Distinto de py-293 (fijo k=2).\n\n**Micro-reto:**\n1. Definí `length_of_longest_substring_k_distinct(s, k)`\n2. s=`\"eceba\"`, k=`2`; imprimí (esperado: `3`)",
+    starter_code: "# def length_of_longest_substring_k_distinct(s, k):\n#     ...\n# print(length_of_longest_substring_k_distinct(\"eceba\", 2))\n",
+    pytest: "def test_k_distinct(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('length_of_longest_substring_k_distinct'))\n    assert ns['length_of_longest_substring_k_distinct']('eceba', 2) == 3\n    assert ns['length_of_longest_substring_k_distinct']('aa', 1) == 2\n    assert ns['length_of_longest_substring_k_distinct']('a', 0) == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "from collections import defaultdict\n\ndef length_of_longest_substring_k_distinct(s, k):\n    if k == 0: return 0\n    count = defaultdict(int); left = best = 0\n    for right, ch in enumerate(s):\n        count[ch] += 1\n        while len(count) > k:\n            count[s[left]] -= 1\n            if count[s[left]] == 0: del count[s[left]]\n            left += 1\n        best = max(best, right - left + 1)\n    return best\nprint(length_of_longest_substring_k_distinct('eceba', 2))",
+    solution_example: "from collections import defaultdict\n\ndef length_of_longest_substring_k_distinct(s, k):\n    if k == 0: return 0\n    count = defaultdict(int); left = best = 0\n    for right, ch in enumerate(s):\n        count[ch] += 1\n        while len(count) > k:\n            count[s[left]] -= 1\n            if count[s[left]] == 0: del count[s[left]]\n            left += 1\n        best = max(best, right - left + 1)\n    return best\nprint(length_of_longest_substring_k_distinct('eceba', 2))\n",
+    next: Some("py-297-check-inclusion"), show_type_chips: false, micro_step: 296,
+};
+
+pub const PY297_CHECK_INCLUSION: CodingStep = CodingStep {
+    id: "py-297-check-inclusion", title: "DSA Check Inclusion", objective: "Decidir si s2 contiene alguna permutación de s1.",
+    prompt_md: "**Permutation in String**\n\nVentana fija del tamaño de s1 + contadores. Distinto de py-217 (listar índices de anagramas).\n\n**Micro-reto:**\n1. Definí `check_inclusion(s1, s2)`\n2. s1=`\"ab\"`, s2=`\"eidbaooo\"`; imprimí `True`",
+    starter_code: "# def check_inclusion(s1, s2):\n#     ...\n# print(check_inclusion(\"ab\", \"eidbaooo\"))\n",
+    pytest: "def test_check_inclusion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('check_inclusion'))\n    assert ns['check_inclusion']('ab', 'eidbaooo') is True\n    assert ns['check_inclusion']('ab', 'eidboaoo') is False\n    assert ns['check_inclusion']('adc', 'dcda') is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "from collections import Counter\n\ndef check_inclusion(s1, s2):\n    need = Counter(s1); n = len(s1)\n    window = Counter()\n    for i, ch in enumerate(s2):\n        window[ch] += 1\n        if i >= n:\n            old = s2[i - n]; window[old] -= 1\n            if not window[old]: del window[old]\n        if window == need: return True\n    return False\nprint(check_inclusion('ab', 'eidbaooo'))",
+    solution_example: "from collections import Counter\n\ndef check_inclusion(s1, s2):\n    need = Counter(s1); n = len(s1)\n    window = Counter()\n    for i, ch in enumerate(s2):\n        window[ch] += 1\n        if i >= n:\n            old = s2[i - n]; window[old] -= 1\n            if not window[old]: del window[old]\n        if window == need: return True\n    return False\nprint(check_inclusion('ab', 'eidbaooo'))\n",
+    next: Some("py-298-sort-colors"), show_type_chips: false, micro_step: 297,
+};
+
+pub const PY298_SORT_COLORS: CodingStep = CodingStep {
+    id: "py-298-sort-colors", title: "DSA Sort Colors", objective: "Ordenar in-place un array de 0/1/2 con tres punteros (Dutch flag).",
+    prompt_md: "**Sort Colors**\n\nPunteros `lo/mid/hi`. Distinto de py-25 (sort genérico de listas).\n\n**Micro-reto:**\n1. Definí `sort_colors(nums)` in-place\n2. `[2,0,2,1,1,0]`; imprimí el array (esperado: `[0, 0, 1, 1, 2, 2]`)",
+    starter_code: "# def sort_colors(nums):\n#     ...\n# nums = [2, 0, 2, 1, 1, 0]\n# sort_colors(nums)\n# print(nums)\n",
+    pytest: "def test_sort_colors(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('sort_colors'))\n    a = [2, 0, 2, 1, 1, 0]; ns['sort_colors'](a); assert a == [0, 0, 1, 1, 2, 2]\n    b = [2, 0, 1]; ns['sort_colors'](b); assert b == [0, 1, 2]\n    assert capsys.readouterr().out.strip() == '[0, 0, 1, 1, 2, 2]'\n",
+    hint: "def sort_colors(nums):\n    lo = mid = 0; hi = len(nums) - 1\n    while mid <= hi:\n        if nums[mid] == 0:\n            nums[lo], nums[mid] = nums[mid], nums[lo]; lo += 1; mid += 1\n        elif nums[mid] == 1: mid += 1\n        else:\n            nums[mid], nums[hi] = nums[hi], nums[mid]; hi -= 1\nnums = [2, 0, 2, 1, 1, 0]\nsort_colors(nums)\nprint(nums)",
+    solution_example: "def sort_colors(nums):\n    lo = mid = 0; hi = len(nums) - 1\n    while mid <= hi:\n        if nums[mid] == 0:\n            nums[lo], nums[mid] = nums[mid], nums[lo]; lo += 1; mid += 1\n        elif nums[mid] == 1: mid += 1\n        else:\n            nums[mid], nums[hi] = nums[hi], nums[mid]; hi -= 1\nnums = [2, 0, 2, 1, 1, 0]\nsort_colors(nums)\nprint(nums)\n",
+    next: None, show_type_chips: false, micro_step: 298,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -4066,6 +4126,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY290_SEARCH_2D_II,
     &PY291_FIND_DUPLICATE,
     &PY292_FIRST_BAD,
+    &PY293_FRUIT_BASKETS,
+    &PY294_PRODUCT_LESS_K,
+    &PY295_ONES_III,
+    &PY296_K_DISTINCT,
+    &PY297_CHECK_INCLUSION,
+    &PY298_SORT_COLORS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4763,7 +4829,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py292_curriculum_chain() {
+    fn py203_to_py298_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4855,7 +4921,13 @@ mod tests {
             (289, "py-289-median-two", Some("py-290-search-2d-ii")),
             (290, "py-290-search-2d-ii", Some("py-291-find-duplicate")),
             (291, "py-291-find-duplicate", Some("py-292-first-bad")),
-            (292, "py-292-first-bad", None),
+            (292, "py-292-first-bad", Some("py-293-fruit-baskets")),
+            (293, "py-293-fruit-baskets", Some("py-294-product-less-k")),
+            (294, "py-294-product-less-k", Some("py-295-ones-iii")),
+            (295, "py-295-ones-iii", Some("py-296-k-distinct")),
+            (296, "py-296-k-distinct", Some("py-297-check-inclusion")),
+            (297, "py-297-check-inclusion", Some("py-298-sort-colors")),
+            (298, "py-298-sort-colors", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
