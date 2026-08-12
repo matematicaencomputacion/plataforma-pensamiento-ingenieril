@@ -191,7 +191,7 @@ print([c.ping(1), c.ping(100), c.ping(3001), c.ping(3002)])
 
 print(time_required([2, 3, 2], 2))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-269-last-stone/,
     cursorAfter: "269",
   },
 ];
