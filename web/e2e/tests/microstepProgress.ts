@@ -286,6 +286,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 278, step_id: "py-278-accounts-merge" },
   { level_id: 279, step_id: "py-279-alien-dict" },
   { level_id: 280, step_id: "py-280-min-cost-points" },
+  { level_id: 281, step_id: "py-281-jump-game-ii" },
+  { level_id: 282, step_id: "py-282-target-sum" },
+  { level_id: 283, step_id: "py-283-maximal-square" },
+  { level_id: 284, step_id: "py-284-stock-cooldown" },
+  { level_id: 285, step_id: "py-285-interleaving" },
+  { level_id: 286, step_id: "py-286-palindrome-subseq" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
