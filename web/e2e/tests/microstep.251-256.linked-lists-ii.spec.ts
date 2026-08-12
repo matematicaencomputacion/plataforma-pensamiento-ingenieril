@@ -22,42 +22,53 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 245,
-    id: "py-245-remove-nth",
-    title: "DSA Remove Nth Node",
+    micro: 251,
+    id: "py-251-copy-random",
+    title: "DSA Copy Random List",
     solution: `class ListNode:
-    def __init__(self, data=0, next=None):
+    def __init__(self, data=0, next=None, random=None):
         self.data = data
         self.next = next
+        self.random = random
 
-def to_list(head):
-    out = []
+def walk(head):
+    vals, rands = [], []
     while head:
-        out.append(head.data)
+        vals.append(head.data)
+        rands.append(head.random.data if head.random else None)
         head = head.next
-    return out
+    return vals, rands
 
-def remove_nth_from_end(head, n):
-    dummy = ListNode(0, head)
-    fast = slow = dummy
-    for _ in range(n):
-        fast = fast.next
-    while fast.next:
-        fast = fast.next
-        slow = slow.next
-    slow.next = slow.next.next
-    return dummy.next
+def copy_random_list(head):
+    if not head:
+        return None
+    mapping = {}
+    cur = head
+    while cur:
+        mapping[cur] = ListNode(cur.data)
+        cur = cur.next
+    cur = head
+    while cur:
+        mapping[cur].next = mapping.get(cur.next)
+        mapping[cur].random = mapping.get(cur.random)
+        cur = cur.next
+    return mapping[head]
 
-head = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
-print(to_list(remove_nth_from_end(head, 2)))
+a = ListNode(1)
+b = ListNode(2)
+a.next = b
+a.random = b
+b.random = a
+copy = copy_random_list(a)
+print(walk(copy)[0])
 `,
-    nextUrl: /\/learn\/py-246-reorder-list/,
-    cursorAfter: "246",
+    nextUrl: /\/learn\/py-252-sort-list/,
+    cursorAfter: "252",
   },
   {
-    micro: 246,
-    id: "py-246-reorder-list",
-    title: "DSA Reorder List",
+    micro: 252,
+    id: "py-252-sort-list",
+    title: "DSA Sort List",
     solution: `class ListNode:
     def __init__(self, data=0, next=None):
         self.data = data
@@ -70,79 +81,41 @@ def to_list(head):
         head = head.next
     return out
 
-def reorder_list(head):
-    if not head or not head.next:
-        return
-    slow = fast = head
-    while fast.next and fast.next.next:
-        slow = slow.next
-        fast = fast.next.next
-    second = slow.next
-    slow.next = None
-    prev = None
-    while second:
-        nxt = second.next
-        second.next = prev
-        prev = second
-        second = nxt
-    first, second = head, prev
-    while second:
-        t1, t2 = first.next, second.next
-        first.next = second
-        second.next = t1
-        first, second = t1, t2
-
-head = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
-reorder_list(head)
-print(to_list(head))
-`,
-    nextUrl: /\/learn\/py-247-add-two-lists/,
-    cursorAfter: "247",
-  },
-  {
-    micro: 247,
-    id: "py-247-add-two-lists",
-    title: "DSA Add Two Lists",
-    solution: `class ListNode:
-    def __init__(self, data=0, next=None):
-        self.data = data
-        self.next = next
-
-def to_list(head):
-    out = []
-    while head:
-        out.append(head.data)
-        head = head.next
-    return out
-
-def add_two_numbers(l1, l2):
+def merge(a, b):
     dummy = ListNode(0)
     cur = dummy
-    carry = 0
-    while l1 or l2 or carry:
-        total = carry
-        if l1:
-            total += l1.data
-            l1 = l1.next
-        if l2:
-            total += l2.data
-            l2 = l2.next
-        cur.next = ListNode(total % 10)
+    while a and b:
+        if a.data <= b.data:
+            cur.next = a
+            a = a.next
+        else:
+            cur.next = b
+            b = b.next
         cur = cur.next
-        carry = total // 10
+    cur.next = a or b
     return dummy.next
 
-l1 = ListNode(2, ListNode(4, ListNode(3)))
-l2 = ListNode(5, ListNode(6, ListNode(4)))
-print(to_list(add_two_numbers(l1, l2)))
+def sort_list(head):
+    if not head or not head.next:
+        return head
+    slow, fast = head, head.next
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    mid = slow.next
+    slow.next = None
+    return merge(sort_list(head), sort_list(mid))
+
+head = ListNode(4, ListNode(2, ListNode(1, ListNode(3))))
+print(to_list(sort_list(head)))
 `,
-    nextUrl: /\/learn\/py-248-swap-pairs/,
-    cursorAfter: "248",
+    nextUrl: /\/learn\/py-253-merge-two-lists/,
+    cursorAfter: "253",
   },
   {
-    micro: 248,
-    id: "py-248-swap-pairs",
-    title: "DSA Swap Pairs",
+    micro: 253,
+    id: "py-253-merge-two-lists",
+    title: "DSA Merge Two Lists",
     solution: `class ListNode:
     def __init__(self, data=0, next=None):
         self.data = data
@@ -155,101 +128,123 @@ def to_list(head):
         head = head.next
     return out
 
-def swap_pairs(head):
-    dummy = ListNode(0, head)
-    prev = dummy
-    while prev.next and prev.next.next:
-        a = prev.next
-        b = a.next
-        prev.next, a.next, b.next = b, b.next, a
-        prev = a
+def merge_two_lists(l1, l2):
+    dummy = ListNode(0)
+    cur = dummy
+    while l1 and l2:
+        if l1.data <= l2.data:
+            cur.next = l1
+            l1 = l1.next
+        else:
+            cur.next = l2
+            l2 = l2.next
+        cur = cur.next
+    cur.next = l1 or l2
     return dummy.next
 
-head = ListNode(1, ListNode(2, ListNode(3, ListNode(4))))
-print(to_list(swap_pairs(head)))
+l1 = ListNode(1, ListNode(2, ListNode(4)))
+l2 = ListNode(1, ListNode(3, ListNode(4)))
+print(to_list(merge_two_lists(l1, l2)))
 `,
-    nextUrl: /\/learn\/py-249-rotate-list/,
-    cursorAfter: "249",
+    nextUrl: /\/learn\/py-254-intersection/,
+    cursorAfter: "254",
   },
   {
-    micro: 249,
-    id: "py-249-rotate-list",
-    title: "DSA Rotate List",
+    micro: 254,
+    id: "py-254-intersection",
+    title: "DSA List Intersection",
     solution: `class ListNode:
     def __init__(self, data=0, next=None):
         self.data = data
         self.next = next
 
-def to_list(head):
-    out = []
-    while head:
-        out.append(head.data)
-        head = head.next
-    return out
+def get_intersection_node(head_a, head_b):
+    a, b = head_a, head_b
+    while a is not b:
+        a = a.next if a else head_b
+        b = b.next if b else head_a
+    return a
 
-def rotate_right(head, k):
-    if not head or not head.next or k == 0:
-        return head
-    n = 1
-    tail = head
-    while tail.next:
-        tail = tail.next
-        n += 1
-    k %= n
-    if k == 0:
-        return head
-    tail.next = head
-    new_tail = head
-    for _ in range(n - k - 1):
-        new_tail = new_tail.next
-    new_head = new_tail.next
-    new_tail.next = None
-    return new_head
-
-head = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
-print(to_list(rotate_right(head, 2)))
+shared = ListNode(3, ListNode(4))
+head_a = ListNode(1, ListNode(2, shared))
+head_b = ListNode(5, shared)
+print(get_intersection_node(head_a, head_b).data)
 `,
-    nextUrl: /\/learn\/py-250-palindrome-list/,
-    cursorAfter: "250",
+    nextUrl: /\/learn\/py-255-cycle-start/,
+    cursorAfter: "255",
   },
   {
-    micro: 250,
-    id: "py-250-palindrome-list",
-    title: "DSA Palindrome List",
+    micro: 255,
+    id: "py-255-cycle-start",
+    title: "DSA Cycle Start",
     solution: `class ListNode:
     def __init__(self, data=0, next=None):
         self.data = data
         self.next = next
 
-def is_palindrome_list(head):
+def detect_cycle_start(head):
     slow = fast = head
     while fast and fast.next:
         slow = slow.next
         fast = fast.next.next
-    prev = None
-    while slow:
-        nxt = slow.next
-        slow.next = prev
-        prev = slow
-        slow = nxt
-    while prev:
-        if prev.data != head.data:
-            return False
-        prev = prev.next
-        head = head.next
-    return True
+        if slow is fast:
+            slow = head
+            while slow is not fast:
+                slow = slow.next
+                fast = fast.next
+            return slow
+    return None
 
-head = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
-print(is_palindrome_list(head))
+n1 = ListNode(1)
+n2 = ListNode(2)
+n3 = ListNode(3)
+n1.next = n2
+n2.next = n3
+n3.next = n2
+print(detect_cycle_start(n1).data)
 `,
-    nextUrl: /\/learn\/py-251-copy-random/,
-    cursorAfter: "251",
+    nextUrl: /\/learn\/py-256-remove-dupes-ii/,
+    cursorAfter: "256",
+  },
+  {
+    micro: 256,
+    id: "py-256-remove-dupes-ii",
+    title: "DSA Remove Dupes II",
+    solution: `class ListNode:
+    def __init__(self, data=0, next=None):
+        self.data = data
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.data)
+        head = head.next
+    return out
+
+def delete_duplicates(head):
+    dummy = ListNode(0, head)
+    prev = dummy
+    while prev.next:
+        if prev.next.next and prev.next.data == prev.next.next.data:
+            val = prev.next.data
+            while prev.next and prev.next.data == val:
+                prev.next = prev.next.next
+        else:
+            prev = prev.next
+    return dummy.next
+
+head = ListNode(1, ListNode(1, ListNode(1, ListNode(2, ListNode(3, ListNode(3))))))
+print(to_list(delete_duplicates(head)))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "257",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-24[5-9]-|^py-250-/);
+    expect(step.id).toMatch(/^py-25[1-6]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -279,7 +274,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 245–250 · listas enlazadas", () => {
+test.describe("micro-steps 251–256 · listas enlazadas II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
