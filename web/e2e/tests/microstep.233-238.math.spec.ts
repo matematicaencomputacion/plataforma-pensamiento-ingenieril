@@ -129,7 +129,7 @@ print(my_pow(2.0, 10))
     return zeros
 print(trailing_zeroes(25))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-239-tree-diameter/,
     cursorAfter: "239",
   },
 ];
