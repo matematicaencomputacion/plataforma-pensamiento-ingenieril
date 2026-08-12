@@ -262,6 +262,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 254, step_id: "py-254-intersection" },
   { level_id: 255, step_id: "py-255-cycle-start" },
   { level_id: 256, step_id: "py-256-remove-dupes-ii" },
+  { level_id: 257, step_id: "py-257-remove-k-digits" },
+  { level_id: 258, step_id: "py-258-asteroid-collision" },
+  { level_id: 259, step_id: "py-259-simplify-path" },
+  { level_id: 260, step_id: "py-260-calc-ii" },
+  { level_id: 261, step_id: "py-261-car-fleet" },
+  { level_id: 262, step_id: "py-262-largest-rect" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

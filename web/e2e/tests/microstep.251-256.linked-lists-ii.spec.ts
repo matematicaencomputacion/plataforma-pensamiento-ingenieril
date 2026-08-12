@@ -237,7 +237,7 @@ def delete_duplicates(head):
 head = ListNode(1, ListNode(1, ListNode(1, ListNode(2, ListNode(3, ListNode(3))))))
 print(to_list(delete_duplicates(head)))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-257-remove-k-digits/,
     cursorAfter: "257",
   },
 ];

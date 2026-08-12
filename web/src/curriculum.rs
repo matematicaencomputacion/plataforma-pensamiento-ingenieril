@@ -3410,7 +3410,67 @@ pub const PY256_REMOVE_DUPES_II: CodingStep = CodingStep {
     pytest: "def test_remove_dupes_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('delete_duplicates'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    def walk(head):\n        out = []\n        while head:\n            out.append(head.data); head = head.next\n        return out\n    assert walk(ns['delete_duplicates'](build([1, 1, 1, 2, 3, 3]))) == [2]\n    assert walk(ns['delete_duplicates'](build([1, 1, 2, 2]))) == []\n    assert capsys.readouterr().out.strip() == '[2]'\n",
     hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef delete_duplicates(head):\n    dummy = ListNode(0, head); prev = dummy\n    while prev.next:\n        if prev.next.next and prev.next.data == prev.next.next.data:\n            val = prev.next.data\n            while prev.next and prev.next.data == val:\n                prev.next = prev.next.next\n        else:\n            prev = prev.next\n    return dummy.next",
     solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef delete_duplicates(head):\n    dummy = ListNode(0, head); prev = dummy\n    while prev.next:\n        if prev.next.next and prev.next.data == prev.next.next.data:\n            val = prev.next.data\n            while prev.next and prev.next.data == val:\n                prev.next = prev.next.next\n        else:\n            prev = prev.next\n    return dummy.next\n\nhead = ListNode(1, ListNode(1, ListNode(1, ListNode(2, ListNode(3, ListNode(3))))))\nprint(to_list(delete_duplicates(head)))\n",
-    next: None, show_type_chips: false, micro_step: 256,
+    next: Some("py-257-remove-k-digits"), show_type_chips: false, micro_step: 256,
+};
+
+pub const PY257_REMOVE_K_DIGITS: CodingStep = CodingStep {
+    id: "py-257-remove-k-digits", title: "DSA Remove K Digits", objective: "Quitar k dígitos para obtener el entero mínimo (stack monotónico).",
+    prompt_md: "**Remove K Digits**\n\nStack creciente: pop mientras el tope sea mayor que el dígito actual. Distinto de py-179 (índices) y py-180 (next greater).\n\n**Micro-reto:**\n1. Definí `remove_k_digits(num, k)`\n2. `num=\"1432219\"`, `k=3`; imprimí el resultado (esperado: `\"1219\"`)",
+    starter_code: "# def remove_k_digits(num, k):\n#     ...\n# print(remove_k_digits(\"1432219\", 3))\n",
+    pytest: "def test_remove_k_digits(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('remove_k_digits'))\n    assert ns['remove_k_digits']('1432219', 3) == '1219'\n    assert ns['remove_k_digits']('10200', 1) == '200'\n    assert ns['remove_k_digits']('10', 2) == '0'\n    assert capsys.readouterr().out.strip() == '1219'\n",
+    hint: "def remove_k_digits(num, k):\n    stack = []\n    for digit in num:\n        while k and stack and stack[-1] > digit:\n            stack.pop(); k -= 1\n        stack.append(digit)\n    return ''.join(stack[:len(stack) - k]).lstrip('0') or '0'\nprint(remove_k_digits('1432219', 3))",
+    solution_example: "def remove_k_digits(num, k):\n    stack = []\n    for digit in num:\n        while k and stack and stack[-1] > digit:\n            stack.pop(); k -= 1\n        stack.append(digit)\n    return ''.join(stack[:len(stack) - k]).lstrip('0') or '0'\nprint(remove_k_digits('1432219', 3))\n",
+    next: Some("py-258-asteroid-collision"), show_type_chips: false, micro_step: 257,
+};
+
+pub const PY258_ASTEROID_COLLISION: CodingStep = CodingStep {
+    id: "py-258-asteroid-collision", title: "DSA Asteroid Collision", objective: "Simular colisiones entre asteroides con stack.",
+    prompt_md: "**Asteroid Collision**\n\nPositivos van derecha, negativos izquierda; colisionan en el tope. Distinto de py-181 (RPN).\n\n**Micro-reto:**\n1. Definí `asteroid_collision(asteroids)`\n2. `[5, 10, -5]`; imprimí el resultado (esperado: `[5, 10]`)",
+    starter_code: "# def asteroid_collision(asteroids):\n#     ...\n# print(asteroid_collision([5, 10, -5]))\n",
+    pytest: "def test_asteroid_collision(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('asteroid_collision'))\n    assert ns['asteroid_collision']([5, 10, -5]) == [5, 10]\n    assert ns['asteroid_collision']([8, -8]) == []\n    assert ns['asteroid_collision']([10, 2, -5]) == [10]\n    assert capsys.readouterr().out.strip() == '[5, 10]'\n",
+    hint: "def asteroid_collision(asteroids):\n    stack = []\n    for a in asteroids:\n        alive = True\n        while alive and a < 0 and stack and stack[-1] > 0:\n            if stack[-1] < -a: stack.pop(); continue\n            elif stack[-1] == -a: stack.pop()\n            alive = False; break\n        if alive: stack.append(a)\n    return stack\nprint(asteroid_collision([5, 10, -5]))",
+    solution_example: "def asteroid_collision(asteroids):\n    stack = []\n    for a in asteroids:\n        alive = True\n        while alive and a < 0 and stack and stack[-1] > 0:\n            if stack[-1] < -a: stack.pop(); continue\n            elif stack[-1] == -a: stack.pop()\n            alive = False; break\n        if alive: stack.append(a)\n    return stack\nprint(asteroid_collision([5, 10, -5]))\n",
+    next: Some("py-259-simplify-path"), show_type_chips: false, micro_step: 258,
+};
+
+pub const PY259_SIMPLIFY_PATH: CodingStep = CodingStep {
+    id: "py-259-simplify-path", title: "DSA Simplify Path", objective: "Normalizar una ruta Unix con `.`, `..` y barras duplicadas.",
+    prompt_md: "**Simplify Path**\n\nStack de carpetas: `..` hace pop, `.` se ignora. Distinto de py-141 (paréntesis).\n\n**Micro-reto:**\n1. Definí `simplify_path(path)`\n2. `\"/home//foo/\"`; imprimí el resultado (esperado: `\"/home/foo\"`)",
+    starter_code: "# def simplify_path(path):\n#     ...\n# print(simplify_path(\"/home//foo/\"))\n",
+    pytest: "def test_simplify_path(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('simplify_path'))\n    assert ns['simplify_path']('/home/') == '/home'\n    assert ns['simplify_path']('/home//foo/') == '/home/foo'\n    assert ns['simplify_path']('/a/./b/../../c/') == '/c'\n    assert capsys.readouterr().out.strip() == '/home/foo'\n",
+    hint: "def simplify_path(path):\n    stack = []\n    for part in path.split('/'):\n        if part == '' or part == '.': continue\n        elif part == '..':\n            if stack: stack.pop()\n        else: stack.append(part)\n    return '/' + '/'.join(stack)\nprint(simplify_path('/home//foo/'))",
+    solution_example: "def simplify_path(path):\n    stack = []\n    for part in path.split('/'):\n        if part == '' or part == '.': continue\n        elif part == '..':\n            if stack: stack.pop()\n        else: stack.append(part)\n    return '/' + '/'.join(stack)\nprint(simplify_path('/home//foo/'))\n",
+    next: Some("py-260-calc-ii"), show_type_chips: false, micro_step: 259,
+};
+
+pub const PY260_CALC_II: CodingStep = CodingStep {
+    id: "py-260-calc-ii", title: "DSA Calculator II", objective: "Evaluar expresiones con +, −, × y ÷ sin paréntesis.",
+    prompt_md: "**Basic Calculator II**\n\nStack de operandos con precedencia `*`/`/` sobre `+`/`-`. Distinto de py-210 (solo suma/resta).\n\n**Micro-reto:**\n1. Definí `calculate_ii(s)`\n2. `\"3+2*2\"`; imprimí el resultado (esperado: `7`)",
+    starter_code: "# def calculate_ii(s):\n#     ...\n# print(calculate_ii(\"3+2*2\"))\n",
+    pytest: "def test_calc_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('calculate_ii'))\n    assert ns['calculate_ii']('3+2*2') == 7\n    assert ns['calculate_ii'](' 3/2 ') == 1\n    assert ns['calculate_ii'](' 3+5 / 2 ') == 5\n    assert capsys.readouterr().out.strip() == '7'\n",
+    hint: "def calculate_ii(s):\n    stack = []; num = 0; op = '+'\n    for i, ch in enumerate(s):\n        if ch.isdigit(): num = num * 10 + int(ch)\n        if (not ch.isdigit() and ch != ' ') or i == len(s) - 1:\n            if op == '+': stack.append(num)\n            elif op == '-': stack.append(-num)\n            elif op == '*': stack[-1] *= num\n            elif op == '/': stack[-1] = int(stack[-1] / num)\n            num = 0; op = ch\n    return sum(stack)\nprint(calculate_ii('3+2*2'))",
+    solution_example: "def calculate_ii(s):\n    stack = []; num = 0; op = '+'\n    for i, ch in enumerate(s):\n        if ch.isdigit(): num = num * 10 + int(ch)\n        if (not ch.isdigit() and ch != ' ') or i == len(s) - 1:\n            if op == '+': stack.append(num)\n            elif op == '-': stack.append(-num)\n            elif op == '*': stack.append(num * stack.pop())\n            elif op == '/': stack.append(int(stack.pop() / num))\n            num = 0; op = ch\n    return sum(stack)\nprint(calculate_ii('3+2*2'))\n",
+    next: Some("py-261-car-fleet"), show_type_chips: false, micro_step: 260,
+};
+
+pub const PY261_CAR_FLEET: CodingStep = CodingStep {
+    id: "py-261-car-fleet", title: "DSA Car Fleet", objective: "Contar flotas que llegan juntas al destino (orden + stack lógico).",
+    prompt_md: "**Car Fleet**\n\nOrdená por posición descendente; cada flota avanza al tiempo del líder más lento adelante. Distinto de py-183 (sliding max).\n\n**Micro-reto:**\n1. Definí `car_fleet(target, position, speed)`\n2. `target=12`, pos `[10,8,0,5,3]`, vel `[2,4,1,1,3]`; imprimí flotas (esperado: `3`)",
+    starter_code: "# def car_fleet(target, position, speed):\n#     ...\n# print(car_fleet(12, [10, 8, 0, 5, 3], [2, 4, 1, 1, 3]))\n",
+    pytest: "def test_car_fleet(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('car_fleet'))\n    assert ns['car_fleet'](12, [10, 8, 0, 5, 3], [2, 4, 1, 1, 3]) == 3\n    assert ns['car_fleet'](10, [3], [3]) == 1\n    assert ns['car_fleet'](100, [0, 2, 4], [4, 2, 1]) == 1\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "def car_fleet(target, position, speed):\n    pairs = sorted(zip(position, speed), reverse=True)\n    fleets = 0; curr_time = 0\n    for pos, spd in pairs:\n        time = (target - pos) / spd\n        if time > curr_time:\n            fleets += 1; curr_time = time\n    return fleets\nprint(car_fleet(12, [10, 8, 0, 5, 3], [2, 4, 1, 1, 3]))",
+    solution_example: "def car_fleet(target, position, speed):\n    pairs = sorted(zip(position, speed), reverse=True)\n    fleets = 0; curr_time = 0\n    for pos, spd in pairs:\n        time = (target - pos) / spd\n        if time > curr_time:\n            fleets += 1; curr_time = time\n    return fleets\nprint(car_fleet(12, [10, 8, 0, 5, 3], [2, 4, 1, 1, 3]))\n",
+    next: Some("py-262-largest-rect"), show_type_chips: false, micro_step: 261,
+};
+
+pub const PY262_LARGEST_RECT: CodingStep = CodingStep {
+    id: "py-262-largest-rect", title: "DSA Largest Rectangle", objective: "Área máxima en histograma con stack monotónico.",
+    prompt_md: "**Largest Rectangle in Histogram**\n\nSentinel `0` al final; pop cuando la altura baja. Distinto de py-177 (trapping rain).\n\n**Micro-reto:**\n1. Definí `largest_rectangle(heights)`\n2. `[2, 1, 5, 6, 2, 3]`; imprimí el área (esperado: `10`)",
+    starter_code: "# def largest_rectangle(heights):\n#     ...\n# print(largest_rectangle([2, 1, 5, 6, 2, 3]))\n",
+    pytest: "def test_largest_rect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('largest_rectangle'))\n    assert ns['largest_rectangle']([2, 1, 5, 6, 2, 3]) == 10\n    assert ns['largest_rectangle']([2, 4]) == 4\n    assert ns['largest_rectangle']([1]) == 1\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "def largest_rectangle(heights):\n    stack = []; best = 0\n    for i, h in enumerate(heights + [0]):\n        while stack and heights[stack[-1]] > h:\n            height = heights[stack.pop()]\n            width = i if not stack else i - stack[-1] - 1\n            best = max(best, height * width)\n        stack.append(i)\n    return best\nprint(largest_rectangle([2, 1, 5, 6, 2, 3]))",
+    solution_example: "def largest_rectangle(heights):\n    stack = []; best = 0\n    for i, h in enumerate(heights + [0]):\n        while stack and heights[stack[-1]] > h:\n            height = heights[stack.pop()]\n            width = i if not stack else i - stack[-1] - 1\n            best = max(best, height * width)\n        stack.append(i)\n    return best\nprint(largest_rectangle([2, 1, 5, 6, 2, 3]))\n",
+    next: None, show_type_chips: false, micro_step: 262,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3670,6 +3730,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY254_INTERSECTION,
     &PY255_CYCLE_START,
     &PY256_REMOVE_DUPES_II,
+    &PY257_REMOVE_K_DIGITS,
+    &PY258_ASTEROID_COLLISION,
+    &PY259_SIMPLIFY_PATH,
+    &PY260_CALC_II,
+    &PY261_CAR_FLEET,
+    &PY262_LARGEST_RECT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4367,7 +4433,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py256_curriculum_chain() {
+    fn py203_to_py262_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4423,7 +4489,13 @@ mod tests {
             (253, "py-253-merge-two-lists", Some("py-254-intersection")),
             (254, "py-254-intersection", Some("py-255-cycle-start")),
             (255, "py-255-cycle-start", Some("py-256-remove-dupes-ii")),
-            (256, "py-256-remove-dupes-ii", None),
+            (256, "py-256-remove-dupes-ii", Some("py-257-remove-k-digits")),
+            (257, "py-257-remove-k-digits", Some("py-258-asteroid-collision")),
+            (258, "py-258-asteroid-collision", Some("py-259-simplify-path")),
+            (259, "py-259-simplify-path", Some("py-260-calc-ii")),
+            (260, "py-260-calc-ii", Some("py-261-car-fleet")),
+            (261, "py-261-car-fleet", Some("py-262-largest-rect")),
+            (262, "py-262-largest-rect", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
