@@ -232,6 +232,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 224, step_id: "py-224-single-number-ii" },
   { level_id: 225, step_id: "py-225-counting-bits" },
   { level_id: 226, step_id: "py-226-reverse-bits" },
+  { level_id: 227, step_id: "py-227-generate-parens" },
+  { level_id: 228, step_id: "py-228-combination-sum" },
+  { level_id: 229, step_id: "py-229-word-search" },
+  { level_id: 230, step_id: "py-230-letter-combos" },
+  { level_id: 231, step_id: "py-231-subsets-ii" },
+  { level_id: 232, step_id: "py-232-palindrome-partition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
