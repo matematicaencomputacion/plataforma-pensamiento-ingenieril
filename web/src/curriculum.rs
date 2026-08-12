@@ -3290,7 +3290,67 @@ pub const PY244_VALIDATE_BST: CodingStep = CodingStep {
     pytest: "def test_validate_bst(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_valid_bst'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(2)\n    root.left = TreeNode(1)\n    root.right = TreeNode(3)\n    assert ns['is_valid_bst'](root) is True\n    bad = TreeNode(5)\n    bad.left = TreeNode(1)\n    bad.right = TreeNode(4)\n    bad.right.left = TreeNode(3)\n    bad.right.right = TreeNode(6)\n    assert ns['is_valid_bst'](bad) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
     hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef is_valid_bst(root):\n    def valid(node, lo, hi):\n        if node is None: return True\n        if not (lo < node.data < hi): return False\n        return valid(node.left, lo, node.data) and valid(node.right, node.data, hi)\n    return valid(root, float('-inf'), float('inf'))",
     solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef is_valid_bst(root):\n    def valid(node, lo, hi):\n        if node is None: return True\n        if not (lo < node.data < hi): return False\n        return valid(node.left, lo, node.data) and valid(node.right, node.data, hi)\n    return valid(root, float('-inf'), float('inf'))\n\nroot = TreeNode(2)\nroot.left = TreeNode(1)\nroot.right = TreeNode(3)\nprint(is_valid_bst(root))\n",
-    next: None, show_type_chips: false, micro_step: 244,
+    next: Some("py-245-remove-nth"), show_type_chips: false, micro_step: 244,
+};
+
+pub const PY245_REMOVE_NTH: CodingStep = CodingStep {
+    id: "py-245-remove-nth", title: "DSA Remove Nth Node", objective: "Eliminar el n-ésimo nodo desde el final con dos punteros.",
+    prompt_md: "**Remove Nth Node From End**\n\nDummy + gap de n: cuando `fast` llega al final, `slow.next` es el objetivo. Distinto de reverse-list (py-161, arrays).\n\n**Micro-reto:**\n1. Definí `class ListNode` (`data`, `next`) y `remove_nth_from_end(head, n)`\n2. Definí `to_list(head)`\n3. Lista `1→2→3→4→5`, n=2; imprimí `to_list(...)` (esperado: `[1, 2, 3, 5]`)",
+    starter_code: "# class ListNode:\n#     ...\n# def remove_nth_from_end(head, n):\n#     ...\n# def to_list(head):\n#     ...\n# head = ...\n# print(to_list(remove_nth_from_end(head, 2)))\n",
+    pytest: "def test_remove_nth(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('remove_nth_from_end'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    def walk(head):\n        out = []\n        while head:\n            out.append(head.data); head = head.next\n        return out\n    assert walk(ns['remove_nth_from_end'](build([1, 2, 3, 4, 5]), 2)) == [1, 2, 3, 5]\n    assert walk(ns['remove_nth_from_end'](build([1]), 1)) == []\n    assert capsys.readouterr().out.strip() == '[1, 2, 3, 5]'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef remove_nth_from_end(head, n):\n    dummy = ListNode(0, head)\n    fast = slow = dummy\n    for _ in range(n):\n        fast = fast.next\n    while fast.next:\n        fast = fast.next; slow = slow.next\n    slow.next = slow.next.next\n    return dummy.next",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef remove_nth_from_end(head, n):\n    dummy = ListNode(0, head)\n    fast = slow = dummy\n    for _ in range(n):\n        fast = fast.next\n    while fast.next:\n        fast = fast.next; slow = slow.next\n    slow.next = slow.next.next\n    return dummy.next\n\nhead = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))\nprint(to_list(remove_nth_from_end(head, 2)))\n",
+    next: Some("py-246-reorder-list"), show_type_chips: false, micro_step: 245,
+};
+
+pub const PY246_REORDER_LIST: CodingStep = CodingStep {
+    id: "py-246-reorder-list", title: "DSA Reorder List", objective: "Reordenar L0→Ln→L1→Ln-1 in-place partiendo y revirtiendo la segunda mitad.",
+    prompt_md: "**Reorder List**\n\nMitad (slow/fast), invertí la segunda, intercalá. Distinto de flatten-tree (py-243).\n\n**Micro-reto:**\n1. Definí `reorder_list(head)` (in-place, no hace falta devolver)\n2. Lista `1→2→3→4→5`; imprimí `to_list(head)` (esperado: `[1, 5, 2, 4, 3]`)",
+    starter_code: "# class ListNode:\n#     ...\n# def reorder_list(head):\n#     ...\n# def to_list(head):\n#     ...\n# head = ...\n# reorder_list(head)\n# print(to_list(head))\n",
+    pytest: "def test_reorder_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('reorder_list'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    def walk(head):\n        out = []\n        while head:\n            out.append(head.data); head = head.next\n        return out\n    head = build([1, 2, 3, 4, 5])\n    ns['reorder_list'](head)\n    assert walk(head) == [1, 5, 2, 4, 3]\n    short = build([1, 2])\n    ns['reorder_list'](short)\n    assert walk(short) == [1, 2]\n    assert capsys.readouterr().out.strip() == '[1, 5, 2, 4, 3]'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef reorder_list(head):\n    if not head or not head.next: return\n    slow = fast = head\n    while fast.next and fast.next.next:\n        slow = slow.next; fast = fast.next.next\n    second = slow.next; slow.next = None\n    prev = None\n    while second:\n        nxt = second.next; second.next = prev; prev = second; second = nxt\n    first, second = head, prev\n    while second:\n        t1, t2 = first.next, second.next\n        first.next = second; second.next = t1\n        first, second = t1, t2",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef reorder_list(head):\n    if not head or not head.next: return\n    slow = fast = head\n    while fast.next and fast.next.next:\n        slow = slow.next; fast = fast.next.next\n    second = slow.next; slow.next = None\n    prev = None\n    while second:\n        nxt = second.next; second.next = prev; prev = second; second = nxt\n    first, second = head, prev\n    while second:\n        t1, t2 = first.next, second.next\n        first.next = second; second.next = t1\n        first, second = t1, t2\n\nhead = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))\nreorder_list(head)\nprint(to_list(head))\n",
+    next: Some("py-247-add-two-lists"), show_type_chips: false, micro_step: 246,
+};
+
+pub const PY247_ADD_TWO_LISTS: CodingStep = CodingStep {
+    id: "py-247-add-two-lists", title: "DSA Add Two Lists", objective: "Sumar dos enteros representados como listas enlazadas (dígito menos significativo primero).",
+    prompt_md: "**Add Two Numbers**\n\nCarry dígito a dígito. Distinto de py-78 (suma de variables) y py-236 (strings binarios).\n\n**Micro-reto:**\n1. Definí `add_two_numbers(l1, l2)`\n2. `2→4→3` + `5→6→4`; imprimí `to_list(...)` (esperado: `[7, 0, 8]`)",
+    starter_code: "# class ListNode:\n#     ...\n# def add_two_numbers(l1, l2):\n#     ...\n# def to_list(head):\n#     ...\n# print(to_list(add_two_numbers(l1, l2)))\n",
+    pytest: "def test_add_two_lists(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('add_two_numbers'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    def walk(head):\n        out = []\n        while head:\n            out.append(head.data); head = head.next\n        return out\n    assert walk(ns['add_two_numbers'](build([2, 4, 3]), build([5, 6, 4]))) == [7, 0, 8]\n    assert walk(ns['add_two_numbers'](build([0]), build([0]))) == [0]\n    assert capsys.readouterr().out.strip() == '[7, 0, 8]'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef add_two_numbers(l1, l2):\n    dummy = ListNode(0); cur = dummy; carry = 0\n    while l1 or l2 or carry:\n        total = carry\n        if l1: total += l1.data; l1 = l1.next\n        if l2: total += l2.data; l2 = l2.next\n        cur.next = ListNode(total % 10); cur = cur.next; carry = total // 10\n    return dummy.next",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef add_two_numbers(l1, l2):\n    dummy = ListNode(0); cur = dummy; carry = 0\n    while l1 or l2 or carry:\n        total = carry\n        if l1: total += l1.data; l1 = l1.next\n        if l2: total += l2.data; l2 = l2.next\n        cur.next = ListNode(total % 10); cur = cur.next; carry = total // 10\n    return dummy.next\n\nl1 = ListNode(2, ListNode(4, ListNode(3)))\nl2 = ListNode(5, ListNode(6, ListNode(4)))\nprint(to_list(add_two_numbers(l1, l2)))\n",
+    next: Some("py-248-swap-pairs"), show_type_chips: false, micro_step: 247,
+};
+
+pub const PY248_SWAP_PAIRS: CodingStep = CodingStep {
+    id: "py-248-swap-pairs", title: "DSA Swap Pairs", objective: "Intercambiar nodos adyacentes de a pares sin mutar los valores.",
+    prompt_md: "**Swap Nodes in Pairs**\n\nDummy: re-enlazá `prev → b → a` y avanzá `prev` a `a`.\n\n**Micro-reto:**\n1. Definí `swap_pairs(head)`\n2. Lista `1→2→3→4`; imprimí `to_list(...)` (esperado: `[2, 1, 4, 3]`)",
+    starter_code: "# class ListNode:\n#     ...\n# def swap_pairs(head):\n#     ...\n# def to_list(head):\n#     ...\n# print(to_list(swap_pairs(head)))\n",
+    pytest: "def test_swap_pairs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('swap_pairs'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    def walk(head):\n        out = []\n        while head:\n            out.append(head.data); head = head.next\n        return out\n    assert walk(ns['swap_pairs'](build([1, 2, 3, 4]))) == [2, 1, 4, 3]\n    assert walk(ns['swap_pairs'](build([1]))) == [1]\n    assert capsys.readouterr().out.strip() == '[2, 1, 4, 3]'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef swap_pairs(head):\n    dummy = ListNode(0, head); prev = dummy\n    while prev.next and prev.next.next:\n        a = prev.next; b = a.next\n        prev.next, a.next, b.next = b, b.next, a\n        prev = a\n    return dummy.next",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef swap_pairs(head):\n    dummy = ListNode(0, head); prev = dummy\n    while prev.next and prev.next.next:\n        a = prev.next; b = a.next\n        prev.next, a.next, b.next = b, b.next, a\n        prev = a\n    return dummy.next\n\nhead = ListNode(1, ListNode(2, ListNode(3, ListNode(4))))\nprint(to_list(swap_pairs(head)))\n",
+    next: Some("py-249-rotate-list"), show_type_chips: false, micro_step: 248,
+};
+
+pub const PY249_ROTATE_LIST: CodingStep = CodingStep {
+    id: "py-249-rotate-list", title: "DSA Rotate List", objective: "Rotar una lista enlazada k lugares a la derecha.",
+    prompt_md: "**Rotate List**\n\nCerrá el anillo, cortá en `n - k%n`. Distinto de rotate-matrix (py-140).\n\n**Micro-reto:**\n1. Definí `rotate_right(head, k)`\n2. Lista `1→2→3→4→5`, k=2; imprimí `to_list(...)` (esperado: `[4, 5, 1, 2, 3]`)",
+    starter_code: "# class ListNode:\n#     ...\n# def rotate_right(head, k):\n#     ...\n# def to_list(head):\n#     ...\n# print(to_list(rotate_right(head, 2)))\n",
+    pytest: "def test_rotate_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('rotate_right'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    def walk(head):\n        out = []\n        while head:\n            out.append(head.data); head = head.next\n        return out\n    assert walk(ns['rotate_right'](build([1, 2, 3, 4, 5]), 2)) == [4, 5, 1, 2, 3]\n    assert walk(ns['rotate_right'](build([0, 1, 2]), 4)) == [2, 0, 1]\n    assert capsys.readouterr().out.strip() == '[4, 5, 1, 2, 3]'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef rotate_right(head, k):\n    if not head or not head.next or k == 0: return head\n    n = 1; tail = head\n    while tail.next:\n        tail = tail.next; n += 1\n    k %= n\n    if k == 0: return head\n    tail.next = head\n    new_tail = head\n    for _ in range(n - k - 1):\n        new_tail = new_tail.next\n    new_head = new_tail.next; new_tail.next = None\n    return new_head",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef rotate_right(head, k):\n    if not head or not head.next or k == 0: return head\n    n = 1; tail = head\n    while tail.next:\n        tail = tail.next; n += 1\n    k %= n\n    if k == 0: return head\n    tail.next = head\n    new_tail = head\n    for _ in range(n - k - 1):\n        new_tail = new_tail.next\n    new_head = new_tail.next; new_tail.next = None\n    return new_head\n\nhead = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))\nprint(to_list(rotate_right(head, 2)))\n",
+    next: Some("py-250-palindrome-list"), show_type_chips: false, micro_step: 249,
+};
+
+pub const PY250_PALINDROME_LIST: CodingStep = CodingStep {
+    id: "py-250-palindrome-list", title: "DSA Palindrome List", objective: "Decidir si una lista enlazada es palíndromo revirtiendo la segunda mitad.",
+    prompt_md: "**Palindrome Linked List**\n\nSlow/fast hasta la mitad, invertí y compará. Distinto de py-164 (string) y py-234 (entero).\n\n**Micro-reto:**\n1. Definí `is_palindrome_list(head)`\n2. Lista `1→2→2→1`; imprimí `True`",
+    starter_code: "# class ListNode:\n#     ...\n# def is_palindrome_list(head):\n#     ...\n# head = ...\n# print(is_palindrome_list(head))\n",
+    pytest: "def test_palindrome_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_palindrome_list'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    assert ns['is_palindrome_list'](build([1, 2, 2, 1])) is True\n    assert ns['is_palindrome_list'](build([1, 2])) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef is_palindrome_list(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next; fast = fast.next.next\n    prev = None\n    while slow:\n        nxt = slow.next; slow.next = prev; prev = slow; slow = nxt\n    while prev:\n        if prev.data != head.data: return False\n        prev = prev.next; head = head.next\n    return True",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef is_palindrome_list(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next; fast = fast.next.next\n    prev = None\n    while slow:\n        nxt = slow.next; slow.next = prev; prev = slow; slow = nxt\n    while prev:\n        if prev.data != head.data: return False\n        prev = prev.next; head = head.next\n    return True\n\nhead = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))\nprint(is_palindrome_list(head))\n",
+    next: None, show_type_chips: false, micro_step: 250,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3538,6 +3598,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY242_RIGHT_SIDE,
     &PY243_FLATTEN_TREE,
     &PY244_VALIDATE_BST,
+    &PY245_REMOVE_NTH,
+    &PY246_REORDER_LIST,
+    &PY247_ADD_TWO_LISTS,
+    &PY248_SWAP_PAIRS,
+    &PY249_ROTATE_LIST,
+    &PY250_PALINDROME_LIST,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4235,7 +4301,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py244_curriculum_chain() {
+    fn py203_to_py250_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4279,7 +4345,13 @@ mod tests {
             (241, "py-241-path-sum", Some("py-242-right-side")),
             (242, "py-242-right-side", Some("py-243-flatten-tree")),
             (243, "py-243-flatten-tree", Some("py-244-validate-bst")),
-            (244, "py-244-validate-bst", None),
+            (244, "py-244-validate-bst", Some("py-245-remove-nth")),
+            (245, "py-245-remove-nth", Some("py-246-reorder-list")),
+            (246, "py-246-reorder-list", Some("py-247-add-two-lists")),
+            (247, "py-247-add-two-lists", Some("py-248-swap-pairs")),
+            (248, "py-248-swap-pairs", Some("py-249-rotate-list")),
+            (249, "py-249-rotate-list", Some("py-250-palindrome-list")),
+            (250, "py-250-palindrome-list", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

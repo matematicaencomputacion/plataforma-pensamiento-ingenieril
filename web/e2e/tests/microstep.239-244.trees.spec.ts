@@ -215,7 +215,7 @@ root.left = TreeNode(1)
 root.right = TreeNode(3)
 print(is_valid_bst(root))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-245-remove-nth/,
     cursorAfter: "245",
   },
 ];
