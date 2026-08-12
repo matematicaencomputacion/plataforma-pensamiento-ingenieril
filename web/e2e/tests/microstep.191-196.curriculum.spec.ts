@@ -21,103 +21,64 @@ type FamilyStep = {
 };
 
 const FAMILY: FamilyStep[] = [
-  { micro: 185, id: "py-185-first-last", title: "DSA First Last Position", solution: `def search_range(nums, target):
-    def bound(first):
-        lo, hi = 0, len(nums)
-        while lo < hi:
-            mid = (lo + hi) // 2
-            if nums[mid] > target or (first and nums[mid] == target):
-                hi = mid
-            else:
-                lo = mid + 1
-        return lo
-    left = bound(True)
-    if left == len(nums) or nums[left] != target:
-        return [-1, -1]
-    return [left, bound(False) - 1]
-print(search_range([5, 7, 7, 8, 8, 10], 8))
-`, nextUrl: /\/learn\/py-186-peak-element/, cursorAfter: "186" },
-  { micro: 186, id: "py-186-peak-element", title: "DSA Peak Element", solution: `def find_peak_element(nums):
-    lo, hi = 0, len(nums) - 1
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if nums[mid] < nums[mid + 1]:
-            lo = mid + 1
-        else:
-            hi = mid
-    return lo
-print(find_peak_element([1, 2, 3, 1]))
-`, nextUrl: /\/learn\/py-187-search-rotated/, cursorAfter: "187" },
-  { micro: 187, id: "py-187-search-rotated", title: "DSA Search Rotated Array", solution: `def search_rotated(nums, target):
-    lo, hi = 0, len(nums) - 1
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        if nums[mid] == target:
-            return mid
-        if nums[lo] <= nums[mid]:
-            if nums[lo] <= target < nums[mid]:
-                hi = mid - 1
-            else:
-                lo = mid + 1
-        else:
-            if nums[mid] < target <= nums[hi]:
-                lo = mid + 1
-            else:
-                hi = mid - 1
-    return -1
-print(search_rotated([4, 5, 6, 7, 0, 1, 2], 0))
-`, nextUrl: /\/learn\/py-188-sqrt/, cursorAfter: "188" },
-  { micro: 188, id: "py-188-sqrt", title: "DSA Sqrt Integer", solution: `def my_sqrt(x):
-    if x < 2:
-        return x
-    lo, hi = 1, x // 2
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        square = mid * mid
-        if square == x:
-            return mid
-        if square < x:
-            lo = mid + 1
-        else:
-            hi = mid - 1
-    return hi
-print(my_sqrt(8))
-`, nextUrl: /\/learn\/py-189-ship-capacity/, cursorAfter: "189" },
-  { micro: 189, id: "py-189-ship-capacity", title: "DSA Ship Capacity", solution: `def ship_within_days(weights, days):
-    def feasible(capacity):
-        needed = 1
-        current = 0
-        for weight in weights:
-            if current + weight > capacity:
-                needed += 1
-                current = weight
-                if needed > days:
-                    return False
-            else:
-                current += weight
-        return True
+  { micro: 191, id: "py-191-kth-largest", title: "DSA Kth Largest", solution: `import heapq
 
-    lo, hi = max(weights), sum(weights)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if feasible(mid):
-            hi = mid
-        else:
-            lo = mid + 1
-    return lo
-print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
-`, nextUrl: /\/learn\/py-190-min-rotated/, cursorAfter: "190" },
-  { micro: 190, id: "py-190-min-rotated", title: "DSA Min Rotated Array", solution: `def find_min_rotated(nums):
-    lo, hi = 0, len(nums) - 1
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if nums[mid] > nums[hi]:
-            lo = mid + 1
-        else:
-            hi = mid
-    return nums[lo]
-print(find_min_rotated([3, 4, 5, 1, 2]))
-`, nextUrl: /\/learn\/py-191-kth-largest/, cursorAfter: "191" },
+def find_kth_largest(nums, k):
+    return heapq.nlargest(k, nums)[-1]
+print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
+`, nextUrl: /\/learn\/py-192-top-k-frequent/, cursorAfter: "192" },
+  { micro: 192, id: "py-192-top-k-frequent", title: "DSA Top K Frequent", solution: `from collections import Counter
+
+def top_k_frequent(nums, k):
+    counts = Counter(nums)
+    return sorted(n for n, _ in counts.most_common(k))
+print(top_k_frequent([1, 1, 1, 2, 2, 3], 2))
+`, nextUrl: /\/learn\/py-193-merge-k-lists/, cursorAfter: "193" },
+  { micro: 193, id: "py-193-merge-k-lists", title: "DSA Merge K Lists", solution: `import heapq
+
+def merge_k_lists(lists):
+    heap = []
+    for i, lst in enumerate(lists):
+        if lst:
+            heapq.heappush(heap, (lst[0], i, 0))
+    result = []
+    while heap:
+        value, list_i, idx = heapq.heappop(heap)
+        result.append(value)
+        if idx + 1 < len(lists[list_i]):
+            heapq.heappush(heap, (lists[list_i][idx + 1], list_i, idx + 1))
+    return result
+print(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))
+`, nextUrl: /\/learn\/py-194-meeting-rooms/, cursorAfter: "194" },
+  { micro: 194, id: "py-194-meeting-rooms", title: "DSA Meeting Rooms", solution: `def can_attend_meetings(intervals):
+    intervals = sorted(intervals)
+    for i in range(1, len(intervals)):
+        if intervals[i][0] < intervals[i - 1][1]:
+            return False
+    return True
+print(can_attend_meetings([[0, 30], [5, 10], [15, 20]]))
+`, nextUrl: /\/learn\/py-195-ugly-number/, cursorAfter: "195" },
+  { micro: 195, id: "py-195-ugly-number", title: "DSA Ugly Number", solution: `def nth_ugly_number(n):
+    ugly = [1]
+    i2 = i3 = i5 = 0
+    while len(ugly) < n:
+        n2, n3, n5 = ugly[i2] * 2, ugly[i3] * 3, ugly[i5] * 5
+        nxt = min(n2, n3, n5)
+        ugly.append(nxt)
+        if nxt == n2:
+            i2 += 1
+        if nxt == n3:
+            i3 += 1
+        if nxt == n5:
+            i5 += 1
+    return ugly[-1]
+print(nth_ugly_number(10))
+`, nextUrl: /\/learn\/py-196-k-closest/, cursorAfter: "196" },
+  { micro: 196, id: "py-196-k-closest", title: "DSA K Closest Points", solution: `def k_closest(points, k):
+    chosen = sorted(points, key=lambda p: p[0] * p[0] + p[1] * p[1])[:k]
+    return sorted(chosen)
+print(k_closest([[1, 3], [-2, 2], [2, -2]], 2))
+`, nextUrl: /\/learn\/py-197-coin-change-ii/, cursorAfter: "197" },
 ];
 
 function uniqueCreds(micro: number) {
