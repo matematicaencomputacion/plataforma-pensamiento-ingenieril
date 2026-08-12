@@ -292,6 +292,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 284, step_id: "py-284-stock-cooldown" },
   { level_id: 285, step_id: "py-285-interleaving" },
   { level_id: 286, step_id: "py-286-palindrome-subseq" },
+  { level_id: 287, step_id: "py-287-koko-bananas" },
+  { level_id: 288, step_id: "py-288-split-array" },
+  { level_id: 289, step_id: "py-289-median-two" },
+  { level_id: 290, step_id: "py-290-search-2d-ii" },
+  { level_id: 291, step_id: "py-291-find-duplicate" },
+  { level_id: 292, step_id: "py-292-first-bad" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

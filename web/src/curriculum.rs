@@ -3710,7 +3710,67 @@ pub const PY286_PALINDROME_SUBSEQ: CodingStep = CodingStep {
     pytest: "def test_palindrome_subseq(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('longest_palindrome_subseq'))\n    assert ns['longest_palindrome_subseq']('bbbab') == 4\n    assert ns['longest_palindrome_subseq']('cbbd') == 2\n    assert ns['longest_palindrome_subseq']('a') == 1\n    assert capsys.readouterr().out.strip() == '4'\n",
     hint: "def longest_palindrome_subseq(s):\n    n = len(s)\n    dp = [[0] * n for _ in range(n)]\n    for i in range(n): dp[i][i] = 1\n    for length in range(2, n + 1):\n        for i in range(n - length + 1):\n            j = i + length - 1\n            if s[i] == s[j]:\n                dp[i][j] = 2 if length == 2 else 2 + dp[i+1][j-1]\n            else:\n                dp[i][j] = max(dp[i+1][j], dp[i][j-1])\n    return dp[0][n-1]\nprint(longest_palindrome_subseq('bbbab'))",
     solution_example: "def longest_palindrome_subseq(s):\n    n = len(s)\n    dp = [[0] * n for _ in range(n)]\n    for i in range(n): dp[i][i] = 1\n    for length in range(2, n + 1):\n        for i in range(n - length + 1):\n            j = i + length - 1\n            if s[i] == s[j]:\n                dp[i][j] = 2 if length == 2 else 2 + dp[i+1][j-1]\n            else:\n                dp[i][j] = max(dp[i+1][j], dp[i][j-1])\n    return dp[0][n-1]\nprint(longest_palindrome_subseq('bbbab'))\n",
-    next: None, show_type_chips: false, micro_step: 286,
+    next: Some("py-287-koko-bananas"), show_type_chips: false, micro_step: 286,
+};
+
+pub const PY287_KOKO_BANANAS: CodingStep = CodingStep {
+    id: "py-287-koko-bananas", title: "DSA Koko Bananas", objective: "Velocidad mínima para comer todos los pilones en h horas.",
+    prompt_md: "**Koko Eating Bananas**\n\nBinary search sobre la velocidad `k`. Distinto de py-189 (ship capacity).\n\n**Micro-reto:**\n1. Definí `min_eating_speed(piles, h)`\n2. piles=`[3,6,7,11]`, h=`8`; imprimí (esperado: `4`)",
+    starter_code: "# def min_eating_speed(piles, h):\n#     ...\n# print(min_eating_speed([3, 6, 7, 11], 8))\n",
+    pytest: "def test_koko_bananas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('min_eating_speed'))\n    assert ns['min_eating_speed']([3, 6, 7, 11], 8) == 4\n    assert ns['min_eating_speed']([30, 11, 23, 4, 20], 5) == 30\n    assert ns['min_eating_speed']([30, 11, 23, 4, 20], 6) == 23\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "def min_eating_speed(piles, h):\n    def hours(k):\n        return sum((p + k - 1) // k for p in piles)\n    lo, hi = 1, max(piles)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if hours(mid) <= h: hi = mid\n        else: lo = mid + 1\n    return lo\nprint(min_eating_speed([3, 6, 7, 11], 8))",
+    solution_example: "def min_eating_speed(piles, h):\n    def hours(k):\n        return sum((p + k - 1) // k for p in piles)\n    lo, hi = 1, max(piles)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if hours(mid) <= h: hi = mid\n        else: lo = mid + 1\n    return lo\nprint(min_eating_speed([3, 6, 7, 11], 8))\n",
+    next: Some("py-288-split-array"), show_type_chips: false, micro_step: 287,
+};
+
+pub const PY288_SPLIT_ARRAY: CodingStep = CodingStep {
+    id: "py-288-split-array", title: "DSA Split Array Largest", objective: "Minimizar la suma máxima al partir el array en m subarrays contiguos.",
+    prompt_md: "**Split Array Largest Sum**\n\nBinary search sobre el bound de suma. Distinto de py-189 (días de barco).\n\n**Micro-reto:**\n1. Definí `split_array(nums, m)`\n2. nums=`[7,2,5,10,8]`, m=`2`; imprimí (esperado: `18`)",
+    starter_code: "# def split_array(nums, m):\n#     ...\n# print(split_array([7, 2, 5, 10, 8], 2))\n",
+    pytest: "def test_split_array(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('split_array'))\n    assert ns['split_array']([7, 2, 5, 10, 8], 2) == 18\n    assert ns['split_array']([1, 2, 3, 4, 5], 2) == 9\n    assert ns['split_array']([1, 4, 4], 3) == 4\n    assert capsys.readouterr().out.strip() == '18'\n",
+    hint: "def split_array(nums, m):\n    def needed(limit):\n        parts = 1; cur = 0\n        for x in nums:\n            if cur + x > limit:\n                parts += 1; cur = x\n            else: cur += x\n        return parts\n    lo, hi = max(nums), sum(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if needed(mid) <= m: hi = mid\n        else: lo = mid + 1\n    return lo\nprint(split_array([7, 2, 5, 10, 8], 2))",
+    solution_example: "def split_array(nums, m):\n    def needed(limit):\n        parts = 1; cur = 0\n        for x in nums:\n            if cur + x > limit:\n                parts += 1; cur = x\n            else: cur += x\n        return parts\n    lo, hi = max(nums), sum(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if needed(mid) <= m: hi = mid\n        else: lo = mid + 1\n    return lo\nprint(split_array([7, 2, 5, 10, 8], 2))\n",
+    next: Some("py-289-median-two"), show_type_chips: false, micro_step: 288,
+};
+
+pub const PY289_MEDIAN_TWO: CodingStep = CodingStep {
+    id: "py-289-median-two", title: "DSA Median Two Arrays", objective: "Mediana de dos arrays ordenados en O(log(m+n)).",
+    prompt_md: "**Median of Two Sorted Arrays**\n\nBinary search sobre el corte del array más corto. Distinto de py-272 (stream con heaps).\n\n**Micro-reto:**\n1. Definí `find_median_sorted(nums1, nums2)`\n2. `[1,3]` + `[2]`; imprimí `2.0`",
+    starter_code: "# def find_median_sorted(nums1, nums2):\n#     ...\n# print(find_median_sorted([1, 3], [2]))\n",
+    pytest: "def test_median_two(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_median_sorted'))\n    assert ns['find_median_sorted']([1, 3], [2]) == 2.0\n    assert ns['find_median_sorted']([1, 2], [3, 4]) == 2.5\n    assert ns['find_median_sorted']([], [1]) == 1.0\n    assert capsys.readouterr().out.strip() == '2.0'\n",
+    hint: "def find_median_sorted(nums1, nums2):\n    if len(nums1) > len(nums2): return find_median_sorted(nums2, nums1)\n    m, n = len(nums1), len(nums2)\n    lo, hi = 0, m\n    while lo <= hi:\n        i = (lo + hi) // 2; j = (m + n + 1) // 2 - i\n        left1 = float('-inf') if i == 0 else nums1[i-1]\n        right1 = float('inf') if i == m else nums1[i]\n        left2 = float('-inf') if j == 0 else nums2[j-1]\n        right2 = float('inf') if j == n else nums2[j]\n        if left1 <= right2 and left2 <= right1:\n            if (m + n) % 2: return float(max(left1, left2))\n            return (max(left1, left2) + min(right1, right2)) / 2.0\n        elif left1 > right2: hi = i - 1\n        else: lo = i + 1\n    return 0.0\nprint(find_median_sorted([1, 3], [2]))",
+    solution_example: "def find_median_sorted(nums1, nums2):\n    if len(nums1) > len(nums2): return find_median_sorted(nums2, nums1)\n    m, n = len(nums1), len(nums2)\n    lo, hi = 0, m\n    while lo <= hi:\n        i = (lo + hi) // 2; j = (m + n + 1) // 2 - i\n        left1 = float('-inf') if i == 0 else nums1[i-1]\n        right1 = float('inf') if i == m else nums1[i]\n        left2 = float('-inf') if j == 0 else nums2[j-1]\n        right2 = float('inf') if j == n else nums2[j]\n        if left1 <= right2 and left2 <= right1:\n            if (m + n) % 2: return float(max(left1, left2))\n            return (max(left1, left2) + min(right1, right2)) / 2.0\n        elif left1 > right2: hi = i - 1\n        else: lo = i + 1\n    return 0.0\nprint(find_median_sorted([1, 3], [2]))\n",
+    next: Some("py-290-search-2d-ii"), show_type_chips: false, micro_step: 289,
+};
+
+pub const PY290_SEARCH_2D_II: CodingStep = CodingStep {
+    id: "py-290-search-2d-ii", title: "DSA Search 2D II", objective: "Buscar un target en matriz ordenada por filas y columnas.",
+    prompt_md: "**Search a 2D Matrix II**\n\nPartí desde la esquina top-right (o bottom-left). Distinto de py-140 (rotate matrix).\n\n**Micro-reto:**\n1. Definí `search_matrix(matrix, target)`\n2. Matriz clásica, target=`5`; imprimí `True`",
+    starter_code: "# def search_matrix(matrix, target):\n#     ...\n# matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]]\n# print(search_matrix(matrix, 5))\n",
+    pytest: "def test_search_2d_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('search_matrix'))\n    matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]]\n    assert ns['search_matrix'](matrix, 5) is True\n    assert ns['search_matrix'](matrix, 20) is False\n    assert ns['search_matrix']([[-1, 3]], 3) is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "def search_matrix(matrix, target):\n    if not matrix or not matrix[0]: return False\n    r, c = 0, len(matrix[0]) - 1\n    while r < len(matrix) and c >= 0:\n        if matrix[r][c] == target: return True\n        if matrix[r][c] > target: c -= 1\n        else: r += 1\n    return False\nmatrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]]\nprint(search_matrix(matrix, 5))",
+    solution_example: "def search_matrix(matrix, target):\n    if not matrix or not matrix[0]: return False\n    r, c = 0, len(matrix[0]) - 1\n    while r < len(matrix) and c >= 0:\n        if matrix[r][c] == target: return True\n        if matrix[r][c] > target: c -= 1\n        else: r += 1\n    return False\nmatrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]]\nprint(search_matrix(matrix, 5))\n",
+    next: Some("py-291-find-duplicate"), show_type_chips: false, micro_step: 290,
+};
+
+pub const PY291_FIND_DUPLICATE: CodingStep = CodingStep {
+    id: "py-291-find-duplicate", title: "DSA Find Duplicate", objective: "Encontrar el entero duplicado en [1..n] sin modificar el array (Floyd).",
+    prompt_md: "**Find the Duplicate Number**\n\nTratá índices como lista enlazada; ciclo → entrada. Distinto de py-155 (contains duplicate bool).\n\n**Micro-reto:**\n1. Definí `find_duplicate(nums)`\n2. `[1,3,4,2,2]`; imprimí (esperado: `2`)",
+    starter_code: "# def find_duplicate(nums):\n#     ...\n# print(find_duplicate([1, 3, 4, 2, 2]))\n",
+    pytest: "def test_find_duplicate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_duplicate'))\n    assert ns['find_duplicate']([1, 3, 4, 2, 2]) == 2\n    assert ns['find_duplicate']([3, 1, 3, 4, 2]) == 3\n    assert ns['find_duplicate']([1, 1]) == 1\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def find_duplicate(nums):\n    slow = fast = nums[0]\n    while True:\n        slow = nums[slow]; fast = nums[nums[fast]]\n        if slow == fast: break\n    slow = nums[0]\n    while slow != fast:\n        slow = nums[slow]; fast = nums[fast]\n    return slow\nprint(find_duplicate([1, 3, 4, 2, 2]))",
+    solution_example: "def find_duplicate(nums):\n    slow = fast = nums[0]\n    while True:\n        slow = nums[slow]; fast = nums[nums[fast]]\n        if slow == fast: break\n    slow = nums[0]\n    while slow != fast:\n        slow = nums[slow]; fast = nums[fast]\n    return slow\nprint(find_duplicate([1, 3, 4, 2, 2]))\n",
+    next: Some("py-292-first-bad"), show_type_chips: false, micro_step: 291,
+};
+
+pub const PY292_FIRST_BAD: CodingStep = CodingStep {
+    id: "py-292-first-bad", title: "DSA First Bad Version", objective: "Primera versión mala con el mínimo de llamadas a isBadVersion.",
+    prompt_md: "**First Bad Version**\n\nBinary search clásico sobre versiones 1..n. Distinto de py-188 (sqrt).\n\n**Micro-reto:**\n1. Definí `first_bad_version(n, is_bad)` donde `is_bad(v)` es callable\n2. n=`5`, mala desde `4`; imprimí (esperado: `4`)",
+    starter_code: "# def first_bad_version(n, is_bad):\n#     ...\n# print(first_bad_version(5, lambda v: v >= 4))\n",
+    pytest: "def test_first_bad(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('first_bad_version'))\n    assert ns['first_bad_version'](5, lambda v: v >= 4) == 4\n    assert ns['first_bad_version'](1, lambda v: v >= 1) == 1\n    assert ns['first_bad_version'](3, lambda v: v >= 2) == 2\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "def first_bad_version(n, is_bad):\n    lo, hi = 1, n\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if is_bad(mid): hi = mid\n        else: lo = mid + 1\n    return lo\nprint(first_bad_version(5, lambda v: v >= 4))",
+    solution_example: "def first_bad_version(n, is_bad):\n    lo, hi = 1, n\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if is_bad(mid): hi = mid\n        else: lo = mid + 1\n    return lo\nprint(first_bad_version(5, lambda v: v >= 4))\n",
+    next: None, show_type_chips: false, micro_step: 292,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -4000,6 +4060,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY284_STOCK_COOLDOWN,
     &PY285_INTERLEAVING,
     &PY286_PALINDROME_SUBSEQ,
+    &PY287_KOKO_BANANAS,
+    &PY288_SPLIT_ARRAY,
+    &PY289_MEDIAN_TWO,
+    &PY290_SEARCH_2D_II,
+    &PY291_FIND_DUPLICATE,
+    &PY292_FIRST_BAD,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4697,7 +4763,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py286_curriculum_chain() {
+    fn py203_to_py292_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4783,7 +4849,13 @@ mod tests {
             (283, "py-283-maximal-square", Some("py-284-stock-cooldown")),
             (284, "py-284-stock-cooldown", Some("py-285-interleaving")),
             (285, "py-285-interleaving", Some("py-286-palindrome-subseq")),
-            (286, "py-286-palindrome-subseq", None),
+            (286, "py-286-palindrome-subseq", Some("py-287-koko-bananas")),
+            (287, "py-287-koko-bananas", Some("py-288-split-array")),
+            (288, "py-288-split-array", Some("py-289-median-two")),
+            (289, "py-289-median-two", Some("py-290-search-2d-ii")),
+            (290, "py-290-search-2d-ii", Some("py-291-find-duplicate")),
+            (291, "py-291-find-duplicate", Some("py-292-first-bad")),
+            (292, "py-292-first-bad", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

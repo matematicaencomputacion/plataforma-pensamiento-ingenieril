@@ -22,139 +22,155 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 281,
-    id: "py-281-jump-game-ii",
-    title: "DSA Jump Game II",
-    solution: `def jump(nums):
-    jumps = end = farthest = 0
-    for i in range(len(nums) - 1):
-        farthest = max(farthest, i + nums[i])
-        if i == end:
-            jumps += 1
-            end = farthest
-    return jumps
+    micro: 287,
+    id: "py-287-koko-bananas",
+    title: "DSA Koko Bananas",
+    solution: `def min_eating_speed(piles, h):
+    def hours(k):
+        return sum((p + k - 1) // k for p in piles)
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if hours(mid) <= h:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
 
-print(jump([2, 3, 1, 1, 4]))
+print(min_eating_speed([3, 6, 7, 11], 8))
 `,
-    nextUrl: /\/learn\/py-282-target-sum/,
-    cursorAfter: "282",
+    nextUrl: /\/learn\/py-288-split-array/,
+    cursorAfter: "288",
   },
   {
-    micro: 282,
-    id: "py-282-target-sum",
-    title: "DSA Target Sum",
-    solution: `def find_target_sum_ways(nums, target):
-    total = sum(nums)
-    if (total + target) % 2 or abs(target) > total:
-        return 0
-    subset = (total + target) // 2
-    dp = [0] * (subset + 1)
-    dp[0] = 1
-    for num in nums:
-        for s in range(subset, num - 1, -1):
-            dp[s] += dp[s - num]
-    return dp[subset]
-
-print(find_target_sum_ways([1, 1, 1, 1, 1], 3))
-`,
-    nextUrl: /\/learn\/py-283-maximal-square/,
-    cursorAfter: "283",
-  },
-  {
-    micro: 283,
-    id: "py-283-maximal-square",
-    title: "DSA Maximal Square",
-    solution: `def maximal_square(matrix):
-    if not matrix:
-        return 0
-    rows, cols = len(matrix), len(matrix[0])
-    dp = [[0] * (cols + 1) for _ in range(rows + 1)]
-    best = 0
-    for i in range(1, rows + 1):
-        for j in range(1, cols + 1):
-            if matrix[i - 1][j - 1] == "1":
-                dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
-                best = max(best, dp[i][j])
-    return best * best
-
-print(maximal_square([["1", "0", "1", "0", "0"], ["1", "0", "1", "1", "1"], ["1", "1", "1", "1", "1"], ["1", "0", "0", "1", "0"]]))
-`,
-    nextUrl: /\/learn\/py-284-stock-cooldown/,
-    cursorAfter: "284",
-  },
-  {
-    micro: 284,
-    id: "py-284-stock-cooldown",
-    title: "DSA Stock Cooldown",
-    solution: `def max_profit_cooldown(prices):
-    hold = float("-inf")
-    sold = 0
-    rest = 0
-    for p in prices:
-        prev_sold = sold
-        sold = hold + p
-        hold = max(hold, rest - p)
-        rest = max(rest, prev_sold)
-    return max(sold, rest)
-
-print(max_profit_cooldown([1, 2, 3, 0, 2]))
-`,
-    nextUrl: /\/learn\/py-285-interleaving/,
-    cursorAfter: "285",
-  },
-  {
-    micro: 285,
-    id: "py-285-interleaving",
-    title: "DSA Interleaving String",
-    solution: `def is_interleave(s1, s2, s3):
-    m, n = len(s1), len(s2)
-    if m + n != len(s3):
-        return False
-    dp = [False] * (n + 1)
-    dp[0] = True
-    for j in range(1, n + 1):
-        dp[j] = dp[j - 1] and s2[j - 1] == s3[j - 1]
-    for i in range(1, m + 1):
-        dp[0] = dp[0] and s1[i - 1] == s3[i - 1]
-        for j in range(1, n + 1):
-            dp[j] = (dp[j] and s1[i - 1] == s3[i + j - 1]) or (
-                dp[j - 1] and s2[j - 1] == s3[i + j - 1]
-            )
-    return dp[n]
-
-print(is_interleave("aabcc", "dbbca", "aadbbcbcac"))
-`,
-    nextUrl: /\/learn\/py-286-palindrome-subseq/,
-    cursorAfter: "286",
-  },
-  {
-    micro: 286,
-    id: "py-286-palindrome-subseq",
-    title: "DSA Palindrome Subseq",
-    solution: `def longest_palindrome_subseq(s):
-    n = len(s)
-    dp = [[0] * n for _ in range(n)]
-    for i in range(n):
-        dp[i][i] = 1
-    for length in range(2, n + 1):
-        for i in range(n - length + 1):
-            j = i + length - 1
-            if s[i] == s[j]:
-                dp[i][j] = 2 if length == 2 else 2 + dp[i + 1][j - 1]
+    micro: 288,
+    id: "py-288-split-array",
+    title: "DSA Split Array Largest",
+    solution: `def split_array(nums, m):
+    def needed(limit):
+        parts = 1
+        cur = 0
+        for x in nums:
+            if cur + x > limit:
+                parts += 1
+                cur = x
             else:
-                dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])
-    return dp[0][n - 1]
+                cur += x
+        return parts
+    lo, hi = max(nums), sum(nums)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if needed(mid) <= m:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
 
-print(longest_palindrome_subseq("bbbab"))
+print(split_array([7, 2, 5, 10, 8], 2))
 `,
-    nextUrl: /\/learn\/py-287-koko-bananas/,
-    cursorAfter: "287",
+    nextUrl: /\/learn\/py-289-median-two/,
+    cursorAfter: "289",
+  },
+  {
+    micro: 289,
+    id: "py-289-median-two",
+    title: "DSA Median Two Arrays",
+    solution: `def find_median_sorted(nums1, nums2):
+    if len(nums1) > len(nums2):
+        return find_median_sorted(nums2, nums1)
+    m, n = len(nums1), len(nums2)
+    lo, hi = 0, m
+    while lo <= hi:
+        i = (lo + hi) // 2
+        j = (m + n + 1) // 2 - i
+        left1 = float("-inf") if i == 0 else nums1[i - 1]
+        right1 = float("inf") if i == m else nums1[i]
+        left2 = float("-inf") if j == 0 else nums2[j - 1]
+        right2 = float("inf") if j == n else nums2[j]
+        if left1 <= right2 and left2 <= right1:
+            if (m + n) % 2:
+                return float(max(left1, left2))
+            return (max(left1, left2) + min(right1, right2)) / 2.0
+        elif left1 > right2:
+            hi = i - 1
+        else:
+            lo = i + 1
+    return 0.0
+
+print(find_median_sorted([1, 3], [2]))
+`,
+    nextUrl: /\/learn\/py-290-search-2d-ii/,
+    cursorAfter: "290",
+  },
+  {
+    micro: 290,
+    id: "py-290-search-2d-ii",
+    title: "DSA Search 2D II",
+    solution: `def search_matrix(matrix, target):
+    if not matrix or not matrix[0]:
+        return False
+    r, c = 0, len(matrix[0]) - 1
+    while r < len(matrix) and c >= 0:
+        if matrix[r][c] == target:
+            return True
+        if matrix[r][c] > target:
+            c -= 1
+        else:
+            r += 1
+    return False
+
+matrix = [[1, 4, 7, 11, 15], [2, 5, 8, 12, 19], [3, 6, 9, 16, 22], [10, 13, 14, 17, 24], [18, 21, 23, 26, 30]]
+print(search_matrix(matrix, 5))
+`,
+    nextUrl: /\/learn\/py-291-find-duplicate/,
+    cursorAfter: "291",
+  },
+  {
+    micro: 291,
+    id: "py-291-find-duplicate",
+    title: "DSA Find Duplicate",
+    solution: `def find_duplicate(nums):
+    slow = fast = nums[0]
+    while True:
+        slow = nums[slow]
+        fast = nums[nums[fast]]
+        if slow == fast:
+            break
+    slow = nums[0]
+    while slow != fast:
+        slow = nums[slow]
+        fast = nums[fast]
+    return slow
+
+print(find_duplicate([1, 3, 4, 2, 2]))
+`,
+    nextUrl: /\/learn\/py-292-first-bad/,
+    cursorAfter: "292",
+  },
+  {
+    micro: 292,
+    id: "py-292-first-bad",
+    title: "DSA First Bad Version",
+    solution: `def first_bad_version(n, is_bad):
+    lo, hi = 1, n
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if is_bad(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(first_bad_version(5, lambda v: v >= 4))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "293",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-28[1-6]-/);
+    expect(step.id).toMatch(/^py-28[7-9]-|^py-29[0-2]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -184,7 +200,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 281–286 · DP II avanzado", () => {
+test.describe("micro-steps 287–292 · binary search II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
