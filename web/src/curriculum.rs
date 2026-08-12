@@ -3590,7 +3590,67 @@ pub const PY274_NETWORK_DELAY: CodingStep = CodingStep {
     pytest: "def test_network_delay(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('network_delay_time'))\n    assert ns['network_delay_time']([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2) == 2\n    assert ns['network_delay_time']([[1, 2, 1]], 2, 1) == 1\n    assert ns['network_delay_time']([[1, 2, 1]], 2, 2) == -1\n    assert capsys.readouterr().out.strip() == '2'\n",
     hint: "import heapq\nfrom collections import defaultdict\n\ndef network_delay_time(times, n, k):\n    graph = defaultdict(list)\n    for u, v, w in times: graph[u].append((v, w))\n    dist = {k: 0}; heap = [(0, k)]\n    while heap:\n        d, node = heapq.heappop(heap)\n        if d > dist.get(node, float('inf')): continue\n        for nei, w in graph[node]:\n            nd = d + w\n            if nd < dist.get(nei, float('inf')):\n                dist[nei] = nd; heapq.heappush(heap, (nd, nei))\n    return max(dist.values()) if len(dist) == n else -1\nprint(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))",
     solution_example: "import heapq\nfrom collections import defaultdict\n\ndef network_delay_time(times, n, k):\n    graph = defaultdict(list)\n    for u, v, w in times: graph[u].append((v, w))\n    dist = {k: 0}; heap = [(0, k)]\n    while heap:\n        d, node = heapq.heappop(heap)\n        if d > dist.get(node, float('inf')): continue\n        for nei, w in graph[node]:\n            nd = d + w\n            if nd < dist.get(nei, float('inf')):\n                dist[nei] = nd; heapq.heappush(heap, (nd, nei))\n    return max(dist.values()) if len(dist) == n else -1\nprint(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))\n",
-    next: None, show_type_chips: false, micro_step: 274,
+    next: Some("py-275-course-order"), show_type_chips: false, micro_step: 274,
+};
+
+pub const PY275_COURSE_ORDER: CodingStep = CodingStep {
+    id: "py-275-course-order", title: "DSA Course Schedule II", objective: "Devolver un orden topológico válido de cursos (o vacío si hay ciclo).",
+    prompt_md: "**Course Schedule II**\n\nKahn (BFS indegree) o DFS postorder. Distinto de py-205 (solo bool).\n\n**Micro-reto:**\n1. Definí `find_order(num_courses, prerequisites)`\n2. `num_courses=4`, prereqs `[[1,0],[2,0],[3,1],[3,2]]`; imprimí un orden válido que empiece por `0` (esperado: `[0, 1, 2, 3]` o `[0, 2, 1, 3]` — usá Kahn estable por cola FIFO y append en orden de descubrimiento desde 0..n-1)",
+    starter_code: "# from collections import deque, defaultdict\n# def find_order(num_courses, prerequisites):\n#     ...\n# print(find_order(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))\n",
+    pytest: "def test_course_order(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_order'))\n    order = ns['find_order'](4, [[1, 0], [2, 0], [3, 1], [3, 2]])\n    assert order in ([0, 1, 2, 3], [0, 2, 1, 3])\n    assert ns['find_order'](2, [[1, 0], [0, 1]]) == []\n    assert ns['find_order'](1, []) == [0]\n    printed = capsys.readouterr().out.strip()\n    assert printed in ('[0, 1, 2, 3]', '[0, 2, 1, 3]')\n",
+    hint: "from collections import deque, defaultdict\n\ndef find_order(num_courses, prerequisites):\n    graph = defaultdict(list); indeg = [0] * num_courses\n    for a, b in prerequisites:\n        graph[b].append(a); indeg[a] += 1\n    q = deque([i for i in range(num_courses) if indeg[i] == 0])\n    order = []\n    while q:\n        u = q.popleft(); order.append(u)\n        for v in graph[u]:\n            indeg[v] -= 1\n            if indeg[v] == 0: q.append(v)\n    return order if len(order) == num_courses else []\nprint(find_order(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))",
+    solution_example: "from collections import deque, defaultdict\n\ndef find_order(num_courses, prerequisites):\n    graph = defaultdict(list); indeg = [0] * num_courses\n    for a, b in prerequisites:\n        graph[b].append(a); indeg[a] += 1\n    q = deque([i for i in range(num_courses) if indeg[i] == 0])\n    order = []\n    while q:\n        u = q.popleft(); order.append(u)\n        for v in graph[u]:\n            indeg[v] -= 1\n            if indeg[v] == 0: q.append(v)\n    return order if len(order) == num_courses else []\nprint(find_order(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))\n",
+    next: Some("py-276-cheapest-flights"), show_type_chips: false, micro_step: 275,
+};
+
+pub const PY276_CHEAPEST_FLIGHTS: CodingStep = CodingStep {
+    id: "py-276-cheapest-flights", title: "DSA Cheapest Flights", objective: "Vuelo más barato con a lo sumo k escalas (Bellman-Ford acotado).",
+    prompt_md: "**Cheapest Flights Within K Stops**\n\nRelajá aristas hasta `k+1` veces. Distinto de py-274 (Dijkstra sin límite de hops).\n\n**Micro-reto:**\n1. Definí `find_cheapest_price(n, flights, src, dst, k)`\n2. n=4, flights `[[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]]`, src=0, dst=3, k=1; imprimí (esperado: `700`)",
+    starter_code: "# def find_cheapest_price(n, flights, src, dst, k):\n#     ...\n# print(find_cheapest_price(4, [[0, 1, 100], [1, 2, 100], [2, 0, 100], [1, 3, 600], [2, 3, 200]], 0, 3, 1))\n",
+    pytest: "def test_cheapest_flights(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_cheapest_price'))\n    flights = [[0, 1, 100], [1, 2, 100], [2, 0, 100], [1, 3, 600], [2, 3, 200]]\n    assert ns['find_cheapest_price'](4, flights, 0, 3, 1) == 700\n    assert ns['find_cheapest_price'](3, [[0, 1, 100], [1, 2, 100], [0, 2, 500]], 0, 2, 1) == 200\n    assert ns['find_cheapest_price'](3, [[0, 1, 100], [1, 2, 100], [0, 2, 500]], 0, 2, 0) == 500\n    assert capsys.readouterr().out.strip() == '700'\n",
+    hint: "def find_cheapest_price(n, flights, src, dst, k):\n    prices = [float('inf')] * n; prices[src] = 0\n    for _ in range(k + 1):\n        nxt = prices[:]\n        for u, v, w in flights:\n            if prices[u] + w < nxt[v]: nxt[v] = prices[u] + w\n        prices = nxt\n    return -1 if prices[dst] == float('inf') else prices[dst]\nprint(find_cheapest_price(4, [[0, 1, 100], [1, 2, 100], [2, 0, 100], [1, 3, 600], [2, 3, 200]], 0, 3, 1))",
+    solution_example: "def find_cheapest_price(n, flights, src, dst, k):\n    prices = [float('inf')] * n; prices[src] = 0\n    for _ in range(k + 1):\n        nxt = prices[:]\n        for u, v, w in flights:\n            if prices[u] + w < nxt[v]: nxt[v] = prices[u] + w\n        prices = nxt\n    return -1 if prices[dst] == float('inf') else prices[dst]\nprint(find_cheapest_price(4, [[0, 1, 100], [1, 2, 100], [2, 0, 100], [1, 3, 600], [2, 3, 200]], 0, 3, 1))\n",
+    next: Some("py-277-redundant-edge"), show_type_chips: false, micro_step: 276,
+};
+
+pub const PY277_REDUNDANT_EDGE: CodingStep = CodingStep {
+    id: "py-277-redundant-edge", title: "DSA Redundant Connection", objective: "Encontrar la arista que forma un ciclo en un grafo casi-árbol.",
+    prompt_md: "**Redundant Connection**\n\nUnion-Find: la primera arista cuyos extremos ya están unidos es la redundante. Distinto de py-115 (UF intro).\n\n**Micro-reto:**\n1. Definí `find_redundant_connection(edges)`\n2. `[[1,2],[1,3],[2,3]]`; imprimí (esperado: `[2, 3]`)",
+    starter_code: "# def find_redundant_connection(edges):\n#     ...\n# print(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))\n",
+    pytest: "def test_redundant_edge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_redundant_connection'))\n    assert ns['find_redundant_connection']([[1, 2], [1, 3], [2, 3]]) == [2, 3]\n    assert ns['find_redundant_connection']([[1, 2], [2, 3], [3, 4], [1, 4], [1, 5]]) == [1, 4]\n    assert capsys.readouterr().out.strip() == '[2, 3]'\n",
+    hint: "def find_redundant_connection(edges):\n    parent = list(range(len(edges) + 1))\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    for a, b in edges:\n        ra, rb = find(a), find(b)\n        if ra == rb: return [a, b]\n        parent[rb] = ra\n    return []\nprint(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))",
+    solution_example: "def find_redundant_connection(edges):\n    parent = list(range(len(edges) + 1))\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    for a, b in edges:\n        ra, rb = find(a), find(b)\n        if ra == rb: return [a, b]\n        parent[rb] = ra\n    return []\nprint(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))\n",
+    next: Some("py-278-accounts-merge"), show_type_chips: false, micro_step: 277,
+};
+
+pub const PY278_ACCOUNTS_MERGE: CodingStep = CodingStep {
+    id: "py-278-accounts-merge", title: "DSA Accounts Merge", objective: "Fusionar cuentas que comparten emails con Union-Find.",
+    prompt_md: "**Accounts Merge**\n\nUF sobre índices de cuenta; devolvés `[name, ...emails ordenados]`. Distinto de py-178 (anagramas).\n\n**Micro-reto:**\n1. Definí `accounts_merge(accounts)`\n2. Input clásico John; imprimí el resultado ordenado por nombre+primer email (esperado una lista de 2 cuentas)",
+    starter_code: "# from collections import defaultdict\n# def accounts_merge(accounts):\n#     ...\n# accounts = [['John', 'j1@mail.com', 'j2@mail.com'], ['John', 'j3@mail.com'], ['John', 'j1@mail.com', 'j4@mail.com'], ['Mary', 'm@mail.com']]\n# print(accounts_merge(accounts))\n",
+    pytest: "def test_accounts_merge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('accounts_merge'))\n    accounts = [['John', 'j1@mail.com', 'j2@mail.com'], ['John', 'j3@mail.com'], ['John', 'j1@mail.com', 'j4@mail.com'], ['Mary', 'm@mail.com']]\n    expected = [['John', 'j1@mail.com', 'j2@mail.com', 'j4@mail.com'], ['John', 'j3@mail.com'], ['Mary', 'm@mail.com']]\n    merged = sorted([[a[0]] + sorted(a[1:]) for a in ns['accounts_merge'](accounts)])\n    assert merged == expected\n    printed = eval(capsys.readouterr().out.strip())\n    assert sorted([[a[0]] + sorted(a[1:]) for a in printed]) == expected\n",
+    hint: "from collections import defaultdict\n\ndef accounts_merge(accounts):\n    n = len(accounts); parent = list(range(n))\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    email_to_id = {}\n    for i, acc in enumerate(accounts):\n        for email in acc[1:]:\n            if email in email_to_id: parent[find(i)] = find(email_to_id[email])\n            else: email_to_id[email] = i\n    groups = defaultdict(set)\n    for email, i in email_to_id.items():\n        groups[find(i)].add(email)\n    out = [[accounts[i][0]] + sorted(emails) for i, emails in groups.items()]\n    return sorted(out, key=lambda a: (a[0], a[1]))\naccounts = [['John', 'j1@mail.com', 'j2@mail.com'], ['John', 'j3@mail.com'], ['John', 'j1@mail.com', 'j4@mail.com'], ['Mary', 'm@mail.com']]\nprint(accounts_merge(accounts))",
+    solution_example: "from collections import defaultdict\n\ndef accounts_merge(accounts):\n    n = len(accounts); parent = list(range(n))\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    email_to_id = {}\n    for i, acc in enumerate(accounts):\n        for email in acc[1:]:\n            if email in email_to_id: parent[find(i)] = find(email_to_id[email])\n            else: email_to_id[email] = i\n    groups = defaultdict(set)\n    for email, i in email_to_id.items():\n        groups[find(i)].add(email)\n    out = [[accounts[i][0]] + sorted(emails) for i, emails in groups.items()]\n    return sorted(out, key=lambda a: (a[0], a[1]))\naccounts = [['John', 'j1@mail.com', 'j2@mail.com'], ['John', 'j3@mail.com'], ['John', 'j1@mail.com', 'j4@mail.com'], ['Mary', 'm@mail.com']]\nprint(accounts_merge(accounts))\n",
+    next: Some("py-279-alien-dict"), show_type_chips: false, micro_step: 278,
+};
+
+pub const PY279_ALIEN_DICT: CodingStep = CodingStep {
+    id: "py-279-alien-dict", title: "DSA Alien Dictionary", objective: "Reconstruir el orden de letras de un alfabeto alienígena.",
+    prompt_md: "**Alien Dictionary**\n\nCompará palabras consecutivas → aristas de precedencia; Kahn. Distinto de py-118 (topo genérico).\n\n**Micro-reto:**\n1. Definí `alien_order(words)`\n2. `['wrt','wrf','er','ett','rftt']`; imprimí (esperado: `\"wertf\"`)",
+    starter_code: "# from collections import defaultdict, deque\n# def alien_order(words):\n#     ...\n# print(alien_order(['wrt', 'wrf', 'er', 'ett', 'rftt']))\n",
+    pytest: "def test_alien_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('alien_order'))\n    assert ns['alien_order'](['wrt', 'wrf', 'er', 'ett', 'rftt']) == 'wertf'\n    assert ns['alien_order'](['z', 'x']) == 'zx'\n    assert ns['alien_order'](['z', 'x', 'z']) == ''\n    assert capsys.readouterr().out.strip() == 'wertf'\n",
+    hint: "from collections import defaultdict, deque\n\ndef alien_order(words):\n    graph = defaultdict(set); indeg = {c: 0 for w in words for c in w}\n    for w1, w2 in zip(words, words[1:]):\n        if len(w1) > len(w2) and w1.startswith(w2): return ''\n        for a, b in zip(w1, w2):\n            if a != b:\n                if b not in graph[a]:\n                    graph[a].add(b); indeg[b] += 1\n                break\n    q = deque(sorted([c for c in indeg if indeg[c] == 0]))\n    out = []\n    while q:\n        u = q.popleft(); out.append(u)\n        for v in sorted(graph[u]):\n            indeg[v] -= 1\n            if indeg[v] == 0: q.append(v)\n    return ''.join(out) if len(out) == len(indeg) else ''\nprint(alien_order(['wrt', 'wrf', 'er', 'ett', 'rftt']))",
+    solution_example: "from collections import defaultdict, deque\n\ndef alien_order(words):\n    graph = defaultdict(set); indeg = {c: 0 for w in words for c in w}\n    for w1, w2 in zip(words, words[1:]):\n        if len(w1) > len(w2) and w1.startswith(w2): return ''\n        for a, b in zip(w1, w2):\n            if a != b:\n                if b not in graph[a]:\n                    graph[a].add(b); indeg[b] += 1\n                break\n    q = deque(sorted([c for c in indeg if indeg[c] == 0]))\n    out = []\n    while q:\n        u = q.popleft(); out.append(u)\n        for v in sorted(graph[u]):\n            indeg[v] -= 1\n            if indeg[v] == 0: q.append(v)\n    return ''.join(out) if len(out) == len(indeg) else ''\nprint(alien_order(['wrt', 'wrf', 'er', 'ett', 'rftt']))\n",
+    next: Some("py-280-min-cost-points"), show_type_chips: false, micro_step: 279,
+};
+
+pub const PY280_MIN_COST_POINTS: CodingStep = CodingStep {
+    id: "py-280-min-cost-points", title: "DSA Min Cost Points", objective: "Conectar todos los puntos con costo Manhattan mínimo (MST).",
+    prompt_md: "**Min Cost to Connect All Points**\n\nPrim desde 0 o Kruskal+UF. Distinto de py-116/117 (MST intro).\n\n**Micro-reto:**\n1. Definí `min_cost_connect(points)`\n2. `[[0,0],[2,2],[3,10],[5,2],[7,0]]`; imprimí (esperado: `20`)",
+    starter_code: "# import heapq\n# def min_cost_connect(points):\n#     ...\n# print(min_cost_connect([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]))\n",
+    pytest: "def test_min_cost_points(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('min_cost_connect'))\n    assert ns['min_cost_connect']([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]) == 20\n    assert ns['min_cost_connect']([[3, 12], [-2, 5], [-4, 1]]) == 18\n    assert ns['min_cost_connect']([[0, 0]]) == 0\n    assert capsys.readouterr().out.strip() == '20'\n",
+    hint: "import heapq\n\ndef min_cost_connect(points):\n    n = len(points)\n    if n <= 1: return 0\n    in_mst = [False] * n; heap = [(0, 0)]; cost = 0; used = 0\n    while heap and used < n:\n        d, i = heapq.heappop(heap)\n        if in_mst[i]: continue\n        in_mst[i] = True; cost += d; used += 1\n        xi, yi = points[i]\n        for j in range(n):\n            if not in_mst[j]:\n                xj, yj = points[j]\n                heapq.heappush(heap, (abs(xi - xj) + abs(yi - yj), j))\n    return cost\nprint(min_cost_connect([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]))",
+    solution_example: "import heapq\n\ndef min_cost_connect(points):\n    n = len(points)\n    if n <= 1: return 0\n    in_mst = [False] * n; heap = [(0, 0)]; cost = 0; used = 0\n    while heap and used < n:\n        d, i = heapq.heappop(heap)\n        if in_mst[i]: continue\n        in_mst[i] = True; cost += d; used += 1\n        xi, yi = points[i]\n        for j in range(n):\n            if not in_mst[j]:\n                xj, yj = points[j]\n                heapq.heappush(heap, (abs(xi - xj) + abs(yi - yj), j))\n    return cost\nprint(min_cost_connect([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]))\n",
+    next: None, show_type_chips: false, micro_step: 280,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3868,6 +3928,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY272_FIND_MEDIAN,
     &PY273_KTH_MATRIX,
     &PY274_NETWORK_DELAY,
+    &PY275_COURSE_ORDER,
+    &PY276_CHEAPEST_FLIGHTS,
+    &PY277_REDUNDANT_EDGE,
+    &PY278_ACCOUNTS_MERGE,
+    &PY279_ALIEN_DICT,
+    &PY280_MIN_COST_POINTS,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4565,7 +4631,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py274_curriculum_chain() {
+    fn py203_to_py280_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4639,7 +4705,13 @@ mod tests {
             (271, "py-271-reorganize-string", Some("py-272-find-median")),
             (272, "py-272-find-median", Some("py-273-kth-matrix")),
             (273, "py-273-kth-matrix", Some("py-274-network-delay")),
-            (274, "py-274-network-delay", None),
+            (274, "py-274-network-delay", Some("py-275-course-order")),
+            (275, "py-275-course-order", Some("py-276-cheapest-flights")),
+            (276, "py-276-cheapest-flights", Some("py-277-redundant-edge")),
+            (277, "py-277-redundant-edge", Some("py-278-accounts-merge")),
+            (278, "py-278-accounts-merge", Some("py-279-alien-dict")),
+            (279, "py-279-alien-dict", Some("py-280-min-cost-points")),
+            (280, "py-280-min-cost-points", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
