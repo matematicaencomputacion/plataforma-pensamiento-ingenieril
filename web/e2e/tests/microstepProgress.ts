@@ -238,6 +238,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 230, step_id: "py-230-letter-combos" },
   { level_id: 231, step_id: "py-231-subsets-ii" },
   { level_id: 232, step_id: "py-232-palindrome-partition" },
+  { level_id: 233, step_id: "py-233-reverse-integer" },
+  { level_id: 234, step_id: "py-234-palindrome-number" },
+  { level_id: 235, step_id: "py-235-plus-one" },
+  { level_id: 236, step_id: "py-236-add-binary" },
+  { level_id: 237, step_id: "py-237-my-pow" },
+  { level_id: 238, step_id: "py-238-trailing-zeroes" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
