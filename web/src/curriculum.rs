@@ -3650,7 +3650,67 @@ pub const PY280_MIN_COST_POINTS: CodingStep = CodingStep {
     pytest: "def test_min_cost_points(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('min_cost_connect'))\n    assert ns['min_cost_connect']([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]) == 20\n    assert ns['min_cost_connect']([[3, 12], [-2, 5], [-4, 1]]) == 18\n    assert ns['min_cost_connect']([[0, 0]]) == 0\n    assert capsys.readouterr().out.strip() == '20'\n",
     hint: "import heapq\n\ndef min_cost_connect(points):\n    n = len(points)\n    if n <= 1: return 0\n    in_mst = [False] * n; heap = [(0, 0)]; cost = 0; used = 0\n    while heap and used < n:\n        d, i = heapq.heappop(heap)\n        if in_mst[i]: continue\n        in_mst[i] = True; cost += d; used += 1\n        xi, yi = points[i]\n        for j in range(n):\n            if not in_mst[j]:\n                xj, yj = points[j]\n                heapq.heappush(heap, (abs(xi - xj) + abs(yi - yj), j))\n    return cost\nprint(min_cost_connect([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]))",
     solution_example: "import heapq\n\ndef min_cost_connect(points):\n    n = len(points)\n    if n <= 1: return 0\n    in_mst = [False] * n; heap = [(0, 0)]; cost = 0; used = 0\n    while heap and used < n:\n        d, i = heapq.heappop(heap)\n        if in_mst[i]: continue\n        in_mst[i] = True; cost += d; used += 1\n        xi, yi = points[i]\n        for j in range(n):\n            if not in_mst[j]:\n                xj, yj = points[j]\n                heapq.heappush(heap, (abs(xi - xj) + abs(yi - yj), j))\n    return cost\nprint(min_cost_connect([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]))\n",
-    next: None, show_type_chips: false, micro_step: 280,
+    next: Some("py-281-jump-game-ii"), show_type_chips: false, micro_step: 280,
+};
+
+pub const PY281_JUMP_GAME_II: CodingStep = CodingStep {
+    id: "py-281-jump-game-ii", title: "DSA Jump Game II", objective: "Mínimo de saltos para llegar al final (greedy por alcance).",
+    prompt_md: "**Jump Game II**\n\nVentana `[start, end]`; cada salto extiende el alcance máximo. Distinto de py-173 (solo alcanzabilidad).\n\n**Micro-reto:**\n1. Definí `jump(nums)`\n2. `[2,3,1,1,4]`; imprimí saltos (esperado: `2`)",
+    starter_code: "# def jump(nums):\n#     ...\n# print(jump([2, 3, 1, 1, 4]))\n",
+    pytest: "def test_jump_game_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('jump'))\n    assert ns['jump']([2, 3, 1, 1, 4]) == 2\n    assert ns['jump']([2, 3, 0, 1, 4]) == 2\n    assert ns['jump']([1]) == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def jump(nums):\n    jumps = end = farthest = 0\n    for i in range(len(nums) - 1):\n        farthest = max(farthest, i + nums[i])\n        if i == end:\n            jumps += 1; end = farthest\n    return jumps\nprint(jump([2, 3, 1, 1, 4]))",
+    solution_example: "def jump(nums):\n    jumps = end = farthest = 0\n    for i in range(len(nums) - 1):\n        farthest = max(farthest, i + nums[i])\n        if i == end:\n            jumps += 1; end = farthest\n    return jumps\nprint(jump([2, 3, 1, 1, 4]))\n",
+    next: Some("py-282-target-sum"), show_type_chips: false, micro_step: 281,
+};
+
+pub const PY282_TARGET_SUM: CodingStep = CodingStep {
+    id: "py-282-target-sum", title: "DSA Target Sum", objective: "Contar formas de asignar +/− a cada número para llegar al target.",
+    prompt_md: "**Target Sum**\n\nEquivalente a subset-sum hacia `(sum+target)/2`. Distinto de py-201 (partition equal subset).\n\n**Micro-reto:**\n1. Definí `find_target_sum_ways(nums, target)`\n2. nums=`[1,1,1,1,1]`, target=`3`; imprimí (esperado: `5`)",
+    starter_code: "# def find_target_sum_ways(nums, target):\n#     ...\n# print(find_target_sum_ways([1, 1, 1, 1, 1], 3))\n",
+    pytest: "def test_target_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_target_sum_ways'))\n    assert ns['find_target_sum_ways']([1, 1, 1, 1, 1], 3) == 5\n    assert ns['find_target_sum_ways']([1], 1) == 1\n    assert ns['find_target_sum_ways']([1], 2) == 0\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "def find_target_sum_ways(nums, target):\n    total = sum(nums)\n    if (total + target) % 2 or abs(target) > total: return 0\n    subset = (total + target) // 2\n    dp = [0] * (subset + 1); dp[0] = 1\n    for num in nums:\n        for s in range(subset, num - 1, -1):\n            dp[s] += dp[s - num]\n    return dp[subset]\nprint(find_target_sum_ways([1, 1, 1, 1, 1], 3))",
+    solution_example: "def find_target_sum_ways(nums, target):\n    total = sum(nums)\n    if (total + target) % 2 or abs(target) > total: return 0\n    subset = (total + target) // 2\n    dp = [0] * (subset + 1); dp[0] = 1\n    for num in nums:\n        for s in range(subset, num - 1, -1):\n            dp[s] += dp[s - num]\n    return dp[subset]\nprint(find_target_sum_ways([1, 1, 1, 1, 1], 3))\n",
+    next: Some("py-283-maximal-square"), show_type_chips: false, micro_step: 282,
+};
+
+pub const PY283_MAXIMAL_SQUARE: CodingStep = CodingStep {
+    id: "py-283-maximal-square", title: "DSA Maximal Square", objective: "Área del cuadrado máximo de 1s en una matriz binaria.",
+    prompt_md: "**Maximal Square**\n\n`dp[i][j] = min(arriba, izq, diag) + 1` si celda es `'1'`. Distinto de py-203 (num islands).\n\n**Micro-reto:**\n1. Definí `maximal_square(matrix)`\n2. Matriz clásica 4×5; imprimí área (esperado: `4`)",
+    starter_code: "# def maximal_square(matrix):\n#     ...\n# print(maximal_square([['1','0','1','0','0'],['1','0','1','1','1'],['1','1','1','1','1'],['1','0','0','1','0']]))\n",
+    pytest: "def test_maximal_square(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('maximal_square'))\n    m = [['1','0','1','0','0'],['1','0','1','1','1'],['1','1','1','1','1'],['1','0','0','1','0']]\n    assert ns['maximal_square'](m) == 4\n    assert ns['maximal_square']([['0','1'],['1','0']]) == 1\n    assert ns['maximal_square']([['0']]) == 0\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "def maximal_square(matrix):\n    if not matrix: return 0\n    rows, cols = len(matrix), len(matrix[0])\n    dp = [[0] * (cols + 1) for _ in range(rows + 1)]\n    best = 0\n    for i in range(1, rows + 1):\n        for j in range(1, cols + 1):\n            if matrix[i-1][j-1] == '1':\n                dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1\n                best = max(best, dp[i][j])\n    return best * best\nprint(maximal_square([['1','0','1','0','0'],['1','0','1','1','1'],['1','1','1','1','1'],['1','0','0','1','0']]))",
+    solution_example: "def maximal_square(matrix):\n    if not matrix: return 0\n    rows, cols = len(matrix), len(matrix[0])\n    dp = [[0] * (cols + 1) for _ in range(rows + 1)]\n    best = 0\n    for i in range(1, rows + 1):\n        for j in range(1, cols + 1):\n            if matrix[i-1][j-1] == '1':\n                dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1\n                best = max(best, dp[i][j])\n    return best * best\nprint(maximal_square([['1','0','1','0','0'],['1','0','1','1','1'],['1','1','1','1','1'],['1','0','0','1','0']]))\n",
+    next: Some("py-284-stock-cooldown"), show_type_chips: false, micro_step: 283,
+};
+
+pub const PY284_STOCK_COOLDOWN: CodingStep = CodingStep {
+    id: "py-284-stock-cooldown", title: "DSA Stock Cooldown", objective: "Máximo profit con cooldown de un día tras vender.",
+    prompt_md: "**Best Time to Buy and Sell Stock with Cooldown**\n\nEstados hold / sold / rest. Distinto de py-156 (una sola transacción).\n\n**Micro-reto:**\n1. Definí `max_profit_cooldown(prices)`\n2. `[1,2,3,0,2]`; imprimí (esperado: `3`)",
+    starter_code: "# def max_profit_cooldown(prices):\n#     ...\n# print(max_profit_cooldown([1, 2, 3, 0, 2]))\n",
+    pytest: "def test_stock_cooldown(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_profit_cooldown'))\n    assert ns['max_profit_cooldown']([1, 2, 3, 0, 2]) == 3\n    assert ns['max_profit_cooldown']([1]) == 0\n    assert ns['max_profit_cooldown']([1, 2]) == 1\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "def max_profit_cooldown(prices):\n    hold = float('-inf'); sold = 0; rest = 0\n    for p in prices:\n        prev_sold = sold\n        sold = hold + p\n        hold = max(hold, rest - p)\n        rest = max(rest, prev_sold)\n    return max(sold, rest)\nprint(max_profit_cooldown([1, 2, 3, 0, 2]))",
+    solution_example: "def max_profit_cooldown(prices):\n    hold = float('-inf'); sold = 0; rest = 0\n    for p in prices:\n        prev_sold = sold\n        sold = hold + p\n        hold = max(hold, rest - p)\n        rest = max(rest, prev_sold)\n    return max(sold, rest)\nprint(max_profit_cooldown([1, 2, 3, 0, 2]))\n",
+    next: Some("py-285-interleaving"), show_type_chips: false, micro_step: 284,
+};
+
+pub const PY285_INTERLEAVING: CodingStep = CodingStep {
+    id: "py-285-interleaving", title: "DSA Interleaving String", objective: "Decidir si s3 es entrelazado de s1 y s2 preservando orden.",
+    prompt_md: "**Interleaving String**\n\nDP booleana 2D (o 1D). Distinto de py-128 (LCS longitud).\n\n**Micro-reto:**\n1. Definí `is_interleave(s1, s2, s3)`\n2. `s1=\"aabcc\"`, `s2=\"dbbca\"`, `s3=\"aadbbcbcac\"`; imprimí `True`",
+    starter_code: "# def is_interleave(s1, s2, s3):\n#     ...\n# print(is_interleave(\"aabcc\", \"dbbca\", \"aadbbcbcac\"))\n",
+    pytest: "def test_interleaving(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_interleave'))\n    assert ns['is_interleave']('aabcc', 'dbbca', 'aadbbcbcac') is True\n    assert ns['is_interleave']('aabcc', 'dbbca', 'aadbbbaccc') is False\n    assert ns['is_interleave']('', '', '') is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "def is_interleave(s1, s2, s3):\n    m, n = len(s1), len(s2)\n    if m + n != len(s3): return False\n    dp = [False] * (n + 1); dp[0] = True\n    for j in range(1, n + 1):\n        dp[j] = dp[j-1] and s2[j-1] == s3[j-1]\n    for i in range(1, m + 1):\n        dp[0] = dp[0] and s1[i-1] == s3[i-1]\n        for j in range(1, n + 1):\n            dp[j] = (dp[j] and s1[i-1] == s3[i+j-1]) or (dp[j-1] and s2[j-1] == s3[i+j-1])\n    return dp[n]\nprint(is_interleave('aabcc', 'dbbca', 'aadbbcbcac'))",
+    solution_example: "def is_interleave(s1, s2, s3):\n    m, n = len(s1), len(s2)\n    if m + n != len(s3): return False\n    dp = [False] * (n + 1); dp[0] = True\n    for j in range(1, n + 1):\n        dp[j] = dp[j-1] and s2[j-1] == s3[j-1]\n    for i in range(1, m + 1):\n        dp[0] = dp[0] and s1[i-1] == s3[i-1]\n        for j in range(1, n + 1):\n            dp[j] = (dp[j] and s1[i-1] == s3[i+j-1]) or (dp[j-1] and s2[j-1] == s3[i+j-1])\n    return dp[n]\nprint(is_interleave('aabcc', 'dbbca', 'aadbbcbcac'))\n",
+    next: Some("py-286-palindrome-subseq"), show_type_chips: false, micro_step: 285,
+};
+
+pub const PY286_PALINDROME_SUBSEQ: CodingStep = CodingStep {
+    id: "py-286-palindrome-subseq", title: "DSA Palindrome Subseq", objective: "Longitud de la subsecuencia palindrómica más larga.",
+    prompt_md: "**Longest Palindromic Subsequence**\n\nDP intervalo: si extremos iguales, `2 + dp[i+1][j-1]`. Distinto de py-154 (substring contigua) y py-250 (lista).\n\n**Micro-reto:**\n1. Definí `longest_palindrome_subseq(s)`\n2. `\"bbbab\"`; imprimí (esperado: `4`)",
+    starter_code: "# def longest_palindrome_subseq(s):\n#     ...\n# print(longest_palindrome_subseq(\"bbbab\"))\n",
+    pytest: "def test_palindrome_subseq(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('longest_palindrome_subseq'))\n    assert ns['longest_palindrome_subseq']('bbbab') == 4\n    assert ns['longest_palindrome_subseq']('cbbd') == 2\n    assert ns['longest_palindrome_subseq']('a') == 1\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "def longest_palindrome_subseq(s):\n    n = len(s)\n    dp = [[0] * n for _ in range(n)]\n    for i in range(n): dp[i][i] = 1\n    for length in range(2, n + 1):\n        for i in range(n - length + 1):\n            j = i + length - 1\n            if s[i] == s[j]:\n                dp[i][j] = 2 if length == 2 else 2 + dp[i+1][j-1]\n            else:\n                dp[i][j] = max(dp[i+1][j], dp[i][j-1])\n    return dp[0][n-1]\nprint(longest_palindrome_subseq('bbbab'))",
+    solution_example: "def longest_palindrome_subseq(s):\n    n = len(s)\n    dp = [[0] * n for _ in range(n)]\n    for i in range(n): dp[i][i] = 1\n    for length in range(2, n + 1):\n        for i in range(n - length + 1):\n            j = i + length - 1\n            if s[i] == s[j]:\n                dp[i][j] = 2 if length == 2 else 2 + dp[i+1][j-1]\n            else:\n                dp[i][j] = max(dp[i+1][j], dp[i][j-1])\n    return dp[0][n-1]\nprint(longest_palindrome_subseq('bbbab'))\n",
+    next: None, show_type_chips: false, micro_step: 286,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3934,6 +3994,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY278_ACCOUNTS_MERGE,
     &PY279_ALIEN_DICT,
     &PY280_MIN_COST_POINTS,
+    &PY281_JUMP_GAME_II,
+    &PY282_TARGET_SUM,
+    &PY283_MAXIMAL_SQUARE,
+    &PY284_STOCK_COOLDOWN,
+    &PY285_INTERLEAVING,
+    &PY286_PALINDROME_SUBSEQ,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4631,7 +4697,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py280_curriculum_chain() {
+    fn py203_to_py286_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4711,7 +4777,13 @@ mod tests {
             (277, "py-277-redundant-edge", Some("py-278-accounts-merge")),
             (278, "py-278-accounts-merge", Some("py-279-alien-dict")),
             (279, "py-279-alien-dict", Some("py-280-min-cost-points")),
-            (280, "py-280-min-cost-points", None),
+            (280, "py-280-min-cost-points", Some("py-281-jump-game-ii")),
+            (281, "py-281-jump-game-ii", Some("py-282-target-sum")),
+            (282, "py-282-target-sum", Some("py-283-maximal-square")),
+            (283, "py-283-maximal-square", Some("py-284-stock-cooldown")),
+            (284, "py-284-stock-cooldown", Some("py-285-interleaving")),
+            (285, "py-285-interleaving", Some("py-286-palindrome-subseq")),
+            (286, "py-286-palindrome-subseq", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

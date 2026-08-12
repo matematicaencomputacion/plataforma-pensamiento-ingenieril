@@ -193,7 +193,7 @@ def min_cost_connect(points):
 
 print(min_cost_connect([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-281-jump-game-ii/,
     cursorAfter: "281",
   },
 ];
