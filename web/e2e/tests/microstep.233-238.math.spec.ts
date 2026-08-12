@@ -22,150 +22,124 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 227,
-    id: "py-227-generate-parens",
-    title: "DSA Generar Paréntesis",
-    solution: `def generate_parenthesis(n):
+    micro: 233,
+    id: "py-233-reverse-integer",
+    title: "DSA Reverse Integer",
+    solution: `def reverse(x):
+    sign = -1 if x < 0 else 1
+    x = abs(x)
+    out = 0
+    while x:
+        out = out * 10 + x % 10
+        x //= 10
+    out *= sign
+    if out < -2**31 or out > 2**31 - 1:
+        return 0
+    return out
+print(reverse(123))
+`,
+    nextUrl: /\/learn\/py-234-palindrome-number/,
+    cursorAfter: "234",
+  },
+  {
+    micro: 234,
+    id: "py-234-palindrome-number",
+    title: "DSA Palindrome Number",
+    solution: `def is_palindrome(x):
+    if x < 0:
+        return False
+    original, rev = x, 0
+    while x:
+        rev = rev * 10 + x % 10
+        x //= 10
+    return original == rev
+print(is_palindrome(121))
+`,
+    nextUrl: /\/learn\/py-235-plus-one/,
+    cursorAfter: "235",
+  },
+  {
+    micro: 235,
+    id: "py-235-plus-one",
+    title: "DSA Plus One",
+    solution: `def plus_one(digits):
+    for i in range(len(digits) - 1, -1, -1):
+        if digits[i] < 9:
+            digits[i] += 1
+            return digits
+        digits[i] = 0
+    return [1] + digits
+print(plus_one([1, 2, 3]))
+`,
+    nextUrl: /\/learn\/py-236-add-binary/,
+    cursorAfter: "236",
+  },
+  {
+    micro: 236,
+    id: "py-236-add-binary",
+    title: "DSA Add Binary",
+    solution: `def add_binary(a, b):
+    i, j, carry = len(a) - 1, len(b) - 1, 0
     out = []
-    def bt(s, open_n, close_n):
-        if len(s) == 2 * n:
-            out.append(s)
-            return
-        if open_n < n:
-            bt(s + '(', open_n + 1, close_n)
-        if close_n < open_n:
-            bt(s + ')', open_n, close_n + 1)
-    bt('', 0, 0)
-    return out
-print(generate_parenthesis(3))
+    while i >= 0 or j >= 0 or carry:
+        total = carry
+        if i >= 0:
+            total += int(a[i])
+            i -= 1
+        if j >= 0:
+            total += int(b[j])
+            j -= 1
+        out.append(str(total % 2))
+        carry = total // 2
+    return ''.join(reversed(out))
+print(add_binary('11', '1'))
 `,
-    nextUrl: /\/learn\/py-228-combination-sum/,
-    cursorAfter: "228",
+    nextUrl: /\/learn\/py-237-my-pow/,
+    cursorAfter: "237",
   },
   {
-    micro: 228,
-    id: "py-228-combination-sum",
-    title: "DSA Combination Sum",
-    solution: `def combination_sum(candidates, target):
-    candidates = sorted(candidates)
-    out = []
-    def bt(start, remain, path):
-        if remain == 0:
-            out.append(path[:])
-            return
-        for i in range(start, len(candidates)):
-            value = candidates[i]
-            if value > remain:
-                break
-            path.append(value)
-            bt(i, remain - value, path)
-            path.pop()
-    bt(0, target, [])
+    micro: 237,
+    id: "py-237-my-pow",
+    title: "DSA Pow(x, n)",
+    solution: `def my_pow(x, n):
+    if n < 0:
+        x = 1 / x
+        n = -n
+    out = 1.0
+    while n:
+        if n & 1:
+            out *= x
+        x *= x
+        n >>= 1
     return out
-print(combination_sum([2, 3, 6, 7], 7))
+print(my_pow(2.0, 10))
 `,
-    nextUrl: /\/learn\/py-229-word-search/,
-    cursorAfter: "229",
+    nextUrl: /\/learn\/py-238-trailing-zeroes/,
+    cursorAfter: "238",
   },
   {
-    micro: 229,
-    id: "py-229-word-search",
-    title: "DSA Word Search",
-    solution: `def exist(board, word):
-    rows, cols = len(board), len(board[0])
-    def dfs(i, j, k):
-        if k == len(word):
-            return True
-        if i < 0 or j < 0 or i >= rows or j >= cols or board[i][j] != word[k]:
-            return False
-        tmp = board[i][j]
-        board[i][j] = '#'
-        ok = (
-            dfs(i + 1, j, k + 1)
-            or dfs(i - 1, j, k + 1)
-            or dfs(i, j + 1, k + 1)
-            or dfs(i, j - 1, k + 1)
-        )
-        board[i][j] = tmp
-        return ok
-    return any(dfs(i, j, 0) for i in range(rows) for j in range(cols))
-print(exist([['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'ABCCED'))
+    micro: 238,
+    id: "py-238-trailing-zeroes",
+    title: "DSA Trailing Zeroes",
+    solution: `def trailing_zeroes(n):
+    zeros = 0
+    while n:
+        n //= 5
+        zeros += n
+    return zeros
+print(trailing_zeroes(25))
 `,
-    nextUrl: /\/learn\/py-230-letter-combos/,
-    cursorAfter: "230",
-  },
-  {
-    micro: 230,
-    id: "py-230-letter-combos",
-    title: "DSA Letter Combinations",
-    solution: `def letter_combinations(digits):
-    if not digits:
-        return []
-    phone = {
-        '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
-        '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz',
-    }
-    out = ['']
-    for digit in digits:
-        out = [prefix + ch for prefix in out for ch in phone[digit]]
-    return out
-print(letter_combinations('23'))
-`,
-    nextUrl: /\/learn\/py-231-subsets-ii/,
-    cursorAfter: "231",
-  },
-  {
-    micro: 231,
-    id: "py-231-subsets-ii",
-    title: "DSA Subsets II",
-    solution: `def subsets_with_dup(nums):
-    nums = sorted(nums)
-    out = []
-    def bt(start, path):
-        out.append(path[:])
-        for i in range(start, len(nums)):
-            if i > start and nums[i] == nums[i - 1]:
-                continue
-            path.append(nums[i])
-            bt(i + 1, path)
-            path.pop()
-    bt(0, [])
-    return out
-print(subsets_with_dup([1, 2, 2]))
-`,
-    nextUrl: /\/learn\/py-232-palindrome-partition/,
-    cursorAfter: "232",
-  },
-  {
-    micro: 232,
-    id: "py-232-palindrome-partition",
-    title: "DSA Palindrome Partition",
-    solution: `def partition(s):
-    out = []
-    def is_pal(left, right):
-        while left < right:
-            if s[left] != s[right]:
-                return False
-            left += 1
-            right -= 1
-        return True
-    def bt(start, path):
-        if start == len(s):
-            out.append(path[:])
-            return
-        for end in range(start, len(s)):
-            if is_pal(start, end):
-                path.append(s[start:end + 1])
-                bt(end + 1, path)
-                path.pop()
-    bt(0, [])
-    return out
-print(partition('aab'))
-`,
-    nextUrl: /\/learn\/py-233-reverse-integer/,
-    cursorAfter: "233",
+    nextUrl: /\/workspace/,
+    cursorAfter: "239",
   },
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-23[3-8]-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -192,7 +166,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 227–232 · backtracking", () => {
+test.describe("micro-steps 233–238 · math", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

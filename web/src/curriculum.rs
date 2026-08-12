@@ -3170,7 +3170,67 @@ pub const PY232_PALINDROME_PARTITION: CodingStep = CodingStep {
     pytest: "def test_palindrome_partition(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('partition'))\n    assert ns['partition']('aab') == [['a', 'a', 'b'], ['aa', 'b']]\n    assert ns['partition']('a') == [['a']]\n    assert capsys.readouterr().out.strip() == \"[['a', 'a', 'b'], ['aa', 'b']]\"\n",
     hint: "def partition(s):\n    out = []\n    def is_pal(left, right):\n        while left < right:\n            if s[left] != s[right]: return False\n            left += 1; right -= 1\n        return True\n    def bt(start, path):\n        if start == len(s):\n            out.append(path[:]); return\n        for end in range(start, len(s)):\n            if is_pal(start, end):\n                path.append(s[start:end + 1]); bt(end + 1, path); path.pop()\n    bt(0, [])\n    return out",
     solution_example: "def partition(s):\n    out = []\n    def is_pal(left, right):\n        while left < right:\n            if s[left] != s[right]: return False\n            left += 1; right -= 1\n        return True\n    def bt(start, path):\n        if start == len(s):\n            out.append(path[:]); return\n        for end in range(start, len(s)):\n            if is_pal(start, end):\n                path.append(s[start:end + 1]); bt(end + 1, path); path.pop()\n    bt(0, [])\n    return out\nprint(partition('aab'))\n",
-    next: None, show_type_chips: false, micro_step: 232,
+    next: Some("py-233-reverse-integer"), show_type_chips: false, micro_step: 232,
+};
+
+pub const PY233_REVERSE_INTEGER: CodingStep = CodingStep {
+    id: "py-233-reverse-integer", title: "DSA Reverse Integer", objective: "Invertir los dígitos de un entero con clamp a 32 bits con signo.",
+    prompt_md: "**Reverse Integer**\n\nConstruí el reverso dígito a dígito; si sale del rango int32, devolvé `0`.\n\n**Micro-reto:**\n1. Definí `reverse(x)`\n2. Imprimí `reverse(123)`",
+    starter_code: "# def reverse(x):\n#     ...\n# print(reverse(123))\n",
+    pytest: "def test_reverse_integer(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('reverse'))\n    assert ns['reverse'](123) == 321\n    assert ns['reverse'](-123) == -321\n    assert ns['reverse'](120) == 21\n    assert ns['reverse'](1534236469) == 0\n    assert capsys.readouterr().out.strip() == '321'\n",
+    hint: "def reverse(x):\n    sign = -1 if x < 0 else 1\n    x = abs(x)\n    out = 0\n    while x:\n        out = out * 10 + x % 10\n        x //= 10\n    out *= sign\n    if out < -2**31 or out > 2**31 - 1:\n        return 0\n    return out",
+    solution_example: "def reverse(x):\n    sign = -1 if x < 0 else 1\n    x = abs(x)\n    out = 0\n    while x:\n        out = out * 10 + x % 10\n        x //= 10\n    out *= sign\n    if out < -2**31 or out > 2**31 - 1:\n        return 0\n    return out\nprint(reverse(123))\n",
+    next: Some("py-234-palindrome-number"), show_type_chips: false, micro_step: 233,
+};
+
+pub const PY234_PALINDROME_NUMBER: CodingStep = CodingStep {
+    id: "py-234-palindrome-number", title: "DSA Palindrome Number", objective: "Decidir si un entero es palíndromo sin convertirlo a string (o con string).",
+    prompt_md: "**Palindrome Number**\n\nNegativos no son palíndromo. Compará el número con su reverso.\n\n**Micro-reto:**\n1. Definí `is_palindrome(x)`\n2. Imprimí `is_palindrome(121)`",
+    starter_code: "# def is_palindrome(x):\n#     ...\n# print(is_palindrome(121))\n",
+    pytest: "def test_palindrome_number(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_palindrome'))\n    assert ns['is_palindrome'](121) is True\n    assert ns['is_palindrome'](-121) is False\n    assert ns['is_palindrome'](10) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "def is_palindrome(x):\n    if x < 0: return False\n    original, rev = x, 0\n    while x:\n        rev = rev * 10 + x % 10\n        x //= 10\n    return original == rev",
+    solution_example: "def is_palindrome(x):\n    if x < 0: return False\n    original, rev = x, 0\n    while x:\n        rev = rev * 10 + x % 10\n        x //= 10\n    return original == rev\nprint(is_palindrome(121))\n",
+    next: Some("py-235-plus-one"), show_type_chips: false, micro_step: 234,
+};
+
+pub const PY235_PLUS_ONE: CodingStep = CodingStep {
+    id: "py-235-plus-one", title: "DSA Plus One", objective: "Sumar uno a un entero representado como array de dígitos.",
+    prompt_md: "**Plus One**\n\nRecorré de derecha a izquierda; propagá el carry si el dígito es 9.\n\n**Micro-reto:**\n1. Definí `plus_one(digits)`\n2. Imprimí `plus_one([1, 2, 3])`",
+    starter_code: "# def plus_one(digits):\n#     ...\n# print(plus_one([1, 2, 3]))\n",
+    pytest: "def test_plus_one(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('plus_one'))\n    assert ns['plus_one']([1, 2, 3]) == [1, 2, 4]\n    assert ns['plus_one']([9, 9]) == [1, 0, 0]\n    assert ns['plus_one']([9]) == [1, 0]\n    assert capsys.readouterr().out.strip() == '[1, 2, 4]'\n",
+    hint: "def plus_one(digits):\n    for i in range(len(digits) - 1, -1, -1):\n        if digits[i] < 9:\n            digits[i] += 1\n            return digits\n        digits[i] = 0\n    return [1] + digits",
+    solution_example: "def plus_one(digits):\n    for i in range(len(digits) - 1, -1, -1):\n        if digits[i] < 9:\n            digits[i] += 1\n            return digits\n        digits[i] = 0\n    return [1] + digits\nprint(plus_one([1, 2, 3]))\n",
+    next: Some("py-236-add-binary"), show_type_chips: false, micro_step: 235,
+};
+
+pub const PY236_ADD_BINARY: CodingStep = CodingStep {
+    id: "py-236-add-binary", title: "DSA Add Binary", objective: "Sumar dos strings binarios y devolver el resultado como string.",
+    prompt_md: "**Add Binary**\n\nSumá bit a bit desde la derecha con carry.\n\n**Micro-reto:**\n1. Definí `add_binary(a, b)`\n2. Imprimí `add_binary('11', '1')`",
+    starter_code: "# def add_binary(a, b):\n#     ...\n# print(add_binary('11', '1'))\n",
+    pytest: "def test_add_binary(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('add_binary'))\n    assert ns['add_binary']('11', '1') == '100'\n    assert ns['add_binary']('1010', '1011') == '10101'\n    assert capsys.readouterr().out.strip() == '100'\n",
+    hint: "def add_binary(a, b):\n    i, j, carry = len(a) - 1, len(b) - 1, 0\n    out = []\n    while i >= 0 or j >= 0 or carry:\n        total = carry\n        if i >= 0:\n            total += int(a[i]); i -= 1\n        if j >= 0:\n            total += int(b[j]); j -= 1\n        out.append(str(total % 2))\n        carry = total // 2\n    return ''.join(reversed(out))",
+    solution_example: "def add_binary(a, b):\n    i, j, carry = len(a) - 1, len(b) - 1, 0\n    out = []\n    while i >= 0 or j >= 0 or carry:\n        total = carry\n        if i >= 0:\n            total += int(a[i]); i -= 1\n        if j >= 0:\n            total += int(b[j]); j -= 1\n        out.append(str(total % 2))\n        carry = total // 2\n    return ''.join(reversed(out))\nprint(add_binary('11', '1'))\n",
+    next: Some("py-237-my-pow"), show_type_chips: false, micro_step: 236,
+};
+
+pub const PY237_MY_POW: CodingStep = CodingStep {
+    id: "py-237-my-pow", title: "DSA Pow(x, n)", objective: "Calcular x elevado a n con exponentiation by squaring.",
+    prompt_md: "**Pow(x, n)**\n\nSi `n` es negativo, invertí la base. Cuadrá y desplazá el exponente.\n\n**Micro-reto:**\n1. Definí `my_pow(x, n)`\n2. Imprimí `my_pow(2.0, 10)`",
+    starter_code: "# def my_pow(x, n):\n#     ...\n# print(my_pow(2.0, 10))\n",
+    pytest: "def test_my_pow(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('my_pow'))\n    assert abs(ns['my_pow'](2.0, 10) - 1024.0) < 1e-9\n    assert abs(ns['my_pow'](2.1, 3) - 9.261) < 1e-9\n    assert abs(ns['my_pow'](2.0, -2) - 0.25) < 1e-9\n    assert capsys.readouterr().out.strip() == '1024.0'\n",
+    hint: "def my_pow(x, n):\n    if n < 0:\n        x = 1 / x\n        n = -n\n    out = 1.0\n    while n:\n        if n & 1:\n            out *= x\n        x *= x\n        n >>= 1\n    return out",
+    solution_example: "def my_pow(x, n):\n    if n < 0:\n        x = 1 / x\n        n = -n\n    out = 1.0\n    while n:\n        if n & 1:\n            out *= x\n        x *= x\n        n >>= 1\n    return out\nprint(my_pow(2.0, 10))\n",
+    next: Some("py-238-trailing-zeroes"), show_type_chips: false, micro_step: 237,
+};
+
+pub const PY238_TRAILING_ZEROES: CodingStep = CodingStep {
+    id: "py-238-trailing-zeroes", title: "DSA Trailing Zeroes", objective: "Contar ceros finales de n! contando factores de 5.",
+    prompt_md: "**Factorial Trailing Zeroes**\n\nSumá `n//5 + n//25 + …` hasta agotar potencias de 5.\n\n**Micro-reto:**\n1. Definí `trailing_zeroes(n)`\n2. Imprimí `trailing_zeroes(25)`",
+    starter_code: "# def trailing_zeroes(n):\n#     ...\n# print(trailing_zeroes(25))\n",
+    pytest: "def test_trailing_zeroes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('trailing_zeroes'))\n    assert ns['trailing_zeroes'](3) == 0\n    assert ns['trailing_zeroes'](5) == 1\n    assert ns['trailing_zeroes'](25) == 6\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "def trailing_zeroes(n):\n    zeros = 0\n    while n:\n        n //= 5\n        zeros += n\n    return zeros",
+    solution_example: "def trailing_zeroes(n):\n    zeros = 0\n    while n:\n        n //= 5\n        zeros += n\n    return zeros\nprint(trailing_zeroes(25))\n",
+    next: None, show_type_chips: false, micro_step: 238,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3406,6 +3466,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY230_LETTER_COMBOS,
     &PY231_SUBSETS_II,
     &PY232_PALINDROME_PARTITION,
+    &PY233_REVERSE_INTEGER,
+    &PY234_PALINDROME_NUMBER,
+    &PY235_PLUS_ONE,
+    &PY236_ADD_BINARY,
+    &PY237_MY_POW,
+    &PY238_TRAILING_ZEROES,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4103,7 +4169,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py232_curriculum_chain() {
+    fn py203_to_py238_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4135,7 +4201,13 @@ mod tests {
             (229, "py-229-word-search", Some("py-230-letter-combos")),
             (230, "py-230-letter-combos", Some("py-231-subsets-ii")),
             (231, "py-231-subsets-ii", Some("py-232-palindrome-partition")),
-            (232, "py-232-palindrome-partition", None),
+            (232, "py-232-palindrome-partition", Some("py-233-reverse-integer")),
+            (233, "py-233-reverse-integer", Some("py-234-palindrome-number")),
+            (234, "py-234-palindrome-number", Some("py-235-plus-one")),
+            (235, "py-235-plus-one", Some("py-236-add-binary")),
+            (236, "py-236-add-binary", Some("py-237-my-pow")),
+            (237, "py-237-my-pow", Some("py-238-trailing-zeroes")),
+            (238, "py-238-trailing-zeroes", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
