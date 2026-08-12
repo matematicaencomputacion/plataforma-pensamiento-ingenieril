@@ -250,6 +250,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 242, step_id: "py-242-right-side" },
   { level_id: 243, step_id: "py-243-flatten-tree" },
   { level_id: 244, step_id: "py-244-validate-bst" },
+  { level_id: 245, step_id: "py-245-remove-nth" },
+  { level_id: 246, step_id: "py-246-reorder-list" },
+  { level_id: 247, step_id: "py-247-add-two-lists" },
+  { level_id: 248, step_id: "py-248-swap-pairs" },
+  { level_id: 249, step_id: "py-249-rotate-list" },
+  { level_id: 250, step_id: "py-250-palindrome-list" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
