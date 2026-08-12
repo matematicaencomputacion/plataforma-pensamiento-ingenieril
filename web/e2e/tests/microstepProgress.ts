@@ -256,6 +256,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 248, step_id: "py-248-swap-pairs" },
   { level_id: 249, step_id: "py-249-rotate-list" },
   { level_id: 250, step_id: "py-250-palindrome-list" },
+  { level_id: 251, step_id: "py-251-copy-random" },
+  { level_id: 252, step_id: "py-252-sort-list" },
+  { level_id: 253, step_id: "py-253-merge-two-lists" },
+  { level_id: 254, step_id: "py-254-intersection" },
+  { level_id: 255, step_id: "py-255-cycle-start" },
+  { level_id: 256, step_id: "py-256-remove-dupes-ii" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

@@ -3350,7 +3350,67 @@ pub const PY250_PALINDROME_LIST: CodingStep = CodingStep {
     pytest: "def test_palindrome_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_palindrome_list'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    assert ns['is_palindrome_list'](build([1, 2, 2, 1])) is True\n    assert ns['is_palindrome_list'](build([1, 2])) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
     hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef is_palindrome_list(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next; fast = fast.next.next\n    prev = None\n    while slow:\n        nxt = slow.next; slow.next = prev; prev = slow; slow = nxt\n    while prev:\n        if prev.data != head.data: return False\n        prev = prev.next; head = head.next\n    return True",
     solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data\n        self.next = next\n\ndef is_palindrome_list(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next; fast = fast.next.next\n    prev = None\n    while slow:\n        nxt = slow.next; slow.next = prev; prev = slow; slow = nxt\n    while prev:\n        if prev.data != head.data: return False\n        prev = prev.next; head = head.next\n    return True\n\nhead = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))\nprint(is_palindrome_list(head))\n",
-    next: None, show_type_chips: false, micro_step: 250,
+    next: Some("py-251-copy-random"), show_type_chips: false, micro_step: 250,
+};
+
+pub const PY251_COPY_RANDOM: CodingStep = CodingStep {
+    id: "py-251-copy-random", title: "DSA Copy Random List", objective: "Clonar una lista con puntero random en O(n) extra.",
+    prompt_md: "**Copy List with Random Pointer**\n\nDos pasadas con hash `original → clone`. Distinto de py-26 list-copy (arrays).\n\n**Micro-reto:**\n1. Definí `ListNode(data, next=None, random=None)` y `copy_random_list(head)`\n2. Lista `1→2` con randoms `[2, 1]`; imprimí `walk(copy)[1]` (esperado: `[1, 2]`)",
+    starter_code: "# class ListNode:\n#     ...\n# def copy_random_list(head):\n#     ...\n# def walk(head):\n#     ...\n# head = ...\n# print(walk(copy_random_list(head))[0])\n",
+    pytest: "def test_copy_random(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('copy_random_list'))\n    ListNode = ns['ListNode']\n    a = ListNode(1); b = ListNode(2)\n    a.next = b; a.random = b; b.random = a\n    copied = ns['copy_random_list'](a)\n    assert copied is not a and copied.next is not b\n    assert copied.data == 1 and copied.next.data == 2\n    assert copied.random.data == 2 and copied.next.random.data == 1\n    vals, rands = ns['walk'](copied)\n    assert vals == [1, 2] and rands == [2, 1]\n    assert capsys.readouterr().out.strip() == '[1, 2]'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None, random=None):\n        self.data = data; self.next = next; self.random = random\n\ndef walk(head):\n    vals, rands = [], []\n    while head:\n        vals.append(head.data)\n        rands.append(head.random.data if head.random else None)\n        head = head.next\n    return vals, rands\n\ndef copy_random_list(head):\n    if not head: return None\n    mapping = {}\n    cur = head\n    while cur:\n        mapping[cur] = ListNode(cur.data); cur = cur.next\n    cur = head\n    while cur:\n        mapping[cur].next = mapping.get(cur.next)\n        mapping[cur].random = mapping.get(cur.random)\n        cur = cur.next\n    return mapping[head]",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None, random=None):\n        self.data = data; self.next = next; self.random = random\n\ndef walk(head):\n    vals, rands = [], []\n    while head:\n        vals.append(head.data)\n        rands.append(head.random.data if head.random else None)\n        head = head.next\n    return vals, rands\n\ndef copy_random_list(head):\n    if not head: return None\n    mapping = {}\n    cur = head\n    while cur:\n        mapping[cur] = ListNode(cur.data); cur = cur.next\n    cur = head\n    while cur:\n        mapping[cur].next = mapping.get(cur.next)\n        mapping[cur].random = mapping.get(cur.random)\n        cur = cur.next\n    return mapping[head]\n\na = ListNode(1); b = ListNode(2)\na.next = b; a.random = b; b.random = a\ncopy = copy_random_list(a)\nprint(walk(copy)[0])\n",
+    next: Some("py-252-sort-list"), show_type_chips: false, micro_step: 251,
+};
+
+pub const PY252_SORT_LIST: CodingStep = CodingStep {
+    id: "py-252-sort-list", title: "DSA Sort List", objective: "Ordenar una lista enlazada con merge sort O(n log n).",
+    prompt_md: "**Sort List**\n\nPartí slow/fast, ordená mitades, merge. Distinto de py-25 list-sort (arrays in-place).\n\n**Micro-reto:**\n1. Definí `sort_list(head)`\n2. Lista `4→2→1→3`; imprimí `to_list(sort_list(head))` (esperado: `[1, 2, 3, 4]`)",
+    starter_code: "# class ListNode:\n#     ...\n# def sort_list(head):\n#     ...\n# def to_list(head):\n#     ...\n# print(to_list(sort_list(head)))\n",
+    pytest: "def test_sort_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('sort_list'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    def walk(head):\n        out = []\n        while head:\n            out.append(head.data); head = head.next\n        return out\n    head = build([4, 2, 1, 3])\n    assert walk(ns['sort_list'](head)) == [1, 2, 3, 4]\n    assert walk(ns['sort_list'](build([-1, 5, 3, 4, 0]))) == [-1, 0, 3, 4, 5]\n    assert capsys.readouterr().out.strip() == '[1, 2, 3, 4]'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef sort_list(head):\n    if not head or not head.next: return head\n    slow, fast = head, head.next\n    while fast and fast.next:\n        slow = slow.next; fast = fast.next.next\n    mid = slow.next; slow.next = None\n    return merge(sort_list(head), sort_list(mid))\n\ndef merge(a, b):\n    dummy = ListNode(0); cur = dummy\n    while a and b:\n        if a.data <= b.data: cur.next = a; a = a.next\n        else: cur.next = b; b = b.next\n        cur = cur.next\n    cur.next = a or b\n    return dummy.next",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef merge(a, b):\n    dummy = ListNode(0); cur = dummy\n    while a and b:\n        if a.data <= b.data: cur.next = a; a = a.next\n        else: cur.next = b; b = b.next\n        cur = cur.next\n    cur.next = a or b\n    return dummy.next\n\ndef sort_list(head):\n    if not head or not head.next: return head\n    slow, fast = head, head.next\n    while fast and fast.next:\n        slow = slow.next; fast = fast.next.next\n    mid = slow.next; slow.next = None\n    return merge(sort_list(head), sort_list(mid))\n\nhead = ListNode(4, ListNode(2, ListNode(1, ListNode(3))))\nprint(to_list(sort_list(head)))\n",
+    next: Some("py-253-merge-two-lists"), show_type_chips: false, micro_step: 252,
+};
+
+pub const PY253_MERGE_TWO_LISTS: CodingStep = CodingStep {
+    id: "py-253-merge-two-lists", title: "DSA Merge Two Lists", objective: "Fusionar dos listas enlazadas ordenadas en una sola cadena.",
+    prompt_md: "**Merge Two Sorted Lists**\n\nDummy + elegir el menor `next`. Distinto de py-162 (arrays) y py-193 (k listas con heap).\n\n**Micro-reto:**\n1. Definí `merge_two_lists(l1, l2)`\n2. `1→2→4` + `1→3→4`; imprimí `to_list(...)` (esperado: `[1, 1, 2, 3, 4, 4]`)",
+    starter_code: "# class ListNode:\n#     ...\n# def merge_two_lists(l1, l2):\n#     ...\n# def to_list(head):\n#     ...\n# print(to_list(merge_two_lists(l1, l2)))\n",
+    pytest: "def test_merge_two_lists(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('merge_two_lists'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    def walk(head):\n        out = []\n        while head:\n            out.append(head.data); head = head.next\n        return out\n    l1 = build([1, 2, 4]); l2 = build([1, 3, 4])\n    assert walk(ns['merge_two_lists'](l1, l2)) == [1, 1, 2, 3, 4, 4]\n    assert walk(ns['merge_two_lists'](None, build([0]))) == [0]\n    assert capsys.readouterr().out.strip() == '[1, 1, 2, 3, 4, 4]'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef merge_two_lists(l1, l2):\n    dummy = ListNode(0); cur = dummy\n    while l1 and l2:\n        if l1.data <= l2.data: cur.next = l1; l1 = l1.next\n        else: cur.next = l2; l2 = l2.next\n        cur = cur.next\n    cur.next = l1 or l2\n    return dummy.next",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef merge_two_lists(l1, l2):\n    dummy = ListNode(0); cur = dummy\n    while l1 and l2:\n        if l1.data <= l2.data: cur.next = l1; l1 = l1.next\n        else: cur.next = l2; l2 = l2.next\n        cur = cur.next\n    cur.next = l1 or l2\n    return dummy.next\n\nl1 = ListNode(1, ListNode(2, ListNode(4)))\nl2 = ListNode(1, ListNode(3, ListNode(4)))\nprint(to_list(merge_two_lists(l1, l2)))\n",
+    next: Some("py-254-intersection"), show_type_chips: false, micro_step: 253,
+};
+
+pub const PY254_INTERSECTION: CodingStep = CodingStep {
+    id: "py-254-intersection", title: "DSA List Intersection", objective: "Encontrar el nodo donde dos listas enlazadas convergen.",
+    prompt_md: "**Intersection of Two Linked Lists**\n\nTruco A/B: cuando un puntero llega al final, saltá a la otra cabeza.\n\n**Micro-reto:**\n1. Definí `get_intersection_node(head_a, head_b)`\n2. Compartí cola `3→4`; imprimí `.data` del nodo común (esperado: `3`)",
+    starter_code: "# class ListNode:\n#     ...\n# def get_intersection_node(head_a, head_b):\n#     ...\n# head_a = ...\n# head_b = ...\n# print(get_intersection_node(head_a, head_b).data)\n",
+    pytest: "def test_intersection(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('get_intersection_node'))\n    ListNode = ns['ListNode']\n    shared = ListNode(3, ListNode(4))\n    a = ListNode(1, ListNode(2, shared))\n    b = ListNode(5, shared)\n    node = ns['get_intersection_node'](a, b)\n    assert node is shared and node.data == 3\n    c = ListNode(9)\n    assert ns['get_intersection_node'](a, c) is None\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef get_intersection_node(head_a, head_b):\n    a, b = head_a, head_b\n    while a is not b:\n        a = a.next if a else head_b\n        b = b.next if b else head_a\n    return a",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef get_intersection_node(head_a, head_b):\n    a, b = head_a, head_b\n    while a is not b:\n        a = a.next if a else head_b\n        b = b.next if b else head_a\n    return a\n\nshared = ListNode(3, ListNode(4))\nhead_a = ListNode(1, ListNode(2, shared))\nhead_b = ListNode(5, shared)\nprint(get_intersection_node(head_a, head_b).data)\n",
+    next: Some("py-255-cycle-start"), show_type_chips: false, micro_step: 254,
+};
+
+pub const PY255_CYCLE_START: CodingStep = CodingStep {
+    id: "py-255-cycle-start", title: "DSA Cycle Start", objective: "Devolver el nodo donde comienza un ciclo (Floyd fase II).",
+    prompt_md: "**Linked List Cycle II**\n\nTras encontrar slow==fast, reiniciá un puntero al head. Distinto de py-163 (solo bool).\n\n**Micro-reto:**\n1. Definí `detect_cycle_start(head)`\n2. Ciclo en nodo `2`; imprimí `.data` (esperado: `2`)",
+    starter_code: "# class ListNode:\n#     ...\n# def detect_cycle_start(head):\n#     ...\n# head = ...\n# print(detect_cycle_start(head).data)\n",
+    pytest: "def test_cycle_start(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('detect_cycle_start'))\n    ListNode = ns['ListNode']\n    n1 = ListNode(1); n2 = ListNode(2); n3 = ListNode(3)\n    n1.next = n2; n2.next = n3; n3.next = n2\n    start = ns['detect_cycle_start'](n1)\n    assert start is n2 and start.data == 2\n    assert ns['detect_cycle_start'](ListNode(1)) is None\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef detect_cycle_start(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next; fast = fast.next.next\n        if slow is fast:\n            slow = head\n            while slow is not fast:\n                slow = slow.next; fast = fast.next\n            return slow\n    return None",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef detect_cycle_start(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next; fast = fast.next.next\n        if slow is fast:\n            slow = head\n            while slow is not fast:\n                slow = slow.next; fast = fast.next\n            return slow\n    return None\n\nn1 = ListNode(1); n2 = ListNode(2); n3 = ListNode(3)\nn1.next = n2; n2.next = n3; n3.next = n2\nprint(detect_cycle_start(n1).data)\n",
+    next: Some("py-256-remove-dupes-ii"), show_type_chips: false, micro_step: 255,
+};
+
+pub const PY256_REMOVE_DUPES_II: CodingStep = CodingStep {
+    id: "py-256-remove-dupes-ii", title: "DSA Remove Dupes II", objective: "Eliminar todos los nodos cuyo valor aparece más de una vez en lista ordenada.",
+    prompt_md: "**Remove Duplicates from Sorted List II**\n\nDummy: si `prev.next` repite, saltá todo el bloque. Distinto de dedupe simple (keep one).\n\n**Micro-reto:**\n1. Definí `delete_duplicates(head)`\n2. `1→1→1→2→3→3`; imprimí `to_list(...)` (esperado: `[2]`)",
+    starter_code: "# class ListNode:\n#     ...\n# def delete_duplicates(head):\n#     ...\n# def to_list(head):\n#     ...\n# print(to_list(delete_duplicates(head)))\n",
+    pytest: "def test_remove_dupes_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('delete_duplicates'))\n    ListNode = ns['ListNode']\n    def build(vals):\n        dummy = ListNode(0); cur = dummy\n        for v in vals:\n            cur.next = ListNode(v); cur = cur.next\n        return dummy.next\n    def walk(head):\n        out = []\n        while head:\n            out.append(head.data); head = head.next\n        return out\n    assert walk(ns['delete_duplicates'](build([1, 1, 1, 2, 3, 3]))) == [2]\n    assert walk(ns['delete_duplicates'](build([1, 1, 2, 2]))) == []\n    assert capsys.readouterr().out.strip() == '[2]'\n",
+    hint: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef delete_duplicates(head):\n    dummy = ListNode(0, head); prev = dummy\n    while prev.next:\n        if prev.next.next and prev.next.data == prev.next.next.data:\n            val = prev.next.data\n            while prev.next and prev.next.data == val:\n                prev.next = prev.next.next\n        else:\n            prev = prev.next\n    return dummy.next",
+    solution_example: "class ListNode:\n    def __init__(self, data=0, next=None):\n        self.data = data; self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.data); head = head.next\n    return out\n\ndef delete_duplicates(head):\n    dummy = ListNode(0, head); prev = dummy\n    while prev.next:\n        if prev.next.next and prev.next.data == prev.next.next.data:\n            val = prev.next.data\n            while prev.next and prev.next.data == val:\n                prev.next = prev.next.next\n        else:\n            prev = prev.next\n    return dummy.next\n\nhead = ListNode(1, ListNode(1, ListNode(1, ListNode(2, ListNode(3, ListNode(3))))))\nprint(to_list(delete_duplicates(head)))\n",
+    next: None, show_type_chips: false, micro_step: 256,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3604,6 +3664,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY248_SWAP_PAIRS,
     &PY249_ROTATE_LIST,
     &PY250_PALINDROME_LIST,
+    &PY251_COPY_RANDOM,
+    &PY252_SORT_LIST,
+    &PY253_MERGE_TWO_LISTS,
+    &PY254_INTERSECTION,
+    &PY255_CYCLE_START,
+    &PY256_REMOVE_DUPES_II,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4301,7 +4367,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py250_curriculum_chain() {
+    fn py203_to_py256_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4351,7 +4417,13 @@ mod tests {
             (247, "py-247-add-two-lists", Some("py-248-swap-pairs")),
             (248, "py-248-swap-pairs", Some("py-249-rotate-list")),
             (249, "py-249-rotate-list", Some("py-250-palindrome-list")),
-            (250, "py-250-palindrome-list", None),
+            (250, "py-250-palindrome-list", Some("py-251-copy-random")),
+            (251, "py-251-copy-random", Some("py-252-sort-list")),
+            (252, "py-252-sort-list", Some("py-253-merge-two-lists")),
+            (253, "py-253-merge-two-lists", Some("py-254-intersection")),
+            (254, "py-254-intersection", Some("py-255-cycle-start")),
+            (255, "py-255-cycle-start", Some("py-256-remove-dupes-ii")),
+            (256, "py-256-remove-dupes-ii", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
