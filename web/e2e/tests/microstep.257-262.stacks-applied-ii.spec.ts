@@ -151,7 +151,7 @@ print(car_fleet(12, [10, 8, 0, 5, 3], [2, 4, 1, 1, 3]))
 
 print(largest_rectangle([2, 1, 5, 6, 2, 3]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-263-open-lock/,
     cursorAfter: "263",
   },
 ];
