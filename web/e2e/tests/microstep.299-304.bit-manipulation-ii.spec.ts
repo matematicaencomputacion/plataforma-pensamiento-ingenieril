@@ -22,154 +22,112 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 293,
-    id: "py-293-fruit-baskets",
-    title: "DSA Fruit Baskets",
-    solution: `from collections import defaultdict
+    micro: 299,
+    id: "py-299-power-of-two",
+    title: "DSA Power of Two",
+    solution: `def is_power_of_two(n):
+    return n > 0 and (n & (n - 1)) == 0
 
-def total_fruit(fruits):
-    count = defaultdict(int)
-    left = best = 0
-    for right, f in enumerate(fruits):
-        count[f] += 1
-        while len(count) > 2:
-            count[fruits[left]] -= 1
-            if count[fruits[left]] == 0:
-                del count[fruits[left]]
-            left += 1
-        best = max(best, right - left + 1)
-    return best
-
-print(total_fruit([1, 2, 1]))
+print(is_power_of_two(16))
 `,
-    nextUrl: /\/learn\/py-294-product-less-k/,
-    cursorAfter: "294",
+    nextUrl: /\/learn\/py-300-hamming-distance/,
+    cursorAfter: "300",
   },
   {
-    micro: 294,
-    id: "py-294-product-less-k",
-    title: "DSA Product Less Than K",
-    solution: `def num_subarray_product_less_than_k(nums, k):
-    if k <= 1:
-        return 0
-    prod = 1
-    left = ans = 0
-    for right, x in enumerate(nums):
-        prod *= x
-        while prod >= k:
-            prod //= nums[left]
-            left += 1
-        ans += right - left + 1
-    return ans
+    micro: 300,
+    id: "py-300-hamming-distance",
+    title: "DSA Hamming Distance",
+    solution: `def hamming_distance(x, y):
+    xor = x ^ y
+    dist = 0
+    while xor:
+        dist += xor & 1
+        xor >>= 1
+    return dist
 
-print(num_subarray_product_less_than_k([10, 5, 2, 6], 100))
+print(hamming_distance(1, 4))
 `,
-    nextUrl: /\/learn\/py-295-ones-iii/,
-    cursorAfter: "295",
+    nextUrl: /\/learn\/py-301-sum-two-int/,
+    cursorAfter: "301",
   },
   {
-    micro: 295,
-    id: "py-295-ones-iii",
-    title: "DSA Max Consecutive Ones III",
-    solution: `def longest_ones(nums, k):
-    left = zeros = best = 0
-    for right, x in enumerate(nums):
-        if x == 0:
-            zeros += 1
-        while zeros > k:
-            if nums[left] == 0:
-                zeros -= 1
-            left += 1
-        best = max(best, right - left + 1)
-    return best
+    micro: 301,
+    id: "py-301-sum-two-int",
+    title: "DSA Sum Two Integers",
+    solution: `MASK = 0xFFFFFFFF
 
-print(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))
+def get_sum(a, b):
+    while b != 0:
+        carry = (a & b) & MASK
+        a = (a ^ b) & MASK
+        b = (carry << 1) & MASK
+    return a if a <= 0x7FFFFFFF else ~(a ^ MASK)
+
+print(get_sum(1, 2))
 `,
-    nextUrl: /\/learn\/py-296-k-distinct/,
-    cursorAfter: "296",
+    nextUrl: /\/learn\/py-302-range-bitwise/,
+    cursorAfter: "302",
   },
   {
-    micro: 296,
-    id: "py-296-k-distinct",
-    title: "DSA Longest K Distinct",
-    solution: `from collections import defaultdict
+    micro: 302,
+    id: "py-302-range-bitwise",
+    title: "DSA Range Bitwise AND",
+    solution: `def range_bitwise_and(left, right):
+    shift = 0
+    while left < right:
+        left >>= 1
+        right >>= 1
+        shift += 1
+    return left << shift
 
-def length_of_longest_substring_k_distinct(s, k):
-    if k == 0:
-        return 0
-    count = defaultdict(int)
-    left = best = 0
-    for right, ch in enumerate(s):
-        count[ch] += 1
-        while len(count) > k:
-            count[s[left]] -= 1
-            if count[s[left]] == 0:
-                del count[s[left]]
-            left += 1
-        best = max(best, right - left + 1)
-    return best
-
-print(length_of_longest_substring_k_distinct("eceba", 2))
+print(range_bitwise_and(5, 7))
 `,
-    nextUrl: /\/learn\/py-297-check-inclusion/,
-    cursorAfter: "297",
+    nextUrl: /\/learn\/py-303-single-number-iii/,
+    cursorAfter: "303",
   },
   {
-    micro: 297,
-    id: "py-297-check-inclusion",
-    title: "DSA Check Inclusion",
-    solution: `from collections import Counter
-
-def check_inclusion(s1, s2):
-    need = Counter(s1)
-    n = len(s1)
-    window = Counter()
-    for i, ch in enumerate(s2):
-        window[ch] += 1
-        if i >= n:
-            old = s2[i - n]
-            window[old] -= 1
-            if not window[old]:
-                del window[old]
-        if window == need:
-            return True
-    return False
-
-print(check_inclusion("ab", "eidbaooo"))
-`,
-    nextUrl: /\/learn\/py-298-sort-colors/,
-    cursorAfter: "298",
-  },
-  {
-    micro: 298,
-    id: "py-298-sort-colors",
-    title: "DSA Sort Colors",
-    solution: `def sort_colors(nums):
-    lo = mid = 0
-    hi = len(nums) - 1
-    while mid <= hi:
-        if nums[mid] == 0:
-            nums[lo], nums[mid] = nums[mid], nums[lo]
-            lo += 1
-            mid += 1
-        elif nums[mid] == 1:
-            mid += 1
+    micro: 303,
+    id: "py-303-single-number-iii",
+    title: "DSA Single Number III",
+    solution: `def single_number_iii(nums):
+    xor = 0
+    for x in nums:
+        xor ^= x
+    bit = xor & -xor
+    a = b = 0
+    for x in nums:
+        if x & bit:
+            a ^= x
         else:
-            nums[mid], nums[hi] = nums[hi], nums[mid]
-            hi -= 1
+            b ^= x
+    return sorted([a, b])
 
-nums = [2, 0, 2, 1, 1, 0]
-sort_colors(nums)
-print(nums)
+print(single_number_iii([1, 2, 1, 3, 2, 5]))
 `,
-    nextUrl: /\/learn\/py-299-power-of-two/,
-    cursorAfter: "299",
+    nextUrl: /\/learn\/py-304-hamming-weight/,
+    cursorAfter: "304",
+  },
+  {
+    micro: 304,
+    id: "py-304-hamming-weight",
+    title: "DSA Hamming Weight",
+    solution: `def hamming_weight(n):
+    count = 0
+    while n:
+        n &= n - 1
+        count += 1
+    return count
+
+print(hamming_weight(11))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "305",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-29[3-8]-/);
+    expect(step.id).toMatch(/^py-299-|^py-30[0-4]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -199,7 +157,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 293–298 · sliding window II", () => {
+test.describe("micro-steps 299–304 · bit manipulation II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

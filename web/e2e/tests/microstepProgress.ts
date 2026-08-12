@@ -304,6 +304,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 296, step_id: "py-296-k-distinct" },
   { level_id: 297, step_id: "py-297-check-inclusion" },
   { level_id: 298, step_id: "py-298-sort-colors" },
+  { level_id: 299, step_id: "py-299-power-of-two" },
+  { level_id: 300, step_id: "py-300-hamming-distance" },
+  { level_id: 301, step_id: "py-301-sum-two-int" },
+  { level_id: 302, step_id: "py-302-range-bitwise" },
+  { level_id: 303, step_id: "py-303-single-number-iii" },
+  { level_id: 304, step_id: "py-304-hamming-weight" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
