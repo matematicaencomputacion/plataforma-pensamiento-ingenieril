@@ -3110,7 +3110,67 @@ pub const PY226_REVERSE_BITS: CodingStep = CodingStep {
     pytest: "def test_reverse_bits(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['reverse_bits'](43261596) == 964176192\n    assert ns['reverse_bits'](0) == 0\n    assert capsys.readouterr().out.strip() == '964176192'\n",
     hint: "def reverse_bits(n):\n    out = 0\n    for _ in range(32): out = (out << 1) | (n & 1); n >>= 1\n    return out",
     solution_example: "def reverse_bits(n):\n    out = 0\n    for _ in range(32): out = (out << 1) | (n & 1); n >>= 1\n    return out\nprint(reverse_bits(43261596))\n",
-    next: None, show_type_chips: false, micro_step: 226,
+    next: Some("py-227-generate-parens"), show_type_chips: false, micro_step: 226,
+};
+
+pub const PY227_GENERATE_PARENS: CodingStep = CodingStep {
+    id: "py-227-generate-parens", title: "DSA Generar Paréntesis", objective: "Generar todas las combinaciones válidas de n pares de paréntesis.",
+    prompt_md: "**Generate Parentheses**\n\nBacktracking: sumá `(` si quedan abiertos; sumá `)` si cierran menos que abren.\n\n**Micro-reto:**\n1. Definí `generate_parenthesis(n)`\n2. Imprimí `generate_parenthesis(3)`",
+    starter_code: "# def generate_parenthesis(n):\n#     ...\n# print(generate_parenthesis(3))\n",
+    pytest: "def test_generate_parens(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('generate_parenthesis'))\n    assert ns['generate_parenthesis'](3) == ['((()))', '(()())', '(())()', '()(())', '()()()']\n    assert ns['generate_parenthesis'](1) == ['()']\n    assert capsys.readouterr().out.strip() == \"['((()))', '(()())', '(())()', '()(())', '()()()']\"\n",
+    hint: "def generate_parenthesis(n):\n    out = []\n    def bt(s, open_n, close_n):\n        if len(s) == 2 * n:\n            out.append(s); return\n        if open_n < n: bt(s + '(', open_n + 1, close_n)\n        if close_n < open_n: bt(s + ')', open_n, close_n + 1)\n    bt('', 0, 0)\n    return out",
+    solution_example: "def generate_parenthesis(n):\n    out = []\n    def bt(s, open_n, close_n):\n        if len(s) == 2 * n:\n            out.append(s); return\n        if open_n < n: bt(s + '(', open_n + 1, close_n)\n        if close_n < open_n: bt(s + ')', open_n, close_n + 1)\n    bt('', 0, 0)\n    return out\nprint(generate_parenthesis(3))\n",
+    next: Some("py-228-combination-sum"), show_type_chips: false, micro_step: 227,
+};
+
+pub const PY228_COMBINATION_SUM: CodingStep = CodingStep {
+    id: "py-228-combination-sum", title: "DSA Combination Sum", objective: "Encontrar combinaciones que sumen el target reusando candidatos.",
+    prompt_md: "**Combination Sum**\n\nBacktracking ordenado: reusá el índice actual; cortá si el candidato supera el resto.\n\n**Micro-reto:**\n1. Definí `combination_sum(candidates, target)`\n2. Imprimí `combination_sum([2, 3, 6, 7], 7)`",
+    starter_code: "# def combination_sum(candidates, target):\n#     ...\n# print(combination_sum([2, 3, 6, 7], 7))\n",
+    pytest: "def test_combination_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('combination_sum'))\n    assert ns['combination_sum']([2, 3, 6, 7], 7) == [[2, 2, 3], [7]]\n    assert ns['combination_sum']([2, 3, 5], 8) == [[2, 2, 2, 2], [2, 3, 3], [3, 5]]\n    assert capsys.readouterr().out.strip() == '[[2, 2, 3], [7]]'\n",
+    hint: "def combination_sum(candidates, target):\n    candidates = sorted(candidates)\n    out = []\n    def bt(start, remain, path):\n        if remain == 0:\n            out.append(path[:]); return\n        for i in range(start, len(candidates)):\n            value = candidates[i]\n            if value > remain: break\n            path.append(value); bt(i, remain - value, path); path.pop()\n    bt(0, target, [])\n    return out",
+    solution_example: "def combination_sum(candidates, target):\n    candidates = sorted(candidates)\n    out = []\n    def bt(start, remain, path):\n        if remain == 0:\n            out.append(path[:]); return\n        for i in range(start, len(candidates)):\n            value = candidates[i]\n            if value > remain: break\n            path.append(value); bt(i, remain - value, path); path.pop()\n    bt(0, target, [])\n    return out\nprint(combination_sum([2, 3, 6, 7], 7))\n",
+    next: Some("py-229-word-search"), show_type_chips: false, micro_step: 228,
+};
+
+pub const PY229_WORD_SEARCH: CodingStep = CodingStep {
+    id: "py-229-word-search", title: "DSA Word Search", objective: "Buscar una palabra en una grilla con DFS adyacente sin reusar celdas.",
+    prompt_md: "**Word Search**\n\nDFS 4-dir: marcá visitado, explorá, restaurá. Distinto de word-ladder (py-208).\n\n**Micro-reto:**\n1. Definí `exist(board, word)`\n2. Imprimí `exist([['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'ABCCED')`",
+    starter_code: "# def exist(board, word):\n#     ...\n# print(exist([['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'ABCCED'))\n",
+    pytest: "def test_word_search(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('exist'))\n    board = [['A','B','C','E'],['S','F','C','S'],['A','D','E','E']]\n    assert ns['exist']([row[:] for row in board], 'ABCCED') is True\n    assert ns['exist']([row[:] for row in board], 'SEE') is True\n    assert ns['exist']([row[:] for row in board], 'ABCB') is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "def exist(board, word):\n    rows, cols = len(board), len(board[0])\n    def dfs(i, j, k):\n        if k == len(word): return True\n        if i < 0 or j < 0 or i >= rows or j >= cols or board[i][j] != word[k]: return False\n        tmp = board[i][j]; board[i][j] = '#'\n        ok = dfs(i + 1, j, k + 1) or dfs(i - 1, j, k + 1) or dfs(i, j + 1, k + 1) or dfs(i, j - 1, k + 1)\n        board[i][j] = tmp\n        return ok\n    return any(dfs(i, j, 0) for i in range(rows) for j in range(cols))",
+    solution_example: "def exist(board, word):\n    rows, cols = len(board), len(board[0])\n    def dfs(i, j, k):\n        if k == len(word): return True\n        if i < 0 or j < 0 or i >= rows or j >= cols or board[i][j] != word[k]: return False\n        tmp = board[i][j]; board[i][j] = '#'\n        ok = dfs(i + 1, j, k + 1) or dfs(i - 1, j, k + 1) or dfs(i, j + 1, k + 1) or dfs(i, j - 1, k + 1)\n        board[i][j] = tmp\n        return ok\n    return any(dfs(i, j, 0) for i in range(rows) for j in range(cols))\nprint(exist([['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'ABCCED'))\n",
+    next: Some("py-230-letter-combos"), show_type_chips: false, micro_step: 229,
+};
+
+pub const PY230_LETTER_COMBOS: CodingStep = CodingStep {
+    id: "py-230-letter-combos", title: "DSA Letter Combinations", objective: "Expandir dígitos del teclado a todas las combinaciones de letras.",
+    prompt_md: "**Letter Combinations of a Phone Number**\n\nMapa 2–9 → letras; productá cada dígito sobre el prefijo actual.\n\n**Micro-reto:**\n1. Definí `letter_combinations(digits)`\n2. Imprimí `letter_combinations('23')`",
+    starter_code: "# def letter_combinations(digits):\n#     ...\n# print(letter_combinations('23'))\n",
+    pytest: "def test_letter_combos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('letter_combinations'))\n    assert ns['letter_combinations']('23') == ['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf']\n    assert ns['letter_combinations']('') == []\n    assert capsys.readouterr().out.strip() == \"['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf']\"\n",
+    hint: "def letter_combinations(digits):\n    if not digits: return []\n    phone = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}\n    out = ['']\n    for digit in digits:\n        out = [prefix + ch for prefix in out for ch in phone[digit]]\n    return out",
+    solution_example: "def letter_combinations(digits):\n    if not digits: return []\n    phone = {'2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl', '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'}\n    out = ['']\n    for digit in digits:\n        out = [prefix + ch for prefix in out for ch in phone[digit]]\n    return out\nprint(letter_combinations('23'))\n",
+    next: Some("py-231-subsets-ii"), show_type_chips: false, micro_step: 230,
+};
+
+pub const PY231_SUBSETS_II: CodingStep = CodingStep {
+    id: "py-231-subsets-ii", title: "DSA Subsets II", objective: "Generar todos los subconjuntos únicos a partir de un array con duplicados.",
+    prompt_md: "**Subsets II**\n\nOrdená y saltá duplicados en el mismo nivel. Distinto de subsets (py-172).\n\n**Micro-reto:**\n1. Definí `subsets_with_dup(nums)`\n2. Imprimí `subsets_with_dup([1, 2, 2])`",
+    starter_code: "# def subsets_with_dup(nums):\n#     ...\n# print(subsets_with_dup([1, 2, 2]))\n",
+    pytest: "def test_subsets_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('subsets_with_dup'))\n    assert ns['subsets_with_dup']([1, 2, 2]) == [[], [1], [1, 2], [1, 2, 2], [2], [2, 2]]\n    assert ns['subsets_with_dup']([0]) == [[], [0]]\n    assert capsys.readouterr().out.strip() == '[[], [1], [1, 2], [1, 2, 2], [2], [2, 2]]'\n",
+    hint: "def subsets_with_dup(nums):\n    nums = sorted(nums)\n    out = []\n    def bt(start, path):\n        out.append(path[:])\n        for i in range(start, len(nums)):\n            if i > start and nums[i] == nums[i - 1]: continue\n            path.append(nums[i]); bt(i + 1, path); path.pop()\n    bt(0, [])\n    return out",
+    solution_example: "def subsets_with_dup(nums):\n    nums = sorted(nums)\n    out = []\n    def bt(start, path):\n        out.append(path[:])\n        for i in range(start, len(nums)):\n            if i > start and nums[i] == nums[i - 1]: continue\n            path.append(nums[i]); bt(i + 1, path); path.pop()\n    bt(0, [])\n    return out\nprint(subsets_with_dup([1, 2, 2]))\n",
+    next: Some("py-232-palindrome-partition"), show_type_chips: false, micro_step: 231,
+};
+
+pub const PY232_PALINDROME_PARTITION: CodingStep = CodingStep {
+    id: "py-232-palindrome-partition", title: "DSA Palindrome Partition", objective: "Particionar un string en todos los cortes donde cada pieza es palíndromo.",
+    prompt_md: "**Palindrome Partitioning**\n\nBacktracking: en cada índice, cortá solo si `s[start:end]` es palíndromo.\n\n**Micro-reto:**\n1. Definí `partition(s)`\n2. Imprimí `partition('aab')`",
+    starter_code: "# def partition(s):\n#     ...\n# print(partition('aab'))\n",
+    pytest: "def test_palindrome_partition(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('partition'))\n    assert ns['partition']('aab') == [['a', 'a', 'b'], ['aa', 'b']]\n    assert ns['partition']('a') == [['a']]\n    assert capsys.readouterr().out.strip() == \"[['a', 'a', 'b'], ['aa', 'b']]\"\n",
+    hint: "def partition(s):\n    out = []\n    def is_pal(left, right):\n        while left < right:\n            if s[left] != s[right]: return False\n            left += 1; right -= 1\n        return True\n    def bt(start, path):\n        if start == len(s):\n            out.append(path[:]); return\n        for end in range(start, len(s)):\n            if is_pal(start, end):\n                path.append(s[start:end + 1]); bt(end + 1, path); path.pop()\n    bt(0, [])\n    return out",
+    solution_example: "def partition(s):\n    out = []\n    def is_pal(left, right):\n        while left < right:\n            if s[left] != s[right]: return False\n            left += 1; right -= 1\n        return True\n    def bt(start, path):\n        if start == len(s):\n            out.append(path[:]); return\n        for end in range(start, len(s)):\n            if is_pal(start, end):\n                path.append(s[start:end + 1]); bt(end + 1, path); path.pop()\n    bt(0, [])\n    return out\nprint(partition('aab'))\n",
+    next: None, show_type_chips: false, micro_step: 232,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3340,6 +3400,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY224_SINGLE_NUMBER_II,
     &PY225_COUNTING_BITS,
     &PY226_REVERSE_BITS,
+    &PY227_GENERATE_PARENS,
+    &PY228_COMBINATION_SUM,
+    &PY229_WORD_SEARCH,
+    &PY230_LETTER_COMBOS,
+    &PY231_SUBSETS_II,
+    &PY232_PALINDROME_PARTITION,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4037,7 +4103,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py226_curriculum_chain() {
+    fn py203_to_py232_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4063,7 +4129,13 @@ mod tests {
             (223, "py-223-meeting-rooms-ii", Some("py-224-single-number-ii")),
             (224, "py-224-single-number-ii", Some("py-225-counting-bits")),
             (225, "py-225-counting-bits", Some("py-226-reverse-bits")),
-            (226, "py-226-reverse-bits", None),
+            (226, "py-226-reverse-bits", Some("py-227-generate-parens")),
+            (227, "py-227-generate-parens", Some("py-228-combination-sum")),
+            (228, "py-228-combination-sum", Some("py-229-word-search")),
+            (229, "py-229-word-search", Some("py-230-letter-combos")),
+            (230, "py-230-letter-combos", Some("py-231-subsets-ii")),
+            (231, "py-231-subsets-ii", Some("py-232-palindrome-partition")),
+            (232, "py-232-palindrome-partition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
