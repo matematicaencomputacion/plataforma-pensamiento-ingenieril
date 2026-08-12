@@ -280,6 +280,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 272, step_id: "py-272-find-median" },
   { level_id: 273, step_id: "py-273-kth-matrix" },
   { level_id: 274, step_id: "py-274-network-delay" },
+  { level_id: 275, step_id: "py-275-course-order" },
+  { level_id: 276, step_id: "py-276-cheapest-flights" },
+  { level_id: 277, step_id: "py-277-redundant-edge" },
+  { level_id: 278, step_id: "py-278-accounts-merge" },
+  { level_id: 279, step_id: "py-279-alien-dict" },
+  { level_id: 280, step_id: "py-280-min-cost-points" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

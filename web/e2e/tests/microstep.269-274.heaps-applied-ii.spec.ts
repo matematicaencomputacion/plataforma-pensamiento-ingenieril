@@ -165,7 +165,7 @@ def network_delay_time(times, n, k):
 
 print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-275-course-order/,
     cursorAfter: "275",
   },
 ];
