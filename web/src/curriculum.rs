@@ -3530,7 +3530,67 @@ pub const PY268_TIME_TICKETS: CodingStep = CodingStep {
     pytest: "def test_time_tickets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('time_required'))\n    assert ns['time_required']([2, 3, 2], 2) == 6\n    assert ns['time_required']([5, 1, 1, 1], 0) == 8\n    assert ns['time_required']([1], 0) == 1\n    assert capsys.readouterr().out.strip() == '6'\n",
     hint: "def time_required(tickets, k):\n    time = 0\n    for i, t in enumerate(tickets):\n        if i <= k: time += min(t, tickets[k])\n        else: time += min(t, tickets[k] - 1)\n    return time\nprint(time_required([2, 3, 2], 2))",
     solution_example: "def time_required(tickets, k):\n    time = 0\n    for i, t in enumerate(tickets):\n        if i <= k: time += min(t, tickets[k])\n        else: time += min(t, tickets[k] - 1)\n    return time\nprint(time_required([2, 3, 2], 2))\n",
-    next: None, show_type_chips: false, micro_step: 268,
+    next: Some("py-269-last-stone"), show_type_chips: false, micro_step: 268,
+};
+
+pub const PY269_LAST_STONE: CodingStep = CodingStep {
+    id: "py-269-last-stone", title: "DSA Last Stone Weight", objective: "Simular choques de piedras con un max-heap hasta quedar ≤1.",
+    prompt_md: "**Last Stone Weight**\n\nSiempre chocá las dos más pesadas; si difieren, reinsertá la diferencia. Distinto de py-113 (heap intro).\n\n**Micro-reto:**\n1. Definí `last_stone_weight(stones)`\n2. `[2,7,4,1,8,1]`; imprimí el peso final (esperado: `1`)",
+    starter_code: "# import heapq\n# def last_stone_weight(stones):\n#     ...\n# print(last_stone_weight([2, 7, 4, 1, 8, 1]))\n",
+    pytest: "def test_last_stone(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('last_stone_weight'))\n    assert ns['last_stone_weight']([2, 7, 4, 1, 8, 1]) == 1\n    assert ns['last_stone_weight']([1]) == 1\n    assert ns['last_stone_weight']([2, 2]) == 0\n    assert capsys.readouterr().out.strip() == '1'\n",
+    hint: "import heapq\n\ndef last_stone_weight(stones):\n    heap = [-s for s in stones]\n    heapq.heapify(heap)\n    while len(heap) > 1:\n        a = -heapq.heappop(heap); b = -heapq.heappop(heap)\n        if a != b: heapq.heappush(heap, -(a - b))\n    return -heap[0] if heap else 0\nprint(last_stone_weight([2, 7, 4, 1, 8, 1]))",
+    solution_example: "import heapq\n\ndef last_stone_weight(stones):\n    heap = [-s for s in stones]\n    heapq.heapify(heap)\n    while len(heap) > 1:\n        a = -heapq.heappop(heap); b = -heapq.heappop(heap)\n        if a != b: heapq.heappush(heap, -(a - b))\n    return -heap[0] if heap else 0\nprint(last_stone_weight([2, 7, 4, 1, 8, 1]))\n",
+    next: Some("py-270-task-scheduler"), show_type_chips: false, micro_step: 269,
+};
+
+pub const PY270_TASK_SCHEDULER: CodingStep = CodingStep {
+    id: "py-270-task-scheduler", title: "DSA Task Scheduler", objective: "Calcular el tiempo mínimo con cooldown n entre tareas iguales.",
+    prompt_md: "**Task Scheduler**\n\nFórmula greedy: `max(len(tasks), (max_freq-1)*(n+1) + count_of_max)`. Distinto de py-192 (top-k frequent).\n\n**Micro-reto:**\n1. Definí `least_interval(tasks, n)`\n2. `tasks=['A','A','A','B','B','B']`, `n=2`; imprimí (esperado: `8`)",
+    starter_code: "# from collections import Counter\n# def least_interval(tasks, n):\n#     ...\n# print(least_interval(['A', 'A', 'A', 'B', 'B', 'B'], 2))\n",
+    pytest: "def test_task_scheduler(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('least_interval'))\n    assert ns['least_interval'](['A', 'A', 'A', 'B', 'B', 'B'], 2) == 8\n    assert ns['least_interval'](['A', 'A', 'A', 'B', 'B', 'B'], 0) == 6\n    assert ns['least_interval'](['A', 'B', 'C', 'D'], 2) == 4\n    assert capsys.readouterr().out.strip() == '8'\n",
+    hint: "from collections import Counter\n\ndef least_interval(tasks, n):\n    freqs = list(Counter(tasks).values())\n    max_f = max(freqs)\n    count_max = freqs.count(max_f)\n    return max(len(tasks), (max_f - 1) * (n + 1) + count_max)\nprint(least_interval(['A', 'A', 'A', 'B', 'B', 'B'], 2))",
+    solution_example: "from collections import Counter\n\ndef least_interval(tasks, n):\n    freqs = list(Counter(tasks).values())\n    max_f = max(freqs)\n    count_max = freqs.count(max_f)\n    return max(len(tasks), (max_f - 1) * (n + 1) + count_max)\nprint(least_interval(['A', 'A', 'A', 'B', 'B', 'B'], 2))\n",
+    next: Some("py-271-reorganize-string"), show_type_chips: false, micro_step: 270,
+};
+
+pub const PY271_REORGANIZE_STRING: CodingStep = CodingStep {
+    id: "py-271-reorganize-string", title: "DSA Reorganize String", objective: "Rearreglar un string para que no haya dos caracteres iguales adyacentes.",
+    prompt_md: "**Reorganize String**\n\nMax-heap de frecuencias; si es imposible devolvé `\"\"`. Distinto de py-178 (group anagrams).\n\n**Micro-reto:**\n1. Definí `reorganize_string(s)`\n2. `\"aab\"`; imprimí un reorden válido (esperado: `\"aba\"`)",
+    starter_code: "# import heapq\n# from collections import Counter\n# def reorganize_string(s):\n#     ...\n# print(reorganize_string(\"aab\"))\n",
+    pytest: "def test_reorganize_string(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('reorganize_string'))\n    out = ns['reorganize_string']('aab')\n    assert out == 'aba' or (len(out) == 3 and all(out[i] != out[i+1] for i in range(2)) and sorted(out) == ['a', 'a', 'b'])\n    assert ns['reorganize_string']('aaab') == ''\n    printed = capsys.readouterr().out.strip()\n    assert printed == 'aba' or (len(printed) == 3 and all(printed[i] != printed[i+1] for i in range(2)))\n",
+    hint: "import heapq\nfrom collections import Counter\n\ndef reorganize_string(s):\n    heap = [(-c, ch) for ch, c in Counter(s).items()]\n    heapq.heapify(heap)\n    out = []\n    prev = (0, '')\n    while heap:\n        count, ch = heapq.heappop(heap)\n        out.append(ch)\n        if prev[0] < 0: heapq.heappush(heap, prev)\n        prev = (count + 1, ch)\n    ans = ''.join(out)\n    return ans if len(ans) == len(s) else ''\nprint(reorganize_string('aab'))",
+    solution_example: "import heapq\nfrom collections import Counter\n\ndef reorganize_string(s):\n    heap = [(-c, ch) for ch, c in Counter(s).items()]\n    heapq.heapify(heap)\n    out = []\n    prev = (0, '')\n    while heap:\n        count, ch = heapq.heappop(heap)\n        out.append(ch)\n        if prev[0] < 0: heapq.heappush(heap, prev)\n        prev = (count + 1, ch)\n    ans = ''.join(out)\n    return ans if len(ans) == len(s) else ''\nprint(reorganize_string('aab'))\n",
+    next: Some("py-272-find-median"), show_type_chips: false, micro_step: 271,
+};
+
+pub const PY272_FIND_MEDIAN: CodingStep = CodingStep {
+    id: "py-272-find-median", title: "DSA Find Median Stream", objective: "Mantener la mediana online con dos heaps (max + min).",
+    prompt_md: "**Find Median from Data Stream**\n\nClase `MedianFinder` con `add_num` y `find_median`. Distinto de py-191 (kth largest estático).\n\n**Micro-reto:**\n1. add `1`, `2`; mediana; add `3`; mediana\n2. Imprimí `[1.5, 2.0]`",
+    starter_code: "# import heapq\n# class MedianFinder:\n#     ...\n",
+    pytest: "def test_find_median(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    mf = ns['MedianFinder']()\n    mf.add_num(1); mf.add_num(2)\n    a = mf.find_median()\n    mf.add_num(3)\n    b = mf.find_median()\n    assert [a, b] == [1.5, 2.0]\n    assert capsys.readouterr().out.strip() == '[1.5, 2.0]'\n",
+    hint: "import heapq\n\nclass MedianFinder:\n    def __init__(self):\n        self.lo = []; self.hi = []\n    def add_num(self, num):\n        heapq.heappush(self.lo, -num)\n        heapq.heappush(self.hi, -heapq.heappop(self.lo))\n        if len(self.hi) > len(self.lo):\n            heapq.heappush(self.lo, -heapq.heappop(self.hi))\n    def find_median(self):\n        if len(self.lo) > len(self.hi): return float(-self.lo[0])\n        return (-self.lo[0] + self.hi[0]) / 2.0\nmf = MedianFinder(); mf.add_num(1); mf.add_num(2); a = mf.find_median(); mf.add_num(3); b = mf.find_median()\nprint([a, b])",
+    solution_example: "import heapq\n\nclass MedianFinder:\n    def __init__(self):\n        self.lo = []; self.hi = []\n    def add_num(self, num):\n        heapq.heappush(self.lo, -num)\n        heapq.heappush(self.hi, -heapq.heappop(self.lo))\n        if len(self.hi) > len(self.lo):\n            heapq.heappush(self.lo, -heapq.heappop(self.hi))\n    def find_median(self):\n        if len(self.lo) > len(self.hi): return float(-self.lo[0])\n        return (-self.lo[0] + self.hi[0]) / 2.0\nmf = MedianFinder(); mf.add_num(1); mf.add_num(2); a = mf.find_median(); mf.add_num(3); b = mf.find_median()\nprint([a, b])\n",
+    next: Some("py-273-kth-matrix"), show_type_chips: false, micro_step: 272,
+};
+
+pub const PY273_KTH_MATRIX: CodingStep = CodingStep {
+    id: "py-273-kth-matrix", title: "DSA Kth Matrix Element", objective: "Encontrar el k-ésimo menor en una matriz ordenada por filas/columnas.",
+    prompt_md: "**Kth Smallest Element in a Sorted Matrix**\n\nMin-heap de candidatos por fila (o binary search). Distinto de py-196 (k closest points).\n\n**Micro-reto:**\n1. Definí `kth_smallest(matrix, k)`\n2. matrix `[[1,5,9],[10,11,13],[12,13,15]]`, `k=8`; imprimí (esperado: `13`)",
+    starter_code: "# import heapq\n# def kth_smallest(matrix, k):\n#     ...\n# print(kth_smallest([[1, 5, 9], [10, 11, 13], [12, 13, 15]], 8))\n",
+    pytest: "def test_kth_matrix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('kth_smallest'))\n    assert ns['kth_smallest']([[1, 5, 9], [10, 11, 13], [12, 13, 15]], 8) == 13\n    assert ns['kth_smallest']([[1, 2], [1, 3]], 2) == 1\n    assert ns['kth_smallest']([[-5]], 1) == -5\n    assert capsys.readouterr().out.strip() == '13'\n",
+    hint: "import heapq\n\ndef kth_smallest(matrix, k):\n    n = len(matrix)\n    heap = [(matrix[i][0], i, 0) for i in range(n)]\n    heapq.heapify(heap)\n    for _ in range(k):\n        val, r, c = heapq.heappop(heap)\n        if c + 1 < n: heapq.heappush(heap, (matrix[r][c + 1], r, c + 1))\n    return val\nprint(kth_smallest([[1, 5, 9], [10, 11, 13], [12, 13, 15]], 8))",
+    solution_example: "import heapq\n\ndef kth_smallest(matrix, k):\n    n = len(matrix)\n    heap = [(matrix[i][0], i, 0) for i in range(n)]\n    heapq.heapify(heap)\n    for _ in range(k):\n        val, r, c = heapq.heappop(heap)\n        if c + 1 < n: heapq.heappush(heap, (matrix[r][c + 1], r, c + 1))\n    return val\nprint(kth_smallest([[1, 5, 9], [10, 11, 13], [12, 13, 15]], 8))\n",
+    next: Some("py-274-network-delay"), show_type_chips: false, micro_step: 273,
+};
+
+pub const PY274_NETWORK_DELAY: CodingStep = CodingStep {
+    id: "py-274-network-delay", title: "DSA Network Delay Time", objective: "Tiempo para que una señal llegue a todos los nodos (Dijkstra).",
+    prompt_md: "**Network Delay Time**\n\nDijkstra desde `k`; si algún nodo es inalcanzable → `-1`. Distinto de py-112 (dijkstra intro genérico).\n\n**Micro-reto:**\n1. Definí `network_delay_time(times, n, k)`\n2. times `[[2,1,1],[2,3,1],[3,4,1]]`, `n=4`, `k=2`; imprimí (esperado: `2`)",
+    starter_code: "# import heapq\n# from collections import defaultdict\n# def network_delay_time(times, n, k):\n#     ...\n# print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))\n",
+    pytest: "def test_network_delay(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('network_delay_time'))\n    assert ns['network_delay_time']([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2) == 2\n    assert ns['network_delay_time']([[1, 2, 1]], 2, 1) == 1\n    assert ns['network_delay_time']([[1, 2, 1]], 2, 2) == -1\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "import heapq\nfrom collections import defaultdict\n\ndef network_delay_time(times, n, k):\n    graph = defaultdict(list)\n    for u, v, w in times: graph[u].append((v, w))\n    dist = {k: 0}; heap = [(0, k)]\n    while heap:\n        d, node = heapq.heappop(heap)\n        if d > dist.get(node, float('inf')): continue\n        for nei, w in graph[node]:\n            nd = d + w\n            if nd < dist.get(nei, float('inf')):\n                dist[nei] = nd; heapq.heappush(heap, (nd, nei))\n    return max(dist.values()) if len(dist) == n else -1\nprint(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))",
+    solution_example: "import heapq\nfrom collections import defaultdict\n\ndef network_delay_time(times, n, k):\n    graph = defaultdict(list)\n    for u, v, w in times: graph[u].append((v, w))\n    dist = {k: 0}; heap = [(0, k)]\n    while heap:\n        d, node = heapq.heappop(heap)\n        if d > dist.get(node, float('inf')): continue\n        for nei, w in graph[node]:\n            nd = d + w\n            if nd < dist.get(nei, float('inf')):\n                dist[nei] = nd; heapq.heappush(heap, (nd, nei))\n    return max(dist.values()) if len(dist) == n else -1\nprint(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))\n",
+    next: None, show_type_chips: false, micro_step: 274,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -3802,6 +3862,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY266_CIRCULAR_QUEUE,
     &PY267_RECENT_COUNTER,
     &PY268_TIME_TICKETS,
+    &PY269_LAST_STONE,
+    &PY270_TASK_SCHEDULER,
+    &PY271_REORGANIZE_STRING,
+    &PY272_FIND_MEDIAN,
+    &PY273_KTH_MATRIX,
+    &PY274_NETWORK_DELAY,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4499,7 +4565,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py268_curriculum_chain() {
+    fn py203_to_py274_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4567,7 +4633,13 @@ mod tests {
             (265, "py-265-walls-gates", Some("py-266-circular-queue")),
             (266, "py-266-circular-queue", Some("py-267-recent-counter")),
             (267, "py-267-recent-counter", Some("py-268-time-tickets")),
-            (268, "py-268-time-tickets", None),
+            (268, "py-268-time-tickets", Some("py-269-last-stone")),
+            (269, "py-269-last-stone", Some("py-270-task-scheduler")),
+            (270, "py-270-task-scheduler", Some("py-271-reorganize-string")),
+            (271, "py-271-reorganize-string", Some("py-272-find-median")),
+            (272, "py-272-find-median", Some("py-273-kth-matrix")),
+            (273, "py-273-kth-matrix", Some("py-274-network-delay")),
+            (274, "py-274-network-delay", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

@@ -274,6 +274,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 266, step_id: "py-266-circular-queue" },
   { level_id: 267, step_id: "py-267-recent-counter" },
   { level_id: 268, step_id: "py-268-time-tickets" },
+  { level_id: 269, step_id: "py-269-last-stone" },
+  { level_id: 270, step_id: "py-270-task-scheduler" },
+  { level_id: 271, step_id: "py-271-reorganize-string" },
+  { level_id: 272, step_id: "py-272-find-median" },
+  { level_id: 273, step_id: "py-273-kth-matrix" },
+  { level_id: 274, step_id: "py-274-network-delay" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
