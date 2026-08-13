@@ -4215,7 +4215,7 @@ pub const PY335_IMPLEMENT_TRIE: CodingStep = CodingStep {
 
 
 pub const PY336_WORD_DICT: CodingStep = CodingStep {
-    id: "py-336-word-dict", title: "DSA Word Dictionary", objective: "Diccionario con search que soporta comodín ".".",
+    id: "py-336-word-dict", title: "DSA Word Dictionary", objective: "Diccionario con search que soporta comodín \".\".",
     prompt_md: "**Design Add and Search Words**\n\nDFS en el trie ante `.`. Distinto de py-335 (match exacto).\n\n**Micro-reto:**\n1. Clase `WordDictionary` con `add_word` / `search`\n2. add `bad`,`dad`,`mad`; imprimí `[search(\"pad\"), search(\"bad\"), search(\".ad\"), search(\"b..\")]` (esperado: `[False, True, True, True]`)",
     starter_code: "# class WordDictionary:\n#     ...\n# w = WordDictionary()\n# ...\n# print([...])\n",
     pytest: "def test_336_word_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'WordDictionary' in ns\n    w = ns['WordDictionary']()\n    w.add_word('bad'); w.add_word('dad'); w.add_word('mad')\n    assert w.search('pad') is False\n    assert w.search('bad') is True\n    assert w.search('.ad') is True\n    assert w.search('b..') is True\n    assert capsys.readouterr().out.strip() == '[False, True, True, True]'\n",
