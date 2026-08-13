@@ -22,141 +22,118 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 359,
-    id: "py-359-search-rotated",
-    title: "DSA Search Rotated",
-    solution: `def search(nums, target):
-    lo, hi = 0, len(nums) - 1
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        if nums[mid] == target:
-            return mid
-        if nums[lo] <= nums[mid]:
-            if nums[lo] <= target < nums[mid]:
-                hi = mid - 1
-            else:
-                lo = mid + 1
-        else:
-            if nums[mid] < target <= nums[hi]:
-                lo = mid + 1
-            else:
-                hi = mid - 1
-    return -1
+    micro: 365,
+    id: "py-365-kth-largest",
+    title: "DSA Kth Largest",
+    solution: `import heapq
 
-print(search([4, 5, 6, 7, 0, 1, 2], 0))
+def find_kth_largest(nums, k):
+    return heapq.nlargest(k, nums)[-1]
+
+print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
 `,
-    nextUrl: /\/learn\/py-360-find-min-rotated/,
-    cursorAfter: "360",
+    nextUrl: /\/learn\/py-366-top-k-frequent/,
+    cursorAfter: "366",
   },
   {
-    micro: 360,
-    id: "py-360-find-min-rotated",
-    title: "DSA Find Min Rotated",
-    solution: `def find_min(nums):
-    lo, hi = 0, len(nums) - 1
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if nums[mid] > nums[hi]:
-            lo = mid + 1
-        else:
-            hi = mid
-    return nums[lo]
+    micro: 366,
+    id: "py-366-top-k-frequent",
+    title: "DSA Top K Frequent",
+    solution: `from collections import Counter
 
-print(find_min([3, 4, 5, 1, 2]))
+def top_k_frequent(nums, k):
+    return [x for x, _ in Counter(nums).most_common(k)]
+
+print(sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)))
 `,
-    nextUrl: /\/learn\/py-361-first-last-pos/,
-    cursorAfter: "361",
+    nextUrl: /\/learn\/py-367-merge-k-lists/,
+    cursorAfter: "367",
   },
   {
-    micro: 361,
-    id: "py-361-first-last-pos",
-    title: "DSA First Last Pos",
-    solution: `import bisect
+    micro: 367,
+    id: "py-367-merge-k-lists",
+    title: "DSA Merge K Lists",
+    solution: `import heapq
 
-def search_range(nums, target):
-    lo = bisect.bisect_left(nums, target)
-    if lo == len(nums) or nums[lo] != target:
-        return [-1, -1]
-    return [lo, bisect.bisect_right(nums, target) - 1]
+def merge_k_lists(lists):
+    return list(heapq.merge(*lists))
 
-print(search_range([5, 7, 7, 8, 8, 10], 8))
+print(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))
 `,
-    nextUrl: /\/learn\/py-362-peak-index/,
-    cursorAfter: "362",
+    nextUrl: /\/learn\/py-368-ugly-number-ii/,
+    cursorAfter: "368",
   },
   {
-    micro: 362,
-    id: "py-362-peak-index",
-    title: "DSA Peak Index",
-    solution: `def peak_index_in_mountain_array(arr):
-    lo, hi = 0, len(arr) - 1
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if arr[mid] < arr[mid + 1]:
-            lo = mid + 1
-        else:
-            hi = mid
-    return lo
+    micro: 368,
+    id: "py-368-ugly-number-ii",
+    title: "DSA Ugly Number II",
+    solution: `import heapq
 
-print(peak_index_in_mountain_array([0, 1, 0]))
+def nth_ugly_number(n):
+    h = [1]
+    seen = {1}
+    x = 1
+    for _ in range(n):
+        x = heapq.heappop(h)
+        for f in (2, 3, 5):
+            y = x * f
+            if y not in seen:
+                seen.add(y)
+                heapq.heappush(h, y)
+    return x
+
+print(nth_ugly_number(10))
 `,
-    nextUrl: /\/learn\/py-363-koko-bananas/,
-    cursorAfter: "363",
+    nextUrl: /\/learn\/py-369-task-scheduler/,
+    cursorAfter: "369",
   },
   {
-    micro: 363,
-    id: "py-363-koko-bananas",
-    title: "DSA Koko Bananas",
-    solution: `import math
+    micro: 369,
+    id: "py-369-task-scheduler",
+    title: "DSA Task Scheduler",
+    solution: `from collections import Counter
 
-def min_eating_speed(piles, h):
-    lo, hi = 1, max(piles)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if sum(math.ceil(p / mid) for p in piles) <= h:
-            hi = mid
-        else:
-            lo = mid + 1
-    return lo
+def least_interval(tasks, n):
+    freq = list(Counter(tasks).values())
+    m = max(freq)
+    cnt = freq.count(m)
+    return max(len(tasks), (m - 1) * (n + 1) + cnt)
 
-print(min_eating_speed([3, 6, 7, 11], 8))
+print(least_interval(["A", "A", "A", "B", "B", "B"], 2))
 `,
-    nextUrl: /\/learn\/py-364-ship-packages/,
-    cursorAfter: "364",
+    nextUrl: /\/learn\/py-370-reorganize-string/,
+    cursorAfter: "370",
   },
   {
-    micro: 364,
-    id: "py-364-ship-packages",
-    title: "DSA Ship Packages",
-    solution: `def ship_within_days(weights, days):
-    def ok(cap):
-        d, cur = 1, 0
-        for w in weights:
-            if cur + w > cap:
-                d += 1
-                cur = 0
-            cur += w
-        return d <= days
+    micro: 370,
+    id: "py-370-reorganize-string",
+    title: "DSA Reorganize String",
+    solution: `import heapq
+from collections import Counter
 
-    lo, hi = max(weights), sum(weights)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if ok(mid):
-            hi = mid
-        else:
-            lo = mid + 1
-    return lo
+def reorganize_string(s):
+    h = [(-c, ch) for ch, c in Counter(s).items()]
+    heapq.heapify(h)
+    out = []
+    prev = (0, "")
+    while h:
+        c, ch = heapq.heappop(h)
+        out.append(ch)
+        if prev[0] < 0:
+            heapq.heappush(h, prev)
+        prev = (c + 1, ch)
+    return "".join(out) if len(out) == len(s) else ""
 
-print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
+print(reorganize_string("aab"))
 `,
-    nextUrl: /\/learn\/py-365-kth-largest/,
-    cursorAfter: "365",
+    nextUrl: /\/workspace/,
+    cursorAfter: "371",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:359|360|361|362|363|364)-/);
+    expect(step.id).toMatch(/^py-(?:365|366|367|368|369|370)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -186,7 +163,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 359–364 · binary search II", () => {
+test.describe("micro-steps 365–370 · heaps II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
