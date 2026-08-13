@@ -22,126 +22,47 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 443,
-    id: "py-443-valid-paren",
-    title: "DSA Valid Paren",
-    solution: `def is_valid(s):
-    m = {")": "(", "]": "[", "}": "{"}
-    st = []
-    for ch in s:
-        if ch in m:
-            if not st or st[-1] != m[ch]:
-                return False
-            st.pop()
+    micro: 449,
+    id: "py-449-roman-to-int",
+    title: "DSA Roman To Int",
+    solution: `def roman_to_int(s):
+    v = dict(I=1, V=5, X=10, L=50, C=100, D=500, M=1000)
+    ans = 0
+    for i, ch in enumerate(s):
+        if i + 1 < len(s) and v[ch] < v[s[i + 1]]:
+            ans -= v[ch]
         else:
-            st.append(ch)
-    return not st
+            ans += v[ch]
+    return ans
 
-print(is_valid("()[]{}"))
+print(roman_to_int("MCMXCIV"))
 `,
-    nextUrl: /\/learn\/py-444-min-stack-ops/,
-    cursorAfter: "444",
+    nextUrl: /\/learn\/py-450-int-to-roman/,
+    cursorAfter: "450",
   },
   {
-    micro: 444,
-    id: "py-444-min-stack-ops",
-    title: "DSA Eval RPN",
-    solution: `def eval_rpn(tokens):
-    st = []
-    for t in tokens:
-        if t in "+-*/":
-            b, a = st.pop(), st.pop()
-            if t == "+":
-                st.append(a + b)
-            elif t == "-":
-                st.append(a - b)
-            elif t == "*":
-                st.append(a * b)
-            else:
-                st.append(int(a / b))
-        else:
-            st.append(int(t))
-    return st[0]
+    micro: 450,
+    id: "py-450-int-to-roman",
+    title: "DSA Int To Roman",
+    solution: `def int_to_roman(num):
+    vals = [(1000, "M"), (900, "CM"), (500, "D"), (400, "CD"), (100, "C"), (90, "XC"), (50, "L"), (40, "XL"), (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")]
+    out = []
+    for v, s in vals:
+        while num >= v:
+            out.append(s)
+            num -= v
+    return "".join(out)
 
-print(eval_rpn(["2", "1", "+", "3", "*"]))
+print(int_to_roman(1994))
 `,
-    nextUrl: /\/learn\/py-445-majority-elem/,
-    cursorAfter: "445",
-  },
-  {
-    micro: 445,
-    id: "py-445-majority-elem",
-    title: "DSA Majority Elem",
-    solution: `def majority_element(nums):
-    cand = None
-    cnt = 0
-    for x in nums:
-        if cnt == 0:
-            cand = x
-        cnt += 1 if x == cand else -1
-    return cand
-
-print(majority_element([3, 2, 3]))
-`,
-    nextUrl: /\/learn\/py-446-pascal-row/,
-    cursorAfter: "446",
-  },
-  {
-    micro: 446,
-    id: "py-446-pascal-row",
-    title: "DSA Pascal Row",
-    solution: `def get_row(row_index):
-    row = [1]
-    for _ in range(row_index):
-        row = [1] + [row[i] + row[i + 1] for i in range(len(row) - 1)] + [1]
-    return row
-
-print(get_row(3))
-`,
-    nextUrl: /\/learn\/py-447-move-zeroes/,
-    cursorAfter: "447",
-  },
-  {
-    micro: 447,
-    id: "py-447-move-zeroes",
-    title: "DSA Move Zeroes",
-    solution: `def move_zeroes(nums):
-    w = 0
-    for x in nums:
-        if x != 0:
-            nums[w] = x
-            w += 1
-    for i in range(w, len(nums)):
-        nums[i] = 0
-    return nums
-
-print(move_zeroes([0, 1, 0, 3, 12]))
-`,
-    nextUrl: /\/learn\/py-448-plus-one/,
-    cursorAfter: "448",
-  },
-  {
-    micro: 448,
-    id: "py-448-plus-one",
-    title: "DSA Plus One",
-    solution: `def plus_one(digits):
-    for i in range(len(digits) - 1, -1, -1):
-        if digits[i] < 9:
-            digits[i] += 1
-            return digits
-        digits[i] = 0
-    return [1] + digits
-
-print(plus_one([1, 2, 3]))
-`,
-    nextUrl: /\/learn\/py-449-roman-to-int/,
-    cursorAfter: "449",
+    nextUrl: /\/workspace/,
+    cursorAfter: "451",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:443|444|445|446|447|448)-/);
+    expect(step.id).toMatch(/^py-(?:449|450)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -171,7 +92,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 443–448 · misc finale", () => {
+test.describe("micro-steps 449–450 · cap 450", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
