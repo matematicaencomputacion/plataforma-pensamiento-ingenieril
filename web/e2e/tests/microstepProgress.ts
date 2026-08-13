@@ -424,6 +424,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 416, step_id: "py-416-is-subsequence" },
   { level_id: 417, step_id: "py-417-decode-string" },
   { level_id: 418, step_id: "py-418-string-compress" },
+  { level_id: 419, step_id: "py-419-min-stack" },
+  { level_id: 420, step_id: "py-420-lru-cache" },
+  { level_id: 421, step_id: "py-421-time-map" },
+  { level_id: 422, step_id: "py-422-randomized-set" },
+  { level_id: 423, step_id: "py-423-moving-avg" },
+  { level_id: 424, step_id: "py-424-browser-history" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
