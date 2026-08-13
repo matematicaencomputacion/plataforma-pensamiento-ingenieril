@@ -243,7 +243,7 @@ root.right.left = TreeNode(15)
 root.right.right = TreeNode(7)
 print(is_balanced(root))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-311-min-arrows/,
     cursorAfter: "311",
   },
 ];
@@ -317,7 +317,7 @@ test.describe("micro-steps 305–310 · trees II", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 310) {
+      if (nextMicro <= 316) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

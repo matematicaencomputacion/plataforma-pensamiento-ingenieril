@@ -22,112 +22,135 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 299,
-    id: "py-299-power-of-two",
-    title: "DSA Power of Two",
-    solution: `def is_power_of_two(n):
-    return n > 0 and (n & (n - 1)) == 0
+    micro: 311,
+    id: "py-311-min-arrows",
+    title: "DSA Min Arrows",
+    solution: `def find_min_arrow_shots(points):
+    points = sorted(points, key=lambda p: p[1])
+    arrows = 0
+    end = float('-inf')
+    for s, e in points:
+        if s > end:
+            arrows += 1
+            end = e
+    return arrows
 
-print(is_power_of_two(16))
+print(find_min_arrow_shots([[10, 16], [2, 8], [1, 6], [7, 12]]))
 `,
-    nextUrl: /\/learn\/py-300-hamming-distance/,
-    cursorAfter: "300",
+    nextUrl: /\/learn\/py-312-car-pooling/,
+    cursorAfter: "312",
   },
   {
-    micro: 300,
-    id: "py-300-hamming-distance",
-    title: "DSA Hamming Distance",
-    solution: `def hamming_distance(x, y):
-    xor = x ^ y
-    dist = 0
-    while xor:
-        dist += xor & 1
-        xor >>= 1
-    return dist
+    micro: 312,
+    id: "py-312-car-pooling",
+    title: "DSA Car Pooling",
+    solution: `def car_pooling(trips, capacity):
+    diff = [0] * 1001
+    for num, start, end in trips:
+        diff[start] += num
+        diff[end] -= num
+    cur = 0
+    for x in diff:
+        cur += x
+        if cur > capacity:
+            return False
+    return True
 
-print(hamming_distance(1, 4))
+print(car_pooling([[2, 1, 5], [3, 3, 7]], 4))
 `,
-    nextUrl: /\/learn\/py-301-sum-two-int/,
-    cursorAfter: "301",
+    nextUrl: /\/learn\/py-313-interval-intersect/,
+    cursorAfter: "313",
   },
   {
-    micro: 301,
-    id: "py-301-sum-two-int",
-    title: "DSA Sum Two Integers",
-    solution: `MASK = 0xFFFFFFFF
-
-def get_sum(a, b):
-    while b != 0:
-        carry = (a & b) & MASK
-        a = (a ^ b) & MASK
-        b = (carry << 1) & MASK
-    return a if a <= 0x7FFFFFFF else ~(a ^ MASK)
-
-print(get_sum(1, 2))
-`,
-    nextUrl: /\/learn\/py-302-range-bitwise/,
-    cursorAfter: "302",
-  },
-  {
-    micro: 302,
-    id: "py-302-range-bitwise",
-    title: "DSA Range Bitwise AND",
-    solution: `def range_bitwise_and(left, right):
-    shift = 0
-    while left < right:
-        left >>= 1
-        right >>= 1
-        shift += 1
-    return left << shift
-
-print(range_bitwise_and(5, 7))
-`,
-    nextUrl: /\/learn\/py-303-single-number-iii/,
-    cursorAfter: "303",
-  },
-  {
-    micro: 303,
-    id: "py-303-single-number-iii",
-    title: "DSA Single Number III",
-    solution: `def single_number_iii(nums):
-    xor = 0
-    for x in nums:
-        xor ^= x
-    bit = xor & -xor
-    a = b = 0
-    for x in nums:
-        if x & bit:
-            a ^= x
+    micro: 313,
+    id: "py-313-interval-intersect",
+    title: "DSA Interval Intersection",
+    solution: `def interval_intersection(first, second):
+    i = j = 0
+    out = []
+    while i < len(first) and j < len(second):
+        lo = max(first[i][0], second[j][0])
+        hi = min(first[i][1], second[j][1])
+        if lo <= hi:
+            out.append([lo, hi])
+        if first[i][1] < second[j][1]:
+            i += 1
         else:
-            b ^= x
-    return sorted([a, b])
+            j += 1
+    return out
 
-print(single_number_iii([1, 2, 1, 3, 2, 5]))
+print(interval_intersection([[0, 2], [5, 10], [13, 23], [24, 25]], [[1, 5], [8, 12], [15, 24], [25, 26]]))
 `,
-    nextUrl: /\/learn\/py-304-hamming-weight/,
-    cursorAfter: "304",
+    nextUrl: /\/learn\/py-314-my-calendar/,
+    cursorAfter: "314",
   },
   {
-    micro: 304,
-    id: "py-304-hamming-weight",
-    title: "DSA Hamming Weight",
-    solution: `def hamming_weight(n):
-    count = 0
-    while n:
-        n &= n - 1
-        count += 1
-    return count
+    micro: 314,
+    id: "py-314-my-calendar",
+    title: "DSA My Calendar",
+    solution: `class MyCalendar:
+    def __init__(self):
+        self.books = []
 
-print(hamming_weight(11))
+    def book(self, start, end):
+        for s, e in self.books:
+            if start < e and end > s:
+                return False
+        self.books.append((start, end))
+        return True
+
+cal = MyCalendar()
+print([cal.book(10, 20), cal.book(15, 25), cal.book(20, 30)])
 `,
-    nextUrl: /\/learn\/py-305-max-path-sum/,
-    cursorAfter: "305",
+    nextUrl: /\/learn\/py-315-non-overlap/,
+    cursorAfter: "315",
+  },
+  {
+    micro: 315,
+    id: "py-315-non-overlap",
+    title: "DSA Non Overlap",
+    solution: `def max_non_overlapping(intervals):
+    intervals = sorted(intervals, key=lambda x: x[1])
+    keep = 0
+    end = float('-inf')
+    for s, e in intervals:
+        if s >= end:
+            keep += 1
+            end = e
+    return keep
+
+print(max_non_overlapping([[1, 2], [2, 3], [3, 4], [1, 3]]))
+`,
+    nextUrl: /\/learn\/py-316-video-stitch/,
+    cursorAfter: "316",
+  },
+  {
+    micro: 316,
+    id: "py-316-video-stitch",
+    title: "DSA Video Stitch",
+    solution: `def video_stitching(clips, time):
+    clips = sorted(clips)
+    end = farthest = used = i = 0
+    while end < time:
+        while i < len(clips) and clips[i][0] <= end:
+            farthest = max(farthest, clips[i][1])
+            i += 1
+        if farthest == end:
+            return -1
+        used += 1
+        end = farthest
+    return used
+
+print(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "317",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-299-|^py-30[0-4]-/);
+    expect(step.id).toMatch(/^py-31[1-6]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -157,7 +180,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 299–304 · bit manipulation II", () => {
+test.describe("micro-steps 311–316 · intervals II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
