@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=310).
+    /// 1-based index on the workspace micro-step rail (1..=316).
     pub micro_step: i32,
 }
 
@@ -3950,8 +3950,69 @@ pub const PY310_IS_BALANCED: CodingStep = CodingStep {
     pytest: "def test_is_balanced(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_balanced'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(3)\n    root.left = TreeNode(9)\n    root.right = TreeNode(20)\n    root.right.left = TreeNode(15)\n    root.right.right = TreeNode(7)\n    assert ns['is_balanced'](root) is True\n    bad = TreeNode(1)\n    bad.left = TreeNode(2)\n    bad.left.left = TreeNode(3)\n    bad.left.left.left = TreeNode(4)\n    bad.right = TreeNode(2)\n    assert ns['is_balanced'](bad) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
     hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data; self.left = None; self.right = None\n\ndef is_balanced(root):\n    def height(node):\n        if node is None: return 0\n        lh = height(node.left)\n        if lh < 0: return -1\n        rh = height(node.right)\n        if rh < 0: return -1\n        if abs(lh - rh) > 1: return -1\n        return 1 + max(lh, rh)\n    return height(root) >= 0\nroot = TreeNode(3); root.left = TreeNode(9); root.right = TreeNode(20)\nroot.right.left = TreeNode(15); root.right.right = TreeNode(7)\nprint(is_balanced(root))",
     solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef is_balanced(root):\n    def height(node):\n        if node is None:\n            return 0\n        lh = height(node.left)\n        if lh < 0:\n            return -1\n        rh = height(node.right)\n        if rh < 0:\n            return -1\n        if abs(lh - rh) > 1:\n            return -1\n        return 1 + max(lh, rh)\n    return height(root) >= 0\n\nroot = TreeNode(3)\nroot.left = TreeNode(9)\nroot.right = TreeNode(20)\nroot.right.left = TreeNode(15)\nroot.right.right = TreeNode(7)\nprint(is_balanced(root))\n",
-    next: None, show_type_chips: false, micro_step: 310,
+    next: Some("py-311-min-arrows"), show_type_chips: false, micro_step: 310,
 };
+
+pub const PY311_MIN_ARROWS: CodingStep = CodingStep {
+    id: "py-311-min-arrows", title: "DSA Min Arrows", objective: "Mínimo de flechas para pinchar todos los globos (intervalos).",
+    prompt_md: "**Minimum Number of Arrows to Burst Balloons**\n\nOrdená por fin; flecha en el extremo; saltá solapados. Distinto de py-222 (contar borrados).\n\n**Micro-reto:**\n1. Definí `find_min_arrow_shots(points)`\n2. `[[10,16],[2,8],[1,6],[7,12]]`; imprimí (esperado: `2`)",
+    starter_code: "# def find_min_arrow_shots(points):\n#     ...\n# print(find_min_arrow_shots([[10, 16], [2, 8], [1, 6], [7, 12]]))\n",
+    pytest: "def test_min_arrows(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_min_arrow_shots'))\n    assert ns['find_min_arrow_shots']([[10, 16], [2, 8], [1, 6], [7, 12]]) == 2\n    assert ns['find_min_arrow_shots']([[1, 2], [3, 4], [5, 6], [7, 8]]) == 4\n    assert ns['find_min_arrow_shots']([[1, 2], [2, 3], [3, 4], [4, 5]]) == 2\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def find_min_arrow_shots(points):\n    points = sorted(points, key=lambda p: p[1])\n    arrows = 0; end = float('-inf')\n    for s, e in points:\n        if s > end:\n            arrows += 1; end = e\n    return arrows\nprint(find_min_arrow_shots([[10, 16], [2, 8], [1, 6], [7, 12]]))",
+    solution_example: "def find_min_arrow_shots(points):\n    points = sorted(points, key=lambda p: p[1])\n    arrows = 0\n    end = float('-inf')\n    for s, e in points:\n        if s > end:\n            arrows += 1\n            end = e\n    return arrows\n\nprint(find_min_arrow_shots([[10, 16], [2, 8], [1, 6], [7, 12]]))\n",
+    next: Some("py-312-car-pooling"), show_type_chips: false, micro_step: 311,
+};
+
+pub const PY312_CAR_POOLING: CodingStep = CodingStep {
+    id: "py-312-car-pooling", title: "DSA Car Pooling", objective: "Decidir si un viaje con capacidad fija puede cubrir todos los tramos.",
+    prompt_md: "**Car Pooling**\n\nDiff array / eventos +1/-1 en pickup/drop. Distinto de py-223 (salas simultáneas).\n\n**Micro-reto:**\n1. Definí `car_pooling(trips, capacity)`\n2. trips=`[[2,1,5],[3,3,7]]`, capacity=`4`; imprimí `False`",
+    starter_code: "# def car_pooling(trips, capacity):\n#     ...\n# print(car_pooling([[2, 1, 5], [3, 3, 7]], 4))\n",
+    pytest: "def test_car_pooling(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('car_pooling'))\n    assert ns['car_pooling']([[2, 1, 5], [3, 3, 7]], 4) is False\n    assert ns['car_pooling']([[2, 1, 5], [3, 3, 7]], 5) is True\n    assert ns['car_pooling']([[3, 2, 7], [3, 7, 9], [8, 3, 9]], 11) is True\n    assert capsys.readouterr().out.strip() == 'False'\n",
+    hint: "def car_pooling(trips, capacity):\n    diff = [0] * 1001\n    for num, start, end in trips:\n        diff[start] += num; diff[end] -= num\n    cur = 0\n    for x in diff:\n        cur += x\n        if cur > capacity: return False\n    return True\nprint(car_pooling([[2, 1, 5], [3, 3, 7]], 4))",
+    solution_example: "def car_pooling(trips, capacity):\n    diff = [0] * 1001\n    for num, start, end in trips:\n        diff[start] += num\n        diff[end] -= num\n    cur = 0\n    for x in diff:\n        cur += x\n        if cur > capacity:\n            return False\n    return True\n\nprint(car_pooling([[2, 1, 5], [3, 3, 7]], 4))\n",
+    next: Some("py-313-interval-intersect"), show_type_chips: false, micro_step: 312,
+};
+
+pub const PY313_INTERVAL_INTERSECT: CodingStep = CodingStep {
+    id: "py-313-interval-intersect", title: "DSA Interval Intersection", objective: "Intersección de dos listas de intervalos ordenados disjuntos.",
+    prompt_md: "**Interval List Intersections**\n\nTwo pointers; solape = [max(starts), min(ends)]. Distinto de py-138 (merge una lista).\n\n**Micro-reto:**\n1. Definí `interval_intersection(first, second)`\n2. first=`[[0,2],[5,10],[13,23],[24,25]]`, second=`[[1,5],[8,12],[15,24],[25,26]]`; imprimí (esperado: `[[1, 2], [5, 5], [8, 10], [15, 23], [24, 24], [25, 25]]`)",
+    starter_code: "# def interval_intersection(first, second):\n#     ...\n# print(interval_intersection([[0, 2], [5, 10], [13, 23], [24, 25]], [[1, 5], [8, 12], [15, 24], [25, 26]]))\n",
+    pytest: "def test_interval_intersect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('interval_intersection'))\n    a = [[0, 2], [5, 10], [13, 23], [24, 25]]\n    b = [[1, 5], [8, 12], [15, 24], [25, 26]]\n    assert ns['interval_intersection'](a, b) == [[1, 2], [5, 5], [8, 10], [15, 23], [24, 24], [25, 25]]\n    assert ns['interval_intersection']([[1, 3], [5, 9]], []) == []\n    assert capsys.readouterr().out.strip() == '[[1, 2], [5, 5], [8, 10], [15, 23], [24, 24], [25, 25]]'\n",
+    hint: "def interval_intersection(first, second):\n    i = j = 0; out = []\n    while i < len(first) and j < len(second):\n        lo = max(first[i][0], second[j][0]); hi = min(first[i][1], second[j][1])\n        if lo <= hi: out.append([lo, hi])\n        if first[i][1] < second[j][1]: i += 1\n        else: j += 1\n    return out\nprint(interval_intersection([[0, 2], [5, 10], [13, 23], [24, 25]], [[1, 5], [8, 12], [15, 24], [25, 26]]))",
+    solution_example: "def interval_intersection(first, second):\n    i = j = 0\n    out = []\n    while i < len(first) and j < len(second):\n        lo = max(first[i][0], second[j][0])\n        hi = min(first[i][1], second[j][1])\n        if lo <= hi:\n            out.append([lo, hi])\n        if first[i][1] < second[j][1]:\n            i += 1\n        else:\n            j += 1\n    return out\n\nprint(interval_intersection([[0, 2], [5, 10], [13, 23], [24, 25]], [[1, 5], [8, 12], [15, 24], [25, 26]]))\n",
+    next: Some("py-314-my-calendar"), show_type_chips: false, micro_step: 313,
+};
+
+pub const PY314_MY_CALENDAR: CodingStep = CodingStep {
+    id: "py-314-my-calendar", title: "DSA My Calendar", objective: "Reservar intervalos sin solapes (book True/False).",
+    prompt_md: "**My Calendar I**\n\nLista ordenada; rechazo si solapa. Distinto de py-221 (insert+merge).\n\n**Micro-reto:**\n1. Clase `MyCalendar` con `book(start, end)`\n2. book(10,20), book(15,25), book(20,30); imprimí la lista de resultados (esperado: `[True, False, True]`)",
+    starter_code: "# class MyCalendar:\n#     ...\n# cal = MyCalendar()\n# print([cal.book(10, 20), cal.book(15, 25), cal.book(20, 30)])\n",
+    pytest: "def test_my_calendar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'MyCalendar' in ns\n    cal = ns['MyCalendar']()\n    assert cal.book(10, 20) is True\n    assert cal.book(15, 25) is False\n    assert cal.book(20, 30) is True\n    assert capsys.readouterr().out.strip() == '[True, False, True]'\n",
+    hint: "class MyCalendar:\n    def __init__(self):\n        self.books = []\n    def book(self, start, end):\n        for s, e in self.books:\n            if start < e and end > s: return False\n        self.books.append((start, end)); return True\ncal = MyCalendar()\nprint([cal.book(10, 20), cal.book(15, 25), cal.book(20, 30)])",
+    solution_example: "class MyCalendar:\n    def __init__(self):\n        self.books = []\n\n    def book(self, start, end):\n        for s, e in self.books:\n            if start < e and end > s:\n                return False\n        self.books.append((start, end))\n        return True\n\ncal = MyCalendar()\nprint([cal.book(10, 20), cal.book(15, 25), cal.book(20, 30)])\n",
+    next: Some("py-315-non-overlap"), show_type_chips: false, micro_step: 314,
+};
+
+pub const PY315_NON_OVERLAP: CodingStep = CodingStep {
+    id: "py-315-non-overlap", title: "DSA Non Overlap", objective: "Máximo de intervalos no solapados (greedy por fin).",
+    prompt_md: "**Non-overlapping Intervals (keep max)**\n\nDevolvé cuántos podés conservar. Distinto de py-222 (mínimo a borrar).\n\n**Micro-reto:**\n1. Definí `max_non_overlapping(intervals)`\n2. `[[1,2],[2,3],[3,4],[1,3]]`; imprimí (esperado: `3`)",
+    starter_code: "# def max_non_overlapping(intervals):\n#     ...\n# print(max_non_overlapping([[1, 2], [2, 3], [3, 4], [1, 3]]))\n",
+    pytest: "def test_non_overlap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_non_overlapping'))\n    assert ns['max_non_overlapping']([[1, 2], [2, 3], [3, 4], [1, 3]]) == 3\n    assert ns['max_non_overlapping']([[1, 2], [1, 2], [1, 2]]) == 1\n    assert ns['max_non_overlapping']([[1, 2], [2, 3]]) == 2\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "def max_non_overlapping(intervals):\n    intervals = sorted(intervals, key=lambda x: x[1])\n    keep = 0; end = float('-inf')\n    for s, e in intervals:\n        if s >= end:\n            keep += 1; end = e\n    return keep\nprint(max_non_overlapping([[1, 2], [2, 3], [3, 4], [1, 3]]))",
+    solution_example: "def max_non_overlapping(intervals):\n    intervals = sorted(intervals, key=lambda x: x[1])\n    keep = 0\n    end = float('-inf')\n    for s, e in intervals:\n        if s >= end:\n            keep += 1\n            end = e\n    return keep\n\nprint(max_non_overlapping([[1, 2], [2, 3], [3, 4], [1, 3]]))\n",
+    next: Some("py-316-video-stitch"), show_type_chips: false, micro_step: 315,
+};
+
+pub const PY316_VIDEO_STITCH: CodingStep = CodingStep {
+    id: "py-316-video-stitch", title: "DSA Video Stitch", objective: "Mínimo de clips para cubrir [0, time] (jump game en intervalos).",
+    prompt_md: "**Video Stitching**\n\nGreedy por alcance como Jump Game II. Distinto de py-281 (array de saltos).\n\n**Micro-reto:**\n1. Definí `video_stitching(clips, time)`\n2. clips=`[[0,2],[4,6],[8,10],[1,9],[1,5],[5,9]]`, time=`10`; imprimí (esperado: `3`)",
+    starter_code: "# def video_stitching(clips, time):\n#     ...\n# print(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))\n",
+    pytest: "def test_video_stitch(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('video_stitching'))\n    assert ns['video_stitching']([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10) == 3\n    assert ns['video_stitching']([[0, 1], [1, 2]], 5) == -1\n    assert ns['video_stitching']([[0, 4], [2, 8]], 5) == 2\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "def video_stitching(clips, time):\n    clips = sorted(clips)\n    end = farthest = used = i = 0\n    while end < time:\n        while i < len(clips) and clips[i][0] <= end:\n            farthest = max(farthest, clips[i][1]); i += 1\n        if farthest == end: return -1\n        used += 1; end = farthest\n    return used\nprint(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))",
+    solution_example: "def video_stitching(clips, time):\n    clips = sorted(clips)\n    end = farthest = used = i = 0\n    while end < time:\n        while i < len(clips) and clips[i][0] <= end:\n            farthest = max(farthest, clips[i][1])\n            i += 1\n        if farthest == end:\n            return -1\n        used += 1\n        end = farthest\n    return used\n\nprint(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))\n",
+    next: None, show_type_chips: false, micro_step: 316,
+};
+
 
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -4265,6 +4326,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY308_KTH_BST,
     &PY309_LEVEL_ORDER,
     &PY310_IS_BALANCED,
+    &PY311_MIN_ARROWS,
+    &PY312_CAR_POOLING,
+    &PY313_INTERVAL_INTERSECT,
+    &PY314_MY_CALENDAR,
+    &PY315_NON_OVERLAP,
+    &PY316_VIDEO_STITCH,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4408,7 +4475,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 310);
+            assert!(step.micro_step >= 1 && step.micro_step <= 316);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -4962,7 +5029,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py310_curriculum_chain() {
+    fn py203_to_py316_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -5072,7 +5139,13 @@ mod tests {
             (307, "py-307-build-tree", Some("py-308-kth-bst")),
             (308, "py-308-kth-bst", Some("py-309-level-order")),
             (309, "py-309-level-order", Some("py-310-is-balanced")),
-            (310, "py-310-is-balanced", None),
+            (310, "py-310-is-balanced", Some("py-311-min-arrows")),
+            (311, "py-311-min-arrows", Some("py-312-car-pooling")),
+            (312, "py-312-car-pooling", Some("py-313-interval-intersect")),
+            (313, "py-313-interval-intersect", Some("py-314-my-calendar")),
+            (314, "py-314-my-calendar", Some("py-315-non-overlap")),
+            (315, "py-315-non-overlap", Some("py-316-video-stitch")),
+            (316, "py-316-video-stitch", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

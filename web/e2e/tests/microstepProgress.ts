@@ -316,6 +316,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 308, step_id: "py-308-kth-bst" },
   { level_id: 309, step_id: "py-309-level-order" },
   { level_id: 310, step_id: "py-310-is-balanced" },
+  { level_id: 311, step_id: "py-311-min-arrows" },
+  { level_id: 312, step_id: "py-312-car-pooling" },
+  { level_id: 313, step_id: "py-313-interval-intersect" },
+  { level_id: 314, step_id: "py-314-my-calendar" },
+  { level_id: 315, step_id: "py-315-non-overlap" },
+  { level_id: 316, step_id: "py-316-video-stitch" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
