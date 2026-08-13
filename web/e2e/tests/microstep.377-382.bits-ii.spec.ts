@@ -22,148 +22,104 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 371,
-    id: "py-371-longest-substr",
-    title: "DSA Longest Substr",
-    solution: `def length_of_longest_substring(s):
-    seen = set()
-    l = 0
-    best = 0
-    for r, ch in enumerate(s):
-        while ch in seen:
-            seen.remove(s[l])
-            l += 1
-        seen.add(ch)
-        best = max(best, r - l + 1)
-    return best
+    micro: 377,
+    id: "py-377-single-number",
+    title: "DSA Single Number",
+    solution: `def single_number(nums):
+    x = 0
+    for n in nums:
+        x ^= n
+    return x
 
-print(length_of_longest_substring("abcabcbb"))
+print(single_number([2, 2, 1]))
 `,
-    nextUrl: /\/learn\/py-372-min-window/,
-    cursorAfter: "372",
+    nextUrl: /\/learn\/py-378-hamming-weight/,
+    cursorAfter: "378",
   },
   {
-    micro: 372,
-    id: "py-372-min-window",
-    title: "DSA Min Window",
-    solution: `from collections import Counter
+    micro: 378,
+    id: "py-378-hamming-weight",
+    title: "DSA Hamming Weight",
+    solution: `def hamming_weight(n):
+    c = 0
+    while n:
+        n &= n - 1
+        c += 1
+    return c
 
-def min_window(s, t):
-    need = Counter(t)
-    missing = len(t)
-    l = 0
-    best = (0, float("inf"))
-    for r, ch in enumerate(s):
-        if need[ch] > 0:
-            missing -= 1
-        need[ch] -= 1
-        while missing == 0:
-            if r - l + 1 < best[1] - best[0]:
-                best = (l, r + 1)
-            need[s[l]] += 1
-            if need[s[l]] > 0:
-                missing += 1
-            l += 1
-    return s[best[0]:best[1]] if best[1] != float("inf") else ""
-
-print(min_window("ADOBECODEBANC", "ABC"))
+print(hamming_weight(11))
 `,
-    nextUrl: /\/learn\/py-373-max-avg-sub/,
-    cursorAfter: "373",
+    nextUrl: /\/learn\/py-379-counting-bits/,
+    cursorAfter: "379",
   },
   {
-    micro: 373,
-    id: "py-373-max-avg-sub",
-    title: "DSA Max Avg Sub",
-    solution: `def find_max_average(nums, k):
-    s = sum(nums[:k])
-    best = s
-    for i in range(k, len(nums)):
-        s += nums[i] - nums[i - k]
-        best = max(best, s)
-    return best / k
+    micro: 379,
+    id: "py-379-counting-bits",
+    title: "DSA Counting Bits",
+    solution: `def count_bits(n):
+    dp = [0] * (n + 1)
+    for i in range(1, n + 1):
+        dp[i] = dp[i >> 1] + (i & 1)
+    return dp
 
-print(find_max_average([1, 12, -5, -6, 50, 3], 4))
+print(count_bits(5))
 `,
-    nextUrl: /\/learn\/py-374-fruits-baskets/,
-    cursorAfter: "374",
+    nextUrl: /\/learn\/py-380-reverse-bits/,
+    cursorAfter: "380",
   },
   {
-    micro: 374,
-    id: "py-374-fruits-baskets",
-    title: "DSA Fruits Baskets",
-    solution: `from collections import defaultdict
-
-def total_fruit(fruits):
-    cnt = defaultdict(int)
-    l = 0
-    best = 0
-    for r, x in enumerate(fruits):
-        cnt[x] += 1
-        while len(cnt) > 2:
-            cnt[fruits[l]] -= 1
-            if cnt[fruits[l]] == 0:
-                del cnt[fruits[l]]
-            l += 1
-        best = max(best, r - l + 1)
-    return best
-
-print(total_fruit([1, 2, 1]))
-`,
-    nextUrl: /\/learn\/py-375-longest-ones/,
-    cursorAfter: "375",
-  },
-  {
-    micro: 375,
-    id: "py-375-longest-ones",
-    title: "DSA Longest Ones",
-    solution: `def longest_ones(nums, k):
-    l = zeros = best = 0
-    for r, x in enumerate(nums):
-        zeros += x == 0
-        while zeros > k:
-            zeros -= nums[l] == 0
-            l += 1
-        best = max(best, r - l + 1)
-    return best
-
-print(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))
-`,
-    nextUrl: /\/learn\/py-376-find-anagrams/,
-    cursorAfter: "376",
-  },
-  {
-    micro: 376,
-    id: "py-376-find-anagrams",
-    title: "DSA Find Anagrams",
-    solution: `from collections import Counter
-
-def find_anagrams(s, p):
-    need = Counter(p)
-    n = len(p)
-    win = Counter(s[:n])
-    out = []
-    if win == need:
-        out.append(0)
-    for i in range(n, len(s)):
-        win[s[i]] += 1
-        win[s[i - n]] -= 1
-        if win[s[i - n]] == 0:
-            del win[s[i - n]]
-        if win == need:
-            out.append(i - n + 1)
+    micro: 380,
+    id: "py-380-reverse-bits",
+    title: "DSA Reverse Bits",
+    solution: `def reverse_bits(n):
+    out = 0
+    for _ in range(32):
+        out = (out << 1) | (n & 1)
+        n >>= 1
     return out
 
-print(find_anagrams("cbaebabacd", "abc"))
+print(reverse_bits(43261596))
 `,
-    nextUrl: /\/learn\/py-377-single-number/,
-    cursorAfter: "377",
+    nextUrl: /\/learn\/py-381-missing-number/,
+    cursorAfter: "381",
+  },
+  {
+    micro: 381,
+    id: "py-381-missing-number",
+    title: "DSA Missing Number",
+    solution: `def missing_number(nums):
+    x = len(nums)
+    for i, v in enumerate(nums):
+        x ^= i ^ v
+    return x
+
+print(missing_number([3, 0, 1]))
+`,
+    nextUrl: /\/learn\/py-382-sum-two-ints/,
+    cursorAfter: "382",
+  },
+  {
+    micro: 382,
+    id: "py-382-sum-two-ints",
+    title: "DSA Sum Two Ints",
+    solution: `def get_sum(a, b):
+    MASK = 0xFFFFFFFF
+    while b & MASK:
+        carry = (a & b) << 1
+        a = (a ^ b) & MASK
+        b = carry
+    return a if a <= 0x7FFFFFFF else ~(a ^ MASK)
+
+print(get_sum(1, 2))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "383",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:371|372|373|374|375|376)-/);
+    expect(step.id).toMatch(/^py-(?:377|378|379|380|381|382)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -193,7 +149,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 371–376 · sliding window II", () => {
+test.describe("micro-steps 377–382 · bit manipulation II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

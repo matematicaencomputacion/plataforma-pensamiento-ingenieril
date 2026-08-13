@@ -382,6 +382,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 374, step_id: "py-374-fruits-baskets" },
   { level_id: 375, step_id: "py-375-longest-ones" },
   { level_id: 376, step_id: "py-376-find-anagrams" },
+  { level_id: 377, step_id: "py-377-single-number" },
+  { level_id: 378, step_id: "py-378-hamming-weight" },
+  { level_id: 379, step_id: "py-379-counting-bits" },
+  { level_id: 380, step_id: "py-380-reverse-bits" },
+  { level_id: 381, step_id: "py-381-missing-number" },
+  { level_id: 382, step_id: "py-382-sum-two-ints" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

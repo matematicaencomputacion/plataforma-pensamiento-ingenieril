@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=376).
+    /// 1-based index on the workspace micro-step rail (1..=382).
     pub micro_step: i32,
 }
 
@@ -5335,7 +5335,246 @@ def find_anagrams(s, p):
 
 print(find_anagrams(\"cbaebabacd\", \"abc\"))
 ",
-    next: None, show_type_chips: false, micro_step: 376,
+    next: Some("py-377-single-number"), show_type_chips: false, micro_step: 376,
+};
+
+
+pub const PY377_SINGLE_NUMBER: CodingStep = CodingStep {
+    id: "py-377-single-number", title: "DSA Single Number", objective: "Único número sin pareja (XOR).",
+    prompt_md: "**Single Number**
+
+XOR de todo el array. Distinto de py-90.
+
+**Micro-reto:**
+1. Definí `single_number(nums)`
+2. `[2,2,1]`; imprimí (esperado: `1`)",
+    starter_code: "# def single_number(nums):
+#     ...
+# print(single_number([2, 2, 1]))
+",
+    pytest: "def test_377_single_number(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('single_number'))
+    assert ns['single_number']([2, 2, 1]) == 1
+    assert ns['single_number']([4, 1, 2, 1, 2]) == 4
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def single_number(nums):
+    x=0
+    for n in nums: x^=n
+    return x
+print(single_number([2, 2, 1]))",
+    solution_example: "def single_number(nums):
+    x = 0
+    for n in nums:
+        x ^= n
+    return x
+
+print(single_number([2, 2, 1]))
+",
+    next: Some("py-378-hamming-weight"), show_type_chips: false, micro_step: 377,
+};
+
+
+pub const PY378_HAMMING_WEIGHT: CodingStep = CodingStep {
+    id: "py-378-hamming-weight", title: "DSA Hamming Weight", objective: "Contar bits 1 (Brian Kernighan).",
+    prompt_md: "**Number of 1 Bits**
+
+n &= n-1. Distinto de py-91.
+
+**Micro-reto:**
+1. Definí `hamming_weight(n)`
+2. n=`11`; imprimí (esperado: `3`)",
+    starter_code: "# def hamming_weight(n):
+#     ...
+# print(hamming_weight(11))
+",
+    pytest: "def test_378_hamming_weight(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('hamming_weight'))
+    assert ns['hamming_weight'](11) == 3
+    assert ns['hamming_weight'](128) == 1
+    assert ns['hamming_weight'](2147483645) == 30
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def hamming_weight(n):
+    c=0
+    while n:
+        n&=n-1; c+=1
+    return c
+print(hamming_weight(11))",
+    solution_example: "def hamming_weight(n):
+    c = 0
+    while n:
+        n &= n - 1
+        c += 1
+    return c
+
+print(hamming_weight(11))
+",
+    next: Some("py-379-counting-bits"), show_type_chips: false, micro_step: 378,
+};
+
+
+pub const PY379_COUNTING_BITS: CodingStep = CodingStep {
+    id: "py-379-counting-bits", title: "DSA Counting Bits", objective: "Bits 1 para cada i en [0..n].",
+    prompt_md: "**Counting Bits**
+
+DP: dp[i]=dp[i>>1]+(i&1). Distinto de py-378.
+
+**Micro-reto:**
+1. Definí `count_bits(n)`
+2. n=`5`; imprimí (esperado: `[0, 1, 1, 2, 1, 2]`)",
+    starter_code: "# def count_bits(n):
+#     ...
+# print(count_bits(5))
+",
+    pytest: "def test_379_counting_bits(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('count_bits'))
+    assert ns['count_bits'](5) == [0, 1, 1, 2, 1, 2]
+    assert ns['count_bits'](2) == [0, 1, 1]
+    assert capsys.readouterr().out.strip() == '[0, 1, 1, 2, 1, 2]'
+",
+    hint: "def count_bits(n):
+    dp=[0]*(n+1)
+    for i in range(1,n+1):
+        dp[i]=dp[i>>1]+(i&1)
+    return dp
+print(count_bits(5))",
+    solution_example: "def count_bits(n):
+    dp = [0] * (n + 1)
+    for i in range(1, n + 1):
+        dp[i] = dp[i >> 1] + (i & 1)
+    return dp
+
+print(count_bits(5))
+",
+    next: Some("py-380-reverse-bits"), show_type_chips: false, micro_step: 379,
+};
+
+
+pub const PY380_REVERSE_BITS: CodingStep = CodingStep {
+    id: "py-380-reverse-bits", title: "DSA Reverse Bits", objective: "Revertir 32 bits de un entero.",
+    prompt_md: "**Reverse Bits**
+
+Shift y OR 32 veces. Distinto de py-377.
+
+**Micro-reto:**
+1. Definí `reverse_bits(n)`
+2. n=`43261596`; imprimí (esperado: `964176192`)",
+    starter_code: "# def reverse_bits(n):
+#     ...
+# print(reverse_bits(43261596))
+",
+    pytest: "def test_380_reverse_bits(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('reverse_bits'))
+    assert ns['reverse_bits'](43261596) == 964176192
+    assert ns['reverse_bits'](4294967293) == 3221225471
+    assert capsys.readouterr().out.strip() == '964176192'
+",
+    hint: "def reverse_bits(n):
+    out=0
+    for _ in range(32):
+        out=(out<<1)|(n&1); n>>=1
+    return out
+print(reverse_bits(43261596))",
+    solution_example: "def reverse_bits(n):
+    out = 0
+    for _ in range(32):
+        out = (out << 1) | (n & 1)
+        n >>= 1
+    return out
+
+print(reverse_bits(43261596))
+",
+    next: Some("py-381-missing-number"), show_type_chips: false, micro_step: 380,
+};
+
+
+pub const PY381_MISSING_NUMBER: CodingStep = CodingStep {
+    id: "py-381-missing-number", title: "DSA Missing Number", objective: "Número faltante 0..n (XOR o suma).",
+    prompt_md: "**Missing Number**
+
+XOR 0..n con nums. Distinto de py-92.
+
+**Micro-reto:**
+1. Definí `missing_number(nums)`
+2. `[3,0,1]`; imprimí (esperado: `2`)",
+    starter_code: "# def missing_number(nums):
+#     ...
+# print(missing_number([3, 0, 1]))
+",
+    pytest: "def test_381_missing_number(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('missing_number'))
+    assert ns['missing_number']([3, 0, 1]) == 2
+    assert ns['missing_number']([0, 1]) == 2
+    assert ns['missing_number']([9, 6, 4, 2, 3, 5, 7, 0, 1]) == 8
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def missing_number(nums):
+    x=len(nums)
+    for i,v in enumerate(nums): x^=i^v
+    return x
+print(missing_number([3, 0, 1]))",
+    solution_example: "def missing_number(nums):
+    x = len(nums)
+    for i, v in enumerate(nums):
+        x ^= i ^ v
+    return x
+
+print(missing_number([3, 0, 1]))
+",
+    next: Some("py-382-sum-two-ints"), show_type_chips: false, micro_step: 381,
+};
+
+
+pub const PY382_SUM_TWO_INTS: CodingStep = CodingStep {
+    id: "py-382-sum-two-ints", title: "DSA Sum Two Ints", objective: "Suma sin + usando bits (AND/XOR).",
+    prompt_md: "**Sum of Two Integers**
+
+Python: máscara 32-bit. Distinto de py-377.
+
+**Micro-reto:**
+1. Definí `get_sum(a, b)`
+2. a=`1`, b=`2`; imprimí (esperado: `3`)",
+    starter_code: "# def get_sum(a, b):
+#     ...
+# print(get_sum(1, 2))
+",
+    pytest: "def test_382_sum_two_ints(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('get_sum'))
+    assert ns['get_sum'](1, 2) == 3
+    assert ns['get_sum'](2, 3) == 5
+    assert ns['get_sum'](-1, 1) == 0
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def get_sum(a, b):
+    MASK=0xFFFFFFFF
+    while b & MASK:
+        carry=(a&b)<<1; a=(a^b)&MASK; b=carry
+    return a if a<=0x7FFFFFFF else ~(a^MASK)
+print(get_sum(1, 2))",
+    solution_example: "def get_sum(a, b):
+    MASK = 0xFFFFFFFF
+    while b & MASK:
+        carry = (a & b) << 1
+        a = (a ^ b) & MASK
+        b = carry
+    return a if a <= 0x7FFFFFFF else ~(a ^ MASK)
+
+print(get_sum(1, 2))
+",
+    next: None, show_type_chips: false, micro_step: 382,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -5714,7 +5953,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY373_MAX_AVG_SUB,
     &PY374_FRUITS_BASKETS,
     &PY375_LONGEST_ONES,
-    &PY376_FIND_ANAGRAMS
+    &PY376_FIND_ANAGRAMS,
+    &PY377_SINGLE_NUMBER,
+    &PY378_HAMMING_WEIGHT,
+    &PY379_COUNTING_BITS,
+    &PY380_REVERSE_BITS,
+    &PY381_MISSING_NUMBER,
+    &PY382_SUM_TWO_INTS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -5858,7 +6103,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 376);
+            assert!(step.micro_step >= 1 && step.micro_step <= 382);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -6412,7 +6657,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py376_curriculum_chain() {
+    fn py203_to_py382_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -6588,7 +6833,13 @@ mod tests {
             (373, "py-373-max-avg-sub", Some("py-374-fruits-baskets")),
             (374, "py-374-fruits-baskets", Some("py-375-longest-ones")),
             (375, "py-375-longest-ones", Some("py-376-find-anagrams")),
-            (376, "py-376-find-anagrams", None),
+            (376, "py-376-find-anagrams", Some("py-377-single-number")),
+            (377, "py-377-single-number", Some("py-378-hamming-weight")),
+            (378, "py-378-hamming-weight", Some("py-379-counting-bits")),
+            (379, "py-379-counting-bits", Some("py-380-reverse-bits")),
+            (380, "py-380-reverse-bits", Some("py-381-missing-number")),
+            (381, "py-381-missing-number", Some("py-382-sum-two-ints")),
+            (382, "py-382-sum-two-ints", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
