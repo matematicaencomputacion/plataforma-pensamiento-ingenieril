@@ -22,102 +22,110 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 395,
-    id: "py-395-reverse-list",
-    title: "DSA Reverse List",
-    solution: `def reverse_list(head):
-    return head[::-1]
+    micro: 401,
+    id: "py-401-sort-colors",
+    title: "DSA Sort Colors",
+    solution: `def sort_colors(nums):
+    lo = mid = 0
+    hi = len(nums) - 1
+    while mid <= hi:
+        if nums[mid] == 0:
+            nums[lo], nums[mid] = nums[mid], nums[lo]
+            lo += 1
+            mid += 1
+        elif nums[mid] == 1:
+            mid += 1
+        else:
+            nums[mid], nums[hi] = nums[hi], nums[mid]
+            hi -= 1
+    return nums
 
-print(reverse_list([1, 2, 3, 4, 5]))
+print(sort_colors([2, 0, 2, 1, 1, 0]))
 `,
-    nextUrl: /\/learn\/py-396-merge-two-lists/,
-    cursorAfter: "396",
+    nextUrl: /\/learn\/py-402-merge-intervals/,
+    cursorAfter: "402",
   },
   {
-    micro: 396,
-    id: "py-396-merge-two-lists",
-    title: "DSA Merge Two Lists",
-    solution: `import heapq
-
-def merge_two_lists(l1, l2):
-    return list(heapq.merge(l1, l2))
-
-print(merge_two_lists([1, 2, 4], [1, 3, 4]))
-`,
-    nextUrl: /\/learn\/py-397-has-cycle/,
-    cursorAfter: "397",
-  },
-  {
-    micro: 397,
-    id: "py-397-has-cycle",
-    title: "DSA Has Cycle",
-    solution: `def has_cycle(vals, pos):
-    n = len(vals)
-    nxt = list(range(1, n)) + [-1]
-    if pos >= 0:
-        nxt[-1] = pos
-    slow = fast = 0
-    while fast != -1 and nxt[fast] != -1:
-        slow = nxt[slow]
-        fast = nxt[nxt[fast]]
-        if slow == fast:
-            return True
-    return False
-
-print(has_cycle([3, 2, 0, -4], 1))
-`,
-    nextUrl: /\/learn\/py-398-remove-nth/,
-    cursorAfter: "398",
-  },
-  {
-    micro: 398,
-    id: "py-398-remove-nth",
-    title: "DSA Remove Nth",
-    solution: `def remove_nth_from_end(head, n):
-    del head[-n]
-    return head
-
-print(remove_nth_from_end([1, 2, 3, 4, 5], 2))
-`,
-    nextUrl: /\/learn\/py-399-palindrome-list/,
-    cursorAfter: "399",
-  },
-  {
-    micro: 399,
-    id: "py-399-palindrome-list",
-    title: "DSA Palindrome List",
-    solution: `def is_palindrome(head):
-    return head == head[::-1]
-
-print(is_palindrome([1, 2, 2, 1]))
-`,
-    nextUrl: /\/learn\/py-400-add-two-numbers/,
-    cursorAfter: "400",
-  },
-  {
-    micro: 400,
-    id: "py-400-add-two-numbers",
-    title: "DSA Add Two Numbers",
-    solution: `def add_two_numbers(l1, l2):
-    i = carry = 0
+    micro: 402,
+    id: "py-402-merge-intervals",
+    title: "DSA Merge Intervals",
+    solution: `def merge(intervals):
+    intervals.sort()
     out = []
-    while i < len(l1) or i < len(l2) or carry:
-        s = carry + (l1[i] if i < len(l1) else 0) + (l2[i] if i < len(l2) else 0)
-        out.append(s % 10)
-        carry = s // 10
-        i += 1
+    for s, e in intervals:
+        if not out or out[-1][1] < s:
+            out.append([s, e])
+        else:
+            out[-1][1] = max(out[-1][1], e)
     return out
 
-print(add_two_numbers([2, 4, 3], [5, 6, 4]))
+print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))
 `,
-    nextUrl: /\/learn\/py-401-sort-colors/,
-    cursorAfter: "401",
+    nextUrl: /\/learn\/py-403-largest-number/,
+    cursorAfter: "403",
+  },
+  {
+    micro: 403,
+    id: "py-403-largest-number",
+    title: "DSA Largest Number",
+    solution: `from functools import cmp_to_key
+
+def largest_number(nums):
+    s = sorted(map(str, nums), key=cmp_to_key(lambda a, b: (a + b < b + a) - (a + b > b + a)))
+    return "".join(s).lstrip("0") or "0"
+
+print(largest_number([10, 2]))
+`,
+    nextUrl: /\/learn\/py-404-wiggle-sort/,
+    cursorAfter: "404",
+  },
+  {
+    micro: 404,
+    id: "py-404-wiggle-sort",
+    title: "DSA Wiggle Sort",
+    solution: `def wiggle_sort(nums):
+    for i in range(len(nums) - 1):
+        if (i % 2 == 0 and nums[i] > nums[i + 1]) or (i % 2 == 1 and nums[i] < nums[i + 1]):
+            nums[i], nums[i + 1] = nums[i + 1], nums[i]
+    return nums
+
+print(wiggle_sort([3, 5, 2, 1, 6, 4]))
+`,
+    nextUrl: /\/learn\/py-405-k-closest/,
+    cursorAfter: "405",
+  },
+  {
+    micro: 405,
+    id: "py-405-k-closest",
+    title: "DSA K Closest",
+    solution: `def k_closest(points, k):
+    return sorted(points, key=lambda p: p[0] * p[0] + p[1] * p[1])[:k]
+
+print(k_closest([[1, 3], [-2, 2]], 1))
+`,
+    nextUrl: /\/learn\/py-406-sort-by-freq/,
+    cursorAfter: "406",
+  },
+  {
+    micro: 406,
+    id: "py-406-sort-by-freq",
+    title: "DSA Sort By Freq",
+    solution: `from collections import Counter
+
+def frequency_sort(nums):
+    c = Counter(nums)
+    return sorted(nums, key=lambda x: (-c[x], x))
+
+print(frequency_sort([1, 1, 2, 2, 2, 3]))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "407",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:395|396|397|398|399|400)-/);
+    expect(step.id).toMatch(/^py-(?:401|402|403|404|405|406)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -147,7 +155,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 395–400 · linked lists II", () => {
+test.describe("micro-steps 401–406 · sorting II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

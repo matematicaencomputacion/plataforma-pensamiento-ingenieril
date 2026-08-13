@@ -406,6 +406,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 398, step_id: "py-398-remove-nth" },
   { level_id: 399, step_id: "py-399-palindrome-list" },
   { level_id: 400, step_id: "py-400-add-two-numbers" },
+  { level_id: 401, step_id: "py-401-sort-colors" },
+  { level_id: 402, step_id: "py-402-merge-intervals" },
+  { level_id: 403, step_id: "py-403-largest-number" },
+  { level_id: 404, step_id: "py-404-wiggle-sort" },
+  { level_id: 405, step_id: "py-405-k-closest" },
+  { level_id: 406, step_id: "py-406-sort-by-freq" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
