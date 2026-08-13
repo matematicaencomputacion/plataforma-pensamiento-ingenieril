@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=400).
+    /// 1-based index on the workspace micro-step rail (1..=406).
     pub micro_step: i32,
 }
 
@@ -6406,7 +6406,251 @@ print(add_two_numbers([2, 4, 3], [5, 6, 4]))",
 
 print(add_two_numbers([2, 4, 3], [5, 6, 4]))
 ",
-    next: None, show_type_chips: false, micro_step: 400,
+    next: Some("py-401-sort-colors"), show_type_chips: false, micro_step: 400,
+};
+
+
+pub const PY401_SORT_COLORS: CodingStep = CodingStep {
+    id: "py-401-sort-colors", title: "DSA Sort Colors", objective: "Dutch national flag 0/1/2 in-place.",
+    prompt_md: "**Sort Colors**
+
+Three pointers. Distinto de py-88.
+
+**Micro-reto:**
+1. Definí `sort_colors(nums)` mutando y devolviendo
+2. `[2,0,2,1,1,0]`; imprimí (esperado: `[0, 0, 1, 1, 2, 2]`)",
+    starter_code: "# def sort_colors(nums):
+#     ...
+# print(sort_colors([2, 0, 2, 1, 1, 0]))
+",
+    pytest: "def test_401_sort_colors(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('sort_colors'))
+    assert ns['sort_colors']([2, 0, 2, 1, 1, 0]) == [0, 0, 1, 1, 2, 2]
+    assert ns['sort_colors']([2, 0, 1]) == [0, 1, 2]
+    assert capsys.readouterr().out.strip() == '[0, 0, 1, 1, 2, 2]'
+",
+    hint: "def sort_colors(nums):
+    lo=mid=0; hi=len(nums)-1
+    while mid<=hi:
+        if nums[mid]==0:
+            nums[lo],nums[mid]=nums[mid],nums[lo]; lo+=1; mid+=1
+        elif nums[mid]==1: mid+=1
+        else:
+            nums[mid],nums[hi]=nums[hi],nums[mid]; hi-=1
+    return nums
+print(sort_colors([2, 0, 2, 1, 1, 0]))",
+    solution_example: "def sort_colors(nums):
+    lo = mid = 0
+    hi = len(nums) - 1
+    while mid <= hi:
+        if nums[mid] == 0:
+            nums[lo], nums[mid] = nums[mid], nums[lo]
+            lo += 1
+            mid += 1
+        elif nums[mid] == 1:
+            mid += 1
+        else:
+            nums[mid], nums[hi] = nums[hi], nums[mid]
+            hi -= 1
+    return nums
+
+print(sort_colors([2, 0, 2, 1, 1, 0]))
+",
+    next: Some("py-402-merge-intervals"), show_type_chips: false, micro_step: 401,
+};
+
+
+pub const PY402_MERGE_INTERVALS: CodingStep = CodingStep {
+    id: "py-402-merge-intervals", title: "DSA Merge Intervals", objective: "Fusionar intervalos solapados.",
+    prompt_md: "**Merge Intervals**
+
+Sort + sweep. Distinto de py-311.
+
+**Micro-reto:**
+1. Definí `merge(intervals)`
+2. `[[1,3],[2,6],[8,10],[15,18]]`; imprimí (esperado: `[[1, 6], [8, 10], [15, 18]]`)",
+    starter_code: "# def merge(intervals):
+#     ...
+# print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))
+",
+    pytest: "def test_402_merge_intervals(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('merge'))
+    assert ns['merge']([[1, 3], [2, 6], [8, 10], [15, 18]]) == [[1, 6], [8, 10], [15, 18]]
+    assert ns['merge']([[1, 4], [4, 5]]) == [[1, 5]]
+    assert capsys.readouterr().out.strip() == '[[1, 6], [8, 10], [15, 18]]'
+",
+    hint: "def merge(intervals):
+    intervals.sort(); out=[]
+    for s,e in intervals:
+        if not out or out[-1][1]<s: out.append([s,e])
+        else: out[-1][1]=max(out[-1][1],e)
+    return out
+print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))",
+    solution_example: "def merge(intervals):
+    intervals.sort()
+    out = []
+    for s, e in intervals:
+        if not out or out[-1][1] < s:
+            out.append([s, e])
+        else:
+            out[-1][1] = max(out[-1][1], e)
+    return out
+
+print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))
+",
+    next: Some("py-403-largest-number"), show_type_chips: false, micro_step: 402,
+};
+
+
+pub const PY403_LARGEST_NUMBER: CodingStep = CodingStep {
+    id: "py-403-largest-number", title: "DSA Largest Number", objective: "Mayor número concatenando enteros.",
+    prompt_md: "**Largest Number**
+
+Sort custom a+b vs b+a. Distinto de py-93.
+
+**Micro-reto:**
+1. Definí `largest_number(nums)`
+2. `[10,2]`; imprimí (esperado: `210`)",
+    starter_code: "# def largest_number(nums):
+#     ...
+# print(largest_number([10, 2]))
+",
+    pytest: "def test_403_largest_number(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('largest_number'))
+    assert ns['largest_number']([10, 2]) == '210'
+    assert ns['largest_number']([3, 30, 34, 5, 9]) == '9534330'
+    assert capsys.readouterr().out.strip() == '210'
+",
+    hint: "from functools import cmp_to_key
+def largest_number(nums):
+    s=sorted(map(str,nums), key=cmp_to_key(lambda a,b: (a+b<b+a)-(a+b>b+a)))
+    return \"\".join(s).lstrip(\"0\") or \"0\"
+print(largest_number([10, 2]))",
+    solution_example: "from functools import cmp_to_key
+
+def largest_number(nums):
+    s = sorted(map(str, nums), key=cmp_to_key(lambda a, b: (a + b < b + a) - (a + b > b + a)))
+    return \"\".join(s).lstrip(\"0\") or \"0\"
+
+print(largest_number([10, 2]))
+",
+    next: Some("py-404-wiggle-sort"), show_type_chips: false, micro_step: 403,
+};
+
+
+pub const PY404_WIGGLE_SORT: CodingStep = CodingStep {
+    id: "py-404-wiggle-sort", title: "DSA Wiggle Sort", objective: "Reordenar nums[0]<nums[1]>nums[2]<...",
+    prompt_md: "**Wiggle Sort**
+
+Swap adyacentes según paridad. Distinto de py-401.
+
+**Micro-reto:**
+1. Definí `wiggle_sort(nums)` devolviendo
+2. `[3,5,2,1,6,4]`; imprimí un wiggle válido (check local)",
+    starter_code: "# def wiggle_sort(nums):
+#     ...
+# print(wiggle_sort([3, 5, 2, 1, 6, 4]))
+",
+    pytest: "def test_404_wiggle_sort(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('wiggle_sort'))
+    got=ns['wiggle_sort']([3, 5, 2, 1, 6, 4])
+    assert all(got[i]<=got[i+1] if i%2==0 else got[i]>=got[i+1] for i in range(len(got)-1))
+    assert capsys.readouterr().out.strip() == '[3, 5, 1, 6, 2, 4]'
+",
+    hint: "def wiggle_sort(nums):
+    for i in range(len(nums)-1):
+        if (i%2==0 and nums[i]>nums[i+1]) or (i%2==1 and nums[i]<nums[i+1]):
+            nums[i],nums[i+1]=nums[i+1],nums[i]
+    return nums
+print(wiggle_sort([3, 5, 2, 1, 6, 4]))",
+    solution_example: "def wiggle_sort(nums):
+    for i in range(len(nums) - 1):
+        if (i % 2 == 0 and nums[i] > nums[i + 1]) or (i % 2 == 1 and nums[i] < nums[i + 1]):
+            nums[i], nums[i + 1] = nums[i + 1], nums[i]
+    return nums
+
+print(wiggle_sort([3, 5, 2, 1, 6, 4]))
+",
+    next: Some("py-405-k-closest"), show_type_chips: false, micro_step: 404,
+};
+
+
+pub const PY405_K_CLOSEST: CodingStep = CodingStep {
+    id: "py-405-k-closest", title: "DSA K Closest", objective: "k puntos más cercanos al origen.",
+    prompt_md: "**K Closest Points to Origin**
+
+Sort o heap. Distinto de py-365.
+
+**Micro-reto:**
+1. Definí `k_closest(points, k)`
+2. points=`[[1,3],[-2,2]]`, k=`1`; imprimí (esperado: `[[-2, 2]]`)",
+    starter_code: "# def k_closest(points, k):
+#     ...
+# print(k_closest([[1, 3], [-2, 2]], 1))
+",
+    pytest: "def test_405_k_closest(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('k_closest'))
+    assert ns['k_closest']([[1, 3], [-2, 2]], 1) == [[-2, 2]]
+    assert sorted(ns['k_closest']([[3, 3], [5, -1], [-2, 4]], 2)) == sorted([[3, 3], [-2, 4]])
+    assert capsys.readouterr().out.strip() == '[[-2, 2]]'
+",
+    hint: "def k_closest(points, k):
+    return sorted(points, key=lambda p: p[0]*p[0]+p[1]*p[1])[:k]
+print(k_closest([[1, 3], [-2, 2]], 1))",
+    solution_example: "def k_closest(points, k):
+    return sorted(points, key=lambda p: p[0] * p[0] + p[1] * p[1])[:k]
+
+print(k_closest([[1, 3], [-2, 2]], 1))
+",
+    next: Some("py-406-sort-by-freq"), show_type_chips: false, micro_step: 405,
+};
+
+
+pub const PY406_SORT_BY_FREQ: CodingStep = CodingStep {
+    id: "py-406-sort-by-freq", title: "DSA Sort By Freq", objective: "Ordenar por frecuencia decreciente.",
+    prompt_md: "**Sort Array by Increasing Frequency** (aquí decreciente por freq)
+
+Counter + sort. Distinto de py-366.
+
+**Micro-reto:**
+1. Definí `frequency_sort(nums)` freq desc, valor asc en empate
+2. `[1,1,2,2,2,3]`; imprimí (esperado: `[2, 2, 2, 1, 1, 3]`)",
+    starter_code: "# def frequency_sort(nums):
+#     ...
+# print(frequency_sort([1, 1, 2, 2, 2, 3]))
+",
+    pytest: "def test_406_sort_by_freq(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('frequency_sort'))
+    assert ns['frequency_sort']([1, 1, 2, 2, 2, 3]) == [2, 2, 2, 1, 1, 3]
+    assert ns['frequency_sort']([2, 3, 1, 3, 2]) == [2, 2, 3, 3, 1]
+    assert capsys.readouterr().out.strip() == '[2, 2, 2, 1, 1, 3]'
+",
+    hint: "from collections import Counter
+def frequency_sort(nums):
+    c=Counter(nums)
+    return sorted(nums, key=lambda x: (-c[x], x))
+print(frequency_sort([1, 1, 2, 2, 2, 3]))",
+    solution_example: "from collections import Counter
+
+def frequency_sort(nums):
+    c = Counter(nums)
+    return sorted(nums, key=lambda x: (-c[x], x))
+
+print(frequency_sort([1, 1, 2, 2, 2, 3]))
+",
+    next: None, show_type_chips: false, micro_step: 406,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -6809,7 +7053,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY397_HAS_CYCLE,
     &PY398_REMOVE_NTH,
     &PY399_PALINDROME_LIST,
-    &PY400_ADD_TWO_NUMBERS
+    &PY400_ADD_TWO_NUMBERS,
+    &PY401_SORT_COLORS,
+    &PY402_MERGE_INTERVALS,
+    &PY403_LARGEST_NUMBER,
+    &PY404_WIGGLE_SORT,
+    &PY405_K_CLOSEST,
+    &PY406_SORT_BY_FREQ
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -6953,7 +7203,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 400);
+            assert!(step.micro_step >= 1 && step.micro_step <= 406);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -7507,7 +7757,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py400_curriculum_chain() {
+    fn py203_to_py406_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -7707,7 +7957,13 @@ mod tests {
             (397, "py-397-has-cycle", Some("py-398-remove-nth")),
             (398, "py-398-remove-nth", Some("py-399-palindrome-list")),
             (399, "py-399-palindrome-list", Some("py-400-add-two-numbers")),
-            (400, "py-400-add-two-numbers", None),
+            (400, "py-400-add-two-numbers", Some("py-401-sort-colors")),
+            (401, "py-401-sort-colors", Some("py-402-merge-intervals")),
+            (402, "py-402-merge-intervals", Some("py-403-largest-number")),
+            (403, "py-403-largest-number", Some("py-404-wiggle-sort")),
+            (404, "py-404-wiggle-sort", Some("py-405-k-closest")),
+            (405, "py-405-k-closest", Some("py-406-sort-by-freq")),
+            (406, "py-406-sort-by-freq", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
