@@ -7355,7 +7355,7 @@ Bisect sobre timestamps. Distinto de py-180.
     assert T.get('foo',1)=='bar' and T.get('foo',3)=='bar'
     T.set('foo','bar2',4)
     assert T.get('foo',4)=='bar2' and T.get('foo',5)=='bar2'
-    assert capsys.readouterr().out.strip() == '['bar', 'bar', 'bar2', 'bar2']'
+    assert capsys.readouterr().out.strip() == \"['bar', 'bar', 'bar2', 'bar2']\"
 ",
     hint: "import bisect
 from collections import defaultdict
@@ -7538,7 +7538,7 @@ Lista + índice. Distinto de py-180.
     B=ns['BrowserHistory']('leetcode.com'); B.visit('google.com'); B.visit('facebook.com'); B.visit('youtube.com')
     assert B.back(1)=='facebook.com' and B.back(1)=='google.com' and B.forward(1)=='facebook.com'
     B.visit('linkedin.com'); assert B.forward(2)=='linkedin.com' and B.back(2)=='google.com' and B.back(7)=='leetcode.com'
-    assert capsys.readouterr().out.strip() == '['facebook.com', 'google.com', 'facebook.com', 'linkedin.com', 'google.com', 'leetcode.com']'
+    assert capsys.readouterr().out.strip() == \"['facebook.com', 'google.com', 'facebook.com', 'linkedin.com', 'google.com', 'leetcode.com']\"
 ",
     hint: "class BrowserHistory:
     def __init__(self, homepage):
