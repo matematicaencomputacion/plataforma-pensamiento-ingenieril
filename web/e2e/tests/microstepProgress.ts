@@ -442,6 +442,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 434, step_id: "py-434-happy-number" },
   { level_id: 435, step_id: "py-435-first-uniq-char" },
   { level_id: 436, step_id: "py-436-subarray-sum-k" },
+  { level_id: 437, step_id: "py-437-pow-x-n" },
+  { level_id: 438, step_id: "py-438-sqrt-x" },
+  { level_id: 439, step_id: "py-439-trailing-zeroes" },
+  { level_id: 440, step_id: "py-440-excel-title" },
+  { level_id: 441, step_id: "py-441-palindrome-number" },
+  { level_id: 442, step_id: "py-442-fizz-buzz" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

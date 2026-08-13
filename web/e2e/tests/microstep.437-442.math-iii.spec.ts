@@ -22,105 +22,122 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 431,
-    id: "py-431-two-sum",
-    title: "DSA Two Sum",
-    solution: `def two_sum(nums, target):
-    seen = {}
-    for i, x in enumerate(nums):
-        if target - x in seen:
-            return [seen[target - x], i]
-        seen[x] = i
-
-print(two_sum([2, 7, 11, 15], 9))
-`,
-    nextUrl: /\/learn\/py-432-contains-dup/,
-    cursorAfter: "432",
-  },
-  {
-    micro: 432,
-    id: "py-432-contains-dup",
-    title: "DSA Contains Dup",
-    solution: `def contains_duplicate(nums):
-    return len(nums) != len(set(nums))
-
-print(contains_duplicate([1, 2, 3, 1]))
-`,
-    nextUrl: /\/learn\/py-433-intersection/,
-    cursorAfter: "433",
-  },
-  {
-    micro: 433,
-    id: "py-433-intersection",
-    title: "DSA Intersection",
-    solution: `def intersection(nums1, nums2):
-    return list(set(nums1) & set(nums2))
-
-print(sorted(intersection([1, 2, 2, 1], [2, 2])))
-`,
-    nextUrl: /\/learn\/py-434-happy-number/,
-    cursorAfter: "434",
-  },
-  {
-    micro: 434,
-    id: "py-434-happy-number",
-    title: "DSA Happy Number Hash",
-    solution: `def is_happy(n):
-    seen = set()
-    while n != 1 and n not in seen:
-        seen.add(n)
-        n = sum(int(d) ** 2 for d in str(n))
-    return n == 1
-
-print(is_happy(19))
-`,
-    nextUrl: /\/learn\/py-435-first-uniq-char/,
-    cursorAfter: "435",
-  },
-  {
-    micro: 435,
-    id: "py-435-first-uniq-char",
-    title: "DSA First Uniq Char",
-    solution: `from collections import Counter
-
-def first_uniq_char(s):
-    c = Counter(s)
-    for i, ch in enumerate(s):
-        if c[ch] == 1:
-            return i
-    return -1
-
-print(first_uniq_char("leetcode"))
-`,
-    nextUrl: /\/learn\/py-436-subarray-sum-k/,
-    cursorAfter: "436",
-  },
-  {
-    micro: 436,
-    id: "py-436-subarray-sum-k",
-    title: "DSA Subarray Sum K",
-    solution: `from collections import defaultdict
-
-def subarray_sum(nums, k):
-    cnt = defaultdict(int)
-    cnt[0] = 1
-    s = ans = 0
-    for x in nums:
-        s += x
-        ans += cnt[s - k]
-        cnt[s] += 1
+    micro: 437,
+    id: "py-437-pow-x-n",
+    title: "DSA Pow X N",
+    solution: `def my_pow(x, n):
+    if n < 0:
+        x = 1 / x
+        n = -n
+    ans = 1.0
+    while n:
+        if n & 1:
+            ans *= x
+        x *= x
+        n >>= 1
     return ans
 
-print(subarray_sum([1, 1, 1], 2))
+print(my_pow(2.0, 10))
 `,
-    nextUrl: /\/learn\/py-437-pow-x-n/,
-    cursorAfter: "437",
+    nextUrl: /\/learn\/py-438-sqrt-x/,
+    cursorAfter: "438",
+  },
+  {
+    micro: 438,
+    id: "py-438-sqrt-x",
+    title: "DSA Sqrt X",
+    solution: `def my_sqrt(x):
+    lo, hi = 0, x
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if mid * mid <= x:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return hi
+
+print(my_sqrt(8))
+`,
+    nextUrl: /\/learn\/py-439-trailing-zeroes/,
+    cursorAfter: "439",
+  },
+  {
+    micro: 439,
+    id: "py-439-trailing-zeroes",
+    title: "DSA Trailing Zeroes",
+    solution: `def trailing_zeroes(n):
+    c = 0
+    while n:
+        n //= 5
+        c += n
+    return c
+
+print(trailing_zeroes(25))
+`,
+    nextUrl: /\/learn\/py-440-excel-title/,
+    cursorAfter: "440",
+  },
+  {
+    micro: 440,
+    id: "py-440-excel-title",
+    title: "DSA Excel Title",
+    solution: `def convert_to_title(column_number):
+    s = ""
+    while column_number:
+        column_number, r = divmod(column_number - 1, 26)
+        s = chr(65 + r) + s
+    return s
+
+print(convert_to_title(28))
+`,
+    nextUrl: /\/learn\/py-441-palindrome-number/,
+    cursorAfter: "441",
+  },
+  {
+    micro: 441,
+    id: "py-441-palindrome-number",
+    title: "DSA Palindrome Num",
+    solution: `def is_palindrome(x):
+    if x < 0 or (x % 10 == 0 and x != 0):
+        return False
+    rev = 0
+    while x > rev:
+        rev = rev * 10 + x % 10
+        x //= 10
+    return x == rev or x == rev // 10
+
+print(is_palindrome(121))
+`,
+    nextUrl: /\/learn\/py-442-fizz-buzz/,
+    cursorAfter: "442",
+  },
+  {
+    micro: 442,
+    id: "py-442-fizz-buzz",
+    title: "DSA Fizz Buzz",
+    solution: `def fizz_buzz(n):
+    out = []
+    for i in range(1, n + 1):
+        if i % 15 == 0:
+            out.append("FizzBuzz")
+        elif i % 3 == 0:
+            out.append("Fizz")
+        elif i % 5 == 0:
+            out.append("Buzz")
+        else:
+            out.append(str(i))
+    return out
+
+print(fizz_buzz(5))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "443",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:431|432|433|434|435|436)-/);
+    expect(step.id).toMatch(/^py-(?:437|438|439|440|441|442)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -150,7 +167,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 431–436 · hashing II", () => {
+test.describe("micro-steps 437–442 · math III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
