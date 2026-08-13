@@ -346,6 +346,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 338, step_id: "py-338-map-sum" },
   { level_id: 339, step_id: "py-339-longest-word" },
   { level_id: 340, step_id: "py-340-stream-checker" },
+  { level_id: 341, step_id: "py-341-range-sum" },
+  { level_id: 342, step_id: "py-342-subarray-sum" },
+  { level_id: 343, step_id: "py-343-product-except" },
+  { level_id: 344, step_id: "py-344-corp-flight" },
+  { level_id: 345, step_id: "py-345-pivot-index" },
+  { level_id: 346, step_id: "py-346-running-sum" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=340).
+    /// 1-based index on the workspace micro-step rail (1..=346).
     pub micro_step: i32,
 }
 
@@ -4265,8 +4265,74 @@ pub const PY340_STREAM_CHECKER: CodingStep = CodingStep {
     pytest: "def test_340_stream_checker(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'StreamChecker' in ns\n    s = ns['StreamChecker'](['cd', 'f', 'kl'])\n    assert [s.query(ch) for ch in 'cdaf'] == [False, True, False, True]\n    assert capsys.readouterr().out.strip() == '[False, True, False, True]'\n",
     hint: "class StreamChecker:\n    def __init__(self, words):\n        self.root = {}; self.buf = []\n        for w in words:\n            node = self.root\n            for ch in reversed(w):\n                node = node.setdefault(ch, {})\n            node[\"$\"] = True\n    def query(self, letter):\n        self.buf.append(letter); node = self.root\n        for ch in reversed(self.buf):\n            if ch not in node: return False\n            node = node[ch]\n            if node.get(\"$\"): return True\n        return False\ns = StreamChecker([\"cd\", \"f\", \"kl\"])\nprint([s.query(ch) for ch in \"cdaf\"])",
     solution_example: "class StreamChecker:\n    def __init__(self, words):\n        self.root = {}\n        self.buf = []\n        for w in words:\n            node = self.root\n            for ch in reversed(w):\n                node = node.setdefault(ch, {})\n            node[\"$\"] = True\n\n    def query(self, letter):\n        self.buf.append(letter)\n        node = self.root\n        for ch in reversed(self.buf):\n            if ch not in node:\n                return False\n            node = node[ch]\n            if node.get(\"$\"):\n                return True\n        return False\n\ns = StreamChecker([\"cd\", \"f\", \"kl\"])\nprint([s.query(ch) for ch in \"cdaf\"])\n",
-    next: None, show_type_chips: false, micro_step: 340,
+    next: Some("py-341-range-sum"), show_type_chips: false, micro_step: 340,
 };
+
+pub const PY341_RANGE_SUM: CodingStep = CodingStep {
+    id: "py-341-range-sum", title: "DSA Range Sum", objective: "Prefijo para sumas de subarray en O(1).",
+    prompt_md: "**Range Sum Query - Immutable**\n\n`pref[i+1]=pref[i]+nums[i]`. Distinto de py-132 (kadane).\n\n**Micro-reto:**\n1. Clase `NumArray(nums)` con `sum_range(left, right)`\n2. nums=`[-2,0,3,-5,2,-1]`; imprimí `[sum_range(0,2), sum_range(2,5), sum_range(0,5)]` (esperado: `[1, -1, -3]`)",
+    starter_code: "# class NumArray:\n#     ...\n# n = NumArray([-2, 0, 3, -5, 2, -1])\n# print([n.sum_range(0, 2), n.sum_range(2, 5), n.sum_range(0, 5)])\n",
+    pytest: "def test_341_range_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'NumArray' in ns\n    n = ns['NumArray']([-2, 0, 3, -5, 2, -1])\n    assert n.sum_range(0, 2) == 1\n    assert n.sum_range(2, 5) == -1\n    assert n.sum_range(0, 5) == -3\n    assert capsys.readouterr().out.strip() == '[1, -1, -3]'\n",
+    hint: "class NumArray:\n    def __init__(self, nums):\n        self.pref = [0]\n        for x in nums: self.pref.append(self.pref[-1] + x)\n    def sum_range(self, left, right):\n        return self.pref[right+1] - self.pref[left]\nn = NumArray([-2, 0, 3, -5, 2, -1])\nprint([n.sum_range(0, 2), n.sum_range(2, 5), n.sum_range(0, 5)])",
+    solution_example: "class NumArray:\n    def __init__(self, nums):\n        self.pref = [0]\n        for x in nums:\n            self.pref.append(self.pref[-1] + x)\n\n    def sum_range(self, left, right):\n        return self.pref[right + 1] - self.pref[left]\n\nn = NumArray([-2, 0, 3, -5, 2, -1])\nprint([n.sum_range(0, 2), n.sum_range(2, 5), n.sum_range(0, 5)])\n",
+    next: Some("py-342-subarray-sum"), show_type_chips: false, micro_step: 341,
+};
+
+
+pub const PY342_SUBARRAY_SUM: CodingStep = CodingStep {
+    id: "py-342-subarray-sum", title: "DSA Subarray Sum", objective: "Contar subarrays cuya suma es k (hash de prefijos).",
+    prompt_md: "**Subarray Sum Equals K**\n\n`count[pref-k]` mientras avanzás. Distinto de py-341 (query fija).\n\n**Micro-reto:**\n1. Definí `subarray_sum(nums, k)`\n2. nums=`[1,1,1]`, k=`2`; imprimí (esperado: `2`)",
+    starter_code: "# def subarray_sum(nums, k):\n#     ...\n# print(subarray_sum([1, 1, 1], 2))\n",
+    pytest: "def test_342_subarray_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('subarray_sum'))\n    assert ns['subarray_sum']([1, 1, 1], 2) == 2\n    assert ns['subarray_sum']([1, 2, 3], 3) == 2\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "from collections import defaultdict\ndef subarray_sum(nums, k):\n    count = defaultdict(int); count[0] = 1\n    pref = ans = 0\n    for x in nums:\n        pref += x; ans += count[pref - k]; count[pref] += 1\n    return ans\nprint(subarray_sum([1, 1, 1], 2))",
+    solution_example: "from collections import defaultdict\n\ndef subarray_sum(nums, k):\n    count = defaultdict(int)\n    count[0] = 1\n    pref = ans = 0\n    for x in nums:\n        pref += x\n        ans += count[pref - k]\n        count[pref] += 1\n    return ans\n\nprint(subarray_sum([1, 1, 1], 2))\n",
+    next: Some("py-343-product-except"), show_type_chips: false, micro_step: 342,
+};
+
+
+pub const PY343_PRODUCT_EXCEPT: CodingStep = CodingStep {
+    id: "py-343-product-except", title: "DSA Product Except", objective: "Producto de todos excepto self sin división (prefijo/sufijo).",
+    prompt_md: "**Product of Array Except Self**\n\nLeft pass + right pass. Distinto de py-294 (ventana producto < k).\n\n**Micro-reto:**\n1. Definí `product_except_self(nums)`\n2. `[1,2,3,4]`; imprimí (esperado: `[24, 12, 8, 6]`)",
+    starter_code: "# def product_except_self(nums):\n#     ...\n# print(product_except_self([1, 2, 3, 4]))\n",
+    pytest: "def test_343_product_except(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('product_except_self'))\n    assert ns['product_except_self']([1, 2, 3, 4]) == [24, 12, 8, 6]\n    assert ns['product_except_self']([-1, 1, 0, -3, 3]) == [0, 0, 9, 0, 0]\n    assert capsys.readouterr().out.strip() == '[24, 12, 8, 6]'\n",
+    hint: "def product_except_self(nums):\n    n = len(nums); out = [1]*n\n    left = 1\n    for i in range(n):\n        out[i] = left; left *= nums[i]\n    right = 1\n    for i in range(n-1, -1, -1):\n        out[i] *= right; right *= nums[i]\n    return out\nprint(product_except_self([1, 2, 3, 4]))",
+    solution_example: "def product_except_self(nums):\n    n = len(nums)\n    out = [1] * n\n    left = 1\n    for i in range(n):\n        out[i] = left\n        left *= nums[i]\n    right = 1\n    for i in range(n - 1, -1, -1):\n        out[i] *= right\n        right *= nums[i]\n    return out\n\nprint(product_except_self([1, 2, 3, 4]))\n",
+    next: Some("py-344-corp-flight"), show_type_chips: false, micro_step: 343,
+};
+
+
+pub const PY344_CORP_FLIGHT: CodingStep = CodingStep {
+    id: "py-344-corp-flight", title: "DSA Corp Flight", objective: "Diff array para asientos en vuelos corporativos.",
+    prompt_md: "**Corporate Flight Bookings**\n\n+seats en first, -seats en last+1; prefijo. Distinto de py-312 (car pooling).\n\n**Micro-reto:**\n1. Definí `corp_flight_bookings(bookings, n)`\n2. bookings=`[[1,2,10],[2,3,20],[2,5,25]]`, n=`5`; imprimí (esperado: `[10, 55, 45, 25, 25]`)",
+    starter_code: "# def corp_flight_bookings(bookings, n):\n#     ...\n# print(corp_flight_bookings([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5))\n",
+    pytest: "def test_344_corp_flight(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('corp_flight_bookings'))\n    assert ns['corp_flight_bookings']([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5) == [10, 55, 45, 25, 25]\n    assert ns['corp_flight_bookings']([[1, 2, 10], [2, 2, 15]], 2) == [10, 25]\n    assert capsys.readouterr().out.strip() == '[10, 55, 45, 25, 25]'\n",
+    hint: "def corp_flight_bookings(bookings, n):\n    diff = [0]*(n+1)\n    for first, last, seats in bookings:\n        diff[first-1] += seats\n        if last < n: diff[last] -= seats\n    for i in range(1, n):\n        diff[i] += diff[i-1]\n    return diff[:n]\nprint(corp_flight_bookings([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5))",
+    solution_example: "def corp_flight_bookings(bookings, n):\n    diff = [0] * (n + 1)\n    for first, last, seats in bookings:\n        diff[first - 1] += seats\n        if last < n:\n            diff[last] -= seats\n    for i in range(1, n):\n        diff[i] += diff[i - 1]\n    return diff[:n]\n\nprint(corp_flight_bookings([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5))\n",
+    next: Some("py-345-pivot-index"), show_type_chips: false, micro_step: 344,
+};
+
+
+pub const PY345_PIVOT_INDEX: CodingStep = CodingStep {
+    id: "py-345-pivot-index", title: "DSA Pivot Index", objective: "Índice donde suma izquierda = suma derecha.",
+    prompt_md: "**Find Pivot Index**\n\nTotal - left - nums[i] == left. Distinto de py-341.\n\n**Micro-reto:**\n1. Definí `pivot_index(nums)`\n2. `[1,7,3,6,5,6]`; imprimí (esperado: `3`)",
+    starter_code: "# def pivot_index(nums):\n#     ...\n# print(pivot_index([1, 7, 3, 6, 5, 6]))\n",
+    pytest: "def test_345_pivot_index(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('pivot_index'))\n    assert ns['pivot_index']([1, 7, 3, 6, 5, 6]) == 3\n    assert ns['pivot_index']([1, 2, 3]) == -1\n    assert ns['pivot_index']([2, 1, -1]) == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "def pivot_index(nums):\n    total = sum(nums); left = 0\n    for i, x in enumerate(nums):\n        if left == total - left - x: return i\n        left += x\n    return -1\nprint(pivot_index([1, 7, 3, 6, 5, 6]))",
+    solution_example: "def pivot_index(nums):\n    total = sum(nums)\n    left = 0\n    for i, x in enumerate(nums):\n        if left == total - left - x:\n            return i\n        left += x\n    return -1\n\nprint(pivot_index([1, 7, 3, 6, 5, 6]))\n",
+    next: Some("py-346-running-sum"), show_type_chips: false, micro_step: 345,
+};
+
+
+pub const PY346_RUNNING_SUM: CodingStep = CodingStep {
+    id: "py-346-running-sum", title: "DSA Running Sum", objective: "Devolver la running sum del array 1D.",
+    prompt_md: "**Running Sum of 1d Array**\n\nIn-place o nuevo array acumulando. Distinto de py-345 (pivot).\n\n**Micro-reto:**\n1. Definí `running_sum(nums)`\n2. `[1,2,3,4]`; imprimí (esperado: `[1, 3, 6, 10]`)",
+    starter_code: "# def running_sum(nums):\n#     ...\n# print(running_sum([1, 2, 3, 4]))\n",
+    pytest: "def test_346_running_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('running_sum'))\n    assert ns['running_sum']([1, 2, 3, 4]) == [1, 3, 6, 10]\n    assert ns['running_sum']([1, 1, 1, 1, 1]) == [1, 2, 3, 4, 5]\n    assert capsys.readouterr().out.strip() == '[1, 3, 6, 10]'\n",
+    hint: "def running_sum(nums):\n    for i in range(1, len(nums)):\n        nums[i] += nums[i-1]\n    return nums\nprint(running_sum([1, 2, 3, 4]))",
+    solution_example: "def running_sum(nums):\n    for i in range(1, len(nums)):\n        nums[i] += nums[i - 1]\n    return nums\n\nprint(running_sum([1, 2, 3, 4]))\n",
+    next: None, show_type_chips: false, micro_step: 346,
+};
+
 
 
 
@@ -4615,6 +4681,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY338_MAP_SUM,
     &PY339_LONGEST_WORD,
     &PY340_STREAM_CHECKER,
+    &PY341_RANGE_SUM,
+    &PY342_SUBARRAY_SUM,
+    &PY343_PRODUCT_EXCEPT,
+    &PY344_CORP_FLIGHT,
+    &PY345_PIVOT_INDEX,
+    &PY346_RUNNING_SUM,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4758,7 +4830,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 340);
+            assert!(step.micro_step >= 1 && step.micro_step <= 346);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -5312,7 +5384,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py340_curriculum_chain() {
+    fn py203_to_py346_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -5452,7 +5524,13 @@ mod tests {
             (337, "py-337-replace-words", Some("py-338-map-sum")),
             (338, "py-338-map-sum", Some("py-339-longest-word")),
             (339, "py-339-longest-word", Some("py-340-stream-checker")),
-            (340, "py-340-stream-checker", None),
+            (340, "py-340-stream-checker", Some("py-341-range-sum")),
+            (341, "py-341-range-sum", Some("py-342-subarray-sum")),
+            (342, "py-342-subarray-sum", Some("py-343-product-except")),
+            (343, "py-343-product-except", Some("py-344-corp-flight")),
+            (344, "py-344-corp-flight", Some("py-345-pivot-index")),
+            (345, "py-345-pivot-index", Some("py-346-running-sum")),
+            (346, "py-346-running-sum", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
