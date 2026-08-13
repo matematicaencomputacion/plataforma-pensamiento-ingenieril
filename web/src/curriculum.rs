@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=430).
+    /// 1-based index on the workspace micro-step rail (1..=436).
     pub micro_step: i32,
 }
 
@@ -7848,7 +7848,243 @@ print(find_content_children([1, 2, 3], [1, 1]))",
 
 print(find_content_children([1, 2, 3], [1, 1]))
 ",
-    next: None, show_type_chips: false, micro_step: 430,
+    next: Some("py-431-two-sum"), show_type_chips: false, micro_step: 430,
+};
+
+
+pub const PY431_TWO_SUM: CodingStep = CodingStep {
+    id: "py-431-two-sum", title: "DSA Two Sum", objective: "Índices que suman target.",
+    prompt_md: "**Two Sum**
+
+Hash mapa. Distinto de py-137.
+
+**Micro-reto:**
+1. Definí `two_sum(nums, target)`
+2. nums=`[2,7,11,15]`, target=`9`; imprimí (esperado: `[0, 1]`)",
+    starter_code: "# def two_sum(nums, target):
+#     ...
+# print(two_sum([2, 7, 11, 15], 9))
+",
+    pytest: "def test_431_two_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('two_sum'))
+    assert ns['two_sum']([2, 7, 11, 15], 9) == [0, 1]
+    assert ns['two_sum']([3, 2, 4], 6) == [1, 2]
+    assert capsys.readouterr().out.strip() == '[0, 1]'
+",
+    hint: "def two_sum(nums, target):
+    seen={}
+    for i,x in enumerate(nums):
+        if target-x in seen: return [seen[target-x], i]
+        seen[x]=i
+print(two_sum([2, 7, 11, 15], 9))",
+    solution_example: "def two_sum(nums, target):
+    seen = {}
+    for i, x in enumerate(nums):
+        if target - x in seen:
+            return [seen[target - x], i]
+        seen[x] = i
+
+print(two_sum([2, 7, 11, 15], 9))
+",
+    next: Some("py-432-contains-dup"), show_type_chips: false, micro_step: 431,
+};
+
+
+pub const PY432_CONTAINS_DUP: CodingStep = CodingStep {
+    id: "py-432-contains-dup", title: "DSA Contains Dup", objective: "¿Hay duplicados?",
+    prompt_md: "**Contains Duplicate**
+
+Set. Distinto de py-40.
+
+**Micro-reto:**
+1. Definí `contains_duplicate(nums)`
+2. `[1,2,3,1]`; imprimí `True`",
+    starter_code: "# def contains_duplicate(nums):
+#     ...
+# print(contains_duplicate([1, 2, 3, 1]))
+",
+    pytest: "def test_432_contains_dup(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('contains_duplicate'))
+    assert ns['contains_duplicate']([1, 2, 3, 1]) is True
+    assert ns['contains_duplicate']([1, 2, 3, 4]) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def contains_duplicate(nums):
+    return len(nums)!=len(set(nums))
+print(contains_duplicate([1, 2, 3, 1]))",
+    solution_example: "def contains_duplicate(nums):
+    return len(nums) != len(set(nums))
+
+print(contains_duplicate([1, 2, 3, 1]))
+",
+    next: Some("py-433-intersection"), show_type_chips: false, micro_step: 432,
+};
+
+
+pub const PY433_INTERSECTION: CodingStep = CodingStep {
+    id: "py-433-intersection", title: "DSA Intersection", objective: "Intersección de dos arrays (únicos).",
+    prompt_md: "**Intersection of Two Arrays**
+
+Set &. Distinto de py-41.
+
+**Micro-reto:**
+1. Definí `intersection(nums1, nums2)` sorted
+2. `[1,2,2,1]`, `[2,2]`; imprimí (esperado: `[2]`)",
+    starter_code: "# def intersection(nums1, nums2):
+#     ...
+# print(sorted(intersection([1, 2, 2, 1], [2, 2])))
+",
+    pytest: "def test_433_intersection(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('intersection'))
+    assert sorted(ns['intersection']([1, 2, 2, 1], [2, 2])) == [2]
+    assert sorted(ns['intersection']([4, 9, 5], [9, 4, 9, 8, 4])) == [4, 9]
+    assert capsys.readouterr().out.strip() == '[2]'
+",
+    hint: "def intersection(nums1, nums2):
+    return list(set(nums1)&set(nums2))
+print(sorted(intersection([1, 2, 2, 1], [2, 2])))",
+    solution_example: "def intersection(nums1, nums2):
+    return list(set(nums1) & set(nums2))
+
+print(sorted(intersection([1, 2, 2, 1], [2, 2])))
+",
+    next: Some("py-434-happy-number"), show_type_chips: false, micro_step: 433,
+};
+
+
+pub const PY434_HAPPY_NUMBER: CodingStep = CodingStep {
+    id: "py-434-happy-number", title: "DSA Happy Number Hash", objective: "Happy number con set de vistos.",
+    prompt_md: "**Happy Number**
+
+Set ciclo. Distinto de py-323.
+
+**Micro-reto:**
+1. Definí `is_happy(n)`
+2. n=`19`; imprimí `True`",
+    starter_code: "# def is_happy(n):
+#     ...
+# print(is_happy(19))
+",
+    pytest: "def test_434_happy_number(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_happy'))
+    assert ns['is_happy'](19) is True
+    assert ns['is_happy'](2) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_happy(n):
+    seen=set()
+    while n!=1 and n not in seen:
+        seen.add(n); n=sum(int(d)**2 for d in str(n))
+    return n==1
+print(is_happy(19))",
+    solution_example: "def is_happy(n):
+    seen = set()
+    while n != 1 and n not in seen:
+        seen.add(n)
+        n = sum(int(d) ** 2 for d in str(n))
+    return n == 1
+
+print(is_happy(19))
+",
+    next: Some("py-435-first-uniq-char"), show_type_chips: false, micro_step: 434,
+};
+
+
+pub const PY435_FIRST_UNIQ_CHAR: CodingStep = CodingStep {
+    id: "py-435-first-uniq-char", title: "DSA First Uniq Char", objective: "Índice del primer char único.",
+    prompt_md: "**First Unique Character in a String**
+
+Counter. Distinto de py-42.
+
+**Micro-reto:**
+1. Definí `first_uniq_char(s)`
+2. `\"leetcode\"`; imprimí (esperado: `0`)",
+    starter_code: "# def first_uniq_char(s):
+#     ...
+# print(first_uniq_char(\"leetcode\"))
+",
+    pytest: "def test_435_first_uniq_char(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('first_uniq_char'))
+    assert ns['first_uniq_char']('leetcode') == 0
+    assert ns['first_uniq_char']('loveleetcode') == 2
+    assert ns['first_uniq_char']('aabb') == -1
+    assert capsys.readouterr().out.strip() == '0'
+",
+    hint: "from collections import Counter
+def first_uniq_char(s):
+    c=Counter(s)
+    for i,ch in enumerate(s):
+        if c[ch]==1: return i
+    return -1
+print(first_uniq_char(\"leetcode\"))",
+    solution_example: "from collections import Counter
+
+def first_uniq_char(s):
+    c = Counter(s)
+    for i, ch in enumerate(s):
+        if c[ch] == 1:
+            return i
+    return -1
+
+print(first_uniq_char(\"leetcode\"))
+",
+    next: Some("py-436-subarray-sum-k"), show_type_chips: false, micro_step: 435,
+};
+
+
+pub const PY436_SUBARRAY_SUM_K: CodingStep = CodingStep {
+    id: "py-436-subarray-sum-k", title: "DSA Subarray Sum K", objective: "Conteo de subarrays que suman k (prefijo).",
+    prompt_md: "**Subarray Sum Equals K**
+
+Prefix + Counter. Distinto de py-341.
+
+**Micro-reto:**
+1. Definí `subarray_sum(nums, k)`
+2. nums=`[1,1,1]`, k=`2`; imprimí (esperado: `2`)",
+    starter_code: "# def subarray_sum(nums, k):
+#     ...
+# print(subarray_sum([1, 1, 1], 2))
+",
+    pytest: "def test_436_subarray_sum_k(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('subarray_sum'))
+    assert ns['subarray_sum']([1, 1, 1], 2) == 2
+    assert ns['subarray_sum']([1, 2, 3], 3) == 2
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "from collections import defaultdict
+def subarray_sum(nums, k):
+    cnt=defaultdict(int); cnt[0]=1; s=ans=0
+    for x in nums:
+        s+=x; ans+=cnt[s-k]; cnt[s]+=1
+    return ans
+print(subarray_sum([1, 1, 1], 2))",
+    solution_example: "from collections import defaultdict
+
+def subarray_sum(nums, k):
+    cnt = defaultdict(int)
+    cnt[0] = 1
+    s = ans = 0
+    for x in nums:
+        s += x
+        ans += cnt[s - k]
+        cnt[s] += 1
+    return ans
+
+print(subarray_sum([1, 1, 1], 2))
+",
+    next: None, show_type_chips: false, micro_step: 436,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -8281,7 +8517,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY427_GAS_STATION,
     &PY428_CANDY,
     &PY429_MAX_UNITS,
-    &PY430_ASSIGN_COOKIES
+    &PY430_ASSIGN_COOKIES,
+    &PY431_TWO_SUM,
+    &PY432_CONTAINS_DUP,
+    &PY433_INTERSECTION,
+    &PY434_HAPPY_NUMBER,
+    &PY435_FIRST_UNIQ_CHAR,
+    &PY436_SUBARRAY_SUM_K
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -8425,7 +8667,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 430);
+            assert!(step.micro_step >= 1 && step.micro_step <= 436);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -8979,7 +9221,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py430_curriculum_chain() {
+    fn py203_to_py436_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -9209,7 +9451,13 @@ mod tests {
             (427, "py-427-gas-station", Some("py-428-candy")),
             (428, "py-428-candy", Some("py-429-max-units")),
             (429, "py-429-max-units", Some("py-430-assign-cookies")),
-            (430, "py-430-assign-cookies", None),
+            (430, "py-430-assign-cookies", Some("py-431-two-sum")),
+            (431, "py-431-two-sum", Some("py-432-contains-dup")),
+            (432, "py-432-contains-dup", Some("py-433-intersection")),
+            (433, "py-433-intersection", Some("py-434-happy-number")),
+            (434, "py-434-happy-number", Some("py-435-first-uniq-char")),
+            (435, "py-435-first-uniq-char", Some("py-436-subarray-sum-k")),
+            (436, "py-436-subarray-sum-k", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

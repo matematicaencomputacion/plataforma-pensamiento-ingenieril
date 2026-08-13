@@ -22,124 +22,105 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 425,
-    id: "py-425-jump-game",
-    title: "DSA Jump Game",
-    solution: `def can_jump(nums):
-    reach = 0
+    micro: 431,
+    id: "py-431-two-sum",
+    title: "DSA Two Sum",
+    solution: `def two_sum(nums, target):
+    seen = {}
     for i, x in enumerate(nums):
-        if i > reach:
-            return False
-        reach = max(reach, i + x)
-    return True
+        if target - x in seen:
+            return [seen[target - x], i]
+        seen[x] = i
 
-print(can_jump([2, 3, 1, 1, 4]))
+print(two_sum([2, 7, 11, 15], 9))
 `,
-    nextUrl: /\/learn\/py-426-jump-game-ii/,
-    cursorAfter: "426",
+    nextUrl: /\/learn\/py-432-contains-dup/,
+    cursorAfter: "432",
   },
   {
-    micro: 426,
-    id: "py-426-jump-game-ii",
-    title: "DSA Jump Game II",
-    solution: `def jump(nums):
-    jumps = end = farthest = 0
-    for i in range(len(nums) - 1):
-        farthest = max(farthest, i + nums[i])
-        if i == end:
-            jumps += 1
-            end = farthest
-    return jumps
+    micro: 432,
+    id: "py-432-contains-dup",
+    title: "DSA Contains Dup",
+    solution: `def contains_duplicate(nums):
+    return len(nums) != len(set(nums))
 
-print(jump([2, 3, 1, 1, 4]))
+print(contains_duplicate([1, 2, 3, 1]))
 `,
-    nextUrl: /\/learn\/py-427-gas-station/,
-    cursorAfter: "427",
+    nextUrl: /\/learn\/py-433-intersection/,
+    cursorAfter: "433",
   },
   {
-    micro: 427,
-    id: "py-427-gas-station",
-    title: "DSA Gas Station",
-    solution: `def can_complete_circuit(gas, cost):
-    if sum(gas) < sum(cost):
-        return -1
-    tank = start = 0
-    for i, (g, c) in enumerate(zip(gas, cost)):
-        tank += g - c
-        if tank < 0:
-            tank = 0
-            start = i + 1
-    return start
+    micro: 433,
+    id: "py-433-intersection",
+    title: "DSA Intersection",
+    solution: `def intersection(nums1, nums2):
+    return list(set(nums1) & set(nums2))
 
-print(can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]))
+print(sorted(intersection([1, 2, 2, 1], [2, 2])))
 `,
-    nextUrl: /\/learn\/py-428-candy/,
-    cursorAfter: "428",
+    nextUrl: /\/learn\/py-434-happy-number/,
+    cursorAfter: "434",
   },
   {
-    micro: 428,
-    id: "py-428-candy",
-    title: "DSA Candy",
-    solution: `def candy(ratings):
-    n = len(ratings)
-    c = [1] * n
-    for i in range(1, n):
-        if ratings[i] > ratings[i - 1]:
-            c[i] = c[i - 1] + 1
-    for i in range(n - 2, -1, -1):
-        if ratings[i] > ratings[i + 1]:
-            c[i] = max(c[i], c[i + 1] + 1)
-    return sum(c)
+    micro: 434,
+    id: "py-434-happy-number",
+    title: "DSA Happy Number Hash",
+    solution: `def is_happy(n):
+    seen = set()
+    while n != 1 and n not in seen:
+        seen.add(n)
+        n = sum(int(d) ** 2 for d in str(n))
+    return n == 1
 
-print(candy([1, 0, 2]))
+print(is_happy(19))
 `,
-    nextUrl: /\/learn\/py-429-max-units/,
-    cursorAfter: "429",
+    nextUrl: /\/learn\/py-435-first-uniq-char/,
+    cursorAfter: "435",
   },
   {
-    micro: 429,
-    id: "py-429-max-units",
-    title: "DSA Max Units",
-    solution: `def maximum_units(box_types, truck_size):
-    box_types.sort(key=lambda x: -x[1])
-    ans = 0
-    for n, u in box_types:
-        take = min(n, truck_size)
-        ans += take * u
-        truck_size -= take
-        if not truck_size:
-            break
+    micro: 435,
+    id: "py-435-first-uniq-char",
+    title: "DSA First Uniq Char",
+    solution: `from collections import Counter
+
+def first_uniq_char(s):
+    c = Counter(s)
+    for i, ch in enumerate(s):
+        if c[ch] == 1:
+            return i
+    return -1
+
+print(first_uniq_char("leetcode"))
+`,
+    nextUrl: /\/learn\/py-436-subarray-sum-k/,
+    cursorAfter: "436",
+  },
+  {
+    micro: 436,
+    id: "py-436-subarray-sum-k",
+    title: "DSA Subarray Sum K",
+    solution: `from collections import defaultdict
+
+def subarray_sum(nums, k):
+    cnt = defaultdict(int)
+    cnt[0] = 1
+    s = ans = 0
+    for x in nums:
+        s += x
+        ans += cnt[s - k]
+        cnt[s] += 1
     return ans
 
-print(maximum_units([[1, 3], [2, 2], [3, 1]], 4))
+print(subarray_sum([1, 1, 1], 2))
 `,
-    nextUrl: /\/learn\/py-430-assign-cookies/,
-    cursorAfter: "430",
-  },
-  {
-    micro: 430,
-    id: "py-430-assign-cookies",
-    title: "DSA Assign Cookies",
-    solution: `def find_content_children(g, s):
-    g.sort()
-    s.sort()
-    i = j = 0
-    while i < len(g) and j < len(s):
-        if s[j] >= g[i]:
-            i += 1
-        j += 1
-    return i
-
-print(find_content_children([1, 2, 3], [1, 1]))
-`,
-    nextUrl: /\/learn\/py-431-two-sum/,
-    cursorAfter: "431",
+    nextUrl: /\/workspace/,
+    cursorAfter: "437",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:425|426|427|428|429|430)-/);
+    expect(step.id).toMatch(/^py-(?:431|432|433|434|435|436)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -169,7 +150,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 425–430 · greedy II", () => {
+test.describe("micro-steps 431–436 · hashing II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

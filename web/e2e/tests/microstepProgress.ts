@@ -436,6 +436,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 428, step_id: "py-428-candy" },
   { level_id: 429, step_id: "py-429-max-units" },
   { level_id: 430, step_id: "py-430-assign-cookies" },
+  { level_id: 431, step_id: "py-431-two-sum" },
+  { level_id: 432, step_id: "py-432-contains-dup" },
+  { level_id: 433, step_id: "py-433-intersection" },
+  { level_id: 434, step_id: "py-434-happy-number" },
+  { level_id: 435, step_id: "py-435-first-uniq-char" },
+  { level_id: 436, step_id: "py-436-subarray-sum-k" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
