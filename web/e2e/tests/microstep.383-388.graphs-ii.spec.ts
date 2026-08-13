@@ -22,104 +22,169 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 377,
-    id: "py-377-single-number",
-    title: "DSA Single Number",
-    solution: `def single_number(nums):
-    x = 0
-    for n in nums:
-        x ^= n
-    return x
-
-print(single_number([2, 2, 1]))
-`,
-    nextUrl: /\/learn\/py-378-hamming-weight/,
-    cursorAfter: "378",
-  },
-  {
-    micro: 378,
-    id: "py-378-hamming-weight",
-    title: "DSA Hamming Weight",
-    solution: `def hamming_weight(n):
+    micro: 383,
+    id: "py-383-num-islands",
+    title: "DSA Num Islands",
+    solution: `def num_islands(grid):
+    if not grid:
+        return 0
+    m, n = len(grid), len(grid[0])
     c = 0
-    while n:
-        n &= n - 1
-        c += 1
+
+    def dfs(i, j):
+        if i < 0 or j < 0 or i >= m or j >= n or grid[i][j] != "1":
+            return
+        grid[i][j] = "0"
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            dfs(i + di, j + dj)
+
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == "1":
+                c += 1
+                dfs(i, j)
     return c
 
-print(hamming_weight(11))
+print(num_islands([["1", "1", "1", "1", "0"], ["1", "1", "0", "1", "0"], ["1", "1", "0", "0", "0"], ["0", "0", "0", "0", "0"]]))
 `,
-    nextUrl: /\/learn\/py-379-counting-bits/,
-    cursorAfter: "379",
+    nextUrl: /\/learn\/py-384-clone-graph/,
+    cursorAfter: "384",
   },
   {
-    micro: 379,
-    id: "py-379-counting-bits",
-    title: "DSA Counting Bits",
-    solution: `def count_bits(n):
-    dp = [0] * (n + 1)
-    for i in range(1, n + 1):
-        dp[i] = dp[i >> 1] + (i & 1)
-    return dp
+    micro: 384,
+    id: "py-384-clone-graph",
+    title: "DSA Clone Graph",
+    solution: `def clone_graph(adj):
+    return {k: list(v) for k, v in adj.items()}
 
-print(count_bits(5))
+print(sorted((k, sorted(v)) for k, v in clone_graph({1: [2, 4], 2: [1, 3], 3: [2, 4], 4: [1, 3]}).items()))
 `,
-    nextUrl: /\/learn\/py-380-reverse-bits/,
-    cursorAfter: "380",
+    nextUrl: /\/learn\/py-385-course-order/,
+    cursorAfter: "385",
   },
   {
-    micro: 380,
-    id: "py-380-reverse-bits",
-    title: "DSA Reverse Bits",
-    solution: `def reverse_bits(n):
-    out = 0
-    for _ in range(32):
-        out = (out << 1) | (n & 1)
-        n >>= 1
-    return out
+    micro: 385,
+    id: "py-385-course-order",
+    title: "DSA Course Order",
+    solution: `from collections import defaultdict, deque
 
-print(reverse_bits(43261596))
+def find_order(num_courses, prerequisites):
+    g = defaultdict(list)
+    indeg = [0] * num_courses
+    for a, b in prerequisites:
+        g[b].append(a)
+        indeg[a] += 1
+    q = deque([i for i in range(num_courses) if indeg[i] == 0])
+    out = []
+    while q:
+        u = q.popleft()
+        out.append(u)
+        for v in g[u]:
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                q.append(v)
+    return out if len(out) == num_courses else []
+
+print(find_order(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))
 `,
-    nextUrl: /\/learn\/py-381-missing-number/,
-    cursorAfter: "381",
+    nextUrl: /\/learn\/py-386-oranges-rotting/,
+    cursorAfter: "386",
   },
   {
-    micro: 381,
-    id: "py-381-missing-number",
-    title: "DSA Missing Number",
-    solution: `def missing_number(nums):
-    x = len(nums)
-    for i, v in enumerate(nums):
-        x ^= i ^ v
-    return x
+    micro: 386,
+    id: "py-386-oranges-rotting",
+    title: "DSA Oranges Rotting",
+    solution: `from collections import deque
 
-print(missing_number([3, 0, 1]))
+def oranges_rotting(grid):
+    m, n = len(grid), len(grid[0])
+    q = deque()
+    fresh = 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == 2:
+                q.append((i, j, 0))
+            elif grid[i][j] == 1:
+                fresh += 1
+    mins = 0
+    while q:
+        i, j, t = q.popleft()
+        mins = t
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < m and 0 <= nj < n and grid[ni][nj] == 1:
+                grid[ni][nj] = 2
+                fresh -= 1
+                q.append((ni, nj, t + 1))
+    return mins if fresh == 0 else -1
+
+print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
 `,
-    nextUrl: /\/learn\/py-382-sum-two-ints/,
-    cursorAfter: "382",
+    nextUrl: /\/learn\/py-387-network-delay/,
+    cursorAfter: "387",
   },
   {
-    micro: 382,
-    id: "py-382-sum-two-ints",
-    title: "DSA Sum Two Ints",
-    solution: `def get_sum(a, b):
-    MASK = 0xFFFFFFFF
-    while b & MASK:
-        carry = (a & b) << 1
-        a = (a ^ b) & MASK
-        b = carry
-    return a if a <= 0x7FFFFFFF else ~(a ^ MASK)
+    micro: 387,
+    id: "py-387-network-delay",
+    title: "DSA Network Delay",
+    solution: `import heapq
+from collections import defaultdict
 
-print(get_sum(1, 2))
+def network_delay_time(times, n, k):
+    g = defaultdict(list)
+    for u, v, w in times:
+        g[u].append((v, w))
+    dist = {}
+    h = [(0, k)]
+    while h:
+        d, u = heapq.heappop(h)
+        if u in dist:
+            continue
+        dist[u] = d
+        for v, w in g[u]:
+            if v not in dist:
+                heapq.heappush(h, (d + w, v))
+    return max(dist.values()) if len(dist) == n else -1
+
+print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))
 `,
-    nextUrl: /\/learn\/py-383-num-islands/,
-    cursorAfter: "383",
+    nextUrl: /\/learn\/py-388-shortest-path-bin/,
+    cursorAfter: "388",
+  },
+  {
+    micro: 388,
+    id: "py-388-shortest-path-bin",
+    title: "DSA Shortest Path Bin",
+    solution: `from collections import deque
+
+def shortest_path_binary_matrix(grid):
+    n = len(grid)
+    if grid[0][0] or grid[n - 1][n - 1]:
+        return -1
+    q = deque([(0, 0, 1)])
+    grid[0][0] = 1
+    while q:
+        i, j, d = q.popleft()
+        if i == n - 1 and j == n - 1:
+            return d
+        for di in (-1, 0, 1):
+            for dj in (-1, 0, 1):
+                ni, nj = i + di, j + dj
+                if 0 <= ni < n and 0 <= nj < n and grid[ni][nj] == 0:
+                    grid[ni][nj] = 1
+                    q.append((ni, nj, d + 1))
+    return -1
+
+print(shortest_path_binary_matrix([[0, 1], [1, 0]]))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "389",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:377|378|379|380|381|382)-/);
+    expect(step.id).toMatch(/^py-(?:383|384|385|386|387|388)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -149,7 +214,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 377–382 · bit manipulation II", () => {
+test.describe("micro-steps 383–388 · graphs II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
