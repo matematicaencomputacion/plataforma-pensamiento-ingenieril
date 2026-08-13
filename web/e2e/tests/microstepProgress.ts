@@ -328,6 +328,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 320, step_id: "py-320-restore-ip" },
   { level_id: 321, step_id: "py-321-valid-sudoku" },
   { level_id: 322, step_id: "py-322-permute-unique" },
+  { level_id: 323, step_id: "py-323-happy-number" },
+  { level_id: 324, step_id: "py-324-count-primes" },
+  { level_id: 325, step_id: "py-325-excel-column" },
+  { level_id: 326, step_id: "py-326-roman-to-int" },
+  { level_id: 327, step_id: "py-327-add-digits" },
+  { level_id: 328, step_id: "py-328-ugly-number" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
