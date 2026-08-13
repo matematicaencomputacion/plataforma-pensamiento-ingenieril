@@ -430,6 +430,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 422, step_id: "py-422-randomized-set" },
   { level_id: 423, step_id: "py-423-moving-avg" },
   { level_id: 424, step_id: "py-424-browser-history" },
+  { level_id: 425, step_id: "py-425-jump-game" },
+  { level_id: 426, step_id: "py-426-jump-game-ii" },
+  { level_id: 427, step_id: "py-427-gas-station" },
+  { level_id: 428, step_id: "py-428-candy" },
+  { level_id: 429, step_id: "py-429-max-units" },
+  { level_id: 430, step_id: "py-430-assign-cookies" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
