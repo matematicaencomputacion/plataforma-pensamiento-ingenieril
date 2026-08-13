@@ -62,13 +62,8 @@ pub fn WorkspacePage() -> impl IntoView {
         });
     };
 
-    let current_level = Signal::derive(move || {
-        session
-            .user
-            .get()
-            .map(|u| u.current_level)
-            .unwrap_or(1)
-    });
+    let current_level =
+        Signal::derive(move || session.user.get().map(|u| u.current_level).unwrap_or(1));
 
     view! {
         <section class="workspace">
@@ -151,7 +146,7 @@ pub fn WorkspacePage() -> impl IntoView {
                             "Module 1 — Declarative Foundations"
                         </h3>
                         <p class="workspace__statement">
-                            "Variables, tipos y foundations declarativas en Python. Los micro-pasos 1–304 viven en «Current level micro-step»; el editor Pyodide sigue en Paso 2 · Coding."
+                            "Variables, tipos y foundations declarativas en Python. Los micro-pasos 1–304 viven arriba en «Current level micro-step» a ancho completo; el editor Pyodide sigue en Paso 2 · Coding."
                         </p>
                         <ul class="workspace__list">
                             <li>"Variables e enteros"</li>

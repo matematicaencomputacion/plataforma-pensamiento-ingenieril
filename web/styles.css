@@ -335,7 +335,7 @@ button:focus-visible {
 }
 
 .workspace {
-  width: min(52rem, 100%);
+  width: min(64rem, 100%);
   text-align: left;
 }
 
@@ -360,15 +360,8 @@ button:focus-visible {
 
 .workspace__grid {
   display: grid;
-  gap: 1.5rem;
+  gap: 1.75rem;
   grid-template-columns: 1fr;
-}
-
-@media (min-width: 720px) {
-  .workspace__grid {
-    grid-template-columns: 1.2fr 0.8fr;
-    align-items: start;
-  }
 }
 
 .workspace__panel {
