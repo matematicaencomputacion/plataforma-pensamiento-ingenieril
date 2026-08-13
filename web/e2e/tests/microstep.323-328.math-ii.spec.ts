@@ -22,191 +22,113 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 317,
-    id: "py-317-permutations",
-    title: "DSA Permutations",
-    solution: `def permute(nums):
-    out = []
-    def bt(path, used):
-        if len(path) == len(nums):
-            out.append(path[:])
-            return
-        for i, x in enumerate(nums):
-            if used[i]:
-                continue
-            used[i] = True
-            path.append(x)
-            bt(path, used)
-            path.pop()
-            used[i] = False
-    bt([], [False] * len(nums))
-    return sorted(out)
+    micro: 323,
+    id: "py-323-happy-number",
+    title: "DSA Happy Number",
+    solution: `def is_happy(n):
+    seen = set()
+    while n != 1 and n not in seen:
+        seen.add(n)
+        n = sum(int(d) ** 2 for d in str(n))
+    return n == 1
 
-print(permute([1, 2, 3]))
+print(is_happy(19))
 `,
-    nextUrl: /\/learn\/py-318-combos-ii/,
-    cursorAfter: "318",
+    nextUrl: /\/learn\/py-324-count-primes/,
+    cursorAfter: "324",
   },
   {
-    micro: 318,
-    id: "py-318-combos-ii",
-    title: "DSA Combination Sum II",
-    solution: `def combination_sum2(candidates, target):
-    candidates = sorted(candidates)
-    out = []
-    def bt(start, remain, path):
-        if remain == 0:
-            out.append(path[:])
-            return
-        for i in range(start, len(candidates)):
-            if i > start and candidates[i] == candidates[i - 1]:
-                continue
-            if candidates[i] > remain:
-                break
-            path.append(candidates[i])
-            bt(i + 1, remain - candidates[i], path)
-            path.pop()
-    bt(0, target, [])
-    return out
+    micro: 324,
+    id: "py-324-count-primes",
+    title: "DSA Count Primes",
+    solution: `def count_primes(n):
+    if n <= 2:
+        return 0
+    is_prime = [True] * n
+    is_prime[0] = is_prime[1] = False
+    p = 2
+    while p * p < n:
+        if is_prime[p]:
+            for q in range(p * p, n, p):
+                is_prime[q] = False
+        p += 1
+    return sum(is_prime)
 
-print(combination_sum2([10, 1, 2, 7, 6, 1, 5], 8))
+print(count_primes(10))
 `,
-    nextUrl: /\/learn\/py-319-n-queens/,
-    cursorAfter: "319",
+    nextUrl: /\/learn\/py-325-excel-column/,
+    cursorAfter: "325",
   },
   {
-    micro: 319,
-    id: "py-319-n-queens",
-    title: "DSA N-Queens",
-    solution: `def total_n_queens(n):
-    cols = set()
-    d1 = set()
-    d2 = set()
-    ans = 0
-    def bt(r):
-        nonlocal ans
-        if r == n:
-            ans += 1
-            return
-        for c in range(n):
-            if c in cols or (r - c) in d1 or (r + c) in d2:
-                continue
-            cols.add(c)
-            d1.add(r - c)
-            d2.add(r + c)
-            bt(r + 1)
-            cols.remove(c)
-            d1.remove(r - c)
-            d2.remove(r + c)
-    bt(0)
-    return ans
+    micro: 325,
+    id: "py-325-excel-column",
+    title: "DSA Excel Column",
+    solution: `def title_to_number(column_title):
+    n = 0
+    for ch in column_title:
+        n = n * 26 + (ord(ch) - ord("A") + 1)
+    return n
 
-print(total_n_queens(4))
+print(title_to_number("AB"))
 `,
-    nextUrl: /\/learn\/py-320-restore-ip/,
-    cursorAfter: "320",
+    nextUrl: /\/learn\/py-326-roman-to-int/,
+    cursorAfter: "326",
   },
   {
-    micro: 320,
-    id: "py-320-restore-ip",
-    title: "DSA Restore IP",
-    solution: `def restore_ip_addresses(s):
-    out = []
-    def bt(start, parts):
-        if len(parts) == 4:
-            if start == len(s):
-                out.append('.'.join(parts))
-            return
-        for length in range(1, 4):
-            if start + length > len(s):
-                break
-            seg = s[start:start + length]
-            if (len(seg) > 1 and seg[0] == '0') or int(seg) > 255:
-                continue
-            parts.append(seg)
-            bt(start + length, parts)
-            parts.pop()
-    bt(0, [])
-    return sorted(out)
+    micro: 326,
+    id: "py-326-roman-to-int",
+    title: "DSA Roman To Int",
+    solution: `def roman_to_int(s):
+    val = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    total = 0
+    for i, ch in enumerate(s):
+        if i + 1 < len(s) and val[ch] < val[s[i + 1]]:
+            total -= val[ch]
+        else:
+            total += val[ch]
+    return total
 
-print(restore_ip_addresses("25525511135"))
+print(roman_to_int("MCMXCIV"))
 `,
-    nextUrl: /\/learn\/py-321-valid-sudoku/,
-    cursorAfter: "321",
+    nextUrl: /\/learn\/py-327-add-digits/,
+    cursorAfter: "327",
   },
   {
-    micro: 321,
-    id: "py-321-valid-sudoku",
-    title: "DSA Valid Sudoku",
-    solution: `def is_valid_sudoku(board):
-    rows = [set() for _ in range(9)]
-    cols = [set() for _ in range(9)]
-    boxes = [set() for _ in range(9)]
-    for r in range(9):
-        for c in range(9):
-            v = board[r][c]
-            if v == '.':
-                continue
-            b = (r // 3) * 3 + c // 3
-            if v in rows[r] or v in cols[c] or v in boxes[b]:
-                return False
-            rows[r].add(v)
-            cols[c].add(v)
-            boxes[b].add(v)
-    return True
+    micro: 327,
+    id: "py-327-add-digits",
+    title: "DSA Add Digits",
+    solution: `def add_digits(num):
+    if num == 0:
+        return 0
+    return 1 + (num - 1) % 9
 
-board = [
-    ['5', '3', '.', '.', '7', '.', '.', '.', '.'],
-    ['6', '.', '.', '1', '9', '5', '.', '.', '.'],
-    ['.', '9', '8', '.', '.', '.', '.', '6', '.'],
-    ['8', '.', '.', '.', '6', '.', '.', '.', '3'],
-    ['4', '.', '.', '8', '.', '3', '.', '.', '1'],
-    ['7', '.', '.', '.', '2', '.', '.', '.', '6'],
-    ['.', '6', '.', '.', '.', '.', '2', '8', '.'],
-    ['.', '.', '.', '4', '1', '9', '.', '.', '5'],
-    ['.', '.', '.', '.', '8', '.', '.', '7', '9'],
-]
-print(is_valid_sudoku(board))
+print(add_digits(38))
 `,
-    nextUrl: /\/learn\/py-322-permute-unique/,
-    cursorAfter: "322",
+    nextUrl: /\/learn\/py-328-ugly-number/,
+    cursorAfter: "328",
   },
   {
-    micro: 322,
-    id: "py-322-permute-unique",
-    title: "DSA Permute Unique",
-    solution: `def permute_unique(nums):
-    nums = sorted(nums)
-    out = []
-    used = [False] * len(nums)
-    def bt(path):
-        if len(path) == len(nums):
-            out.append(path[:])
-            return
-        for i, x in enumerate(nums):
-            if used[i]:
-                continue
-            if i > 0 and nums[i] == nums[i - 1] and not used[i - 1]:
-                continue
-            used[i] = True
-            path.append(x)
-            bt(path)
-            path.pop()
-            used[i] = False
-    bt([])
-    return out
+    micro: 328,
+    id: "py-328-ugly-number",
+    title: "DSA Ugly Number",
+    solution: `def is_ugly(n):
+    if n <= 0:
+        return False
+    for p in (2, 3, 5):
+        while n % p == 0:
+            n //= p
+    return n == 1
 
-print(permute_unique([1, 1, 2]))
+print(is_ugly(6))
 `,
-    nextUrl: /\/learn\/py-323-happy-number/,
-    cursorAfter: "323",
+    nextUrl: /\/workspace/,
+    cursorAfter: "329",
   },
 ];
 
-
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-31[7-9]-|^py-32[0-2]-/);
+    expect(step.id).toMatch(/^py-32[3-8]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -236,7 +158,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 317–322 · backtracking II", () => {
+test.describe("micro-steps 323–328 · math II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

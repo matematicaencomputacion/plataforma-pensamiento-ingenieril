@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=322).
+    /// 1-based index on the workspace micro-step rail (1..=328).
     pub micro_step: i32,
 }
 
@@ -4070,8 +4070,74 @@ pub const PY322_PERMUTE_UNIQUE: CodingStep = CodingStep {
     pytest: "def test_permute_unique(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('permute_unique'))\n    assert sorted(ns['permute_unique']([1, 1, 2])) == [[1, 1, 2], [1, 2, 1], [2, 1, 1]]\n    assert sorted(ns['permute_unique']([1, 2, 3])) == [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\n    assert capsys.readouterr().out.strip() == '[[1, 1, 2], [1, 2, 1], [2, 1, 1]]'\n",
     hint: "def permute_unique(nums):\n    nums = sorted(nums); out = []; used = [False]*len(nums)\n    def bt(path):\n        if len(path) == len(nums): out.append(path[:]); return\n        for i, x in enumerate(nums):\n            if used[i]: continue\n            if i > 0 and nums[i] == nums[i-1] and not used[i-1]: continue\n            used[i] = True; path.append(x); bt(path); path.pop(); used[i] = False\n    bt([]); return out\nprint(permute_unique([1, 1, 2]))",
     solution_example: "def permute_unique(nums):\n    nums = sorted(nums)\n    out = []\n    used = [False] * len(nums)\n    def bt(path):\n        if len(path) == len(nums):\n            out.append(path[:])\n            return\n        for i, x in enumerate(nums):\n            if used[i]:\n                continue\n            if i > 0 and nums[i] == nums[i - 1] and not used[i - 1]:\n                continue\n            used[i] = True\n            path.append(x)\n            bt(path)\n            path.pop()\n            used[i] = False\n    bt([])\n    return out\n\nprint(permute_unique([1, 1, 2]))\n",
-    next: None, show_type_chips: false, micro_step: 322,
+    next: Some("py-323-happy-number"), show_type_chips: false, micro_step: 322,
 };
+
+pub const PY323_HAPPY_NUMBER: CodingStep = CodingStep {
+    id: "py-323-happy-number", title: "DSA Happy Number", objective: "Decidir si un número es happy (suma de cuadrados de dígitos → 1).",
+    prompt_md: "**Happy Number**\n\nFloyd o set de vistos. Distinto de py-234 (palíndromo numérico).\n\n**Micro-reto:**\n1. Definí `is_happy(n)`\n2. n=`19`; imprimí `True`",
+    starter_code: "# def is_happy(n):\n#     ...\n# print(is_happy(19))\n",
+    pytest: "def test_323_hapnumber(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_happy'))\n    assert ns['is_happy'](19) is True\n    assert ns['is_happy'](2) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "def is_happy(n):\n    seen = set()\n    while n != 1 and n not in seen:\n        seen.add(n); n = sum(int(d)**2 for d in str(n))\n    return n == 1\nprint(is_happy(19))",
+    solution_example: "def is_happy(n):\n    seen = set()\n    while n != 1 and n not in seen:\n        seen.add(n)\n        n = sum(int(d) ** 2 for d in str(n))\n    return n == 1\n\nprint(is_happy(19))\n",
+    next: Some("py-324-count-primes"), show_type_chips: false, micro_step: 323,
+};
+
+
+pub const PY324_COUNT_PRIMES: CodingStep = CodingStep {
+    id: "py-324-count-primes", title: "DSA Count Primes", objective: "Contar primos estrictamente menores que n (criba).",
+    prompt_md: "**Count Primes**\n\nCriba de Eratóstenes. Distinto de py-238 (trailing zeroes).\n\n**Micro-reto:**\n1. Definí `count_primes(n)`\n2. n=`10`; imprimí (esperado: `4`)",
+    starter_code: "# def count_primes(n):\n#     ...\n# print(count_primes(10))\n",
+    pytest: "def test_324_count_primes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('count_primes'))\n    assert ns['count_primes'](10) == 4\n    assert ns['count_primes'](0) == 0\n    assert ns['count_primes'](2) == 0\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "def count_primes(n):\n    if n <= 2: return 0\n    is_prime = [True]*n; is_prime[0]=is_prime[1]=False\n    p=2\n    while p*p < n:\n        if is_prime[p]:\n            for q in range(p*p, n, p): is_prime[q]=False\n        p += 1\n    return sum(is_prime)\nprint(count_primes(10))",
+    solution_example: "def count_primes(n):\n    if n <= 2:\n        return 0\n    is_prime = [True] * n\n    is_prime[0] = is_prime[1] = False\n    p = 2\n    while p * p < n:\n        if is_prime[p]:\n            for q in range(p * p, n, p):\n                is_prime[q] = False\n        p += 1\n    return sum(is_prime)\n\nprint(count_primes(10))\n",
+    next: Some("py-325-excel-column"), show_type_chips: false, micro_step: 324,
+};
+
+
+pub const PY325_EXCEL_COLUMN: CodingStep = CodingStep {
+    id: "py-325-excel-column", title: "DSA Excel Column", objective: "Convertir título de columna Excel a número (A=1).",
+    prompt_md: "**Excel Sheet Column Number**\n\nBase 26. Distinto de py-235 (plus one array).\n\n**Micro-reto:**\n1. Definí `title_to_number(column_title)`\n2. `\"AB\"`; imprimí (esperado: `28`)",
+    starter_code: "# def title_to_number(column_title):\n#     ...\n# print(title_to_number(\"AB\"))\n",
+    pytest: "def test_325_excel_column(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('title_to_number'))\n    assert ns['title_to_number']('AB') == 28\n    assert ns['title_to_number']('A') == 1\n    assert ns['title_to_number']('ZY') == 701\n    assert capsys.readouterr().out.strip() == '28'\n",
+    hint: "def title_to_number(column_title):\n    n = 0\n    for ch in column_title:\n        n = n * 26 + (ord(ch) - ord(\"A\") + 1)\n    return n\nprint(title_to_number(\"AB\"))",
+    solution_example: "def title_to_number(column_title):\n    n = 0\n    for ch in column_title:\n        n = n * 26 + (ord(ch) - ord(\"A\") + 1)\n    return n\n\nprint(title_to_number(\"AB\"))\n",
+    next: Some("py-326-roman-to-int"), show_type_chips: false, micro_step: 325,
+};
+
+
+pub const PY326_ROMAN_TO_INT: CodingStep = CodingStep {
+    id: "py-326-roman-to-int", title: "DSA Roman To Int", objective: "Convertir un numeral romano a entero.",
+    prompt_md: "**Roman to Integer**\n\nSi valor actual < siguiente, restá. Distinto de py-236 (add binary).\n\n**Micro-reto:**\n1. Definí `roman_to_int(s)`\n2. s=`\"MCMXCIV\"`; imprimí (esperado: `1994`)",
+    starter_code: "# def roman_to_int(s):\n#     ...\n# print(roman_to_int(\"MCMXCIV\"))\n",
+    pytest: "def test_326_roman_to_int(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('roman_to_int'))\n    assert ns['roman_to_int']('MCMXCIV') == 1994\n    assert ns['roman_to_int']('III') == 3\n    assert ns['roman_to_int']('LVIII') == 58\n    assert capsys.readouterr().out.strip() == '1994'\n",
+    hint: "def roman_to_int(s):\n    val = {\"I\":1,\"V\":5,\"X\":10,\"L\":50,\"C\":100,\"D\":500,\"M\":1000}\n    total = 0\n    for i, ch in enumerate(s):\n        if i+1 < len(s) and val[ch] < val[s[i+1]]: total -= val[ch]\n        else: total += val[ch]\n    return total\nprint(roman_to_int(\"MCMXCIV\"))",
+    solution_example: "def roman_to_int(s):\n    val = {\"I\": 1, \"V\": 5, \"X\": 10, \"L\": 50, \"C\": 100, \"D\": 500, \"M\": 1000}\n    total = 0\n    for i, ch in enumerate(s):\n        if i + 1 < len(s) and val[ch] < val[s[i + 1]]:\n            total -= val[ch]\n        else:\n            total += val[ch]\n    return total\n\nprint(roman_to_int(\"MCMXCIV\"))\n",
+    next: Some("py-327-add-digits"), show_type_chips: false, micro_step: 326,
+};
+
+
+pub const PY327_ADD_DIGITS: CodingStep = CodingStep {
+    id: "py-327-add-digits", title: "DSA Add Digits", objective: "Sumar dígitos repetidamente hasta un solo dígito (digital root).",
+    prompt_md: "**Add Digits**\n\nFórmula `1 + (n-1)%9` o loop. Distinto de py-323 (happy).\n\n**Micro-reto:**\n1. Definí `add_digits(num)`\n2. num=`38`; imprimí (esperado: `2`)",
+    starter_code: "# def add_digits(num):\n#     ...\n# print(add_digits(38))\n",
+    pytest: "def test_327_add_digits(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('add_digits'))\n    assert ns['add_digits'](38) == 2\n    assert ns['add_digits'](0) == 0\n    assert ns['add_digits'](9) == 9\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def add_digits(num):\n    if num == 0: return 0\n    return 1 + (num - 1) % 9\nprint(add_digits(38))",
+    solution_example: "def add_digits(num):\n    if num == 0:\n        return 0\n    return 1 + (num - 1) % 9\n\nprint(add_digits(38))\n",
+    next: Some("py-328-ugly-number"), show_type_chips: false, micro_step: 327,
+};
+
+
+pub const PY328_UGLY_NUMBER: CodingStep = CodingStep {
+    id: "py-328-ugly-number", title: "DSA Ugly Number", objective: "Decidir si n solo tiene factores primos 2, 3 y 5.",
+    prompt_md: "**Ugly Number**\n\nDividí por 2/3/5 mientras sea divisible. Distinto de py-324 (contar primos).\n\n**Micro-reto:**\n1. Definí `is_ugly(n)`\n2. n=`6`; imprimí `True`",
+    starter_code: "# def is_ugly(n):\n#     ...\n# print(is_ugly(6))\n",
+    pytest: "def test_328_ugly_number(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_ugly'))\n    assert ns['is_ugly'](6) is True\n    assert ns['is_ugly'](1) is True\n    assert ns['is_ugly'](14) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "def is_ugly(n):\n    if n <= 0: return False\n    for p in (2, 3, 5):\n        while n % p == 0: n //= p\n    return n == 1\nprint(is_ugly(6))",
+    solution_example: "def is_ugly(n):\n    if n <= 0:\n        return False\n    for p in (2, 3, 5):\n        while n % p == 0:\n            n //= p\n    return n == 1\n\nprint(is_ugly(6))\n",
+    next: None, show_type_chips: false, micro_step: 328,
+};
+
 
 
 
@@ -4399,6 +4465,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY320_RESTORE_IP,
     &PY321_VALID_SUDOKU,
     &PY322_PERMUTE_UNIQUE,
+    &PY323_HAPPY_NUMBER,
+    &PY324_COUNT_PRIMES,
+    &PY325_EXCEL_COLUMN,
+    &PY326_ROMAN_TO_INT,
+    &PY327_ADD_DIGITS,
+    &PY328_UGLY_NUMBER,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4542,7 +4614,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 322);
+            assert!(step.micro_step >= 1 && step.micro_step <= 328);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -5096,7 +5168,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py322_curriculum_chain() {
+    fn py203_to_py328_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -5218,7 +5290,13 @@ mod tests {
             (319, "py-319-n-queens", Some("py-320-restore-ip")),
             (320, "py-320-restore-ip", Some("py-321-valid-sudoku")),
             (321, "py-321-valid-sudoku", Some("py-322-permute-unique")),
-            (322, "py-322-permute-unique", None),
+            (322, "py-322-permute-unique", Some("py-323-happy-number")),
+            (323, "py-323-happy-number", Some("py-324-count-primes")),
+            (324, "py-324-count-primes", Some("py-325-excel-column")),
+            (325, "py-325-excel-column", Some("py-326-roman-to-int")),
+            (326, "py-326-roman-to-int", Some("py-327-add-digits")),
+            (327, "py-327-add-digits", Some("py-328-ugly-number")),
+            (328, "py-328-ugly-number", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
