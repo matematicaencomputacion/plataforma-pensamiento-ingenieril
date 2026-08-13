@@ -388,6 +388,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 380, step_id: "py-380-reverse-bits" },
   { level_id: 381, step_id: "py-381-missing-number" },
   { level_id: 382, step_id: "py-382-sum-two-ints" },
+  { level_id: 383, step_id: "py-383-num-islands" },
+  { level_id: 384, step_id: "py-384-clone-graph" },
+  { level_id: 385, step_id: "py-385-course-order" },
+  { level_id: 386, step_id: "py-386-oranges-rotting" },
+  { level_id: 387, step_id: "py-387-network-delay" },
+  { level_id: 388, step_id: "py-388-shortest-path-bin" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

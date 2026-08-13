@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=382).
+    /// 1-based index on the workspace micro-step rail (1..=388).
     pub micro_step: i32,
 }
 
@@ -5574,7 +5574,352 @@ print(get_sum(1, 2))",
 
 print(get_sum(1, 2))
 ",
-    next: None, show_type_chips: false, micro_step: 382,
+    next: Some("py-383-num-islands"), show_type_chips: false, micro_step: 382,
+};
+
+
+pub const PY383_NUM_ISLANDS: CodingStep = CodingStep {
+    id: "py-383-num-islands", title: "DSA Num Islands", objective: "Contar islas 1s en grid (DFS/BFS).",
+    prompt_md: "**Number of Islands**
+
+DFS flood fill. Distinto de py-107.
+
+**Micro-reto:**
+1. Definí `num_islands(grid)`
+2. grid clásico 4 islas→ imprimí `1` en el caso 1-isla",
+    starter_code: "# def num_islands(grid):
+#     ...
+# print(num_islands([[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]))
+",
+    pytest: "def test_383_num_islands(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('num_islands'))
+    g=[['1','1','1','1','0'],['1','1','0','1','0'],['1','1','0','0','0'],['0','0','0','0','0']]
+    assert ns['num_islands'](g) == 1
+    g2=[['1','1','0','0','0'],['1','1','0','0','0'],['0','0','1','0','0'],['0','0','0','1','1']]
+    assert ns['num_islands']([[c for c in r] for r in g2]) == 3
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def num_islands(grid):
+    if not grid: return 0
+    m,n=len(grid),len(grid[0]); c=0
+    def dfs(i,j):
+        if i<0 or j<0 or i>=m or j>=n or grid[i][j]!=\"1\": return
+        grid[i][j]=\"0\"
+        for di,dj in ((1,0),(-1,0),(0,1),(0,-1)): dfs(i+di,j+dj)
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j]==\"1\": c+=1; dfs(i,j)
+    return c
+print(num_islands([[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]))",
+    solution_example: "def num_islands(grid):
+    if not grid:
+        return 0
+    m, n = len(grid), len(grid[0])
+    c = 0
+
+    def dfs(i, j):
+        if i < 0 or j < 0 or i >= m or j >= n or grid[i][j] != \"1\":
+            return
+        grid[i][j] = \"0\"
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            dfs(i + di, j + dj)
+
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == \"1\":
+                c += 1
+                dfs(i, j)
+    return c
+
+print(num_islands([[\"1\", \"1\", \"1\", \"1\", \"0\"], [\"1\", \"1\", \"0\", \"1\", \"0\"], [\"1\", \"1\", \"0\", \"0\", \"0\"], [\"0\", \"0\", \"0\", \"0\", \"0\"]]))
+",
+    next: Some("py-384-clone-graph"), show_type_chips: false, micro_step: 383,
+};
+
+
+pub const PY384_CLONE_GRAPH: CodingStep = CodingStep {
+    id: "py-384-clone-graph", title: "DSA Clone Graph", objective: "Clonar grafo no dirigido (DFS + mapa).",
+    prompt_md: "**Clone Graph** (adj list dict)
+
+Mapa old→new. Distinto de py-108.
+
+**Micro-reto:**
+1. Definí `clone_graph(adj)` devolviendo adj clonado
+2. `{1:[2,4],2:[1,3],3:[2,4],4:[1,3]}`; imprimí sorted items",
+    starter_code: "# def clone_graph(adj):
+#     ...
+# print(sorted((k, sorted(v)) for k, v in clone_graph({1: [2, 4], 2: [1, 3], 3: [2, 4], 4: [1, 3]}).items()))
+",
+    pytest: "def test_384_clone_graph(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('clone_graph'))
+    got=ns['clone_graph']({1:[2,4],2:[1,3],3:[2,4],4:[1,3]})
+    assert sorted((k, sorted(v)) for k,v in got.items()) == [(1,[2,4]),(2,[1,3]),(3,[2,4]),(4,[1,3])]
+    assert capsys.readouterr().out.strip() == '[(1, [2, 4]), (2, [1, 3]), (3, [2, 4]), (4, [1, 3])]'
+",
+    hint: "def clone_graph(adj):
+    return {k: list(v) for k,v in adj.items()}
+print(sorted((k, sorted(v)) for k, v in clone_graph({1: [2, 4], 2: [1, 3], 3: [2, 4], 4: [1, 3]}).items()))",
+    solution_example: "def clone_graph(adj):
+    return {k: list(v) for k, v in adj.items()}
+
+print(sorted((k, sorted(v)) for k, v in clone_graph({1: [2, 4], 2: [1, 3], 3: [2, 4], 4: [1, 3]}).items()))
+",
+    next: Some("py-385-course-order"), show_type_chips: false, micro_step: 384,
+};
+
+
+pub const PY385_COURSE_ORDER: CodingStep = CodingStep {
+    id: "py-385-course-order", title: "DSA Course Order", objective: "Orden topológico de cursos (Kahn).",
+    prompt_md: "**Course Schedule II**
+
+BFS indegrees. Distinto de py-109.
+
+**Micro-reto:**
+1. Definí `find_order(num_courses, prerequisites)`
+2. n=`4`, prereq=`[[1,0],[2,0],[3,1],[3,2]]`; imprimí un orden válido que empiece por 0",
+    starter_code: "# def find_order(num_courses, prerequisites):
+#     ...
+# print(find_order(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))
+",
+    pytest: "def test_385_course_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_order'))
+    o=ns['find_order'](4, [[1,0],[2,0],[3,1],[3,2]])
+    assert len(o)==4 and o.index(0)<o.index(1) and o.index(0)<o.index(2) and o.index(1)<o.index(3) and o.index(2)<o.index(3)
+    assert ns['find_order'](2, [[1,0],[0,1]]) == []
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import defaultdict, deque
+def find_order(num_courses, prerequisites):
+    g=defaultdict(list); indeg=[0]*num_courses
+    for a,b in prerequisites:
+        g[b].append(a); indeg[a]+=1
+    q=deque([i for i in range(num_courses) if indeg[i]==0]); out=[]
+    while q:
+        u=q.popleft(); out.append(u)
+        for v in g[u]:
+            indeg[v]-=1
+            if indeg[v]==0: q.append(v)
+    return out if len(out)==num_courses else []
+print(find_order(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))",
+    solution_example: "from collections import defaultdict, deque
+
+def find_order(num_courses, prerequisites):
+    g = defaultdict(list)
+    indeg = [0] * num_courses
+    for a, b in prerequisites:
+        g[b].append(a)
+        indeg[a] += 1
+    q = deque([i for i in range(num_courses) if indeg[i] == 0])
+    out = []
+    while q:
+        u = q.popleft()
+        out.append(u)
+        for v in g[u]:
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                q.append(v)
+    return out if len(out) == num_courses else []
+
+print(find_order(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))
+",
+    next: Some("py-386-oranges-rotting"), show_type_chips: false, micro_step: 385,
+};
+
+
+pub const PY386_ORANGES_ROTTING: CodingStep = CodingStep {
+    id: "py-386-oranges-rotting", title: "DSA Oranges Rotting", objective: "Minutos hasta pudrir todas (BFS multi-source).",
+    prompt_md: "**Rotting Oranges**
+
+BFS desde todas las podridas. Distinto de py-110.
+
+**Micro-reto:**
+1. Definí `oranges_rotting(grid)`
+2. grid=`[[2,1,1],[1,1,0],[0,1,1]]`; imprimí (esperado: `4`)",
+    starter_code: "# def oranges_rotting(grid):
+#     ...
+# print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
+",
+    pytest: "def test_386_oranges_rotting(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('oranges_rotting'))
+    assert ns['oranges_rotting']([[2,1,1],[1,1,0],[0,1,1]]) == 4
+    assert ns['oranges_rotting']([[2,1,1],[0,1,1],[1,0,1]]) == -1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "from collections import deque
+def oranges_rotting(grid):
+    m,n=len(grid),len(grid[0]); q=deque(); fresh=0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j]==2: q.append((i,j,0))
+            elif grid[i][j]==1: fresh+=1
+    mins=0
+    while q:
+        i,j,t=q.popleft(); mins=t
+        for di,dj in ((1,0),(-1,0),(0,1),(0,-1)):
+            ni,nj=i+di,j+dj
+            if 0<=ni<m and 0<=nj<n and grid[ni][nj]==1:
+                grid[ni][nj]=2; fresh-=1; q.append((ni,nj,t+1))
+    return mins if fresh==0 else -1
+print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))",
+    solution_example: "from collections import deque
+
+def oranges_rotting(grid):
+    m, n = len(grid), len(grid[0])
+    q = deque()
+    fresh = 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == 2:
+                q.append((i, j, 0))
+            elif grid[i][j] == 1:
+                fresh += 1
+    mins = 0
+    while q:
+        i, j, t = q.popleft()
+        mins = t
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < m and 0 <= nj < n and grid[ni][nj] == 1:
+                grid[ni][nj] = 2
+                fresh -= 1
+                q.append((ni, nj, t + 1))
+    return mins if fresh == 0 else -1
+
+print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
+",
+    next: Some("py-387-network-delay"), show_type_chips: false, micro_step: 386,
+};
+
+
+pub const PY387_NETWORK_DELAY: CodingStep = CodingStep {
+    id: "py-387-network-delay", title: "DSA Network Delay", objective: "Tiempo para llegar a todos (Dijkstra).",
+    prompt_md: "**Network Delay Time**
+
+Dijkstra heap. Distinto de py-111.
+
+**Micro-reto:**
+1. Definí `network_delay_time(times, n, k)`
+2. times=`[[2,1,1],[2,3,1],[3,4,1]]`, n=`4`, k=`2`; imprimí (esperado: `2`)",
+    starter_code: "# def network_delay_time(times, n, k):
+#     ...
+# print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))
+",
+    pytest: "def test_387_network_delay(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('network_delay_time'))
+    assert ns['network_delay_time']([[2,1,1],[2,3,1],[3,4,1]], 4, 2) == 2
+    assert ns['network_delay_time']([[1,2,1]], 2, 1) == 1
+    assert ns['network_delay_time']([[1,2,1]], 2, 2) == -1
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "import heapq
+from collections import defaultdict
+def network_delay_time(times, n, k):
+    g=defaultdict(list)
+    for u,v,w in times: g[u].append((v,w))
+    dist={}; h=[(0,k)]
+    while h:
+        d,u=heapq.heappop(h)
+        if u in dist: continue
+        dist[u]=d
+        for v,w in g[u]:
+            if v not in dist: heapq.heappush(h,(d+w,v))
+    return max(dist.values()) if len(dist)==n else -1
+print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))",
+    solution_example: "import heapq
+from collections import defaultdict
+
+def network_delay_time(times, n, k):
+    g = defaultdict(list)
+    for u, v, w in times:
+        g[u].append((v, w))
+    dist = {}
+    h = [(0, k)]
+    while h:
+        d, u = heapq.heappop(h)
+        if u in dist:
+            continue
+        dist[u] = d
+        for v, w in g[u]:
+            if v not in dist:
+                heapq.heappush(h, (d + w, v))
+    return max(dist.values()) if len(dist) == n else -1
+
+print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))
+",
+    next: Some("py-388-shortest-path-bin"), show_type_chips: false, micro_step: 387,
+};
+
+
+pub const PY388_SHORTEST_PATH_BIN: CodingStep = CodingStep {
+    id: "py-388-shortest-path-bin", title: "DSA Shortest Path Bin", objective: "Camino más corto en grid binario (BFS 0-cells).",
+    prompt_md: "**Shortest Path in Binary Matrix**
+
+BFS 8-dir desde (0,0). Distinto de py-112.
+
+**Micro-reto:**
+1. Definí `shortest_path_binary_matrix(grid)`
+2. `[[0,1],[1,0]]`; imprimí (esperado: `2`)",
+    starter_code: "# def shortest_path_binary_matrix(grid):
+#     ...
+# print(shortest_path_binary_matrix([[0, 1], [1, 0]]))
+",
+    pytest: "def test_388_shortest_path_bin(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('shortest_path_binary_matrix'))
+    assert ns['shortest_path_binary_matrix']([[0,1],[1,0]]) == 2
+    assert ns['shortest_path_binary_matrix']([[0,0,0],[1,1,0],[1,1,0]]) == 4
+    assert ns['shortest_path_binary_matrix']([[1,0,0],[1,1,0],[1,1,0]]) == -1
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "from collections import deque
+def shortest_path_binary_matrix(grid):
+    n=len(grid)
+    if grid[0][0] or grid[n-1][n-1]: return -1
+    q=deque([(0,0,1)]); grid[0][0]=1
+    while q:
+        i,j,d=q.popleft()
+        if i==n-1 and j==n-1: return d
+        for di in (-1,0,1):
+            for dj in (-1,0,1):
+                ni,nj=i+di,j+dj
+                if 0<=ni<n and 0<=nj<n and grid[ni][nj]==0:
+                    grid[ni][nj]=1; q.append((ni,nj,d+1))
+    return -1
+print(shortest_path_binary_matrix([[0, 1], [1, 0]]))",
+    solution_example: "from collections import deque
+
+def shortest_path_binary_matrix(grid):
+    n = len(grid)
+    if grid[0][0] or grid[n - 1][n - 1]:
+        return -1
+    q = deque([(0, 0, 1)])
+    grid[0][0] = 1
+    while q:
+        i, j, d = q.popleft()
+        if i == n - 1 and j == n - 1:
+            return d
+        for di in (-1, 0, 1):
+            for dj in (-1, 0, 1):
+                ni, nj = i + di, j + dj
+                if 0 <= ni < n and 0 <= nj < n and grid[ni][nj] == 0:
+                    grid[ni][nj] = 1
+                    q.append((ni, nj, d + 1))
+    return -1
+
+print(shortest_path_binary_matrix([[0, 1], [1, 0]]))
+",
+    next: None, show_type_chips: false, micro_step: 388,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -5959,7 +6304,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY379_COUNTING_BITS,
     &PY380_REVERSE_BITS,
     &PY381_MISSING_NUMBER,
-    &PY382_SUM_TWO_INTS
+    &PY382_SUM_TWO_INTS,
+    &PY383_NUM_ISLANDS,
+    &PY384_CLONE_GRAPH,
+    &PY385_COURSE_ORDER,
+    &PY386_ORANGES_ROTTING,
+    &PY387_NETWORK_DELAY,
+    &PY388_SHORTEST_PATH_BIN
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -6103,7 +6454,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 382);
+            assert!(step.micro_step >= 1 && step.micro_step <= 388);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -6657,7 +7008,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py382_curriculum_chain() {
+    fn py203_to_py388_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -6839,7 +7190,13 @@ mod tests {
             (379, "py-379-counting-bits", Some("py-380-reverse-bits")),
             (380, "py-380-reverse-bits", Some("py-381-missing-number")),
             (381, "py-381-missing-number", Some("py-382-sum-two-ints")),
-            (382, "py-382-sum-two-ints", None),
+            (382, "py-382-sum-two-ints", Some("py-383-num-islands")),
+            (383, "py-383-num-islands", Some("py-384-clone-graph")),
+            (384, "py-384-clone-graph", Some("py-385-course-order")),
+            (385, "py-385-course-order", Some("py-386-oranges-rotting")),
+            (386, "py-386-oranges-rotting", Some("py-387-network-delay")),
+            (387, "py-387-network-delay", Some("py-388-shortest-path-bin")),
+            (388, "py-388-shortest-path-bin", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
