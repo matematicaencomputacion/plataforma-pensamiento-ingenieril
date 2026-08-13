@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=448).
+    /// 1-based index on the workspace micro-step rail (1..=450).
     pub micro_step: i32,
 }
 
@@ -8628,7 +8628,96 @@ print(plus_one([1, 2, 3]))",
 
 print(plus_one([1, 2, 3]))
 ",
-    next: None, show_type_chips: false, micro_step: 448,
+    next: Some("py-449-roman-to-int"), show_type_chips: false, micro_step: 448,
+};
+
+
+pub const PY449_ROMAN_TO_INT: CodingStep = CodingStep {
+    id: "py-449-roman-to-int", title: "DSA Roman To Int", objective: "Romano → entero.",
+    prompt_md: "**Roman to Integer**
+
+Mapa + resta si menor. Distinto de py-326.
+
+**Micro-reto:**
+1. Definí `roman_to_int(s)`
+2. `\"MCMXCIV\"`; imprimí (esperado: `1994`)",
+    starter_code: "# def roman_to_int(s):
+#     ...
+# print(roman_to_int(\"MCMXCIV\"))
+",
+    pytest: "def test_449_roman_to_int(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('roman_to_int'))
+    assert ns['roman_to_int']('MCMXCIV') == 1994
+    assert ns['roman_to_int']('III') == 3
+    assert ns['roman_to_int']('LVIII') == 58
+    assert capsys.readouterr().out.strip() == '1994'
+",
+    hint: "def roman_to_int(s):
+    v=dict(I=1,V=5,X=10,L=50,C=100,D=500,M=1000); ans=0
+    for i,ch in enumerate(s):
+        if i+1<len(s) and v[ch]<v[s[i+1]]: ans-=v[ch]
+        else: ans+=v[ch]
+    return ans
+print(roman_to_int(\"MCMXCIV\"))",
+    solution_example: "def roman_to_int(s):
+    v = dict(I=1, V=5, X=10, L=50, C=100, D=500, M=1000)
+    ans = 0
+    for i, ch in enumerate(s):
+        if i + 1 < len(s) and v[ch] < v[s[i + 1]]:
+            ans -= v[ch]
+        else:
+            ans += v[ch]
+    return ans
+
+print(roman_to_int(\"MCMXCIV\"))
+",
+    next: Some("py-450-int-to-roman"), show_type_chips: false, micro_step: 449,
+};
+
+
+pub const PY450_INT_TO_ROMAN: CodingStep = CodingStep {
+    id: "py-450-int-to-roman", title: "DSA Int To Roman", objective: "Entero → romano.",
+    prompt_md: "**Integer to Roman**
+
+Greedy valores. Distinto de py-449.
+
+**Micro-reto:**
+1. Definí `int_to_roman(num)`
+2. `1994`; imprimí (esperado: `MCMXCIV`)",
+    starter_code: "# def int_to_roman(num):
+#     ...
+# print(int_to_roman(1994))
+",
+    pytest: "def test_450_int_to_roman(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('int_to_roman'))
+    assert ns['int_to_roman'](1994) == 'MCMXCIV'
+    assert ns['int_to_roman'](58) == 'LVIII'
+    assert ns['int_to_roman'](3) == 'III'
+    assert capsys.readouterr().out.strip() == 'MCMXCIV'
+",
+    hint: "def int_to_roman(num):
+    vals=[(1000,\"M\"),(900,\"CM\"),(500,\"D\"),(400,\"CD\"),(100,\"C\"),(90,\"XC\"),(50,\"L\"),(40,\"XL\"),(10,\"X\"),(9,\"IX\"),(5,\"V\"),(4,\"IV\"),(1,\"I\")]
+    out=[]
+    for v,s in vals:
+        while num>=v: out.append(s); num-=v
+    return \"\".join(out)
+print(int_to_roman(1994))",
+    solution_example: "def int_to_roman(num):
+    vals = [(1000, \"M\"), (900, \"CM\"), (500, \"D\"), (400, \"CD\"), (100, \"C\"), (90, \"XC\"), (50, \"L\"), (40, \"XL\"), (10, \"X\"), (9, \"IX\"), (5, \"V\"), (4, \"IV\"), (1, \"I\")]
+    out = []
+    for v, s in vals:
+        while num >= v:
+            out.append(s)
+            num -= v
+    return \"\".join(out)
+
+print(int_to_roman(1994))
+",
+    next: None, show_type_chips: false, micro_step: 450,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -9079,7 +9168,9 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY445_MAJORITY_ELEM,
     &PY446_PASCAL_ROW,
     &PY447_MOVE_ZEROES,
-    &PY448_PLUS_ONE
+    &PY448_PLUS_ONE,
+    &PY449_ROMAN_TO_INT,
+    &PY450_INT_TO_ROMAN
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -9223,7 +9314,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 448);
+            assert!(step.micro_step >= 1 && step.micro_step <= 450);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -9777,7 +9868,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py448_curriculum_chain() {
+    fn py203_to_py450_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -10025,7 +10116,9 @@ mod tests {
             (445, "py-445-majority-elem", Some("py-446-pascal-row")),
             (446, "py-446-pascal-row", Some("py-447-move-zeroes")),
             (447, "py-447-move-zeroes", Some("py-448-plus-one")),
-            (448, "py-448-plus-one", None),
+            (448, "py-448-plus-one", Some("py-449-roman-to-int")),
+            (449, "py-449-roman-to-int", Some("py-450-int-to-roman")),
+            (450, "py-450-int-to-roman", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

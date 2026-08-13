@@ -454,6 +454,8 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 446, step_id: "py-446-pascal-row" },
   { level_id: 447, step_id: "py-447-move-zeroes" },
   { level_id: 448, step_id: "py-448-plus-one" },
+  { level_id: 449, step_id: "py-449-roman-to-int" },
+  { level_id: 450, step_id: "py-450-int-to-roman" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
