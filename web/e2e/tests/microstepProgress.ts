@@ -364,6 +364,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 356, step_id: "py-356-smallest-string" },
   { level_id: 357, step_id: "py-357-graph-valid-tree" },
   { level_id: 358, step_id: "py-358-earliest-friend" },
+  { level_id: 359, step_id: "py-359-search-rotated" },
+  { level_id: 360, step_id: "py-360-find-min-rotated" },
+  { level_id: 361, step_id: "py-361-first-last-pos" },
+  { level_id: 362, step_id: "py-362-peak-index" },
+  { level_id: 363, step_id: "py-363-koko-bananas" },
+  { level_id: 364, step_id: "py-364-ship-packages" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

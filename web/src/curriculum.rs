@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=358).
+    /// 1-based index on the workspace micro-step rail (1..=364).
     pub micro_step: i32,
 }
 
@@ -4460,7 +4460,7 @@ pub const PY358_EARLIEST_FRIEND: CodingStep = CodingStep {
     pytest: "def test_358_earliest_friend(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('earliest_acq'))\n    assert ns['earliest_acq']([[20190101, 0, 1], [20190104, 3, 4], [20190107, 2, 3], [20190211, 1, 5], [20190224, 2, 4], [20190301, 0, 3], [20190312, 1, 2], [20190322, 4, 5]], 6) == 20190301\n    assert ns['earliest_acq']([[0, 2, 0], [1, 0, 1], [3, 0, 3], [4, 1, 2], [7, 3, 1]], 4) == 3\n    assert capsys.readouterr().out.strip() == '20190301'\n",
     hint: "def earliest_acq(logs, n):\n    parent = list(range(n)); comps = n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    for t, a, b in sorted(logs):\n        ra, rb = find(a), find(b)\n        if ra != rb:\n            parent[rb] = ra; comps -= 1\n            if comps == 1: return t\n    return -1\nprint(earliest_acq([[20190101, 0, 1], [20190104, 3, 4], [20190107, 2, 3], [20190211, 1, 5], [20190224, 2, 4], [20190301, 0, 3], [20190312, 1, 2], [20190322, 4, 5]], 6))",
     solution_example: "def earliest_acq(logs, n):\n    parent = list(range(n))\n    comps = n\n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n\n    for t, a, b in sorted(logs):\n        ra, rb = find(a), find(b)\n        if ra != rb:\n            parent[rb] = ra\n            comps -= 1\n            if comps == 1:\n                return t\n    return -1\n\nprint(earliest_acq([[20190101, 0, 1], [20190104, 3, 4], [20190107, 2, 3], [20190211, 1, 5], [20190224, 2, 4], [20190301, 0, 3], [20190312, 1, 2], [20190322, 4, 5]], 6))\n",
-    next: None, show_type_chips: false, micro_step: 358,
+    next: Some("py-359-search-rotated"), show_type_chips: false, micro_step: 358,
 };
 
 
@@ -4471,6 +4471,309 @@ pub const PY358_EARLIEST_FRIEND: CodingStep = CodingStep {
 
 
 
+
+
+pub const PY359_SEARCH_ROTATED: CodingStep = CodingStep {
+    id: "py-359-search-rotated", title: "DSA Search Rotated", objective: "Buscar en array rotado sorted (binary search).",
+    prompt_md: "**Search in Rotated Sorted Array**
+
+Pivot + binaria o binaria adaptada. Distinto de py-94.
+
+**Micro-reto:**
+1. Definí `search(nums, target)`
+2. nums=`[4,5,6,7,0,1,2]`, target=`0`; imprimí (esperado: `4`)",
+    starter_code: "# def search(nums, target):
+#     ...
+# print(search([4, 5, 6, 7, 0, 1, 2], 0))
+",
+    pytest: "def test_359_search_rotated(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('search'))
+    assert ns['search']([4, 5, 6, 7, 0, 1, 2], 0) == 4
+    assert ns['search']([4, 5, 6, 7, 0, 1, 2], 3) == -1
+    assert ns['search']([1], 0) == -1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def search(nums, target):
+    lo, hi = 0, len(nums)-1
+    while lo <= hi:
+        mid = (lo+hi)//2
+        if nums[mid] == target: return mid
+        if nums[lo] <= nums[mid]:
+            if nums[lo] <= target < nums[mid]: hi = mid-1
+            else: lo = mid+1
+        else:
+            if nums[mid] < target <= nums[hi]: lo = mid+1
+            else: hi = mid-1
+    return -1
+print(search([4, 5, 6, 7, 0, 1, 2], 0))",
+    solution_example: "def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= nums[mid]:
+            if nums[lo] <= target < nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+    return -1
+
+print(search([4, 5, 6, 7, 0, 1, 2], 0))
+",
+    next: Some("py-360-find-min-rotated"), show_type_chips: false, micro_step: 359,
+};
+
+
+pub const PY360_FIND_MIN_ROTATED: CodingStep = CodingStep {
+    id: "py-360-find-min-rotated", title: "DSA Find Min Rotated", objective: "Mínimo en array rotado sorted.",
+    prompt_md: "**Find Minimum in Rotated Sorted Array**
+
+Binaria hacia el lado desordenado. Distinto de py-359.
+
+**Micro-reto:**
+1. Definí `find_min(nums)`
+2. `[3,4,5,1,2]`; imprimí (esperado: `1`)",
+    starter_code: "# def find_min(nums):
+#     ...
+# print(find_min([3, 4, 5, 1, 2]))
+",
+    pytest: "def test_360_find_min_rotated(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_min'))
+    assert ns['find_min']([3, 4, 5, 1, 2]) == 1
+    assert ns['find_min']([4, 5, 6, 7, 0, 1, 2]) == 0
+    assert ns['find_min']([11, 13, 15, 17]) == 11
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def find_min(nums):
+    lo, hi = 0, len(nums)-1
+    while lo < hi:
+        mid = (lo+hi)//2
+        if nums[mid] > nums[hi]: lo = mid+1
+        else: hi = mid
+    return nums[lo]
+print(find_min([3, 4, 5, 1, 2]))",
+    solution_example: "def find_min(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return nums[lo]
+
+print(find_min([3, 4, 5, 1, 2]))
+",
+    next: Some("py-361-first-last-pos"), show_type_chips: false, micro_step: 360,
+};
+
+
+pub const PY361_FIRST_LAST_POS: CodingStep = CodingStep {
+    id: "py-361-first-last-pos", title: "DSA First Last Pos", objective: "Primera y última posición de target en array sorted.",
+    prompt_md: "**Find First and Last Position of Element in Sorted Array**
+
+Dos binarias (lower/upper). Distinto de py-88.
+
+**Micro-reto:**
+1. Definí `search_range(nums, target)`
+2. nums=`[5,7,7,8,8,10]`, target=`8`; imprimí (esperado: `[3, 4]`)",
+    starter_code: "# def search_range(nums, target):
+#     ...
+# print(search_range([5, 7, 7, 8, 8, 10], 8))
+",
+    pytest: "def test_361_first_last_pos(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('search_range'))
+    assert ns['search_range']([5, 7, 7, 8, 8, 10], 8) == [3, 4]
+    assert ns['search_range']([5, 7, 7, 8, 8, 10], 6) == [-1, -1]
+    assert ns['search_range']([], 0) == [-1, -1]
+    assert capsys.readouterr().out.strip() == '[3, 4]'
+",
+    hint: "import bisect
+def search_range(nums, target):
+    lo = bisect.bisect_left(nums, target)
+    if lo == len(nums) or nums[lo] != target: return [-1, -1]
+    return [lo, bisect.bisect_right(nums, target)-1]
+print(search_range([5, 7, 7, 8, 8, 10], 8))",
+    solution_example: "import bisect
+
+def search_range(nums, target):
+    lo = bisect.bisect_left(nums, target)
+    if lo == len(nums) or nums[lo] != target:
+        return [-1, -1]
+    return [lo, bisect.bisect_right(nums, target) - 1]
+
+print(search_range([5, 7, 7, 8, 8, 10], 8))
+",
+    next: Some("py-362-peak-index"), show_type_chips: false, micro_step: 361,
+};
+
+
+pub const PY362_PEAK_INDEX: CodingStep = CodingStep {
+    id: "py-362-peak-index", title: "DSA Peak Index", objective: "Índice del pico en mountain array.",
+    prompt_md: "**Peak Index in a Mountain Array**
+
+Binaria: sube si nums[mid]<nums[mid+1]. Distinto de py-361.
+
+**Micro-reto:**
+1. Definí `peak_index_in_mountain_array(arr)`
+2. `[0,1,0]`; imprimí (esperado: `1`)",
+    starter_code: "# def peak_index_in_mountain_array(arr):
+#     ...
+# print(peak_index_in_mountain_array([0, 1, 0]))
+",
+    pytest: "def test_362_peak_index(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('peak_index_in_mountain_array'))
+    assert ns['peak_index_in_mountain_array']([0, 1, 0]) == 1
+    assert ns['peak_index_in_mountain_array']([0, 2, 1, 0]) == 1
+    assert ns['peak_index_in_mountain_array']([0, 10, 5, 2]) == 1
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def peak_index_in_mountain_array(arr):
+    lo, hi = 0, len(arr)-1
+    while lo < hi:
+        mid = (lo+hi)//2
+        if arr[mid] < arr[mid+1]: lo = mid+1
+        else: hi = mid
+    return lo
+print(peak_index_in_mountain_array([0, 1, 0]))",
+    solution_example: "def peak_index_in_mountain_array(arr):
+    lo, hi = 0, len(arr) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if arr[mid] < arr[mid + 1]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(peak_index_in_mountain_array([0, 1, 0]))
+",
+    next: Some("py-363-koko-bananas"), show_type_chips: false, micro_step: 362,
+};
+
+
+pub const PY363_KOKO_BANANAS: CodingStep = CodingStep {
+    id: "py-363-koko-bananas", title: "DSA Koko Bananas", objective: "Velocidad mínima para comer bananas a tiempo (binaria en respuesta).",
+    prompt_md: "**Koko Eating Bananas**
+
+Binaria sobre k. Distinto de py-125.
+
+**Micro-reto:**
+1. Definí `min_eating_speed(piles, h)`
+2. piles=`[3,6,7,11]`, h=`8`; imprimí (esperado: `4`)",
+    starter_code: "# def min_eating_speed(piles, h):
+#     ...
+# print(min_eating_speed([3, 6, 7, 11], 8))
+",
+    pytest: "def test_363_koko_bananas(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('min_eating_speed'))
+    assert ns['min_eating_speed']([3, 6, 7, 11], 8) == 4
+    assert ns['min_eating_speed']([30, 11, 23, 4, 20], 5) == 30
+    assert ns['min_eating_speed']([30, 11, 23, 4, 20], 6) == 23
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "import math
+def min_eating_speed(piles, h):
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        mid = (lo+hi)//2
+        if sum(math.ceil(p/mid) for p in piles) <= h: hi = mid
+        else: lo = mid+1
+    return lo
+print(min_eating_speed([3, 6, 7, 11], 8))",
+    solution_example: "import math
+
+def min_eating_speed(piles, h):
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if sum(math.ceil(p / mid) for p in piles) <= h:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(min_eating_speed([3, 6, 7, 11], 8))
+",
+    next: Some("py-364-ship-packages"), show_type_chips: false, micro_step: 363,
+};
+
+
+pub const PY364_SHIP_PACKAGES: CodingStep = CodingStep {
+    id: "py-364-ship-packages", title: "DSA Ship Packages", objective: "Capacidad mínima de barco para enviar en D días.",
+    prompt_md: "**Capacity To Ship Packages Within D Days**
+
+Binaria sobre capacidad. Distinto de py-363.
+
+**Micro-reto:**
+1. Definí `ship_within_days(weights, days)`
+2. weights=`[1,2,3,4,5,6,7,8,9,10]`, days=`5`; imprimí (esperado: `15`)",
+    starter_code: "# def ship_within_days(weights, days):
+#     ...
+# print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
+",
+    pytest: "def test_364_ship_packages(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('ship_within_days'))
+    assert ns['ship_within_days']([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5) == 15
+    assert ns['ship_within_days']([3, 2, 2, 4, 1, 4], 3) == 6
+    assert ns['ship_within_days']([1, 2, 3, 1, 1], 4) == 3
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def ship_within_days(weights, days):
+    def ok(cap):
+        d, cur = 1, 0
+        for w in weights:
+            if cur + w > cap: d += 1; cur = 0
+            cur += w
+        return d <= days
+    lo, hi = max(weights), sum(weights)
+    while lo < hi:
+        mid = (lo+hi)//2
+        if ok(mid): hi = mid
+        else: lo = mid+1
+    return lo
+print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))",
+    solution_example: "def ship_within_days(weights, days):
+    def ok(cap):
+        d, cur = 1, 0
+        for w in weights:
+            if cur + w > cap:
+                d += 1
+                cur = 0
+            cur += w
+        return d <= days
+
+    lo, hi = max(weights), sum(weights)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if ok(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
+",
+    next: None, show_type_chips: false, micro_step: 364,
+};
 
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -4831,6 +5134,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY356_SMALLEST_STRING,
     &PY357_GRAPH_VALID_TREE,
     &PY358_EARLIEST_FRIEND,
+    &PY359_SEARCH_ROTATED,
+    &PY360_FIND_MIN_ROTATED,
+    &PY361_FIRST_LAST_POS,
+    &PY362_PEAK_INDEX,
+    &PY363_KOKO_BANANAS,
+    &PY364_SHIP_PACKAGES
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4974,7 +5283,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 358);
+            assert!(step.micro_step >= 1 && step.micro_step <= 364);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -5528,7 +5837,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py358_curriculum_chain() {
+    fn py203_to_py364_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -5686,7 +5995,13 @@ mod tests {
             (355, "py-355-accounts-merge", Some("py-356-smallest-string")),
             (356, "py-356-smallest-string", Some("py-357-graph-valid-tree")),
             (357, "py-357-graph-valid-tree", Some("py-358-earliest-friend")),
-            (358, "py-358-earliest-friend", None),
+            (358, "py-358-earliest-friend", Some("py-359-search-rotated")),
+            (359, "py-359-search-rotated", Some("py-360-find-min-rotated")),
+            (360, "py-360-find-min-rotated", Some("py-361-first-last-pos")),
+            (361, "py-361-first-last-pos", Some("py-362-peak-index")),
+            (362, "py-362-peak-index", Some("py-363-koko-bananas")),
+            (363, "py-363-koko-bananas", Some("py-364-ship-packages")),
+            (364, "py-364-ship-packages", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
