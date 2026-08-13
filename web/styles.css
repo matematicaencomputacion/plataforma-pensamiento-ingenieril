@@ -537,6 +537,16 @@ button:focus-visible {
   filter: brightness(1.08);
 }
 
+.workspace__microstep--jumpable {
+  opacity: 0.72;
+  cursor: pointer;
+}
+
+.workspace__microstep--jumpable:hover {
+  filter: brightness(1.08);
+  opacity: 0.9;
+}
+
 .workspace__microstep--locked {
   opacity: 0.72;
   cursor: default;

@@ -76,7 +76,9 @@ test.describe("micro-step 9 · Python Casting", () => {
     );
 
     await expect(page.locator("#workspace-microstep-link-9")).toBeVisible();
-    await expect(page.locator("#workspace-microstep-link-10")).toHaveCount(0);
+    await expect(page.locator(
+      `#workspace-microsteps [data-microstep="10"]`,
+    )).toHaveClass(/workspace__microstep--jumpable/);
 
     await page.locator("#workspace-microstep-link-9").click();
     await expect(page).toHaveURL(/\/learn\/py-09-casting/, { timeout: e2eTimeout });

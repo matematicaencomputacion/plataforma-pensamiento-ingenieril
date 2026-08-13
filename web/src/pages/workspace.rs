@@ -146,7 +146,7 @@ pub fn WorkspacePage() -> impl IntoView {
                             "Module 1 — Declarative Foundations"
                         </h3>
                         <p class="workspace__statement">
-                            "Variables, tipos y foundations declarativas en Python. Los micro-pasos 1–304 viven arriba en «Current level micro-step» a ancho completo; el editor Pyodide sigue en Paso 2 · Coding."
+                            "Variables, tipos y foundations declarativas en Python. Cada número del rail abre su ejercicio en Coding; el editor Pyodide vive en Paso 2."
                         </p>
                         <ul class="workspace__list">
                             <li>"Variables e enteros"</li>
@@ -198,6 +198,10 @@ fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
                                 }
                                 if micro_step_unlocked(cur, n) && step_href.is_some() {
                                     class.push_str(" workspace__microstep--open");
+                                } else if step_href.is_some() {
+                                    // Future step: muted, but still a link so authors/students
+                                    // can jump to any exercise from the rail.
+                                    class.push_str(" workspace__microstep--jumpable");
                                 } else {
                                     class.push_str(" workspace__microstep--locked");
                                 }
@@ -210,23 +214,14 @@ fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
                         >
                             {match step_href.clone() {
                                 Some(href) => view! {
-                                    <Show
-                                        when=move || micro_step_unlocked(current_level.get(), n)
-                                        fallback=move || {
-                                            view! {
-                                                <span class="workspace__microstep-num">{n}</span>
-                                            }
-                                            .into_any()
-                                        }
+                                    <A
+                                        href=href.clone()
+                                        attr:class="workspace__microstep-link"
+                                        attr:id=format!("workspace-microstep-link-{n}")
+                                        attr:title=format!("Abrir micro-paso {n}")
                                     >
-                                        <A
-                                            href=href.clone()
-                                            attr:class="workspace__microstep-link"
-                                            attr:id=format!("workspace-microstep-link-{n}")
-                                        >
-                                            <span class="workspace__microstep-num">{n}</span>
-                                        </A>
-                                    </Show>
+                                        <span class="workspace__microstep-num">{n}</span>
+                                    </A>
                                 }
                                 .into_any(),
                                 None => view! {

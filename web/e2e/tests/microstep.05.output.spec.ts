@@ -86,7 +86,9 @@ test.describe("micro-step 5 · Python Output", () => {
     );
 
     await expect(page.locator("#workspace-microstep-link-5")).toBeVisible();
-    await expect(page.locator("#workspace-microstep-link-6")).toHaveCount(0);
+    await expect(page.locator(
+      `#workspace-microsteps [data-microstep="6"]`,
+    )).toHaveClass(/workspace__microstep--jumpable/);
 
     await page.locator("#workspace-microstep-link-5").click();
     await expect(page).toHaveURL(/\/learn\/py-05-output/, { timeout: e2eTimeout });

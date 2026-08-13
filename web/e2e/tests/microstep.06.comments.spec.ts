@@ -93,7 +93,9 @@ test.describe("micro-step 6 · Python Comments", () => {
     );
 
     await expect(page.locator("#workspace-microstep-link-6")).toBeVisible();
-    await expect(page.locator("#workspace-microstep-link-7")).toHaveCount(0);
+    await expect(page.locator(
+      `#workspace-microsteps [data-microstep="7"]`,
+    )).toHaveClass(/workspace__microstep--jumpable/);
 
     await page.locator("#workspace-microstep-link-6").click();
     await expect(page).toHaveURL(/\/learn\/py-06-comments/, { timeout: e2eTimeout });
