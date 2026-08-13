@@ -22,177 +22,141 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 353,
-    id: "py-353-num-provinces",
-    title: "DSA Num Provinces",
-    solution: `def find_circle_num(is_connected):
-    n = len(is_connected)
-    parent = list(range(n))
-
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    for i in range(n):
-        for j in range(i + 1, n):
-            if is_connected[i][j]:
-                a, b = find(i), find(j)
-                if a != b:
-                    parent[b] = a
-    return len({find(i) for i in range(n)})
-
-print(find_circle_num([[1, 1, 0], [1, 1, 0], [0, 0, 1]]))
-`,
-    nextUrl: /\/learn\/py-354-redundant-conn/,
-    cursorAfter: "354",
-  },
-  {
-    micro: 354,
-    id: "py-354-redundant-conn",
-    title: "DSA Redundant Conn",
-    solution: `def find_redundant_connection(edges):
-    parent = {}
-
-    def find(x):
-        parent.setdefault(x, x)
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    for a, b in edges:
-        ra, rb = find(a), find(b)
-        if ra == rb:
-            return [a, b]
-        parent[rb] = ra
-    return []
-
-print(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))
-`,
-    nextUrl: /\/learn\/py-355-accounts-merge/,
-    cursorAfter: "355",
-  },
-  {
-    micro: 355,
-    id: "py-355-accounts-merge",
-    title: "DSA Accounts Merge",
-    solution: `from collections import defaultdict
-
-def accounts_merge(accounts):
-    parent = {}
-
-    def find(x):
-        parent.setdefault(x, x)
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    email_name = {}
-    for acc in accounts:
-        name = acc[0]
-        for e in acc[1:]:
-            email_name[e] = name
-            find(e)
-            parent[find(e)] = find(acc[1])
-    groups = defaultdict(list)
-    for e in email_name:
-        groups[find(e)].append(e)
-    return [[email_name[r]] + sorted(emails) for r, emails in groups.items()]
-
-print(sorted(accounts_merge([["John", "johnsmith@mail.com", "john_newyork@mail.com"], ["John", "johnsmith@mail.com", "john00@mail.com"], ["Mary", "mary@mail.com"], ["John", "johnnybravo@mail.com"]])))
-`,
-    nextUrl: /\/learn\/py-356-smallest-string/,
-    cursorAfter: "356",
-  },
-  {
-    micro: 356,
-    id: "py-356-smallest-string",
-    title: "DSA Smallest String",
-    solution: `def smallest_equivalent_string(s1, s2, base_str):
-    parent = {chr(c): chr(c) for c in range(ord("a"), ord("z") + 1)}
-
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    for a, b in zip(s1, s2):
-        ra, rb = find(a), find(b)
-        if ra < rb:
-            parent[rb] = ra
+    micro: 359,
+    id: "py-359-search-rotated",
+    title: "DSA Search Rotated",
+    solution: `def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= nums[mid]:
+            if nums[lo] <= target < nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
         else:
-            parent[ra] = rb
-    return "".join(find(ch) for ch in base_str)
-
-print(smallest_equivalent_string("parker", "morris", "parser"))
-`,
-    nextUrl: /\/learn\/py-357-graph-valid-tree/,
-    cursorAfter: "357",
-  },
-  {
-    micro: 357,
-    id: "py-357-graph-valid-tree",
-    title: "DSA Graph Valid Tree",
-    solution: `def valid_tree(n, edges):
-    if len(edges) != n - 1:
-        return False
-    parent = list(range(n))
-
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    for a, b in edges:
-        ra, rb = find(a), find(b)
-        if ra == rb:
-            return False
-        parent[rb] = ra
-    return True
-
-print(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))
-`,
-    nextUrl: /\/learn\/py-358-earliest-friend/,
-    cursorAfter: "358",
-  },
-  {
-    micro: 358,
-    id: "py-358-earliest-friend",
-    title: "DSA Earliest Friend",
-    solution: `def earliest_acq(logs, n):
-    parent = list(range(n))
-    comps = n
-
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    for t, a, b in sorted(logs):
-        ra, rb = find(a), find(b)
-        if ra != rb:
-            parent[rb] = ra
-            comps -= 1
-            if comps == 1:
-                return t
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
     return -1
 
-print(earliest_acq([[20190101, 0, 1], [20190104, 3, 4], [20190107, 2, 3], [20190211, 1, 5], [20190224, 2, 4], [20190301, 0, 3], [20190312, 1, 2], [20190322, 4, 5]], 6))
+print(search([4, 5, 6, 7, 0, 1, 2], 0))
 `,
-    nextUrl: /\/learn\/py-359-search-rotated/,
-    cursorAfter: "359",
+    nextUrl: /\/learn\/py-360-find-min-rotated/,
+    cursorAfter: "360",
   },
+  {
+    micro: 360,
+    id: "py-360-find-min-rotated",
+    title: "DSA Find Min Rotated",
+    solution: `def find_min(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return nums[lo]
+
+print(find_min([3, 4, 5, 1, 2]))
+`,
+    nextUrl: /\/learn\/py-361-first-last-pos/,
+    cursorAfter: "361",
+  },
+  {
+    micro: 361,
+    id: "py-361-first-last-pos",
+    title: "DSA First Last Pos",
+    solution: `import bisect
+
+def search_range(nums, target):
+    lo = bisect.bisect_left(nums, target)
+    if lo == len(nums) or nums[lo] != target:
+        return [-1, -1]
+    return [lo, bisect.bisect_right(nums, target) - 1]
+
+print(search_range([5, 7, 7, 8, 8, 10], 8))
+`,
+    nextUrl: /\/learn\/py-362-peak-index/,
+    cursorAfter: "362",
+  },
+  {
+    micro: 362,
+    id: "py-362-peak-index",
+    title: "DSA Peak Index",
+    solution: `def peak_index_in_mountain_array(arr):
+    lo, hi = 0, len(arr) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if arr[mid] < arr[mid + 1]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(peak_index_in_mountain_array([0, 1, 0]))
+`,
+    nextUrl: /\/learn\/py-363-koko-bananas/,
+    cursorAfter: "363",
+  },
+  {
+    micro: 363,
+    id: "py-363-koko-bananas",
+    title: "DSA Koko Bananas",
+    solution: `import math
+
+def min_eating_speed(piles, h):
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if sum(math.ceil(p / mid) for p in piles) <= h:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(min_eating_speed([3, 6, 7, 11], 8))
+`,
+    nextUrl: /\/learn\/py-364-ship-packages/,
+    cursorAfter: "364",
+  },
+  {
+    micro: 364,
+    id: "py-364-ship-packages",
+    title: "DSA Ship Packages",
+    solution: `def ship_within_days(weights, days):
+    def ok(cap):
+        d, cur = 1, 0
+        for w in weights:
+            if cur + w > cap:
+                d += 1
+                cur = 0
+            cur += w
+        return d <= days
+
+    lo, hi = max(weights), sum(weights)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if ok(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "365",
+  }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-35[3-8]-/);
+    expect(step.id).toMatch(/^py-(?:359|360|361|362|363|364)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -222,7 +186,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 353–358 · union-find II", () => {
+test.describe("micro-steps 359–364 · binary search II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
