@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=424).
+    /// 1-based index on the workspace micro-step rail (1..=430).
     pub micro_step: i32,
 }
 
@@ -7581,7 +7581,274 @@ f = b.back(2)
 g = b.back(7)
 print([a, c, d, e, f, g])
 ",
-    next: None, show_type_chips: false, micro_step: 424,
+    next: Some("py-425-jump-game"), show_type_chips: false, micro_step: 424,
+};
+
+
+pub const PY425_JUMP_GAME: CodingStep = CodingStep {
+    id: "py-425-jump-game", title: "DSA Jump Game", objective: "¿Se puede llegar al final?",
+    prompt_md: "**Jump Game**
+
+Max reach greedy. Distinto de py-125.
+
+**Micro-reto:**
+1. Definí `can_jump(nums)`
+2. `[2,3,1,1,4]`; imprimí `True`",
+    starter_code: "# def can_jump(nums):
+#     ...
+# print(can_jump([2, 3, 1, 1, 4]))
+",
+    pytest: "def test_425_jump_game(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('can_jump'))
+    assert ns['can_jump']([2, 3, 1, 1, 4]) is True
+    assert ns['can_jump']([3, 2, 1, 0, 4]) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def can_jump(nums):
+    reach=0
+    for i,x in enumerate(nums):
+        if i>reach: return False
+        reach=max(reach,i+x)
+    return True
+print(can_jump([2, 3, 1, 1, 4]))",
+    solution_example: "def can_jump(nums):
+    reach = 0
+    for i, x in enumerate(nums):
+        if i > reach:
+            return False
+        reach = max(reach, i + x)
+    return True
+
+print(can_jump([2, 3, 1, 1, 4]))
+",
+    next: Some("py-426-jump-game-ii"), show_type_chips: false, micro_step: 425,
+};
+
+
+pub const PY426_JUMP_GAME_II: CodingStep = CodingStep {
+    id: "py-426-jump-game-ii", title: "DSA Jump Game II", objective: "Mínimo de saltos al final.",
+    prompt_md: "**Jump Game II**
+
+Ventanas greedy. Distinto de py-425.
+
+**Micro-reto:**
+1. Definí `jump(nums)`
+2. `[2,3,1,1,4]`; imprimí (esperado: `2`)",
+    starter_code: "# def jump(nums):
+#     ...
+# print(jump([2, 3, 1, 1, 4]))
+",
+    pytest: "def test_426_jump_game_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('jump'))
+    assert ns['jump']([2, 3, 1, 1, 4]) == 2
+    assert ns['jump']([2, 3, 0, 1, 4]) == 2
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def jump(nums):
+    jumps=end=farthest=0
+    for i in range(len(nums)-1):
+        farthest=max(farthest,i+nums[i])
+        if i==end:
+            jumps+=1; end=farthest
+    return jumps
+print(jump([2, 3, 1, 1, 4]))",
+    solution_example: "def jump(nums):
+    jumps = end = farthest = 0
+    for i in range(len(nums) - 1):
+        farthest = max(farthest, i + nums[i])
+        if i == end:
+            jumps += 1
+            end = farthest
+    return jumps
+
+print(jump([2, 3, 1, 1, 4]))
+",
+    next: Some("py-427-gas-station"), show_type_chips: false, micro_step: 426,
+};
+
+
+pub const PY427_GAS_STATION: CodingStep = CodingStep {
+    id: "py-427-gas-station", title: "DSA Gas Station", objective: "Índice de partida para completar circuito.",
+    prompt_md: "**Gas Station**
+
+Total>=0 y reset tank. Distinto de py-126.
+
+**Micro-reto:**
+1. Definí `can_complete_circuit(gas, cost)`
+2. gas=`[1,2,3,4,5]`, cost=`[3,4,5,1,2]`; imprimí (esperado: `3`)",
+    starter_code: "# def can_complete_circuit(gas, cost):
+#     ...
+# print(can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]))
+",
+    pytest: "def test_427_gas_station(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('can_complete_circuit'))
+    assert ns['can_complete_circuit']([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]) == 3
+    assert ns['can_complete_circuit']([2, 3, 4], [3, 4, 3]) == -1
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def can_complete_circuit(gas, cost):
+    if sum(gas)<sum(cost): return -1
+    tank=start=0
+    for i,(g,c) in enumerate(zip(gas,cost)):
+        tank+=g-c
+        if tank<0: tank=0; start=i+1
+    return start
+print(can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]))",
+    solution_example: "def can_complete_circuit(gas, cost):
+    if sum(gas) < sum(cost):
+        return -1
+    tank = start = 0
+    for i, (g, c) in enumerate(zip(gas, cost)):
+        tank += g - c
+        if tank < 0:
+            tank = 0
+            start = i + 1
+    return start
+
+print(can_complete_circuit([1, 2, 3, 4, 5], [3, 4, 5, 1, 2]))
+",
+    next: Some("py-428-candy"), show_type_chips: false, micro_step: 427,
+};
+
+
+pub const PY428_CANDY: CodingStep = CodingStep {
+    id: "py-428-candy", title: "DSA Candy", objective: "Mínimo caramelos con ratings vecinos.",
+    prompt_md: "**Candy**
+
+Dos pasadas. Distinto de py-127.
+
+**Micro-reto:**
+1. Definí `candy(ratings)`
+2. `[1,0,2]`; imprimí (esperado: `5`)",
+    starter_code: "# def candy(ratings):
+#     ...
+# print(candy([1, 0, 2]))
+",
+    pytest: "def test_428_candy(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('candy'))
+    assert ns['candy']([1, 0, 2]) == 5
+    assert ns['candy']([1, 2, 2]) == 4
+    assert capsys.readouterr().out.strip() == '5'
+",
+    hint: "def candy(ratings):
+    n=len(ratings); c=[1]*n
+    for i in range(1,n):
+        if ratings[i]>ratings[i-1]: c[i]=c[i-1]+1
+    for i in range(n-2,-1,-1):
+        if ratings[i]>ratings[i+1]: c[i]=max(c[i],c[i+1]+1)
+    return sum(c)
+print(candy([1, 0, 2]))",
+    solution_example: "def candy(ratings):
+    n = len(ratings)
+    c = [1] * n
+    for i in range(1, n):
+        if ratings[i] > ratings[i - 1]:
+            c[i] = c[i - 1] + 1
+    for i in range(n - 2, -1, -1):
+        if ratings[i] > ratings[i + 1]:
+            c[i] = max(c[i], c[i + 1] + 1)
+    return sum(c)
+
+print(candy([1, 0, 2]))
+",
+    next: Some("py-429-max-units"), show_type_chips: false, micro_step: 428,
+};
+
+
+pub const PY429_MAX_UNITS: CodingStep = CodingStep {
+    id: "py-429-max-units", title: "DSA Max Units", objective: "Max unidades en camión (greedy por units/box).",
+    prompt_md: "**Maximum Units on a Truck**
+
+Sort desc units. Distinto de py-128.
+
+**Micro-reto:**
+1. Definí `maximum_units(box_types, truck_size)`
+2. box_types=`[[1,3],[2,2],[3,1]]`, truck=`4`; imprimí (esperado: `8`)",
+    starter_code: "# def maximum_units(box_types, truck_size):
+#     ...
+# print(maximum_units([[1, 3], [2, 2], [3, 1]], 4))
+",
+    pytest: "def test_429_max_units(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('maximum_units'))
+    assert ns['maximum_units']([[1, 3], [2, 2], [3, 1]], 4) == 8
+    assert ns['maximum_units']([[5, 10], [2, 5], [4, 7], [3, 9]], 10) == 91
+    assert capsys.readouterr().out.strip() == '8'
+",
+    hint: "def maximum_units(box_types, truck_size):
+    box_types.sort(key=lambda x: -x[1]); ans=0
+    for n,u in box_types:
+        take=min(n,truck_size); ans+=take*u; truck_size-=take
+        if not truck_size: break
+    return ans
+print(maximum_units([[1, 3], [2, 2], [3, 1]], 4))",
+    solution_example: "def maximum_units(box_types, truck_size):
+    box_types.sort(key=lambda x: -x[1])
+    ans = 0
+    for n, u in box_types:
+        take = min(n, truck_size)
+        ans += take * u
+        truck_size -= take
+        if not truck_size:
+            break
+    return ans
+
+print(maximum_units([[1, 3], [2, 2], [3, 1]], 4))
+",
+    next: Some("py-430-assign-cookies"), show_type_chips: false, micro_step: 429,
+};
+
+
+pub const PY430_ASSIGN_COOKIES: CodingStep = CodingStep {
+    id: "py-430-assign-cookies", title: "DSA Assign Cookies", objective: "Asignar galletas a niños greedy.",
+    prompt_md: "**Assign Cookies**
+
+Sort + two pointers. Distinto de py-129.
+
+**Micro-reto:**
+1. Definí `find_content_children(g, s)`
+2. g=`[1,2,3]`, s=`[1,1]`; imprimí (esperado: `1`)",
+    starter_code: "# def find_content_children(g, s):
+#     ...
+# print(find_content_children([1, 2, 3], [1, 1]))
+",
+    pytest: "def test_430_assign_cookies(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_content_children'))
+    assert ns['find_content_children']([1, 2, 3], [1, 1]) == 1
+    assert ns['find_content_children']([1, 2], [1, 2, 3]) == 2
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def find_content_children(g, s):
+    g.sort(); s.sort(); i=j=0
+    while i<len(g) and j<len(s):
+        if s[j]>=g[i]: i+=1
+        j+=1
+    return i
+print(find_content_children([1, 2, 3], [1, 1]))",
+    solution_example: "def find_content_children(g, s):
+    g.sort()
+    s.sort()
+    i = j = 0
+    while i < len(g) and j < len(s):
+        if s[j] >= g[i]:
+            i += 1
+        j += 1
+    return i
+
+print(find_content_children([1, 2, 3], [1, 1]))
+",
+    next: None, show_type_chips: false, micro_step: 430,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -8008,7 +8275,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY421_TIME_MAP,
     &PY422_RANDOMIZED_SET,
     &PY423_MOVING_AVG,
-    &PY424_BROWSER_HISTORY
+    &PY424_BROWSER_HISTORY,
+    &PY425_JUMP_GAME,
+    &PY426_JUMP_GAME_II,
+    &PY427_GAS_STATION,
+    &PY428_CANDY,
+    &PY429_MAX_UNITS,
+    &PY430_ASSIGN_COOKIES
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -8152,7 +8425,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 424);
+            assert!(step.micro_step >= 1 && step.micro_step <= 430);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -8706,7 +8979,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py424_curriculum_chain() {
+    fn py203_to_py430_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -8930,7 +9203,13 @@ mod tests {
             (421, "py-421-time-map", Some("py-422-randomized-set")),
             (422, "py-422-randomized-set", Some("py-423-moving-avg")),
             (423, "py-423-moving-avg", Some("py-424-browser-history")),
-            (424, "py-424-browser-history", None),
+            (424, "py-424-browser-history", Some("py-425-jump-game")),
+            (425, "py-425-jump-game", Some("py-426-jump-game-ii")),
+            (426, "py-426-jump-game-ii", Some("py-427-gas-station")),
+            (427, "py-427-gas-station", Some("py-428-candy")),
+            (428, "py-428-candy", Some("py-429-max-units")),
+            (429, "py-429-max-units", Some("py-430-assign-cookies")),
+            (430, "py-430-assign-cookies", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
