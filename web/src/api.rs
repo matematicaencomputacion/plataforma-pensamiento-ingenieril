@@ -23,6 +23,9 @@ pub struct AuthUser {
     /// Operational progress cursor (1 = first unlockable level).
     #[serde(default = "default_current_level")]
     pub current_level: i32,
+    /// Micro-steps the learner actually passed (not inferred from the cursor).
+    #[serde(default)]
+    pub completed_levels: Vec<i32>,
 }
 
 fn default_current_level() -> i32 {
@@ -116,6 +119,8 @@ pub struct ProgressCompleteResponse {
     pub passed: bool,
     pub current_level: i32,
     pub advanced: bool,
+    #[serde(default)]
+    pub completed_levels: Vec<i32>,
 }
 
 /// Min length enforced by Go `LearnerProfileService` (unicode runes).
@@ -419,15 +424,17 @@ mod tests {
 
     #[test]
     fn auth_success_deserializes_like_go() {
-        let raw = r#"{"user":{"id":"u1","email":"a@b.com","current_level":2},"token":"jwt"}"#;
+        let raw = r#"{"user":{"id":"u1","email":"a@b.com","current_level":2,"completed_levels":[1]},"token":"jwt"}"#;
         let parsed: AuthSuccess = serde_json::from_str(raw).expect("decode");
         assert_eq!(parsed.user.id, "u1");
         assert_eq!(parsed.user.email, "a@b.com");
         assert_eq!(parsed.user.current_level, 2);
+        assert_eq!(parsed.user.completed_levels, vec![1]);
         assert_eq!(parsed.token, "jwt");
 
         let legacy = r#"{"user":{"id":"u1","email":"a@b.com"},"token":"jwt"}"#;
         let parsed_legacy: AuthSuccess = serde_json::from_str(legacy).expect("decode legacy");
         assert_eq!(parsed_legacy.user.current_level, 1);
+        assert!(parsed_legacy.user.completed_levels.is_empty());
     }
 }

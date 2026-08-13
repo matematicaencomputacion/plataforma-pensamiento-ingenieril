@@ -28,9 +28,9 @@ pub fn ProgressCheck(
     }
 }
 
-/// True when the learner has cleared `level_id` (cursor moved past it).
-pub fn level_completed(current_level: i32, level_id: i32) -> bool {
-    level_id > 0 && current_level > level_id
+/// True when the learner earned `level_id` (explicit completed set — not cursor inference).
+pub fn level_completed(completed_levels: &[i32], level_id: i32) -> bool {
+    level_id > 0 && completed_levels.iter().any(|&id| id == level_id)
 }
 
 #[cfg(test)]
@@ -38,10 +38,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn level_completed_uses_cursor() {
-        assert!(!level_completed(1, 1));
-        assert!(level_completed(2, 1));
-        assert!(!level_completed(2, 2));
-        assert!(!level_completed(0, 1));
+    fn level_completed_uses_earned_set_not_cursor() {
+        assert!(!level_completed(&[], 1));
+        assert!(level_completed(&[1], 1));
+        assert!(!level_completed(&[157], 1));
+        assert!(level_completed(&[157], 157));
+        assert!(!level_completed(&[157], 156));
+        assert!(!level_completed(&[1, 2], 0));
     }
 }

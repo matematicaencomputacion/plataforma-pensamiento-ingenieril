@@ -73,6 +73,31 @@ func TestProgressCompleteHTTP(t *testing.T) {
 	if out["current_level"].(float64) != 2 {
 		t.Fatalf("expected current_level=2: %#v", out)
 	}
+	completed, ok := out["completed_levels"].([]any)
+	if !ok || len(completed) != 1 || completed[0].(float64) != 1 {
+		t.Fatalf("expected completed_levels=[1]: %#v", out["completed_levels"])
+	}
+
+	jumpBody := []byte(`{"level_id":157,"step_id":"py-157-jump","passed":true}`)
+	jumpReq := httptest.NewRequest(http.MethodPost, "/api/progress/complete", bytes.NewReader(jumpBody))
+	jumpReq.Header.Set("Authorization", "Bearer "+token)
+	jumpRec := httptest.NewRecorder()
+	progress.Complete(jumpRec, jumpReq)
+	if jumpRec.Code != http.StatusOK {
+		t.Fatalf("jump complete %d %s", jumpRec.Code, jumpRec.Body.String())
+	}
+	var jumpOut map[string]any
+	_ = json.Unmarshal(jumpRec.Body.Bytes(), &jumpOut)
+	if jumpOut["advanced"] != false {
+		t.Fatalf("jump-ahead must not advance cursor: %#v", jumpOut)
+	}
+	if jumpOut["current_level"].(float64) != 2 {
+		t.Fatalf("cursor stays at 2 after jump: %#v", jumpOut)
+	}
+	jumpCompleted, _ := jumpOut["completed_levels"].([]any)
+	if len(jumpCompleted) != 2 {
+		t.Fatalf("expected earned {1,157}: %#v", jumpOut["completed_levels"])
+	}
 
 	resetReq := httptest.NewRequest(http.MethodPost, "/api/progress/reset", nil)
 	resetReq.Header.Set("Authorization", "Bearer "+token)
@@ -85,5 +110,9 @@ func TestProgressCompleteHTTP(t *testing.T) {
 	_ = json.Unmarshal(resetRec.Body.Bytes(), &resetOut)
 	if resetOut["current_level"].(float64) != 1 {
 		t.Fatalf("expected reset to 1: %#v", resetOut)
+	}
+	resetCompleted, _ := resetOut["completed_levels"].([]any)
+	if len(resetCompleted) != 0 {
+		t.Fatalf("reset must clear earned set: %#v", resetOut["completed_levels"])
 	}
 }

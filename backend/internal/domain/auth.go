@@ -23,9 +23,10 @@ var (
 
 // PublicUser es la proyección segura del usuario (sin hash).
 type PublicUser struct {
-	ID           string `json:"id"`
-	Email        string `json:"email"`
-	CurrentLevel int    `json:"current_level"`
+	ID              string `json:"id"`
+	Email           string `json:"email"`
+	CurrentLevel    int    `json:"current_level"`
+	CompletedLevels []int  `json:"completed_levels"`
 }
 
 // ToPublic convierte User a PublicUser.
@@ -34,7 +35,53 @@ func (u User) ToPublic() PublicUser {
 	if level <= 0 {
 		level = 1
 	}
-	return PublicUser{ID: u.ID, Email: u.Email, CurrentLevel: level}
+	completed := u.CompletedLevels
+	if completed == nil {
+		completed = []int{}
+	}
+	return PublicUser{
+		ID:              u.ID,
+		Email:           u.Email,
+		CurrentLevel:    level,
+		CompletedLevels: completed,
+	}
+}
+
+// HasCompletedLevel reports whether levelID is in the earned set.
+func HasCompletedLevel(completed []int, levelID int) bool {
+	for _, id := range completed {
+		if id == levelID {
+			return true
+		}
+	}
+	return false
+}
+
+// WithCompletedLevel returns a copy of completed that includes levelID (idempotent).
+func WithCompletedLevel(completed []int, levelID int) []int {
+	if HasCompletedLevel(completed, levelID) {
+		out := make([]int, len(completed))
+		copy(out, completed)
+		return out
+	}
+	out := make([]int, len(completed)+1)
+	copy(out, completed)
+	out[len(completed)] = levelID
+	return out
+}
+
+// AdvanceCursorThroughCompleted walks the progress cursor past contiguous earned levels.
+// Starting at current, while current is completed, current++. Returns the new cursor
+// and whether it moved.
+func AdvanceCursorThroughCompleted(current int, completed []int) (int, bool) {
+	if current <= 0 {
+		current = 1
+	}
+	next := current
+	for HasCompletedLevel(completed, next) {
+		next++
+	}
+	return next, next != current
 }
 
 // PasswordHasher abstrae el hashing de contraseñas (bcrypt en infraestructura).

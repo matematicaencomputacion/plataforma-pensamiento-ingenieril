@@ -49,7 +49,7 @@ pub fn WorkspacePage() -> impl IntoView {
         leptos::task::spawn_local(async move {
             match reset_progress().await {
                 Ok(prog) => {
-                    session.set_current_level(prog.current_level);
+                    session.set_progress(prog.current_level, prog.completed_levels);
                     reset_note.set(Some(
                         "Avance reiniciado. Los checks verdes se borraron.".into(),
                     ));
@@ -64,6 +64,13 @@ pub fn WorkspacePage() -> impl IntoView {
 
     let current_level =
         Signal::derive(move || session.user.get().map(|u| u.current_level).unwrap_or(1));
+    let completed_levels = Signal::derive(move || {
+        session
+            .user
+            .get()
+            .map(|u| u.completed_levels)
+            .unwrap_or_default()
+    });
 
     view! {
         <section class="workspace">
@@ -135,7 +142,10 @@ pub fn WorkspacePage() -> impl IntoView {
                                 {move || reset_note.get().unwrap_or_default()}
                             </p>
                         </Show>
-                        <MicroStepRail current_level=current_level />
+                        <MicroStepRail
+                            current_level=current_level
+                            completed_levels=completed_levels
+                        />
                     </section>
 
                     <section class="workspace__panel" aria-labelledby="workspace-path-heading">
@@ -173,7 +183,10 @@ pub fn WorkspacePage() -> impl IntoView {
 }
 
 #[component]
-fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
+fn MicroStepRail(
+    current_level: Signal<i32>,
+    completed_levels: Signal<Vec<i32>>,
+) -> impl IntoView {
     view! {
         <ol
             class="workspace__microsteps"
@@ -190,8 +203,9 @@ fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
                         <li
                             class=move || {
                                 let cur = current_level.get();
+                                let earned = completed_levels.get();
                                 let mut class = String::from("workspace__microstep");
-                                if level_completed(cur, n) {
+                                if level_completed(&earned, n) {
                                     class.push_str(" workspace__microstep--done");
                                 } else if cur == n {
                                     class.push_str(" workspace__microstep--current");
@@ -229,7 +243,7 @@ fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
                                 }
                                 .into_any(),
                             }}
-                            <Show when=move || level_completed(current_level.get(), n)>
+                            <Show when=move || level_completed(&completed_levels.get(), n)>
                                 <span
                                     class="workspace__microstep-badge"
                                     data-testid="microstep-done-badge"

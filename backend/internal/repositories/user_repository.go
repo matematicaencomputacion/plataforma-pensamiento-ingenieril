@@ -32,6 +32,8 @@ type UserRepository interface {
 	GetByID(id string) (domain.User, error)
 	UpdateProfile(userID string, profile domain.LearnerProfile) error
 	UpdateCurrentLevel(userID string, currentLevel int) error
+	MarkLevelCompleted(userID string, levelID int) error
+	ClearCompletedLevels(userID string) error
 	UpdatePasswordHash(userID, passwordHash string) error
 	CreatePasswordResetToken(token PasswordResetToken) error
 	GetPasswordResetTokenByHash(tokenHash string) (PasswordResetToken, error)

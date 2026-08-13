@@ -74,6 +74,16 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
   used_at TEXT,
   FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );`)
+	if err != nil {
+		return err
+	}
+	_, err = r.db.Exec(`
+CREATE TABLE IF NOT EXISTS user_completed_levels (
+  user_id TEXT NOT NULL,
+  level_id INTEGER NOT NULL,
+  PRIMARY KEY (user_id, level_id),
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);`)
 	return err
 }
 
@@ -208,6 +218,50 @@ func (r *UserRepository) UpdateCurrentLevel(userID string, currentLevel int) err
 	return nil
 }
 
+func (r *UserRepository) MarkLevelCompleted(userID string, levelID int) error {
+	if levelID <= 0 {
+		return fmt.Errorf("level_id inválido: %d", levelID)
+	}
+	if _, err := r.GetByID(userID); err != nil {
+		return err
+	}
+	_, err := r.db.Exec(
+		`INSERT OR IGNORE INTO user_completed_levels (user_id, level_id) VALUES (?, ?)`,
+		userID,
+		levelID,
+	)
+	return err
+}
+
+func (r *UserRepository) ClearCompletedLevels(userID string) error {
+	if _, err := r.GetByID(userID); err != nil {
+		return err
+	}
+	_, err := r.db.Exec(`DELETE FROM user_completed_levels WHERE user_id = ?`, userID)
+	return err
+}
+
+func (r *UserRepository) listCompletedLevels(userID string) ([]int, error) {
+	rows, err := r.db.Query(
+		`SELECT level_id FROM user_completed_levels WHERE user_id = ? ORDER BY level_id ASC`,
+		userID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := make([]int, 0)
+	for rows.Next() {
+		var levelID int
+		if err := rows.Scan(&levelID); err != nil {
+			return nil, err
+		}
+		out = append(out, levelID)
+	}
+	return out, rows.Err()
+}
+
 func (r *UserRepository) UpdatePasswordHash(userID, passwordHash string) error {
 	res, err := r.db.Exec(
 		`UPDATE users SET password_hash = ? WHERE id = ?`,
@@ -327,6 +381,11 @@ func (r *UserRepository) scanOne(query string, arg any) (domain.User, error) {
 		Vision5Years: vision.String,
 		TechStack:    stack.String,
 	}
+	completed, err := r.listCompletedLevels(u.ID)
+	if err != nil {
+		return domain.User{}, err
+	}
+	u.CompletedLevels = completed
 	return u, nil
 }
 

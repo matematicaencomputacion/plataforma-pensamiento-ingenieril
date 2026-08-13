@@ -35,17 +35,18 @@ impl SessionCtx {
         self.user.set(Some(user));
     }
 
-    /// Patch `current_level` on the live session user (after progress complete/reset).
+    /// Patch progress cursor + earned set on the live session user.
     /// Replaces the `Option` so derived signals (workspace rail) always re-run.
-    pub fn set_current_level(&self, current_level: i32) {
+    pub fn set_progress(&self, current_level: i32, completed_levels: Vec<i32>) {
         let next = current_level.max(1);
         let Some(mut user) = self.user.get_untracked() else {
             return;
         };
-        if user.current_level == next {
+        if user.current_level == next && user.completed_levels == completed_levels {
             return;
         }
         user.current_level = next;
+        user.completed_levels = completed_levels;
         self.user.set(Some(user));
     }
 

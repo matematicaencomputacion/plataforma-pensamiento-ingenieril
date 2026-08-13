@@ -117,4 +117,54 @@ test.describe("persistent progress checks", () => {
     });
     await expect(page.locator("#workspace-reset-note")).toContainText(/reiniciado/i);
   });
+
+  test("jump-ahead complete marks only that micro-step", async ({
+    page,
+    request,
+  }: {
+    page: Page;
+    request: APIRequestContext;
+  }) => {
+    const { email, password } = uniqueCreds();
+    const reg = await request.post("/api/auth/register", {
+      data: { email, password },
+      timeout: e2eTimeout,
+    });
+    expect(reg.ok(), await reg.text()).toBeTruthy();
+    const regJson = (await reg.json()) as { token: string };
+    const token = regJson.token;
+
+    const complete = await request.post("/api/progress/complete", {
+      headers: { Authorization: `Bearer ${token}` },
+      data: { level_id: 157, step_id: "py-157-jump", passed: true },
+      timeout: e2eTimeout,
+    });
+    expect(complete.ok(), await complete.text()).toBeTruthy();
+    const body = (await complete.json()) as {
+      current_level: number;
+      advanced: boolean;
+      completed_levels: number[];
+    };
+    expect(body.current_level).toBe(1);
+    expect(body.advanced).toBe(false);
+    expect(body.completed_levels).toEqual([157]);
+
+    await login(page, email, password);
+    await expect(page.locator("#workspace-microsteps")).toHaveAttribute(
+      "data-current-level",
+      "1",
+    );
+
+    const step157 = page.locator('#workspace-microsteps [data-microstep="157"]');
+    const step1 = page.locator('#workspace-microsteps [data-microstep="1"]');
+    const step156 = page.locator('#workspace-microsteps [data-microstep="156"]');
+
+    await expect(step157).toHaveClass(/workspace__microstep--done/);
+    await expect(step157.locator(".workspace__microstep-badge")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await expect(step1.locator(".workspace__microstep-badge")).toHaveCount(0);
+    await expect(step156.locator(".workspace__microstep-badge")).toHaveCount(0);
+    await expect(page.locator("#workspace-microsteps .workspace__microstep-badge")).toHaveCount(1);
+  });
 });

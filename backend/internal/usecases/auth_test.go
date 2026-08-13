@@ -304,7 +304,7 @@ func TestCompleteProgressAdvancesLevel(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed attempt: %v", err)
 	}
-	if denied.Advanced || denied.CurrentLevel != 1 {
+	if denied.Advanced || denied.CurrentLevel != 1 || len(denied.CompletedLevels) != 0 {
 		t.Fatalf("failed attempt must not advance: %#v", denied)
 	}
 
@@ -315,6 +315,9 @@ func TestCompleteProgressAdvancesLevel(t *testing.T) {
 	if !ok.Advanced || ok.CurrentLevel != 2 {
 		t.Fatalf("expected advance to 2: %#v", ok)
 	}
+	if len(ok.CompletedLevels) != 1 || ok.CompletedLevels[0] != 1 {
+		t.Fatalf("expected completed_levels=[1]: %#v", ok.CompletedLevels)
+	}
 
 	idempotent, err := svc.CompleteProgress(ctx, reg.Token, 1, "py-02-variables", true)
 	if err != nil {
@@ -324,12 +327,20 @@ func TestCompleteProgressAdvancesLevel(t *testing.T) {
 		t.Fatalf("second pass must not re-advance: %#v", idempotent)
 	}
 
+	me, err := svc.Me(ctx, reg.Token)
+	if err != nil {
+		t.Fatalf("me: %v", err)
+	}
+	if me.CurrentLevel != 2 || len(me.CompletedLevels) != 1 || me.CompletedLevels[0] != 1 {
+		t.Fatalf("me must expose earned set: %#v", me)
+	}
+
 	reset, err := svc.ResetProgress(ctx, reg.Token)
 	if err != nil {
 		t.Fatalf("reset: %v", err)
 	}
-	if reset.CurrentLevel != 1 {
-		t.Fatalf("expected current_level=1 after reset: %#v", reset)
+	if reset.CurrentLevel != 1 || len(reset.CompletedLevels) != 0 {
+		t.Fatalf("expected current_level=1 and empty set after reset: %#v", reset)
 	}
 
 	_, err = svc.CompleteProgress(ctx, reg.Token, 0, "x", true)
@@ -339,5 +350,37 @@ func TestCompleteProgressAdvancesLevel(t *testing.T) {
 	_, err = svc.CompleteProgress(ctx, reg.Token, 1, "  ", true)
 	if !errors.Is(err, domain.ErrInvalidStepID) {
 		t.Fatalf("want ErrInvalidStepID, got %v", err)
+	}
+}
+
+func TestCompleteProgressJumpAheadDoesNotFillGaps(t *testing.T) {
+	svc := newTestAuth(t)
+	ctx := context.Background()
+	reg, err := svc.Register(ctx, "jump@example.com", "secreto12")
+	if err != nil {
+		t.Fatalf("register: %v", err)
+	}
+
+	jumped, err := svc.CompleteProgress(ctx, reg.Token, 157, "py-157-jump", true)
+	if err != nil {
+		t.Fatalf("jump complete: %v", err)
+	}
+	if jumped.Advanced || jumped.CurrentLevel != 1 {
+		t.Fatalf("jump-ahead must keep cursor at 1: %#v", jumped)
+	}
+	if len(jumped.CompletedLevels) != 1 || jumped.CompletedLevels[0] != 157 {
+		t.Fatalf("only 157 must be earned: %#v", jumped.CompletedLevels)
+	}
+
+	// Filling the gap at 1 should cascade through already-earned 157? No — 2..156 missing.
+	first, err := svc.CompleteProgress(ctx, reg.Token, 1, "py-02-variables", true)
+	if err != nil {
+		t.Fatalf("complete 1: %v", err)
+	}
+	if !first.Advanced || first.CurrentLevel != 2 {
+		t.Fatalf("completing 1 advances only to 2 (gap before 157): %#v", first)
+	}
+	if !domain.HasCompletedLevel(first.CompletedLevels, 1) || !domain.HasCompletedLevel(first.CompletedLevels, 157) {
+		t.Fatalf("earned set must keep both 1 and 157: %#v", first.CompletedLevels)
 	}
 }
