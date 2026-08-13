@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=352).
+    /// 1-based index on the workspace micro-step rail (1..=358).
     pub micro_step: i32,
 }
 
@@ -4395,8 +4395,74 @@ pub const PY352_REMOVE_K_DUPES: CodingStep = CodingStep {
     pytest: "def test_352_remove_k_dupes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('remove_duplicates'))\n    assert ns['remove_duplicates']('deeedbbcccbdaa', 3) == 'aa'\n    assert ns['remove_duplicates']('abcd', 2) == 'abcd'\n    assert ns['remove_duplicates']('pbbcggttciiippooaais', 2) == 'ps'\n    assert capsys.readouterr().out.strip() == 'aa'\n",
     hint: "def remove_duplicates(s, k):\n    stack = []\n    for ch in s:\n        if stack and stack[-1][0] == ch:\n            stack[-1][1] += 1\n            if stack[-1][1] == k: stack.pop()\n        else:\n            stack.append([ch, 1])\n    return \"\".join(ch*c for ch,c in stack)\nprint(remove_duplicates(\"deeedbbcccbdaa\", 3))",
     solution_example: "def remove_duplicates(s, k):\n    stack = []\n    for ch in s:\n        if stack and stack[-1][0] == ch:\n            stack[-1][1] += 1\n            if stack[-1][1] == k:\n                stack.pop()\n        else:\n            stack.append([ch, 1])\n    return \"\".join(ch * c for ch, c in stack)\n\nprint(remove_duplicates(\"deeedbbcccbdaa\", 3))\n",
-    next: None, show_type_chips: false, micro_step: 352,
+    next: Some("py-353-num-provinces"), show_type_chips: false, micro_step: 352,
 };
+
+pub const PY353_NUM_PROVINCES: CodingStep = CodingStep {
+    id: "py-353-num-provinces", title: "DSA Num Provinces", objective: "Contar componentes conexas en matriz de adyacencia (UF o DFS).",
+    prompt_md: "**Number of Provinces**\n\nUnion-Find sobre isConnected. Distinto de py-115 (UF básico).\n\n**Micro-reto:**\n1. Definí `find_circle_num(is_connected)`\n2. `[[1,1,0],[1,1,0],[0,0,1]]`; imprimí (esperado: `2`)",
+    starter_code: "# def find_circle_num(is_connected):\n#     ...\n# print(find_circle_num([[1, 1, 0], [1, 1, 0], [0, 0, 1]]))\n",
+    pytest: "def test_353_num_provinces(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_circle_num'))\n    assert ns['find_circle_num']([[1, 1, 0], [1, 1, 0], [0, 0, 1]]) == 2\n    assert ns['find_circle_num']([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) == 3\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def find_circle_num(is_connected):\n    n = len(is_connected); parent = list(range(n))\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    for i in range(n):\n        for j in range(i+1, n):\n            if is_connected[i][j]:\n                a, b = find(i), find(j)\n                if a != b: parent[b] = a\n    return len({find(i) for i in range(n)})\nprint(find_circle_num([[1, 1, 0], [1, 1, 0], [0, 0, 1]]))",
+    solution_example: "def find_circle_num(is_connected):\n    n = len(is_connected)\n    parent = list(range(n))\n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n\n    for i in range(n):\n        for j in range(i + 1, n):\n            if is_connected[i][j]:\n                a, b = find(i), find(j)\n                if a != b:\n                    parent[b] = a\n    return len({find(i) for i in range(n)})\n\nprint(find_circle_num([[1, 1, 0], [1, 1, 0], [0, 0, 1]]))\n",
+    next: Some("py-354-redundant-conn"), show_type_chips: false, micro_step: 353,
+};
+
+
+pub const PY354_REDUNDANT_CONN: CodingStep = CodingStep {
+    id: "py-354-redundant-conn", title: "DSA Redundant Conn", objective: "Arista que forma ciclo en un grafo casi-árbol.",
+    prompt_md: "**Redundant Connection**\n\nUF: primera arista cuyos extremos ya unidos. Distinto de py-277.\n\n**Micro-reto:**\n1. Definí `find_redundant_connection(edges)`\n2. `[[1,2],[1,3],[2,3]]`; imprimí (esperado: `[2, 3]`)",
+    starter_code: "# def find_redundant_connection(edges):\n#     ...\n# print(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))\n",
+    pytest: "def test_354_redundant_conn(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('find_redundant_connection'))\n    assert ns['find_redundant_connection']([[1, 2], [1, 3], [2, 3]]) == [2, 3]\n    assert ns['find_redundant_connection']([[1, 2], [2, 3], [3, 4], [1, 4], [1, 5]]) == [1, 4]\n    assert capsys.readouterr().out.strip() == '[2, 3]'\n",
+    hint: "def find_redundant_connection(edges):\n    parent = {}\n    def find(x):\n        parent.setdefault(x, x)\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    for a, b in edges:\n        ra, rb = find(a), find(b)\n        if ra == rb: return [a, b]\n        parent[rb] = ra\n    return []\nprint(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))",
+    solution_example: "def find_redundant_connection(edges):\n    parent = {}\n\n    def find(x):\n        parent.setdefault(x, x)\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n\n    for a, b in edges:\n        ra, rb = find(a), find(b)\n        if ra == rb:\n            return [a, b]\n        parent[rb] = ra\n    return []\n\nprint(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))\n",
+    next: Some("py-355-accounts-merge"), show_type_chips: false, micro_step: 354,
+};
+
+
+pub const PY355_ACCOUNTS_MERGE: CodingStep = CodingStep {
+    id: "py-355-accounts-merge", title: "DSA Accounts Merge", objective: "Fusionar cuentas por emails compartidos (UF).",
+    prompt_md: "**Accounts Merge**\n\nUF por email + nombre. Distinto de py-278.\n\n**Micro-reto:**\n1. Definí `accounts_merge(accounts)` ordenado\n2. accounts clásico LC721 reducido; imprimí resultado esperado",
+    starter_code: "# def accounts_merge(accounts):\n#     ...\n# print(accounts_merge([[\"John\",\"johnsmith@mail.com\",\"john_newyork@mail.com\"],[\"John\",\"johnsmith@mail.com\",\"john00@mail.com\"],[\"Mary\",\"mary@mail.com\"],[\"John\",\"johnnybravo@mail.com\"]]))\n",
+    pytest: "def test_355_accounts_merge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('accounts_merge'))\n    got = ns['accounts_merge']([['John', 'johnsmith@mail.com', 'john_newyork@mail.com'], ['John', 'johnsmith@mail.com', 'john00@mail.com'], ['Mary', 'mary@mail.com'], ['John', 'johnnybravo@mail.com']])\n    assert sorted(got) == sorted([['John', 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com'], ['Mary', 'mary@mail.com'], ['John', 'johnnybravo@mail.com']])\n    assert capsys.readouterr().out.strip().startswith('[[')\n",
+    hint: "from collections import defaultdict\ndef accounts_merge(accounts):\n    parent = {}\n    def find(x):\n        parent.setdefault(x, x)\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    email_name = {}\n    for acc in accounts:\n        name = acc[0]\n        for e in acc[1:]:\n            email_name[e] = name\n            find(e)\n            parent[find(e)] = find(acc[1])\n    groups = defaultdict(list)\n    for e in email_name:\n        groups[find(e)].append(e)\n    return [[email_name[r]] + sorted(emails) for r, emails in groups.items()]\nprint(accounts_merge([[\"John\",\"johnsmith@mail.com\",\"john_newyork@mail.com\"],[\"John\",\"johnsmith@mail.com\",\"john00@mail.com\"],[\"Mary\",\"mary@mail.com\"],[\"John\",\"johnnybravo@mail.com\"]]))",
+    solution_example: "from collections import defaultdict\n\ndef accounts_merge(accounts):\n    parent = {}\n\n    def find(x):\n        parent.setdefault(x, x)\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n\n    email_name = {}\n    for acc in accounts:\n        name = acc[0]\n        for e in acc[1:]:\n            email_name[e] = name\n            find(e)\n            parent[find(e)] = find(acc[1])\n    groups = defaultdict(list)\n    for e in email_name:\n        groups[find(e)].append(e)\n    return [[email_name[r]] + sorted(emails) for r, emails in groups.items()]\n\nprint(sorted(accounts_merge([[\"John\", \"johnsmith@mail.com\", \"john_newyork@mail.com\"], [\"John\", \"johnsmith@mail.com\", \"john00@mail.com\"], [\"Mary\", \"mary@mail.com\"], [\"John\", \"johnnybravo@mail.com\"]])))\n",
+    next: Some("py-356-smallest-string"), show_type_chips: false, micro_step: 355,
+};
+
+
+pub const PY356_SMALLEST_STRING: CodingStep = CodingStep {
+    id: "py-356-smallest-string", title: "DSA Smallest String", objective: "Lexicographically smallest equivalent string con UF de letras.",
+    prompt_md: "**Smallest String With Swaps / Equivalent**\n\nUF de caracteres equivalentes; mapeá al menor. Distinto de py-353.\n\n**Micro-reto:**\n1. Definí `smallest_equivalent_string(s1, s2, base_str)`\n2. s1=`\"parker\"`, s2=`\"morris\"`, base=`\"parser\"`; imprimí (esperado: `makkek`)",
+    starter_code: "# def smallest_equivalent_string(s1, s2, base_str):\n#     ...\n# print(smallest_equivalent_string(\"parker\", \"morris\", \"parser\"))\n",
+    pytest: "def test_356_smallest_string(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('smallest_equivalent_string'))\n    assert ns['smallest_equivalent_string']('parker', 'morris', 'parser') == 'makkek'\n    assert ns['smallest_equivalent_string']('hello', 'world', 'hold') == 'hdld'\n    assert capsys.readouterr().out.strip() == 'makkek'\n",
+    hint: "def smallest_equivalent_string(s1, s2, base_str):\n    parent = {chr(c): chr(c) for c in range(ord(\"a\"), ord(\"z\")+1)}\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    for a, b in zip(s1, s2):\n        ra, rb = find(a), find(b)\n        if ra < rb: parent[rb] = ra\n        else: parent[ra] = rb\n    return \"\".join(find(ch) for ch in base_str)\nprint(smallest_equivalent_string(\"parker\", \"morris\", \"parser\"))",
+    solution_example: "def smallest_equivalent_string(s1, s2, base_str):\n    parent = {chr(c): chr(c) for c in range(ord(\"a\"), ord(\"z\") + 1)}\n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n\n    for a, b in zip(s1, s2):\n        ra, rb = find(a), find(b)\n        if ra < rb:\n            parent[rb] = ra\n        else:\n            parent[ra] = rb\n    return \"\".join(find(ch) for ch in base_str)\n\nprint(smallest_equivalent_string(\"parker\", \"morris\", \"parser\"))\n",
+    next: Some("py-357-graph-valid-tree"), show_type_chips: false, micro_step: 356,
+};
+
+
+pub const PY357_GRAPH_VALID_TREE: CodingStep = CodingStep {
+    id: "py-357-graph-valid-tree", title: "DSA Graph Valid Tree", objective: "Decidir si n nodos y edges forman un árbol.",
+    prompt_md: "**Graph Valid Tree**\n\nn-1 aristas + 1 componente. Distinto de py-354.\n\n**Micro-reto:**\n1. Definí `valid_tree(n, edges)`\n2. n=`5`, edges=`[[0,1],[0,2],[0,3],[1,4]]`; imprimí `True`",
+    starter_code: "# def valid_tree(n, edges):\n#     ...\n# print(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))\n",
+    pytest: "def test_357_graph_valid_tree(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('valid_tree'))\n    assert ns['valid_tree'](5, [[0, 1], [0, 2], [0, 3], [1, 4]]) is True\n    assert ns['valid_tree'](5, [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]]) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "def valid_tree(n, edges):\n    if len(edges) != n - 1: return False\n    parent = list(range(n))\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    for a, b in edges:\n        ra, rb = find(a), find(b)\n        if ra == rb: return False\n        parent[rb] = ra\n    return True\nprint(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))",
+    solution_example: "def valid_tree(n, edges):\n    if len(edges) != n - 1:\n        return False\n    parent = list(range(n))\n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n\n    for a, b in edges:\n        ra, rb = find(a), find(b)\n        if ra == rb:\n            return False\n        parent[rb] = ra\n    return True\n\nprint(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))\n",
+    next: Some("py-358-earliest-friend"), show_type_chips: false, micro_step: 357,
+};
+
+
+pub const PY358_EARLIEST_FRIEND: CodingStep = CodingStep {
+    id: "py-358-earliest-friend", title: "DSA Earliest Friend", objective: "Momento en que todos quedan amigos (UF con timestamp).",
+    prompt_md: "**The Earliest Moment When Everyone Become Friends**\n\nOrdená logs y uní hasta 1 componente. Distinto de py-357.\n\n**Micro-reto:**\n1. Definí `earliest_acq(logs, n)`\n2. logs=`[[20190101,0,1],[20190104,3,4],[20190107,2,3],[20190211,1,5],[20190224,2,4],[20190301,0,3],[20190312,1,2],[20190322,4,5]]`, n=`6`; imprimí (esperado: `20190301`)",
+    starter_code: "# def earliest_acq(logs, n):\n#     ...\n# print(earliest_acq([[20190101, 0, 1], [20190104, 3, 4], [20190107, 2, 3], [20190211, 1, 5], [20190224, 2, 4], [20190301, 0, 3], [20190312, 1, 2], [20190322, 4, 5]], 6))\n",
+    pytest: "def test_358_earliest_friend(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('earliest_acq'))\n    assert ns['earliest_acq']([[20190101, 0, 1], [20190104, 3, 4], [20190107, 2, 3], [20190211, 1, 5], [20190224, 2, 4], [20190301, 0, 3], [20190312, 1, 2], [20190322, 4, 5]], 6) == 20190301\n    assert ns['earliest_acq']([[0, 2, 0], [1, 0, 1], [3, 0, 3], [4, 1, 2], [7, 3, 1]], 4) == 3\n    assert capsys.readouterr().out.strip() == '20190301'\n",
+    hint: "def earliest_acq(logs, n):\n    parent = list(range(n)); comps = n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]; x = parent[x]\n        return x\n    for t, a, b in sorted(logs):\n        ra, rb = find(a), find(b)\n        if ra != rb:\n            parent[rb] = ra; comps -= 1\n            if comps == 1: return t\n    return -1\nprint(earliest_acq([[20190101, 0, 1], [20190104, 3, 4], [20190107, 2, 3], [20190211, 1, 5], [20190224, 2, 4], [20190301, 0, 3], [20190312, 1, 2], [20190322, 4, 5]], 6))",
+    solution_example: "def earliest_acq(logs, n):\n    parent = list(range(n))\n    comps = n\n\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n\n    for t, a, b in sorted(logs):\n        ra, rb = find(a), find(b)\n        if ra != rb:\n            parent[rb] = ra\n            comps -= 1\n            if comps == 1:\n                return t\n    return -1\n\nprint(earliest_acq([[20190101, 0, 1], [20190104, 3, 4], [20190107, 2, 3], [20190211, 1, 5], [20190224, 2, 4], [20190301, 0, 3], [20190312, 1, 2], [20190322, 4, 5]], 6))\n",
+    next: None, show_type_chips: false, micro_step: 358,
+};
+
 
 
 
@@ -4759,6 +4825,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY350_ONLINE_STOCK,
     &PY351_SUM_SUBARRAY_MINS,
     &PY352_REMOVE_K_DUPES,
+    &PY353_NUM_PROVINCES,
+    &PY354_REDUNDANT_CONN,
+    &PY355_ACCOUNTS_MERGE,
+    &PY356_SMALLEST_STRING,
+    &PY357_GRAPH_VALID_TREE,
+    &PY358_EARLIEST_FRIEND,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4902,7 +4974,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 352);
+            assert!(step.micro_step >= 1 && step.micro_step <= 358);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -5456,7 +5528,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py352_curriculum_chain() {
+    fn py203_to_py358_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -5608,7 +5680,13 @@ mod tests {
             (349, "py-349-daily-temps", Some("py-350-online-stock")),
             (350, "py-350-online-stock", Some("py-351-sum-subarray-mins")),
             (351, "py-351-sum-subarray-mins", Some("py-352-remove-k-dupes")),
-            (352, "py-352-remove-k-dupes", None),
+            (352, "py-352-remove-k-dupes", Some("py-353-num-provinces")),
+            (353, "py-353-num-provinces", Some("py-354-redundant-conn")),
+            (354, "py-354-redundant-conn", Some("py-355-accounts-merge")),
+            (355, "py-355-accounts-merge", Some("py-356-smallest-string")),
+            (356, "py-356-smallest-string", Some("py-357-graph-valid-tree")),
+            (357, "py-357-graph-valid-tree", Some("py-358-earliest-friend")),
+            (358, "py-358-earliest-friend", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
