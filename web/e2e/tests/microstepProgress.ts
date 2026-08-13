@@ -340,6 +340,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 332, step_id: "py-332-container-water" },
   { level_id: 333, step_id: "py-333-remove-dupes" },
   { level_id: 334, step_id: "py-334-move-zeroes" },
+  { level_id: 335, step_id: "py-335-implement-trie" },
+  { level_id: 336, step_id: "py-336-word-dict" },
+  { level_id: 337, step_id: "py-337-replace-words" },
+  { level_id: 338, step_id: "py-338-map-sum" },
+  { level_id: 339, step_id: "py-339-longest-word" },
+  { level_id: 340, step_id: "py-340-stream-checker" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

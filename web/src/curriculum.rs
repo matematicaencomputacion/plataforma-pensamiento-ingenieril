@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=334).
+    /// 1-based index on the workspace micro-step rail (1..=340).
     pub micro_step: i32,
 }
 
@@ -4200,8 +4200,74 @@ pub const PY334_MOVE_ZEROES: CodingStep = CodingStep {
     pytest: "def test_334_move_zeroes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('move_zeroes'))\n    a = [0, 1, 0, 3, 12]\n    ns['move_zeroes'](a)\n    assert a == [1, 3, 12, 0, 0]\n    b = [0]\n    ns['move_zeroes'](b)\n    assert b == [0]\n    assert capsys.readouterr().out.strip() == '[1, 3, 12, 0, 0]'\n",
     hint: "def move_zeroes(nums):\n    w = 0\n    for x in nums:\n        if x != 0:\n            nums[w] = x; w += 1\n    for i in range(w, len(nums)):\n        nums[i] = 0\nnums = [0, 1, 0, 3, 12]\nmove_zeroes(nums)\nprint(nums)",
     solution_example: "def move_zeroes(nums):\n    w = 0\n    for x in nums:\n        if x != 0:\n            nums[w] = x\n            w += 1\n    for i in range(w, len(nums)):\n        nums[i] = 0\n\nnums = [0, 1, 0, 3, 12]\nmove_zeroes(nums)\nprint(nums)\n",
-    next: None, show_type_chips: false, micro_step: 334,
+    next: Some("py-335-implement-trie"), show_type_chips: false, micro_step: 334,
 };
+
+pub const PY335_IMPLEMENT_TRIE: CodingStep = CodingStep {
+    id: "py-335-implement-trie", title: "DSA Implement Trie", objective: "Trie con insert/search/starts_with.",
+    prompt_md: "**Implement Trie (Prefix Tree)**\n\nNodos dict + end flag. Distinto de py-135 (demo mínima).\n\n**Micro-reto:**\n1. Clase `Trie` con `insert`, `search`, `starts_with`\n2. insert `\"apple\"`; imprimí `[search(\"apple\"), search(\"app\"), starts_with(\"app\")]` (esperado: `[True, False, True]`)",
+    starter_code: "# class Trie:\n#     ...\n# t = Trie()\n# t.insert(\"apple\")\n# print([t.search(\"apple\"), t.search(\"app\"), t.starts_with(\"app\")])\n",
+    pytest: "def test_335_implement_trie(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'Trie' in ns\n    t = ns['Trie']()\n    t.insert('apple')\n    assert t.search('apple') is True\n    assert t.search('app') is False\n    assert t.starts_with('app') is True\n    t.insert('app')\n    assert t.search('app') is True\n    assert capsys.readouterr().out.strip() == '[True, False, True]'\n",
+    hint: "class Trie:\n    def __init__(self):\n        self.root = {}\n    def insert(self, word):\n        node = self.root\n        for ch in word:\n            node = node.setdefault(ch, {})\n        node[\"$\"] = True\n    def search(self, word):\n        node = self.root\n        for ch in word:\n            if ch not in node: return False\n            node = node[ch]\n        return bool(node.get(\"$\"))\n    def starts_with(self, prefix):\n        node = self.root\n        for ch in prefix:\n            if ch not in node: return False\n            node = node[ch]\n        return True\nt = Trie(); t.insert(\"apple\")\nprint([t.search(\"apple\"), t.search(\"app\"), t.starts_with(\"app\")])",
+    solution_example: "class Trie:\n    def __init__(self):\n        self.root = {}\n\n    def insert(self, word):\n        node = self.root\n        for ch in word:\n            node = node.setdefault(ch, {})\n        node[\"$\"] = True\n\n    def search(self, word):\n        node = self.root\n        for ch in word:\n            if ch not in node:\n                return False\n            node = node[ch]\n        return bool(node.get(\"$\"))\n\n    def starts_with(self, prefix):\n        node = self.root\n        for ch in prefix:\n            if ch not in node:\n                return False\n            node = node[ch]\n        return True\n\nt = Trie()\nt.insert(\"apple\")\nprint([t.search(\"apple\"), t.search(\"app\"), t.starts_with(\"app\")])\n",
+    next: Some("py-336-word-dict"), show_type_chips: false, micro_step: 335,
+};
+
+
+pub const PY336_WORD_DICT: CodingStep = CodingStep {
+    id: "py-336-word-dict", title: "DSA Word Dictionary", objective: "Diccionario con search que soporta comodín \".\".",
+    prompt_md: "**Design Add and Search Words**\n\nDFS en el trie ante `.`. Distinto de py-335 (match exacto).\n\n**Micro-reto:**\n1. Clase `WordDictionary` con `add_word` / `search`\n2. add `bad`,`dad`,`mad`; imprimí `[search(\"pad\"), search(\"bad\"), search(\".ad\"), search(\"b..\")]` (esperado: `[False, True, True, True]`)",
+    starter_code: "# class WordDictionary:\n#     ...\n# w = WordDictionary()\n# ...\n# print([...])\n",
+    pytest: "def test_336_word_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'WordDictionary' in ns\n    w = ns['WordDictionary']()\n    w.add_word('bad'); w.add_word('dad'); w.add_word('mad')\n    assert w.search('pad') is False\n    assert w.search('bad') is True\n    assert w.search('.ad') is True\n    assert w.search('b..') is True\n    assert capsys.readouterr().out.strip() == '[False, True, True, True]'\n",
+    hint: "class WordDictionary:\n    def __init__(self):\n        self.root = {}\n    def add_word(self, word):\n        node = self.root\n        for ch in word:\n            node = node.setdefault(ch, {})\n        node[\"$\"] = True\n    def search(self, word):\n        def dfs(i, node):\n            if i == len(word): return bool(node.get(\"$\"))\n            ch = word[i]\n            if ch == \".\":\n                return any(dfs(i+1, node[k]) for k in node if k != \"$\")\n            if ch not in node: return False\n            return dfs(i+1, node[ch])\n        return dfs(0, self.root)\nw = WordDictionary()\nfor x in (\"bad\",\"dad\",\"mad\"): w.add_word(x)\nprint([w.search(\"pad\"), w.search(\"bad\"), w.search(\".ad\"), w.search(\"b..\")])",
+    solution_example: "class WordDictionary:\n    def __init__(self):\n        self.root = {}\n\n    def add_word(self, word):\n        node = self.root\n        for ch in word:\n            node = node.setdefault(ch, {})\n        node[\"$\"] = True\n\n    def search(self, word):\n        def dfs(i, node):\n            if i == len(word):\n                return bool(node.get(\"$\"))\n            ch = word[i]\n            if ch == \".\":\n                return any(dfs(i + 1, node[k]) for k in node if k != \"$\")\n            if ch not in node:\n                return False\n            return dfs(i + 1, node[ch])\n        return dfs(0, self.root)\n\nw = WordDictionary()\nfor x in (\"bad\", \"dad\", \"mad\"):\n    w.add_word(x)\nprint([w.search(\"pad\"), w.search(\"bad\"), w.search(\".ad\"), w.search(\"b..\")])\n",
+    next: Some("py-337-replace-words"), show_type_chips: false, micro_step: 336,
+};
+
+
+pub const PY337_REPLACE_WORDS: CodingStep = CodingStep {
+    id: "py-337-replace-words", title: "DSA Replace Words", objective: "Reemplazar palabras por la raíz más corta del diccionario.",
+    prompt_md: "**Replace Words**\n\nTrie de roots; al encontrar end cortá. Distinto de py-165 (LCP de strings).\n\n**Micro-reto:**\n1. Definí `replace_words(dictionary, sentence)`\n2. dictionary=`[\"cat\",\"bat\",\"rat\"]`, sentence=`\"the cattle was rattled by the battery\"`; imprimí (esperado: `the cat was rat by the bat`)",
+    starter_code: "# def replace_words(dictionary, sentence):\n#     ...\n# print(replace_words([\"cat\", \"bat\", \"rat\"], \"the cattle was rattled by the battery\"))\n",
+    pytest: "def test_337_replace_words(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['replace_words'](['cat', 'bat', 'rat'], 'the cattle was rattled by the battery') == 'the cat was rat by the bat'\n    assert ns['replace_words'](['a', 'b', 'c'], 'aadsfasf absbs bbab cadsfafs') == 'a a b c'\n    assert capsys.readouterr().out.strip() == 'the cat was rat by the bat'\n",
+    hint: "def replace_words(dictionary, sentence):\n    root = {}\n    for w in dictionary:\n        node = root\n        for ch in w:\n            node = node.setdefault(ch, {})\n        node[\"$\"] = True\n    def repl(word):\n        node = root; pref = []\n        for ch in word:\n            if ch not in node: return word\n            node = node[ch]; pref.append(ch)\n            if node.get(\"$\"): return \"\".join(pref)\n        return word\n    return \" \".join(repl(w) for w in sentence.split())\nprint(replace_words([\"cat\", \"bat\", \"rat\"], \"the cattle was rattled by the battery\"))",
+    solution_example: "def replace_words(dictionary, sentence):\n    root = {}\n    for w in dictionary:\n        node = root\n        for ch in w:\n            node = node.setdefault(ch, {})\n        node[\"$\"] = True\n\n    def repl(word):\n        node = root\n        pref = []\n        for ch in word:\n            if ch not in node:\n                return word\n            node = node[ch]\n            pref.append(ch)\n            if node.get(\"$\"):\n                return \"\".join(pref)\n        return word\n\n    return \" \".join(repl(w) for w in sentence.split())\n\nprint(replace_words([\"cat\", \"bat\", \"rat\"], \"the cattle was rattled by the battery\"))\n",
+    next: Some("py-338-map-sum"), show_type_chips: false, micro_step: 337,
+};
+
+
+pub const PY338_MAP_SUM: CodingStep = CodingStep {
+    id: "py-338-map-sum", title: "DSA Map Sum", objective: "MapSum: insert key→val y sumar valores con prefijo dado.",
+    prompt_md: "**Map Sum Pairs**\n\nTrie con peso en nodos (delta al reinsertar). Distinto de py-335.\n\n**Micro-reto:**\n1. Clase `MapSum` con `insert` / `sum`\n2. insert `apple=3`, sum `ap`, insert `app=2`, sum `ap`; imprimí `[3, 5]`",
+    starter_code: "# class MapSum:\n#     ...\n# m = MapSum()\n# m.insert(\"apple\", 3)\n# a = m.sum(\"ap\")\n# m.insert(\"app\", 2)\n# b = m.sum(\"ap\")\n# print([a, b])\n",
+    pytest: "def test_338_map_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'MapSum' in ns\n    m = ns['MapSum']()\n    m.insert('apple', 3)\n    assert m.sum('ap') == 3\n    m.insert('app', 2)\n    assert m.sum('ap') == 5\n    assert capsys.readouterr().out.strip() == '[3, 5]'\n",
+    hint: "class MapSum:\n    def __init__(self):\n        self.root = {}; self.vals = {}\n    def insert(self, key, val):\n        delta = val - self.vals.get(key, 0); self.vals[key] = val\n        node = self.root\n        for ch in key:\n            node = node.setdefault(ch, {\"#\": 0})\n            node[\"#\"] = node.get(\"#\", 0) + delta\n    def sum(self, prefix):\n        node = self.root\n        for ch in prefix:\n            if ch not in node: return 0\n            node = node[ch]\n        return node.get(\"#\", 0)\nm = MapSum(); m.insert(\"apple\", 3); a = m.sum(\"ap\"); m.insert(\"app\", 2); b = m.sum(\"ap\"); print([a, b])",
+    solution_example: "class MapSum:\n    def __init__(self):\n        self.root = {}\n        self.vals = {}\n\n    def insert(self, key, val):\n        delta = val - self.vals.get(key, 0)\n        self.vals[key] = val\n        node = self.root\n        for ch in key:\n            node = node.setdefault(ch, {\"#\": 0})\n            node[\"#\"] = node.get(\"#\", 0) + delta\n\n    def sum(self, prefix):\n        node = self.root\n        for ch in prefix:\n            if ch not in node:\n                return 0\n            node = node[ch]\n        return node.get(\"#\", 0)\n\nm = MapSum()\nm.insert(\"apple\", 3)\na = m.sum(\"ap\")\nm.insert(\"app\", 2)\nb = m.sum(\"ap\")\nprint([a, b])\n",
+    next: Some("py-339-longest-word"), show_type_chips: false, micro_step: 338,
+};
+
+
+pub const PY339_LONGEST_WORD: CodingStep = CodingStep {
+    id: "py-339-longest-word", title: "DSA Longest Word", objective: "Palabra más larga construible letra a letra desde el diccionario.",
+    prompt_md: "**Longest Word in Dictionary**\n\nTodas las prefijos deben existir. Distinto de py-165.\n\n**Micro-reto:**\n1. Definí `longest_word(words)`\n2. `[\"w\",\"wo\",\"wor\",\"worl\",\"world\"]`; imprimí `world`",
+    starter_code: "# def longest_word(words):\n#     ...\n# print(longest_word([\"w\", \"wo\", \"wor\", \"worl\", \"world\"]))\n",
+    pytest: "def test_339_longest_word(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['longest_word'](['w', 'wo', 'wor', 'worl', 'world']) == 'world'\n    assert ns['longest_word'](['a', 'banana', 'app', 'appl', 'ap', 'apply', 'apple']) == 'apple'\n    assert capsys.readouterr().out.strip() == 'world'\n",
+    hint: "def longest_word(words):\n    words = sorted(words); seen = {\"\"}; best = \"\"\n    for w in words:\n        if w[:-1] in seen:\n            seen.add(w)\n            if len(w) > len(best): best = w\n    return best\nprint(longest_word([\"w\", \"wo\", \"wor\", \"worl\", \"world\"]))",
+    solution_example: "def longest_word(words):\n    words = sorted(words)\n    seen = {\"\"}\n    best = \"\"\n    for w in words:\n        if w[:-1] in seen:\n            seen.add(w)\n            if len(w) > len(best):\n                best = w\n    return best\n\nprint(longest_word([\"w\", \"wo\", \"wor\", \"worl\", \"world\"]))\n",
+    next: Some("py-340-stream-checker"), show_type_chips: false, micro_step: 339,
+};
+
+
+pub const PY340_STREAM_CHECKER: CodingStep = CodingStep {
+    id: "py-340-stream-checker", title: "DSA Stream Checker", objective: "Query stream de letras: ¿algún word es sufijo del stream?",
+    prompt_md: "**Stream of Characters**\n\nTrie de palabras invertidas + buffer. Distinto de py-336.\n\n**Micro-reto:**\n1. Clase `StreamChecker(words)` con `query(letter)`\n2. words=`[\"cd\",\"f\",\"kl\"]`; query c,d,a,f; imprimí resultados (esperado: `[False, True, False, True]`)",
+    starter_code: "# class StreamChecker:\n#     ...\n# s = StreamChecker([\"cd\", \"f\", \"kl\"])\n# print([s.query(ch) for ch in \"cdaf\"])\n",
+    pytest: "def test_340_stream_checker(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'StreamChecker' in ns\n    s = ns['StreamChecker'](['cd', 'f', 'kl'])\n    assert [s.query(ch) for ch in 'cdaf'] == [False, True, False, True]\n    assert capsys.readouterr().out.strip() == '[False, True, False, True]'\n",
+    hint: "class StreamChecker:\n    def __init__(self, words):\n        self.root = {}; self.buf = []\n        for w in words:\n            node = self.root\n            for ch in reversed(w):\n                node = node.setdefault(ch, {})\n            node[\"$\"] = True\n    def query(self, letter):\n        self.buf.append(letter); node = self.root\n        for ch in reversed(self.buf):\n            if ch not in node: return False\n            node = node[ch]\n            if node.get(\"$\"): return True\n        return False\ns = StreamChecker([\"cd\", \"f\", \"kl\"])\nprint([s.query(ch) for ch in \"cdaf\"])",
+    solution_example: "class StreamChecker:\n    def __init__(self, words):\n        self.root = {}\n        self.buf = []\n        for w in words:\n            node = self.root\n            for ch in reversed(w):\n                node = node.setdefault(ch, {})\n            node[\"$\"] = True\n\n    def query(self, letter):\n        self.buf.append(letter)\n        node = self.root\n        for ch in reversed(self.buf):\n            if ch not in node:\n                return False\n            node = node[ch]\n            if node.get(\"$\"):\n                return True\n        return False\n\ns = StreamChecker([\"cd\", \"f\", \"kl\"])\nprint([s.query(ch) for ch in \"cdaf\"])\n",
+    next: None, show_type_chips: false, micro_step: 340,
+};
+
 
 
 
@@ -4543,6 +4609,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY332_CONTAINER_WATER,
     &PY333_REMOVE_DUPES,
     &PY334_MOVE_ZEROES,
+    &PY335_IMPLEMENT_TRIE,
+    &PY336_WORD_DICT,
+    &PY337_REPLACE_WORDS,
+    &PY338_MAP_SUM,
+    &PY339_LONGEST_WORD,
+    &PY340_STREAM_CHECKER,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4686,7 +4758,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 334);
+            assert!(step.micro_step >= 1 && step.micro_step <= 340);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -5240,7 +5312,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py334_curriculum_chain() {
+    fn py203_to_py340_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -5374,7 +5446,13 @@ mod tests {
             (331, "py-331-four-sum", Some("py-332-container-water")),
             (332, "py-332-container-water", Some("py-333-remove-dupes")),
             (333, "py-333-remove-dupes", Some("py-334-move-zeroes")),
-            (334, "py-334-move-zeroes", None),
+            (334, "py-334-move-zeroes", Some("py-335-implement-trie")),
+            (335, "py-335-implement-trie", Some("py-336-word-dict")),
+            (336, "py-336-word-dict", Some("py-337-replace-words")),
+            (337, "py-337-replace-words", Some("py-338-map-sum")),
+            (338, "py-338-map-sum", Some("py-339-longest-word")),
+            (339, "py-339-longest-word", Some("py-340-stream-checker")),
+            (340, "py-340-stream-checker", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
