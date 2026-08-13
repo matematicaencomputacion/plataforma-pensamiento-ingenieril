@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=328).
+    /// 1-based index on the workspace micro-step rail (1..=334).
     pub micro_step: i32,
 }
 
@@ -4135,8 +4135,74 @@ pub const PY328_UGLY_NUMBER: CodingStep = CodingStep {
     pytest: "def test_328_ugly_number(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_ugly'))\n    assert ns['is_ugly'](6) is True\n    assert ns['is_ugly'](1) is True\n    assert ns['is_ugly'](14) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
     hint: "def is_ugly(n):\n    if n <= 0: return False\n    for p in (2, 3, 5):\n        while n % p == 0: n //= p\n    return n == 1\nprint(is_ugly(6))",
     solution_example: "def is_ugly(n):\n    if n <= 0:\n        return False\n    for p in (2, 3, 5):\n        while n % p == 0:\n            n //= p\n    return n == 1\n\nprint(is_ugly(6))\n",
-    next: None, show_type_chips: false, micro_step: 328,
+    next: Some("py-329-three-sum"), show_type_chips: false, micro_step: 328,
 };
+
+pub const PY329_THREE_SUM: CodingStep = CodingStep {
+    id: "py-329-three-sum", title: "DSA Three Sum", objective: "Encontrar triples únicos que suman 0 (two pointers).",
+    prompt_md: "**3Sum**\n\nOrdená + i fijo + two pointers. Distinto de py-155 (two sum hash).\n\n**Micro-reto:**\n1. Definí `three_sum(nums)` → lista de triples ordenados\n2. `[-1,0,1,2,-1,-4]`; imprimí (esperado: `[[-1, -1, 2], [-1, 0, 1]]`)",
+    starter_code: "# def three_sum(nums):\n#     ...\n# print(three_sum([-1, 0, 1, 2, -1, -4]))\n",
+    pytest: "def test_329_three_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('three_sum'))\n    assert sorted(ns['three_sum']([-1, 0, 1, 2, -1, -4])) == [[-1, -1, 2], [-1, 0, 1]]\n    assert ns['three_sum']([0, 1, 1]) == []\n    assert ns['three_sum']([0, 0, 0]) == [[0, 0, 0]]\n    assert capsys.readouterr().out.strip() == '[[-1, -1, 2], [-1, 0, 1]]'\n",
+    hint: "def three_sum(nums):\n    nums = sorted(nums); out = []\n    for i in range(len(nums)):\n        if i and nums[i] == nums[i-1]: continue\n        lo, hi = i+1, len(nums)-1\n        while lo < hi:\n            s = nums[i]+nums[lo]+nums[hi]\n            if s == 0:\n                out.append([nums[i], nums[lo], nums[hi]])\n                lo += 1; hi -= 1\n                while lo < hi and nums[lo] == nums[lo-1]: lo += 1\n                while lo < hi and nums[hi] == nums[hi+1]: hi -= 1\n            elif s < 0: lo += 1\n            else: hi -= 1\n    return out\nprint(three_sum([-1, 0, 1, 2, -1, -4]))",
+    solution_example: "def three_sum(nums):\n    nums = sorted(nums)\n    out = []\n    for i in range(len(nums)):\n        if i and nums[i] == nums[i - 1]:\n            continue\n        lo, hi = i + 1, len(nums) - 1\n        while lo < hi:\n            s = nums[i] + nums[lo] + nums[hi]\n            if s == 0:\n                out.append([nums[i], nums[lo], nums[hi]])\n                lo += 1\n                hi -= 1\n                while lo < hi and nums[lo] == nums[lo - 1]:\n                    lo += 1\n                while lo < hi and nums[hi] == nums[hi + 1]:\n                    hi -= 1\n            elif s < 0:\n                lo += 1\n            else:\n                hi -= 1\n    return out\n\nprint(three_sum([-1, 0, 1, 2, -1, -4]))\n",
+    next: Some("py-330-three-sum-closest"), show_type_chips: false, micro_step: 329,
+};
+
+
+pub const PY330_THREE_SUM_CLOSEST: CodingStep = CodingStep {
+    id: "py-330-three-sum-closest", title: "DSA Three Sum Closest", objective: "Triple cuya suma queda más cerca de target.",
+    prompt_md: "**3Sum Closest**\n\nTwo pointers + track best. Distinto de py-329 (suma exacta 0).\n\n**Micro-reto:**\n1. Definí `three_sum_closest(nums, target)`\n2. nums=`[-1,2,1,-4]`, target=`1`; imprimí (esperado: `2`)",
+    starter_code: "# def three_sum_closest(nums, target):\n#     ...\n# print(three_sum_closest([-1, 2, 1, -4], 1))\n",
+    pytest: "def test_330_three_sum_closest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('three_sum_closest'))\n    assert ns['three_sum_closest']([-1, 2, 1, -4], 1) == 2\n    assert ns['three_sum_closest']([0, 0, 0], 1) == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def three_sum_closest(nums, target):\n    nums = sorted(nums); best = nums[0]+nums[1]+nums[2]\n    for i in range(len(nums)-2):\n        lo, hi = i+1, len(nums)-1\n        while lo < hi:\n            s = nums[i]+nums[lo]+nums[hi]\n            if abs(s-target) < abs(best-target): best = s\n            if s < target: lo += 1\n            elif s > target: hi -= 1\n            else: return s\n    return best\nprint(three_sum_closest([-1, 2, 1, -4], 1))",
+    solution_example: "def three_sum_closest(nums, target):\n    nums = sorted(nums)\n    best = nums[0] + nums[1] + nums[2]\n    for i in range(len(nums) - 2):\n        lo, hi = i + 1, len(nums) - 1\n        while lo < hi:\n            s = nums[i] + nums[lo] + nums[hi]\n            if abs(s - target) < abs(best - target):\n                best = s\n            if s < target:\n                lo += 1\n            elif s > target:\n                hi -= 1\n            else:\n                return s\n    return best\n\nprint(three_sum_closest([-1, 2, 1, -4], 1))\n",
+    next: Some("py-331-four-sum"), show_type_chips: false, micro_step: 330,
+};
+
+
+pub const PY331_FOUR_SUM: CodingStep = CodingStep {
+    id: "py-331-four-sum", title: "DSA Four Sum", objective: "Cuádruples únicos que suman target.",
+    prompt_md: "**4Sum**\n\nDoble bucle + two pointers. Distinto de py-329.\n\n**Micro-reto:**\n1. Definí `four_sum(nums, target)` ordenado\n2. nums=`[1,0,-1,0,-2,2]`, target=`0`; imprimí (esperado: `[[-2, -1, 1, 2], [-2, 0, 0, 2], [-1, 0, 0, 1]]`)",
+    starter_code: "# def four_sum(nums, target):\n#     ...\n# print(four_sum([1, 0, -1, 0, -2, 2], 0))\n",
+    pytest: "def test_331_four_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('four_sum'))\n    assert sorted(ns['four_sum']([1, 0, -1, 0, -2, 2], 0)) == [[-2, -1, 1, 2], [-2, 0, 0, 2], [-1, 0, 0, 1]]\n    assert ns['four_sum']([2, 2, 2, 2, 2], 8) == [[2, 2, 2, 2]]\n    assert capsys.readouterr().out.strip() == '[[-2, -1, 1, 2], [-2, 0, 0, 2], [-1, 0, 0, 1]]'\n",
+    hint: "def four_sum(nums, target):\n    nums = sorted(nums); n = len(nums); out = []\n    for i in range(n):\n        if i and nums[i] == nums[i-1]: continue\n        for j in range(i+1, n):\n            if j > i+1 and nums[j] == nums[j-1]: continue\n            lo, hi = j+1, n-1\n            while lo < hi:\n                s = nums[i]+nums[j]+nums[lo]+nums[hi]\n                if s == target:\n                    out.append([nums[i], nums[j], nums[lo], nums[hi]])\n                    lo += 1; hi -= 1\n                    while lo < hi and nums[lo] == nums[lo-1]: lo += 1\n                    while lo < hi and nums[hi] == nums[hi+1]: hi -= 1\n                elif s < target: lo += 1\n                else: hi -= 1\n    return out\nprint(four_sum([1, 0, -1, 0, -2, 2], 0))",
+    solution_example: "def four_sum(nums, target):\n    nums = sorted(nums)\n    n = len(nums)\n    out = []\n    for i in range(n):\n        if i and nums[i] == nums[i - 1]:\n            continue\n        for j in range(i + 1, n):\n            if j > i + 1 and nums[j] == nums[j - 1]:\n                continue\n            lo, hi = j + 1, n - 1\n            while lo < hi:\n                s = nums[i] + nums[j] + nums[lo] + nums[hi]\n                if s == target:\n                    out.append([nums[i], nums[j], nums[lo], nums[hi]])\n                    lo += 1\n                    hi -= 1\n                    while lo < hi and nums[lo] == nums[lo - 1]:\n                        lo += 1\n                    while lo < hi and nums[hi] == nums[hi + 1]:\n                        hi -= 1\n                elif s < target:\n                    lo += 1\n                else:\n                    hi -= 1\n    return out\n\nprint(four_sum([1, 0, -1, 0, -2, 2], 0))\n",
+    next: Some("py-332-container-water"), show_type_chips: false, micro_step: 331,
+};
+
+
+pub const PY332_CONTAINER_WATER: CodingStep = CodingStep {
+    id: "py-332-container-water", title: "DSA Container Water", objective: "Máxima área de contenedor entre dos líneas (two pointers).",
+    prompt_md: "**Container With Most Water**\n\nAvanzá el lado más bajo. Distinto de py-177 (trapping rain).\n\n**Micro-reto:**\n1. Definí `max_area(height)`\n2. `[1,8,6,2,5,4,8,3,7]`; imprimí (esperado: `49`)",
+    starter_code: "# def max_area(height):\n#     ...\n# print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))\n",
+    pytest: "def test_332_container_water(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_area'))\n    assert ns['max_area']([1, 8, 6, 2, 5, 4, 8, 3, 7]) == 49\n    assert ns['max_area']([1, 1]) == 1\n    assert capsys.readouterr().out.strip() == '49'\n",
+    hint: "def max_area(height):\n    lo, hi = 0, len(height)-1; best = 0\n    while lo < hi:\n        best = max(best, min(height[lo], height[hi]) * (hi-lo))\n        if height[lo] < height[hi]: lo += 1\n        else: hi -= 1\n    return best\nprint(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))",
+    solution_example: "def max_area(height):\n    lo, hi = 0, len(height) - 1\n    best = 0\n    while lo < hi:\n        best = max(best, min(height[lo], height[hi]) * (hi - lo))\n        if height[lo] < height[hi]:\n            lo += 1\n        else:\n            hi -= 1\n    return best\n\nprint(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))\n",
+    next: Some("py-333-remove-dupes"), show_type_chips: false, micro_step: 332,
+};
+
+
+pub const PY333_REMOVE_DUPES: CodingStep = CodingStep {
+    id: "py-333-remove-dupes", title: "DSA Remove Dupes", objective: "Remover duplicados in-place de array ordenado (dejar únicos).",
+    prompt_md: "**Remove Duplicates from Sorted Array**\n\nSlow/fast pointers. Distinto de py-256 (linked list dupes II).\n\n**Micro-reto:**\n1. Definí `remove_duplicates(nums)` → nueva longitud; mutá el prefijo\n2. `[1,1,2]`; imprimí (esperado: `2`) y el prefijo válido `[1, 2]`",
+    starter_code: "# def remove_duplicates(nums):\n#     ...\n# nums = [1, 1, 2]\n# k = remove_duplicates(nums)\n# print(k)\n# print(nums[:k])\n",
+    pytest: "def test_333_remove_dupes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('remove_duplicates'))\n    nums = [1, 1, 2]\n    assert ns['remove_duplicates'](nums) == 2\n    assert nums[:2] == [1, 2]\n    a = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]\n    assert ns['remove_duplicates'](a) == 5\n    assert a[:5] == [0, 1, 2, 3, 4]\n    out = [ln.strip() for ln in capsys.readouterr().out.splitlines() if ln.strip()]\n    assert out == ['2', '[1, 2]']\n",
+    hint: "def remove_duplicates(nums):\n    if not nums: return 0\n    w = 1\n    for r in range(1, len(nums)):\n        if nums[r] != nums[w-1]:\n            nums[w] = nums[r]; w += 1\n    return w\nnums = [1, 1, 2]\nk = remove_duplicates(nums)\nprint(k)\nprint(nums[:k])",
+    solution_example: "def remove_duplicates(nums):\n    if not nums:\n        return 0\n    w = 1\n    for r in range(1, len(nums)):\n        if nums[r] != nums[w - 1]:\n            nums[w] = nums[r]\n            w += 1\n    return w\n\nnums = [1, 1, 2]\nk = remove_duplicates(nums)\nprint(k)\nprint(nums[:k])\n",
+    next: Some("py-334-move-zeroes"), show_type_chips: false, micro_step: 333,
+};
+
+
+pub const PY334_MOVE_ZEROES: CodingStep = CodingStep {
+    id: "py-334-move-zeroes", title: "DSA Move Zeroes", objective: "Mover ceros al final in-place preservando orden relativo.",
+    prompt_md: "**Move Zeroes**\n\nWrite pointer para no-ceros. Distinto de py-298 (sort colors).\n\n**Micro-reto:**\n1. Definí `move_zeroes(nums)` in-place\n2. `[0,1,0,3,12]`; imprimí (esperado: `[1, 3, 12, 0, 0]`)",
+    starter_code: "# def move_zeroes(nums):\n#     ...\n# nums = [0, 1, 0, 3, 12]\n# move_zeroes(nums)\n# print(nums)\n",
+    pytest: "def test_334_move_zeroes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('move_zeroes'))\n    a = [0, 1, 0, 3, 12]\n    ns['move_zeroes'](a)\n    assert a == [1, 3, 12, 0, 0]\n    b = [0]\n    ns['move_zeroes'](b)\n    assert b == [0]\n    assert capsys.readouterr().out.strip() == '[1, 3, 12, 0, 0]'\n",
+    hint: "def move_zeroes(nums):\n    w = 0\n    for x in nums:\n        if x != 0:\n            nums[w] = x; w += 1\n    for i in range(w, len(nums)):\n        nums[i] = 0\nnums = [0, 1, 0, 3, 12]\nmove_zeroes(nums)\nprint(nums)",
+    solution_example: "def move_zeroes(nums):\n    w = 0\n    for x in nums:\n        if x != 0:\n            nums[w] = x\n            w += 1\n    for i in range(w, len(nums)):\n        nums[i] = 0\n\nnums = [0, 1, 0, 3, 12]\nmove_zeroes(nums)\nprint(nums)\n",
+    next: None, show_type_chips: false, micro_step: 334,
+};
+
 
 
 
@@ -4471,6 +4537,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY326_ROMAN_TO_INT,
     &PY327_ADD_DIGITS,
     &PY328_UGLY_NUMBER,
+    &PY329_THREE_SUM,
+    &PY330_THREE_SUM_CLOSEST,
+    &PY331_FOUR_SUM,
+    &PY332_CONTAINER_WATER,
+    &PY333_REMOVE_DUPES,
+    &PY334_MOVE_ZEROES,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4614,7 +4686,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 328);
+            assert!(step.micro_step >= 1 && step.micro_step <= 334);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -5168,7 +5240,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py328_curriculum_chain() {
+    fn py203_to_py334_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -5296,7 +5368,13 @@ mod tests {
             (325, "py-325-excel-column", Some("py-326-roman-to-int")),
             (326, "py-326-roman-to-int", Some("py-327-add-digits")),
             (327, "py-327-add-digits", Some("py-328-ugly-number")),
-            (328, "py-328-ugly-number", None),
+            (328, "py-328-ugly-number", Some("py-329-three-sum")),
+            (329, "py-329-three-sum", Some("py-330-three-sum-closest")),
+            (330, "py-330-three-sum-closest", Some("py-331-four-sum")),
+            (331, "py-331-four-sum", Some("py-332-container-water")),
+            (332, "py-332-container-water", Some("py-333-remove-dupes")),
+            (333, "py-333-remove-dupes", Some("py-334-move-zeroes")),
+            (334, "py-334-move-zeroes", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

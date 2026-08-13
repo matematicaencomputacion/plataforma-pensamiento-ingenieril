@@ -334,6 +334,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 326, step_id: "py-326-roman-to-int" },
   { level_id: 327, step_id: "py-327-add-digits" },
   { level_id: 328, step_id: "py-328-ugly-number" },
+  { level_id: 329, step_id: "py-329-three-sum" },
+  { level_id: 330, step_id: "py-330-three-sum-closest" },
+  { level_id: 331, step_id: "py-331-four-sum" },
+  { level_id: 332, step_id: "py-332-container-water" },
+  { level_id: 333, step_id: "py-333-remove-dupes" },
+  { level_id: 334, step_id: "py-334-move-zeroes" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
