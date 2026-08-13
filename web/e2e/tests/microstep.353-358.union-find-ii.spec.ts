@@ -22,138 +22,177 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 347,
-    id: "py-347-next-greater",
-    title: "DSA Next Greater",
-    solution: `def next_greater_element(nums1, nums2):
-    stack = []
-    nxt = {}
-    for x in nums2:
-        while stack and stack[-1] < x:
-            nxt[stack.pop()] = x
-        stack.append(x)
-    return [nxt.get(x, -1) for x in nums1]
+    micro: 353,
+    id: "py-353-num-provinces",
+    title: "DSA Num Provinces",
+    solution: `def find_circle_num(is_connected):
+    n = len(is_connected)
+    parent = list(range(n))
 
-print(next_greater_element([4, 1, 2], [1, 3, 4, 2]))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if is_connected[i][j]:
+                a, b = find(i), find(j)
+                if a != b:
+                    parent[b] = a
+    return len({find(i) for i in range(n)})
+
+print(find_circle_num([[1, 1, 0], [1, 1, 0], [0, 0, 1]]))
 `,
-    nextUrl: /\/learn\/py-348-next-greater-ii/,
-    cursorAfter: "348",
+    nextUrl: /\/learn\/py-354-redundant-conn/,
+    cursorAfter: "354",
   },
   {
-    micro: 348,
-    id: "py-348-next-greater-ii",
-    title: "DSA Next Greater II",
-    solution: `def next_greater_elements(nums):
-    n = len(nums)
-    out = [-1] * n
-    stack = []
-    for i in range(2 * n):
-        x = nums[i % n]
-        while stack and nums[stack[-1]] < x:
-            out[stack.pop()] = x
-        if i < n:
-            stack.append(i)
-    return out
+    micro: 354,
+    id: "py-354-redundant-conn",
+    title: "DSA Redundant Conn",
+    solution: `def find_redundant_connection(edges):
+    parent = {}
 
-print(next_greater_elements([1, 2, 1]))
+    def find(x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for a, b in edges:
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return [a, b]
+        parent[rb] = ra
+    return []
+
+print(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))
 `,
-    nextUrl: /\/learn\/py-349-daily-temps/,
-    cursorAfter: "349",
+    nextUrl: /\/learn\/py-355-accounts-merge/,
+    cursorAfter: "355",
   },
   {
-    micro: 349,
-    id: "py-349-daily-temps",
-    title: "DSA Daily Temps",
-    solution: `def daily_temperatures(temperatures):
-    n = len(temperatures)
-    out = [0] * n
-    stack = []
-    for i, t in enumerate(temperatures):
-        while stack and temperatures[stack[-1]] < t:
-            j = stack.pop()
-            out[j] = i - j
-        stack.append(i)
-    return out
+    micro: 355,
+    id: "py-355-accounts-merge",
+    title: "DSA Accounts Merge",
+    solution: `from collections import defaultdict
 
-print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
+def accounts_merge(accounts):
+    parent = {}
+
+    def find(x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    email_name = {}
+    for acc in accounts:
+        name = acc[0]
+        for e in acc[1:]:
+            email_name[e] = name
+            find(e)
+            parent[find(e)] = find(acc[1])
+    groups = defaultdict(list)
+    for e in email_name:
+        groups[find(e)].append(e)
+    return [[email_name[r]] + sorted(emails) for r, emails in groups.items()]
+
+print(sorted(accounts_merge([["John", "johnsmith@mail.com", "john_newyork@mail.com"], ["John", "johnsmith@mail.com", "john00@mail.com"], ["Mary", "mary@mail.com"], ["John", "johnnybravo@mail.com"]])))
 `,
-    nextUrl: /\/learn\/py-350-online-stock/,
-    cursorAfter: "350",
+    nextUrl: /\/learn\/py-356-smallest-string/,
+    cursorAfter: "356",
   },
   {
-    micro: 350,
-    id: "py-350-online-stock",
-    title: "DSA Online Stock",
-    solution: `class StockSpanner:
-    def __init__(self):
-        self.stack = []
+    micro: 356,
+    id: "py-356-smallest-string",
+    title: "DSA Smallest String",
+    solution: `def smallest_equivalent_string(s1, s2, base_str):
+    parent = {chr(c): chr(c) for c in range(ord("a"), ord("z") + 1)}
 
-    def next(self, price):
-        span = 1
-        while self.stack and self.stack[-1][0] <= price:
-            span += self.stack.pop()[1]
-        self.stack.append((price, span))
-        return span
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
 
-s = StockSpanner()
-print([s.next(p) for p in [100, 80, 60, 70, 60, 75, 85]])
-`,
-    nextUrl: /\/learn\/py-351-sum-subarray-mins/,
-    cursorAfter: "351",
-  },
-  {
-    micro: 351,
-    id: "py-351-sum-subarray-mins",
-    title: "DSA Sum Subarray Mins",
-    solution: `def sum_subarray_mins(arr):
-    MOD = 10**9 + 7
-    n = len(arr)
-    left = [0] * n
-    right = [0] * n
-    stack = []
-    for i, x in enumerate(arr):
-        while stack and arr[stack[-1]] > x:
-            stack.pop()
-        left[i] = i - stack[-1] if stack else i + 1
-        stack.append(i)
-    stack = []
-    for i in range(n - 1, -1, -1):
-        while stack and arr[stack[-1]] >= arr[i]:
-            stack.pop()
-        right[i] = stack[-1] - i if stack else n - i
-        stack.append(i)
-    return sum(a * l * r for a, l, r in zip(arr, left, right)) % MOD
-
-print(sum_subarray_mins([3, 1, 2, 4]))
-`,
-    nextUrl: /\/learn\/py-352-remove-k-dupes/,
-    cursorAfter: "352",
-  },
-  {
-    micro: 352,
-    id: "py-352-remove-k-dupes",
-    title: "DSA Remove K Dupes",
-    solution: `def remove_duplicates(s, k):
-    stack = []
-    for ch in s:
-        if stack and stack[-1][0] == ch:
-            stack[-1][1] += 1
-            if stack[-1][1] == k:
-                stack.pop()
+    for a, b in zip(s1, s2):
+        ra, rb = find(a), find(b)
+        if ra < rb:
+            parent[rb] = ra
         else:
-            stack.append([ch, 1])
-    return "".join(ch * c for ch, c in stack)
+            parent[ra] = rb
+    return "".join(find(ch) for ch in base_str)
 
-print(remove_duplicates("deeedbbcccbdaa", 3))
+print(smallest_equivalent_string("parker", "morris", "parser"))
 `,
-    nextUrl: /\/learn\/py-353-num-provinces/,
-    cursorAfter: "353",
+    nextUrl: /\/learn\/py-357-graph-valid-tree/,
+    cursorAfter: "357",
+  },
+  {
+    micro: 357,
+    id: "py-357-graph-valid-tree",
+    title: "DSA Graph Valid Tree",
+    solution: `def valid_tree(n, edges):
+    if len(edges) != n - 1:
+        return False
+    parent = list(range(n))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for a, b in edges:
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return False
+        parent[rb] = ra
+    return True
+
+print(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))
+`,
+    nextUrl: /\/learn\/py-358-earliest-friend/,
+    cursorAfter: "358",
+  },
+  {
+    micro: 358,
+    id: "py-358-earliest-friend",
+    title: "DSA Earliest Friend",
+    solution: `def earliest_acq(logs, n):
+    parent = list(range(n))
+    comps = n
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for t, a, b in sorted(logs):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[rb] = ra
+            comps -= 1
+            if comps == 1:
+                return t
+    return -1
+
+print(earliest_acq([[20190101, 0, 1], [20190104, 3, 4], [20190107, 2, 3], [20190211, 1, 5], [20190224, 2, 4], [20190301, 0, 3], [20190312, 1, 2], [20190322, 4, 5]], 6))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "359",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-34[7-9]-|^py-35[0-2]-/);
+    expect(step.id).toMatch(/^py-35[3-8]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -183,7 +222,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 347–352 · monotonic stack II", () => {
+test.describe("micro-steps 353–358 · union-find II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

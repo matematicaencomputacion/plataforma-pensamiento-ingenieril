@@ -358,6 +358,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 350, step_id: "py-350-online-stock" },
   { level_id: 351, step_id: "py-351-sum-subarray-mins" },
   { level_id: 352, step_id: "py-352-remove-k-dupes" },
+  { level_id: 353, step_id: "py-353-num-provinces" },
+  { level_id: 354, step_id: "py-354-redundant-conn" },
+  { level_id: 355, step_id: "py-355-accounts-merge" },
+  { level_id: 356, step_id: "py-356-smallest-string" },
+  { level_id: 357, step_id: "py-357-graph-valid-tree" },
+  { level_id: 358, step_id: "py-358-earliest-friend" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
