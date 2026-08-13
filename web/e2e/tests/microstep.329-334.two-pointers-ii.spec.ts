@@ -22,113 +22,166 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 323,
-    id: "py-323-happy-number",
-    title: "DSA Happy Number",
-    solution: `def is_happy(n):
-    seen = set()
-    while n != 1 and n not in seen:
-        seen.add(n)
-        n = sum(int(d) ** 2 for d in str(n))
-    return n == 1
+    micro: 329,
+    id: "py-329-three-sum",
+    title: "DSA Three Sum",
+    solution: `def three_sum(nums):
+    nums = sorted(nums)
+    out = []
+    for i in range(len(nums)):
+        if i and nums[i] == nums[i - 1]:
+            continue
+        lo, hi = i + 1, len(nums) - 1
+        while lo < hi:
+            s = nums[i] + nums[lo] + nums[hi]
+            if s == 0:
+                out.append([nums[i], nums[lo], nums[hi]])
+                lo += 1
+                hi -= 1
+                while lo < hi and nums[lo] == nums[lo - 1]:
+                    lo += 1
+                while lo < hi and nums[hi] == nums[hi + 1]:
+                    hi -= 1
+            elif s < 0:
+                lo += 1
+            else:
+                hi -= 1
+    return out
 
-print(is_happy(19))
+print(three_sum([-1, 0, 1, 2, -1, -4]))
 `,
-    nextUrl: /\/learn\/py-324-count-primes/,
-    cursorAfter: "324",
+    nextUrl: /\/learn\/py-330-three-sum-closest/,
+    cursorAfter: "330",
   },
   {
-    micro: 324,
-    id: "py-324-count-primes",
-    title: "DSA Count Primes",
-    solution: `def count_primes(n):
-    if n <= 2:
-        return 0
-    is_prime = [True] * n
-    is_prime[0] = is_prime[1] = False
-    p = 2
-    while p * p < n:
-        if is_prime[p]:
-            for q in range(p * p, n, p):
-                is_prime[q] = False
-        p += 1
-    return sum(is_prime)
+    micro: 330,
+    id: "py-330-three-sum-closest",
+    title: "DSA Three Sum Closest",
+    solution: `def three_sum_closest(nums, target):
+    nums = sorted(nums)
+    best = nums[0] + nums[1] + nums[2]
+    for i in range(len(nums) - 2):
+        lo, hi = i + 1, len(nums) - 1
+        while lo < hi:
+            s = nums[i] + nums[lo] + nums[hi]
+            if abs(s - target) < abs(best - target):
+                best = s
+            if s < target:
+                lo += 1
+            elif s > target:
+                hi -= 1
+            else:
+                return s
+    return best
 
-print(count_primes(10))
+print(three_sum_closest([-1, 2, 1, -4], 1))
 `,
-    nextUrl: /\/learn\/py-325-excel-column/,
-    cursorAfter: "325",
+    nextUrl: /\/learn\/py-331-four-sum/,
+    cursorAfter: "331",
   },
   {
-    micro: 325,
-    id: "py-325-excel-column",
-    title: "DSA Excel Column",
-    solution: `def title_to_number(column_title):
-    n = 0
-    for ch in column_title:
-        n = n * 26 + (ord(ch) - ord("A") + 1)
-    return n
+    micro: 331,
+    id: "py-331-four-sum",
+    title: "DSA Four Sum",
+    solution: `def four_sum(nums, target):
+    nums = sorted(nums)
+    n = len(nums)
+    out = []
+    for i in range(n):
+        if i and nums[i] == nums[i - 1]:
+            continue
+        for j in range(i + 1, n):
+            if j > i + 1 and nums[j] == nums[j - 1]:
+                continue
+            lo, hi = j + 1, n - 1
+            while lo < hi:
+                s = nums[i] + nums[j] + nums[lo] + nums[hi]
+                if s == target:
+                    out.append([nums[i], nums[j], nums[lo], nums[hi]])
+                    lo += 1
+                    hi -= 1
+                    while lo < hi and nums[lo] == nums[lo - 1]:
+                        lo += 1
+                    while lo < hi and nums[hi] == nums[hi + 1]:
+                        hi -= 1
+                elif s < target:
+                    lo += 1
+                else:
+                    hi -= 1
+    return out
 
-print(title_to_number("AB"))
+print(four_sum([1, 0, -1, 0, -2, 2], 0))
 `,
-    nextUrl: /\/learn\/py-326-roman-to-int/,
-    cursorAfter: "326",
+    nextUrl: /\/learn\/py-332-container-water/,
+    cursorAfter: "332",
   },
   {
-    micro: 326,
-    id: "py-326-roman-to-int",
-    title: "DSA Roman To Int",
-    solution: `def roman_to_int(s):
-    val = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
-    total = 0
-    for i, ch in enumerate(s):
-        if i + 1 < len(s) and val[ch] < val[s[i + 1]]:
-            total -= val[ch]
+    micro: 332,
+    id: "py-332-container-water",
+    title: "DSA Container Water",
+    solution: `def max_area(height):
+    lo, hi = 0, len(height) - 1
+    best = 0
+    while lo < hi:
+        best = max(best, min(height[lo], height[hi]) * (hi - lo))
+        if height[lo] < height[hi]:
+            lo += 1
         else:
-            total += val[ch]
-    return total
+            hi -= 1
+    return best
 
-print(roman_to_int("MCMXCIV"))
+print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))
 `,
-    nextUrl: /\/learn\/py-327-add-digits/,
-    cursorAfter: "327",
+    nextUrl: /\/learn\/py-333-remove-dupes/,
+    cursorAfter: "333",
   },
   {
-    micro: 327,
-    id: "py-327-add-digits",
-    title: "DSA Add Digits",
-    solution: `def add_digits(num):
-    if num == 0:
+    micro: 333,
+    id: "py-333-remove-dupes",
+    title: "DSA Remove Dupes",
+    solution: `def remove_duplicates(nums):
+    if not nums:
         return 0
-    return 1 + (num - 1) % 9
+    w = 1
+    for r in range(1, len(nums)):
+        if nums[r] != nums[w - 1]:
+            nums[w] = nums[r]
+            w += 1
+    return w
 
-print(add_digits(38))
+nums = [1, 1, 2]
+k = remove_duplicates(nums)
+print(k)
+print(nums[:k])
 `,
-    nextUrl: /\/learn\/py-328-ugly-number/,
-    cursorAfter: "328",
+    nextUrl: /\/learn\/py-334-move-zeroes/,
+    cursorAfter: "334",
   },
   {
-    micro: 328,
-    id: "py-328-ugly-number",
-    title: "DSA Ugly Number",
-    solution: `def is_ugly(n):
-    if n <= 0:
-        return False
-    for p in (2, 3, 5):
-        while n % p == 0:
-            n //= p
-    return n == 1
+    micro: 334,
+    id: "py-334-move-zeroes",
+    title: "DSA Move Zeroes",
+    solution: `def move_zeroes(nums):
+    w = 0
+    for x in nums:
+        if x != 0:
+            nums[w] = x
+            w += 1
+    for i in range(w, len(nums)):
+        nums[i] = 0
 
-print(is_ugly(6))
+nums = [0, 1, 0, 3, 12]
+move_zeroes(nums)
+print(nums)
 `,
-    nextUrl: /\/learn\/py-329-three-sum/,
-    cursorAfter: "329",
+    nextUrl: /\/workspace/,
+    cursorAfter: "335",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-32[3-8]-/);
+    expect(step.id).toMatch(/^py-32[9]-|^py-33[0-4]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -158,7 +211,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 323–328 · math II", () => {
+test.describe("micro-steps 329–334 · two pointers II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
