@@ -22,113 +22,102 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 389,
-    id: "py-389-climb-stairs",
-    title: "DSA Climb Stairs",
-    solution: `def climb_stairs(n):
-    a = b = 1
-    for _ in range(n):
-        a, b = b, a + b
-    return a
+    micro: 395,
+    id: "py-395-reverse-list",
+    title: "DSA Reverse List",
+    solution: `def reverse_list(head):
+    return head[::-1]
 
-print(climb_stairs(3))
+print(reverse_list([1, 2, 3, 4, 5]))
 `,
-    nextUrl: /\/learn\/py-390-house-robber/,
-    cursorAfter: "390",
+    nextUrl: /\/learn\/py-396-merge-two-lists/,
+    cursorAfter: "396",
   },
   {
-    micro: 390,
-    id: "py-390-house-robber",
-    title: "DSA House Robber",
-    solution: `def rob(nums):
-    prev = cur = 0
-    for x in nums:
-        prev, cur = cur, max(cur, prev + x)
-    return cur
+    micro: 396,
+    id: "py-396-merge-two-lists",
+    title: "DSA Merge Two Lists",
+    solution: `import heapq
 
-print(rob([1, 2, 3, 1]))
+def merge_two_lists(l1, l2):
+    return list(heapq.merge(l1, l2))
+
+print(merge_two_lists([1, 2, 4], [1, 3, 4]))
 `,
-    nextUrl: /\/learn\/py-391-coin-change/,
-    cursorAfter: "391",
+    nextUrl: /\/learn\/py-397-has-cycle/,
+    cursorAfter: "397",
   },
   {
-    micro: 391,
-    id: "py-391-coin-change",
-    title: "DSA Coin Change",
-    solution: `def coin_change(coins, amount):
-    INF = amount + 1
-    dp = [0] + [INF] * amount
-    for a in range(1, amount + 1):
-        for c in coins:
-            if c <= a:
-                dp[a] = min(dp[a], dp[a - c] + 1)
-    return dp[amount] if dp[amount] != INF else -1
+    micro: 397,
+    id: "py-397-has-cycle",
+    title: "DSA Has Cycle",
+    solution: `def has_cycle(vals, pos):
+    n = len(vals)
+    nxt = list(range(1, n)) + [-1]
+    if pos >= 0:
+        nxt[-1] = pos
+    slow = fast = 0
+    while fast != -1 and nxt[fast] != -1:
+        slow = nxt[slow]
+        fast = nxt[nxt[fast]]
+        if slow == fast:
+            return True
+    return False
 
-print(coin_change([1, 2, 5], 11))
+print(has_cycle([3, 2, 0, -4], 1))
 `,
-    nextUrl: /\/learn\/py-392-lis-length/,
-    cursorAfter: "392",
+    nextUrl: /\/learn\/py-398-remove-nth/,
+    cursorAfter: "398",
   },
   {
-    micro: 392,
-    id: "py-392-lis-length",
-    title: "DSA LIS Length",
-    solution: `import bisect
+    micro: 398,
+    id: "py-398-remove-nth",
+    title: "DSA Remove Nth",
+    solution: `def remove_nth_from_end(head, n):
+    del head[-n]
+    return head
 
-def length_of_lis(nums):
-    tails = []
-    for x in nums:
-        i = bisect.bisect_left(tails, x)
-        if i == len(tails):
-            tails.append(x)
-        else:
-            tails[i] = x
-    return len(tails)
-
-print(length_of_lis([10, 9, 2, 5, 3, 7, 101, 18]))
+print(remove_nth_from_end([1, 2, 3, 4, 5], 2))
 `,
-    nextUrl: /\/learn\/py-393-unique-paths/,
-    cursorAfter: "393",
+    nextUrl: /\/learn\/py-399-palindrome-list/,
+    cursorAfter: "399",
   },
   {
-    micro: 393,
-    id: "py-393-unique-paths",
-    title: "DSA Unique Paths",
-    solution: `import math
+    micro: 399,
+    id: "py-399-palindrome-list",
+    title: "DSA Palindrome List",
+    solution: `def is_palindrome(head):
+    return head == head[::-1]
 
-def unique_paths(m, n):
-    return math.comb(m + n - 2, m - 1)
-
-print(unique_paths(3, 7))
+print(is_palindrome([1, 2, 2, 1]))
 `,
-    nextUrl: /\/learn\/py-394-word-break/,
-    cursorAfter: "394",
+    nextUrl: /\/learn\/py-400-add-two-numbers/,
+    cursorAfter: "400",
   },
   {
-    micro: 394,
-    id: "py-394-word-break",
-    title: "DSA Word Break",
-    solution: `def word_break(s, word_dict):
-    words = set(word_dict)
-    n = len(s)
-    dp = [True] + [False] * n
-    for i in range(1, n + 1):
-        for j in range(i):
-            if dp[j] and s[j:i] in words:
-                dp[i] = True
-                break
-    return dp[n]
+    micro: 400,
+    id: "py-400-add-two-numbers",
+    title: "DSA Add Two Numbers",
+    solution: `def add_two_numbers(l1, l2):
+    i = carry = 0
+    out = []
+    while i < len(l1) or i < len(l2) or carry:
+        s = carry + (l1[i] if i < len(l1) else 0) + (l2[i] if i < len(l2) else 0)
+        out.append(s % 10)
+        carry = s // 10
+        i += 1
+    return out
 
-print(word_break("leetcode", ["leet", "code"]))
+print(add_two_numbers([2, 4, 3], [5, 6, 4]))
 `,
-    nextUrl: /\/learn\/py-395-reverse-list/,
-    cursorAfter: "395",
+    nextUrl: /\/workspace/,
+    cursorAfter: "401",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:389|390|391|392|393|394)-/);
+    expect(step.id).toMatch(/^py-(?:395|396|397|398|399|400)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -158,7 +147,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 389–394 · DP II", () => {
+test.describe("micro-steps 395–400 · linked lists II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
