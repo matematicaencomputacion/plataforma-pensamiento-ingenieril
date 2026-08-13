@@ -22,169 +22,113 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 383,
-    id: "py-383-num-islands",
-    title: "DSA Num Islands",
-    solution: `def num_islands(grid):
-    if not grid:
-        return 0
-    m, n = len(grid), len(grid[0])
-    c = 0
+    micro: 389,
+    id: "py-389-climb-stairs",
+    title: "DSA Climb Stairs",
+    solution: `def climb_stairs(n):
+    a = b = 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
 
-    def dfs(i, j):
-        if i < 0 or j < 0 or i >= m or j >= n or grid[i][j] != "1":
-            return
-        grid[i][j] = "0"
-        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            dfs(i + di, j + dj)
-
-    for i in range(m):
-        for j in range(n):
-            if grid[i][j] == "1":
-                c += 1
-                dfs(i, j)
-    return c
-
-print(num_islands([["1", "1", "1", "1", "0"], ["1", "1", "0", "1", "0"], ["1", "1", "0", "0", "0"], ["0", "0", "0", "0", "0"]]))
+print(climb_stairs(3))
 `,
-    nextUrl: /\/learn\/py-384-clone-graph/,
-    cursorAfter: "384",
+    nextUrl: /\/learn\/py-390-house-robber/,
+    cursorAfter: "390",
   },
   {
-    micro: 384,
-    id: "py-384-clone-graph",
-    title: "DSA Clone Graph",
-    solution: `def clone_graph(adj):
-    return {k: list(v) for k, v in adj.items()}
+    micro: 390,
+    id: "py-390-house-robber",
+    title: "DSA House Robber",
+    solution: `def rob(nums):
+    prev = cur = 0
+    for x in nums:
+        prev, cur = cur, max(cur, prev + x)
+    return cur
 
-print(sorted((k, sorted(v)) for k, v in clone_graph({1: [2, 4], 2: [1, 3], 3: [2, 4], 4: [1, 3]}).items()))
+print(rob([1, 2, 3, 1]))
 `,
-    nextUrl: /\/learn\/py-385-course-order/,
-    cursorAfter: "385",
+    nextUrl: /\/learn\/py-391-coin-change/,
+    cursorAfter: "391",
   },
   {
-    micro: 385,
-    id: "py-385-course-order",
-    title: "DSA Course Order",
-    solution: `from collections import defaultdict, deque
+    micro: 391,
+    id: "py-391-coin-change",
+    title: "DSA Coin Change",
+    solution: `def coin_change(coins, amount):
+    INF = amount + 1
+    dp = [0] + [INF] * amount
+    for a in range(1, amount + 1):
+        for c in coins:
+            if c <= a:
+                dp[a] = min(dp[a], dp[a - c] + 1)
+    return dp[amount] if dp[amount] != INF else -1
 
-def find_order(num_courses, prerequisites):
-    g = defaultdict(list)
-    indeg = [0] * num_courses
-    for a, b in prerequisites:
-        g[b].append(a)
-        indeg[a] += 1
-    q = deque([i for i in range(num_courses) if indeg[i] == 0])
-    out = []
-    while q:
-        u = q.popleft()
-        out.append(u)
-        for v in g[u]:
-            indeg[v] -= 1
-            if indeg[v] == 0:
-                q.append(v)
-    return out if len(out) == num_courses else []
-
-print(find_order(4, [[1, 0], [2, 0], [3, 1], [3, 2]]))
+print(coin_change([1, 2, 5], 11))
 `,
-    nextUrl: /\/learn\/py-386-oranges-rotting/,
-    cursorAfter: "386",
+    nextUrl: /\/learn\/py-392-lis-length/,
+    cursorAfter: "392",
   },
   {
-    micro: 386,
-    id: "py-386-oranges-rotting",
-    title: "DSA Oranges Rotting",
-    solution: `from collections import deque
+    micro: 392,
+    id: "py-392-lis-length",
+    title: "DSA LIS Length",
+    solution: `import bisect
 
-def oranges_rotting(grid):
-    m, n = len(grid), len(grid[0])
-    q = deque()
-    fresh = 0
-    for i in range(m):
-        for j in range(n):
-            if grid[i][j] == 2:
-                q.append((i, j, 0))
-            elif grid[i][j] == 1:
-                fresh += 1
-    mins = 0
-    while q:
-        i, j, t = q.popleft()
-        mins = t
-        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            ni, nj = i + di, j + dj
-            if 0 <= ni < m and 0 <= nj < n and grid[ni][nj] == 1:
-                grid[ni][nj] = 2
-                fresh -= 1
-                q.append((ni, nj, t + 1))
-    return mins if fresh == 0 else -1
+def length_of_lis(nums):
+    tails = []
+    for x in nums:
+        i = bisect.bisect_left(tails, x)
+        if i == len(tails):
+            tails.append(x)
+        else:
+            tails[i] = x
+    return len(tails)
 
-print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
+print(length_of_lis([10, 9, 2, 5, 3, 7, 101, 18]))
 `,
-    nextUrl: /\/learn\/py-387-network-delay/,
-    cursorAfter: "387",
+    nextUrl: /\/learn\/py-393-unique-paths/,
+    cursorAfter: "393",
   },
   {
-    micro: 387,
-    id: "py-387-network-delay",
-    title: "DSA Network Delay",
-    solution: `import heapq
-from collections import defaultdict
+    micro: 393,
+    id: "py-393-unique-paths",
+    title: "DSA Unique Paths",
+    solution: `import math
 
-def network_delay_time(times, n, k):
-    g = defaultdict(list)
-    for u, v, w in times:
-        g[u].append((v, w))
-    dist = {}
-    h = [(0, k)]
-    while h:
-        d, u = heapq.heappop(h)
-        if u in dist:
-            continue
-        dist[u] = d
-        for v, w in g[u]:
-            if v not in dist:
-                heapq.heappush(h, (d + w, v))
-    return max(dist.values()) if len(dist) == n else -1
+def unique_paths(m, n):
+    return math.comb(m + n - 2, m - 1)
 
-print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))
+print(unique_paths(3, 7))
 `,
-    nextUrl: /\/learn\/py-388-shortest-path-bin/,
-    cursorAfter: "388",
+    nextUrl: /\/learn\/py-394-word-break/,
+    cursorAfter: "394",
   },
   {
-    micro: 388,
-    id: "py-388-shortest-path-bin",
-    title: "DSA Shortest Path Bin",
-    solution: `from collections import deque
+    micro: 394,
+    id: "py-394-word-break",
+    title: "DSA Word Break",
+    solution: `def word_break(s, word_dict):
+    words = set(word_dict)
+    n = len(s)
+    dp = [True] + [False] * n
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in words:
+                dp[i] = True
+                break
+    return dp[n]
 
-def shortest_path_binary_matrix(grid):
-    n = len(grid)
-    if grid[0][0] or grid[n - 1][n - 1]:
-        return -1
-    q = deque([(0, 0, 1)])
-    grid[0][0] = 1
-    while q:
-        i, j, d = q.popleft()
-        if i == n - 1 and j == n - 1:
-            return d
-        for di in (-1, 0, 1):
-            for dj in (-1, 0, 1):
-                ni, nj = i + di, j + dj
-                if 0 <= ni < n and 0 <= nj < n and grid[ni][nj] == 0:
-                    grid[ni][nj] = 1
-                    q.append((ni, nj, d + 1))
-    return -1
-
-print(shortest_path_binary_matrix([[0, 1], [1, 0]]))
+print(word_break("leetcode", ["leet", "code"]))
 `,
-    nextUrl: /\/learn\/py-389-climb-stairs/,
-    cursorAfter: "389",
+    nextUrl: /\/workspace/,
+    cursorAfter: "395",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:383|384|385|386|387|388)-/);
+    expect(step.id).toMatch(/^py-(?:389|390|391|392|393|394)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -214,7 +158,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 383–388 · graphs II", () => {
+test.describe("micro-steps 389–394 · DP II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

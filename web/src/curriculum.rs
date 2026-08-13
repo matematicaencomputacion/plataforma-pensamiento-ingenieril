@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=388).
+    /// 1-based index on the workspace micro-step rail (1..=394).
     pub micro_step: i32,
 }
 
@@ -5919,7 +5919,260 @@ def shortest_path_binary_matrix(grid):
 
 print(shortest_path_binary_matrix([[0, 1], [1, 0]]))
 ",
-    next: None, show_type_chips: false, micro_step: 388,
+    next: Some("py-389-climb-stairs"), show_type_chips: false, micro_step: 388,
+};
+
+
+pub const PY389_CLIMB_STAIRS: CodingStep = CodingStep {
+    id: "py-389-climb-stairs", title: "DSA Climb Stairs", objective: "Formas de subir n escalones (1 o 2).",
+    prompt_md: "**Climbing Stairs**
+
+DP fibonacci. Distinto de py-119.
+
+**Micro-reto:**
+1. Definí `climb_stairs(n)`
+2. n=`3`; imprimí (esperado: `3`)",
+    starter_code: "# def climb_stairs(n):
+#     ...
+# print(climb_stairs(3))
+",
+    pytest: "def test_389_climb_stairs(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('climb_stairs'))
+    assert ns['climb_stairs'](3) == 3
+    assert ns['climb_stairs'](2) == 2
+    assert ns['climb_stairs'](5) == 8
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def climb_stairs(n):
+    a=b=1
+    for _ in range(n):
+        a,b=b,a+b
+    return a
+print(climb_stairs(3))",
+    solution_example: "def climb_stairs(n):
+    a = b = 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+print(climb_stairs(3))
+",
+    next: Some("py-390-house-robber"), show_type_chips: false, micro_step: 389,
+};
+
+
+pub const PY390_HOUSE_ROBBER: CodingStep = CodingStep {
+    id: "py-390-house-robber", title: "DSA House Robber", objective: "Max robo sin casas adyacentes.",
+    prompt_md: "**House Robber**
+
+DP: rob/skip. Distinto de py-120.
+
+**Micro-reto:**
+1. Definí `rob(nums)`
+2. `[1,2,3,1]`; imprimí (esperado: `4`)",
+    starter_code: "# def rob(nums):
+#     ...
+# print(rob([1, 2, 3, 1]))
+",
+    pytest: "def test_390_house_robber(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('rob'))
+    assert ns['rob']([1, 2, 3, 1]) == 4
+    assert ns['rob']([2, 7, 9, 3, 1]) == 12
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def rob(nums):
+    prev=cur=0
+    for x in nums:
+        prev,cur=cur,max(cur,prev+x)
+    return cur
+print(rob([1, 2, 3, 1]))",
+    solution_example: "def rob(nums):
+    prev = cur = 0
+    for x in nums:
+        prev, cur = cur, max(cur, prev + x)
+    return cur
+
+print(rob([1, 2, 3, 1]))
+",
+    next: Some("py-391-coin-change"), show_type_chips: false, micro_step: 390,
+};
+
+
+pub const PY391_COIN_CHANGE: CodingStep = CodingStep {
+    id: "py-391-coin-change", title: "DSA Coin Change", objective: "Mínimo de monedas para amount.",
+    prompt_md: "**Coin Change**
+
+DP unbounded knapsack. Distinto de py-121.
+
+**Micro-reto:**
+1. Definí `coin_change(coins, amount)`
+2. coins=`[1,2,5]`, amount=`11`; imprimí (esperado: `3`)",
+    starter_code: "# def coin_change(coins, amount):
+#     ...
+# print(coin_change([1, 2, 5], 11))
+",
+    pytest: "def test_391_coin_change(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('coin_change'))
+    assert ns['coin_change']([1, 2, 5], 11) == 3
+    assert ns['coin_change']([2], 3) == -1
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def coin_change(coins, amount):
+    INF=amount+1; dp=[0]+[INF]*amount
+    for a in range(1,amount+1):
+        for c in coins:
+            if c<=a: dp[a]=min(dp[a], dp[a-c]+1)
+    return dp[amount] if dp[amount]!=INF else -1
+print(coin_change([1, 2, 5], 11))",
+    solution_example: "def coin_change(coins, amount):
+    INF = amount + 1
+    dp = [0] + [INF] * amount
+    for a in range(1, amount + 1):
+        for c in coins:
+            if c <= a:
+                dp[a] = min(dp[a], dp[a - c] + 1)
+    return dp[amount] if dp[amount] != INF else -1
+
+print(coin_change([1, 2, 5], 11))
+",
+    next: Some("py-392-lis-length"), show_type_chips: false, micro_step: 391,
+};
+
+
+pub const PY392_LIS_LENGTH: CodingStep = CodingStep {
+    id: "py-392-lis-length", title: "DSA LIS Length", objective: "Longitud de LIS (O(n log n) o DP).",
+    prompt_md: "**Longest Increasing Subsequence**
+
+Patience sorting / DP. Distinto de py-122.
+
+**Micro-reto:**
+1. Definí `length_of_lis(nums)`
+2. `[10,9,2,5,3,7,101,18]`; imprimí (esperado: `4`)",
+    starter_code: "# def length_of_lis(nums):
+#     ...
+# print(length_of_lis([10, 9, 2, 5, 3, 7, 101, 18]))
+",
+    pytest: "def test_392_lis_length(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('length_of_lis'))
+    assert ns['length_of_lis']([10, 9, 2, 5, 3, 7, 101, 18]) == 4
+    assert ns['length_of_lis']([0, 1, 0, 3, 2, 3]) == 4
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "import bisect
+def length_of_lis(nums):
+    tails=[]
+    for x in nums:
+        i=bisect.bisect_left(tails,x)
+        if i==len(tails): tails.append(x)
+        else: tails[i]=x
+    return len(tails)
+print(length_of_lis([10, 9, 2, 5, 3, 7, 101, 18]))",
+    solution_example: "import bisect
+
+def length_of_lis(nums):
+    tails = []
+    for x in nums:
+        i = bisect.bisect_left(tails, x)
+        if i == len(tails):
+            tails.append(x)
+        else:
+            tails[i] = x
+    return len(tails)
+
+print(length_of_lis([10, 9, 2, 5, 3, 7, 101, 18]))
+",
+    next: Some("py-393-unique-paths"), show_type_chips: false, micro_step: 392,
+};
+
+
+pub const PY393_UNIQUE_PATHS: CodingStep = CodingStep {
+    id: "py-393-unique-paths", title: "DSA Unique Paths", objective: "Caminos en grilla m×n solo right/down.",
+    prompt_md: "**Unique Paths**
+
+DP combinatorio. Distinto de py-123.
+
+**Micro-reto:**
+1. Definí `unique_paths(m, n)`
+2. m=`3`, n=`7`; imprimí (esperado: `28`)",
+    starter_code: "# def unique_paths(m, n):
+#     ...
+# print(unique_paths(3, 7))
+",
+    pytest: "def test_393_unique_paths(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('unique_paths'))
+    assert ns['unique_paths'](3, 7) == 28
+    assert ns['unique_paths'](3, 2) == 3
+    assert capsys.readouterr().out.strip() == '28'
+",
+    hint: "import math
+def unique_paths(m, n):
+    return math.comb(m+n-2, m-1)
+print(unique_paths(3, 7))",
+    solution_example: "import math
+
+def unique_paths(m, n):
+    return math.comb(m + n - 2, m - 1)
+
+print(unique_paths(3, 7))
+",
+    next: Some("py-394-word-break"), show_type_chips: false, micro_step: 393,
+};
+
+
+pub const PY394_WORD_BREAK: CodingStep = CodingStep {
+    id: "py-394-word-break", title: "DSA Word Break", objective: "Segmentar s con dict (DP boolean).",
+    prompt_md: "**Word Break**
+
+DP[i] si prefijo segmentable. Distinto de py-149.
+
+**Micro-reto:**
+1. Definí `word_break(s, word_dict)`
+2. s=`\"leetcode\"`, dict=`[\"leet\",\"code\"]`; imprimí `True`",
+    starter_code: "# def word_break(s, word_dict):
+#     ...
+# print(word_break(\"leetcode\", [\"leet\", \"code\"]))
+",
+    pytest: "def test_394_word_break(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('word_break'))
+    assert ns['word_break']('leetcode', ['leet', 'code']) is True
+    assert ns['word_break']('applepenapple', ['apple', 'pen']) is True
+    assert ns['word_break']('catsandog', ['cats', 'dog', 'sand', 'and', 'cat']) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def word_break(s, word_dict):
+    words=set(word_dict); n=len(s); dp=[True]+[False]*n
+    for i in range(1,n+1):
+        for j in range(i):
+            if dp[j] and s[j:i] in words:
+                dp[i]=True; break
+    return dp[n]
+print(word_break(\"leetcode\", [\"leet\", \"code\"]))",
+    solution_example: "def word_break(s, word_dict):
+    words = set(word_dict)
+    n = len(s)
+    dp = [True] + [False] * n
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in words:
+                dp[i] = True
+                break
+    return dp[n]
+
+print(word_break(\"leetcode\", [\"leet\", \"code\"]))
+",
+    next: None, show_type_chips: false, micro_step: 394,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -6310,7 +6563,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY385_COURSE_ORDER,
     &PY386_ORANGES_ROTTING,
     &PY387_NETWORK_DELAY,
-    &PY388_SHORTEST_PATH_BIN
+    &PY388_SHORTEST_PATH_BIN,
+    &PY389_CLIMB_STAIRS,
+    &PY390_HOUSE_ROBBER,
+    &PY391_COIN_CHANGE,
+    &PY392_LIS_LENGTH,
+    &PY393_UNIQUE_PATHS,
+    &PY394_WORD_BREAK
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -6454,7 +6713,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 388);
+            assert!(step.micro_step >= 1 && step.micro_step <= 394);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -7008,7 +7267,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py388_curriculum_chain() {
+    fn py203_to_py394_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -7196,7 +7455,13 @@ mod tests {
             (385, "py-385-course-order", Some("py-386-oranges-rotting")),
             (386, "py-386-oranges-rotting", Some("py-387-network-delay")),
             (387, "py-387-network-delay", Some("py-388-shortest-path-bin")),
-            (388, "py-388-shortest-path-bin", None),
+            (388, "py-388-shortest-path-bin", Some("py-389-climb-stairs")),
+            (389, "py-389-climb-stairs", Some("py-390-house-robber")),
+            (390, "py-390-house-robber", Some("py-391-coin-change")),
+            (391, "py-391-coin-change", Some("py-392-lis-length")),
+            (392, "py-392-lis-length", Some("py-393-unique-paths")),
+            (393, "py-393-unique-paths", Some("py-394-word-break")),
+            (394, "py-394-word-break", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

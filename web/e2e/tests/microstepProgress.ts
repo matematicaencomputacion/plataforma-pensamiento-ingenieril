@@ -394,6 +394,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 386, step_id: "py-386-oranges-rotting" },
   { level_id: 387, step_id: "py-387-network-delay" },
   { level_id: 388, step_id: "py-388-shortest-path-bin" },
+  { level_id: 389, step_id: "py-389-climb-stairs" },
+  { level_id: 390, step_id: "py-390-house-robber" },
+  { level_id: 391, step_id: "py-391-coin-change" },
+  { level_id: 392, step_id: "py-392-lis-length" },
+  { level_id: 393, step_id: "py-393-unique-paths" },
+  { level_id: 394, step_id: "py-394-word-break" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
