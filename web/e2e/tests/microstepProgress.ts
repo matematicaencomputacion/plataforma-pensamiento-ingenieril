@@ -448,6 +448,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 440, step_id: "py-440-excel-title" },
   { level_id: 441, step_id: "py-441-palindrome-number" },
   { level_id: 442, step_id: "py-442-fizz-buzz" },
+  { level_id: 443, step_id: "py-443-valid-paren" },
+  { level_id: 444, step_id: "py-444-min-stack-ops" },
+  { level_id: 445, step_id: "py-445-majority-elem" },
+  { level_id: 446, step_id: "py-446-pascal-row" },
+  { level_id: 447, step_id: "py-447-move-zeroes" },
+  { level_id: 448, step_id: "py-448-plus-one" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

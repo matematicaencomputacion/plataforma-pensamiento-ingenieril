@@ -22,122 +22,126 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 437,
-    id: "py-437-pow-x-n",
-    title: "DSA Pow X N",
-    solution: `def my_pow(x, n):
-    if n < 0:
-        x = 1 / x
-        n = -n
-    ans = 1.0
-    while n:
-        if n & 1:
-            ans *= x
-        x *= x
-        n >>= 1
-    return ans
-
-print(my_pow(2.0, 10))
-`,
-    nextUrl: /\/learn\/py-438-sqrt-x/,
-    cursorAfter: "438",
-  },
-  {
-    micro: 438,
-    id: "py-438-sqrt-x",
-    title: "DSA Sqrt X",
-    solution: `def my_sqrt(x):
-    lo, hi = 0, x
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        if mid * mid <= x:
-            lo = mid + 1
+    micro: 443,
+    id: "py-443-valid-paren",
+    title: "DSA Valid Paren",
+    solution: `def is_valid(s):
+    m = {")": "(", "]": "[", "}": "{"}
+    st = []
+    for ch in s:
+        if ch in m:
+            if not st or st[-1] != m[ch]:
+                return False
+            st.pop()
         else:
-            hi = mid - 1
-    return hi
+            st.append(ch)
+    return not st
 
-print(my_sqrt(8))
+print(is_valid("()[]{}"))
 `,
-    nextUrl: /\/learn\/py-439-trailing-zeroes/,
-    cursorAfter: "439",
+    nextUrl: /\/learn\/py-444-min-stack-ops/,
+    cursorAfter: "444",
   },
   {
-    micro: 439,
-    id: "py-439-trailing-zeroes",
-    title: "DSA Trailing Zeroes",
-    solution: `def trailing_zeroes(n):
-    c = 0
-    while n:
-        n //= 5
-        c += n
-    return c
-
-print(trailing_zeroes(25))
-`,
-    nextUrl: /\/learn\/py-440-excel-title/,
-    cursorAfter: "440",
-  },
-  {
-    micro: 440,
-    id: "py-440-excel-title",
-    title: "DSA Excel Title",
-    solution: `def convert_to_title(column_number):
-    s = ""
-    while column_number:
-        column_number, r = divmod(column_number - 1, 26)
-        s = chr(65 + r) + s
-    return s
-
-print(convert_to_title(28))
-`,
-    nextUrl: /\/learn\/py-441-palindrome-number/,
-    cursorAfter: "441",
-  },
-  {
-    micro: 441,
-    id: "py-441-palindrome-number",
-    title: "DSA Palindrome Num",
-    solution: `def is_palindrome(x):
-    if x < 0 or (x % 10 == 0 and x != 0):
-        return False
-    rev = 0
-    while x > rev:
-        rev = rev * 10 + x % 10
-        x //= 10
-    return x == rev or x == rev // 10
-
-print(is_palindrome(121))
-`,
-    nextUrl: /\/learn\/py-442-fizz-buzz/,
-    cursorAfter: "442",
-  },
-  {
-    micro: 442,
-    id: "py-442-fizz-buzz",
-    title: "DSA Fizz Buzz",
-    solution: `def fizz_buzz(n):
-    out = []
-    for i in range(1, n + 1):
-        if i % 15 == 0:
-            out.append("FizzBuzz")
-        elif i % 3 == 0:
-            out.append("Fizz")
-        elif i % 5 == 0:
-            out.append("Buzz")
+    micro: 444,
+    id: "py-444-min-stack-ops",
+    title: "DSA Eval RPN",
+    solution: `def eval_rpn(tokens):
+    st = []
+    for t in tokens:
+        if t in "+-*/":
+            b, a = st.pop(), st.pop()
+            if t == "+":
+                st.append(a + b)
+            elif t == "-":
+                st.append(a - b)
+            elif t == "*":
+                st.append(a * b)
+            else:
+                st.append(int(a / b))
         else:
-            out.append(str(i))
-    return out
+            st.append(int(t))
+    return st[0]
 
-print(fizz_buzz(5))
+print(eval_rpn(["2", "1", "+", "3", "*"]))
 `,
-    nextUrl: /\/learn\/py-443-valid-paren/,
-    cursorAfter: "443",
+    nextUrl: /\/learn\/py-445-majority-elem/,
+    cursorAfter: "445",
+  },
+  {
+    micro: 445,
+    id: "py-445-majority-elem",
+    title: "DSA Majority Elem",
+    solution: `def majority_element(nums):
+    cand = None
+    cnt = 0
+    for x in nums:
+        if cnt == 0:
+            cand = x
+        cnt += 1 if x == cand else -1
+    return cand
+
+print(majority_element([3, 2, 3]))
+`,
+    nextUrl: /\/learn\/py-446-pascal-row/,
+    cursorAfter: "446",
+  },
+  {
+    micro: 446,
+    id: "py-446-pascal-row",
+    title: "DSA Pascal Row",
+    solution: `def get_row(row_index):
+    row = [1]
+    for _ in range(row_index):
+        row = [1] + [row[i] + row[i + 1] for i in range(len(row) - 1)] + [1]
+    return row
+
+print(get_row(3))
+`,
+    nextUrl: /\/learn\/py-447-move-zeroes/,
+    cursorAfter: "447",
+  },
+  {
+    micro: 447,
+    id: "py-447-move-zeroes",
+    title: "DSA Move Zeroes",
+    solution: `def move_zeroes(nums):
+    w = 0
+    for x in nums:
+        if x != 0:
+            nums[w] = x
+            w += 1
+    for i in range(w, len(nums)):
+        nums[i] = 0
+    return nums
+
+print(move_zeroes([0, 1, 0, 3, 12]))
+`,
+    nextUrl: /\/learn\/py-448-plus-one/,
+    cursorAfter: "448",
+  },
+  {
+    micro: 448,
+    id: "py-448-plus-one",
+    title: "DSA Plus One",
+    solution: `def plus_one(digits):
+    for i in range(len(digits) - 1, -1, -1):
+        if digits[i] < 9:
+            digits[i] += 1
+            return digits
+        digits[i] = 0
+    return [1] + digits
+
+print(plus_one([1, 2, 3]))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "449",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:437|438|439|440|441|442)-/);
+    expect(step.id).toMatch(/^py-(?:443|444|445|446|447|448)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -167,7 +171,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 437–442 · math III", () => {
+test.describe("micro-steps 443–448 · misc finale", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

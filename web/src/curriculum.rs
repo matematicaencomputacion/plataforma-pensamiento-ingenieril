@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=442).
+    /// 1-based index on the workspace micro-step rail (1..=448).
     pub micro_step: i32,
 }
 
@@ -8354,7 +8354,281 @@ print(fizz_buzz(5))",
 
 print(fizz_buzz(5))
 ",
-    next: None, show_type_chips: false, micro_step: 442,
+    next: Some("py-443-valid-paren"), show_type_chips: false, micro_step: 442,
+};
+
+
+pub const PY443_VALID_PAREN: CodingStep = CodingStep {
+    id: "py-443-valid-paren", title: "DSA Valid Paren", objective: "Paréntesis válidos con stack.",
+    prompt_md: "**Valid Parentheses**
+
+Stack matching. Distinto de py-46.
+
+**Micro-reto:**
+1. Definí `is_valid(s)`
+2. `\"()[]{}\"`; imprimí `True`",
+    starter_code: "# def is_valid(s):
+#     ...
+# print(is_valid(\"()[]{}\"))
+",
+    pytest: "def test_443_valid_paren(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_valid'))
+    assert ns['is_valid']('()[]{}') is True
+    assert ns['is_valid']('(]') is False
+    assert ns['is_valid']('([)]') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_valid(s):
+    m={\")\":\"(\",\"]\":\"[\",\"}\":\"{\"}; st=[]
+    for ch in s:
+        if ch in m:
+            if not st or st[-1]!=m[ch]: return False
+            st.pop()
+        else: st.append(ch)
+    return not st
+print(is_valid(\"()[]{}\"))",
+    solution_example: "def is_valid(s):
+    m = {\")\": \"(\", \"]\": \"[\", \"}\": \"{\"}
+    st = []
+    for ch in s:
+        if ch in m:
+            if not st or st[-1] != m[ch]:
+                return False
+            st.pop()
+        else:
+            st.append(ch)
+    return not st
+
+print(is_valid(\"()[]{}\"))
+",
+    next: Some("py-444-min-stack-ops"), show_type_chips: false, micro_step: 443,
+};
+
+
+pub const PY444_MIN_STACK_OPS: CodingStep = CodingStep {
+    id: "py-444-min-stack-ops", title: "DSA Eval RPN", objective: "Evaluar expresión RPN.",
+    prompt_md: "**Evaluate Reverse Polish Notation**
+
+Stack aritmético. Distinto de py-419.
+
+**Micro-reto:**
+1. Definí `eval_rpn(tokens)`
+2. `[\"2\",\"1\",\"+\",\"3\",\"*\"]`; imprimí (esperado: `9`)",
+    starter_code: "# def eval_rpn(tokens):
+#     ...
+# print(eval_rpn([\"2\", \"1\", \"+\", \"3\", \"*\"]))
+",
+    pytest: "def test_444_min_stack_ops(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('eval_rpn'))
+    assert ns['eval_rpn'](['2', '1', '+', '3', '*']) == 9
+    assert ns['eval_rpn'](['4', '13', '5', '/', '+']) == 6
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def eval_rpn(tokens):
+    st=[]
+    for t in tokens:
+        if t in \"+-*/\":
+            b,a=st.pop(),st.pop()
+            if t==\"+\": st.append(a+b)
+            elif t==\"-\": st.append(a-b)
+            elif t==\"*\": st.append(a*b)
+            else: st.append(int(a/b))
+        else: st.append(int(t))
+    return st[0]
+print(eval_rpn([\"2\", \"1\", \"+\", \"3\", \"*\"]))",
+    solution_example: "def eval_rpn(tokens):
+    st = []
+    for t in tokens:
+        if t in \"+-*/\":
+            b, a = st.pop(), st.pop()
+            if t == \"+\":
+                st.append(a + b)
+            elif t == \"-\":
+                st.append(a - b)
+            elif t == \"*\":
+                st.append(a * b)
+            else:
+                st.append(int(a / b))
+        else:
+            st.append(int(t))
+    return st[0]
+
+print(eval_rpn([\"2\", \"1\", \"+\", \"3\", \"*\"]))
+",
+    next: Some("py-445-majority-elem"), show_type_chips: false, micro_step: 444,
+};
+
+
+pub const PY445_MAJORITY_ELEM: CodingStep = CodingStep {
+    id: "py-445-majority-elem", title: "DSA Majority Elem", objective: "Elemento mayoritario (Boyer-Moore).",
+    prompt_md: "**Majority Element**
+
+Voting. Distinto de py-137.
+
+**Micro-reto:**
+1. Definí `majority_element(nums)`
+2. `[3,2,3]`; imprimí (esperado: `3`)",
+    starter_code: "# def majority_element(nums):
+#     ...
+# print(majority_element([3, 2, 3]))
+",
+    pytest: "def test_445_majority_elem(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('majority_element'))
+    assert ns['majority_element']([3, 2, 3]) == 3
+    assert ns['majority_element']([2, 2, 1, 1, 1, 2, 2]) == 2
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def majority_element(nums):
+    cand=None; cnt=0
+    for x in nums:
+        if cnt==0: cand=x
+        cnt += 1 if x==cand else -1
+    return cand
+print(majority_element([3, 2, 3]))",
+    solution_example: "def majority_element(nums):
+    cand = None
+    cnt = 0
+    for x in nums:
+        if cnt == 0:
+            cand = x
+        cnt += 1 if x == cand else -1
+    return cand
+
+print(majority_element([3, 2, 3]))
+",
+    next: Some("py-446-pascal-row"), show_type_chips: false, micro_step: 445,
+};
+
+
+pub const PY446_PASCAL_ROW: CodingStep = CodingStep {
+    id: "py-446-pascal-row", title: "DSA Pascal Row", objective: "Fila k de Pascal (0-index).",
+    prompt_md: "**Pascal's Triangle II**
+
+Construir fila. Distinto de py-119.
+
+**Micro-reto:**
+1. Definí `get_row(row_index)`
+2. row_index=`3`; imprimí (esperado: `[1, 3, 3, 1]`)",
+    starter_code: "# def get_row(row_index):
+#     ...
+# print(get_row(3))
+",
+    pytest: "def test_446_pascal_row(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('get_row'))
+    assert ns['get_row'](3) == [1, 3, 3, 1]
+    assert ns['get_row'](0) == [1]
+    assert ns['get_row'](1) == [1, 1]
+    assert capsys.readouterr().out.strip() == '[1, 3, 3, 1]'
+",
+    hint: "def get_row(row_index):
+    row=[1]
+    for _ in range(row_index):
+        row=[1]+[row[i]+row[i+1] for i in range(len(row)-1)]+[1]
+    return row
+print(get_row(3))",
+    solution_example: "def get_row(row_index):
+    row = [1]
+    for _ in range(row_index):
+        row = [1] + [row[i] + row[i + 1] for i in range(len(row) - 1)] + [1]
+    return row
+
+print(get_row(3))
+",
+    next: Some("py-447-move-zeroes"), show_type_chips: false, micro_step: 446,
+};
+
+
+pub const PY447_MOVE_ZEROES: CodingStep = CodingStep {
+    id: "py-447-move-zeroes", title: "DSA Move Zeroes", objective: "Mover ceros al final preservando orden.",
+    prompt_md: "**Move Zeroes**
+
+Two pointers write. Distinto de py-329.
+
+**Micro-reto:**
+1. Definí `move_zeroes(nums)` devolviendo
+2. `[0,1,0,3,12]`; imprimí (esperado: `[1, 3, 12, 0, 0]`)",
+    starter_code: "# def move_zeroes(nums):
+#     ...
+# print(move_zeroes([0, 1, 0, 3, 12]))
+",
+    pytest: "def test_447_move_zeroes(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('move_zeroes'))
+    assert ns['move_zeroes']([0, 1, 0, 3, 12]) == [1, 3, 12, 0, 0]
+    assert ns['move_zeroes']([0]) == [0]
+    assert capsys.readouterr().out.strip() == '[1, 3, 12, 0, 0]'
+",
+    hint: "def move_zeroes(nums):
+    w=0
+    for x in nums:
+        if x!=0: nums[w]=x; w+=1
+    for i in range(w,len(nums)): nums[i]=0
+    return nums
+print(move_zeroes([0, 1, 0, 3, 12]))",
+    solution_example: "def move_zeroes(nums):
+    w = 0
+    for x in nums:
+        if x != 0:
+            nums[w] = x
+            w += 1
+    for i in range(w, len(nums)):
+        nums[i] = 0
+    return nums
+
+print(move_zeroes([0, 1, 0, 3, 12]))
+",
+    next: Some("py-448-plus-one"), show_type_chips: false, micro_step: 447,
+};
+
+
+pub const PY448_PLUS_ONE: CodingStep = CodingStep {
+    id: "py-448-plus-one", title: "DSA Plus One", objective: "Sumar uno a entero como dígitos.",
+    prompt_md: "**Plus One**
+
+Carry. Distinto de py-400.
+
+**Micro-reto:**
+1. Definí `plus_one(digits)`
+2. `[1,2,3]`; imprimí (esperado: `[1, 2, 4]`)",
+    starter_code: "# def plus_one(digits):
+#     ...
+# print(plus_one([1, 2, 3]))
+",
+    pytest: "def test_448_plus_one(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('plus_one'))
+    assert ns['plus_one']([1, 2, 3]) == [1, 2, 4]
+    assert ns['plus_one']([9, 9]) == [1, 0, 0]
+    assert capsys.readouterr().out.strip() == '[1, 2, 4]'
+",
+    hint: "def plus_one(digits):
+    for i in range(len(digits)-1,-1,-1):
+        if digits[i]<9:
+            digits[i]+=1; return digits
+        digits[i]=0
+    return [1]+digits
+print(plus_one([1, 2, 3]))",
+    solution_example: "def plus_one(digits):
+    for i in range(len(digits) - 1, -1, -1):
+        if digits[i] < 9:
+            digits[i] += 1
+            return digits
+        digits[i] = 0
+    return [1] + digits
+
+print(plus_one([1, 2, 3]))
+",
+    next: None, show_type_chips: false, micro_step: 448,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -8799,7 +9073,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY439_TRAILING_ZEROES,
     &PY440_EXCEL_TITLE,
     &PY441_PALINDROME_NUMBER,
-    &PY442_FIZZ_BUZZ
+    &PY442_FIZZ_BUZZ,
+    &PY443_VALID_PAREN,
+    &PY444_MIN_STACK_OPS,
+    &PY445_MAJORITY_ELEM,
+    &PY446_PASCAL_ROW,
+    &PY447_MOVE_ZEROES,
+    &PY448_PLUS_ONE
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -8943,7 +9223,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 442);
+            assert!(step.micro_step >= 1 && step.micro_step <= 448);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -9497,7 +9777,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py442_curriculum_chain() {
+    fn py203_to_py448_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -9739,7 +10019,13 @@ mod tests {
             (439, "py-439-trailing-zeroes", Some("py-440-excel-title")),
             (440, "py-440-excel-title", Some("py-441-palindrome-number")),
             (441, "py-441-palindrome-number", Some("py-442-fizz-buzz")),
-            (442, "py-442-fizz-buzz", None),
+            (442, "py-442-fizz-buzz", Some("py-443-valid-paren")),
+            (443, "py-443-valid-paren", Some("py-444-min-stack-ops")),
+            (444, "py-444-min-stack-ops", Some("py-445-majority-elem")),
+            (445, "py-445-majority-elem", Some("py-446-pascal-row")),
+            (446, "py-446-pascal-row", Some("py-447-move-zeroes")),
+            (447, "py-447-move-zeroes", Some("py-448-plus-one")),
+            (448, "py-448-plus-one", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
