@@ -418,6 +418,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 410, step_id: "py-410-search-2d" },
   { level_id: 411, step_id: "py-411-game-of-life" },
   { level_id: 412, step_id: "py-412-reshape-matrix" },
+  { level_id: 413, step_id: "py-413-valid-anagram" },
+  { level_id: 414, step_id: "py-414-group-anagrams" },
+  { level_id: 415, step_id: "py-415-longest-common-pref" },
+  { level_id: 416, step_id: "py-416-is-subsequence" },
+  { level_id: 417, step_id: "py-417-decode-string" },
+  { level_id: 418, step_id: "py-418-string-compress" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=412).
+    /// 1-based index on the workspace micro-step rail (1..=418).
     pub micro_step: i32,
 }
 
@@ -6934,7 +6934,268 @@ print(matrix_reshape([[1, 2], [3, 4]], 1, 4))",
 
 print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
 ",
-    next: None, show_type_chips: false, micro_step: 412,
+    next: Some("py-413-valid-anagram"), show_type_chips: false, micro_step: 412,
+};
+
+
+pub const PY413_VALID_ANAGRAM: CodingStep = CodingStep {
+    id: "py-413-valid-anagram", title: "DSA Valid Anagram", objective: "¿s y t son anagramas?",
+    prompt_md: "**Valid Anagram**
+
+Counter. Distinto de py-376.
+
+**Micro-reto:**
+1. Definí `is_anagram(s, t)`
+2. s=`\"anagram\"`, t=`\"nagaram\"`; imprimí `True`",
+    starter_code: "# def is_anagram(s, t):
+#     ...
+# print(is_anagram(\"anagram\", \"nagaram\"))
+",
+    pytest: "def test_413_valid_anagram(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_anagram'))
+    assert ns['is_anagram']('anagram', 'nagaram') is True
+    assert ns['is_anagram']('rat', 'car') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "from collections import Counter
+def is_anagram(s, t):
+    return Counter(s)==Counter(t)
+print(is_anagram(\"anagram\", \"nagaram\"))",
+    solution_example: "from collections import Counter
+
+def is_anagram(s, t):
+    return Counter(s) == Counter(t)
+
+print(is_anagram(\"anagram\", \"nagaram\"))
+",
+    next: Some("py-414-group-anagrams"), show_type_chips: false, micro_step: 413,
+};
+
+
+pub const PY414_GROUP_ANAGRAMS: CodingStep = CodingStep {
+    id: "py-414-group-anagrams", title: "DSA Group Anagrams", objective: "Agrupar anagramas.",
+    prompt_md: "**Group Anagrams**
+
+Key sorted. Distinto de py-138.
+
+**Micro-reto:**
+1. Definí `group_anagrams(strs)`
+2. `[\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]`; imprimí grupos sorted",
+    starter_code: "# def group_anagrams(strs):
+#     ...
+# print(sorted([sorted(g) for g in group_anagrams([\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"])]))
+",
+    pytest: "def test_414_group_anagrams(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('group_anagrams'))
+    got=sorted([sorted(g) for g in ns['group_anagrams'](['eat','tea','tan','ate','nat','bat'])])
+    assert got == [['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]
+    assert capsys.readouterr().out.strip() == \"[['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]\"
+",
+    hint: "from collections import defaultdict
+def group_anagrams(strs):
+    d=defaultdict(list)
+    for s in strs: d[\"\".join(sorted(s))].append(s)
+    return list(d.values())
+print(sorted([sorted(g) for g in group_anagrams([\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"])]))",
+    solution_example: "from collections import defaultdict
+
+def group_anagrams(strs):
+    d = defaultdict(list)
+    for s in strs:
+        d[\"\".join(sorted(s))].append(s)
+    return list(d.values())
+
+print(sorted([sorted(g) for g in group_anagrams([\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"])]))
+",
+    next: Some("py-415-longest-common-pref"), show_type_chips: false, micro_step: 414,
+};
+
+
+pub const PY415_LONGEST_COMMON_PREF: CodingStep = CodingStep {
+    id: "py-415-longest-common-pref", title: "DSA Longest Pref", objective: "Prefijo común más largo.",
+    prompt_md: "**Longest Common Prefix**
+
+Zip chars. Distinto de py-14.
+
+**Micro-reto:**
+1. Definí `longest_common_prefix(strs)`
+2. `[\"flower\",\"flow\",\"flight\"]`; imprimí (esperado: `fl`)",
+    starter_code: "# def longest_common_prefix(strs):
+#     ...
+# print(longest_common_prefix([\"flower\", \"flow\", \"flight\"]))
+",
+    pytest: "def test_415_longest_common_pref(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('longest_common_prefix'))
+    assert ns['longest_common_prefix'](['flower', 'flow', 'flight']) == 'fl'
+    assert ns['longest_common_prefix'](['dog', 'racecar', 'car']) == ''
+    assert capsys.readouterr().out.strip() == 'fl'
+",
+    hint: "def longest_common_prefix(strs):
+    if not strs: return \"\"
+    for i,ch in enumerate(strs[0]):
+        for s in strs[1:]:
+            if i>=len(s) or s[i]!=ch: return strs[0][:i]
+    return strs[0]
+print(longest_common_prefix([\"flower\", \"flow\", \"flight\"]))",
+    solution_example: "def longest_common_prefix(strs):
+    if not strs:
+        return \"\"
+    for i, ch in enumerate(strs[0]):
+        for s in strs[1:]:
+            if i >= len(s) or s[i] != ch:
+                return strs[0][:i]
+    return strs[0]
+
+print(longest_common_prefix([\"flower\", \"flow\", \"flight\"]))
+",
+    next: Some("py-416-is-subsequence"), show_type_chips: false, micro_step: 415,
+};
+
+
+pub const PY416_IS_SUBSEQUENCE: CodingStep = CodingStep {
+    id: "py-416-is-subsequence", title: "DSA Is Subsequence", objective: "¿s es subsecuencia de t?",
+    prompt_md: "**Is Subsequence**
+
+Two pointers. Distinto de py-329.
+
+**Micro-reto:**
+1. Definí `is_subsequence(s, t)`
+2. s=`\"abc\"`, t=`\"ahbgdc\"`; imprimí `True`",
+    starter_code: "# def is_subsequence(s, t):
+#     ...
+# print(is_subsequence(\"abc\", \"ahbgdc\"))
+",
+    pytest: "def test_416_is_subsequence(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_subsequence'))
+    assert ns['is_subsequence']('abc', 'ahbgdc') is True
+    assert ns['is_subsequence']('axc', 'ahbgdc') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_subsequence(s, t):
+    it=iter(t)
+    return all(c in it for c in s)
+print(is_subsequence(\"abc\", \"ahbgdc\"))",
+    solution_example: "def is_subsequence(s, t):
+    it = iter(t)
+    return all(c in it for c in s)
+
+print(is_subsequence(\"abc\", \"ahbgdc\"))
+",
+    next: Some("py-417-decode-string"), show_type_chips: false, micro_step: 416,
+};
+
+
+pub const PY417_DECODE_STRING: CodingStep = CodingStep {
+    id: "py-417-decode-string", title: "DSA Decode String", objective: "Decodificar k[encoded] con stack.",
+    prompt_md: "**Decode String**
+
+Stack de counts/strings. Distinto de py-182.
+
+**Micro-reto:**
+1. Definí `decode_string(s)`
+2. `\"3[a]2[bc]\"`; imprimí (esperado: `aaabcbc`)",
+    starter_code: "# def decode_string(s):
+#     ...
+# print(decode_string(\"3[a]2[bc]\"))
+",
+    pytest: "def test_417_decode_string(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('decode_string'))
+    assert ns['decode_string']('3[a]2[bc]') == 'aaabcbc'
+    assert ns['decode_string']('3[a2[c]]') == 'accaccacc'
+    assert ns['decode_string']('2[abc]3[cd]ef') == 'abcabccdcdcdef'
+    assert capsys.readouterr().out.strip() == 'aaabcbc'
+",
+    hint: "def decode_string(s):
+    stack=[]; cur=\"\"; num=0
+    for ch in s:
+        if ch.isdigit(): num=num*10+int(ch)
+        elif ch==\"[\": stack.append((cur,num)); cur=\"\"; num=0
+        elif ch==\"]\":
+            prev,n=stack.pop(); cur=prev+n*cur
+        else: cur+=ch
+    return cur
+print(decode_string(\"3[a]2[bc]\"))",
+    solution_example: "def decode_string(s):
+    stack = []
+    cur = \"\"
+    num = 0
+    for ch in s:
+        if ch.isdigit():
+            num = num * 10 + int(ch)
+        elif ch == \"[\":
+            stack.append((cur, num))
+            cur = \"\"
+            num = 0
+        elif ch == \"]\":
+            prev, n = stack.pop()
+            cur = prev + n * cur
+        else:
+            cur += ch
+    return cur
+
+print(decode_string(\"3[a]2[bc]\"))
+",
+    next: Some("py-418-string-compress"), show_type_chips: false, micro_step: 417,
+};
+
+
+pub const PY418_STRING_COMPRESS: CodingStep = CodingStep {
+    id: "py-418-string-compress", title: "DSA String Compress", objective: "Comprimir grupos in-place estilo LC443 (devolver string).",
+    prompt_md: "**String Compression**
+
+Contar runs. Distinto de py-182.
+
+**Micro-reto:**
+1. Definí `compress(chars)` devolviendo string comprimido
+2. `[\"a\",\"a\",\"b\",\"b\",\"c\",\"c\",\"c\"]`; imprimí (esperado: `a2b2c3`)",
+    starter_code: "# def compress(chars):
+#     ...
+# print(compress([\"a\", \"a\", \"b\", \"b\", \"c\", \"c\", \"c\"]))
+",
+    pytest: "def test_418_string_compress(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('compress'))
+    assert ns['compress'](['a', 'a', 'b', 'b', 'c', 'c', 'c']) == 'a2b2c3'
+    assert ns['compress'](['a']) == 'a'
+    assert capsys.readouterr().out.strip() == 'a2b2c3'
+",
+    hint: "def compress(chars):
+    out=[]; i=0
+    while i<len(chars):
+        j=i
+        while j<len(chars) and chars[j]==chars[i]: j+=1
+        out.append(chars[i])
+        if j-i>1: out.extend(str(j-i))
+        i=j
+    return \"\".join(out)
+print(compress([\"a\", \"a\", \"b\", \"b\", \"c\", \"c\", \"c\"]))",
+    solution_example: "def compress(chars):
+    out = []
+    i = 0
+    while i < len(chars):
+        j = i
+        while j < len(chars) and chars[j] == chars[i]:
+            j += 1
+        out.append(chars[i])
+        if j - i > 1:
+            out.extend(str(j - i))
+        i = j
+    return \"\".join(out)
+
+print(compress([\"a\", \"a\", \"b\", \"b\", \"c\", \"c\", \"c\"]))
+",
+    next: None, show_type_chips: false, micro_step: 418,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -7349,7 +7610,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY409_ROTATE_IMAGE,
     &PY410_SEARCH_2D,
     &PY411_GAME_OF_LIFE,
-    &PY412_RESHAPE_MATRIX
+    &PY412_RESHAPE_MATRIX,
+    &PY413_VALID_ANAGRAM,
+    &PY414_GROUP_ANAGRAMS,
+    &PY415_LONGEST_COMMON_PREF,
+    &PY416_IS_SUBSEQUENCE,
+    &PY417_DECODE_STRING,
+    &PY418_STRING_COMPRESS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -7493,7 +7760,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 412);
+            assert!(step.micro_step >= 1 && step.micro_step <= 418);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -8047,7 +8314,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py412_curriculum_chain() {
+    fn py203_to_py418_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -8259,7 +8526,13 @@ mod tests {
             (409, "py-409-rotate-image", Some("py-410-search-2d")),
             (410, "py-410-search-2d", Some("py-411-game-of-life")),
             (411, "py-411-game-of-life", Some("py-412-reshape-matrix")),
-            (412, "py-412-reshape-matrix", None),
+            (412, "py-412-reshape-matrix", Some("py-413-valid-anagram")),
+            (413, "py-413-valid-anagram", Some("py-414-group-anagrams")),
+            (414, "py-414-group-anagrams", Some("py-415-longest-common-pref")),
+            (415, "py-415-longest-common-pref", Some("py-416-is-subsequence")),
+            (416, "py-416-is-subsequence", Some("py-417-decode-string")),
+            (417, "py-417-decode-string", Some("py-418-string-compress")),
+            (418, "py-418-string-compress", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
