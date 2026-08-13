@@ -376,6 +376,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 368, step_id: "py-368-ugly-number-ii" },
   { level_id: 369, step_id: "py-369-task-scheduler" },
   { level_id: 370, step_id: "py-370-reorganize-string" },
+  { level_id: 371, step_id: "py-371-longest-substr" },
+  { level_id: 372, step_id: "py-372-min-window" },
+  { level_id: 373, step_id: "py-373-max-avg-sub" },
+  { level_id: 374, step_id: "py-374-fruits-baskets" },
+  { level_id: 375, step_id: "py-375-longest-ones" },
+  { level_id: 376, step_id: "py-376-find-anagrams" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
