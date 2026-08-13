@@ -275,16 +275,17 @@ pub fn LearnPage() -> impl IntoView {
                         code_dirty_since_pass.set(false);
                         match complete_progress(level_id, step_key, true).await {
                             Ok(prog) => {
-                                session.set_current_level(prog.current_level);
+                                session.set_progress(
+                                    prog.current_level,
+                                    prog.completed_levels.clone(),
+                                );
                                 if prog.advanced {
                                     progress_note.set(Some(format!(
                                         "Progreso guardado · nivel actual {}",
                                         prog.current_level
                                     )));
                                 } else {
-                                    progress_note.set(Some(
-                                        "Progreso confirmado (ya estabas por delante).".into(),
-                                    ));
+                                    progress_note.set(Some("Progreso guardado.".into()));
                                 }
                             }
                             Err(err) => {
@@ -538,11 +539,11 @@ pub fn LearnPage() -> impl IntoView {
                         <Show when=move || {
                             can_continue.get()
                                 || level_completed(
-                                    session
+                                    &session
                                         .user
                                         .get()
-                                        .map(|u| u.current_level)
-                                        .unwrap_or(1),
+                                        .map(|u| u.completed_levels)
+                                        .unwrap_or_default(),
                                     step.get().micro_step,
                                 )
                         }>

@@ -330,15 +330,18 @@ func (s *AuthService) UpdateProfile(
 
 // ProgressResult es el avance persistido tras completar un micro-reto en el cliente.
 type ProgressResult struct {
-	LevelID      int    `json:"level_id"`
-	StepID       string `json:"step_id"`
-	Passed       bool   `json:"passed"`
-	CurrentLevel int    `json:"current_level"`
-	Advanced     bool   `json:"advanced"`
+	LevelID         int    `json:"level_id"`
+	StepID          string `json:"step_id"`
+	Passed          bool   `json:"passed"`
+	CurrentLevel    int    `json:"current_level"`
+	Advanced        bool   `json:"advanced"`
+	CompletedLevels []int  `json:"completed_levels"`
 }
 
 // CompleteProgress registra la superación de un nivel/paso (sin código Python — ADR 002).
-// Si passed=false, no muta CurrentLevel (ack del intento client-side).
+// Si passed=false, no muta el set ni CurrentLevel (ack del intento client-side).
+// Si passed=true, añade levelID al set ganado y solo avanza el cursor de forma contigua
+// (no salta huecos: completar 157 con cursor en 1 no marca 1–156 ni pone current=158).
 func (s *AuthService) CompleteProgress(
 	_ context.Context,
 	bearerToken string,
@@ -363,19 +366,33 @@ func (s *AuthService) CompleteProgress(
 		return ProgressResult{}, domain.ErrUnauthorized
 	}
 
+	completed := user.CompletedLevels
+	if completed == nil {
+		completed = []int{}
+	}
 	out := ProgressResult{
-		LevelID:      levelID,
-		StepID:       stepID,
-		Passed:       passed,
-		CurrentLevel: user.CurrentLevel,
-		Advanced:     false,
+		LevelID:         levelID,
+		StepID:          stepID,
+		Passed:          passed,
+		CurrentLevel:    user.CurrentLevel,
+		Advanced:        false,
+		CompletedLevels: completed,
 	}
 	if !passed {
 		return out, nil
 	}
 
-	next := levelID + 1
-	if user.CurrentLevel < next {
+	if err := s.users.MarkLevelCompleted(userID, levelID); err != nil {
+		if errors.Is(err, repositories.ErrUserNotFound) {
+			return ProgressResult{}, domain.ErrUnauthorized
+		}
+		return ProgressResult{}, err
+	}
+	completed = domain.WithCompletedLevel(completed, levelID)
+	out.CompletedLevels = completed
+
+	next, moved := domain.AdvanceCursorThroughCompleted(user.CurrentLevel, completed)
+	if moved {
 		if err := s.users.UpdateCurrentLevel(userID, next); err != nil {
 			if errors.Is(err, repositories.ErrUserNotFound) {
 				return ProgressResult{}, domain.ErrUnauthorized
@@ -388,7 +405,7 @@ func (s *AuthService) CompleteProgress(
 	return out, nil
 }
 
-// ResetProgress vuelve el avance del alumno al inicio (current_level = 1).
+// ResetProgress vuelve el avance del alumno al inicio (current_level = 1, set vacío).
 func (s *AuthService) ResetProgress(
 	_ context.Context,
 	bearerToken string,
@@ -400,6 +417,12 @@ func (s *AuthService) ResetProgress(
 	if _, err := s.users.GetByID(userID); err != nil {
 		return ProgressResult{}, domain.ErrUnauthorized
 	}
+	if err := s.users.ClearCompletedLevels(userID); err != nil {
+		if errors.Is(err, repositories.ErrUserNotFound) {
+			return ProgressResult{}, domain.ErrUnauthorized
+		}
+		return ProgressResult{}, err
+	}
 	if err := s.users.UpdateCurrentLevel(userID, 1); err != nil {
 		if errors.Is(err, repositories.ErrUserNotFound) {
 			return ProgressResult{}, domain.ErrUnauthorized
@@ -407,11 +430,12 @@ func (s *AuthService) ResetProgress(
 		return ProgressResult{}, err
 	}
 	return ProgressResult{
-		LevelID:      1,
-		StepID:       "reset",
-		Passed:       false,
-		CurrentLevel: 1,
-		Advanced:     false,
+		LevelID:         1,
+		StepID:          "reset",
+		Passed:          false,
+		CurrentLevel:    1,
+		Advanced:        false,
+		CompletedLevels: []int{},
 	}, nil
 }
 
