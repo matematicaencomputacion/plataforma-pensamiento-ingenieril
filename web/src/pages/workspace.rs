@@ -9,8 +9,8 @@ use crate::curriculum::{coding_step_by_micro_step, micro_step_unlocked};
 use crate::session::SessionCtx;
 
 /// Placeholder rail for the upcoming Python micro-challenges (scaffold only).
-/// Rail capacity toward the 300-micro-step roadmap (cells beyond filled curriculum stay locked).
-const MICRO_STEP_COUNT: i32 = 300;
+/// Rail capacity toward the 304-micro-step roadmap (cells beyond filled curriculum stay locked).
+const MICRO_STEP_COUNT: i32 = 304;
 
 #[component]
 pub fn WorkspacePage() -> impl IntoView {
@@ -151,7 +151,7 @@ pub fn WorkspacePage() -> impl IntoView {
                             "Module 1 — Declarative Foundations"
                         </h3>
                         <p class="workspace__statement">
-                            "Variables, tipos y foundations declarativas en Python. Los micro-pasos 1–300 viven en «Current level micro-step»; el editor Pyodide sigue en Paso 2 · Coding."
+                            "Variables, tipos y foundations declarativas en Python. Los micro-pasos 1–304 viven en «Current level micro-step»; el editor Pyodide sigue en Paso 2 · Coding."
                         </p>
                         <ul class="workspace__list">
                             <li>"Variables e enteros"</li>
@@ -183,7 +183,7 @@ fn MicroStepRail(current_level: Signal<i32>) -> impl IntoView {
         <ol
             class="workspace__microsteps"
             id="workspace-microsteps"
-            aria-label="Python micro-step challenges 1 to 300"
+            aria-label="Python micro-step challenges 1 to 304"
             data-current-level=move || current_level.get().to_string()
         >
             {(1..=MICRO_STEP_COUNT)
