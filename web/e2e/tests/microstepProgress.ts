@@ -322,6 +322,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 314, step_id: "py-314-my-calendar" },
   { level_id: 315, step_id: "py-315-non-overlap" },
   { level_id: 316, step_id: "py-316-video-stitch" },
+  { level_id: 317, step_id: "py-317-permutations" },
+  { level_id: 318, step_id: "py-318-combos-ii" },
+  { level_id: 319, step_id: "py-319-n-queens" },
+  { level_id: 320, step_id: "py-320-restore-ip" },
+  { level_id: 321, step_id: "py-321-valid-sudoku" },
+  { level_id: 322, step_id: "py-322-permute-unique" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

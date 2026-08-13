@@ -97,7 +97,7 @@ test.describe("persistent progress checks", () => {
       timeout: e2eTimeout,
     });
     await expect(step1.locator(".progress-check")).toBeVisible();
-    await expect(page.locator("#workspace-microsteps li")).toHaveCount(316);
+    await expect(page.locator("#workspace-microsteps li")).toHaveCount(322);
     await expect(page.locator("#workspace-level-check")).toHaveCount(0);
 
     const resetResponse = page.waitForResponse(

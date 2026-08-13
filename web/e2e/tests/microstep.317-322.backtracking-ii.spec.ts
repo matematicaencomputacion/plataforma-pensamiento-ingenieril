@@ -22,135 +22,191 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 311,
-    id: "py-311-min-arrows",
-    title: "DSA Min Arrows",
-    solution: `def find_min_arrow_shots(points):
-    points = sorted(points, key=lambda p: p[1])
-    arrows = 0
-    end = float('-inf')
-    for s, e in points:
-        if s > end:
-            arrows += 1
-            end = e
-    return arrows
-
-print(find_min_arrow_shots([[10, 16], [2, 8], [1, 6], [7, 12]]))
-`,
-    nextUrl: /\/learn\/py-312-car-pooling/,
-    cursorAfter: "312",
-  },
-  {
-    micro: 312,
-    id: "py-312-car-pooling",
-    title: "DSA Car Pooling",
-    solution: `def car_pooling(trips, capacity):
-    diff = [0] * 1001
-    for num, start, end in trips:
-        diff[start] += num
-        diff[end] -= num
-    cur = 0
-    for x in diff:
-        cur += x
-        if cur > capacity:
-            return False
-    return True
-
-print(car_pooling([[2, 1, 5], [3, 3, 7]], 4))
-`,
-    nextUrl: /\/learn\/py-313-interval-intersect/,
-    cursorAfter: "313",
-  },
-  {
-    micro: 313,
-    id: "py-313-interval-intersect",
-    title: "DSA Interval Intersection",
-    solution: `def interval_intersection(first, second):
-    i = j = 0
+    micro: 317,
+    id: "py-317-permutations",
+    title: "DSA Permutations",
+    solution: `def permute(nums):
     out = []
-    while i < len(first) and j < len(second):
-        lo = max(first[i][0], second[j][0])
-        hi = min(first[i][1], second[j][1])
-        if lo <= hi:
-            out.append([lo, hi])
-        if first[i][1] < second[j][1]:
-            i += 1
-        else:
-            j += 1
+    def bt(path, used):
+        if len(path) == len(nums):
+            out.append(path[:])
+            return
+        for i, x in enumerate(nums):
+            if used[i]:
+                continue
+            used[i] = True
+            path.append(x)
+            bt(path, used)
+            path.pop()
+            used[i] = False
+    bt([], [False] * len(nums))
+    return sorted(out)
+
+print(permute([1, 2, 3]))
+`,
+    nextUrl: /\/learn\/py-318-combos-ii/,
+    cursorAfter: "318",
+  },
+  {
+    micro: 318,
+    id: "py-318-combos-ii",
+    title: "DSA Combination Sum II",
+    solution: `def combination_sum2(candidates, target):
+    candidates = sorted(candidates)
+    out = []
+    def bt(start, remain, path):
+        if remain == 0:
+            out.append(path[:])
+            return
+        for i in range(start, len(candidates)):
+            if i > start and candidates[i] == candidates[i - 1]:
+                continue
+            if candidates[i] > remain:
+                break
+            path.append(candidates[i])
+            bt(i + 1, remain - candidates[i], path)
+            path.pop()
+    bt(0, target, [])
     return out
 
-print(interval_intersection([[0, 2], [5, 10], [13, 23], [24, 25]], [[1, 5], [8, 12], [15, 24], [25, 26]]))
+print(combination_sum2([10, 1, 2, 7, 6, 1, 5], 8))
 `,
-    nextUrl: /\/learn\/py-314-my-calendar/,
-    cursorAfter: "314",
+    nextUrl: /\/learn\/py-319-n-queens/,
+    cursorAfter: "319",
   },
   {
-    micro: 314,
-    id: "py-314-my-calendar",
-    title: "DSA My Calendar",
-    solution: `class MyCalendar:
-    def __init__(self):
-        self.books = []
+    micro: 319,
+    id: "py-319-n-queens",
+    title: "DSA N-Queens",
+    solution: `def total_n_queens(n):
+    cols = set()
+    d1 = set()
+    d2 = set()
+    ans = 0
+    def bt(r):
+        nonlocal ans
+        if r == n:
+            ans += 1
+            return
+        for c in range(n):
+            if c in cols or (r - c) in d1 or (r + c) in d2:
+                continue
+            cols.add(c)
+            d1.add(r - c)
+            d2.add(r + c)
+            bt(r + 1)
+            cols.remove(c)
+            d1.remove(r - c)
+            d2.remove(r + c)
+    bt(0)
+    return ans
 
-    def book(self, start, end):
-        for s, e in self.books:
-            if start < e and end > s:
+print(total_n_queens(4))
+`,
+    nextUrl: /\/learn\/py-320-restore-ip/,
+    cursorAfter: "320",
+  },
+  {
+    micro: 320,
+    id: "py-320-restore-ip",
+    title: "DSA Restore IP",
+    solution: `def restore_ip_addresses(s):
+    out = []
+    def bt(start, parts):
+        if len(parts) == 4:
+            if start == len(s):
+                out.append('.'.join(parts))
+            return
+        for length in range(1, 4):
+            if start + length > len(s):
+                break
+            seg = s[start:start + length]
+            if (len(seg) > 1 and seg[0] == '0') or int(seg) > 255:
+                continue
+            parts.append(seg)
+            bt(start + length, parts)
+            parts.pop()
+    bt(0, [])
+    return sorted(out)
+
+print(restore_ip_addresses("25525511135"))
+`,
+    nextUrl: /\/learn\/py-321-valid-sudoku/,
+    cursorAfter: "321",
+  },
+  {
+    micro: 321,
+    id: "py-321-valid-sudoku",
+    title: "DSA Valid Sudoku",
+    solution: `def is_valid_sudoku(board):
+    rows = [set() for _ in range(9)]
+    cols = [set() for _ in range(9)]
+    boxes = [set() for _ in range(9)]
+    for r in range(9):
+        for c in range(9):
+            v = board[r][c]
+            if v == '.':
+                continue
+            b = (r // 3) * 3 + c // 3
+            if v in rows[r] or v in cols[c] or v in boxes[b]:
                 return False
-        self.books.append((start, end))
-        return True
+            rows[r].add(v)
+            cols[c].add(v)
+            boxes[b].add(v)
+    return True
 
-cal = MyCalendar()
-print([cal.book(10, 20), cal.book(15, 25), cal.book(20, 30)])
+board = [
+    ['5', '3', '.', '.', '7', '.', '.', '.', '.'],
+    ['6', '.', '.', '1', '9', '5', '.', '.', '.'],
+    ['.', '9', '8', '.', '.', '.', '.', '6', '.'],
+    ['8', '.', '.', '.', '6', '.', '.', '.', '3'],
+    ['4', '.', '.', '8', '.', '3', '.', '.', '1'],
+    ['7', '.', '.', '.', '2', '.', '.', '.', '6'],
+    ['.', '6', '.', '.', '.', '.', '2', '8', '.'],
+    ['.', '.', '.', '4', '1', '9', '.', '.', '5'],
+    ['.', '.', '.', '.', '8', '.', '.', '7', '9'],
+]
+print(is_valid_sudoku(board))
 `,
-    nextUrl: /\/learn\/py-315-non-overlap/,
-    cursorAfter: "315",
+    nextUrl: /\/learn\/py-322-permute-unique/,
+    cursorAfter: "322",
   },
   {
-    micro: 315,
-    id: "py-315-non-overlap",
-    title: "DSA Non Overlap",
-    solution: `def max_non_overlapping(intervals):
-    intervals = sorted(intervals, key=lambda x: x[1])
-    keep = 0
-    end = float('-inf')
-    for s, e in intervals:
-        if s >= end:
-            keep += 1
-            end = e
-    return keep
+    micro: 322,
+    id: "py-322-permute-unique",
+    title: "DSA Permute Unique",
+    solution: `def permute_unique(nums):
+    nums = sorted(nums)
+    out = []
+    used = [False] * len(nums)
+    def bt(path):
+        if len(path) == len(nums):
+            out.append(path[:])
+            return
+        for i, x in enumerate(nums):
+            if used[i]:
+                continue
+            if i > 0 and nums[i] == nums[i - 1] and not used[i - 1]:
+                continue
+            used[i] = True
+            path.append(x)
+            bt(path)
+            path.pop()
+            used[i] = False
+    bt([])
+    return out
 
-print(max_non_overlapping([[1, 2], [2, 3], [3, 4], [1, 3]]))
+print(permute_unique([1, 1, 2]))
 `,
-    nextUrl: /\/learn\/py-316-video-stitch/,
-    cursorAfter: "316",
-  },
-  {
-    micro: 316,
-    id: "py-316-video-stitch",
-    title: "DSA Video Stitch",
-    solution: `def video_stitching(clips, time):
-    clips = sorted(clips)
-    end = farthest = used = i = 0
-    while end < time:
-        while i < len(clips) and clips[i][0] <= end:
-            farthest = max(farthest, clips[i][1])
-            i += 1
-        if farthest == end:
-            return -1
-        used += 1
-        end = farthest
-    return used
-
-print(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))
-`,
-    nextUrl: /\/learn\/py-317-permutations/,
-    cursorAfter: "317",
+    nextUrl: /\/workspace/,
+    cursorAfter: "323",
   },
 ];
 
+
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-31[1-6]-/);
+    expect(step.id).toMatch(/^py-31[7-9]-|^py-32[0-2]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -180,7 +236,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 311–316 · intervals II", () => {
+test.describe("micro-steps 317–322 · backtracking II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
