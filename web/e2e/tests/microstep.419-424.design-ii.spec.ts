@@ -22,121 +22,217 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 413,
-    id: "py-413-valid-anagram",
-    title: "DSA Valid Anagram",
-    solution: `from collections import Counter
+    micro: 419,
+    id: "py-419-min-stack",
+    title: "DSA Min Stack",
+    solution: `class MinStack:
+    def __init__(self):
+        self.st = []
+        self.mn = []
 
-def is_anagram(s, t):
-    return Counter(s) == Counter(t)
+    def push(self, x):
+        self.st.append(x)
+        self.mn.append(x if not self.mn else min(x, self.mn[-1]))
 
-print(is_anagram("anagram", "nagaram"))
+    def pop(self):
+        self.st.pop()
+        self.mn.pop()
+
+    def top(self):
+        return self.st[-1]
+
+    def getMin(self):
+        return self.mn[-1]
+
+s = MinStack()
+s.push(-2)
+s.push(0)
+s.push(-3)
+a = s.getMin()
+s.pop()
+b = s.top()
+c = s.getMin()
+print([a, b, c])
 `,
-    nextUrl: /\/learn\/py-414-group-anagrams/,
-    cursorAfter: "414",
+    nextUrl: /\/learn\/py-420-lru-cache/,
+    cursorAfter: "420",
   },
   {
-    micro: 414,
-    id: "py-414-group-anagrams",
-    title: "DSA Group Anagrams",
-    solution: `from collections import defaultdict
+    micro: 420,
+    id: "py-420-lru-cache",
+    title: "DSA LRU Cache",
+    solution: `from collections import OrderedDict
 
-def group_anagrams(strs):
-    d = defaultdict(list)
-    for s in strs:
-        d["".join(sorted(s))].append(s)
-    return list(d.values())
+class LRUCache:
+    def __init__(self, capacity):
+        self.cap = capacity
+        self.d = OrderedDict()
 
-print(sorted([sorted(g) for g in group_anagrams(["eat", "tea", "tan", "ate", "nat", "bat"])]))
+    def get(self, key):
+        if key not in self.d:
+            return -1
+        self.d.move_to_end(key)
+        return self.d[key]
+
+    def put(self, key, value):
+        if key in self.d:
+            self.d.move_to_end(key)
+        self.d[key] = value
+        if len(self.d) > self.cap:
+            self.d.popitem(last=False)
+
+c = LRUCache(2)
+c.put(1, 1)
+c.put(2, 2)
+a = c.get(1)
+c.put(3, 3)
+b = c.get(2)
+c.put(4, 4)
+d = c.get(1)
+e = c.get(3)
+f = c.get(4)
+print([a, b, d, e, f])
 `,
-    nextUrl: /\/learn\/py-415-longest-common-pref/,
-    cursorAfter: "415",
+    nextUrl: /\/learn\/py-421-time-map/,
+    cursorAfter: "421",
   },
   {
-    micro: 415,
-    id: "py-415-longest-common-pref",
-    title: "DSA Longest Pref",
-    solution: `def longest_common_prefix(strs):
-    if not strs:
-        return ""
-    for i, ch in enumerate(strs[0]):
-        for s in strs[1:]:
-            if i >= len(s) or s[i] != ch:
-                return strs[0][:i]
-    return strs[0]
+    micro: 421,
+    id: "py-421-time-map",
+    title: "DSA Time Map",
+    solution: `import bisect
+from collections import defaultdict
 
-print(longest_common_prefix(["flower", "flow", "flight"]))
+class TimeMap:
+    def __init__(self):
+        self.d = defaultdict(list)
+
+    def set(self, key, value, timestamp):
+        self.d[key].append((timestamp, value))
+
+    def get(self, key, timestamp):
+        arr = self.d[key]
+        i = bisect.bisect_right(arr, (timestamp, chr(127))) - 1
+        return arr[i][1] if i >= 0 else ""
+
+t = TimeMap()
+t.set("foo", "bar", 1)
+a = t.get("foo", 1)
+b = t.get("foo", 3)
+t.set("foo", "bar2", 4)
+c = t.get("foo", 4)
+d = t.get("foo", 5)
+print([a, b, c, d])
 `,
-    nextUrl: /\/learn\/py-416-is-subsequence/,
-    cursorAfter: "416",
+    nextUrl: /\/learn\/py-422-randomized-set/,
+    cursorAfter: "422",
   },
   {
-    micro: 416,
-    id: "py-416-is-subsequence",
-    title: "DSA Is Subsequence",
-    solution: `def is_subsequence(s, t):
-    it = iter(t)
-    return all(c in it for c in s)
+    micro: 422,
+    id: "py-422-randomized-set",
+    title: "DSA Randomized Set",
+    solution: `import random
 
-print(is_subsequence("abc", "ahbgdc"))
+class RandomizedSet:
+    def __init__(self):
+        self.arr = []
+        self.idx = {}
+
+    def insert(self, val):
+        if val in self.idx:
+            return False
+        self.idx[val] = len(self.arr)
+        self.arr.append(val)
+        return True
+
+    def remove(self, val):
+        if val not in self.idx:
+            return False
+        i = self.idx[val]
+        last = self.arr[-1]
+        self.arr[i] = last
+        self.idx[last] = i
+        self.arr.pop()
+        del self.idx[val]
+        return True
+
+    def getRandom(self):
+        return random.choice(self.arr)
+
+r = RandomizedSet()
+print([r.insert(1), r.insert(2), r.remove(1), r.getRandom()])
 `,
-    nextUrl: /\/learn\/py-417-decode-string/,
-    cursorAfter: "417",
+    nextUrl: /\/learn\/py-423-moving-avg/,
+    cursorAfter: "423",
   },
   {
-    micro: 417,
-    id: "py-417-decode-string",
-    title: "DSA Decode String",
-    solution: `def decode_string(s):
-    stack = []
-    cur = ""
-    num = 0
-    for ch in s:
-        if ch.isdigit():
-            num = num * 10 + int(ch)
-        elif ch == "[":
-            stack.append((cur, num))
-            cur = ""
-            num = 0
-        elif ch == "]":
-            prev, n = stack.pop()
-            cur = prev + n * cur
-        else:
-            cur += ch
-    return cur
+    micro: 423,
+    id: "py-423-moving-avg",
+    title: "DSA Moving Avg",
+    solution: `from collections import deque
 
-print(decode_string("3[a]2[bc]"))
+class MovingAverage:
+    def __init__(self, size):
+        self.size = size
+        self.q = deque()
+        self.s = 0
+
+    def next(self, val):
+        self.q.append(val)
+        self.s += val
+        if len(self.q) > self.size:
+            self.s -= self.q.popleft()
+        return self.s / len(self.q)
+
+m = MovingAverage(3)
+print([m.next(1), m.next(10), m.next(3), m.next(5)])
 `,
-    nextUrl: /\/learn\/py-418-string-compress/,
-    cursorAfter: "418",
+    nextUrl: /\/learn\/py-424-browser-history/,
+    cursorAfter: "424",
   },
   {
-    micro: 418,
-    id: "py-418-string-compress",
-    title: "DSA String Compress",
-    solution: `def compress(chars):
-    out = []
-    i = 0
-    while i < len(chars):
-        j = i
-        while j < len(chars) and chars[j] == chars[i]:
-            j += 1
-        out.append(chars[i])
-        if j - i > 1:
-            out.extend(str(j - i))
-        i = j
-    return "".join(out)
+    micro: 424,
+    id: "py-424-browser-history",
+    title: "DSA Browser History",
+    solution: `class BrowserHistory:
+    def __init__(self, homepage):
+        self.h = [homepage]
+        self.i = 0
 
-print(compress(["a", "a", "b", "b", "c", "c", "c"]))
+    def visit(self, url):
+        self.h = self.h[: self.i + 1]
+        self.h.append(url)
+        self.i += 1
+
+    def back(self, steps):
+        self.i = max(0, self.i - steps)
+        return self.h[self.i]
+
+    def forward(self, steps):
+        self.i = min(len(self.h) - 1, self.i + steps)
+        return self.h[self.i]
+
+b = BrowserHistory("leetcode.com")
+b.visit("google.com")
+b.visit("facebook.com")
+b.visit("youtube.com")
+a = b.back(1)
+c = b.back(1)
+d = b.forward(1)
+b.visit("linkedin.com")
+e = b.forward(2)
+f = b.back(2)
+g = b.back(7)
+print([a, c, d, e, f, g])
 `,
-    nextUrl: /\/learn\/py-419-min-stack/,
-    cursorAfter: "419",
+    nextUrl: /\/workspace/,
+    cursorAfter: "425",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:413|414|415|416|417|418)-/);
+    expect(step.id).toMatch(/^py-(?:419|420|421|422|423|424)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -166,7 +262,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 413–418 · strings II", () => {
+test.describe("micro-steps 419–424 · design II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

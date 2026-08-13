@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=418).
+    /// 1-based index on the workspace micro-step rail (1..=424).
     pub micro_step: i32,
 }
 
@@ -7195,7 +7195,393 @@ print(compress([\"a\", \"a\", \"b\", \"b\", \"c\", \"c\", \"c\"]))",
 
 print(compress([\"a\", \"a\", \"b\", \"b\", \"c\", \"c\", \"c\"]))
 ",
-    next: None, show_type_chips: false, micro_step: 418,
+    next: Some("py-419-min-stack"), show_type_chips: false, micro_step: 418,
+};
+
+
+pub const PY419_MIN_STACK: CodingStep = CodingStep {
+    id: "py-419-min-stack", title: "DSA Min Stack", objective: "Stack con getMin O(1).",
+    prompt_md: "**Min Stack**
+
+Stack auxiliar de mínimos. Distinto de py-180.
+
+**Micro-reto:**
+1. Clase `MinStack` con push/pop/top/getMin
+2. secuencia del enunciado; imprimí getMins",
+    starter_code: "# class MinStack:
+#     ...
+# s=MinStack(); s.push(-2); s.push(0); s.push(-3); a=s.getMin(); s.pop(); b=s.top(); c=s.getMin(); print([a,b,c])
+",
+    pytest: "def test_419_min_stack(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert 'MinStack' in ns
+    S=ns['MinStack'](); S.push(-2); S.push(0); S.push(-3)
+    assert S.getMin()==-3; S.pop(); assert S.top()==0; assert S.getMin()==-2
+    assert capsys.readouterr().out.strip() == '[-3, 0, -2]'
+",
+    hint: "class MinStack:
+    def __init__(self):
+        self.st=[]; self.mn=[]
+    def push(self,x):
+        self.st.append(x); self.mn.append(x if not self.mn else min(x,self.mn[-1]))
+    def pop(self):
+        self.st.pop(); self.mn.pop()
+    def top(self): return self.st[-1]
+    def getMin(self): return self.mn[-1]
+s=MinStack(); s.push(-2); s.push(0); s.push(-3); a=s.getMin(); s.pop(); b=s.top(); c=s.getMin(); print([a,b,c])",
+    solution_example: "class MinStack:
+    def __init__(self):
+        self.st = []
+        self.mn = []
+
+    def push(self, x):
+        self.st.append(x)
+        self.mn.append(x if not self.mn else min(x, self.mn[-1]))
+
+    def pop(self):
+        self.st.pop()
+        self.mn.pop()
+
+    def top(self):
+        return self.st[-1]
+
+    def getMin(self):
+        return self.mn[-1]
+
+s = MinStack()
+s.push(-2)
+s.push(0)
+s.push(-3)
+a = s.getMin()
+s.pop()
+b = s.top()
+c = s.getMin()
+print([a, b, c])
+",
+    next: Some("py-420-lru-cache"), show_type_chips: false, micro_step: 419,
+};
+
+
+pub const PY420_LRU_CACHE: CodingStep = CodingStep {
+    id: "py-420-lru-cache", title: "DSA LRU Cache", objective: "LRU con OrderedDict.",
+    prompt_md: "**LRU Cache**
+
+OrderedDict move_to_end. Distinto de py-181.
+
+**Micro-reto:**
+1. Clase `LRUCache`
+2. capacity 2; secuencia clásica; imprimí gets",
+    starter_code: "# from collections import OrderedDict
+# class LRUCache:
+#     ...
+# c=LRUCache(2); c.put(1,1); c.put(2,2); a=c.get(1); c.put(3,3); b=c.get(2); c.put(4,4); d=c.get(1); e=c.get(3); f=c.get(4); print([a,b,d,e,f])
+",
+    pytest: "def test_420_lru_cache(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert 'LRUCache' in ns
+    C=ns['LRUCache'](2); C.put(1,1); C.put(2,2)
+    assert C.get(1)==1; C.put(3,3); assert C.get(2)==-1; C.put(4,4)
+    assert C.get(1)==-1 and C.get(3)==3 and C.get(4)==4
+    assert capsys.readouterr().out.strip() == '[1, -1, -1, 3, 4]'
+",
+    hint: "from collections import OrderedDict
+class LRUCache:
+    def __init__(self, capacity):
+        self.cap=capacity; self.d=OrderedDict()
+    def get(self, key):
+        if key not in self.d: return -1
+        self.d.move_to_end(key); return self.d[key]
+    def put(self, key, value):
+        if key in self.d: self.d.move_to_end(key)
+        self.d[key]=value
+        if len(self.d)>self.cap: self.d.popitem(last=False)
+c=LRUCache(2); c.put(1,1); c.put(2,2); a=c.get(1); c.put(3,3); b=c.get(2); c.put(4,4); d=c.get(1); e=c.get(3); f=c.get(4); print([a,b,d,e,f])",
+    solution_example: "from collections import OrderedDict
+
+class LRUCache:
+    def __init__(self, capacity):
+        self.cap = capacity
+        self.d = OrderedDict()
+
+    def get(self, key):
+        if key not in self.d:
+            return -1
+        self.d.move_to_end(key)
+        return self.d[key]
+
+    def put(self, key, value):
+        if key in self.d:
+            self.d.move_to_end(key)
+        self.d[key] = value
+        if len(self.d) > self.cap:
+            self.d.popitem(last=False)
+
+c = LRUCache(2)
+c.put(1, 1)
+c.put(2, 2)
+a = c.get(1)
+c.put(3, 3)
+b = c.get(2)
+c.put(4, 4)
+d = c.get(1)
+e = c.get(3)
+f = c.get(4)
+print([a, b, d, e, f])
+",
+    next: Some("py-421-time-map"), show_type_chips: false, micro_step: 420,
+};
+
+
+pub const PY421_TIME_MAP: CodingStep = CodingStep {
+    id: "py-421-time-map", title: "DSA Time Map", objective: "Mapa clave→valor con timestamp.",
+    prompt_md: "**Time Based Key-Value Store**
+
+Bisect sobre timestamps. Distinto de py-180.
+
+**Micro-reto:**
+1. Clase `TimeMap` set/get
+2. set foo bar 1; set foo bar2 4; gets; imprimí",
+    starter_code: "# class TimeMap:
+#     ...
+# t=TimeMap(); t.set(\"foo\",\"bar\",1); a=t.get(\"foo\",1); b=t.get(\"foo\",3); t.set(\"foo\",\"bar2\",4); c=t.get(\"foo\",4); d=t.get(\"foo\",5); print([a,b,c,d])
+",
+    pytest: "def test_421_time_map(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert 'TimeMap' in ns
+    T=ns['TimeMap'](); T.set('foo','bar',1)
+    assert T.get('foo',1)=='bar' and T.get('foo',3)=='bar'
+    T.set('foo','bar2',4)
+    assert T.get('foo',4)=='bar2' and T.get('foo',5)=='bar2'
+    assert capsys.readouterr().out.strip() == '['bar', 'bar', 'bar2', 'bar2']'
+",
+    hint: "import bisect
+from collections import defaultdict
+class TimeMap:
+    def __init__(self):
+        self.d=defaultdict(list)
+    def set(self,key,value,timestamp):
+        self.d[key].append((timestamp,value))
+    def get(self,key,timestamp):
+        arr=self.d[key]; i=bisect.bisect_right(arr,(timestamp,chr(127)))-1
+        return arr[i][1] if i>=0 else \"\"
+t=TimeMap(); t.set(\"foo\",\"bar\",1); a=t.get(\"foo\",1); b=t.get(\"foo\",3); t.set(\"foo\",\"bar2\",4); c=t.get(\"foo\",4); d=t.get(\"foo\",5); print([a,b,c,d])",
+    solution_example: "import bisect
+from collections import defaultdict
+
+class TimeMap:
+    def __init__(self):
+        self.d = defaultdict(list)
+
+    def set(self, key, value, timestamp):
+        self.d[key].append((timestamp, value))
+
+    def get(self, key, timestamp):
+        arr = self.d[key]
+        i = bisect.bisect_right(arr, (timestamp, chr(127))) - 1
+        return arr[i][1] if i >= 0 else \"\"
+
+t = TimeMap()
+t.set(\"foo\", \"bar\", 1)
+a = t.get(\"foo\", 1)
+b = t.get(\"foo\", 3)
+t.set(\"foo\", \"bar2\", 4)
+c = t.get(\"foo\", 4)
+d = t.get(\"foo\", 5)
+print([a, b, c, d])
+",
+    next: Some("py-422-randomized-set"), show_type_chips: false, micro_step: 421,
+};
+
+
+pub const PY422_RANDOMIZED_SET: CodingStep = CodingStep {
+    id: "py-422-randomized-set", title: "DSA Randomized Set", objective: "Insert/remove/getRandom O(1).",
+    prompt_md: "**Insert Delete GetRandom O(1)**
+
+Lista + dict índices. Distinto de py-34.
+
+**Micro-reto:**
+1. Clase `RandomizedSet`
+2. insert 1,2; remove 1; getRandom debe ser 2; imprimí flags",
+    starter_code: "# class RandomizedSet:
+#     ...
+# r=RandomizedSet(); print([r.insert(1), r.insert(2), r.remove(1), r.getRandom()])
+",
+    pytest: "def test_422_randomized_set(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert 'RandomizedSet' in ns
+    R=ns['RandomizedSet']()
+    assert R.insert(1) is True and R.insert(2) is True and R.remove(1) is True and R.getRandom()==2
+    assert capsys.readouterr().out.strip() == '[True, True, True, 2]'
+",
+    hint: "import random
+class RandomizedSet:
+    def __init__(self):
+        self.arr=[]; self.idx={}
+    def insert(self, val):
+        if val in self.idx: return False
+        self.idx[val]=len(self.arr); self.arr.append(val); return True
+    def remove(self, val):
+        if val not in self.idx: return False
+        i=self.idx[val]; last=self.arr[-1]
+        self.arr[i]=last; self.idx[last]=i; self.arr.pop(); del self.idx[val]; return True
+    def getRandom(self):
+        return random.choice(self.arr)
+r=RandomizedSet(); print([r.insert(1), r.insert(2), r.remove(1), r.getRandom()])",
+    solution_example: "import random
+
+class RandomizedSet:
+    def __init__(self):
+        self.arr = []
+        self.idx = {}
+
+    def insert(self, val):
+        if val in self.idx:
+            return False
+        self.idx[val] = len(self.arr)
+        self.arr.append(val)
+        return True
+
+    def remove(self, val):
+        if val not in self.idx:
+            return False
+        i = self.idx[val]
+        last = self.arr[-1]
+        self.arr[i] = last
+        self.idx[last] = i
+        self.arr.pop()
+        del self.idx[val]
+        return True
+
+    def getRandom(self):
+        return random.choice(self.arr)
+
+r = RandomizedSet()
+print([r.insert(1), r.insert(2), r.remove(1), r.getRandom()])
+",
+    next: Some("py-423-moving-avg"), show_type_chips: false, micro_step: 422,
+};
+
+
+pub const PY423_MOVING_AVG: CodingStep = CodingStep {
+    id: "py-423-moving-avg", title: "DSA Moving Avg", objective: "Media móvil ventana size.",
+    prompt_md: "**Moving Average from Data Stream**
+
+Cola + suma. Distinto de py-373.
+
+**Micro-reto:**
+1. Clase `MovingAverage`
+2. size 3; next 1,10,3,5; imprimí medias",
+    starter_code: "# class MovingAverage:
+#     ...
+# m=MovingAverage(3); print([m.next(1), m.next(10), m.next(3), m.next(5)])
+",
+    pytest: "def test_423_moving_avg(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert 'MovingAverage' in ns
+    M=ns['MovingAverage'](3)
+    assert [M.next(1), M.next(10), M.next(3), M.next(5)] == [1.0, 5.5, 4.666666666666667, 6.0]
+    assert capsys.readouterr().out.strip() == '[1.0, 5.5, 4.666666666666667, 6.0]'
+",
+    hint: "from collections import deque
+class MovingAverage:
+    def __init__(self, size):
+        self.size=size; self.q=deque(); self.s=0
+    def next(self, val):
+        self.q.append(val); self.s+=val
+        if len(self.q)>self.size: self.s-=self.q.popleft()
+        return self.s/len(self.q)
+m=MovingAverage(3); print([m.next(1), m.next(10), m.next(3), m.next(5)])",
+    solution_example: "from collections import deque
+
+class MovingAverage:
+    def __init__(self, size):
+        self.size = size
+        self.q = deque()
+        self.s = 0
+
+    def next(self, val):
+        self.q.append(val)
+        self.s += val
+        if len(self.q) > self.size:
+            self.s -= self.q.popleft()
+        return self.s / len(self.q)
+
+m = MovingAverage(3)
+print([m.next(1), m.next(10), m.next(3), m.next(5)])
+",
+    next: Some("py-424-browser-history"), show_type_chips: false, micro_step: 423,
+};
+
+
+pub const PY424_BROWSER_HISTORY: CodingStep = CodingStep {
+    id: "py-424-browser-history", title: "DSA Browser History", objective: "Historial back/forward con dos stacks o lista+cursor.",
+    prompt_md: "**Design Browser History**
+
+Lista + índice. Distinto de py-180.
+
+**Micro-reto:**
+1. Clase `BrowserHistory`
+2. homepage leptos.dev; visit; back/forward; imprimí urls",
+    starter_code: "# class BrowserHistory:
+#     ...
+# b=BrowserHistory(\"leetcode.com\"); b.visit(\"google.com\"); b.visit(\"facebook.com\"); b.visit(\"youtube.com\"); a=b.back(1); c=b.back(1); d=b.forward(1); b.visit(\"linkedin.com\"); e=b.forward(2); f=b.back(2); g=b.back(7); print([a,c,d,e,f,g])
+",
+    pytest: "def test_424_browser_history(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert 'BrowserHistory' in ns
+    B=ns['BrowserHistory']('leetcode.com'); B.visit('google.com'); B.visit('facebook.com'); B.visit('youtube.com')
+    assert B.back(1)=='facebook.com' and B.back(1)=='google.com' and B.forward(1)=='facebook.com'
+    B.visit('linkedin.com'); assert B.forward(2)=='linkedin.com' and B.back(2)=='google.com' and B.back(7)=='leetcode.com'
+    assert capsys.readouterr().out.strip() == '['facebook.com', 'google.com', 'facebook.com', 'linkedin.com', 'google.com', 'leetcode.com']'
+",
+    hint: "class BrowserHistory:
+    def __init__(self, homepage):
+        self.h=[homepage]; self.i=0
+    def visit(self, url):
+        self.h=self.h[:self.i+1]; self.h.append(url); self.i+=1
+    def back(self, steps):
+        self.i=max(0,self.i-steps); return self.h[self.i]
+    def forward(self, steps):
+        self.i=min(len(self.h)-1,self.i+steps); return self.h[self.i]
+b=BrowserHistory(\"leetcode.com\"); b.visit(\"google.com\"); b.visit(\"facebook.com\"); b.visit(\"youtube.com\"); a=b.back(1); c=b.back(1); d=b.forward(1); b.visit(\"linkedin.com\"); e=b.forward(2); f=b.back(2); g=b.back(7); print([a,c,d,e,f,g])",
+    solution_example: "class BrowserHistory:
+    def __init__(self, homepage):
+        self.h = [homepage]
+        self.i = 0
+
+    def visit(self, url):
+        self.h = self.h[: self.i + 1]
+        self.h.append(url)
+        self.i += 1
+
+    def back(self, steps):
+        self.i = max(0, self.i - steps)
+        return self.h[self.i]
+
+    def forward(self, steps):
+        self.i = min(len(self.h) - 1, self.i + steps)
+        return self.h[self.i]
+
+b = BrowserHistory(\"leetcode.com\")
+b.visit(\"google.com\")
+b.visit(\"facebook.com\")
+b.visit(\"youtube.com\")
+a = b.back(1)
+c = b.back(1)
+d = b.forward(1)
+b.visit(\"linkedin.com\")
+e = b.forward(2)
+f = b.back(2)
+g = b.back(7)
+print([a, c, d, e, f, g])
+",
+    next: None, show_type_chips: false, micro_step: 424,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -7616,7 +8002,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY415_LONGEST_COMMON_PREF,
     &PY416_IS_SUBSEQUENCE,
     &PY417_DECODE_STRING,
-    &PY418_STRING_COMPRESS
+    &PY418_STRING_COMPRESS,
+    &PY419_MIN_STACK,
+    &PY420_LRU_CACHE,
+    &PY421_TIME_MAP,
+    &PY422_RANDOMIZED_SET,
+    &PY423_MOVING_AVG,
+    &PY424_BROWSER_HISTORY
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -7760,7 +8152,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 418);
+            assert!(step.micro_step >= 1 && step.micro_step <= 424);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -8314,7 +8706,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py418_curriculum_chain() {
+    fn py203_to_py424_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -8532,7 +8924,13 @@ mod tests {
             (415, "py-415-longest-common-pref", Some("py-416-is-subsequence")),
             (416, "py-416-is-subsequence", Some("py-417-decode-string")),
             (417, "py-417-decode-string", Some("py-418-string-compress")),
-            (418, "py-418-string-compress", None),
+            (418, "py-418-string-compress", Some("py-419-min-stack")),
+            (419, "py-419-min-stack", Some("py-420-lru-cache")),
+            (420, "py-420-lru-cache", Some("py-421-time-map")),
+            (421, "py-421-time-map", Some("py-422-randomized-set")),
+            (422, "py-422-randomized-set", Some("py-423-moving-avg")),
+            (423, "py-423-moving-avg", Some("py-424-browser-history")),
+            (424, "py-424-browser-history", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
