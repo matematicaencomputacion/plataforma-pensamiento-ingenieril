@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=346).
+    /// 1-based index on the workspace micro-step rail (1..=352).
     pub micro_step: i32,
 }
 
@@ -4330,8 +4330,74 @@ pub const PY346_RUNNING_SUM: CodingStep = CodingStep {
     pytest: "def test_346_running_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('running_sum'))\n    assert ns['running_sum']([1, 2, 3, 4]) == [1, 3, 6, 10]\n    assert ns['running_sum']([1, 1, 1, 1, 1]) == [1, 2, 3, 4, 5]\n    assert capsys.readouterr().out.strip() == '[1, 3, 6, 10]'\n",
     hint: "def running_sum(nums):\n    for i in range(1, len(nums)):\n        nums[i] += nums[i-1]\n    return nums\nprint(running_sum([1, 2, 3, 4]))",
     solution_example: "def running_sum(nums):\n    for i in range(1, len(nums)):\n        nums[i] += nums[i - 1]\n    return nums\n\nprint(running_sum([1, 2, 3, 4]))\n",
-    next: None, show_type_chips: false, micro_step: 346,
+    next: Some("py-347-next-greater"), show_type_chips: false, micro_step: 346,
 };
+
+pub const PY347_NEXT_GREATER: CodingStep = CodingStep {
+    id: "py-347-next-greater", title: "DSA Next Greater", objective: "Siguiente mayor a la derecha con stack monótono.",
+    prompt_md: "**Next Greater Element I**\n\nMapa nums1→next greater en nums2. Distinto de py-183 (daily temperatures).\n\n**Micro-reto:**\n1. Definí `next_greater_element(nums1, nums2)`\n2. nums1=`[4,1,2]`, nums2=`[1,3,4,2]`; imprimí (esperado: `[-1, 3, -1]`)",
+    starter_code: "# def next_greater_element(nums1, nums2):\n#     ...\n# print(next_greater_element([4, 1, 2], [1, 3, 4, 2]))\n",
+    pytest: "def test_347_next_greater(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('next_greater_element'))\n    assert ns['next_greater_element']([4, 1, 2], [1, 3, 4, 2]) == [-1, 3, -1]\n    assert ns['next_greater_element']([2, 4], [1, 2, 3, 4]) == [3, -1]\n    assert capsys.readouterr().out.strip() == '[-1, 3, -1]'\n",
+    hint: "def next_greater_element(nums1, nums2):\n    stack = []; nxt = {}\n    for x in nums2:\n        while stack and stack[-1] < x:\n            nxt[stack.pop()] = x\n        stack.append(x)\n    return [nxt.get(x, -1) for x in nums1]\nprint(next_greater_element([4, 1, 2], [1, 3, 4, 2]))",
+    solution_example: "def next_greater_element(nums1, nums2):\n    stack = []\n    nxt = {}\n    for x in nums2:\n        while stack and stack[-1] < x:\n            nxt[stack.pop()] = x\n        stack.append(x)\n    return [nxt.get(x, -1) for x in nums1]\n\nprint(next_greater_element([4, 1, 2], [1, 3, 4, 2]))\n",
+    next: Some("py-348-next-greater-ii"), show_type_chips: false, micro_step: 347,
+};
+
+
+pub const PY348_NEXT_GREATER_II: CodingStep = CodingStep {
+    id: "py-348-next-greater-ii", title: "DSA Next Greater II", objective: "Siguiente mayor circular (array como círculo).",
+    prompt_md: "**Next Greater Element II**\n\nDoble pasada / índices mod n. Distinto de py-347.\n\n**Micro-reto:**\n1. Definí `next_greater_elements(nums)`\n2. `[1,2,1]`; imprimí (esperado: `[2, -1, 2]`)",
+    starter_code: "# def next_greater_elements(nums):\n#     ...\n# print(next_greater_elements([1, 2, 1]))\n",
+    pytest: "def test_348_next_greater_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('next_greater_elements'))\n    assert ns['next_greater_elements']([1, 2, 1]) == [2, -1, 2]\n    assert ns['next_greater_elements']([1, 2, 3, 4, 3]) == [2, 3, 4, -1, 4]\n    assert capsys.readouterr().out.strip() == '[2, -1, 2]'\n",
+    hint: "def next_greater_elements(nums):\n    n = len(nums); out = [-1]*n; stack = []\n    for i in range(2*n):\n        x = nums[i % n]\n        while stack and nums[stack[-1]] < x:\n            out[stack.pop()] = x\n        if i < n: stack.append(i)\n    return out\nprint(next_greater_elements([1, 2, 1]))",
+    solution_example: "def next_greater_elements(nums):\n    n = len(nums)\n    out = [-1] * n\n    stack = []\n    for i in range(2 * n):\n        x = nums[i % n]\n        while stack and nums[stack[-1]] < x:\n            out[stack.pop()] = x\n        if i < n:\n            stack.append(i)\n    return out\n\nprint(next_greater_elements([1, 2, 1]))\n",
+    next: Some("py-349-daily-temps"), show_type_chips: false, micro_step: 348,
+};
+
+
+pub const PY349_DAILY_TEMPS: CodingStep = CodingStep {
+    id: "py-349-daily-temps", title: "DSA Daily Temps", objective: "Días hasta una temperatura más cálida (stack monótono).",
+    prompt_md: "**Daily Temperatures**\n\nStack de índices decreciente. Distinto de py-183 si existía variante; aquí II explícito.\n\n**Micro-reto:**\n1. Definí `daily_temperatures(temperatures)`\n2. `[73,74,75,71,69,72,76,73]`; imprimí (esperado: `[1, 1, 4, 2, 1, 1, 0, 0]`)",
+    starter_code: "# def daily_temperatures(temperatures):\n#     ...\n# print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))\n",
+    pytest: "def test_349_daily_temps(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('daily_temperatures'))\n    assert ns['daily_temperatures']([73, 74, 75, 71, 69, 72, 76, 73]) == [1, 1, 4, 2, 1, 1, 0, 0]\n    assert ns['daily_temperatures']([30, 40, 50, 60]) == [1, 1, 1, 0]\n    assert capsys.readouterr().out.strip() == '[1, 1, 4, 2, 1, 1, 0, 0]'\n",
+    hint: "def daily_temperatures(temperatures):\n    n = len(temperatures); out = [0]*n; stack = []\n    for i, t in enumerate(temperatures):\n        while stack and temperatures[stack[-1]] < t:\n            j = stack.pop(); out[j] = i - j\n        stack.append(i)\n    return out\nprint(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))",
+    solution_example: "def daily_temperatures(temperatures):\n    n = len(temperatures)\n    out = [0] * n\n    stack = []\n    for i, t in enumerate(temperatures):\n        while stack and temperatures[stack[-1]] < t:\n            j = stack.pop()\n            out[j] = i - j\n        stack.append(i)\n    return out\n\nprint(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))\n",
+    next: Some("py-350-online-stock"), show_type_chips: false, micro_step: 349,
+};
+
+
+pub const PY350_ONLINE_STOCK: CodingStep = CodingStep {
+    id: "py-350-online-stock", title: "DSA Online Stock", objective: "Span de precios: días consecutivos <= precio actual.",
+    prompt_md: "**Online Stock Span**\n\nStack (price, span). Distinto de py-349.\n\n**Micro-reto:**\n1. Clase `StockSpanner` con `next(price)`\n2. next 100,80,60,70,60,75,85; imprimí spans (esperado: `[1, 1, 1, 2, 1, 4, 6]`)",
+    starter_code: "# class StockSpanner:\n#     ...\n# s = StockSpanner()\n# print([s.next(p) for p in [100, 80, 60, 70, 60, 75, 85]])\n",
+    pytest: "def test_350_online_stock(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'StockSpanner' in ns\n    s = ns['StockSpanner']()\n    assert [s.next(p) for p in [100, 80, 60, 70, 60, 75, 85]] == [1, 1, 1, 2, 1, 4, 6]\n    assert capsys.readouterr().out.strip() == '[1, 1, 1, 2, 1, 4, 6]'\n",
+    hint: "class StockSpanner:\n    def __init__(self):\n        self.stack = []\n    def next(self, price):\n        span = 1\n        while self.stack and self.stack[-1][0] <= price:\n            span += self.stack.pop()[1]\n        self.stack.append((price, span)); return span\ns = StockSpanner()\nprint([s.next(p) for p in [100, 80, 60, 70, 60, 75, 85]])",
+    solution_example: "class StockSpanner:\n    def __init__(self):\n        self.stack = []\n\n    def next(self, price):\n        span = 1\n        while self.stack and self.stack[-1][0] <= price:\n            span += self.stack.pop()[1]\n        self.stack.append((price, span))\n        return span\n\ns = StockSpanner()\nprint([s.next(p) for p in [100, 80, 60, 70, 60, 75, 85]])\n",
+    next: Some("py-351-sum-subarray-mins"), show_type_chips: false, micro_step: 350,
+};
+
+
+pub const PY351_SUM_SUBARRAY_MINS: CodingStep = CodingStep {
+    id: "py-351-sum-subarray-mins", title: "DSA Sum Subarray Mins", objective: "Suma de mínimos de todos los subarrays (contribución con stack).",
+    prompt_md: "**Sum of Subarray Minimums**\n\nPrev/next menor estricto. Distinto de py-262 (largest rectangle).\n\n**Micro-reto:**\n1. Definí `sum_subarray_mins(arr)` mod `10**9+7`\n2. `[3,1,2,4]`; imprimí (esperado: `17`)",
+    starter_code: "# def sum_subarray_mins(arr):\n#     ...\n# print(sum_subarray_mins([3, 1, 2, 4]))\n",
+    pytest: "def test_351_sum_subarray_mins(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('sum_subarray_mins'))\n    assert ns['sum_subarray_mins']([3, 1, 2, 4]) == 17\n    assert ns['sum_subarray_mins']([11, 81, 94, 43, 3]) == 444\n    assert capsys.readouterr().out.strip() == '17'\n",
+    hint: "def sum_subarray_mins(arr):\n    MOD = 10**9+7; n = len(arr)\n    left = [i+1 for i in range(n)]; right = [n-i for i in range(n)]\n    stack = []\n    for i, x in enumerate(arr):\n        while stack and arr[stack[-1]] > x: stack.pop()\n        left[i] = i - stack[-1] if stack else i + 1\n        stack.append(i)\n    stack = []\n    for i in range(n-1, -1, -1):\n        while stack and arr[stack[-1]] >= arr[i]: stack.pop()\n        right[i] = stack[-1] - i if stack else n - i\n        stack.append(i)\n    return sum(a*l*r for a,l,r in zip(arr,left,right)) % MOD\nprint(sum_subarray_mins([3, 1, 2, 4]))",
+    solution_example: "def sum_subarray_mins(arr):\n    MOD = 10**9 + 7\n    n = len(arr)\n    left = [0] * n\n    right = [0] * n\n    stack = []\n    for i, x in enumerate(arr):\n        while stack and arr[stack[-1]] > x:\n            stack.pop()\n        left[i] = i - stack[-1] if stack else i + 1\n        stack.append(i)\n    stack = []\n    for i in range(n - 1, -1, -1):\n        while stack and arr[stack[-1]] >= arr[i]:\n            stack.pop()\n        right[i] = stack[-1] - i if stack else n - i\n        stack.append(i)\n    return sum(a * l * r for a, l, r in zip(arr, left, right)) % MOD\n\nprint(sum_subarray_mins([3, 1, 2, 4]))\n",
+    next: Some("py-352-remove-k-dupes"), show_type_chips: false, micro_step: 351,
+};
+
+
+pub const PY352_REMOVE_K_DUPES: CodingStep = CodingStep {
+    id: "py-352-remove-k-dupes", title: "DSA Remove K Dupes", objective: "Eliminar k duplicados adyacentes iguales con stack (count).",
+    prompt_md: "**Remove All Adjacent Duplicates in String II**\n\nStack (char, count). Distinto de py-182 (k=2 implícito).\n\n**Micro-reto:**\n1. Definí `remove_duplicates(s, k)`\n2. s=`\"deeedbbcccbdaa\"`, k=`3`; imprimí (esperado: `aa`)",
+    starter_code: "# def remove_duplicates(s, k):\n#     ...\n# print(remove_duplicates(\"deeedbbcccbdaa\", 3))\n",
+    pytest: "def test_352_remove_k_dupes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('remove_duplicates'))\n    assert ns['remove_duplicates']('deeedbbcccbdaa', 3) == 'aa'\n    assert ns['remove_duplicates']('abcd', 2) == 'abcd'\n    assert ns['remove_duplicates']('pbbcggttciiippooaais', 2) == 'ps'\n    assert capsys.readouterr().out.strip() == 'aa'\n",
+    hint: "def remove_duplicates(s, k):\n    stack = []\n    for ch in s:\n        if stack and stack[-1][0] == ch:\n            stack[-1][1] += 1\n            if stack[-1][1] == k: stack.pop()\n        else:\n            stack.append([ch, 1])\n    return \"\".join(ch*c for ch,c in stack)\nprint(remove_duplicates(\"deeedbbcccbdaa\", 3))",
+    solution_example: "def remove_duplicates(s, k):\n    stack = []\n    for ch in s:\n        if stack and stack[-1][0] == ch:\n            stack[-1][1] += 1\n            if stack[-1][1] == k:\n                stack.pop()\n        else:\n            stack.append([ch, 1])\n    return \"\".join(ch * c for ch, c in stack)\n\nprint(remove_duplicates(\"deeedbbcccbdaa\", 3))\n",
+    next: None, show_type_chips: false, micro_step: 352,
+};
+
 
 
 
@@ -4687,6 +4753,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY344_CORP_FLIGHT,
     &PY345_PIVOT_INDEX,
     &PY346_RUNNING_SUM,
+    &PY347_NEXT_GREATER,
+    &PY348_NEXT_GREATER_II,
+    &PY349_DAILY_TEMPS,
+    &PY350_ONLINE_STOCK,
+    &PY351_SUM_SUBARRAY_MINS,
+    &PY352_REMOVE_K_DUPES,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4830,7 +4902,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 346);
+            assert!(step.micro_step >= 1 && step.micro_step <= 352);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -5384,7 +5456,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py346_curriculum_chain() {
+    fn py203_to_py352_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -5530,7 +5602,13 @@ mod tests {
             (343, "py-343-product-except", Some("py-344-corp-flight")),
             (344, "py-344-corp-flight", Some("py-345-pivot-index")),
             (345, "py-345-pivot-index", Some("py-346-running-sum")),
-            (346, "py-346-running-sum", None),
+            (346, "py-346-running-sum", Some("py-347-next-greater")),
+            (347, "py-347-next-greater", Some("py-348-next-greater-ii")),
+            (348, "py-348-next-greater-ii", Some("py-349-daily-temps")),
+            (349, "py-349-daily-temps", Some("py-350-online-stock")),
+            (350, "py-350-online-stock", Some("py-351-sum-subarray-mins")),
+            (351, "py-351-sum-subarray-mins", Some("py-352-remove-k-dupes")),
+            (352, "py-352-remove-k-dupes", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

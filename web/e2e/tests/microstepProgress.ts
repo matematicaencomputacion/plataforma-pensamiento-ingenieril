@@ -352,6 +352,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 344, step_id: "py-344-corp-flight" },
   { level_id: 345, step_id: "py-345-pivot-index" },
   { level_id: 346, step_id: "py-346-running-sum" },
+  { level_id: 347, step_id: "py-347-next-greater" },
+  { level_id: 348, step_id: "py-348-next-greater-ii" },
+  { level_id: 349, step_id: "py-349-daily-temps" },
+  { level_id: 350, step_id: "py-350-online-stock" },
+  { level_id: 351, step_id: "py-351-sum-subarray-mins" },
+  { level_id: 352, step_id: "py-352-remove-k-dupes" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

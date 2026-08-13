@@ -22,123 +22,138 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 341,
-    id: "py-341-range-sum",
-    title: "DSA Range Sum",
-    solution: `class NumArray:
-    def __init__(self, nums):
-        self.pref = [0]
-        for x in nums:
-            self.pref.append(self.pref[-1] + x)
+    micro: 347,
+    id: "py-347-next-greater",
+    title: "DSA Next Greater",
+    solution: `def next_greater_element(nums1, nums2):
+    stack = []
+    nxt = {}
+    for x in nums2:
+        while stack and stack[-1] < x:
+            nxt[stack.pop()] = x
+        stack.append(x)
+    return [nxt.get(x, -1) for x in nums1]
 
-    def sum_range(self, left, right):
-        return self.pref[right + 1] - self.pref[left]
-
-n = NumArray([-2, 0, 3, -5, 2, -1])
-print([n.sum_range(0, 2), n.sum_range(2, 5), n.sum_range(0, 5)])
+print(next_greater_element([4, 1, 2], [1, 3, 4, 2]))
 `,
-    nextUrl: /\/learn\/py-342-subarray-sum/,
-    cursorAfter: "342",
+    nextUrl: /\/learn\/py-348-next-greater-ii/,
+    cursorAfter: "348",
   },
   {
-    micro: 342,
-    id: "py-342-subarray-sum",
-    title: "DSA Subarray Sum",
-    solution: `from collections import defaultdict
-
-def subarray_sum(nums, k):
-    count = defaultdict(int)
-    count[0] = 1
-    pref = ans = 0
-    for x in nums:
-        pref += x
-        ans += count[pref - k]
-        count[pref] += 1
-    return ans
-
-print(subarray_sum([1, 1, 1], 2))
-`,
-    nextUrl: /\/learn\/py-343-product-except/,
-    cursorAfter: "343",
-  },
-  {
-    micro: 343,
-    id: "py-343-product-except",
-    title: "DSA Product Except",
-    solution: `def product_except_self(nums):
+    micro: 348,
+    id: "py-348-next-greater-ii",
+    title: "DSA Next Greater II",
+    solution: `def next_greater_elements(nums):
     n = len(nums)
-    out = [1] * n
-    left = 1
-    for i in range(n):
-        out[i] = left
-        left *= nums[i]
-    right = 1
-    for i in range(n - 1, -1, -1):
-        out[i] *= right
-        right *= nums[i]
+    out = [-1] * n
+    stack = []
+    for i in range(2 * n):
+        x = nums[i % n]
+        while stack and nums[stack[-1]] < x:
+            out[stack.pop()] = x
+        if i < n:
+            stack.append(i)
     return out
 
-print(product_except_self([1, 2, 3, 4]))
+print(next_greater_elements([1, 2, 1]))
 `,
-    nextUrl: /\/learn\/py-344-corp-flight/,
-    cursorAfter: "344",
+    nextUrl: /\/learn\/py-349-daily-temps/,
+    cursorAfter: "349",
   },
   {
-    micro: 344,
-    id: "py-344-corp-flight",
-    title: "DSA Corp Flight",
-    solution: `def corp_flight_bookings(bookings, n):
-    diff = [0] * (n + 1)
-    for first, last, seats in bookings:
-        diff[first - 1] += seats
-        if last < n:
-            diff[last] -= seats
-    for i in range(1, n):
-        diff[i] += diff[i - 1]
-    return diff[:n]
+    micro: 349,
+    id: "py-349-daily-temps",
+    title: "DSA Daily Temps",
+    solution: `def daily_temperatures(temperatures):
+    n = len(temperatures)
+    out = [0] * n
+    stack = []
+    for i, t in enumerate(temperatures):
+        while stack and temperatures[stack[-1]] < t:
+            j = stack.pop()
+            out[j] = i - j
+        stack.append(i)
+    return out
 
-print(corp_flight_bookings([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5))
+print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
 `,
-    nextUrl: /\/learn\/py-345-pivot-index/,
-    cursorAfter: "345",
+    nextUrl: /\/learn\/py-350-online-stock/,
+    cursorAfter: "350",
   },
   {
-    micro: 345,
-    id: "py-345-pivot-index",
-    title: "DSA Pivot Index",
-    solution: `def pivot_index(nums):
-    total = sum(nums)
-    left = 0
-    for i, x in enumerate(nums):
-        if left == total - left - x:
-            return i
-        left += x
-    return -1
+    micro: 350,
+    id: "py-350-online-stock",
+    title: "DSA Online Stock",
+    solution: `class StockSpanner:
+    def __init__(self):
+        self.stack = []
 
-print(pivot_index([1, 7, 3, 6, 5, 6]))
+    def next(self, price):
+        span = 1
+        while self.stack and self.stack[-1][0] <= price:
+            span += self.stack.pop()[1]
+        self.stack.append((price, span))
+        return span
+
+s = StockSpanner()
+print([s.next(p) for p in [100, 80, 60, 70, 60, 75, 85]])
 `,
-    nextUrl: /\/learn\/py-346-running-sum/,
-    cursorAfter: "346",
+    nextUrl: /\/learn\/py-351-sum-subarray-mins/,
+    cursorAfter: "351",
   },
   {
-    micro: 346,
-    id: "py-346-running-sum",
-    title: "DSA Running Sum",
-    solution: `def running_sum(nums):
-    for i in range(1, len(nums)):
-        nums[i] += nums[i - 1]
-    return nums
+    micro: 351,
+    id: "py-351-sum-subarray-mins",
+    title: "DSA Sum Subarray Mins",
+    solution: `def sum_subarray_mins(arr):
+    MOD = 10**9 + 7
+    n = len(arr)
+    left = [0] * n
+    right = [0] * n
+    stack = []
+    for i, x in enumerate(arr):
+        while stack and arr[stack[-1]] > x:
+            stack.pop()
+        left[i] = i - stack[-1] if stack else i + 1
+        stack.append(i)
+    stack = []
+    for i in range(n - 1, -1, -1):
+        while stack and arr[stack[-1]] >= arr[i]:
+            stack.pop()
+        right[i] = stack[-1] - i if stack else n - i
+        stack.append(i)
+    return sum(a * l * r for a, l, r in zip(arr, left, right)) % MOD
 
-print(running_sum([1, 2, 3, 4]))
+print(sum_subarray_mins([3, 1, 2, 4]))
 `,
-    nextUrl: /\/learn\/py-347-next-greater/,
-    cursorAfter: "347",
+    nextUrl: /\/learn\/py-352-remove-k-dupes/,
+    cursorAfter: "352",
+  },
+  {
+    micro: 352,
+    id: "py-352-remove-k-dupes",
+    title: "DSA Remove K Dupes",
+    solution: `def remove_duplicates(s, k):
+    stack = []
+    for ch in s:
+        if stack and stack[-1][0] == ch:
+            stack[-1][1] += 1
+            if stack[-1][1] == k:
+                stack.pop()
+        else:
+            stack.append([ch, 1])
+    return "".join(ch * c for ch, c in stack)
+
+print(remove_duplicates("deeedbbcccbdaa", 3))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "353",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-34[1-6]-/);
+    expect(step.id).toMatch(/^py-34[7-9]-|^py-35[0-2]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -168,7 +183,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 341–346 · prefix sums II", () => {
+test.describe("micro-steps 347–352 · monotonic stack II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
