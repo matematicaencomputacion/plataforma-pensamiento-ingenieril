@@ -310,6 +310,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 302, step_id: "py-302-range-bitwise" },
   { level_id: 303, step_id: "py-303-single-number-iii" },
   { level_id: 304, step_id: "py-304-hamming-weight" },
+  { level_id: 305, step_id: "py-305-max-path-sum" },
+  { level_id: 306, step_id: "py-306-serialize-tree" },
+  { level_id: 307, step_id: "py-307-build-tree" },
+  { level_id: 308, step_id: "py-308-kth-bst" },
+  { level_id: 309, step_id: "py-309-level-order" },
+  { level_id: 310, step_id: "py-310-is-balanced" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
