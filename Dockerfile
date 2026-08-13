@@ -12,7 +12,7 @@ FROM --platform=linux/amd64 rust:1-bookworm AS web-builder
 ARG TRUNK_VERSION=0.21.14
 # Cache bust: Cloud Build / Developer Connect should pass the git SHA.
 # Fallback stamps must bump whenever SPA UX ships and BuildKit might cache web.
-ARG PPI_BUILD_ID=stamp-v5-20260813-workspace-fullwidth
+ARG PPI_BUILD_ID=stamp-v6-20260813-rail-all-clickable
 # Bookworm apt binaryen is too old for wasm-bindgen externref + wasm-opt.
 # data-wasm-opt="0" in index.html — binaryen not required.
 
@@ -56,7 +56,7 @@ RUN rm -rf dist target \
 # ---- go API (embeds Trunk dist) ----
 FROM --platform=linux/amd64 golang:1.25-alpine AS builder
 
-ARG PPI_BUILD_ID=stamp-v5-20260813-workspace-fullwidth
+ARG PPI_BUILD_ID=stamp-v6-20260813-rail-all-clickable
 
 RUN apk add --no-cache ca-certificates git
 
@@ -87,7 +87,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 # ---- runtime ----
 FROM --platform=linux/amd64 alpine:latest
 
-ARG PPI_BUILD_ID=stamp-v5-20260813-workspace-fullwidth
+ARG PPI_BUILD_ID=stamp-v6-20260813-rail-all-clickable
 
 RUN apk add --no-cache ca-certificates tzdata \
     && adduser -D -H -u 10001 appuser

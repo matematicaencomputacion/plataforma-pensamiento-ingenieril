@@ -77,7 +77,9 @@ test.describe("micro-step 7 · Python Data Types", () => {
     );
 
     await expect(page.locator("#workspace-microstep-link-7")).toBeVisible();
-    await expect(page.locator("#workspace-microstep-link-8")).toHaveCount(0);
+    await expect(page.locator(
+      `#workspace-microsteps [data-microstep="8"]`,
+    )).toHaveClass(/workspace__microstep--jumpable/);
 
     await page.locator("#workspace-microstep-link-7").click();
     await expect(page).toHaveURL(/\/learn\/py-07-data-types/, {

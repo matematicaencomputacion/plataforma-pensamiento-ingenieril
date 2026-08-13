@@ -142,9 +142,18 @@ test.describe("micro-steps 179–184 · stacks / deque", () => {
       await expect(
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
-      await expect(
-        page.locator(`#workspace-microstep-link-${step.micro + 1}`),
-      ).toHaveCount(0);
+      const nextMicro = step.micro + 1;
+      if (nextMicro <= 304) {
+        await expect(
+          page.locator(
+            `#workspace-microsteps [data-microstep="${nextMicro}"]`,
+          ),
+        ).toHaveClass(/workspace__microstep--jumpable/);
+      } else {
+        await expect(
+          page.locator(`#workspace-microstep-link-${nextMicro}`),
+        ).toHaveCount(0);
+      }
 
       await page.locator(`#workspace-microstep-link-${step.micro}`).click();
       await expect(page).toHaveURL(new RegExp(`/learn/${step.id}`), {

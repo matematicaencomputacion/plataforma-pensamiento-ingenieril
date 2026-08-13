@@ -77,7 +77,9 @@ test.describe("micro-step 8 · Python Numbers", () => {
     );
 
     await expect(page.locator("#workspace-microstep-link-8")).toBeVisible();
-    await expect(page.locator("#workspace-microstep-link-9")).toHaveCount(0);
+    await expect(page.locator(
+      `#workspace-microsteps [data-microstep="9"]`,
+    )).toHaveClass(/workspace__microstep--jumpable/);
 
     await page.locator("#workspace-microstep-link-8").click();
     await expect(page).toHaveURL(/\/learn\/py-08-numbers/, { timeout: e2eTimeout });
