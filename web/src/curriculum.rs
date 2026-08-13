@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=394).
+    /// 1-based index on the workspace micro-step rail (1..=400).
     pub micro_step: i32,
 }
 
@@ -6172,7 +6172,241 @@ print(word_break(\"leetcode\", [\"leet\", \"code\"]))",
 
 print(word_break(\"leetcode\", [\"leet\", \"code\"]))
 ",
-    next: None, show_type_chips: false, micro_step: 394,
+    next: Some("py-395-reverse-list"), show_type_chips: false, micro_step: 394,
+};
+
+
+pub const PY395_REVERSE_LIST: CodingStep = CodingStep {
+    id: "py-395-reverse-list", title: "DSA Reverse List", objective: "Revertir lista (array) in-place conceptual.",
+    prompt_md: "**Reverse Linked List** (lista como array)
+
+Two pointers. Distinto de py-82.
+
+**Micro-reto:**
+1. Definí `reverse_list(head)`
+2. `[1,2,3,4,5]`; imprimí (esperado: `[5, 4, 3, 2, 1]`)",
+    starter_code: "# def reverse_list(head):
+#     ...
+# print(reverse_list([1, 2, 3, 4, 5]))
+",
+    pytest: "def test_395_reverse_list(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('reverse_list'))
+    assert ns['reverse_list']([1, 2, 3, 4, 5]) == [5, 4, 3, 2, 1]
+    assert ns['reverse_list']([1, 2]) == [2, 1]
+    assert capsys.readouterr().out.strip() == '[5, 4, 3, 2, 1]'
+",
+    hint: "def reverse_list(head):
+    return head[::-1]
+print(reverse_list([1, 2, 3, 4, 5]))",
+    solution_example: "def reverse_list(head):
+    return head[::-1]
+
+print(reverse_list([1, 2, 3, 4, 5]))
+",
+    next: Some("py-396-merge-two-lists"), show_type_chips: false, micro_step: 395,
+};
+
+
+pub const PY396_MERGE_TWO_LISTS: CodingStep = CodingStep {
+    id: "py-396-merge-two-lists", title: "DSA Merge Two Lists", objective: "Fusionar dos listas sorted.",
+    prompt_md: "**Merge Two Sorted Lists**
+
+Two pointers. Distinto de py-367.
+
+**Micro-reto:**
+1. Definí `merge_two_lists(l1, l2)`
+2. `[1,2,4]` y `[1,3,4]`; imprimí (esperado: `[1, 1, 2, 3, 4, 4]`)",
+    starter_code: "# def merge_two_lists(l1, l2):
+#     ...
+# print(merge_two_lists([1, 2, 4], [1, 3, 4]))
+",
+    pytest: "def test_396_merge_two_lists(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('merge_two_lists'))
+    assert ns['merge_two_lists']([1, 2, 4], [1, 3, 4]) == [1, 1, 2, 3, 4, 4]
+    assert ns['merge_two_lists']([], [0]) == [0]
+    assert capsys.readouterr().out.strip() == '[1, 1, 2, 3, 4, 4]'
+",
+    hint: "def merge_two_lists(l1, l2):
+    import heapq
+    return list(heapq.merge(l1,l2))
+print(merge_two_lists([1, 2, 4], [1, 3, 4]))",
+    solution_example: "import heapq
+
+def merge_two_lists(l1, l2):
+    return list(heapq.merge(l1, l2))
+
+print(merge_two_lists([1, 2, 4], [1, 3, 4]))
+",
+    next: Some("py-397-has-cycle"), show_type_chips: false, micro_step: 396,
+};
+
+
+pub const PY397_HAS_CYCLE: CodingStep = CodingStep {
+    id: "py-397-has-cycle", title: "DSA Has Cycle", objective: "Detectar ciclo con Floyd (simulado con next idxs).",
+    prompt_md: "**Linked List Cycle**
+
+pos index: -1 sin ciclo. Distinto de py-83.
+
+**Micro-reto:**
+1. Definí `has_cycle(vals, pos)`
+2. vals=`[3,2,0,-4]`, pos=`1`; imprimí `True`",
+    starter_code: "# def has_cycle(vals, pos):
+#     ...
+# print(has_cycle([3, 2, 0, -4], 1))
+",
+    pytest: "def test_397_has_cycle(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('has_cycle'))
+    assert ns['has_cycle']([3, 2, 0, -4], 1) is True
+    assert ns['has_cycle']([1, 2], 0) is True
+    assert ns['has_cycle']([1], -1) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def has_cycle(vals, pos):
+    if pos < 0: return False
+    n=len(vals); nxt=list(range(1,n))+([-1] if pos<0 else [pos])
+    if pos<0: nxt[-1]=-1
+    else: nxt[-1]=pos
+    slow=fast=0
+    while fast!=-1 and nxt[fast]!=-1:
+        slow=nxt[slow]; fast=nxt[nxt[fast]]
+        if slow==fast: return True
+    return False
+print(has_cycle([3, 2, 0, -4], 1))",
+    solution_example: "def has_cycle(vals, pos):
+    n = len(vals)
+    nxt = list(range(1, n)) + [-1]
+    if pos >= 0:
+        nxt[-1] = pos
+    slow = fast = 0
+    while fast != -1 and nxt[fast] != -1:
+        slow = nxt[slow]
+        fast = nxt[nxt[fast]]
+        if slow == fast:
+            return True
+    return False
+
+print(has_cycle([3, 2, 0, -4], 1))
+",
+    next: Some("py-398-remove-nth"), show_type_chips: false, micro_step: 397,
+};
+
+
+pub const PY398_REMOVE_NTH: CodingStep = CodingStep {
+    id: "py-398-remove-nth", title: "DSA Remove Nth", objective: "Eliminar n-ésimo desde el final.",
+    prompt_md: "**Remove Nth Node From End of List**
+
+Two pointers gap n. Distinto de py-84.
+
+**Micro-reto:**
+1. Definí `remove_nth_from_end(head, n)`
+2. `[1,2,3,4,5]`, n=`2`; imprimí (esperado: `[1, 2, 3, 5]`)",
+    starter_code: "# def remove_nth_from_end(head, n):
+#     ...
+# print(remove_nth_from_end([1, 2, 3, 4, 5], 2))
+",
+    pytest: "def test_398_remove_nth(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('remove_nth_from_end'))
+    assert ns['remove_nth_from_end']([1, 2, 3, 4, 5], 2) == [1, 2, 3, 5]
+    assert ns['remove_nth_from_end']([1], 1) == []
+    assert ns['remove_nth_from_end']([1, 2], 1) == [1]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3, 5]'
+",
+    hint: "def remove_nth_from_end(head, n):
+    del head[-n]; return head
+print(remove_nth_from_end([1, 2, 3, 4, 5], 2))",
+    solution_example: "def remove_nth_from_end(head, n):
+    del head[-n]
+    return head
+
+print(remove_nth_from_end([1, 2, 3, 4, 5], 2))
+",
+    next: Some("py-399-palindrome-list"), show_type_chips: false, micro_step: 398,
+};
+
+
+pub const PY399_PALINDROME_LIST: CodingStep = CodingStep {
+    id: "py-399-palindrome-list", title: "DSA Palindrome List", objective: "¿La lista es palíndromo?",
+    prompt_md: "**Palindrome Linked List**
+
+Comparar con reverse. Distinto de py-85.
+
+**Micro-reto:**
+1. Definí `is_palindrome(head)`
+2. `[1,2,2,1]`; imprimí `True`",
+    starter_code: "# def is_palindrome(head):
+#     ...
+# print(is_palindrome([1, 2, 2, 1]))
+",
+    pytest: "def test_399_palindrome_list(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_palindrome'))
+    assert ns['is_palindrome']([1, 2, 2, 1]) is True
+    assert ns['is_palindrome']([1, 2]) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_palindrome(head):
+    return head==head[::-1]
+print(is_palindrome([1, 2, 2, 1]))",
+    solution_example: "def is_palindrome(head):
+    return head == head[::-1]
+
+print(is_palindrome([1, 2, 2, 1]))
+",
+    next: Some("py-400-add-two-numbers"), show_type_chips: false, micro_step: 399,
+};
+
+
+pub const PY400_ADD_TWO_NUMBERS: CodingStep = CodingStep {
+    id: "py-400-add-two-numbers", title: "DSA Add Two Numbers", objective: "Sumar dos enteros representados como dígitos LSB-first.",
+    prompt_md: "**Add Two Numbers**
+
+Carry digit a digit. Distinto de py-86.
+
+**Micro-reto:**
+1. Definí `add_two_numbers(l1, l2)`
+2. `[2,4,3]` + `[5,6,4]`; imprimí (esperado: `[7, 0, 8]`)",
+    starter_code: "# def add_two_numbers(l1, l2):
+#     ...
+# print(add_two_numbers([2, 4, 3], [5, 6, 4]))
+",
+    pytest: "def test_400_add_two_numbers(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('add_two_numbers'))
+    assert ns['add_two_numbers']([2, 4, 3], [5, 6, 4]) == [7, 0, 8]
+    assert ns['add_two_numbers']([0], [0]) == [0]
+    assert ns['add_two_numbers']([9, 9, 9, 9, 9, 9, 9], [9, 9, 9, 9]) == [8, 9, 9, 9, 0, 0, 0, 1]
+    assert capsys.readouterr().out.strip() == '[7, 0, 8]'
+",
+    hint: "def add_two_numbers(l1, l2):
+    i=carry=0; out=[]
+    while i<len(l1) or i<len(l2) or carry:
+        s=carry+(l1[i] if i<len(l1) else 0)+(l2[i] if i<len(l2) else 0)
+        out.append(s%10); carry=s//10; i+=1
+    return out
+print(add_two_numbers([2, 4, 3], [5, 6, 4]))",
+    solution_example: "def add_two_numbers(l1, l2):
+    i = carry = 0
+    out = []
+    while i < len(l1) or i < len(l2) or carry:
+        s = carry + (l1[i] if i < len(l1) else 0) + (l2[i] if i < len(l2) else 0)
+        out.append(s % 10)
+        carry = s // 10
+        i += 1
+    return out
+
+print(add_two_numbers([2, 4, 3], [5, 6, 4]))
+",
+    next: None, show_type_chips: false, micro_step: 400,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -6569,7 +6803,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY391_COIN_CHANGE,
     &PY392_LIS_LENGTH,
     &PY393_UNIQUE_PATHS,
-    &PY394_WORD_BREAK
+    &PY394_WORD_BREAK,
+    &PY395_REVERSE_LIST,
+    &PY396_MERGE_TWO_LISTS,
+    &PY397_HAS_CYCLE,
+    &PY398_REMOVE_NTH,
+    &PY399_PALINDROME_LIST,
+    &PY400_ADD_TWO_NUMBERS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -6713,7 +6953,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 394);
+            assert!(step.micro_step >= 1 && step.micro_step <= 400);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -7267,7 +7507,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py394_curriculum_chain() {
+    fn py203_to_py400_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -7461,7 +7701,13 @@ mod tests {
             (391, "py-391-coin-change", Some("py-392-lis-length")),
             (392, "py-392-lis-length", Some("py-393-unique-paths")),
             (393, "py-393-unique-paths", Some("py-394-word-break")),
-            (394, "py-394-word-break", None),
+            (394, "py-394-word-break", Some("py-395-reverse-list")),
+            (395, "py-395-reverse-list", Some("py-396-merge-two-lists")),
+            (396, "py-396-merge-two-lists", Some("py-397-has-cycle")),
+            (397, "py-397-has-cycle", Some("py-398-remove-nth")),
+            (398, "py-398-remove-nth", Some("py-399-palindrome-list")),
+            (399, "py-399-palindrome-list", Some("py-400-add-two-numbers")),
+            (400, "py-400-add-two-numbers", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

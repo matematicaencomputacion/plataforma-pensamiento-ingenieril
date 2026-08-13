@@ -400,6 +400,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 392, step_id: "py-392-lis-length" },
   { level_id: 393, step_id: "py-393-unique-paths" },
   { level_id: 394, step_id: "py-394-word-break" },
+  { level_id: 395, step_id: "py-395-reverse-list" },
+  { level_id: 396, step_id: "py-396-merge-two-lists" },
+  { level_id: 397, step_id: "py-397-has-cycle" },
+  { level_id: 398, step_id: "py-398-remove-nth" },
+  { level_id: 399, step_id: "py-399-palindrome-list" },
+  { level_id: 400, step_id: "py-400-add-two-numbers" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
