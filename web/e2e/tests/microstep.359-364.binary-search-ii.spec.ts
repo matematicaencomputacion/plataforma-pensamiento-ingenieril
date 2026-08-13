@@ -45,7 +45,7 @@ const FAMILY: FamilyStep[] = [
 
 print(search([4, 5, 6, 7, 0, 1, 2], 0))
 `,
-    nextUrl: /\\/learn\\/py-360-find-min-rotated/,
+    nextUrl: /\/learn\/py-360-find-min-rotated/,
     cursorAfter: "360",
   },
   {
@@ -64,7 +64,7 @@ print(search([4, 5, 6, 7, 0, 1, 2], 0))
 
 print(find_min([3, 4, 5, 1, 2]))
 `,
-    nextUrl: /\\/learn\\/py-361-first-last-pos/,
+    nextUrl: /\/learn\/py-361-first-last-pos/,
     cursorAfter: "361",
   },
   {
@@ -81,7 +81,7 @@ def search_range(nums, target):
 
 print(search_range([5, 7, 7, 8, 8, 10], 8))
 `,
-    nextUrl: /\\/learn\\/py-362-peak-index/,
+    nextUrl: /\/learn\/py-362-peak-index/,
     cursorAfter: "362",
   },
   {
@@ -100,7 +100,7 @@ print(search_range([5, 7, 7, 8, 8, 10], 8))
 
 print(peak_index_in_mountain_array([0, 1, 0]))
 `,
-    nextUrl: /\\/learn\\/py-363-koko-bananas/,
+    nextUrl: /\/learn\/py-363-koko-bananas/,
     cursorAfter: "363",
   },
   {
@@ -121,7 +121,7 @@ def min_eating_speed(piles, h):
 
 print(min_eating_speed([3, 6, 7, 11], 8))
 `,
-    nextUrl: /\\/learn\\/py-364-ship-packages/,
+    nextUrl: /\/learn\/py-364-ship-packages/,
     cursorAfter: "364",
   },
   {
@@ -149,7 +149,7 @@ print(min_eating_speed([3, 6, 7, 11], 8))
 
 print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
 `,
-    nextUrl: /\\/workspace/,
+    nextUrl: /\/workspace/,
     cursorAfter: "365",
   }
 ];
