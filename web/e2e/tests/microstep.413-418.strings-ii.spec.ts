@@ -22,132 +22,121 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 407,
-    id: "py-407-spiral-order",
-    title: "DSA Spiral Order",
-    solution: `def spiral_order(matrix):
-    out = []
-    while matrix:
-        out += matrix.pop(0)
-        if matrix and matrix[0]:
-            for row in matrix:
-                out.append(row.pop())
-        if matrix:
-            out += matrix.pop()[::-1]
-        if matrix and matrix[0]:
-            for row in matrix[::-1]:
-                out.append(row.pop(0))
-    return out
+    micro: 413,
+    id: "py-413-valid-anagram",
+    title: "DSA Valid Anagram",
+    solution: `from collections import Counter
 
-print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+def is_anagram(s, t):
+    return Counter(s) == Counter(t)
+
+print(is_anagram("anagram", "nagaram"))
 `,
-    nextUrl: /\/learn\/py-408-set-zeroes/,
-    cursorAfter: "408",
+    nextUrl: /\/learn\/py-414-group-anagrams/,
+    cursorAfter: "414",
   },
   {
-    micro: 408,
-    id: "py-408-set-zeroes",
-    title: "DSA Set Zeroes",
-    solution: `def set_zeroes(matrix):
-    m, n = len(matrix), len(matrix[0])
-    rows = {i for i in range(m) for j in range(n) if matrix[i][j] == 0}
-    cols = {j for i in range(m) for j in range(n) if matrix[i][j] == 0}
-    for i in range(m):
-        for j in range(n):
-            if i in rows or j in cols:
-                matrix[i][j] = 0
-    return matrix
+    micro: 414,
+    id: "py-414-group-anagrams",
+    title: "DSA Group Anagrams",
+    solution: `from collections import defaultdict
 
-print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
+def group_anagrams(strs):
+    d = defaultdict(list)
+    for s in strs:
+        d["".join(sorted(s))].append(s)
+    return list(d.values())
+
+print(sorted([sorted(g) for g in group_anagrams(["eat", "tea", "tan", "ate", "nat", "bat"])]))
 `,
-    nextUrl: /\/learn\/py-409-rotate-image/,
-    cursorAfter: "409",
+    nextUrl: /\/learn\/py-415-longest-common-pref/,
+    cursorAfter: "415",
   },
   {
-    micro: 409,
-    id: "py-409-rotate-image",
-    title: "DSA Rotate Image",
-    solution: `def rotate(matrix):
-    n = len(matrix)
-    for i in range(n):
-        for j in range(i + 1, n):
-            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
-    for row in matrix:
-        row.reverse()
-    return matrix
+    micro: 415,
+    id: "py-415-longest-common-pref",
+    title: "DSA Longest Pref",
+    solution: `def longest_common_prefix(strs):
+    if not strs:
+        return ""
+    for i, ch in enumerate(strs[0]):
+        for s in strs[1:]:
+            if i >= len(s) or s[i] != ch:
+                return strs[0][:i]
+    return strs[0]
 
-print(rotate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+print(longest_common_prefix(["flower", "flow", "flight"]))
 `,
-    nextUrl: /\/learn\/py-410-search-2d/,
-    cursorAfter: "410",
+    nextUrl: /\/learn\/py-416-is-subsequence/,
+    cursorAfter: "416",
   },
   {
-    micro: 410,
-    id: "py-410-search-2d",
-    title: "DSA Search 2D",
-    solution: `def search_matrix(matrix, target):
-    if not matrix:
-        return False
-    r, c = 0, len(matrix[0]) - 1
-    while r < len(matrix) and c >= 0:
-        if matrix[r][c] == target:
-            return True
-        if matrix[r][c] > target:
-            c -= 1
+    micro: 416,
+    id: "py-416-is-subsequence",
+    title: "DSA Is Subsequence",
+    solution: `def is_subsequence(s, t):
+    it = iter(t)
+    return all(c in it for c in s)
+
+print(is_subsequence("abc", "ahbgdc"))
+`,
+    nextUrl: /\/learn\/py-417-decode-string/,
+    cursorAfter: "417",
+  },
+  {
+    micro: 417,
+    id: "py-417-decode-string",
+    title: "DSA Decode String",
+    solution: `def decode_string(s):
+    stack = []
+    cur = ""
+    num = 0
+    for ch in s:
+        if ch.isdigit():
+            num = num * 10 + int(ch)
+        elif ch == "[":
+            stack.append((cur, num))
+            cur = ""
+            num = 0
+        elif ch == "]":
+            prev, n = stack.pop()
+            cur = prev + n * cur
         else:
-            r += 1
-    return False
+            cur += ch
+    return cur
 
-print(search_matrix([[1, 4, 7, 11, 15], [2, 5, 8, 12, 19], [3, 6, 9, 16, 22], [10, 13, 14, 17, 24], [18, 21, 23, 26, 30]], 5))
+print(decode_string("3[a]2[bc]"))
 `,
-    nextUrl: /\/learn\/py-411-game-of-life/,
-    cursorAfter: "411",
+    nextUrl: /\/learn\/py-418-string-compress/,
+    cursorAfter: "418",
   },
   {
-    micro: 411,
-    id: "py-411-game-of-life",
-    title: "DSA Game Of Life",
-    solution: `import copy
+    micro: 418,
+    id: "py-418-string-compress",
+    title: "DSA String Compress",
+    solution: `def compress(chars):
+    out = []
+    i = 0
+    while i < len(chars):
+        j = i
+        while j < len(chars) and chars[j] == chars[i]:
+            j += 1
+        out.append(chars[i])
+        if j - i > 1:
+            out.extend(str(j - i))
+        i = j
+    return "".join(out)
 
-def game_of_life(board):
-    m, n = len(board), len(board[0])
-    nxt = copy.deepcopy(board)
-    for i in range(m):
-        for j in range(n):
-            live = sum(board[x][y] for x in range(i - 1, i + 2) for y in range(j - 1, j + 2) if 0 <= x < m and 0 <= y < n) - board[i][j]
-            if board[i][j] == 1 and (live < 2 or live > 3):
-                nxt[i][j] = 0
-            elif board[i][j] == 0 and live == 3:
-                nxt[i][j] = 1
-    for i in range(m):
-        board[i] = nxt[i]
-    return board
-
-print(game_of_life([[0, 1, 0], [0, 0, 1], [1, 1, 1], [0, 0, 0]]))
+print(compress(["a", "a", "b", "b", "c", "c", "c"]))
 `,
-    nextUrl: /\/learn\/py-412-reshape-matrix/,
-    cursorAfter: "412",
-  },
-  {
-    micro: 412,
-    id: "py-412-reshape-matrix",
-    title: "DSA Reshape Matrix",
-    solution: `def matrix_reshape(mat, r, c):
-    flat = [x for row in mat for x in row]
-    if len(flat) != r * c:
-        return mat
-    return [flat[i * c:(i + 1) * c] for i in range(r)]
-
-print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
-`,
-    nextUrl: /\/learn\/py-413-valid-anagram/,
-    cursorAfter: "413",
+    nextUrl: /\/workspace/,
+    cursorAfter: "419",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:407|408|409|410|411|412)-/);
+    expect(step.id).toMatch(/^py-(?:413|414|415|416|417|418)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -177,7 +166,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 407–412 · matrix II", () => {
+test.describe("micro-steps 413–418 · strings II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
