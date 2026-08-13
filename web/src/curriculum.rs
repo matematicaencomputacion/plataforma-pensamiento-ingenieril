@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=300).
+    /// 1-based index on the workspace micro-step rail (1..=304).
     pub micro_step: i32,
 }
 
@@ -3830,7 +3830,67 @@ pub const PY298_SORT_COLORS: CodingStep = CodingStep {
     pytest: "def test_sort_colors(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('sort_colors'))\n    a = [2, 0, 2, 1, 1, 0]; ns['sort_colors'](a); assert a == [0, 0, 1, 1, 2, 2]\n    b = [2, 0, 1]; ns['sort_colors'](b); assert b == [0, 1, 2]\n    assert capsys.readouterr().out.strip() == '[0, 0, 1, 1, 2, 2]'\n",
     hint: "def sort_colors(nums):\n    lo = mid = 0; hi = len(nums) - 1\n    while mid <= hi:\n        if nums[mid] == 0:\n            nums[lo], nums[mid] = nums[mid], nums[lo]; lo += 1; mid += 1\n        elif nums[mid] == 1: mid += 1\n        else:\n            nums[mid], nums[hi] = nums[hi], nums[mid]; hi -= 1\nnums = [2, 0, 2, 1, 1, 0]\nsort_colors(nums)\nprint(nums)",
     solution_example: "def sort_colors(nums):\n    lo = mid = 0; hi = len(nums) - 1\n    while mid <= hi:\n        if nums[mid] == 0:\n            nums[lo], nums[mid] = nums[mid], nums[lo]; lo += 1; mid += 1\n        elif nums[mid] == 1: mid += 1\n        else:\n            nums[mid], nums[hi] = nums[hi], nums[mid]; hi -= 1\nnums = [2, 0, 2, 1, 1, 0]\nsort_colors(nums)\nprint(nums)\n",
-    next: None, show_type_chips: false, micro_step: 298,
+    next: Some("py-299-power-of-two"), show_type_chips: false, micro_step: 298,
+};
+
+pub const PY299_POWER_OF_TWO: CodingStep = CodingStep {
+    id: "py-299-power-of-two", title: "DSA Power of Two", objective: "Decidir si un entero positivo es potencia de 2 con bit trick.",
+    prompt_md: "**Power of Two**\n\n`n > 0 and (n & (n-1)) == 0`. Distinto de py-225 (conteo DP de bits).\n\n**Micro-reto:**\n1. Definí `is_power_of_two(n)`\n2. `n=16`; imprimí `True`",
+    starter_code: "# def is_power_of_two(n):\n#     ...\n# print(is_power_of_two(16))\n",
+    pytest: "def test_power_of_two(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_power_of_two'))\n    assert ns['is_power_of_two'](16) is True\n    assert ns['is_power_of_two'](3) is False\n    assert ns['is_power_of_two'](1) is True\n    assert ns['is_power_of_two'](0) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "def is_power_of_two(n):\n    return n > 0 and (n & (n - 1)) == 0\nprint(is_power_of_two(16))",
+    solution_example: "def is_power_of_two(n):\n    return n > 0 and (n & (n - 1)) == 0\nprint(is_power_of_two(16))\n",
+    next: Some("py-300-hamming-distance"), show_type_chips: false, micro_step: 299,
+};
+
+pub const PY300_HAMMING_DISTANCE: CodingStep = CodingStep {
+    id: "py-300-hamming-distance", title: "DSA Hamming Distance", objective: "Contar bits distintos entre dos enteros.",
+    prompt_md: "**Hamming Distance**\n\nXOR y popcount. Distinto de py-226 (reverse bits).\n\n**Micro-reto:**\n1. Definí `hamming_distance(x, y)`\n2. x=`1`, y=`4`; imprimí (esperado: `2`)",
+    starter_code: "# def hamming_distance(x, y):\n#     ...\n# print(hamming_distance(1, 4))\n",
+    pytest: "def test_hamming_distance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('hamming_distance'))\n    assert ns['hamming_distance'](1, 4) == 2\n    assert ns['hamming_distance'](3, 1) == 1\n    assert ns['hamming_distance'](0, 0) == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def hamming_distance(x, y):\n    xor = x ^ y; dist = 0\n    while xor:\n        dist += xor & 1; xor >>= 1\n    return dist\nprint(hamming_distance(1, 4))",
+    solution_example: "def hamming_distance(x, y):\n    xor = x ^ y; dist = 0\n    while xor:\n        dist += xor & 1; xor >>= 1\n    return dist\nprint(hamming_distance(1, 4))\n",
+    next: Some("py-301-sum-two-int"), show_type_chips: false, micro_step: 300,
+};
+
+pub const PY301_SUM_TWO_INT: CodingStep = CodingStep {
+    id: "py-301-sum-two-int", title: "DSA Sum Two Integers", objective: "Sumar dos enteros sin usar + ni - (carry con bits).",
+    prompt_md: "**Sum of Two Integers**\n\n`sum = a ^ b`, `carry = (a & b) << 1`, iterá. Distinto de py-235 (plus one array).\n\n**Micro-reto:**\n1. Definí `get_sum(a, b)`\n2. a=`1`, b=`2`; imprimí (esperado: `3`)",
+    starter_code: "# def get_sum(a, b):\n#     ...\n# print(get_sum(1, 2))\n",
+    pytest: "def test_sum_two_int(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('get_sum'))\n    assert ns['get_sum'](1, 2) == 3\n    assert ns['get_sum'](2, 3) == 5\n    assert ns['get_sum'](-1, 1) == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "MASK = 0xFFFFFFFF\n\ndef get_sum(a, b):\n    while b != 0:\n        carry = (a & b) & MASK\n        a = (a ^ b) & MASK\n        b = (carry << 1) & MASK\n    return a if a <= 0x7FFFFFFF else ~(a ^ MASK)\nprint(get_sum(1, 2))",
+    solution_example: "MASK = 0xFFFFFFFF\n\ndef get_sum(a, b):\n    while b != 0:\n        carry = (a & b) & MASK\n        a = (a ^ b) & MASK\n        b = (carry << 1) & MASK\n    return a if a <= 0x7FFFFFFF else ~(a ^ MASK)\nprint(get_sum(1, 2))\n",
+    next: Some("py-302-range-bitwise"), show_type_chips: false, micro_step: 301,
+};
+
+pub const PY302_RANGE_BITWISE: CodingStep = CodingStep {
+    id: "py-302-range-bitwise", title: "DSA Range Bitwise AND", objective: "AND de todos los enteros en [left, right] sin iterar el rango.",
+    prompt_md: "**Bitwise AND of Numbers Range**\n\nDesplazá hasta que left==right (prefijo común). Distinto de py-148 (XOR único).\n\n**Micro-reto:**\n1. Definí `range_bitwise_and(left, right)`\n2. left=`5`, right=`7`; imprimí (esperado: `4`)",
+    starter_code: "# def range_bitwise_and(left, right):\n#     ...\n# print(range_bitwise_and(5, 7))\n",
+    pytest: "def test_range_bitwise(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('range_bitwise_and'))\n    assert ns['range_bitwise_and'](5, 7) == 4\n    assert ns['range_bitwise_and'](0, 0) == 0\n    assert ns['range_bitwise_and'](1, 2147483647) == 0\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "def range_bitwise_and(left, right):\n    shift = 0\n    while left < right:\n        left >>= 1; right >>= 1; shift += 1\n    return left << shift\nprint(range_bitwise_and(5, 7))",
+    solution_example: "def range_bitwise_and(left, right):\n    shift = 0\n    while left < right:\n        left >>= 1; right >>= 1; shift += 1\n    return left << shift\nprint(range_bitwise_and(5, 7))\n",
+    next: Some("py-303-single-number-iii"), show_type_chips: false, micro_step: 302,
+};
+
+pub const PY303_SINGLE_NUMBER_III: CodingStep = CodingStep {
+    id: "py-303-single-number-iii", title: "DSA Single Number III", objective: "Encontrar los dos números que aparecen una sola vez.",
+    prompt_md: "**Single Number III**\n\nXOR total → bit distintivo → dos grupos. Distinto de py-224 (aparece 1 vs 3).\n\n**Micro-reto:**\n1. Definí `single_number_iii(nums)` → lista de 2 enteros ordenados\n2. `[1,2,1,3,2,5]`; imprimí (esperado: `[3, 5]`)",
+    starter_code: "# def single_number_iii(nums):\n#     ...\n# print(single_number_iii([1, 2, 1, 3, 2, 5]))\n",
+    pytest: "def test_single_number_iii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('single_number_iii'))\n    assert ns['single_number_iii']([1, 2, 1, 3, 2, 5]) == [3, 5]\n    assert ns['single_number_iii']([-1, 0]) == [-1, 0]\n    assert ns['single_number_iii']([0, 1]) == [0, 1]\n    assert capsys.readouterr().out.strip() == '[3, 5]'\n",
+    hint: "def single_number_iii(nums):\n    xor = 0\n    for x in nums: xor ^= x\n    bit = xor & -xor\n    a = b = 0\n    for x in nums:\n        if x & bit: a ^= x\n        else: b ^= x\n    return sorted([a, b])\nprint(single_number_iii([1, 2, 1, 3, 2, 5]))",
+    solution_example: "def single_number_iii(nums):\n    xor = 0\n    for x in nums: xor ^= x\n    bit = xor & -xor\n    a = b = 0\n    for x in nums:\n        if x & bit: a ^= x\n        else: b ^= x\n    return sorted([a, b])\nprint(single_number_iii([1, 2, 1, 3, 2, 5]))\n",
+    next: Some("py-304-hamming-weight"), show_type_chips: false, micro_step: 303,
+};
+
+pub const PY304_HAMMING_WEIGHT: CodingStep = CodingStep {
+    id: "py-304-hamming-weight", title: "DSA Hamming Weight", objective: "Contar bits en 1 de un entero de 32 bits (popcount).",
+    prompt_md: "**Number of 1 Bits**\n\nBrian Kernighan: `n &= n-1`. Distinto de py-225 (array 0..n).\n\n**Micro-reto:**\n1. Definí `hamming_weight(n)`\n2. n=`11` (1011); imprimí (esperado: `3`)",
+    starter_code: "# def hamming_weight(n):\n#     ...\n# print(hamming_weight(11))\n",
+    pytest: "def test_hamming_weight(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('hamming_weight'))\n    assert ns['hamming_weight'](11) == 3\n    assert ns['hamming_weight'](128) == 1\n    assert ns['hamming_weight'](2147483645) == 30\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "def hamming_weight(n):\n    count = 0\n    while n:\n        n &= n - 1; count += 1\n    return count\nprint(hamming_weight(11))",
+    solution_example: "def hamming_weight(n):\n    count = 0\n    while n:\n        n &= n - 1; count += 1\n    return count\nprint(hamming_weight(11))\n",
+    next: None, show_type_chips: false, micro_step: 304,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -4132,6 +4192,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY296_K_DISTINCT,
     &PY297_CHECK_INCLUSION,
     &PY298_SORT_COLORS,
+    &PY299_POWER_OF_TWO,
+    &PY300_HAMMING_DISTANCE,
+    &PY301_SUM_TWO_INT,
+    &PY302_RANGE_BITWISE,
+    &PY303_SINGLE_NUMBER_III,
+    &PY304_HAMMING_WEIGHT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4275,7 +4341,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 300);
+            assert!(step.micro_step >= 1 && step.micro_step <= 304);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -4829,7 +4895,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py298_curriculum_chain() {
+    fn py203_to_py304_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4927,7 +4993,13 @@ mod tests {
             (295, "py-295-ones-iii", Some("py-296-k-distinct")),
             (296, "py-296-k-distinct", Some("py-297-check-inclusion")),
             (297, "py-297-check-inclusion", Some("py-298-sort-colors")),
-            (298, "py-298-sort-colors", None),
+            (298, "py-298-sort-colors", Some("py-299-power-of-two")),
+            (299, "py-299-power-of-two", Some("py-300-hamming-distance")),
+            (300, "py-300-hamming-distance", Some("py-301-sum-two-int")),
+            (301, "py-301-sum-two-int", Some("py-302-range-bitwise")),
+            (302, "py-302-range-bitwise", Some("py-303-single-number-iii")),
+            (303, "py-303-single-number-iii", Some("py-304-hamming-weight")),
+            (304, "py-304-hamming-weight", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
