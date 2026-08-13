@@ -22,198 +22,123 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 335,
-    id: "py-335-implement-trie",
-    title: "DSA Implement Trie",
-    solution: `class Trie:
-    def __init__(self):
-        self.root = {}
+    micro: 341,
+    id: "py-341-range-sum",
+    title: "DSA Range Sum",
+    solution: `class NumArray:
+    def __init__(self, nums):
+        self.pref = [0]
+        for x in nums:
+            self.pref.append(self.pref[-1] + x)
 
-    def insert(self, word):
-        node = self.root
-        for ch in word:
-            node = node.setdefault(ch, {})
-        node["$"] = True
+    def sum_range(self, left, right):
+        return self.pref[right + 1] - self.pref[left]
 
-    def search(self, word):
-        node = self.root
-        for ch in word:
-            if ch not in node:
-                return False
-            node = node[ch]
-        return bool(node.get("$"))
-
-    def starts_with(self, prefix):
-        node = self.root
-        for ch in prefix:
-            if ch not in node:
-                return False
-            node = node[ch]
-        return True
-
-t = Trie()
-t.insert("apple")
-print([t.search("apple"), t.search("app"), t.starts_with("app")])
+n = NumArray([-2, 0, 3, -5, 2, -1])
+print([n.sum_range(0, 2), n.sum_range(2, 5), n.sum_range(0, 5)])
 `,
-    nextUrl: /\/learn\/py-336-word-dict/,
-    cursorAfter: "336",
+    nextUrl: /\/learn\/py-342-subarray-sum/,
+    cursorAfter: "342",
   },
   {
-    micro: 336,
-    id: "py-336-word-dict",
-    title: "DSA Word Dictionary",
-    solution: `class WordDictionary:
-    def __init__(self):
-        self.root = {}
+    micro: 342,
+    id: "py-342-subarray-sum",
+    title: "DSA Subarray Sum",
+    solution: `from collections import defaultdict
 
-    def add_word(self, word):
-        node = self.root
-        for ch in word:
-            node = node.setdefault(ch, {})
-        node["$"] = True
+def subarray_sum(nums, k):
+    count = defaultdict(int)
+    count[0] = 1
+    pref = ans = 0
+    for x in nums:
+        pref += x
+        ans += count[pref - k]
+        count[pref] += 1
+    return ans
 
-    def search(self, word):
-        def dfs(i, node):
-            if i == len(word):
-                return bool(node.get("$"))
-            ch = word[i]
-            if ch == ".":
-                return any(dfs(i + 1, node[k]) for k in node if k != "$")
-            if ch not in node:
-                return False
-            return dfs(i + 1, node[ch])
-        return dfs(0, self.root)
-
-w = WordDictionary()
-for x in ("bad", "dad", "mad"):
-    w.add_word(x)
-print([w.search("pad"), w.search("bad"), w.search(".ad"), w.search("b..")])
+print(subarray_sum([1, 1, 1], 2))
 `,
-    nextUrl: /\/learn\/py-337-replace-words/,
-    cursorAfter: "337",
+    nextUrl: /\/learn\/py-343-product-except/,
+    cursorAfter: "343",
   },
   {
-    micro: 337,
-    id: "py-337-replace-words",
-    title: "DSA Replace Words",
-    solution: `def replace_words(dictionary, sentence):
-    root = {}
-    for w in dictionary:
-        node = root
-        for ch in w:
-            node = node.setdefault(ch, {})
-        node["$"] = True
+    micro: 343,
+    id: "py-343-product-except",
+    title: "DSA Product Except",
+    solution: `def product_except_self(nums):
+    n = len(nums)
+    out = [1] * n
+    left = 1
+    for i in range(n):
+        out[i] = left
+        left *= nums[i]
+    right = 1
+    for i in range(n - 1, -1, -1):
+        out[i] *= right
+        right *= nums[i]
+    return out
 
-    def repl(word):
-        node = root
-        pref = []
-        for ch in word:
-            if ch not in node:
-                return word
-            node = node[ch]
-            pref.append(ch)
-            if node.get("$"):
-                return "".join(pref)
-        return word
-
-    return " ".join(repl(w) for w in sentence.split())
-
-print(replace_words(["cat", "bat", "rat"], "the cattle was rattled by the battery"))
+print(product_except_self([1, 2, 3, 4]))
 `,
-    nextUrl: /\/learn\/py-338-map-sum/,
-    cursorAfter: "338",
+    nextUrl: /\/learn\/py-344-corp-flight/,
+    cursorAfter: "344",
   },
   {
-    micro: 338,
-    id: "py-338-map-sum",
-    title: "DSA Map Sum",
-    solution: `class MapSum:
-    def __init__(self):
-        self.root = {}
-        self.vals = {}
+    micro: 344,
+    id: "py-344-corp-flight",
+    title: "DSA Corp Flight",
+    solution: `def corp_flight_bookings(bookings, n):
+    diff = [0] * (n + 1)
+    for first, last, seats in bookings:
+        diff[first - 1] += seats
+        if last < n:
+            diff[last] -= seats
+    for i in range(1, n):
+        diff[i] += diff[i - 1]
+    return diff[:n]
 
-    def insert(self, key, val):
-        delta = val - self.vals.get(key, 0)
-        self.vals[key] = val
-        node = self.root
-        for ch in key:
-            node = node.setdefault(ch, {"#": 0})
-            node["#"] = node.get("#", 0) + delta
-
-    def sum(self, prefix):
-        node = self.root
-        for ch in prefix:
-            if ch not in node:
-                return 0
-            node = node[ch]
-        return node.get("#", 0)
-
-m = MapSum()
-m.insert("apple", 3)
-a = m.sum("ap")
-m.insert("app", 2)
-b = m.sum("ap")
-print([a, b])
+print(corp_flight_bookings([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5))
 `,
-    nextUrl: /\/learn\/py-339-longest-word/,
-    cursorAfter: "339",
+    nextUrl: /\/learn\/py-345-pivot-index/,
+    cursorAfter: "345",
   },
   {
-    micro: 339,
-    id: "py-339-longest-word",
-    title: "DSA Longest Word",
-    solution: `def longest_word(words):
-    words = sorted(words)
-    seen = {""}
-    best = ""
-    for w in words:
-        if w[:-1] in seen:
-            seen.add(w)
-            if len(w) > len(best):
-                best = w
-    return best
+    micro: 345,
+    id: "py-345-pivot-index",
+    title: "DSA Pivot Index",
+    solution: `def pivot_index(nums):
+    total = sum(nums)
+    left = 0
+    for i, x in enumerate(nums):
+        if left == total - left - x:
+            return i
+        left += x
+    return -1
 
-print(longest_word(["w", "wo", "wor", "worl", "world"]))
+print(pivot_index([1, 7, 3, 6, 5, 6]))
 `,
-    nextUrl: /\/learn\/py-340-stream-checker/,
-    cursorAfter: "340",
+    nextUrl: /\/learn\/py-346-running-sum/,
+    cursorAfter: "346",
   },
   {
-    micro: 340,
-    id: "py-340-stream-checker",
-    title: "DSA Stream Checker",
-    solution: `class StreamChecker:
-    def __init__(self, words):
-        self.root = {}
-        self.buf = []
-        for w in words:
-            node = self.root
-            for ch in reversed(w):
-                node = node.setdefault(ch, {})
-            node["$"] = True
+    micro: 346,
+    id: "py-346-running-sum",
+    title: "DSA Running Sum",
+    solution: `def running_sum(nums):
+    for i in range(1, len(nums)):
+        nums[i] += nums[i - 1]
+    return nums
 
-    def query(self, letter):
-        self.buf.append(letter)
-        node = self.root
-        for ch in reversed(self.buf):
-            if ch not in node:
-                return False
-            node = node[ch]
-            if node.get("$"):
-                return True
-        return False
-
-s = StreamChecker(["cd", "f", "kl"])
-print([s.query(ch) for ch in "cdaf"])
+print(running_sum([1, 2, 3, 4]))
 `,
-    nextUrl: /\/learn\/py-341-range-sum/,
-    cursorAfter: "341",
+    nextUrl: /\/workspace/,
+    cursorAfter: "347",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-33[5-9]-|^py-340-/);
+    expect(step.id).toMatch(/^py-34[1-6]-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -243,7 +168,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 335–340 · tries II", () => {
+test.describe("micro-steps 341–346 · prefix sums II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
