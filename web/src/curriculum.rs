@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=304).
+    /// 1-based index on the workspace micro-step rail (1..=310).
     pub micro_step: i32,
 }
 
@@ -3890,8 +3890,69 @@ pub const PY304_HAMMING_WEIGHT: CodingStep = CodingStep {
     pytest: "def test_hamming_weight(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('hamming_weight'))\n    assert ns['hamming_weight'](11) == 3\n    assert ns['hamming_weight'](128) == 1\n    assert ns['hamming_weight'](2147483645) == 30\n    assert capsys.readouterr().out.strip() == '3'\n",
     hint: "def hamming_weight(n):\n    count = 0\n    while n:\n        n &= n - 1; count += 1\n    return count\nprint(hamming_weight(11))",
     solution_example: "def hamming_weight(n):\n    count = 0\n    while n:\n        n &= n - 1; count += 1\n    return count\nprint(hamming_weight(11))\n",
-    next: None, show_type_chips: false, micro_step: 304,
+    next: Some("py-305-max-path-sum"), show_type_chips: false, micro_step: 304,
 };
+
+pub const PY305_MAX_PATH_SUM: CodingStep = CodingStep {
+    id: "py-305-max-path-sum", title: "DSA Max Path Sum", objective: "Máxima suma de un camino cualquiera en un árbol binario (nodo como cumbre).",
+    prompt_md: "**Binary Tree Maximum Path Sum**\n\nEn cada nodo: contribución = valor + max(0, left) + max(0, right); devolvé solo un brazo. Distinto de py-241 (raíz→hoja con target).\n\n**Micro-reto:**\n1. Definí `max_path_sum(root)`\n2. Árbol `-10` → left `9` / right `20` (15, 7); imprimí (esperado: `42`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def max_path_sum(root):\n#     ...\n# root = ...\n# print(max_path_sum(root))\n",
+    pytest: "def test_max_path_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('max_path_sum'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(-10)\n    root.left = TreeNode(9)\n    root.right = TreeNode(20)\n    root.right.left = TreeNode(15)\n    root.right.right = TreeNode(7)\n    assert ns['max_path_sum'](root) == 42\n    assert ns['max_path_sum'](TreeNode(1)) == 1\n    assert capsys.readouterr().out.strip() == '42'\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data; self.left = None; self.right = None\n\ndef max_path_sum(root):\n    best = float('-inf')\n    def dfs(node):\n        nonlocal best\n        if node is None: return 0\n        left = max(dfs(node.left), 0); right = max(dfs(node.right), 0)\n        best = max(best, node.data + left + right)\n        return node.data + max(left, right)\n    dfs(root); return best\nroot = TreeNode(-10); root.left = TreeNode(9); root.right = TreeNode(20)\nroot.right.left = TreeNode(15); root.right.right = TreeNode(7)\nprint(max_path_sum(root))",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef max_path_sum(root):\n    best = float('-inf')\n    def dfs(node):\n        nonlocal best\n        if node is None:\n            return 0\n        left = max(dfs(node.left), 0)\n        right = max(dfs(node.right), 0)\n        best = max(best, node.data + left + right)\n        return node.data + max(left, right)\n    dfs(root)\n    return best\n\nroot = TreeNode(-10)\nroot.left = TreeNode(9)\nroot.right = TreeNode(20)\nroot.right.left = TreeNode(15)\nroot.right.right = TreeNode(7)\nprint(max_path_sum(root))\n",
+    next: Some("py-306-serialize-tree"), show_type_chips: false, micro_step: 305,
+};
+
+pub const PY306_SERIALIZE_TREE: CodingStep = CodingStep {
+    id: "py-306-serialize-tree", title: "DSA Serialize Tree", objective: "Serializar y deserializar un árbol binario con marcadores null.",
+    prompt_md: "**Serialize and Deserialize Binary Tree**\n\nBFS o preorder con `#` para null. Distinto de py-243 (aplanar in-place).\n\n**Micro-reto:**\n1. Definí `serialize(root)` y `deserialize(data)`\n2. Árbol `1` → left `2` / right `3` (4, 5); imprimí `serialize(root)` (esperado: `1,2,3,#,#,4,5,#,#,#,#`)",
+    starter_code: "# from collections import deque\n# class TreeNode:\n#     ...\n# def serialize(root):\n#     ...\n# def deserialize(data):\n#     ...\n# root = ...\n# print(serialize(root))\n",
+    pytest: "def test_serialize_tree(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('serialize')) and callable(ns.get('deserialize'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(1)\n    root.left = TreeNode(2)\n    root.right = TreeNode(3)\n    root.right.left = TreeNode(4)\n    root.right.right = TreeNode(5)\n    s = ns['serialize'](root)\n    assert s == '1,2,3,#,#,4,5,#,#,#,#'\n    back = ns['deserialize'](s)\n    assert back.data == 1 and back.left.data == 2 and back.right.data == 3\n    assert back.right.left.data == 4 and back.right.right.data == 5\n    assert capsys.readouterr().out.strip() == '1,2,3,#,#,4,5,#,#,#,#'\n",
+    hint: "from collections import deque\n\nclass TreeNode:\n    def __init__(self, data):\n        self.data = data; self.left = None; self.right = None\n\ndef serialize(root):\n    if root is None: return '#'\n    out = []; q = deque([root])\n    while q:\n        node = q.popleft()\n        if node is None: out.append('#'); continue\n        out.append(str(node.data)); q.append(node.left); q.append(node.right)\n    return ','.join(out)\n\ndef deserialize(data):\n    if data == '#': return None\n    vals = data.split(','); root = TreeNode(int(vals[0])); q = deque([root]); i = 1\n    while q and i < len(vals):\n        node = q.popleft()\n        if vals[i] != '#':\n            node.left = TreeNode(int(vals[i])); q.append(node.left)\n        i += 1\n        if i < len(vals) and vals[i] != '#':\n            node.right = TreeNode(int(vals[i])); q.append(node.right)\n        i += 1\n    return root\nroot = TreeNode(1); root.left = TreeNode(2); root.right = TreeNode(3)\nroot.right.left = TreeNode(4); root.right.right = TreeNode(5)\nprint(serialize(root))",
+    solution_example: "from collections import deque\n\nclass TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef serialize(root):\n    if root is None:\n        return '#'\n    out = []\n    q = deque([root])\n    while q:\n        node = q.popleft()\n        if node is None:\n            out.append('#')\n            continue\n        out.append(str(node.data))\n        q.append(node.left)\n        q.append(node.right)\n    return ','.join(out)\n\ndef deserialize(data):\n    if data == '#':\n        return None\n    vals = data.split(',')\n    root = TreeNode(int(vals[0]))\n    q = deque([root])\n    i = 1\n    while q and i < len(vals):\n        node = q.popleft()\n        if vals[i] != '#':\n            node.left = TreeNode(int(vals[i]))\n            q.append(node.left)\n        i += 1\n        if i < len(vals) and vals[i] != '#':\n            node.right = TreeNode(int(vals[i]))\n            q.append(node.right)\n        i += 1\n    return root\n\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\nroot.right.left = TreeNode(4)\nroot.right.right = TreeNode(5)\nprint(serialize(root))\n",
+    next: Some("py-307-build-tree"), show_type_chips: false, micro_step: 306,
+};
+
+pub const PY307_BUILD_TREE: CodingStep = CodingStep {
+    id: "py-307-build-tree", title: "DSA Build Tree", objective: "Construir un árbol binario desde preorder e inorder.",
+    prompt_md: "**Construct Binary Tree from Preorder and Inorder**\n\nRaíz = preorder[0]; partí inorder; recursión. Distinto de traversals py-106..108.\n\n**Micro-reto:**\n1. Definí `build_tree(preorder, inorder)`\n2. preorder=`[3,9,20,15,7]`, inorder=`[9,3,15,20,7]`; imprimí preorder del árbol (esperado: `[3, 9, 20, 15, 7]`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def build_tree(preorder, inorder):\n#     ...\n# def preorder_walk(root):\n#     ...\n# root = build_tree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7])\n# print(preorder_walk(root))\n",
+    pytest: "def test_build_tree(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('build_tree'))\n    root = ns['build_tree']([3, 9, 20, 15, 7], [9, 3, 15, 20, 7])\n    assert root.data == 3 and root.left.data == 9 and root.right.data == 20\n    assert root.right.left.data == 15 and root.right.right.data == 7\n    walk = ns.get('preorder_walk')\n    if callable(walk):\n        assert walk(root) == [3, 9, 20, 15, 7]\n    assert capsys.readouterr().out.strip() == '[3, 9, 20, 15, 7]'\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data; self.left = None; self.right = None\n\ndef build_tree(preorder, inorder):\n    if not preorder: return None\n    root = TreeNode(preorder[0])\n    mid = inorder.index(preorder[0])\n    root.left = build_tree(preorder[1:1+mid], inorder[:mid])\n    root.right = build_tree(preorder[1+mid:], inorder[mid+1:])\n    return root\n\ndef preorder_walk(root):\n    if root is None: return []\n    return [root.data] + preorder_walk(root.left) + preorder_walk(root.right)\nroot = build_tree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7])\nprint(preorder_walk(root))",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef build_tree(preorder, inorder):\n    if not preorder:\n        return None\n    root = TreeNode(preorder[0])\n    mid = inorder.index(preorder[0])\n    root.left = build_tree(preorder[1:1 + mid], inorder[:mid])\n    root.right = build_tree(preorder[1 + mid:], inorder[mid + 1:])\n    return root\n\ndef preorder_walk(root):\n    if root is None:\n        return []\n    return [root.data] + preorder_walk(root.left) + preorder_walk(root.right)\n\nroot = build_tree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7])\nprint(preorder_walk(root))\n",
+    next: Some("py-308-kth-bst"), show_type_chips: false, micro_step: 307,
+};
+
+pub const PY308_KTH_BST: CodingStep = CodingStep {
+    id: "py-308-kth-bst", title: "DSA Kth BST", objective: "Encontrar el k-ésimo menor en un BST (inorder).",
+    prompt_md: "**Kth Smallest Element in a BST**\n\nInorder hasta k. Distinto de py-244 (solo validar BST).\n\n**Micro-reto:**\n1. Definí `kth_smallest(root, k)`\n2. BST `3` → left `1` (right 2) / right `4`, k=`1`; imprimí (esperado: `1`)",
+    starter_code: "# class TreeNode:\n#     ...\n# def kth_smallest(root, k):\n#     ...\n# root = ...\n# print(kth_smallest(root, 1))\n",
+    pytest: "def test_kth_bst(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('kth_smallest'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(3)\n    root.left = TreeNode(1)\n    root.right = TreeNode(4)\n    root.left.right = TreeNode(2)\n    assert ns['kth_smallest'](root, 1) == 1\n    assert ns['kth_smallest'](root, 3) == 3\n    assert capsys.readouterr().out.strip() == '1'\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data; self.left = None; self.right = None\n\ndef kth_smallest(root, k):\n    stack = []; cur = root\n    while True:\n        while cur:\n            stack.append(cur); cur = cur.left\n        cur = stack.pop(); k -= 1\n        if k == 0: return cur.data\n        cur = cur.right\nroot = TreeNode(3); root.left = TreeNode(1); root.right = TreeNode(4); root.left.right = TreeNode(2)\nprint(kth_smallest(root, 1))",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef kth_smallest(root, k):\n    stack = []\n    cur = root\n    while True:\n        while cur:\n            stack.append(cur)\n            cur = cur.left\n        cur = stack.pop()\n        k -= 1\n        if k == 0:\n            return cur.data\n        cur = cur.right\n\nroot = TreeNode(3)\nroot.left = TreeNode(1)\nroot.right = TreeNode(4)\nroot.left.right = TreeNode(2)\nprint(kth_smallest(root, 1))\n",
+    next: Some("py-309-level-order"), show_type_chips: false, micro_step: 308,
+};
+
+pub const PY309_LEVEL_ORDER: CodingStep = CodingStep {
+    id: "py-309-level-order", title: "DSA Level Order", objective: "Recorrido BFS por niveles devolviendo lista de listas.",
+    prompt_md: "**Binary Tree Level Order Traversal**\n\nCola por nivel. Distinto de py-242 (solo vista derecha).\n\n**Micro-reto:**\n1. Definí `level_order(root)`\n2. Árbol `3` → left `9` / right `20` (15, 7); imprimí (esperado: `[[3], [9, 20], [15, 7]]`)",
+    starter_code: "# from collections import deque\n# class TreeNode:\n#     ...\n# def level_order(root):\n#     ...\n# root = ...\n# print(level_order(root))\n",
+    pytest: "def test_level_order(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('level_order'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(3)\n    root.left = TreeNode(9)\n    root.right = TreeNode(20)\n    root.right.left = TreeNode(15)\n    root.right.right = TreeNode(7)\n    assert ns['level_order'](root) == [[3], [9, 20], [15, 7]]\n    assert ns['level_order'](None) == []\n    assert capsys.readouterr().out.strip() == '[[3], [9, 20], [15, 7]]'\n",
+    hint: "from collections import deque\n\nclass TreeNode:\n    def __init__(self, data):\n        self.data = data; self.left = None; self.right = None\n\ndef level_order(root):\n    if root is None: return []\n    out = []; q = deque([root])\n    while q:\n        level = []\n        for _ in range(len(q)):\n            node = q.popleft(); level.append(node.data)\n            if node.left: q.append(node.left)\n            if node.right: q.append(node.right)\n        out.append(level)\n    return out\nroot = TreeNode(3); root.left = TreeNode(9); root.right = TreeNode(20)\nroot.right.left = TreeNode(15); root.right.right = TreeNode(7)\nprint(level_order(root))",
+    solution_example: "from collections import deque\n\nclass TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef level_order(root):\n    if root is None:\n        return []\n    out = []\n    q = deque([root])\n    while q:\n        level = []\n        for _ in range(len(q)):\n            node = q.popleft()\n            level.append(node.data)\n            if node.left:\n                q.append(node.left)\n            if node.right:\n                q.append(node.right)\n        out.append(level)\n    return out\n\nroot = TreeNode(3)\nroot.left = TreeNode(9)\nroot.right = TreeNode(20)\nroot.right.left = TreeNode(15)\nroot.right.right = TreeNode(7)\nprint(level_order(root))\n",
+    next: Some("py-310-is-balanced"), show_type_chips: false, micro_step: 309,
+};
+
+pub const PY310_IS_BALANCED: CodingStep = CodingStep {
+    id: "py-310-is-balanced", title: "DSA Is Balanced", objective: "Decidir si un árbol binario está height-balanced.",
+    prompt_md: "**Balanced Binary Tree**\n\nDFS que devuelve altura o -1 si desbalance. Distinto de py-111 (solo altura).\n\n**Micro-reto:**\n1. Definí `is_balanced(root)`\n2. Árbol `3` → left `9` / right `20` (15, 7); imprimí `True`",
+    starter_code: "# class TreeNode:\n#     ...\n# def is_balanced(root):\n#     ...\n# root = ...\n# print(is_balanced(root))\n",
+    pytest: "def test_is_balanced(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_balanced'))\n    TreeNode = ns['TreeNode']\n    root = TreeNode(3)\n    root.left = TreeNode(9)\n    root.right = TreeNode(20)\n    root.right.left = TreeNode(15)\n    root.right.right = TreeNode(7)\n    assert ns['is_balanced'](root) is True\n    bad = TreeNode(1)\n    bad.left = TreeNode(2)\n    bad.left.left = TreeNode(3)\n    bad.left.left.left = TreeNode(4)\n    bad.right = TreeNode(2)\n    assert ns['is_balanced'](bad) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "class TreeNode:\n    def __init__(self, data):\n        self.data = data; self.left = None; self.right = None\n\ndef is_balanced(root):\n    def height(node):\n        if node is None: return 0\n        lh = height(node.left)\n        if lh < 0: return -1\n        rh = height(node.right)\n        if rh < 0: return -1\n        if abs(lh - rh) > 1: return -1\n        return 1 + max(lh, rh)\n    return height(root) >= 0\nroot = TreeNode(3); root.left = TreeNode(9); root.right = TreeNode(20)\nroot.right.left = TreeNode(15); root.right.right = TreeNode(7)\nprint(is_balanced(root))",
+    solution_example: "class TreeNode:\n    def __init__(self, data):\n        self.data = data\n        self.left = None\n        self.right = None\n\ndef is_balanced(root):\n    def height(node):\n        if node is None:\n            return 0\n        lh = height(node.left)\n        if lh < 0:\n            return -1\n        rh = height(node.right)\n        if rh < 0:\n            return -1\n        if abs(lh - rh) > 1:\n            return -1\n        return 1 + max(lh, rh)\n    return height(root) >= 0\n\nroot = TreeNode(3)\nroot.left = TreeNode(9)\nroot.right = TreeNode(20)\nroot.right.left = TreeNode(15)\nroot.right.right = TreeNode(7)\nprint(is_balanced(root))\n",
+    next: None, show_type_chips: false, micro_step: 310,
+};
+
 
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -4198,6 +4259,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY302_RANGE_BITWISE,
     &PY303_SINGLE_NUMBER_III,
     &PY304_HAMMING_WEIGHT,
+    &PY305_MAX_PATH_SUM,
+    &PY306_SERIALIZE_TREE,
+    &PY307_BUILD_TREE,
+    &PY308_KTH_BST,
+    &PY309_LEVEL_ORDER,
+    &PY310_IS_BALANCED,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4341,7 +4408,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 304);
+            assert!(step.micro_step >= 1 && step.micro_step <= 310);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -4895,7 +4962,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py304_curriculum_chain() {
+    fn py203_to_py310_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -4999,7 +5066,13 @@ mod tests {
             (301, "py-301-sum-two-int", Some("py-302-range-bitwise")),
             (302, "py-302-range-bitwise", Some("py-303-single-number-iii")),
             (303, "py-303-single-number-iii", Some("py-304-hamming-weight")),
-            (304, "py-304-hamming-weight", None),
+            (304, "py-304-hamming-weight", Some("py-305-max-path-sum")),
+            (305, "py-305-max-path-sum", Some("py-306-serialize-tree")),
+            (306, "py-306-serialize-tree", Some("py-307-build-tree")),
+            (307, "py-307-build-tree", Some("py-308-kth-bst")),
+            (308, "py-308-kth-bst", Some("py-309-level-order")),
+            (309, "py-309-level-order", Some("py-310-is-balanced")),
+            (310, "py-310-is-balanced", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
