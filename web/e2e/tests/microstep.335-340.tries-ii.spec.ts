@@ -22,166 +22,198 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 329,
-    id: "py-329-three-sum",
-    title: "DSA Three Sum",
-    solution: `def three_sum(nums):
-    nums = sorted(nums)
-    out = []
-    for i in range(len(nums)):
-        if i and nums[i] == nums[i - 1]:
-            continue
-        lo, hi = i + 1, len(nums) - 1
-        while lo < hi:
-            s = nums[i] + nums[lo] + nums[hi]
-            if s == 0:
-                out.append([nums[i], nums[lo], nums[hi]])
-                lo += 1
-                hi -= 1
-                while lo < hi and nums[lo] == nums[lo - 1]:
-                    lo += 1
-                while lo < hi and nums[hi] == nums[hi + 1]:
-                    hi -= 1
-            elif s < 0:
-                lo += 1
-            else:
-                hi -= 1
-    return out
+    micro: 335,
+    id: "py-335-implement-trie",
+    title: "DSA Implement Trie",
+    solution: `class Trie:
+    def __init__(self):
+        self.root = {}
 
-print(three_sum([-1, 0, 1, 2, -1, -4]))
+    def insert(self, word):
+        node = self.root
+        for ch in word:
+            node = node.setdefault(ch, {})
+        node["$"] = True
+
+    def search(self, word):
+        node = self.root
+        for ch in word:
+            if ch not in node:
+                return False
+            node = node[ch]
+        return bool(node.get("$"))
+
+    def starts_with(self, prefix):
+        node = self.root
+        for ch in prefix:
+            if ch not in node:
+                return False
+            node = node[ch]
+        return True
+
+t = Trie()
+t.insert("apple")
+print([t.search("apple"), t.search("app"), t.starts_with("app")])
 `,
-    nextUrl: /\/learn\/py-330-three-sum-closest/,
-    cursorAfter: "330",
+    nextUrl: /\/learn\/py-336-word-dict/,
+    cursorAfter: "336",
   },
   {
-    micro: 330,
-    id: "py-330-three-sum-closest",
-    title: "DSA Three Sum Closest",
-    solution: `def three_sum_closest(nums, target):
-    nums = sorted(nums)
-    best = nums[0] + nums[1] + nums[2]
-    for i in range(len(nums) - 2):
-        lo, hi = i + 1, len(nums) - 1
-        while lo < hi:
-            s = nums[i] + nums[lo] + nums[hi]
-            if abs(s - target) < abs(best - target):
-                best = s
-            if s < target:
-                lo += 1
-            elif s > target:
-                hi -= 1
-            else:
-                return s
+    micro: 336,
+    id: "py-336-word-dict",
+    title: "DSA Word Dictionary",
+    solution: `class WordDictionary:
+    def __init__(self):
+        self.root = {}
+
+    def add_word(self, word):
+        node = self.root
+        for ch in word:
+            node = node.setdefault(ch, {})
+        node["$"] = True
+
+    def search(self, word):
+        def dfs(i, node):
+            if i == len(word):
+                return bool(node.get("$"))
+            ch = word[i]
+            if ch == ".":
+                return any(dfs(i + 1, node[k]) for k in node if k != "$")
+            if ch not in node:
+                return False
+            return dfs(i + 1, node[ch])
+        return dfs(0, self.root)
+
+w = WordDictionary()
+for x in ("bad", "dad", "mad"):
+    w.add_word(x)
+print([w.search("pad"), w.search("bad"), w.search(".ad"), w.search("b..")])
+`,
+    nextUrl: /\/learn\/py-337-replace-words/,
+    cursorAfter: "337",
+  },
+  {
+    micro: 337,
+    id: "py-337-replace-words",
+    title: "DSA Replace Words",
+    solution: `def replace_words(dictionary, sentence):
+    root = {}
+    for w in dictionary:
+        node = root
+        for ch in w:
+            node = node.setdefault(ch, {})
+        node["$"] = True
+
+    def repl(word):
+        node = root
+        pref = []
+        for ch in word:
+            if ch not in node:
+                return word
+            node = node[ch]
+            pref.append(ch)
+            if node.get("$"):
+                return "".join(pref)
+        return word
+
+    return " ".join(repl(w) for w in sentence.split())
+
+print(replace_words(["cat", "bat", "rat"], "the cattle was rattled by the battery"))
+`,
+    nextUrl: /\/learn\/py-338-map-sum/,
+    cursorAfter: "338",
+  },
+  {
+    micro: 338,
+    id: "py-338-map-sum",
+    title: "DSA Map Sum",
+    solution: `class MapSum:
+    def __init__(self):
+        self.root = {}
+        self.vals = {}
+
+    def insert(self, key, val):
+        delta = val - self.vals.get(key, 0)
+        self.vals[key] = val
+        node = self.root
+        for ch in key:
+            node = node.setdefault(ch, {"#": 0})
+            node["#"] = node.get("#", 0) + delta
+
+    def sum(self, prefix):
+        node = self.root
+        for ch in prefix:
+            if ch not in node:
+                return 0
+            node = node[ch]
+        return node.get("#", 0)
+
+m = MapSum()
+m.insert("apple", 3)
+a = m.sum("ap")
+m.insert("app", 2)
+b = m.sum("ap")
+print([a, b])
+`,
+    nextUrl: /\/learn\/py-339-longest-word/,
+    cursorAfter: "339",
+  },
+  {
+    micro: 339,
+    id: "py-339-longest-word",
+    title: "DSA Longest Word",
+    solution: `def longest_word(words):
+    words = sorted(words)
+    seen = {""}
+    best = ""
+    for w in words:
+        if w[:-1] in seen:
+            seen.add(w)
+            if len(w) > len(best):
+                best = w
     return best
 
-print(three_sum_closest([-1, 2, 1, -4], 1))
+print(longest_word(["w", "wo", "wor", "worl", "world"]))
 `,
-    nextUrl: /\/learn\/py-331-four-sum/,
-    cursorAfter: "331",
+    nextUrl: /\/learn\/py-340-stream-checker/,
+    cursorAfter: "340",
   },
   {
-    micro: 331,
-    id: "py-331-four-sum",
-    title: "DSA Four Sum",
-    solution: `def four_sum(nums, target):
-    nums = sorted(nums)
-    n = len(nums)
-    out = []
-    for i in range(n):
-        if i and nums[i] == nums[i - 1]:
-            continue
-        for j in range(i + 1, n):
-            if j > i + 1 and nums[j] == nums[j - 1]:
-                continue
-            lo, hi = j + 1, n - 1
-            while lo < hi:
-                s = nums[i] + nums[j] + nums[lo] + nums[hi]
-                if s == target:
-                    out.append([nums[i], nums[j], nums[lo], nums[hi]])
-                    lo += 1
-                    hi -= 1
-                    while lo < hi and nums[lo] == nums[lo - 1]:
-                        lo += 1
-                    while lo < hi and nums[hi] == nums[hi + 1]:
-                        hi -= 1
-                elif s < target:
-                    lo += 1
-                else:
-                    hi -= 1
-    return out
+    micro: 340,
+    id: "py-340-stream-checker",
+    title: "DSA Stream Checker",
+    solution: `class StreamChecker:
+    def __init__(self, words):
+        self.root = {}
+        self.buf = []
+        for w in words:
+            node = self.root
+            for ch in reversed(w):
+                node = node.setdefault(ch, {})
+            node["$"] = True
 
-print(four_sum([1, 0, -1, 0, -2, 2], 0))
-`,
-    nextUrl: /\/learn\/py-332-container-water/,
-    cursorAfter: "332",
-  },
-  {
-    micro: 332,
-    id: "py-332-container-water",
-    title: "DSA Container Water",
-    solution: `def max_area(height):
-    lo, hi = 0, len(height) - 1
-    best = 0
-    while lo < hi:
-        best = max(best, min(height[lo], height[hi]) * (hi - lo))
-        if height[lo] < height[hi]:
-            lo += 1
-        else:
-            hi -= 1
-    return best
+    def query(self, letter):
+        self.buf.append(letter)
+        node = self.root
+        for ch in reversed(self.buf):
+            if ch not in node:
+                return False
+            node = node[ch]
+            if node.get("$"):
+                return True
+        return False
 
-print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))
+s = StreamChecker(["cd", "f", "kl"])
+print([s.query(ch) for ch in "cdaf"])
 `,
-    nextUrl: /\/learn\/py-333-remove-dupes/,
-    cursorAfter: "333",
-  },
-  {
-    micro: 333,
-    id: "py-333-remove-dupes",
-    title: "DSA Remove Dupes",
-    solution: `def remove_duplicates(nums):
-    if not nums:
-        return 0
-    w = 1
-    for r in range(1, len(nums)):
-        if nums[r] != nums[w - 1]:
-            nums[w] = nums[r]
-            w += 1
-    return w
-
-nums = [1, 1, 2]
-k = remove_duplicates(nums)
-print(k)
-print(nums[:k])
-`,
-    nextUrl: /\/learn\/py-334-move-zeroes/,
-    cursorAfter: "334",
-  },
-  {
-    micro: 334,
-    id: "py-334-move-zeroes",
-    title: "DSA Move Zeroes",
-    solution: `def move_zeroes(nums):
-    w = 0
-    for x in nums:
-        if x != 0:
-            nums[w] = x
-            w += 1
-    for i in range(w, len(nums)):
-        nums[i] = 0
-
-nums = [0, 1, 0, 3, 12]
-move_zeroes(nums)
-print(nums)
-`,
-    nextUrl: /\/learn\/py-335-implement-trie/,
-    cursorAfter: "335",
+    nextUrl: /\/workspace/,
+    cursorAfter: "341",
   },
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-32[9]-|^py-33[0-4]-/);
+    expect(step.id).toMatch(/^py-33[5-9]-|^py-340-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -211,7 +243,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 329–334 · two pointers II", () => {
+test.describe("micro-steps 335–340 · tries II", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
