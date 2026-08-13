@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=436).
+    /// 1-based index on the workspace micro-step rail (1..=442).
     pub micro_step: i32,
 }
 
@@ -8084,7 +8084,277 @@ def subarray_sum(nums, k):
 
 print(subarray_sum([1, 1, 1], 2))
 ",
-    next: None, show_type_chips: false, micro_step: 436,
+    next: Some("py-437-pow-x-n"), show_type_chips: false, micro_step: 436,
+};
+
+
+pub const PY437_POW_X_N: CodingStep = CodingStep {
+    id: "py-437-pow-x-n", title: "DSA Pow X N", objective: "Potencia x^n (exponenciación rápida).",
+    prompt_md: "**Pow(x, n)**
+
+Binary exp. Distinto de py-323.
+
+**Micro-reto:**
+1. Definí `my_pow(x, n)`
+2. x=`2.0`, n=`10`; imprimí (esperado: `1024.0`)",
+    starter_code: "# def my_pow(x, n):
+#     ...
+# print(my_pow(2.0, 10))
+",
+    pytest: "def test_437_pow_x_n(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('my_pow'))
+    assert abs(ns['my_pow'](2.0, 10) - 1024.0) < 1e-9
+    assert abs(ns['my_pow'](2.1, 3) - 9.261) < 1e-9
+    assert abs(ns['my_pow'](2.0, -2) - 0.25) < 1e-9
+    assert capsys.readouterr().out.strip() == '1024.0'
+",
+    hint: "def my_pow(x, n):
+    if n<0: x=1/x; n=-n
+    ans=1.0
+    while n:
+        if n&1: ans*=x
+        x*=x; n>>=1
+    return ans
+print(my_pow(2.0, 10))",
+    solution_example: "def my_pow(x, n):
+    if n < 0:
+        x = 1 / x
+        n = -n
+    ans = 1.0
+    while n:
+        if n & 1:
+            ans *= x
+        x *= x
+        n >>= 1
+    return ans
+
+print(my_pow(2.0, 10))
+",
+    next: Some("py-438-sqrt-x"), show_type_chips: false, micro_step: 437,
+};
+
+
+pub const PY438_SQRT_X: CodingStep = CodingStep {
+    id: "py-438-sqrt-x", title: "DSA Sqrt X", objective: "Raíz entera (binaria).",
+    prompt_md: "**Sqrt(x)**
+
+Binaria. Distinto de py-359.
+
+**Micro-reto:**
+1. Definí `my_sqrt(x)`
+2. x=`8`; imprimí (esperado: `2`)",
+    starter_code: "# def my_sqrt(x):
+#     ...
+# print(my_sqrt(8))
+",
+    pytest: "def test_438_sqrt_x(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('my_sqrt'))
+    assert ns['my_sqrt'](8) == 2
+    assert ns['my_sqrt'](4) == 2
+    assert ns['my_sqrt'](0) == 0
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def my_sqrt(x):
+    lo,hi=0,x
+    while lo<=hi:
+        mid=(lo+hi)//2
+        if mid*mid<=x: lo=mid+1
+        else: hi=mid-1
+    return hi
+print(my_sqrt(8))",
+    solution_example: "def my_sqrt(x):
+    lo, hi = 0, x
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if mid * mid <= x:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return hi
+
+print(my_sqrt(8))
+",
+    next: Some("py-439-trailing-zeroes"), show_type_chips: false, micro_step: 438,
+};
+
+
+pub const PY439_TRAILING_ZEROES: CodingStep = CodingStep {
+    id: "py-439-trailing-zeroes", title: "DSA Trailing Zeroes", objective: "Ceros finales de n!.",
+    prompt_md: "**Factorial Trailing Zeroes**
+
+Contar factores 5. Distinto de py-324.
+
+**Micro-reto:**
+1. Definí `trailing_zeroes(n)`
+2. n=`25`; imprimí (esperado: `6`)",
+    starter_code: "# def trailing_zeroes(n):
+#     ...
+# print(trailing_zeroes(25))
+",
+    pytest: "def test_439_trailing_zeroes(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('trailing_zeroes'))
+    assert ns['trailing_zeroes'](25) == 6
+    assert ns['trailing_zeroes'](5) == 1
+    assert ns['trailing_zeroes'](0) == 0
+    assert capsys.readouterr().out.strip() == '6'
+",
+    hint: "def trailing_zeroes(n):
+    c=0
+    while n:
+        n//=5; c+=n
+    return c
+print(trailing_zeroes(25))",
+    solution_example: "def trailing_zeroes(n):
+    c = 0
+    while n:
+        n //= 5
+        c += n
+    return c
+
+print(trailing_zeroes(25))
+",
+    next: Some("py-440-excel-title"), show_type_chips: false, micro_step: 439,
+};
+
+
+pub const PY440_EXCEL_TITLE: CodingStep = CodingStep {
+    id: "py-440-excel-title", title: "DSA Excel Title", objective: "Número de columna → título Excel.",
+    prompt_md: "**Excel Sheet Column Title**
+
+Base 26. Distinto de py-325.
+
+**Micro-reto:**
+1. Definí `convert_to_title(column_number)`
+2. `28`; imprimí (esperado: `AB`)",
+    starter_code: "# def convert_to_title(column_number):
+#     ...
+# print(convert_to_title(28))
+",
+    pytest: "def test_440_excel_title(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('convert_to_title'))
+    assert ns['convert_to_title'](28) == 'AB'
+    assert ns['convert_to_title'](1) == 'A'
+    assert ns['convert_to_title'](701) == 'ZY'
+    assert capsys.readouterr().out.strip() == 'AB'
+",
+    hint: "def convert_to_title(column_number):
+    s=\"\"
+    while column_number:
+        column_number,r=divmod(column_number-1,26)
+        s=chr(65+r)+s
+    return s
+print(convert_to_title(28))",
+    solution_example: "def convert_to_title(column_number):
+    s = \"\"
+    while column_number:
+        column_number, r = divmod(column_number - 1, 26)
+        s = chr(65 + r) + s
+    return s
+
+print(convert_to_title(28))
+",
+    next: Some("py-441-palindrome-number"), show_type_chips: false, micro_step: 440,
+};
+
+
+pub const PY441_PALINDROME_NUMBER: CodingStep = CodingStep {
+    id: "py-441-palindrome-number", title: "DSA Palindrome Num", objective: "¿Entero es palíndromo sin string?",
+    prompt_md: "**Palindrome Number**
+
+Revertir mitad. Distinto de py-399.
+
+**Micro-reto:**
+1. Definí `is_palindrome(x)`
+2. x=`121`; imprimí `True`",
+    starter_code: "# def is_palindrome(x):
+#     ...
+# print(is_palindrome(121))
+",
+    pytest: "def test_441_palindrome_number(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_palindrome'))
+    assert ns['is_palindrome'](121) is True
+    assert ns['is_palindrome'](-121) is False
+    assert ns['is_palindrome'](10) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_palindrome(x):
+    if x<0 or (x%10==0 and x!=0): return False
+    rev=0
+    while x>rev:
+        rev=rev*10+x%10; x//=10
+    return x==rev or x==rev//10
+print(is_palindrome(121))",
+    solution_example: "def is_palindrome(x):
+    if x < 0 or (x % 10 == 0 and x != 0):
+        return False
+    rev = 0
+    while x > rev:
+        rev = rev * 10 + x % 10
+        x //= 10
+    return x == rev or x == rev // 10
+
+print(is_palindrome(121))
+",
+    next: Some("py-442-fizz-buzz"), show_type_chips: false, micro_step: 441,
+};
+
+
+pub const PY442_FIZZ_BUZZ: CodingStep = CodingStep {
+    id: "py-442-fizz-buzz", title: "DSA Fizz Buzz", objective: "FizzBuzz clásico 1..n.",
+    prompt_md: "**Fizz Buzz**
+
+Reglas 3/5. Distinto de py-01.
+
+**Micro-reto:**
+1. Definí `fizz_buzz(n)`
+2. n=`5`; imprimí lista",
+    starter_code: "# def fizz_buzz(n):
+#     ...
+# print(fizz_buzz(5))
+",
+    pytest: "def test_442_fizz_buzz(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('fizz_buzz'))
+    assert ns['fizz_buzz'](5) == ['1', '2', 'Fizz', '4', 'Buzz']
+    assert ns['fizz_buzz'](3) == ['1', '2', 'Fizz']
+    assert capsys.readouterr().out.strip() == '['1', '2', 'Fizz', '4', 'Buzz']'
+",
+    hint: "def fizz_buzz(n):
+    out=[]
+    for i in range(1,n+1):
+        if i%15==0: out.append(\"FizzBuzz\")
+        elif i%3==0: out.append(\"Fizz\")
+        elif i%5==0: out.append(\"Buzz\")
+        else: out.append(str(i))
+    return out
+print(fizz_buzz(5))",
+    solution_example: "def fizz_buzz(n):
+    out = []
+    for i in range(1, n + 1):
+        if i % 15 == 0:
+            out.append(\"FizzBuzz\")
+        elif i % 3 == 0:
+            out.append(\"Fizz\")
+        elif i % 5 == 0:
+            out.append(\"Buzz\")
+        else:
+            out.append(str(i))
+    return out
+
+print(fizz_buzz(5))
+",
+    next: None, show_type_chips: false, micro_step: 442,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -8523,7 +8793,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY433_INTERSECTION,
     &PY434_HAPPY_NUMBER,
     &PY435_FIRST_UNIQ_CHAR,
-    &PY436_SUBARRAY_SUM_K
+    &PY436_SUBARRAY_SUM_K,
+    &PY437_POW_X_N,
+    &PY438_SQRT_X,
+    &PY439_TRAILING_ZEROES,
+    &PY440_EXCEL_TITLE,
+    &PY441_PALINDROME_NUMBER,
+    &PY442_FIZZ_BUZZ
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -8667,7 +8943,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 436);
+            assert!(step.micro_step >= 1 && step.micro_step <= 442);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -9221,7 +9497,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py436_curriculum_chain() {
+    fn py203_to_py442_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -9457,7 +9733,13 @@ mod tests {
             (433, "py-433-intersection", Some("py-434-happy-number")),
             (434, "py-434-happy-number", Some("py-435-first-uniq-char")),
             (435, "py-435-first-uniq-char", Some("py-436-subarray-sum-k")),
-            (436, "py-436-subarray-sum-k", None),
+            (436, "py-436-subarray-sum-k", Some("py-437-pow-x-n")),
+            (437, "py-437-pow-x-n", Some("py-438-sqrt-x")),
+            (438, "py-438-sqrt-x", Some("py-439-trailing-zeroes")),
+            (439, "py-439-trailing-zeroes", Some("py-440-excel-title")),
+            (440, "py-440-excel-title", Some("py-441-palindrome-number")),
+            (441, "py-441-palindrome-number", Some("py-442-fizz-buzz")),
+            (442, "py-442-fizz-buzz", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
