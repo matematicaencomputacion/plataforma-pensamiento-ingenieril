@@ -370,6 +370,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 362, step_id: "py-362-peak-index" },
   { level_id: 363, step_id: "py-363-koko-bananas" },
   { level_id: 364, step_id: "py-364-ship-packages" },
+  { level_id: 365, step_id: "py-365-kth-largest" },
+  { level_id: 366, step_id: "py-366-top-k-frequent" },
+  { level_id: 367, step_id: "py-367-merge-k-lists" },
+  { level_id: 368, step_id: "py-368-ugly-number-ii" },
+  { level_id: 369, step_id: "py-369-task-scheduler" },
+  { level_id: 370, step_id: "py-370-reorganize-string" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

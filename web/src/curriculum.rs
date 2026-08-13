@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=364).
+    /// 1-based index on the workspace micro-step rail (1..=370).
     pub micro_step: i32,
 }
 
@@ -4772,7 +4772,263 @@ print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))",
 
 print(ship_within_days([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5))
 ",
-    next: None, show_type_chips: false, micro_step: 364,
+    next: Some("py-365-kth-largest"), show_type_chips: false, micro_step: 364,
+};
+
+
+pub const PY365_KTH_LARGEST: CodingStep = CodingStep {
+    id: "py-365-kth-largest", title: "DSA Kth Largest", objective: "k-ésimo mayor con heap de tamaño k.",
+    prompt_md: "**Kth Largest Element in an Array**
+
+heapq nsmallest/nlargest o min-heap k. Distinto de py-113.
+
+**Micro-reto:**
+1. Definí `find_kth_largest(nums, k)`
+2. nums=`[3,2,1,5,6,4]`, k=`2`; imprimí (esperado: `5`)",
+    starter_code: "# def find_kth_largest(nums, k):
+#     ...
+# print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
+",
+    pytest: "def test_365_kth_largest(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_kth_largest'))
+    assert ns['find_kth_largest']([3, 2, 1, 5, 6, 4], 2) == 5
+    assert ns['find_kth_largest']([3, 2, 3, 1, 2, 4, 5, 5, 6], 4) == 4
+    assert capsys.readouterr().out.strip() == '5'
+",
+    hint: "import heapq
+def find_kth_largest(nums, k):
+    return heapq.nlargest(k, nums)[-1]
+print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))",
+    solution_example: "import heapq
+
+def find_kth_largest(nums, k):
+    return heapq.nlargest(k, nums)[-1]
+
+print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
+",
+    next: Some("py-366-top-k-frequent"), show_type_chips: false, micro_step: 365,
+};
+
+
+pub const PY366_TOP_K_FREQUENT: CodingStep = CodingStep {
+    id: "py-366-top-k-frequent", title: "DSA Top K Frequent", objective: "k enteros más frecuentes (heap o bucket).",
+    prompt_md: "**Top K Frequent Elements**
+
+Counter + nlargest. Distinto de py-137.
+
+**Micro-reto:**
+1. Definí `top_k_frequent(nums, k)` (cualquier orden válido)
+2. nums=`[1,1,1,2,2,3]`, k=`2`; imprimí sorted (esperado: `[1, 2]`)",
+    starter_code: "# def top_k_frequent(nums, k):
+#     ...
+# print(sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)))
+",
+    pytest: "def test_366_top_k_frequent(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('top_k_frequent'))
+    assert sorted(ns['top_k_frequent']([1, 1, 1, 2, 2, 3], 2)) == [1, 2]
+    assert sorted(ns['top_k_frequent']([1], 1)) == [1]
+    assert capsys.readouterr().out.strip() == '[1, 2]'
+",
+    hint: "from collections import Counter
+import heapq
+def top_k_frequent(nums, k):
+    return [x for x,_ in Counter(nums).most_common(k)]
+print(sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)))",
+    solution_example: "from collections import Counter
+
+def top_k_frequent(nums, k):
+    return [x for x, _ in Counter(nums).most_common(k)]
+
+print(sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)))
+",
+    next: Some("py-367-merge-k-lists"), show_type_chips: false, micro_step: 366,
+};
+
+
+pub const PY367_MERGE_K_LISTS: CodingStep = CodingStep {
+    id: "py-367-merge-k-lists", title: "DSA Merge K Lists", objective: "Fusionar k listas enlazadas sorted (heap de nodos).",
+    prompt_md: "**Merge k Sorted Lists** (listas como arrays)
+
+heapq merge. Distinto de py-19.
+
+**Micro-reto:**
+1. Definí `merge_k_lists(lists)`
+2. `[[1,4,5],[1,3,4],[2,6]]`; imprimí (esperado: `[1, 1, 2, 3, 4, 4, 5, 6]`)",
+    starter_code: "# def merge_k_lists(lists):
+#     ...
+# print(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))
+",
+    pytest: "def test_367_merge_k_lists(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('merge_k_lists'))
+    assert ns['merge_k_lists']([[1, 4, 5], [1, 3, 4], [2, 6]]) == [1, 1, 2, 3, 4, 4, 5, 6]
+    assert ns['merge_k_lists']([]) == []
+    assert ns['merge_k_lists']([[]]) == []
+    assert capsys.readouterr().out.strip() == '[1, 1, 2, 3, 4, 4, 5, 6]'
+",
+    hint: "import heapq
+def merge_k_lists(lists):
+    return list(heapq.merge(*lists))
+print(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))",
+    solution_example: "import heapq
+
+def merge_k_lists(lists):
+    return list(heapq.merge(*lists))
+
+print(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))
+",
+    next: Some("py-368-ugly-number-ii"), show_type_chips: false, micro_step: 367,
+};
+
+
+pub const PY368_UGLY_NUMBER_II: CodingStep = CodingStep {
+    id: "py-368-ugly-number-ii", title: "DSA Ugly Number II", objective: "n-ésimo ugly number con min-heap.",
+    prompt_md: "**Ugly Number II**
+
+Heap + set de vistos. Distinto de py-328.
+
+**Micro-reto:**
+1. Definí `nth_ugly_number(n)`
+2. n=`10`; imprimí (esperado: `12`)",
+    starter_code: "# def nth_ugly_number(n):
+#     ...
+# print(nth_ugly_number(10))
+",
+    pytest: "def test_368_ugly_number_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('nth_ugly_number'))
+    assert ns['nth_ugly_number'](10) == 12
+    assert ns['nth_ugly_number'](1) == 1
+    assert capsys.readouterr().out.strip() == '12'
+",
+    hint: "import heapq
+def nth_ugly_number(n):
+    h=[1]; seen={1}
+    for _ in range(n):
+        x=heapq.heappop(h)
+        for f in (2,3,5):
+            y=x*f
+            if y not in seen: seen.add(y); heapq.heappush(h,y)
+    return x
+print(nth_ugly_number(10))",
+    solution_example: "import heapq
+
+def nth_ugly_number(n):
+    h = [1]
+    seen = {1}
+    x = 1
+    for _ in range(n):
+        x = heapq.heappop(h)
+        for f in (2, 3, 5):
+            y = x * f
+            if y not in seen:
+                seen.add(y)
+                heapq.heappush(h, y)
+    return x
+
+print(nth_ugly_number(10))
+",
+    next: Some("py-369-task-scheduler"), show_type_chips: false, micro_step: 368,
+};
+
+
+pub const PY369_TASK_SCHEDULER: CodingStep = CodingStep {
+    id: "py-369-task-scheduler", title: "DSA Task Scheduler", objective: "Mínimo tiempo con cooldown entre tareas iguales.",
+    prompt_md: "**Task Scheduler**
+
+Fórmula o simulación con heap. Distinto de py-126.
+
+**Micro-reto:**
+1. Definí `least_interval(tasks, n)`
+2. tasks=`[\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"]`, n=`2`; imprimí (esperado: `8`)",
+    starter_code: "# def least_interval(tasks, n):
+#     ...
+# print(least_interval([\"A\", \"A\", \"A\", \"B\", \"B\", \"B\"], 2))
+",
+    pytest: "def test_369_task_scheduler(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('least_interval'))
+    assert ns['least_interval'](['A', 'A', 'A', 'B', 'B', 'B'], 2) == 8
+    assert ns['least_interval'](['A', 'A', 'A', 'B', 'B', 'B'], 0) == 6
+    assert capsys.readouterr().out.strip() == '8'
+",
+    hint: "from collections import Counter
+def least_interval(tasks, n):
+    freq=list(Counter(tasks).values()); m=max(freq); cnt=freq.count(m)
+    return max(len(tasks), (m-1)*(n+1)+cnt)
+print(least_interval([\"A\", \"A\", \"A\", \"B\", \"B\", \"B\"], 2))",
+    solution_example: "from collections import Counter
+
+def least_interval(tasks, n):
+    freq = list(Counter(tasks).values())
+    m = max(freq)
+    cnt = freq.count(m)
+    return max(len(tasks), (m - 1) * (n + 1) + cnt)
+
+print(least_interval([\"A\", \"A\", \"A\", \"B\", \"B\", \"B\"], 2))
+",
+    next: Some("py-370-reorganize-string"), show_type_chips: false, micro_step: 369,
+};
+
+
+pub const PY370_REORGANIZE_STRING: CodingStep = CodingStep {
+    id: "py-370-reorganize-string", title: "DSA Reorganize String", objective: "Reorganizar string sin dos iguales adyacentes (heap).",
+    prompt_md: "**Reorganize String**
+
+Max-heap por frecuencia. Distinto de py-369.
+
+**Micro-reto:**
+1. Definí `reorganize_string(s)`
+2. `\"aab\"`; imprimí (esperado: `aba`)",
+    starter_code: "# def reorganize_string(s):
+#     ...
+# print(reorganize_string(\"aab\"))
+",
+    pytest: "def test_370_reorganize_string(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('reorganize_string'))
+    assert ns['reorganize_string']('aab') == 'aba'
+    assert ns['reorganize_string']('aaab') == ''
+    assert capsys.readouterr().out.strip() == 'aba'
+",
+    hint: "import heapq
+from collections import Counter
+def reorganize_string(s):
+    h=[(-c,ch) for ch,c in Counter(s).items()]; heapq.heapify(h)
+    out=[]; prev=(0,\"\")
+    while h:
+        c,ch=heapq.heappop(h); out.append(ch)
+        if prev[0]<0: heapq.heappush(h,prev)
+        prev=(c+1,ch)
+    return \"\".join(out) if len(out)==len(s) else \"\"
+print(reorganize_string(\"aab\"))",
+    solution_example: "import heapq
+from collections import Counter
+
+def reorganize_string(s):
+    h = [(-c, ch) for ch, c in Counter(s).items()]
+    heapq.heapify(h)
+    out = []
+    prev = (0, \"\")
+    while h:
+        c, ch = heapq.heappop(h)
+        out.append(ch)
+        if prev[0] < 0:
+            heapq.heappush(h, prev)
+        prev = (c + 1, ch)
+    return \"\".join(out) if len(out) == len(s) else \"\"
+
+print(reorganize_string(\"aab\"))
+",
+    next: None, show_type_chips: false, micro_step: 370,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -5139,7 +5395,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY361_FIRST_LAST_POS,
     &PY362_PEAK_INDEX,
     &PY363_KOKO_BANANAS,
-    &PY364_SHIP_PACKAGES
+    &PY364_SHIP_PACKAGES,
+    &PY365_KTH_LARGEST,
+    &PY366_TOP_K_FREQUENT,
+    &PY367_MERGE_K_LISTS,
+    &PY368_UGLY_NUMBER_II,
+    &PY369_TASK_SCHEDULER,
+    &PY370_REORGANIZE_STRING
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -5283,7 +5545,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 364);
+            assert!(step.micro_step >= 1 && step.micro_step <= 370);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -5837,7 +6099,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py364_curriculum_chain() {
+    fn py203_to_py370_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -6001,7 +6263,13 @@ mod tests {
             (361, "py-361-first-last-pos", Some("py-362-peak-index")),
             (362, "py-362-peak-index", Some("py-363-koko-bananas")),
             (363, "py-363-koko-bananas", Some("py-364-ship-packages")),
-            (364, "py-364-ship-packages", None),
+            (364, "py-364-ship-packages", Some("py-365-kth-largest")),
+            (365, "py-365-kth-largest", Some("py-366-top-k-frequent")),
+            (366, "py-366-top-k-frequent", Some("py-367-merge-k-lists")),
+            (367, "py-367-merge-k-lists", Some("py-368-ugly-number-ii")),
+            (368, "py-368-ugly-number-ii", Some("py-369-task-scheduler")),
+            (369, "py-369-task-scheduler", Some("py-370-reorganize-string")),
+            (370, "py-370-reorganize-string", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
