@@ -412,6 +412,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 404, step_id: "py-404-wiggle-sort" },
   { level_id: 405, step_id: "py-405-k-closest" },
   { level_id: 406, step_id: "py-406-sort-by-freq" },
+  { level_id: 407, step_id: "py-407-spiral-order" },
+  { level_id: 408, step_id: "py-408-set-zeroes" },
+  { level_id: 409, step_id: "py-409-rotate-image" },
+  { level_id: 410, step_id: "py-410-search-2d" },
+  { level_id: 411, step_id: "py-411-game-of-life" },
+  { level_id: 412, step_id: "py-412-reshape-matrix" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

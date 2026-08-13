@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=406).
+    /// 1-based index on the workspace micro-step rail (1..=412).
     pub micro_step: i32,
 }
 
@@ -6650,7 +6650,291 @@ def frequency_sort(nums):
 
 print(frequency_sort([1, 1, 2, 2, 2, 3]))
 ",
-    next: None, show_type_chips: false, micro_step: 406,
+    next: Some("py-407-spiral-order"), show_type_chips: false, micro_step: 406,
+};
+
+
+pub const PY407_SPIRAL_ORDER: CodingStep = CodingStep {
+    id: "py-407-spiral-order", title: "DSA Spiral Order", objective: "Recorrido espiral de matriz.",
+    prompt_md: "**Spiral Matrix**
+
+Límites que se cierran. Distinto de py-95.
+
+**Micro-reto:**
+1. Definí `spiral_order(matrix)`
+2. `[[1,2,3],[4,5,6],[7,8,9]]`; imprimí (esperado: `[1, 2, 3, 6, 9, 8, 7, 4, 5]`)",
+    starter_code: "# def spiral_order(matrix):
+#     ...
+# print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    pytest: "def test_407_spiral_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('spiral_order'))
+    assert ns['spiral_order']([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == [1, 2, 3, 6, 9, 8, 7, 4, 5]
+    assert ns['spiral_order']([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]) == [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3, 6, 9, 8, 7, 4, 5]'
+",
+    hint: "def spiral_order(matrix):
+    out=[]
+    while matrix:
+        out+=matrix.pop(0)
+        if matrix and matrix[0]:
+            for row in matrix: out.append(row.pop())
+        if matrix:
+            out+=matrix.pop()[::-1]
+        if matrix and matrix[0]:
+            for row in matrix[::-1]: out.append(row.pop(0))
+    return out
+print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))",
+    solution_example: "def spiral_order(matrix):
+    out = []
+    while matrix:
+        out += matrix.pop(0)
+        if matrix and matrix[0]:
+            for row in matrix:
+                out.append(row.pop())
+        if matrix:
+            out += matrix.pop()[::-1]
+        if matrix and matrix[0]:
+            for row in matrix[::-1]:
+                out.append(row.pop(0))
+    return out
+
+print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    next: Some("py-408-set-zeroes"), show_type_chips: false, micro_step: 407,
+};
+
+
+pub const PY408_SET_ZEROES: CodingStep = CodingStep {
+    id: "py-408-set-zeroes", title: "DSA Set Zeroes", objective: "Si cell=0, poner fila y columna a 0.",
+    prompt_md: "**Set Matrix Zeroes**
+
+Markers O(1). Distinto de py-96.
+
+**Micro-reto:**
+1. Definí `set_zeroes(matrix)` mutando/devolviendo
+2. `[[1,1,1],[1,0,1],[1,1,1]]`; imprimí resultado",
+    starter_code: "# def set_zeroes(matrix):
+#     ...
+# print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
+",
+    pytest: "def test_408_set_zeroes(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('set_zeroes'))
+    assert ns['set_zeroes']([[1, 1, 1], [1, 0, 1], [1, 1, 1]]) == [[1, 0, 1], [0, 0, 0], [1, 0, 1]]
+    assert ns['set_zeroes']([[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]]) == [[0, 0, 0, 0], [0, 4, 5, 0], [0, 3, 1, 0]]
+    assert capsys.readouterr().out.strip() == '[[1, 0, 1], [0, 0, 0], [1, 0, 1]]'
+",
+    hint: "def set_zeroes(matrix):
+    m,n=len(matrix),len(matrix[0])
+    rows={i for i in range(m) for j in range(n) if matrix[i][j]==0}
+    cols={j for i in range(m) for j in range(n) if matrix[i][j]==0}
+    for i in range(m):
+        for j in range(n):
+            if i in rows or j in cols: matrix[i][j]=0
+    return matrix
+print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))",
+    solution_example: "def set_zeroes(matrix):
+    m, n = len(matrix), len(matrix[0])
+    rows = {i for i in range(m) for j in range(n) if matrix[i][j] == 0}
+    cols = {j for i in range(m) for j in range(n) if matrix[i][j] == 0}
+    for i in range(m):
+        for j in range(n):
+            if i in rows or j in cols:
+                matrix[i][j] = 0
+    return matrix
+
+print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
+",
+    next: Some("py-409-rotate-image"), show_type_chips: false, micro_step: 408,
+};
+
+
+pub const PY409_ROTATE_IMAGE: CodingStep = CodingStep {
+    id: "py-409-rotate-image", title: "DSA Rotate Image", objective: "Rotar matriz 90° clockwise in-place.",
+    prompt_md: "**Rotate Image**
+
+Transpose + reverse rows. Distinto de py-97.
+
+**Micro-reto:**
+1. Definí `rotate(matrix)`
+2. `[[1,2,3],[4,5,6],[7,8,9]]`; imprimí (esperado: `[[7, 4, 1], [8, 5, 2], [9, 6, 3]]`)",
+    starter_code: "# def rotate(matrix):
+#     ...
+# print(rotate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    pytest: "def test_409_rotate_image(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('rotate'))
+    assert ns['rotate']([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == [[7, 4, 1], [8, 5, 2], [9, 6, 3]]
+    assert capsys.readouterr().out.strip() == '[[7, 4, 1], [8, 5, 2], [9, 6, 3]]'
+",
+    hint: "def rotate(matrix):
+    n=len(matrix)
+    for i in range(n):
+        for j in range(i+1,n):
+            matrix[i][j],matrix[j][i]=matrix[j][i],matrix[i][j]
+    for row in matrix: row.reverse()
+    return matrix
+print(rotate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))",
+    solution_example: "def rotate(matrix):
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i + 1, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    for row in matrix:
+        row.reverse()
+    return matrix
+
+print(rotate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    next: Some("py-410-search-2d"), show_type_chips: false, micro_step: 409,
+};
+
+
+pub const PY410_SEARCH_2D: CodingStep = CodingStep {
+    id: "py-410-search-2d", title: "DSA Search 2D", objective: "Buscar en matriz sorted por filas/cols.",
+    prompt_md: "**Search a 2D Matrix II**
+
+Desde esquina. Distinto de py-98.
+
+**Micro-reto:**
+1. Definí `search_matrix(matrix, target)`
+2. matrix típica, target=`5`; imprimí `True`",
+    starter_code: "# def search_matrix(matrix, target):
+#     ...
+# print(search_matrix([[1, 4, 7, 11, 15], [2, 5, 8, 12, 19], [3, 6, 9, 16, 22], [10, 13, 14, 17, 24], [18, 21, 23, 26, 30]], 5))
+",
+    pytest: "def test_410_search_2d(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('search_matrix'))
+    m=[[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]]
+    assert ns['search_matrix'](m, 5) is True
+    assert ns['search_matrix'](m, 20) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def search_matrix(matrix, target):
+    if not matrix: return False
+    r,c=0,len(matrix[0])-1
+    while r<len(matrix) and c>=0:
+        if matrix[r][c]==target: return True
+        if matrix[r][c]>target: c-=1
+        else: r+=1
+    return False
+print(search_matrix([[1, 4, 7, 11, 15], [2, 5, 8, 12, 19], [3, 6, 9, 16, 22], [10, 13, 14, 17, 24], [18, 21, 23, 26, 30]], 5))",
+    solution_example: "def search_matrix(matrix, target):
+    if not matrix:
+        return False
+    r, c = 0, len(matrix[0]) - 1
+    while r < len(matrix) and c >= 0:
+        if matrix[r][c] == target:
+            return True
+        if matrix[r][c] > target:
+            c -= 1
+        else:
+            r += 1
+    return False
+
+print(search_matrix([[1, 4, 7, 11, 15], [2, 5, 8, 12, 19], [3, 6, 9, 16, 22], [10, 13, 14, 17, 24], [18, 21, 23, 26, 30]], 5))
+",
+    next: Some("py-411-game-of-life"), show_type_chips: false, micro_step: 410,
+};
+
+
+pub const PY411_GAME_OF_LIFE: CodingStep = CodingStep {
+    id: "py-411-game-of-life", title: "DSA Game Of Life", objective: "Siguiente estado Conway in-place (o copia).",
+    prompt_md: "**Game of Life**
+
+Contar vecinos. Distinto de py-99.
+
+**Micro-reto:**
+1. Definí `game_of_life(board)`
+2. `[[0,1,0],[0,0,1],[1,1,1],[0,0,0]]`; imprimí siguiente",
+    starter_code: "# def game_of_life(board):
+#     ...
+# print(game_of_life([[0, 1, 0], [0, 0, 1], [1, 1, 1], [0, 0, 0]]))
+",
+    pytest: "def test_411_game_of_life(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('game_of_life'))
+    assert ns['game_of_life']([[0, 1, 0], [0, 0, 1], [1, 1, 1], [0, 0, 0]]) == [[0, 0, 0], [1, 0, 1], [0, 1, 1], [0, 1, 0]]
+    assert capsys.readouterr().out.strip() == '[[0, 0, 0], [1, 0, 1], [0, 1, 1], [0, 1, 0]]'
+",
+    hint: "def game_of_life(board):
+    import copy
+    m,n=len(board),len(board[0]); nxt=copy.deepcopy(board)
+    for i in range(m):
+        for j in range(n):
+            live=sum(board[x][y] for x in range(i-1,i+2) for y in range(j-1,j+2) if 0<=x<m and 0<=y<n)-board[i][j]
+            if board[i][j]==1 and (live<2 or live>3): nxt[i][j]=0
+            elif board[i][j]==0 and live==3: nxt[i][j]=1
+    for i in range(m):
+        board[i]=nxt[i]
+    return board
+print(game_of_life([[0, 1, 0], [0, 0, 1], [1, 1, 1], [0, 0, 0]]))",
+    solution_example: "import copy
+
+def game_of_life(board):
+    m, n = len(board), len(board[0])
+    nxt = copy.deepcopy(board)
+    for i in range(m):
+        for j in range(n):
+            live = sum(board[x][y] for x in range(i - 1, i + 2) for y in range(j - 1, j + 2) if 0 <= x < m and 0 <= y < n) - board[i][j]
+            if board[i][j] == 1 and (live < 2 or live > 3):
+                nxt[i][j] = 0
+            elif board[i][j] == 0 and live == 3:
+                nxt[i][j] = 1
+    for i in range(m):
+        board[i] = nxt[i]
+    return board
+
+print(game_of_life([[0, 1, 0], [0, 0, 1], [1, 1, 1], [0, 0, 0]]))
+",
+    next: Some("py-412-reshape-matrix"), show_type_chips: false, micro_step: 411,
+};
+
+
+pub const PY412_RESHAPE_MATRIX: CodingStep = CodingStep {
+    id: "py-412-reshape-matrix", title: "DSA Reshape Matrix", objective: "Reshape matriz a r×c si cabe.",
+    prompt_md: "**Reshape the Matrix**
+
+Flatten + chunk. Distinto de py-100.
+
+**Micro-reto:**
+1. Definí `matrix_reshape(mat, r, c)`
+2. mat=`[[1,2],[3,4]]`, r=`1`, c=`4`; imprimí (esperado: `[[1, 2, 3, 4]]`)",
+    starter_code: "# def matrix_reshape(mat, r, c):
+#     ...
+# print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
+",
+    pytest: "def test_412_reshape_matrix(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('matrix_reshape'))
+    assert ns['matrix_reshape']([[1, 2], [3, 4]], 1, 4) == [[1, 2, 3, 4]]
+    assert ns['matrix_reshape']([[1, 2], [3, 4]], 2, 4) == [[1, 2], [3, 4]]
+    assert capsys.readouterr().out.strip() == '[[1, 2, 3, 4]]'
+",
+    hint: "def matrix_reshape(mat, r, c):
+    flat=[x for row in mat for x in row]
+    if len(flat)!=r*c: return mat
+    return [flat[i*c:(i+1)*c] for i in range(r)]
+print(matrix_reshape([[1, 2], [3, 4]], 1, 4))",
+    solution_example: "def matrix_reshape(mat, r, c):
+    flat = [x for row in mat for x in row]
+    if len(flat) != r * c:
+        return mat
+    return [flat[i * c:(i + 1) * c] for i in range(r)]
+
+print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
+",
+    next: None, show_type_chips: false, micro_step: 412,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -7059,7 +7343,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY403_LARGEST_NUMBER,
     &PY404_WIGGLE_SORT,
     &PY405_K_CLOSEST,
-    &PY406_SORT_BY_FREQ
+    &PY406_SORT_BY_FREQ,
+    &PY407_SPIRAL_ORDER,
+    &PY408_SET_ZEROES,
+    &PY409_ROTATE_IMAGE,
+    &PY410_SEARCH_2D,
+    &PY411_GAME_OF_LIFE,
+    &PY412_RESHAPE_MATRIX
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -7203,7 +7493,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 406);
+            assert!(step.micro_step >= 1 && step.micro_step <= 412);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -7757,7 +8047,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py406_curriculum_chain() {
+    fn py203_to_py412_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -7963,7 +8253,13 @@ mod tests {
             (403, "py-403-largest-number", Some("py-404-wiggle-sort")),
             (404, "py-404-wiggle-sort", Some("py-405-k-closest")),
             (405, "py-405-k-closest", Some("py-406-sort-by-freq")),
-            (406, "py-406-sort-by-freq", None),
+            (406, "py-406-sort-by-freq", Some("py-407-spiral-order")),
+            (407, "py-407-spiral-order", Some("py-408-set-zeroes")),
+            (408, "py-408-set-zeroes", Some("py-409-rotate-image")),
+            (409, "py-409-rotate-image", Some("py-410-search-2d")),
+            (410, "py-410-search-2d", Some("py-411-game-of-life")),
+            (411, "py-411-game-of-life", Some("py-412-reshape-matrix")),
+            (412, "py-412-reshape-matrix", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
