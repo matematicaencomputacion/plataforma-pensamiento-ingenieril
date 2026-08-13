@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=316).
+    /// 1-based index on the workspace micro-step rail (1..=322).
     pub micro_step: i32,
 }
 
@@ -4010,8 +4010,69 @@ pub const PY316_VIDEO_STITCH: CodingStep = CodingStep {
     pytest: "def test_video_stitch(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('video_stitching'))\n    assert ns['video_stitching']([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10) == 3\n    assert ns['video_stitching']([[0, 1], [1, 2]], 5) == -1\n    assert ns['video_stitching']([[0, 4], [2, 8]], 5) == 2\n    assert capsys.readouterr().out.strip() == '3'\n",
     hint: "def video_stitching(clips, time):\n    clips = sorted(clips)\n    end = farthest = used = i = 0\n    while end < time:\n        while i < len(clips) and clips[i][0] <= end:\n            farthest = max(farthest, clips[i][1]); i += 1\n        if farthest == end: return -1\n        used += 1; end = farthest\n    return used\nprint(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))",
     solution_example: "def video_stitching(clips, time):\n    clips = sorted(clips)\n    end = farthest = used = i = 0\n    while end < time:\n        while i < len(clips) and clips[i][0] <= end:\n            farthest = max(farthest, clips[i][1])\n            i += 1\n        if farthest == end:\n            return -1\n        used += 1\n        end = farthest\n    return used\n\nprint(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))\n",
-    next: None, show_type_chips: false, micro_step: 316,
+    next: Some("py-317-permutations"), show_type_chips: false, micro_step: 316,
 };
+
+pub const PY317_PERMUTATIONS: CodingStep = CodingStep {
+    id: "py-317-permutations", title: "DSA Permutations", objective: "Generar todas las permutaciones de un array distinto.",
+    prompt_md: "**Permutations**\n\nBacktracking swap o used[]. Distinto de py-231 (subsets con dupes).\n\n**Micro-reto:**\n1. Definí `permute(nums)` → lista de listas ordenada\n2. `[1,2,3]`; imprimí (esperado: `[[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]`)",
+    starter_code: "# def permute(nums):\n#     ...\n# print(permute([1, 2, 3]))\n",
+    pytest: "def test_permutations(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('permute'))\n    got = sorted(ns['permute']([1, 2, 3]))\n    assert got == [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\n    assert sorted(ns['permute']([0, 1])) == [[0, 1], [1, 0]]\n    assert capsys.readouterr().out.strip() == '[[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]'\n",
+    hint: "def permute(nums):\n    out = []\n    def bt(path, used):\n        if len(path) == len(nums):\n            out.append(path[:]); return\n        for i, x in enumerate(nums):\n            if used[i]: continue\n            used[i] = True; path.append(x); bt(path, used); path.pop(); used[i] = False\n    bt([], [False]*len(nums))\n    return sorted(out)\nprint(permute([1, 2, 3]))",
+    solution_example: "def permute(nums):\n    out = []\n    def bt(path, used):\n        if len(path) == len(nums):\n            out.append(path[:])\n            return\n        for i, x in enumerate(nums):\n            if used[i]:\n                continue\n            used[i] = True\n            path.append(x)\n            bt(path, used)\n            path.pop()\n            used[i] = False\n    bt([], [False] * len(nums))\n    return sorted(out)\n\nprint(permute([1, 2, 3]))\n",
+    next: Some("py-318-combos-ii"), show_type_chips: false, micro_step: 317,
+};
+
+pub const PY318_COMBOS_II: CodingStep = CodingStep {
+    id: "py-318-combos-ii", title: "DSA Combination Sum II", objective: "Combinaciones que suman target sin reusar el mismo índice (con dupes).",
+    prompt_md: "**Combination Sum II**\n\nOrdená + skip duplicates. Distinto de py-228 (reuso ilimitado).\n\n**Micro-reto:**\n1. Definí `combination_sum2(candidates, target)` → listas ordenadas\n2. candidates=`[10,1,2,7,6,1,5]`, target=`8`; imprimí (esperado: `[[1, 1, 6], [1, 2, 5], [1, 7], [2, 6]]`)",
+    starter_code: "# def combination_sum2(candidates, target):\n#     ...\n# print(combination_sum2([10, 1, 2, 7, 6, 1, 5], 8))\n",
+    pytest: "def test_combos_ii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('combination_sum2'))\n    got = ns['combination_sum2']([10, 1, 2, 7, 6, 1, 5], 8)\n    assert sorted(got) == [[1, 1, 6], [1, 2, 5], [1, 7], [2, 6]]\n    assert ns['combination_sum2']([2, 5, 2, 1, 2], 5) == [[1, 2, 2], [5]] or sorted(ns['combination_sum2']([2, 5, 2, 1, 2], 5)) == [[1, 2, 2], [5]]\n    assert capsys.readouterr().out.strip() == '[[1, 1, 6], [1, 2, 5], [1, 7], [2, 6]]'\n",
+    hint: "def combination_sum2(candidates, target):\n    candidates = sorted(candidates); out = []\n    def bt(start, remain, path):\n        if remain == 0: out.append(path[:]); return\n        for i in range(start, len(candidates)):\n            if i > start and candidates[i] == candidates[i-1]: continue\n            if candidates[i] > remain: break\n            path.append(candidates[i]); bt(i+1, remain-candidates[i], path); path.pop()\n    bt(0, target, []); return out\nprint(combination_sum2([10, 1, 2, 7, 6, 1, 5], 8))",
+    solution_example: "def combination_sum2(candidates, target):\n    candidates = sorted(candidates)\n    out = []\n    def bt(start, remain, path):\n        if remain == 0:\n            out.append(path[:])\n            return\n        for i in range(start, len(candidates)):\n            if i > start and candidates[i] == candidates[i - 1]:\n                continue\n            if candidates[i] > remain:\n                break\n            path.append(candidates[i])\n            bt(i + 1, remain - candidates[i], path)\n            path.pop()\n    bt(0, target, [])\n    return out\n\nprint(combination_sum2([10, 1, 2, 7, 6, 1, 5], 8))\n",
+    next: Some("py-319-n-queens"), show_type_chips: false, micro_step: 318,
+};
+
+pub const PY319_N_QUEENS: CodingStep = CodingStep {
+    id: "py-319-n-queens", title: "DSA N-Queens", objective: "Contar soluciones al problema de n reinas.",
+    prompt_md: "**N-Queens II**\n\nBacktracking con cols/diags. Distinto de py-227 (paréntesis).\n\n**Micro-reto:**\n1. Definí `total_n_queens(n)`\n2. n=`4`; imprimí (esperado: `2`)",
+    starter_code: "# def total_n_queens(n):\n#     ...\n# print(total_n_queens(4))\n",
+    pytest: "def test_n_queens(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('total_n_queens'))\n    assert ns['total_n_queens'](4) == 2\n    assert ns['total_n_queens'](1) == 1\n    assert ns['total_n_queens'](8) == 92\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def total_n_queens(n):\n    cols = set(); d1 = set(); d2 = set(); ans = 0\n    def bt(r):\n        nonlocal ans\n        if r == n: ans += 1; return\n        for c in range(n):\n            if c in cols or (r-c) in d1 or (r+c) in d2: continue\n            cols.add(c); d1.add(r-c); d2.add(r+c)\n            bt(r+1)\n            cols.remove(c); d1.remove(r-c); d2.remove(r+c)\n    bt(0); return ans\nprint(total_n_queens(4))",
+    solution_example: "def total_n_queens(n):\n    cols = set()\n    d1 = set()\n    d2 = set()\n    ans = 0\n    def bt(r):\n        nonlocal ans\n        if r == n:\n            ans += 1\n            return\n        for c in range(n):\n            if c in cols or (r - c) in d1 or (r + c) in d2:\n                continue\n            cols.add(c)\n            d1.add(r - c)\n            d2.add(r + c)\n            bt(r + 1)\n            cols.remove(c)\n            d1.remove(r - c)\n            d2.remove(r + c)\n    bt(0)\n    return ans\n\nprint(total_n_queens(4))\n",
+    next: Some("py-320-restore-ip"), show_type_chips: false, micro_step: 319,
+};
+
+pub const PY320_RESTORE_IP: CodingStep = CodingStep {
+    id: "py-320-restore-ip", title: "DSA Restore IP", objective: "Restaurar todas las IPs válidas desde un string de dígitos.",
+    prompt_md: "**Restore IP Addresses**\n\n4 segmentos 0–255 sin leading zeros. Distinto de py-232 (palindrome partition).\n\n**Micro-reto:**\n1. Definí `restore_ip_addresses(s)` ordenado\n2. s=`\"25525511135\"`; imprimí (esperado: `['255.255.11.135', '255.255.111.35']`)",
+    starter_code: "# def restore_ip_addresses(s):\n#     ...\n# print(restore_ip_addresses(\"25525511135\"))\n",
+    pytest: "def test_restore_ip(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('restore_ip_addresses'))\n    got = sorted(ns['restore_ip_addresses']('25525511135'))\n    assert got == ['255.255.11.135', '255.255.111.35']\n    assert ns['restore_ip_addresses']('0000') == ['0.0.0.0']\n    assert capsys.readouterr().out.strip() == \"['255.255.11.135', '255.255.111.35']\"\n",
+    hint: "def restore_ip_addresses(s):\n    out = []\n    def bt(start, parts):\n        if len(parts) == 4:\n            if start == len(s): out.append('.'.join(parts))\n            return\n        for length in range(1, 4):\n            if start + length > len(s): break\n            seg = s[start:start+length]\n            if (len(seg) > 1 and seg[0] == '0') or int(seg) > 255: continue\n            parts.append(seg); bt(start+length, parts); parts.pop()\n    bt(0, []); return sorted(out)\nprint(restore_ip_addresses('25525511135'))",
+    solution_example: "def restore_ip_addresses(s):\n    out = []\n    def bt(start, parts):\n        if len(parts) == 4:\n            if start == len(s):\n                out.append('.'.join(parts))\n            return\n        for length in range(1, 4):\n            if start + length > len(s):\n                break\n            seg = s[start:start + length]\n            if (len(seg) > 1 and seg[0] == '0') or int(seg) > 255:\n                continue\n            parts.append(seg)\n            bt(start + length, parts)\n            parts.pop()\n    bt(0, [])\n    return sorted(out)\n\nprint(restore_ip_addresses('25525511135'))\n",
+    next: Some("py-321-valid-sudoku"), show_type_chips: false, micro_step: 320,
+};
+
+pub const PY321_VALID_SUDOKU: CodingStep = CodingStep {
+    id: "py-321-valid-sudoku", title: "DSA Valid Sudoku", objective: "Validar filas, columnas y bloques 3x3 de un tablero 9x9.",
+    prompt_md: "**Valid Sudoku**\n\nSets por fila/col/box. Distinto de py-229 (word search DFS).\n\n**Micro-reto:**\n1. Definí `is_valid_sudoku(board)`\n2. Tablero parcial clásico LC36; imprimí `True`",
+    starter_code: "# def is_valid_sudoku(board):\n#     ...\n# board = [...]\n# print(is_valid_sudoku(board))\n",
+    pytest: "def test_valid_sudoku(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('is_valid_sudoku'))\n    board = [\n        ['5','3','.','.','7','.','.','.','.'],\n        ['6','.','.','1','9','5','.','.','.'],\n        ['.','9','8','.','.','.','.','6','.'],\n        ['8','.','.','.','6','.','.','.','3'],\n        ['4','.','.','8','.','3','.','.','1'],\n        ['7','.','.','.','2','.','.','.','6'],\n        ['.','6','.','.','.','.','2','8','.'],\n        ['.','.','.','4','1','9','.','.','5'],\n        ['.','.','.','.','8','.','.','7','9'],\n    ]\n    assert ns['is_valid_sudoku'](board) is True\n    bad = [row[:] for row in board]; bad[0][0] = '8'\n    assert ns['is_valid_sudoku'](bad) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "def is_valid_sudoku(board):\n    rows = [set() for _ in range(9)]; cols = [set() for _ in range(9)]; boxes = [set() for _ in range(9)]\n    for r in range(9):\n        for c in range(9):\n            v = board[r][c]\n            if v == '.': continue\n            b = (r//3)*3 + c//3\n            if v in rows[r] or v in cols[c] or v in boxes[b]: return False\n            rows[r].add(v); cols[c].add(v); boxes[b].add(v)\n    return True",
+    solution_example: "def is_valid_sudoku(board):\n    rows = [set() for _ in range(9)]\n    cols = [set() for _ in range(9)]\n    boxes = [set() for _ in range(9)]\n    for r in range(9):\n        for c in range(9):\n            v = board[r][c]\n            if v == '.':\n                continue\n            b = (r // 3) * 3 + c // 3\n            if v in rows[r] or v in cols[c] or v in boxes[b]:\n                return False\n            rows[r].add(v)\n            cols[c].add(v)\n            boxes[b].add(v)\n    return True\n\nboard = [\n    ['5', '3', '.', '.', '7', '.', '.', '.', '.'],\n    ['6', '.', '.', '1', '9', '5', '.', '.', '.'],\n    ['.', '9', '8', '.', '.', '.', '.', '6', '.'],\n    ['8', '.', '.', '.', '6', '.', '.', '.', '3'],\n    ['4', '.', '.', '8', '.', '3', '.', '.', '1'],\n    ['7', '.', '.', '.', '2', '.', '.', '.', '6'],\n    ['.', '6', '.', '.', '.', '.', '2', '8', '.'],\n    ['.', '.', '.', '4', '1', '9', '.', '.', '5'],\n    ['.', '.', '.', '.', '8', '.', '.', '7', '9'],\n]\nprint(is_valid_sudoku(board))\n",
+    next: Some("py-322-permute-unique"), show_type_chips: false, micro_step: 321,
+};
+
+pub const PY322_PERMUTE_UNIQUE: CodingStep = CodingStep {
+    id: "py-322-permute-unique", title: "DSA Permute Unique", objective: "Permutaciones únicas de un array con duplicados.",
+    prompt_md: "**Permutations II**\n\nOrdená + skip si used[i-1] False. Distinto de py-317 (sin dupes).\n\n**Micro-reto:**\n1. Definí `permute_unique(nums)` ordenado\n2. `[1,1,2]`; imprimí (esperado: `[[1, 1, 2], [1, 2, 1], [2, 1, 1]]`)",
+    starter_code: "# def permute_unique(nums):\n#     ...\n# print(permute_unique([1, 1, 2]))\n",
+    pytest: "def test_permute_unique(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('permute_unique'))\n    assert sorted(ns['permute_unique']([1, 1, 2])) == [[1, 1, 2], [1, 2, 1], [2, 1, 1]]\n    assert sorted(ns['permute_unique']([1, 2, 3])) == [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\n    assert capsys.readouterr().out.strip() == '[[1, 1, 2], [1, 2, 1], [2, 1, 1]]'\n",
+    hint: "def permute_unique(nums):\n    nums = sorted(nums); out = []; used = [False]*len(nums)\n    def bt(path):\n        if len(path) == len(nums): out.append(path[:]); return\n        for i, x in enumerate(nums):\n            if used[i]: continue\n            if i > 0 and nums[i] == nums[i-1] and not used[i-1]: continue\n            used[i] = True; path.append(x); bt(path); path.pop(); used[i] = False\n    bt([]); return out\nprint(permute_unique([1, 1, 2]))",
+    solution_example: "def permute_unique(nums):\n    nums = sorted(nums)\n    out = []\n    used = [False] * len(nums)\n    def bt(path):\n        if len(path) == len(nums):\n            out.append(path[:])\n            return\n        for i, x in enumerate(nums):\n            if used[i]:\n                continue\n            if i > 0 and nums[i] == nums[i - 1] and not used[i - 1]:\n                continue\n            used[i] = True\n            path.append(x)\n            bt(path)\n            path.pop()\n            used[i] = False\n    bt([])\n    return out\n\nprint(permute_unique([1, 1, 2]))\n",
+    next: None, show_type_chips: false, micro_step: 322,
+};
+
 
 
 
@@ -4332,6 +4393,12 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY314_MY_CALENDAR,
     &PY315_NON_OVERLAP,
     &PY316_VIDEO_STITCH,
+    &PY317_PERMUTATIONS,
+    &PY318_COMBOS_II,
+    &PY319_N_QUEENS,
+    &PY320_RESTORE_IP,
+    &PY321_VALID_SUDOKU,
+    &PY322_PERMUTE_UNIQUE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -4475,7 +4542,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 316);
+            assert!(step.micro_step >= 1 && step.micro_step <= 322);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -5029,7 +5096,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py316_curriculum_chain() {
+    fn py203_to_py322_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -5145,7 +5212,13 @@ mod tests {
             (313, "py-313-interval-intersect", Some("py-314-my-calendar")),
             (314, "py-314-my-calendar", Some("py-315-non-overlap")),
             (315, "py-315-non-overlap", Some("py-316-video-stitch")),
-            (316, "py-316-video-stitch", None),
+            (316, "py-316-video-stitch", Some("py-317-permutations")),
+            (317, "py-317-permutations", Some("py-318-combos-ii")),
+            (318, "py-318-combos-ii", Some("py-319-n-queens")),
+            (319, "py-319-n-queens", Some("py-320-restore-ip")),
+            (320, "py-320-restore-ip", Some("py-321-valid-sudoku")),
+            (321, "py-321-valid-sudoku", Some("py-322-permute-unique")),
+            (322, "py-322-permute-unique", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
