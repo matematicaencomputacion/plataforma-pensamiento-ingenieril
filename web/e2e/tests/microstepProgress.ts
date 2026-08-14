@@ -720,6 +720,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 712, step_id: "py-712-lca-lift" },
   { level_id: 713, step_id: "py-713-tree-dist" },
   { level_id: 714, step_id: "py-714-jump-depth" },
+  { level_id: 715, step_id: "py-715-sieve-primes" },
+  { level_id: 716, step_id: "py-716-euler-phi" },
+  { level_id: 717, step_id: "py-717-linear-sieve" },
+  { level_id: 718, step_id: "py-718-binpow" },
+  { level_id: 719, step_id: "py-719-mod-inverse" },
+  { level_id: 720, step_id: "py-720-crt" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
