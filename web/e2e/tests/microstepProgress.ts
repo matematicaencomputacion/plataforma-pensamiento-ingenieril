@@ -666,6 +666,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 658, step_id: "py-658-update-matrix" },
   { level_id: 659, step_id: "py-659-shortest-bridge" },
   { level_id: 660, step_id: "py-660-pacific-atlantic" },
+  { level_id: 661, step_id: "py-661-network-delay-k" },
+  { level_id: 662, step_id: "py-662-cheapest-flights-k" },
+  { level_id: 663, step_id: "py-663-path-with-min-effort" },
+  { level_id: 664, step_id: "py-664-swim-in-water" },
+  { level_id: 665, step_id: "py-665-cheapest-binary-maze" },
+  { level_id: 666, step_id: "py-666-maze-nearest-exit" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

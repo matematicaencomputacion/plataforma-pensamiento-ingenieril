@@ -21826,7 +21826,500 @@ def pacific_atlantic(heights):
 
 print(sorted(pacific_atlantic([[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]])))
 ",
-    next: None, show_type_chips: false, micro_step: 660,
+    next: Some("py-661-network-delay-k"), show_type_chips: false, micro_step: 660,
+};
+
+
+pub const PY661_NETWORK_DELAY_K: CodingStep = CodingStep {
+    id: "py-661-network-delay-k", title: "DSA Shortest Path IV · Delay Time", objective: "Tiempo para que la señal de k llegue a n nodos; -1 si alguno falla.",
+    prompt_md: "**Network Delay Time**
+
+Dijkstra clásico; el resultado es el máximo dist si se visitaron n nodos.
+
+**Micro-reto:**
+1. Definí `network_delay_time(times, n, k)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# import heapq
+# from collections import defaultdict
+#
+# def network_delay_time(times, n, k):
+#     graph = defaultdict(list)
+#     for u, v, w in times:
+#         graph[u].append((v, w))
+#     dist = {k: 0}
+#     heap = [(0, k)]
+#     while heap:
+#         d, u = heapq.heappop(heap)
+#         if d > dist.get(u, 10**18):
+#             continue
+#         for v, w in graph[u]:
+#             nd = d + w
+#             if nd < dist.get(v, 10**18):
+#                 dist[v] = nd
+#                 heapq.heappush(heap, (nd, v))
+#     return max(dist.values()) if len(dist) == n else -1
+#
+# print(network_delay_time([[2,1,1],[2,3,1],[3,4,1]], 4, 2))
+",
+    pytest: "def test_661_network_delay_k(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('network_delay_time'))
+    assert ns['network_delay_time']([[2,1,1],[2,3,1],[3,4,1]], 4, 2) == 2
+    assert ns['network_delay_time']([[1,2,1]], 2, 2) == -1
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "import heapq
+from collections import defaultdict
+
+def network_delay_time(times, n, k):
+    graph = defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+    dist = {k: 0}
+    heap = [(0, k)]
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d > dist.get(u, 10**18):
+            continue
+        for v, w in graph[u]:
+            nd = d + w
+            if nd < dist.get(v, 10**18):
+                dist[v] = nd
+                heapq.heappush(heap, (nd, v))
+    return max(dist.values()) if len(dist) == n else -1
+
+print(network_delay_time([[2,1,1],[2,3,1],[3,4,1]], 4, 2))
+",
+    solution_example: "import heapq
+from collections import defaultdict
+
+def network_delay_time(times, n, k):
+    graph = defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+    dist = {k: 0}
+    heap = [(0, k)]
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d > dist.get(u, 10**18):
+            continue
+        for v, w in graph[u]:
+            nd = d + w
+            if nd < dist.get(v, 10**18):
+                dist[v] = nd
+                heapq.heappush(heap, (nd, v))
+    return max(dist.values()) if len(dist) == n else -1
+
+print(network_delay_time([[2,1,1],[2,3,1],[3,4,1]], 4, 2))
+",
+    next: Some("py-662-cheapest-flights-k"), show_type_chips: false, micro_step: 661,
+};
+
+pub const PY662_CHEAPEST_FLIGHTS_K: CodingStep = CodingStep {
+    id: "py-662-cheapest-flights-k", title: "DSA Shortest Path IV · K Stops", objective: "Vuelo más barato con a lo sumo k escalas.",
+    prompt_md: "**Cheapest Flights Within K Stops**
+
+Bellman-Ford acotado: relajá aristas k+1 veces sobre una copia.
+
+**Micro-reto:**
+1. Definí `find_cheapest_price(n, flights, src, dst, k)`
+2. Ejecutá el ejemplo; imprimí `700`.",
+    starter_code: "# def find_cheapest_price(n, flights, src, dst, k):
+#     prices = [10**18] * n
+#     prices[src] = 0
+#     for _ in range(k + 1):
+#         nxt = prices[:]
+#         for u, v, w in flights:
+#             if prices[u] + w < nxt[v]:
+#                 nxt[v] = prices[u] + w
+#         prices = nxt
+#     return -1 if prices[dst] >= 10**18 else prices[dst]
+#
+# print(find_cheapest_price(4, [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], 0, 3, 1))
+",
+    pytest: "def test_662_cheapest_flights_k(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_cheapest_price'))
+    assert ns['find_cheapest_price'](4, [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], 0, 3, 1) == 700
+    assert ns['find_cheapest_price'](3, [[0,1,100],[1,2,100],[0,2,500]], 0, 2, 0) == 500
+    assert capsys.readouterr().out.strip() == '700'
+",
+    hint: "def find_cheapest_price(n, flights, src, dst, k):
+    prices = [10**18] * n
+    prices[src] = 0
+    for _ in range(k + 1):
+        nxt = prices[:]
+        for u, v, w in flights:
+            if prices[u] + w < nxt[v]:
+                nxt[v] = prices[u] + w
+        prices = nxt
+    return -1 if prices[dst] >= 10**18 else prices[dst]
+
+print(find_cheapest_price(4, [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], 0, 3, 1))
+",
+    solution_example: "def find_cheapest_price(n, flights, src, dst, k):
+    prices = [10**18] * n
+    prices[src] = 0
+    for _ in range(k + 1):
+        nxt = prices[:]
+        for u, v, w in flights:
+            if prices[u] + w < nxt[v]:
+                nxt[v] = prices[u] + w
+        prices = nxt
+    return -1 if prices[dst] >= 10**18 else prices[dst]
+
+print(find_cheapest_price(4, [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], 0, 3, 1))
+",
+    next: Some("py-663-path-with-min-effort"), show_type_chips: false, micro_step: 662,
+};
+
+pub const PY663_PATH_WITH_MIN_EFFORT: CodingStep = CodingStep {
+    id: "py-663-path-with-min-effort", title: "DSA Shortest Path IV · Min Effort", objective: "Camino a (m-1,n-1) que minimiza el esfuerzo abs(diff) máximo.",
+    prompt_md: "**Path With Minimum Effort**
+
+Dijkstra sobre el max-abs-diff; el estado es el esfuerzo acumulado.
+
+**Micro-reto:**
+1. Definí `minimum_effort_path(heights)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# import heapq
+#
+# def minimum_effort_path(heights):
+#     rows, cols = len(heights), len(heights[0])
+#     dist = [[10**18] * cols for _ in range(rows)]
+#     dist[0][0] = 0
+#     heap = [(0, 0, 0)]
+#     while heap:
+#         d, i, j = heapq.heappop(heap)
+#         if (i, j) == (rows - 1, cols - 1):
+#             return d
+#         if d > dist[i][j]:
+#             continue
+#         for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#             ni, nj = i + di, j + dj
+#             if 0 <= ni < rows and 0 <= nj < cols:
+#                 nd = max(d, abs(heights[ni][nj] - heights[i][j]))
+#                 if nd < dist[ni][nj]:
+#                     dist[ni][nj] = nd
+#                     heapq.heappush(heap, (nd, ni, nj))
+#     return 0
+#
+# print(minimum_effort_path([[1,2,2],[3,8,2],[5,3,5]]))
+",
+    pytest: "def test_663_path_with_min_effort(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_effort_path'))
+    assert ns['minimum_effort_path']([[1,2,2],[3,8,2],[5,3,5]]) == 2
+    assert ns['minimum_effort_path']([[1,2,3],[3,8,4],[5,3,5]]) == 1
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "import heapq
+
+def minimum_effort_path(heights):
+    rows, cols = len(heights), len(heights[0])
+    dist = [[10**18] * cols for _ in range(rows)]
+    dist[0][0] = 0
+    heap = [(0, 0, 0)]
+    while heap:
+        d, i, j = heapq.heappop(heap)
+        if (i, j) == (rows - 1, cols - 1):
+            return d
+        if d > dist[i][j]:
+            continue
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < rows and 0 <= nj < cols:
+                nd = max(d, abs(heights[ni][nj] - heights[i][j]))
+                if nd < dist[ni][nj]:
+                    dist[ni][nj] = nd
+                    heapq.heappush(heap, (nd, ni, nj))
+    return 0
+
+print(minimum_effort_path([[1,2,2],[3,8,2],[5,3,5]]))
+",
+    solution_example: "import heapq
+
+def minimum_effort_path(heights):
+    rows, cols = len(heights), len(heights[0])
+    dist = [[10**18] * cols for _ in range(rows)]
+    dist[0][0] = 0
+    heap = [(0, 0, 0)]
+    while heap:
+        d, i, j = heapq.heappop(heap)
+        if (i, j) == (rows - 1, cols - 1):
+            return d
+        if d > dist[i][j]:
+            continue
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < rows and 0 <= nj < cols:
+                nd = max(d, abs(heights[ni][nj] - heights[i][j]))
+                if nd < dist[ni][nj]:
+                    dist[ni][nj] = nd
+                    heapq.heappush(heap, (nd, ni, nj))
+    return 0
+
+print(minimum_effort_path([[1,2,2],[3,8,2],[5,3,5]]))
+",
+    next: Some("py-664-swim-in-water"), show_type_chips: false, micro_step: 663,
+};
+
+pub const PY664_SWIM_IN_WATER: CodingStep = CodingStep {
+    id: "py-664-swim-in-water", title: "DSA Shortest Path IV · Swim in Water", objective: "Tiempo mínimo t tal que podés nadar por celdas ≤ t.",
+    prompt_md: "**Swim in Rising Water**
+
+Dijkstra con costo max(t, grid[ni][nj]) desde (0,0).
+
+**Micro-reto:**
+1. Definí `swim_in_water(grid)`
+2. Ejecutá el ejemplo; imprimí `3`.",
+    starter_code: "# import heapq
+#
+# def swim_in_water(grid):
+#     n = len(grid)
+#     dist = [[10**18] * n for _ in range(n)]
+#     dist[0][0] = grid[0][0]
+#     heap = [(grid[0][0], 0, 0)]
+#     while heap:
+#         t, i, j = heapq.heappop(heap)
+#         if (i, j) == (n - 1, n - 1):
+#             return t
+#         if t > dist[i][j]:
+#             continue
+#         for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#             ni, nj = i + di, j + dj
+#             if 0 <= ni < n and 0 <= nj < n:
+#                 nt = max(t, grid[ni][nj])
+#                 if nt < dist[ni][nj]:
+#                     dist[ni][nj] = nt
+#                     heapq.heappush(heap, (nt, ni, nj))
+#     return grid[0][0]
+#
+# print(swim_in_water([[0,2],[1,3]]))
+",
+    pytest: "def test_664_swim_in_water(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('swim_in_water'))
+    assert ns['swim_in_water']([[0,2],[1,3]]) == 3
+    assert ns['swim_in_water']([[3,2],[0,1]]) == 3
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "import heapq
+
+def swim_in_water(grid):
+    n = len(grid)
+    dist = [[10**18] * n for _ in range(n)]
+    dist[0][0] = grid[0][0]
+    heap = [(grid[0][0], 0, 0)]
+    while heap:
+        t, i, j = heapq.heappop(heap)
+        if (i, j) == (n - 1, n - 1):
+            return t
+        if t > dist[i][j]:
+            continue
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < n and 0 <= nj < n:
+                nt = max(t, grid[ni][nj])
+                if nt < dist[ni][nj]:
+                    dist[ni][nj] = nt
+                    heapq.heappush(heap, (nt, ni, nj))
+    return grid[0][0]
+
+print(swim_in_water([[0,2],[1,3]]))
+",
+    solution_example: "import heapq
+
+def swim_in_water(grid):
+    n = len(grid)
+    dist = [[10**18] * n for _ in range(n)]
+    dist[0][0] = grid[0][0]
+    heap = [(grid[0][0], 0, 0)]
+    while heap:
+        t, i, j = heapq.heappop(heap)
+        if (i, j) == (n - 1, n - 1):
+            return t
+        if t > dist[i][j]:
+            continue
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < n and 0 <= nj < n:
+                nt = max(t, grid[ni][nj])
+                if nt < dist[ni][nj]:
+                    dist[ni][nj] = nt
+                    heapq.heappush(heap, (nt, ni, nj))
+    return grid[0][0]
+
+print(swim_in_water([[0,2],[1,3]]))
+",
+    next: Some("py-665-cheapest-binary-maze"), show_type_chips: false, micro_step: 664,
+};
+
+pub const PY665_CHEAPEST_BINARY_MAZE: CodingStep = CodingStep {
+    id: "py-665-cheapest-binary-maze", title: "DSA Shortest Path IV · Shortest Path Obstacles", objective: "Camino más corto eliminando a lo sumo k obstáculos.",
+    prompt_md: "**Shortest Path in a Grid with Obstacles Elimination**
+
+BFS 3D (i,j,restos); cada obstáculo consume un crédito.
+
+**Micro-reto:**
+1. Definí `shortest_path(grid, k)`
+2. Ejecutá el ejemplo; imprimí `6`.",
+    starter_code: "# from collections import deque
+#
+# def shortest_path(grid, k):
+#     rows, cols = len(grid), len(grid[0])
+#     q = deque([(0, 0, k, 0)])
+#     seen = {(0, 0, k)}
+#     while q:
+#         i, j, left, d = q.popleft()
+#         if (i, j) == (rows - 1, cols - 1):
+#             return d
+#         for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#             ni, nj = i + di, j + dj
+#             if 0 <= ni < rows and 0 <= nj < cols:
+#                 nleft = left - grid[ni][nj]
+#                 if nleft >= 0 and (ni, nj, nleft) not in seen:
+#                     seen.add((ni, nj, nleft))
+#                     q.append((ni, nj, nleft, d + 1))
+#     return -1
+#
+# print(shortest_path([[0,0,0],[1,1,0],[0,0,0],[0,1,1],[0,0,0]], 1))
+",
+    pytest: "def test_665_cheapest_binary_maze(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('shortest_path'))
+    assert ns['shortest_path']([[0,0,0],[1,1,0],[0,0,0],[0,1,1],[0,0,0]], 1) == 6
+    assert ns['shortest_path']([[0,1,1],[1,1,1],[1,0,0]], 1) == -1
+    assert capsys.readouterr().out.strip() == '6'
+",
+    hint: "from collections import deque
+
+def shortest_path(grid, k):
+    rows, cols = len(grid), len(grid[0])
+    q = deque([(0, 0, k, 0)])
+    seen = {(0, 0, k)}
+    while q:
+        i, j, left, d = q.popleft()
+        if (i, j) == (rows - 1, cols - 1):
+            return d
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < rows and 0 <= nj < cols:
+                nleft = left - grid[ni][nj]
+                if nleft >= 0 and (ni, nj, nleft) not in seen:
+                    seen.add((ni, nj, nleft))
+                    q.append((ni, nj, nleft, d + 1))
+    return -1
+
+print(shortest_path([[0,0,0],[1,1,0],[0,0,0],[0,1,1],[0,0,0]], 1))
+",
+    solution_example: "from collections import deque
+
+def shortest_path(grid, k):
+    rows, cols = len(grid), len(grid[0])
+    q = deque([(0, 0, k, 0)])
+    seen = {(0, 0, k)}
+    while q:
+        i, j, left, d = q.popleft()
+        if (i, j) == (rows - 1, cols - 1):
+            return d
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < rows and 0 <= nj < cols:
+                nleft = left - grid[ni][nj]
+                if nleft >= 0 and (ni, nj, nleft) not in seen:
+                    seen.add((ni, nj, nleft))
+                    q.append((ni, nj, nleft, d + 1))
+    return -1
+
+print(shortest_path([[0,0,0],[1,1,0],[0,0,0],[0,1,1],[0,0,0]], 1))
+",
+    next: Some("py-666-maze-nearest-exit"), show_type_chips: false, micro_step: 665,
+};
+
+pub const PY666_MAZE_NEAREST_EXIT: CodingStep = CodingStep {
+    id: "py-666-maze-nearest-exit", title: "DSA Shortest Path IV · Nearest Exit", objective: "Pasos a la salida de borde más cercana, sin contar el entrance.",
+    prompt_md: "**Nearest Exit from Entrance**
+
+BFS desde entrance; una celda vacía en el borde distinta del start es salida.
+
+**Micro-reto:**
+1. Definí `nearest_exit(maze, entrance)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# from collections import deque
+#
+# def nearest_exit(maze, entrance):
+#     rows, cols = len(maze), len(maze[0])
+#     sr, sc = entrance
+#     q = deque([(sr, sc, 0)])
+#     maze[sr][sc] = '+'
+#     while q:
+#         i, j, d = q.popleft()
+#         for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#             ni, nj = i + di, j + dj
+#             if 0 <= ni < rows and 0 <= nj < cols and maze[ni][nj] == '.':
+#                 if ni in (0, rows - 1) or nj in (0, cols - 1):
+#                     return d + 1
+#                 maze[ni][nj] = '+'
+#                 q.append((ni, nj, d + 1))
+#     return -1
+#
+# print(nearest_exit([['+','+','.','+'],['.','.','.','+'],['+','+','+','.']], [1, 2]))
+",
+    pytest: "def test_666_maze_nearest_exit(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('nearest_exit'))
+    assert ns['nearest_exit']([['+','+','.','+'],['.','.','.','+'],['+','+','+','.']], [1, 2]) == 1
+    assert ns['nearest_exit']([['+','+','+'],['.','.','.'],['+','+','+']], [1, 0]) == 2
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "from collections import deque
+
+def nearest_exit(maze, entrance):
+    rows, cols = len(maze), len(maze[0])
+    sr, sc = entrance
+    q = deque([(sr, sc, 0)])
+    maze[sr][sc] = '+'
+    while q:
+        i, j, d = q.popleft()
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < rows and 0 <= nj < cols and maze[ni][nj] == '.':
+                if ni in (0, rows - 1) or nj in (0, cols - 1):
+                    return d + 1
+                maze[ni][nj] = '+'
+                q.append((ni, nj, d + 1))
+    return -1
+
+print(nearest_exit([['+','+','.','+'],['.','.','.','+'],['+','+','+','.']], [1, 2]))
+",
+    solution_example: "from collections import deque
+
+def nearest_exit(maze, entrance):
+    rows, cols = len(maze), len(maze[0])
+    sr, sc = entrance
+    q = deque([(sr, sc, 0)])
+    maze[sr][sc] = '+'
+    while q:
+        i, j, d = q.popleft()
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < rows and 0 <= nj < cols and maze[ni][nj] == '.':
+                if ni in (0, rows - 1) or nj in (0, cols - 1):
+                    return d + 1
+                maze[ni][nj] = '+'
+                q.append((ni, nj, d + 1))
+    return -1
+
+print(nearest_exit([['+','+','.','+'],['.','.','.','+'],['+','+','+','.']], [1, 2]))
+",
+    next: None, show_type_chips: false, micro_step: 666,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -22489,7 +22982,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY657_SURROUNDED_REGIONS,
     &PY658_UPDATE_MATRIX,
     &PY659_SHORTEST_BRIDGE,
-    &PY660_PACIFIC_ATLANTIC
+    &PY660_PACIFIC_ATLANTIC,
+    &PY661_NETWORK_DELAY_K,
+    &PY662_CHEAPEST_FLIGHTS_K,
+    &PY663_PATH_WITH_MIN_EFFORT,
+    &PY664_SWIM_IN_WATER,
+    &PY665_CHEAPEST_BINARY_MAZE,
+    &PY666_MAZE_NEAREST_EXIT
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -22633,7 +23132,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 660);
+            assert!(step.micro_step >= 1 && step.micro_step <= 666);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -25033,7 +25532,13 @@ mod tests {
             (657, "py-657-surrounded-regions", Some("py-658-update-matrix")),
             (658, "py-658-update-matrix", Some("py-659-shortest-bridge")),
             (659, "py-659-shortest-bridge", Some("py-660-pacific-atlantic")),
-            (660, "py-660-pacific-atlantic", None),
+            (660, "py-660-pacific-atlantic", Some("py-661-network-delay-k")),
+            (661, "py-661-network-delay-k", Some("py-662-cheapest-flights-k")),
+            (662, "py-662-cheapest-flights-k", Some("py-663-path-with-min-effort")),
+            (663, "py-663-path-with-min-effort", Some("py-664-swim-in-water")),
+            (664, "py-664-swim-in-water", Some("py-665-cheapest-binary-maze")),
+            (665, "py-665-cheapest-binary-maze", Some("py-666-maze-nearest-exit")),
+            (666, "py-666-maze-nearest-exit", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
