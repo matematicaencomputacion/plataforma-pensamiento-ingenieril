@@ -38839,7 +38839,324 @@ print(minimum_transition_sparse_table_ii([10, 15, 20]))
 
 print(minimum_transition_sparse_table_ii([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 924,
+    next: Some("py-925-binary-lifting-ii-canonicalize"), show_type_chips: false, micro_step: 924,
+};
+
+
+pub const PY925_BINARY_LIFTING_II_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-925-binary-lifting-ii-canonicalize", title: "DSA Binary Lifting II · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de Binary Lifting II.",
+    prompt_md: "**Binary Lifting II: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_binary_lifting_ii(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_binary_lifting_ii(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_binary_lifting_ii([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_925_binary_lifting_ii_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_binary_lifting_ii'))
+    assert ns['canonicalize_binary_lifting_ii']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_binary_lifting_ii']([]) == []
+    assert ns['canonicalize_binary_lifting_ii']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_binary_lifting_ii(values):
+    return sorted(set(values))
+
+print(canonicalize_binary_lifting_ii([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_binary_lifting_ii(values):
+    return sorted(set(values))
+
+print(canonicalize_binary_lifting_ii([3, 1, 2, 3, 1]))
+",
+    next: Some("py-926-binary-lifting-ii-prefix-state"), show_type_chips: false, micro_step: 925,
+};
+
+pub const PY926_BINARY_LIFTING_II_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-926-binary-lifting-ii-prefix-state", title: "DSA Binary Lifting II · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de Binary Lifting II.",
+    prompt_md: "**Binary Lifting II: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_binary_lifting_ii(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_binary_lifting_ii(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_binary_lifting_ii([3, 1, 4]))
+",
+    pytest: "def test_926_binary_lifting_ii_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_binary_lifting_ii'))
+    assert ns['prefix_state_binary_lifting_ii']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_binary_lifting_ii']([]) == []
+    assert ns['prefix_state_binary_lifting_ii']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_binary_lifting_ii(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_binary_lifting_ii([3, 1, 4]))
+",
+    solution_example: "def prefix_state_binary_lifting_ii(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_binary_lifting_ii([3, 1, 4]))
+",
+    next: Some("py-927-binary-lifting-ii-bounded-window"), show_type_chips: false, micro_step: 926,
+};
+
+pub const PY927_BINARY_LIFTING_II_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-927-binary-lifting-ii-bounded-window", title: "DSA Binary Lifting II · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de Binary Lifting II.",
+    prompt_md: "**Binary Lifting II: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_binary_lifting_ii(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_binary_lifting_ii(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_binary_lifting_ii([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_927_binary_lifting_ii_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_binary_lifting_ii'))
+    assert ns['best_window_binary_lifting_ii']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_binary_lifting_ii']([4], 1) == 4
+    assert ns['best_window_binary_lifting_ii']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_binary_lifting_ii(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_binary_lifting_ii([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_binary_lifting_ii(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_binary_lifting_ii([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-928-binary-lifting-ii-lower-boundary"), show_type_chips: false, micro_step: 927,
+};
+
+pub const PY928_BINARY_LIFTING_II_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-928-binary-lifting-ii-lower-boundary", title: "DSA Binary Lifting II · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de Binary Lifting II.",
+    prompt_md: "**Binary Lifting II: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_binary_lifting_ii(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_binary_lifting_ii(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_binary_lifting_ii([1, 3, 3, 7], 3))
+",
+    pytest: "def test_928_binary_lifting_ii_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_binary_lifting_ii'))
+    assert ns['lower_boundary_binary_lifting_ii']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_binary_lifting_ii']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_binary_lifting_ii']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_binary_lifting_ii(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_binary_lifting_ii([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_binary_lifting_ii(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_binary_lifting_ii([1, 3, 3, 7], 3))
+",
+    next: Some("py-929-binary-lifting-ii-dependency-order"), show_type_chips: false, micro_step: 928,
+};
+
+pub const PY929_BINARY_LIFTING_II_DEPENDENCY_ORDER: CodingStep = CodingStep {
+    id: "py-929-binary-lifting-ii-dependency-order", title: "DSA Binary Lifting II · Dependency Order", objective: "Recorrer dependencias sin duplicar trabajo en un escenario de Binary Lifting II.",
+    prompt_md: "**Binary Lifting II: laboratorio 5**
+
+La cola separa descubrimiento de procesamiento; seen garantiza que cada nodo entra una sola vez.
+
+**Micro-reto:**
+1. Definí `dependency_order_binary_lifting_ii(graph, start)`
+2. Ejecutá el ejemplo; imprimí `[0, 1, 2, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def dependency_order_binary_lifting_ii(graph, start):
+#     queue = deque([start])
+#     seen = {start}
+#     order = []
+#     while queue:
+#         node = queue.popleft()
+#         order.append(node)
+#         for neighbor in graph[node]:
+#             if neighbor not in seen:
+#                 seen.add(neighbor)
+#                 queue.append(neighbor)
+#     return order
+#
+# print(dependency_order_binary_lifting_ii([[1, 2], [3], [3], []], 0))
+",
+    pytest: "def test_929_binary_lifting_ii_dependency_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('dependency_order_binary_lifting_ii'))
+    assert ns['dependency_order_binary_lifting_ii']([[1, 2], [3], [3], []], 0) == [0, 1, 2, 3]
+    assert ns['dependency_order_binary_lifting_ii']([[]], 0) == [0]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import deque
+
+def dependency_order_binary_lifting_ii(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_binary_lifting_ii([[1, 2], [3], [3], []], 0))
+",
+    solution_example: "from collections import deque
+
+def dependency_order_binary_lifting_ii(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_binary_lifting_ii([[1, 2], [3], [3], []], 0))
+",
+    next: Some("py-930-binary-lifting-ii-minimum-transition"), show_type_chips: false, micro_step: 929,
+};
+
+pub const PY930_BINARY_LIFTING_II_MINIMUM_TRANSITION: CodingStep = CodingStep {
+    id: "py-930-binary-lifting-ii-minimum-transition", title: "DSA Binary Lifting II · Minimum Transition", objective: "Optimizar transiciones locales conservando solo el estado necesario de Binary Lifting II.",
+    prompt_md: "**Binary Lifting II: laboratorio 6**
+
+La recurrencia depende de dos estados previos; comprimirlos mantiene O(1) memoria.
+
+**Micro-reto:**
+1. Definí `minimum_transition_binary_lifting_ii(cost)`
+2. Ejecutá el ejemplo; imprimí `15`.",
+    starter_code: "# def minimum_transition_binary_lifting_ii(cost):
+#     two_back = one_back = 0
+#     for value in cost:
+#         two_back, one_back = one_back, value + min(two_back, one_back)
+#     return min(two_back, one_back)
+#
+# print(minimum_transition_binary_lifting_ii([10, 15, 20]))
+",
+    pytest: "def test_930_binary_lifting_ii_minimum_transition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_transition_binary_lifting_ii'))
+    assert ns['minimum_transition_binary_lifting_ii']([10, 15, 20]) == 15
+    assert ns['minimum_transition_binary_lifting_ii']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def minimum_transition_binary_lifting_ii(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_binary_lifting_ii([10, 15, 20]))
+",
+    solution_example: "def minimum_transition_binary_lifting_ii(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_binary_lifting_ii([10, 15, 20]))
+",
+    next: None, show_type_chips: false, micro_step: 930,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -39766,7 +40083,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY921_SPARSE_TABLE_II_BOUNDED_WINDOW,
     &PY922_SPARSE_TABLE_II_LOWER_BOUNDARY,
     &PY923_SPARSE_TABLE_II_DEPENDENCY_ORDER,
-    &PY924_SPARSE_TABLE_II_MINIMUM_TRANSITION
+    &PY924_SPARSE_TABLE_II_MINIMUM_TRANSITION,
+    &PY925_BINARY_LIFTING_II_CANONICALIZE,
+    &PY926_BINARY_LIFTING_II_PREFIX_STATE,
+    &PY927_BINARY_LIFTING_II_BOUNDED_WINDOW,
+    &PY928_BINARY_LIFTING_II_LOWER_BOUNDARY,
+    &PY929_BINARY_LIFTING_II_DEPENDENCY_ORDER,
+    &PY930_BINARY_LIFTING_II_MINIMUM_TRANSITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -39910,7 +40233,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 924);
+            assert!(step.micro_step >= 1 && step.micro_step <= 930);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -42574,7 +42897,13 @@ mod tests {
             (921, "py-921-sparse-table-ii-bounded-window", Some("py-922-sparse-table-ii-lower-boundary")),
             (922, "py-922-sparse-table-ii-lower-boundary", Some("py-923-sparse-table-ii-dependency-order")),
             (923, "py-923-sparse-table-ii-dependency-order", Some("py-924-sparse-table-ii-minimum-transition")),
-            (924, "py-924-sparse-table-ii-minimum-transition", None),
+            (924, "py-924-sparse-table-ii-minimum-transition", Some("py-925-binary-lifting-ii-canonicalize")),
+            (925, "py-925-binary-lifting-ii-canonicalize", Some("py-926-binary-lifting-ii-prefix-state")),
+            (926, "py-926-binary-lifting-ii-prefix-state", Some("py-927-binary-lifting-ii-bounded-window")),
+            (927, "py-927-binary-lifting-ii-bounded-window", Some("py-928-binary-lifting-ii-lower-boundary")),
+            (928, "py-928-binary-lifting-ii-lower-boundary", Some("py-929-binary-lifting-ii-dependency-order")),
+            (929, "py-929-binary-lifting-ii-dependency-order", Some("py-930-binary-lifting-ii-minimum-transition")),
+            (930, "py-930-binary-lifting-ii-minimum-transition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
