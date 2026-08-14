@@ -534,6 +534,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 526, step_id: "py-526-decode-string" },
   { level_id: 527, step_id: "py-527-asteroid" },
   { level_id: 528, step_id: "py-528-remove-k-digits" },
+  { level_id: 529, step_id: "py-529-recent-counter" },
+  { level_id: 530, step_id: "py-530-dota2-senate" },
+  { level_id: 531, step_id: "py-531-open-lock" },
+  { level_id: 532, step_id: "py-532-oranges-rot" },
+  { level_id: 533, step_id: "py-533-shortest-path-bin" },
+  { level_id: 534, step_id: "py-534-snakes-ladders" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

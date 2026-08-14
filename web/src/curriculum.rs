@@ -13237,7 +13237,487 @@ print(remove_k_digits(\"1432219\", 3))
 
 print(remove_k_digits(\"1432219\", 3))
 ",
-    next: None, show_type_chips: false, micro_step: 528,
+    next: Some("py-529-recent-counter"), show_type_chips: false, micro_step: 528,
+};
+
+
+pub const PY529_RECENT_COUNTER: CodingStep = CodingStep {
+    id: "py-529-recent-counter", title: "DSA Recent Counter", objective: "Pings en 3000ms.",
+    prompt_md: "**Recent Counter**
+
+Pings en 3000ms.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 2, 3, 3]`.",
+    starter_code: "# class RecentCounter:
+#     def __init__(self):
+#         from collections import deque
+#         self.q = deque()
+#     def ping(self, t):
+#         self.q.append(t)
+#         while self.q[0] < t - 3000:
+#             self.q.popleft()
+#         return len(self.q)
+#
+# c = RecentCounter()
+# print([c.ping(1), c.ping(100), c.ping(3001), c.ping(3002)])
+",
+    pytest: "def test_529_recent_counter(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    c = ns['RecentCounter']()
+    assert [c.ping(1), c.ping(100), c.ping(3001), c.ping(3002)] == [1, 2, 3, 3]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3, 3]'
+",
+    hint: "class RecentCounter:
+    def __init__(self):
+        from collections import deque
+        self.q = deque()
+    def ping(self, t):
+        self.q.append(t)
+        while self.q[0] < t - 3000:
+            self.q.popleft()
+        return len(self.q)
+
+c = RecentCounter()
+print([c.ping(1), c.ping(100), c.ping(3001), c.ping(3002)])
+",
+    solution_example: "class RecentCounter:
+    def __init__(self):
+        from collections import deque
+        self.q = deque()
+    def ping(self, t):
+        self.q.append(t)
+        while self.q[0] < t - 3000:
+            self.q.popleft()
+        return len(self.q)
+
+c = RecentCounter()
+print([c.ping(1), c.ping(100), c.ping(3001), c.ping(3002)])
+",
+    next: Some("py-530-dota2-senate"), show_type_chips: false, micro_step: 529,
+};
+
+pub const PY530_DOTA2_SENATE: CodingStep = CodingStep {
+    id: "py-530-dota2-senate", title: "DSA Dota Senate", objective: "Ganador del senado.",
+    prompt_md: "**Dota Senate**
+
+Ganador del senado.
+
+**Micro-reto:**
+1. Definí `predict_party_victory(...)`
+2. Ejecutá el ejemplo del starter; imprimí `Radiant`.",
+    starter_code: "# def predict_party_victory(senate):
+#     from collections import deque
+#     r = deque(); d = deque()
+#     n = len(senate)
+#     for i, ch in enumerate(senate):
+#         (r if ch == \"R\" else d).append(i)
+#     while r and d:
+#         a, b = r.popleft(), d.popleft()
+#         if a < b:
+#             r.append(a + n)
+#         else:
+#             d.append(b + n)
+#     return \"Radiant\" if r else \"Dire\"
+#
+# print(predict_party_victory(\"RD\"))
+",
+    pytest: "def test_530_dota2_senate(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('predict_party_victory'))
+    assert ns['predict_party_victory']('RD') == 'Radiant'
+    assert ns['predict_party_victory']('RDD') == 'Dire'
+    assert capsys.readouterr().out.strip() == 'Radiant'
+",
+    hint: "def predict_party_victory(senate):
+    from collections import deque
+    r = deque(); d = deque()
+    n = len(senate)
+    for i, ch in enumerate(senate):
+        (r if ch == \"R\" else d).append(i)
+    while r and d:
+        a, b = r.popleft(), d.popleft()
+        if a < b:
+            r.append(a + n)
+        else:
+            d.append(b + n)
+    return \"Radiant\" if r else \"Dire\"
+
+print(predict_party_victory(\"RD\"))
+",
+    solution_example: "def predict_party_victory(senate):
+    from collections import deque
+    r = deque(); d = deque()
+    n = len(senate)
+    for i, ch in enumerate(senate):
+        (r if ch == \"R\" else d).append(i)
+    while r and d:
+        a, b = r.popleft(), d.popleft()
+        if a < b:
+            r.append(a + n)
+        else:
+            d.append(b + n)
+    return \"Radiant\" if r else \"Dire\"
+
+print(predict_party_victory(\"RD\"))
+",
+    next: Some("py-531-open-lock"), show_type_chips: false, micro_step: 530,
+};
+
+pub const PY531_OPEN_LOCK: CodingStep = CodingStep {
+    id: "py-531-open-lock", title: "DSA Open Lock", objective: "Mínimos giros open lock.",
+    prompt_md: "**Open Lock**
+
+Mínimos giros open lock.
+
+**Micro-reto:**
+1. Definí `open_lock(...)`
+2. Ejecutá el ejemplo del starter; imprimí `6`.",
+    starter_code: "# def open_lock(deadends, target):
+#     from collections import deque
+#     dead = set(deadends)
+#     if \"0000\" in dead:
+#         return -1
+#     q = deque([(\"0000\", 0)])
+#     seen = {\"0000\"}
+#     while q:
+#         cur, dist = q.popleft()
+#         if cur == target:
+#             return dist
+#         for i in range(4):
+#             for d in (-1, 1):
+#                 nxt = cur[:i] + str((int(cur[i]) + d) % 10) + cur[i + 1:]
+#                 if nxt not in seen and nxt not in dead:
+#                     seen.add(nxt)
+#                     q.append((nxt, dist + 1))
+#     return -1
+#
+# print(open_lock([\"0201\", \"0101\", \"0102\", \"1212\", \"2002\"], \"0202\"))
+",
+    pytest: "def test_531_open_lock(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('open_lock'))
+    assert ns['open_lock'](['0201', '0101', '0102', '1212', '2002'], '0202') == 6
+    assert capsys.readouterr().out.strip() == '6'
+",
+    hint: "def open_lock(deadends, target):
+    from collections import deque
+    dead = set(deadends)
+    if \"0000\" in dead:
+        return -1
+    q = deque([(\"0000\", 0)])
+    seen = {\"0000\"}
+    while q:
+        cur, dist = q.popleft()
+        if cur == target:
+            return dist
+        for i in range(4):
+            for d in (-1, 1):
+                nxt = cur[:i] + str((int(cur[i]) + d) % 10) + cur[i + 1:]
+                if nxt not in seen and nxt not in dead:
+                    seen.add(nxt)
+                    q.append((nxt, dist + 1))
+    return -1
+
+print(open_lock([\"0201\", \"0101\", \"0102\", \"1212\", \"2002\"], \"0202\"))
+",
+    solution_example: "def open_lock(deadends, target):
+    from collections import deque
+    dead = set(deadends)
+    if \"0000\" in dead:
+        return -1
+    q = deque([(\"0000\", 0)])
+    seen = {\"0000\"}
+    while q:
+        cur, dist = q.popleft()
+        if cur == target:
+            return dist
+        for i in range(4):
+            for d in (-1, 1):
+                nxt = cur[:i] + str((int(cur[i]) + d) % 10) + cur[i + 1:]
+                if nxt not in seen and nxt not in dead:
+                    seen.add(nxt)
+                    q.append((nxt, dist + 1))
+    return -1
+
+print(open_lock([\"0201\", \"0101\", \"0102\", \"1212\", \"2002\"], \"0202\"))
+",
+    next: Some("py-532-oranges-rot"), show_type_chips: false, micro_step: 531,
+};
+
+pub const PY532_ORANGES_ROT: CodingStep = CodingStep {
+    id: "py-532-oranges-rot", title: "DSA Oranges Rot", objective: "Minutos hasta pudrir.",
+    prompt_md: "**Oranges Rot**
+
+Minutos hasta pudrir.
+
+**Micro-reto:**
+1. Definí `oranges_rotting(...)`
+2. Ejecutá el ejemplo del starter; imprimí `4`.",
+    starter_code: "# def oranges_rotting(grid):
+#     from collections import deque
+#     q = deque()
+#     fresh = 0
+#     rows, cols = len(grid), len(grid[0])
+#     for i in range(rows):
+#         for j in range(cols):
+#             if grid[i][j] == 2:
+#                 q.append((i, j, 0))
+#             elif grid[i][j] == 1:
+#                 fresh += 1
+#     mins = 0
+#     while q:
+#         r, c, t = q.popleft()
+#         mins = t
+#         for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)):
+#             nr, nc = r + dr, c + dc
+#             if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1:
+#                 grid[nr][nc] = 2
+#                 fresh -= 1
+#                 q.append((nr, nc, t + 1))
+#     return mins if fresh == 0 else -1
+#
+# print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
+",
+    pytest: "def test_532_oranges_rot(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('oranges_rotting'))
+    assert ns['oranges_rotting']([[2, 1, 1], [1, 1, 0], [0, 1, 1]]) == 4
+    assert ns['oranges_rotting']([[2, 1, 1], [0, 1, 1], [1, 0, 1]]) == -1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def oranges_rotting(grid):
+    from collections import deque
+    q = deque()
+    fresh = 0
+    rows, cols = len(grid), len(grid[0])
+    for i in range(rows):
+        for j in range(cols):
+            if grid[i][j] == 2:
+                q.append((i, j, 0))
+            elif grid[i][j] == 1:
+                fresh += 1
+    mins = 0
+    while q:
+        r, c, t = q.popleft()
+        mins = t
+        for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)):
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1:
+                grid[nr][nc] = 2
+                fresh -= 1
+                q.append((nr, nc, t + 1))
+    return mins if fresh == 0 else -1
+
+print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
+",
+    solution_example: "def oranges_rotting(grid):
+    from collections import deque
+    q = deque()
+    fresh = 0
+    rows, cols = len(grid), len(grid[0])
+    for i in range(rows):
+        for j in range(cols):
+            if grid[i][j] == 2:
+                q.append((i, j, 0))
+            elif grid[i][j] == 1:
+                fresh += 1
+    mins = 0
+    while q:
+        r, c, t = q.popleft()
+        mins = t
+        for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)):
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1:
+                grid[nr][nc] = 2
+                fresh -= 1
+                q.append((nr, nc, t + 1))
+    return mins if fresh == 0 else -1
+
+print(oranges_rotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]))
+",
+    next: Some("py-533-shortest-path-bin"), show_type_chips: false, micro_step: 532,
+};
+
+pub const PY533_SHORTEST_PATH_BIN: CodingStep = CodingStep {
+    id: "py-533-shortest-path-bin", title: "DSA Shortest Path Bin", objective: "Camino más corto en binario.",
+    prompt_md: "**Shortest Path Bin**
+
+Camino más corto en binario.
+
+**Micro-reto:**
+1. Definí `shortest_path_binary_matrix(...)`
+2. Ejecutá el ejemplo del starter; imprimí `2`.",
+    starter_code: "# def shortest_path_binary_matrix(grid):
+#     from collections import deque
+#     n = len(grid)
+#     if grid[0][0] or grid[n - 1][n - 1]:
+#         return -1
+#     q = deque([(0, 0, 1)])
+#     grid[0][0] = 1
+#     while q:
+#         r, c, d = q.popleft()
+#         if r == n - 1 and c == n - 1:
+#             return d
+#         for dr in (-1, 0, 1):
+#             for dc in (-1, 0, 1):
+#                 nr, nc = r + dr, c + dc
+#                 if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0:
+#                     grid[nr][nc] = 1
+#                     q.append((nr, nc, d + 1))
+#     return -1
+#
+# print(shortest_path_binary_matrix([[0, 1], [1, 0]]))
+",
+    pytest: "def test_533_shortest_path_bin(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('shortest_path_binary_matrix'))
+    assert ns['shortest_path_binary_matrix']([[0, 1], [1, 0]]) == 2
+    assert ns['shortest_path_binary_matrix']([[0, 0, 0], [1, 1, 0], [1, 1, 0]]) == 4
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def shortest_path_binary_matrix(grid):
+    from collections import deque
+    n = len(grid)
+    if grid[0][0] or grid[n - 1][n - 1]:
+        return -1
+    q = deque([(0, 0, 1)])
+    grid[0][0] = 1
+    while q:
+        r, c, d = q.popleft()
+        if r == n - 1 and c == n - 1:
+            return d
+        for dr in (-1, 0, 1):
+            for dc in (-1, 0, 1):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0:
+                    grid[nr][nc] = 1
+                    q.append((nr, nc, d + 1))
+    return -1
+
+print(shortest_path_binary_matrix([[0, 1], [1, 0]]))
+",
+    solution_example: "def shortest_path_binary_matrix(grid):
+    from collections import deque
+    n = len(grid)
+    if grid[0][0] or grid[n - 1][n - 1]:
+        return -1
+    q = deque([(0, 0, 1)])
+    grid[0][0] = 1
+    while q:
+        r, c, d = q.popleft()
+        if r == n - 1 and c == n - 1:
+            return d
+        for dr in (-1, 0, 1):
+            for dc in (-1, 0, 1):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0:
+                    grid[nr][nc] = 1
+                    q.append((nr, nc, d + 1))
+    return -1
+
+print(shortest_path_binary_matrix([[0, 1], [1, 0]]))
+",
+    next: Some("py-534-snakes-ladders"), show_type_chips: false, micro_step: 533,
+};
+
+pub const PY534_SNAKES_LADDERS: CodingStep = CodingStep {
+    id: "py-534-snakes-ladders", title: "DSA Snakes Ladders", objective: "Min throws snakes.",
+    prompt_md: "**Snakes Ladders**
+
+Min throws snakes.
+
+**Micro-reto:**
+1. Definí `snakes_and_ladders(...)`
+2. Ejecutá el ejemplo del starter; imprimí `4`.",
+    starter_code: "# def snakes_and_ladders(board):
+#     from collections import deque
+#     n = len(board)
+#     def cell(pos):
+#         r, c = divmod(pos - 1, n)
+#         row = n - 1 - r
+#         col = c if r % 2 == 0 else n - 1 - c
+#         return row, col
+#     q = deque([(1, 0)])
+#     seen = {1}
+#     while q:
+#         pos, dist = q.popleft()
+#         if pos == n * n:
+#             return dist
+#         for nxt in range(pos + 1, min(pos + 6, n * n) + 1):
+#             r, c = cell(nxt)
+#             dest = board[r][c] if board[r][c] != -1 else nxt
+#             if dest not in seen:
+#                 seen.add(dest)
+#                 q.append((dest, dist + 1))
+#     return -1
+#
+# print(snakes_and_ladders([[-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, 35, -1, -1, 13, -1], [-1, -1, -1, -1, -1, -1], [-1, 15, -1, -1, -1, -1]]))
+",
+    pytest: "def test_534_snakes_ladders(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('snakes_and_ladders'))
+    b = [[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,35,-1,-1,13,-1],[-1,-1,-1,-1,-1,-1],[-1,15,-1,-1,-1,-1]]
+    assert ns['snakes_and_ladders'](b) == 4
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def snakes_and_ladders(board):
+    from collections import deque
+    n = len(board)
+    def cell(pos):
+        r, c = divmod(pos - 1, n)
+        row = n - 1 - r
+        col = c if r % 2 == 0 else n - 1 - c
+        return row, col
+    q = deque([(1, 0)])
+    seen = {1}
+    while q:
+        pos, dist = q.popleft()
+        if pos == n * n:
+            return dist
+        for nxt in range(pos + 1, min(pos + 6, n * n) + 1):
+            r, c = cell(nxt)
+            dest = board[r][c] if board[r][c] != -1 else nxt
+            if dest not in seen:
+                seen.add(dest)
+                q.append((dest, dist + 1))
+    return -1
+
+print(snakes_and_ladders([[-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, 35, -1, -1, 13, -1], [-1, -1, -1, -1, -1, -1], [-1, 15, -1, -1, -1, -1]]))
+",
+    solution_example: "def snakes_and_ladders(board):
+    from collections import deque
+    n = len(board)
+    def cell(pos):
+        r, c = divmod(pos - 1, n)
+        row = n - 1 - r
+        col = c if r % 2 == 0 else n - 1 - c
+        return row, col
+    q = deque([(1, 0)])
+    seen = {1}
+    while q:
+        pos, dist = q.popleft()
+        if pos == n * n:
+            return dist
+        for nxt in range(pos + 1, min(pos + 6, n * n) + 1):
+            r, c = cell(nxt)
+            dest = board[r][c] if board[r][c] != -1 else nxt
+            if dest not in seen:
+                seen.add(dest)
+                q.append((dest, dist + 1))
+    return -1
+
+print(snakes_and_ladders([[-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, 35, -1, -1, 13, -1], [-1, -1, -1, -1, -1, -1], [-1, 15, -1, -1, -1, -1]]))
+",
+    next: None, show_type_chips: false, micro_step: 534,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -13768,7 +14248,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY525_EVAL_RPN,
     &PY526_DECODE_STRING,
     &PY527_ASTEROID,
-    &PY528_REMOVE_K_DIGITS
+    &PY528_REMOVE_K_DIGITS,
+    &PY529_RECENT_COUNTER,
+    &PY530_DOTA2_SENATE,
+    &PY531_OPEN_LOCK,
+    &PY532_ORANGES_ROT,
+    &PY533_SHORTEST_PATH_BIN,
+    &PY534_SNAKES_LADDERS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -13912,7 +14398,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 528);
+            assert!(step.micro_step >= 1 && step.micro_step <= 534);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -15064,7 +15550,73 @@ mod tests {
 
 
 
-            (528, "py-528-remove-k-digits", None),
+            (528, "py-528-remove-k-digits", Some("py-529-recent-counter")),
+
+
+
+
+
+
+
+
+
+
+            (529, "py-529-recent-counter", Some("py-530-dota2-senate")),
+
+
+
+
+
+
+
+
+
+
+            (530, "py-530-dota2-senate", Some("py-531-open-lock")),
+
+
+
+
+
+
+
+
+
+
+            (531, "py-531-open-lock", Some("py-532-oranges-rot")),
+
+
+
+
+
+
+
+
+
+
+            (532, "py-532-oranges-rot", Some("py-533-shortest-path-bin")),
+
+
+
+
+
+
+
+
+
+
+            (533, "py-533-shortest-path-bin", Some("py-534-snakes-ladders")),
+
+
+
+
+
+
+
+
+
+
+            (534, "py-534-snakes-ladders", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
