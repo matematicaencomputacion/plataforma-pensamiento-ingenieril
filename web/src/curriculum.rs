@@ -40741,7 +40741,324 @@ print(minimum_transition_graph_matching_i([10, 15, 20]))
 
 print(minimum_transition_graph_matching_i([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 960,
+    next: Some("py-961-game-theory-i-canonicalize"), show_type_chips: false, micro_step: 960,
+};
+
+
+pub const PY961_GAME_THEORY_I_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-961-game-theory-i-canonicalize", title: "DSA Game Theory I · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de Game Theory I.",
+    prompt_md: "**Game Theory I: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_game_theory_i(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_game_theory_i(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_game_theory_i([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_961_game_theory_i_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_game_theory_i'))
+    assert ns['canonicalize_game_theory_i']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_game_theory_i']([]) == []
+    assert ns['canonicalize_game_theory_i']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_game_theory_i(values):
+    return sorted(set(values))
+
+print(canonicalize_game_theory_i([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_game_theory_i(values):
+    return sorted(set(values))
+
+print(canonicalize_game_theory_i([3, 1, 2, 3, 1]))
+",
+    next: Some("py-962-game-theory-i-prefix-state"), show_type_chips: false, micro_step: 961,
+};
+
+pub const PY962_GAME_THEORY_I_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-962-game-theory-i-prefix-state", title: "DSA Game Theory I · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de Game Theory I.",
+    prompt_md: "**Game Theory I: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_game_theory_i(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_game_theory_i(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_game_theory_i([3, 1, 4]))
+",
+    pytest: "def test_962_game_theory_i_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_game_theory_i'))
+    assert ns['prefix_state_game_theory_i']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_game_theory_i']([]) == []
+    assert ns['prefix_state_game_theory_i']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_game_theory_i(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_game_theory_i([3, 1, 4]))
+",
+    solution_example: "def prefix_state_game_theory_i(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_game_theory_i([3, 1, 4]))
+",
+    next: Some("py-963-game-theory-i-bounded-window"), show_type_chips: false, micro_step: 962,
+};
+
+pub const PY963_GAME_THEORY_I_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-963-game-theory-i-bounded-window", title: "DSA Game Theory I · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de Game Theory I.",
+    prompt_md: "**Game Theory I: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_game_theory_i(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_game_theory_i(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_game_theory_i([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_963_game_theory_i_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_game_theory_i'))
+    assert ns['best_window_game_theory_i']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_game_theory_i']([4], 1) == 4
+    assert ns['best_window_game_theory_i']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_game_theory_i(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_game_theory_i([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_game_theory_i(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_game_theory_i([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-964-game-theory-i-lower-boundary"), show_type_chips: false, micro_step: 963,
+};
+
+pub const PY964_GAME_THEORY_I_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-964-game-theory-i-lower-boundary", title: "DSA Game Theory I · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de Game Theory I.",
+    prompt_md: "**Game Theory I: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_game_theory_i(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_game_theory_i(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_game_theory_i([1, 3, 3, 7], 3))
+",
+    pytest: "def test_964_game_theory_i_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_game_theory_i'))
+    assert ns['lower_boundary_game_theory_i']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_game_theory_i']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_game_theory_i']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_game_theory_i(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_game_theory_i([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_game_theory_i(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_game_theory_i([1, 3, 3, 7], 3))
+",
+    next: Some("py-965-game-theory-i-dependency-order"), show_type_chips: false, micro_step: 964,
+};
+
+pub const PY965_GAME_THEORY_I_DEPENDENCY_ORDER: CodingStep = CodingStep {
+    id: "py-965-game-theory-i-dependency-order", title: "DSA Game Theory I · Dependency Order", objective: "Recorrer dependencias sin duplicar trabajo en un escenario de Game Theory I.",
+    prompt_md: "**Game Theory I: laboratorio 5**
+
+La cola separa descubrimiento de procesamiento; seen garantiza que cada nodo entra una sola vez.
+
+**Micro-reto:**
+1. Definí `dependency_order_game_theory_i(graph, start)`
+2. Ejecutá el ejemplo; imprimí `[0, 1, 2, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def dependency_order_game_theory_i(graph, start):
+#     queue = deque([start])
+#     seen = {start}
+#     order = []
+#     while queue:
+#         node = queue.popleft()
+#         order.append(node)
+#         for neighbor in graph[node]:
+#             if neighbor not in seen:
+#                 seen.add(neighbor)
+#                 queue.append(neighbor)
+#     return order
+#
+# print(dependency_order_game_theory_i([[1, 2], [3], [3], []], 0))
+",
+    pytest: "def test_965_game_theory_i_dependency_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('dependency_order_game_theory_i'))
+    assert ns['dependency_order_game_theory_i']([[1, 2], [3], [3], []], 0) == [0, 1, 2, 3]
+    assert ns['dependency_order_game_theory_i']([[]], 0) == [0]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import deque
+
+def dependency_order_game_theory_i(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_game_theory_i([[1, 2], [3], [3], []], 0))
+",
+    solution_example: "from collections import deque
+
+def dependency_order_game_theory_i(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_game_theory_i([[1, 2], [3], [3], []], 0))
+",
+    next: Some("py-966-game-theory-i-minimum-transition"), show_type_chips: false, micro_step: 965,
+};
+
+pub const PY966_GAME_THEORY_I_MINIMUM_TRANSITION: CodingStep = CodingStep {
+    id: "py-966-game-theory-i-minimum-transition", title: "DSA Game Theory I · Minimum Transition", objective: "Optimizar transiciones locales conservando solo el estado necesario de Game Theory I.",
+    prompt_md: "**Game Theory I: laboratorio 6**
+
+La recurrencia depende de dos estados previos; comprimirlos mantiene O(1) memoria.
+
+**Micro-reto:**
+1. Definí `minimum_transition_game_theory_i(cost)`
+2. Ejecutá el ejemplo; imprimí `15`.",
+    starter_code: "# def minimum_transition_game_theory_i(cost):
+#     two_back = one_back = 0
+#     for value in cost:
+#         two_back, one_back = one_back, value + min(two_back, one_back)
+#     return min(two_back, one_back)
+#
+# print(minimum_transition_game_theory_i([10, 15, 20]))
+",
+    pytest: "def test_966_game_theory_i_minimum_transition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_transition_game_theory_i'))
+    assert ns['minimum_transition_game_theory_i']([10, 15, 20]) == 15
+    assert ns['minimum_transition_game_theory_i']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def minimum_transition_game_theory_i(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_game_theory_i([10, 15, 20]))
+",
+    solution_example: "def minimum_transition_game_theory_i(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_game_theory_i([10, 15, 20]))
+",
+    next: None, show_type_chips: false, micro_step: 966,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -41704,7 +42021,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY957_GRAPH_MATCHING_I_BOUNDED_WINDOW,
     &PY958_GRAPH_MATCHING_I_LOWER_BOUNDARY,
     &PY959_GRAPH_MATCHING_I_DEPENDENCY_ORDER,
-    &PY960_GRAPH_MATCHING_I_MINIMUM_TRANSITION
+    &PY960_GRAPH_MATCHING_I_MINIMUM_TRANSITION,
+    &PY961_GAME_THEORY_I_CANONICALIZE,
+    &PY962_GAME_THEORY_I_PREFIX_STATE,
+    &PY963_GAME_THEORY_I_BOUNDED_WINDOW,
+    &PY964_GAME_THEORY_I_LOWER_BOUNDARY,
+    &PY965_GAME_THEORY_I_DEPENDENCY_ORDER,
+    &PY966_GAME_THEORY_I_MINIMUM_TRANSITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -41848,7 +42171,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 960);
+            assert!(step.micro_step >= 1 && step.micro_step <= 966);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -44548,7 +44871,13 @@ mod tests {
             (957, "py-957-graph-matching-i-bounded-window", Some("py-958-graph-matching-i-lower-boundary")),
             (958, "py-958-graph-matching-i-lower-boundary", Some("py-959-graph-matching-i-dependency-order")),
             (959, "py-959-graph-matching-i-dependency-order", Some("py-960-graph-matching-i-minimum-transition")),
-            (960, "py-960-graph-matching-i-minimum-transition", None),
+            (960, "py-960-graph-matching-i-minimum-transition", Some("py-961-game-theory-i-canonicalize")),
+            (961, "py-961-game-theory-i-canonicalize", Some("py-962-game-theory-i-prefix-state")),
+            (962, "py-962-game-theory-i-prefix-state", Some("py-963-game-theory-i-bounded-window")),
+            (963, "py-963-game-theory-i-bounded-window", Some("py-964-game-theory-i-lower-boundary")),
+            (964, "py-964-game-theory-i-lower-boundary", Some("py-965-game-theory-i-dependency-order")),
+            (965, "py-965-game-theory-i-dependency-order", Some("py-966-game-theory-i-minimum-transition")),
+            (966, "py-966-game-theory-i-minimum-transition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
