@@ -3,6 +3,7 @@
 mod api;
 mod auth;
 mod components;
+mod concepts;
 mod curriculum;
 mod data_types;
 mod interop;
@@ -13,10 +14,10 @@ use leptos::prelude::*;
 use leptos_router::components::{Route, Router, Routes};
 use leptos_router::path;
 
-use components::{BrandLink, SessionBar};
+use components::{BrandLink, PartitionNav, SessionBar};
 use pages::{
-    ForgotPasswordPage, LandingPage, LearnPage, LoginPage, OnboardingPage, RegisterPage,
-    ResetPasswordPage, WorkspacePage,
+    ConceptsPage, ForgotPasswordPage, LandingPage, LearnPage, LoginPage, OnboardingPage,
+    RegisterPage, ResetPasswordPage, WorkspacePage,
 };
 use session::{SessionBootstrap, SessionCtx};
 
@@ -38,6 +39,7 @@ fn App() -> impl IntoView {
             <div class="shell">
                 <header class="shell__header">
                     <BrandLink class="shell__brand" />
+                    <PartitionNav />
                     <SessionBar />
                 </header>
                 <main class="shell__main">
@@ -50,6 +52,7 @@ fn App() -> impl IntoView {
                         <Route path=path!("/forgot-password") view=ForgotPasswordPage />
                         <Route path=path!("/reset-password") view=ResetPasswordPage />
                         <Route path=path!("/workspace") view=WorkspacePage />
+                        <Route path=path!("/concepts/:id") view=ConceptsPage />
                         <Route path=path!("/onboarding") view=OnboardingPage />
                         <Route path=path!("/learn") view=LearnPage />
                         <Route path=path!("/learn/:step") view=LearnPage />

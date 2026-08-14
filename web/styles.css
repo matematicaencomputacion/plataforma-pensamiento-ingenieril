@@ -37,12 +37,244 @@ a {
 
 .shell__header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem 1rem;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border);
 }
+
+.partition-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+}
+
+.partition-nav__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  background: rgba(15, 28, 24, 0.35);
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.partition-nav__btn:hover {
+  filter: brightness(1.08);
+  color: var(--fg);
+}
+
+.partition-nav__btn--active {
+  color: var(--fg);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.partition-nav__num {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.partition-nav__label {
+  letter-spacing: 0.02em;
+}
+
+.partition-nav__btn:focus-visible,
+.partition-badge:focus-visible,
+.concepts__tab:focus-visible,
+.concepts__drill-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.partition-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 0.75rem;
+}
+
+.partition-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 0.3rem;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: #b8e4c2;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.partition-badge:hover {
+  filter: brightness(1.08);
+}
+
+.concepts {
+  width: min(64rem, 100%);
+  text-align: left;
+  margin: 0 auto;
+}
+
+.concepts__muted {
+  color: var(--muted);
+}
+
+.concepts__eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.concepts__title {
+  margin: 0 0 0.6rem;
+  font-size: 2rem;
+}
+
+.concepts__lead {
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.concepts__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.concepts__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.concepts__tab--active {
+  color: var(--fg);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.concepts__tab-num {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+}
+
+.concepts__panel {
+  display: grid;
+  gap: 1.35rem;
+}
+
+.concepts__panel-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+}
+
+.concepts__mastery {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.concepts__map-note {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.concepts__block-title {
+  margin: 0 0 0.55rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.concepts__model {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--fg);
+}
+
+.concepts__axes {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.concepts__drills {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.concepts__drill-link {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr auto;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(15, 28, 24, 0.28);
+}
+
+.concepts__drill--done .concepts__drill-link {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.concepts__drill-num {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+.concepts__drill-title {
+  font-size: 0.92rem;
+}
+
+.concepts__drill-status {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.concepts__footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
 
 .shell__brand {
   margin: 0;
