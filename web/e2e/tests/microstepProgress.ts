@@ -786,6 +786,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 778, step_id: "py-778-trees-vi-lower-boundary" },
   { level_id: 779, step_id: "py-779-trees-vi-dependency-order" },
   { level_id: 780, step_id: "py-780-trees-vi-minimum-transition" },
+  { level_id: 781, step_id: "py-781-graph-dfs-vi-canonicalize" },
+  { level_id: 782, step_id: "py-782-graph-dfs-vi-prefix-state" },
+  { level_id: 783, step_id: "py-783-graph-dfs-vi-bounded-window" },
+  { level_id: 784, step_id: "py-784-graph-dfs-vi-lower-boundary" },
+  { level_id: 785, step_id: "py-785-graph-dfs-vi-dependency-order" },
+  { level_id: 786, step_id: "py-786-graph-dfs-vi-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
