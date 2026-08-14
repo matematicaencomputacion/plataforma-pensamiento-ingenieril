@@ -912,6 +912,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 904, step_id: "py-904-monotonic-queue-ii-lower-boundary" },
   { level_id: 905, step_id: "py-905-monotonic-queue-ii-dependency-order" },
   { level_id: 906, step_id: "py-906-monotonic-queue-ii-minimum-transition" },
+  { level_id: 907, step_id: "py-907-fenwick-ii-canonicalize" },
+  { level_id: 908, step_id: "py-908-fenwick-ii-prefix-state" },
+  { level_id: 909, step_id: "py-909-fenwick-ii-bounded-window" },
+  { level_id: 910, step_id: "py-910-fenwick-ii-lower-boundary" },
+  { level_id: 911, step_id: "py-911-fenwick-ii-dependency-order" },
+  { level_id: 912, step_id: "py-912-fenwick-ii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

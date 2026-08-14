@@ -37888,7 +37888,324 @@ print(minimum_transition_monotonic_queue_ii([10, 15, 20]))
 
 print(minimum_transition_monotonic_queue_ii([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 906,
+    next: Some("py-907-fenwick-ii-canonicalize"), show_type_chips: false, micro_step: 906,
+};
+
+
+pub const PY907_FENWICK_II_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-907-fenwick-ii-canonicalize", title: "DSA Fenwick Tree II · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de Fenwick Tree II.",
+    prompt_md: "**Fenwick Tree II: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_fenwick_ii(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_fenwick_ii(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_fenwick_ii([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_907_fenwick_ii_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_fenwick_ii'))
+    assert ns['canonicalize_fenwick_ii']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_fenwick_ii']([]) == []
+    assert ns['canonicalize_fenwick_ii']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_fenwick_ii(values):
+    return sorted(set(values))
+
+print(canonicalize_fenwick_ii([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_fenwick_ii(values):
+    return sorted(set(values))
+
+print(canonicalize_fenwick_ii([3, 1, 2, 3, 1]))
+",
+    next: Some("py-908-fenwick-ii-prefix-state"), show_type_chips: false, micro_step: 907,
+};
+
+pub const PY908_FENWICK_II_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-908-fenwick-ii-prefix-state", title: "DSA Fenwick Tree II · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de Fenwick Tree II.",
+    prompt_md: "**Fenwick Tree II: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_fenwick_ii(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_fenwick_ii(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_fenwick_ii([3, 1, 4]))
+",
+    pytest: "def test_908_fenwick_ii_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_fenwick_ii'))
+    assert ns['prefix_state_fenwick_ii']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_fenwick_ii']([]) == []
+    assert ns['prefix_state_fenwick_ii']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_fenwick_ii(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_fenwick_ii([3, 1, 4]))
+",
+    solution_example: "def prefix_state_fenwick_ii(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_fenwick_ii([3, 1, 4]))
+",
+    next: Some("py-909-fenwick-ii-bounded-window"), show_type_chips: false, micro_step: 908,
+};
+
+pub const PY909_FENWICK_II_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-909-fenwick-ii-bounded-window", title: "DSA Fenwick Tree II · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de Fenwick Tree II.",
+    prompt_md: "**Fenwick Tree II: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_fenwick_ii(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_fenwick_ii(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_fenwick_ii([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_909_fenwick_ii_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_fenwick_ii'))
+    assert ns['best_window_fenwick_ii']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_fenwick_ii']([4], 1) == 4
+    assert ns['best_window_fenwick_ii']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_fenwick_ii(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_fenwick_ii([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_fenwick_ii(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_fenwick_ii([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-910-fenwick-ii-lower-boundary"), show_type_chips: false, micro_step: 909,
+};
+
+pub const PY910_FENWICK_II_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-910-fenwick-ii-lower-boundary", title: "DSA Fenwick Tree II · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de Fenwick Tree II.",
+    prompt_md: "**Fenwick Tree II: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_fenwick_ii(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_fenwick_ii(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_fenwick_ii([1, 3, 3, 7], 3))
+",
+    pytest: "def test_910_fenwick_ii_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_fenwick_ii'))
+    assert ns['lower_boundary_fenwick_ii']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_fenwick_ii']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_fenwick_ii']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_fenwick_ii(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_fenwick_ii([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_fenwick_ii(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_fenwick_ii([1, 3, 3, 7], 3))
+",
+    next: Some("py-911-fenwick-ii-dependency-order"), show_type_chips: false, micro_step: 910,
+};
+
+pub const PY911_FENWICK_II_DEPENDENCY_ORDER: CodingStep = CodingStep {
+    id: "py-911-fenwick-ii-dependency-order", title: "DSA Fenwick Tree II · Dependency Order", objective: "Recorrer dependencias sin duplicar trabajo en un escenario de Fenwick Tree II.",
+    prompt_md: "**Fenwick Tree II: laboratorio 5**
+
+La cola separa descubrimiento de procesamiento; seen garantiza que cada nodo entra una sola vez.
+
+**Micro-reto:**
+1. Definí `dependency_order_fenwick_ii(graph, start)`
+2. Ejecutá el ejemplo; imprimí `[0, 1, 2, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def dependency_order_fenwick_ii(graph, start):
+#     queue = deque([start])
+#     seen = {start}
+#     order = []
+#     while queue:
+#         node = queue.popleft()
+#         order.append(node)
+#         for neighbor in graph[node]:
+#             if neighbor not in seen:
+#                 seen.add(neighbor)
+#                 queue.append(neighbor)
+#     return order
+#
+# print(dependency_order_fenwick_ii([[1, 2], [3], [3], []], 0))
+",
+    pytest: "def test_911_fenwick_ii_dependency_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('dependency_order_fenwick_ii'))
+    assert ns['dependency_order_fenwick_ii']([[1, 2], [3], [3], []], 0) == [0, 1, 2, 3]
+    assert ns['dependency_order_fenwick_ii']([[]], 0) == [0]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import deque
+
+def dependency_order_fenwick_ii(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_fenwick_ii([[1, 2], [3], [3], []], 0))
+",
+    solution_example: "from collections import deque
+
+def dependency_order_fenwick_ii(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_fenwick_ii([[1, 2], [3], [3], []], 0))
+",
+    next: Some("py-912-fenwick-ii-minimum-transition"), show_type_chips: false, micro_step: 911,
+};
+
+pub const PY912_FENWICK_II_MINIMUM_TRANSITION: CodingStep = CodingStep {
+    id: "py-912-fenwick-ii-minimum-transition", title: "DSA Fenwick Tree II · Minimum Transition", objective: "Optimizar transiciones locales conservando solo el estado necesario de Fenwick Tree II.",
+    prompt_md: "**Fenwick Tree II: laboratorio 6**
+
+La recurrencia depende de dos estados previos; comprimirlos mantiene O(1) memoria.
+
+**Micro-reto:**
+1. Definí `minimum_transition_fenwick_ii(cost)`
+2. Ejecutá el ejemplo; imprimí `15`.",
+    starter_code: "# def minimum_transition_fenwick_ii(cost):
+#     two_back = one_back = 0
+#     for value in cost:
+#         two_back, one_back = one_back, value + min(two_back, one_back)
+#     return min(two_back, one_back)
+#
+# print(minimum_transition_fenwick_ii([10, 15, 20]))
+",
+    pytest: "def test_912_fenwick_ii_minimum_transition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_transition_fenwick_ii'))
+    assert ns['minimum_transition_fenwick_ii']([10, 15, 20]) == 15
+    assert ns['minimum_transition_fenwick_ii']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def minimum_transition_fenwick_ii(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_fenwick_ii([10, 15, 20]))
+",
+    solution_example: "def minimum_transition_fenwick_ii(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_fenwick_ii([10, 15, 20]))
+",
+    next: None, show_type_chips: false, micro_step: 912,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -38797,7 +39114,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY903_MONOTONIC_QUEUE_II_BOUNDED_WINDOW,
     &PY904_MONOTONIC_QUEUE_II_LOWER_BOUNDARY,
     &PY905_MONOTONIC_QUEUE_II_DEPENDENCY_ORDER,
-    &PY906_MONOTONIC_QUEUE_II_MINIMUM_TRANSITION
+    &PY906_MONOTONIC_QUEUE_II_MINIMUM_TRANSITION,
+    &PY907_FENWICK_II_CANONICALIZE,
+    &PY908_FENWICK_II_PREFIX_STATE,
+    &PY909_FENWICK_II_BOUNDED_WINDOW,
+    &PY910_FENWICK_II_LOWER_BOUNDARY,
+    &PY911_FENWICK_II_DEPENDENCY_ORDER,
+    &PY912_FENWICK_II_MINIMUM_TRANSITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -38941,7 +39264,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 906);
+            assert!(step.micro_step >= 1 && step.micro_step <= 912);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -41587,7 +41910,13 @@ mod tests {
             (903, "py-903-monotonic-queue-ii-bounded-window", Some("py-904-monotonic-queue-ii-lower-boundary")),
             (904, "py-904-monotonic-queue-ii-lower-boundary", Some("py-905-monotonic-queue-ii-dependency-order")),
             (905, "py-905-monotonic-queue-ii-dependency-order", Some("py-906-monotonic-queue-ii-minimum-transition")),
-            (906, "py-906-monotonic-queue-ii-minimum-transition", None),
+            (906, "py-906-monotonic-queue-ii-minimum-transition", Some("py-907-fenwick-ii-canonicalize")),
+            (907, "py-907-fenwick-ii-canonicalize", Some("py-908-fenwick-ii-prefix-state")),
+            (908, "py-908-fenwick-ii-prefix-state", Some("py-909-fenwick-ii-bounded-window")),
+            (909, "py-909-fenwick-ii-bounded-window", Some("py-910-fenwick-ii-lower-boundary")),
+            (910, "py-910-fenwick-ii-lower-boundary", Some("py-911-fenwick-ii-dependency-order")),
+            (911, "py-911-fenwick-ii-dependency-order", Some("py-912-fenwick-ii-minimum-transition")),
+            (912, "py-912-fenwick-ii-minimum-transition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
