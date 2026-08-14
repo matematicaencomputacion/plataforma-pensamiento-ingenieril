@@ -756,6 +756,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 748, step_id: "py-748-hashing-vi-lower-boundary" },
   { level_id: 749, step_id: "py-749-hashing-vi-dependency-order" },
   { level_id: 750, step_id: "py-750-hashing-vi-minimum-transition" },
+  { level_id: 751, step_id: "py-751-stacks-vi-canonicalize" },
+  { level_id: 752, step_id: "py-752-stacks-vi-prefix-state" },
+  { level_id: 753, step_id: "py-753-stacks-vi-bounded-window" },
+  { level_id: 754, step_id: "py-754-stacks-vi-lower-boundary" },
+  { level_id: 755, step_id: "py-755-stacks-vi-dependency-order" },
+  { level_id: 756, step_id: "py-756-stacks-vi-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
