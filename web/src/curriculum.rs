@@ -13717,7 +13717,386 @@ print(snakes_and_ladders([[-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-
 
 print(snakes_and_ladders([[-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, 35, -1, -1, 13, -1], [-1, -1, -1, -1, -1, -1], [-1, 15, -1, -1, -1, -1]]))
 ",
-    next: None, show_type_chips: false, micro_step: 534,
+    next: Some("py-535-search-rotated"), show_type_chips: false, micro_step: 534,
+};
+
+
+pub const PY535_SEARCH_ROTATED: CodingStep = CodingStep {
+    id: "py-535-search-rotated", title: "DSA Search Rotated", objective: "Buscar en rotated.",
+    prompt_md: "**Search Rotated**
+
+Buscar en rotated.
+
+**Micro-reto:**
+1. Definí `search(...)`
+2. Ejecutá el ejemplo del starter; imprimí `4`.",
+    starter_code: "# def search(nums, target):
+#     lo, hi = 0, len(nums) - 1
+#     while lo <= hi:
+#         mid = (lo + hi) // 2
+#         if nums[mid] == target:
+#             return mid
+#         if nums[lo] <= nums[mid]:
+#             if nums[lo] <= target < nums[mid]:
+#                 hi = mid - 1
+#             else:
+#                 lo = mid + 1
+#         else:
+#             if nums[mid] < target <= nums[hi]:
+#                 lo = mid + 1
+#             else:
+#                 hi = mid - 1
+#     return -1
+#
+# print(search([4, 5, 6, 7, 0, 1, 2], 0))
+",
+    pytest: "def test_535_search_rotated(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('search'))
+    assert ns['search']([4, 5, 6, 7, 0, 1, 2], 0) == 4
+    assert ns['search']([4, 5, 6, 7, 0, 1, 2], 3) == -1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= nums[mid]:
+            if nums[lo] <= target < nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+    return -1
+
+print(search([4, 5, 6, 7, 0, 1, 2], 0))
+",
+    solution_example: "def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= nums[mid]:
+            if nums[lo] <= target < nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+    return -1
+
+print(search([4, 5, 6, 7, 0, 1, 2], 0))
+",
+    next: Some("py-536-find-min-rotated"), show_type_chips: false, micro_step: 535,
+};
+
+pub const PY536_FIND_MIN_ROTATED: CodingStep = CodingStep {
+    id: "py-536-find-min-rotated", title: "DSA Find Min Rotated", objective: "Mínimo en rotated.",
+    prompt_md: "**Find Min Rotated**
+
+Mínimo en rotated.
+
+**Micro-reto:**
+1. Definí `find_min(...)`
+2. Ejecutá el ejemplo del starter; imprimí `1`.",
+    starter_code: "# def find_min(nums):
+#     lo, hi = 0, len(nums) - 1
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if nums[mid] > nums[hi]:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return nums[lo]
+#
+# print(find_min([3, 4, 5, 1, 2]))
+",
+    pytest: "def test_536_find_min_rotated(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_min'))
+    assert ns['find_min']([3, 4, 5, 1, 2]) == 1
+    assert ns['find_min']([4, 5, 6, 7, 0, 1, 2]) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def find_min(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return nums[lo]
+
+print(find_min([3, 4, 5, 1, 2]))
+",
+    solution_example: "def find_min(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return nums[lo]
+
+print(find_min([3, 4, 5, 1, 2]))
+",
+    next: Some("py-537-peak-index"), show_type_chips: false, micro_step: 536,
+};
+
+pub const PY537_PEAK_INDEX: CodingStep = CodingStep {
+    id: "py-537-peak-index", title: "DSA Peak Index", objective: "Índice del pico.",
+    prompt_md: "**Peak Index**
+
+Índice del pico.
+
+**Micro-reto:**
+1. Definí `peak_index_in_mountain_array(...)`
+2. Ejecutá el ejemplo del starter; imprimí `1`.",
+    starter_code: "# def peak_index_in_mountain_array(arr):
+#     lo, hi = 0, len(arr) - 1
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if arr[mid] < arr[mid + 1]:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(peak_index_in_mountain_array([0, 1, 0]))
+",
+    pytest: "def test_537_peak_index(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('peak_index_in_mountain_array'))
+    assert ns['peak_index_in_mountain_array']([0, 2, 1, 0]) == 1
+    assert ns['peak_index_in_mountain_array']([0, 10, 5, 2]) == 1
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def peak_index_in_mountain_array(arr):
+    lo, hi = 0, len(arr) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if arr[mid] < arr[mid + 1]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(peak_index_in_mountain_array([0, 1, 0]))
+",
+    solution_example: "def peak_index_in_mountain_array(arr):
+    lo, hi = 0, len(arr) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if arr[mid] < arr[mid + 1]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(peak_index_in_mountain_array([0, 1, 0]))
+",
+    next: Some("py-538-first-bad"), show_type_chips: false, micro_step: 537,
+};
+
+pub const PY538_FIRST_BAD: CodingStep = CodingStep {
+    id: "py-538-first-bad", title: "DSA First Bad", objective: "Primera versión mala.",
+    prompt_md: "**First Bad**
+
+Primera versión mala.
+
+**Micro-reto:**
+1. Definí `first_bad_version(...)`
+2. Ejecutá el ejemplo del starter; imprimí `4`.",
+    starter_code: "# def first_bad_version(n, is_bad):
+#     lo, hi = 1, n
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if is_bad(mid):
+#             hi = mid
+#         else:
+#             lo = mid + 1
+#     return lo
+#
+# print(first_bad_version(5, lambda v: v >= 4))
+",
+    pytest: "def test_538_first_bad(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('first_bad_version'))
+    assert ns['first_bad_version'](5, lambda v: v >= 4) == 4
+    assert ns['first_bad_version'](1, lambda v: True) == 1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def first_bad_version(n, is_bad):
+    lo, hi = 1, n
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if is_bad(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(first_bad_version(5, lambda v: v >= 4))
+",
+    solution_example: "def first_bad_version(n, is_bad):
+    lo, hi = 1, n
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if is_bad(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(first_bad_version(5, lambda v: v >= 4))
+",
+    next: Some("py-539-search-range"), show_type_chips: false, micro_step: 538,
+};
+
+pub const PY539_SEARCH_RANGE: CodingStep = CodingStep {
+    id: "py-539-search-range", title: "DSA Search Range", objective: "Rango de target.",
+    prompt_md: "**Search Range**
+
+Rango de target.
+
+**Micro-reto:**
+1. Definí `search_range(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[3, 4]`.",
+    starter_code: "# def search_range(nums, target):
+#     def bound(left):
+#         lo, hi = 0, len(nums)
+#         while lo < hi:
+#             mid = (lo + hi) // 2
+#             if nums[mid] > target or (left and nums[mid] == target):
+#                 hi = mid
+#             else:
+#                 lo = mid + 1
+#         return lo
+#     i = bound(True)
+#     if i == len(nums) or nums[i] != target:
+#         return [-1, -1]
+#     return [i, bound(False) - 1]
+#
+# print(search_range([5, 7, 7, 8, 8, 10], 8))
+",
+    pytest: "def test_539_search_range(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('search_range'))
+    assert ns['search_range']([5, 7, 7, 8, 8, 10], 8) == [3, 4]
+    assert ns['search_range']([5, 7, 7, 8, 8, 10], 6) == [-1, -1]
+    assert capsys.readouterr().out.strip() == '[3, 4]'
+",
+    hint: "def search_range(nums, target):
+    def bound(left):
+        lo, hi = 0, len(nums)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if nums[mid] > target or (left and nums[mid] == target):
+                hi = mid
+            else:
+                lo = mid + 1
+        return lo
+    i = bound(True)
+    if i == len(nums) or nums[i] != target:
+        return [-1, -1]
+    return [i, bound(False) - 1]
+
+print(search_range([5, 7, 7, 8, 8, 10], 8))
+",
+    solution_example: "def search_range(nums, target):
+    def bound(left):
+        lo, hi = 0, len(nums)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if nums[mid] > target or (left and nums[mid] == target):
+                hi = mid
+            else:
+                lo = mid + 1
+        return lo
+    i = bound(True)
+    if i == len(nums) or nums[i] != target:
+        return [-1, -1]
+    return [i, bound(False) - 1]
+
+print(search_range([5, 7, 7, 8, 8, 10], 8))
+",
+    next: Some("py-540-koko-bananas"), show_type_chips: false, micro_step: 539,
+};
+
+pub const PY540_KOKO_BANANAS: CodingStep = CodingStep {
+    id: "py-540-koko-bananas", title: "DSA Koko Bananas", objective: "Mínima velocidad.",
+    prompt_md: "**Koko Bananas**
+
+Mínima velocidad.
+
+**Micro-reto:**
+1. Definí `min_eating_speed(...)`
+2. Ejecutá el ejemplo del starter; imprimí `4`.",
+    starter_code: "# def min_eating_speed(piles, h):
+#     import math
+#     lo, hi = 1, max(piles)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if sum((p + mid - 1) // mid for p in piles) <= h:
+#             hi = mid
+#         else:
+#             lo = mid + 1
+#     return lo
+#
+# print(min_eating_speed([3, 6, 7, 11], 8))
+",
+    pytest: "def test_540_koko_bananas(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('min_eating_speed'))
+    assert ns['min_eating_speed']([3, 6, 7, 11], 8) == 4
+    assert ns['min_eating_speed']([30, 11, 23, 4, 20], 5) == 30
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def min_eating_speed(piles, h):
+    import math
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if sum((p + mid - 1) // mid for p in piles) <= h:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(min_eating_speed([3, 6, 7, 11], 8))
+",
+    solution_example: "def min_eating_speed(piles, h):
+    import math
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if sum((p + mid - 1) // mid for p in piles) <= h:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(min_eating_speed([3, 6, 7, 11], 8))
+",
+    next: None, show_type_chips: false, micro_step: 540,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -14254,7 +14633,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY531_OPEN_LOCK,
     &PY532_ORANGES_ROT,
     &PY533_SHORTEST_PATH_BIN,
-    &PY534_SNAKES_LADDERS
+    &PY534_SNAKES_LADDERS,
+    &PY535_SEARCH_ROTATED,
+    &PY536_FIND_MIN_ROTATED,
+    &PY537_PEAK_INDEX,
+    &PY538_FIRST_BAD,
+    &PY539_SEARCH_RANGE,
+    &PY540_KOKO_BANANAS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -14398,7 +14783,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 534);
+            assert!(step.micro_step >= 1 && step.micro_step <= 540);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -15616,7 +16001,79 @@ mod tests {
 
 
 
-            (534, "py-534-snakes-ladders", None),
+            (534, "py-534-snakes-ladders", Some("py-535-search-rotated")),
+
+
+
+
+
+
+
+
+
+
+
+            (535, "py-535-search-rotated", Some("py-536-find-min-rotated")),
+
+
+
+
+
+
+
+
+
+
+
+            (536, "py-536-find-min-rotated", Some("py-537-peak-index")),
+
+
+
+
+
+
+
+
+
+
+
+            (537, "py-537-peak-index", Some("py-538-first-bad")),
+
+
+
+
+
+
+
+
+
+
+
+            (538, "py-538-first-bad", Some("py-539-search-range")),
+
+
+
+
+
+
+
+
+
+
+
+            (539, "py-539-search-range", Some("py-540-koko-bananas")),
+
+
+
+
+
+
+
+
+
+
+
+            (540, "py-540-koko-bananas", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

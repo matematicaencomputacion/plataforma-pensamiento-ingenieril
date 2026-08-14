@@ -22,123 +22,138 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 341,
-    id: "py-341-range-sum",
-    title: "DSA Range Sum",
-    solution: `class NumArray:
-    def __init__(self, nums):
-        self.pref = [0]
-        for x in nums:
-            self.pref.append(self.pref[-1] + x)
-
-    def sum_range(self, left, right):
-        return self.pref[right + 1] - self.pref[left]
-
-n = NumArray([-2, 0, 3, -5, 2, -1])
-print([n.sum_range(0, 2), n.sum_range(2, 5), n.sum_range(0, 5)])
-`,
-    nextUrl: /\/learn\/py-342-subarray-sum/,
-    cursorAfter: "342",
-  },
-  {
-    micro: 342,
-    id: "py-342-subarray-sum",
-    title: "DSA Subarray Sum",
-    solution: `from collections import defaultdict
-
-def subarray_sum(nums, k):
-    count = defaultdict(int)
-    count[0] = 1
-    pref = ans = 0
-    for x in nums:
-        pref += x
-        ans += count[pref - k]
-        count[pref] += 1
-    return ans
-
-print(subarray_sum([1, 1, 1], 2))
-`,
-    nextUrl: /\/learn\/py-343-product-except/,
-    cursorAfter: "343",
-  },
-  {
-    micro: 343,
-    id: "py-343-product-except",
-    title: "DSA Product Except",
-    solution: `def product_except_self(nums):
-    n = len(nums)
-    out = [1] * n
-    left = 1
-    for i in range(n):
-        out[i] = left
-        left *= nums[i]
-    right = 1
-    for i in range(n - 1, -1, -1):
-        out[i] *= right
-        right *= nums[i]
-    return out
-
-print(product_except_self([1, 2, 3, 4]))
-`,
-    nextUrl: /\/learn\/py-344-corp-flight/,
-    cursorAfter: "344",
-  },
-  {
-    micro: 344,
-    id: "py-344-corp-flight",
-    title: "DSA Corp Flight",
-    solution: `def corp_flight_bookings(bookings, n):
-    diff = [0] * (n + 1)
-    for first, last, seats in bookings:
-        diff[first - 1] += seats
-        if last < n:
-            diff[last] -= seats
-    for i in range(1, n):
-        diff[i] += diff[i - 1]
-    return diff[:n]
-
-print(corp_flight_bookings([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5))
-`,
-    nextUrl: /\/learn\/py-345-pivot-index/,
-    cursorAfter: "345",
-  },
-  {
-    micro: 345,
-    id: "py-345-pivot-index",
-    title: "DSA Pivot Index",
-    solution: `def pivot_index(nums):
-    total = sum(nums)
-    left = 0
-    for i, x in enumerate(nums):
-        if left == total - left - x:
-            return i
-        left += x
+    micro: 535,
+    id: "py-535-search-rotated",
+    title: "DSA Search Rotated",
+    solution: `def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= nums[mid]:
+            if nums[lo] <= target < nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
     return -1
 
-print(pivot_index([1, 7, 3, 6, 5, 6]))
+print(search([4, 5, 6, 7, 0, 1, 2], 0))
 `,
-    nextUrl: /\/learn\/py-346-running-sum/,
-    cursorAfter: "346",
+    nextUrl: /\/learn\/py-536-find-min-rotated/,
+    cursorAfter: "536",
   },
   {
-    micro: 346,
-    id: "py-346-running-sum",
-    title: "DSA Running Sum",
-    solution: `def running_sum(nums):
-    for i in range(1, len(nums)):
-        nums[i] += nums[i - 1]
-    return nums
+    micro: 536,
+    id: "py-536-find-min-rotated",
+    title: "DSA Find Min Rotated",
+    solution: `def find_min(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return nums[lo]
 
-print(running_sum([1, 2, 3, 4]))
+print(find_min([3, 4, 5, 1, 2]))
 `,
-    nextUrl: /\/learn\/py-347-next-greater/,
-    cursorAfter: "347",
+    nextUrl: /\/learn\/py-537-peak-index/,
+    cursorAfter: "537",
   },
+  {
+    micro: 537,
+    id: "py-537-peak-index",
+    title: "DSA Peak Index",
+    solution: `def peak_index_in_mountain_array(arr):
+    lo, hi = 0, len(arr) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if arr[mid] < arr[mid + 1]:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(peak_index_in_mountain_array([0, 1, 0]))
+`,
+    nextUrl: /\/learn\/py-538-first-bad/,
+    cursorAfter: "538",
+  },
+  {
+    micro: 538,
+    id: "py-538-first-bad",
+    title: "DSA First Bad",
+    solution: `def first_bad_version(n, is_bad):
+    lo, hi = 1, n
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if is_bad(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(first_bad_version(5, lambda v: v >= 4))
+`,
+    nextUrl: /\/learn\/py-539-search-range/,
+    cursorAfter: "539",
+  },
+  {
+    micro: 539,
+    id: "py-539-search-range",
+    title: "DSA Search Range",
+    solution: `def search_range(nums, target):
+    def bound(left):
+        lo, hi = 0, len(nums)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if nums[mid] > target or (left and nums[mid] == target):
+                hi = mid
+            else:
+                lo = mid + 1
+        return lo
+    i = bound(True)
+    if i == len(nums) or nums[i] != target:
+        return [-1, -1]
+    return [i, bound(False) - 1]
+
+print(search_range([5, 7, 7, 8, 8, 10], 8))
+`,
+    nextUrl: /\/learn\/py-540-koko-bananas/,
+    cursorAfter: "540",
+  },
+  {
+    micro: 540,
+    id: "py-540-koko-bananas",
+    title: "DSA Koko Bananas",
+    solution: `def min_eating_speed(piles, h):
+    import math
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if sum((p + mid - 1) // mid for p in piles) <= h:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(min_eating_speed([3, 6, 7, 11], 8))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "541",
+  }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-34[1-6]-/);
+    expect(step.id).toMatch(/^py-(?:535|536|537|538|539|540)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -168,7 +183,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 341–346 · prefix sums II", () => {
+test.describe("micro-steps 535–540 · binsearch III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

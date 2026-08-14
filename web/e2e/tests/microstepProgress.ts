@@ -540,6 +540,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 532, step_id: "py-532-oranges-rot" },
   { level_id: 533, step_id: "py-533-shortest-path-bin" },
   { level_id: 534, step_id: "py-534-snakes-ladders" },
+  { level_id: 535, step_id: "py-535-search-rotated" },
+  { level_id: 536, step_id: "py-536-find-min-rotated" },
+  { level_id: 537, step_id: "py-537-peak-index" },
+  { level_id: 538, step_id: "py-538-first-bad" },
+  { level_id: 539, step_id: "py-539-search-range" },
+  { level_id: 540, step_id: "py-540-koko-bananas" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
