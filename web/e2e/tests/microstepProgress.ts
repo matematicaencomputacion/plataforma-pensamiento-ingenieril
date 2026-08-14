@@ -804,6 +804,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 796, step_id: "py-796-toposort-iv-lower-boundary" },
   { level_id: 797, step_id: "py-797-toposort-iv-dependency-order" },
   { level_id: 798, step_id: "py-798-toposort-iv-minimum-transition" },
+  { level_id: 799, step_id: "py-799-union-find-v-canonicalize" },
+  { level_id: 800, step_id: "py-800-union-find-v-prefix-state" },
+  { level_id: 801, step_id: "py-801-union-find-v-bounded-window" },
+  { level_id: 802, step_id: "py-802-union-find-v-lower-boundary" },
+  { level_id: 803, step_id: "py-803-union-find-v-dependency-order" },
+  { level_id: 804, step_id: "py-804-union-find-v-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
