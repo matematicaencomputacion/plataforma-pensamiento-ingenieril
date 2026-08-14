@@ -816,6 +816,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 808, step_id: "py-808-shortest-path-v-lower-boundary" },
   { level_id: 809, step_id: "py-809-shortest-path-v-dependency-order" },
   { level_id: 810, step_id: "py-810-shortest-path-v-minimum-transition" },
+  { level_id: 811, step_id: "py-811-mst-iii-canonicalize" },
+  { level_id: 812, step_id: "py-812-mst-iii-prefix-state" },
+  { level_id: 813, step_id: "py-813-mst-iii-bounded-window" },
+  { level_id: 814, step_id: "py-814-mst-iii-lower-boundary" },
+  { level_id: 815, step_id: "py-815-mst-iii-dependency-order" },
+  { level_id: 816, step_id: "py-816-mst-iii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
