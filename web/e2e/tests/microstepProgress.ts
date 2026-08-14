@@ -630,6 +630,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 622, step_id: "py-622-stones-removed" },
   { level_id: 623, step_id: "py-623-similar-string-groups" },
   { level_id: 624, step_id: "py-624-graph-valid-tree" },
+  { level_id: 625, step_id: "py-625-implement-trie" },
+  { level_id: 626, step_id: "py-626-replace-words" },
+  { level_id: 627, step_id: "py-627-longest-word-dict" },
+  { level_id: 628, step_id: "py-628-map-sum" },
+  { level_id: 629, step_id: "py-629-count-prefix-pairs" },
+  { level_id: 630, step_id: "py-630-max-xor-two" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

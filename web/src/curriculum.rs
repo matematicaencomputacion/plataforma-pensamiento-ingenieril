@@ -19229,7 +19229,498 @@ print(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))
 
 print(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))
 ",
-    next: None, show_type_chips: false, micro_step: 624,
+    next: Some("py-625-implement-trie"), show_type_chips: false, micro_step: 624,
+};
+
+
+pub const PY625_IMPLEMENT_TRIE: CodingStep = CodingStep {
+    id: "py-625-implement-trie", title: "DSA Trie III · Implement Trie", objective: "Insertar, buscar y detectar prefijos en un trie de letras.",
+    prompt_md: "**Implement Trie**
+
+Cada nodo tiene hasta 26 hijos y un flag de fin de palabra.
+
+**Micro-reto:**
+1. Definí `la clase Trie con insert, search y starts_with`
+2. Ejecutá el ejemplo; imprimí `[True, False, True]`.",
+    starter_code: "# class Trie:
+#     def __init__(self):
+#         self.children = {}
+#         self.end = False
+#
+#     def insert(self, word):
+#         node = self
+#         for ch in word:
+#             node = node.children.setdefault(ch, Trie())
+#         node.end = True
+#
+#     def search(self, word):
+#         node = self
+#         for ch in word:
+#             if ch not in node.children:
+#                 return False
+#             node = node.children[ch]
+#         return node.end
+#
+#     def starts_with(self, prefix):
+#         node = self
+#         for ch in prefix:
+#             if ch not in node.children:
+#                 return False
+#             node = node.children[ch]
+#         return True
+#
+# t = Trie(); t.insert('apple'); print([t.search('apple'), t.search('app'), t.starts_with('app')])
+",
+    pytest: "def test_625_implement_trie(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns.get('Trie') is not None
+    t = ns['Trie']()
+    t.insert('apple')
+    assert t.search('apple') is True
+    assert t.search('app') is False
+    assert t.starts_with('app') is True
+    t.insert('app')
+    assert t.search('app') is True
+    assert capsys.readouterr().out.strip() == '[True, False, True]'
+",
+    hint: "class Trie:
+    def __init__(self):
+        self.children = {}
+        self.end = False
+
+    def insert(self, word):
+        node = self
+        for ch in word:
+            node = node.children.setdefault(ch, Trie())
+        node.end = True
+
+    def search(self, word):
+        node = self
+        for ch in word:
+            if ch not in node.children:
+                return False
+            node = node.children[ch]
+        return node.end
+
+    def starts_with(self, prefix):
+        node = self
+        for ch in prefix:
+            if ch not in node.children:
+                return False
+            node = node.children[ch]
+        return True
+
+t = Trie(); t.insert('apple'); print([t.search('apple'), t.search('app'), t.starts_with('app')])
+",
+    solution_example: "class Trie:
+    def __init__(self):
+        self.children = {}
+        self.end = False
+
+    def insert(self, word):
+        node = self
+        for ch in word:
+            node = node.children.setdefault(ch, Trie())
+        node.end = True
+
+    def search(self, word):
+        node = self
+        for ch in word:
+            if ch not in node.children:
+                return False
+            node = node.children[ch]
+        return node.end
+
+    def starts_with(self, prefix):
+        node = self
+        for ch in prefix:
+            if ch not in node.children:
+                return False
+            node = node.children[ch]
+        return True
+
+t = Trie(); t.insert('apple'); print([t.search('apple'), t.search('app'), t.starts_with('app')])
+",
+    next: Some("py-626-replace-words"), show_type_chips: false, micro_step: 625,
+};
+
+pub const PY626_REPLACE_WORDS: CodingStep = CodingStep {
+    id: "py-626-replace-words", title: "DSA Trie III · Replace Words", objective: "Sustituir palabras por la raíz más corta presente en un diccionario.",
+    prompt_md: "**Replace Words**
+
+Insertá raíces en un trie y cortá en el primer end al recorrer cada palabra.
+
+**Micro-reto:**
+1. Definí `replace_words(dictionary, sentence)`
+2. Ejecutá el ejemplo; imprimí `the cat was rat by the bat`.",
+    starter_code: "# def replace_words(dictionary, sentence):
+#     trie = {}
+#     for word in dictionary:
+#         node = trie
+#         for ch in word:
+#             node = node.setdefault(ch, {})
+#         node['#'] = True
+#     def root_of(word):
+#         node = trie
+#         acc = []
+#         for ch in word:
+#             if '#' in node:
+#                 return ''.join(acc)
+#             if ch not in node:
+#                 return word
+#             acc.append(ch)
+#             node = node[ch]
+#         return ''.join(acc) if '#' in node else word
+#     return ' '.join(root_of(w) for w in sentence.split())
+#
+# print(replace_words(['cat', 'bat', 'rat'], 'the cattle was rattled by the battery'))
+",
+    pytest: "def test_626_replace_words(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('replace_words'))
+    assert ns['replace_words'](['cat', 'bat', 'rat'], 'the cattle was rattled by the battery') == 'the cat was rat by the bat'
+    assert ns['replace_words'](['a', 'b'], 'aadsfasf absbs bbab cadsfafs') == 'a a b cadsfafs'
+    assert capsys.readouterr().out.strip() == 'the cat was rat by the bat'
+",
+    hint: "def replace_words(dictionary, sentence):
+    trie = {}
+    for word in dictionary:
+        node = trie
+        for ch in word:
+            node = node.setdefault(ch, {})
+        node['#'] = True
+    def root_of(word):
+        node = trie
+        acc = []
+        for ch in word:
+            if '#' in node:
+                return ''.join(acc)
+            if ch not in node:
+                return word
+            acc.append(ch)
+            node = node[ch]
+        return ''.join(acc) if '#' in node else word
+    return ' '.join(root_of(w) for w in sentence.split())
+
+print(replace_words(['cat', 'bat', 'rat'], 'the cattle was rattled by the battery'))
+",
+    solution_example: "def replace_words(dictionary, sentence):
+    trie = {}
+    for word in dictionary:
+        node = trie
+        for ch in word:
+            node = node.setdefault(ch, {})
+        node['#'] = True
+    def root_of(word):
+        node = trie
+        acc = []
+        for ch in word:
+            if '#' in node:
+                return ''.join(acc)
+            if ch not in node:
+                return word
+            acc.append(ch)
+            node = node[ch]
+        return ''.join(acc) if '#' in node else word
+    return ' '.join(root_of(w) for w in sentence.split())
+
+print(replace_words(['cat', 'bat', 'rat'], 'the cattle was rattled by the battery'))
+",
+    next: Some("py-627-longest-word-dict"), show_type_chips: false, micro_step: 626,
+};
+
+pub const PY627_LONGEST_WORD_DICT: CodingStep = CodingStep {
+    id: "py-627-longest-word-dict", title: "DSA Trie III · Longest Word", objective: "Palabra más larga que se puede construir letra a letra desde el diccionario.",
+    prompt_md: "**Longest Word in Dictionary**
+
+Un conjunto de prefijos: cada palabra vale si word[:-1] también está (o es vacía).
+
+**Micro-reto:**
+1. Definí `longest_word(words)`
+2. Ejecutá el ejemplo; imprimí `world`.",
+    starter_code: "# def longest_word(words):
+#     seen = set(words)
+#     best = ''
+#     for word in sorted(words):
+#         if all(word[:i] in seen for i in range(1, len(word))) and (len(word) > len(best) or (len(word) == len(best) and word < best)):
+#             best = word
+#     return best
+#
+# print(longest_word(['w', 'wo', 'wor', 'worl', 'world']))
+",
+    pytest: "def test_627_longest_word_dict(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('longest_word'))
+    assert ns['longest_word'](['w', 'wo', 'wor', 'worl', 'world']) == 'world'
+    assert ns['longest_word'](['a', 'banana', 'app', 'appl', 'ap', 'apply', 'apple']) == 'apple'
+    assert capsys.readouterr().out.strip() == 'world'
+",
+    hint: "def longest_word(words):
+    seen = set(words)
+    best = ''
+    for word in sorted(words):
+        if all(word[:i] in seen for i in range(1, len(word))) and (len(word) > len(best) or (len(word) == len(best) and word < best)):
+            best = word
+    return best
+
+print(longest_word(['w', 'wo', 'wor', 'worl', 'world']))
+",
+    solution_example: "def longest_word(words):
+    seen = set(words)
+    best = ''
+    for word in sorted(words):
+        if all(word[:i] in seen for i in range(1, len(word))) and (len(word) > len(best) or (len(word) == len(best) and word < best)):
+            best = word
+    return best
+
+print(longest_word(['w', 'wo', 'wor', 'worl', 'world']))
+",
+    next: Some("py-628-map-sum"), show_type_chips: false, micro_step: 627,
+};
+
+pub const PY628_MAP_SUM: CodingStep = CodingStep {
+    id: "py-628-map-sum", title: "DSA Trie III · Map Sum", objective: "Sumar valores de claves que empiezan con un prefijo, con overwrite de clave.",
+    prompt_md: "**Map Sum Pairs**
+
+Guardá el delta respecto al valor anterior de la clave y acumulalo en cada nodo.
+
+**Micro-reto:**
+1. Definí `la clase MapSum con insert y sum`
+2. Ejecutá el ejemplo; imprimí `5`.",
+    starter_code: "# class MapSum:
+#     def __init__(self):
+#         self.vals = {}
+#         self.trie = {}
+#
+#     def insert(self, key, val):
+#         delta = val - self.vals.get(key, 0)
+#         self.vals[key] = val
+#         node = self.trie
+#         for ch in key:
+#             node = node.setdefault(ch, {'$': 0})
+#             node['$'] = node.get('$', 0) + delta
+#
+#     def sum(self, prefix):
+#         node = self.trie
+#         for ch in prefix:
+#             if ch not in node:
+#                 return 0
+#             node = node[ch]
+#         return node.get('$', 0)
+#
+# m = MapSum(); m.insert('apple', 3); m.insert('app', 2); print(m.sum('ap'))
+",
+    pytest: "def test_628_map_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns.get('MapSum') is not None
+    m = ns['MapSum']()
+    m.insert('apple', 3)
+    assert m.sum('ap') == 3
+    m.insert('app', 2)
+    assert m.sum('ap') == 5
+    m.insert('apple', 2)
+    assert m.sum('ap') == 4
+    assert capsys.readouterr().out.strip() == '5'
+",
+    hint: "class MapSum:
+    def __init__(self):
+        self.vals = {}
+        self.trie = {}
+
+    def insert(self, key, val):
+        delta = val - self.vals.get(key, 0)
+        self.vals[key] = val
+        node = self.trie
+        for ch in key:
+            node = node.setdefault(ch, {'$': 0})
+            node['$'] = node.get('$', 0) + delta
+
+    def sum(self, prefix):
+        node = self.trie
+        for ch in prefix:
+            if ch not in node:
+                return 0
+            node = node[ch]
+        return node.get('$', 0)
+
+m = MapSum(); m.insert('apple', 3); m.insert('app', 2); print(m.sum('ap'))
+",
+    solution_example: "class MapSum:
+    def __init__(self):
+        self.vals = {}
+        self.trie = {}
+
+    def insert(self, key, val):
+        delta = val - self.vals.get(key, 0)
+        self.vals[key] = val
+        node = self.trie
+        for ch in key:
+            node = node.setdefault(ch, {'$': 0})
+            node['$'] = node.get('$', 0) + delta
+
+    def sum(self, prefix):
+        node = self.trie
+        for ch in prefix:
+            if ch not in node:
+                return 0
+            node = node[ch]
+        return node.get('$', 0)
+
+m = MapSum(); m.insert('apple', 3); m.insert('app', 2); print(m.sum('ap'))
+",
+    next: Some("py-629-count-prefix-pairs"), show_type_chips: false, micro_step: 628,
+};
+
+pub const PY629_COUNT_PREFIX_PAIRS: CodingStep = CodingStep {
+    id: "py-629-count-prefix-pairs", title: "DSA Trie III · Prefix Pairs", objective: "Contar pares i < j donde words[i] es prefijo de words[j] o viceversa.",
+    prompt_md: "**Count Prefix and Suffix Pairs I**
+
+Para n chico, starts-with alcanza; el trie escala si n crece.
+
+**Micro-reto:**
+1. Definí `count_prefix_suffix_pairs(words)`
+2. Ejecutá el ejemplo; imprimí `4`.",
+    starter_code: "# def count_prefix_suffix_pairs(words):
+#     total = 0
+#     n = len(words)
+#     for i in range(n):
+#         for j in range(i + 1, n):
+#             a, b = words[i], words[j]
+#             if (b.startswith(a) and b.endswith(a)) or (a.startswith(b) and a.endswith(b)):
+#                 total += 1
+#     return total
+#
+# print(count_prefix_suffix_pairs(['a', 'aba', 'ababa', 'aa']))
+",
+    pytest: "def test_629_count_prefix_pairs(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('count_prefix_suffix_pairs'))
+    assert ns['count_prefix_suffix_pairs'](['a', 'aba', 'ababa', 'aa']) == 4
+    assert ns['count_prefix_suffix_pairs'](['pa', 'papa', 'ma', 'mama']) == 2
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def count_prefix_suffix_pairs(words):
+    total = 0
+    n = len(words)
+    for i in range(n):
+        for j in range(i + 1, n):
+            a, b = words[i], words[j]
+            if (b.startswith(a) and b.endswith(a)) or (a.startswith(b) and a.endswith(b)):
+                total += 1
+    return total
+
+print(count_prefix_suffix_pairs(['a', 'aba', 'ababa', 'aa']))
+",
+    solution_example: "def count_prefix_suffix_pairs(words):
+    total = 0
+    n = len(words)
+    for i in range(n):
+        for j in range(i + 1, n):
+            a, b = words[i], words[j]
+            if (b.startswith(a) and b.endswith(a)) or (a.startswith(b) and a.endswith(b)):
+                total += 1
+    return total
+
+print(count_prefix_suffix_pairs(['a', 'aba', 'ababa', 'aa']))
+",
+    next: Some("py-630-max-xor-two"), show_type_chips: false, micro_step: 629,
+};
+
+pub const PY630_MAX_XOR_TWO: CodingStep = CodingStep {
+    id: "py-630-max-xor-two", title: "DSA Trie III · Max XOR", objective: "Máximo XOR entre dos números del array usando un trie de bits.",
+    prompt_md: "**Maximum XOR of Two Numbers**
+
+Insertá bits de alto a bajo; en cada bit preferí el complemento si existe.
+
+**Micro-reto:**
+1. Definí `find_maximum_xor(nums)`
+2. Ejecutá el ejemplo; imprimí `28`.",
+    starter_code: "# def find_maximum_xor(nums):
+#     trie = {}
+#     for x in nums:
+#         node = trie
+#         for b in range(31, -1, -1):
+#             bit = (x >> b) & 1
+#             node = node.setdefault(bit, {})
+#     best = 0
+#     for x in nums:
+#         node = trie
+#         acc = 0
+#         for b in range(31, -1, -1):
+#             bit = (x >> b) & 1
+#             want = 1 - bit
+#             if want in node:
+#                 acc |= 1 << b
+#                 node = node[want]
+#             else:
+#                 node = node[bit]
+#         best = max(best, acc)
+#     return best
+#
+# print(find_maximum_xor([3, 10, 5, 25, 2, 8]))
+",
+    pytest: "def test_630_max_xor_two(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_maximum_xor'))
+    assert ns['find_maximum_xor']([3, 10, 5, 25, 2, 8]) == 28
+    assert ns['find_maximum_xor']([8, 10, 2]) == 10
+    assert capsys.readouterr().out.strip() == '28'
+",
+    hint: "def find_maximum_xor(nums):
+    trie = {}
+    for x in nums:
+        node = trie
+        for b in range(31, -1, -1):
+            bit = (x >> b) & 1
+            node = node.setdefault(bit, {})
+    best = 0
+    for x in nums:
+        node = trie
+        acc = 0
+        for b in range(31, -1, -1):
+            bit = (x >> b) & 1
+            want = 1 - bit
+            if want in node:
+                acc |= 1 << b
+                node = node[want]
+            else:
+                node = node[bit]
+        best = max(best, acc)
+    return best
+
+print(find_maximum_xor([3, 10, 5, 25, 2, 8]))
+",
+    solution_example: "def find_maximum_xor(nums):
+    trie = {}
+    for x in nums:
+        node = trie
+        for b in range(31, -1, -1):
+            bit = (x >> b) & 1
+            node = node.setdefault(bit, {})
+    best = 0
+    for x in nums:
+        node = trie
+        acc = 0
+        for b in range(31, -1, -1):
+            bit = (x >> b) & 1
+            want = 1 - bit
+            if want in node:
+                acc |= 1 << b
+                node = node[want]
+            else:
+                node = node[bit]
+        best = max(best, acc)
+    return best
+
+print(find_maximum_xor([3, 10, 5, 25, 2, 8]))
+",
+    next: None, show_type_chips: false, micro_step: 630,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -19856,7 +20347,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY621_PROVINCES,
     &PY622_STONES_REMOVED,
     &PY623_SIMILAR_STRING_GROUPS,
-    &PY624_GRAPH_VALID_TREE
+    &PY624_GRAPH_VALID_TREE,
+    &PY625_IMPLEMENT_TRIE,
+    &PY626_REPLACE_WORDS,
+    &PY627_LONGEST_WORD_DICT,
+    &PY628_MAP_SUM,
+    &PY629_COUNT_PREFIX_PAIRS,
+    &PY630_MAX_XOR_TWO
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -20000,7 +20497,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 624);
+            assert!(step.micro_step >= 1 && step.micro_step <= 630);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -22364,7 +22861,13 @@ mod tests {
             (621, "py-621-provinces", Some("py-622-stones-removed")),
             (622, "py-622-stones-removed", Some("py-623-similar-string-groups")),
             (623, "py-623-similar-string-groups", Some("py-624-graph-valid-tree")),
-            (624, "py-624-graph-valid-tree", None),
+            (624, "py-624-graph-valid-tree", Some("py-625-implement-trie")),
+            (625, "py-625-implement-trie", Some("py-626-replace-words")),
+            (626, "py-626-replace-words", Some("py-627-longest-word-dict")),
+            (627, "py-627-longest-word-dict", Some("py-628-map-sum")),
+            (628, "py-628-map-sum", Some("py-629-count-prefix-pairs")),
+            (629, "py-629-count-prefix-pairs", Some("py-630-max-xor-two")),
+            (630, "py-630-max-xor-two", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
