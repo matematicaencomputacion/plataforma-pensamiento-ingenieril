@@ -22,202 +22,145 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 463,
-    id: "py-463-max-depth-bt",
-    title: "DSA Max Depth BT",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 469,
+    id: "py-469-flood-fill",
+    title: "DSA Flood Fill",
+    solution: `def flood_fill(image, sr, sc, color):
+    start = image[sr][sc]
+    if start == color:
+        return image
+    rows, cols = len(image), len(image[0])
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols or image[r][c] != start:
+            return
+        image[r][c] = color
+        dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1)
+    dfs(sr, sc)
+    return image
 
-def max_depth(root):
-    if root is None:
+print(flood_fill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2))
+`,
+    nextUrl: /\\/learn\\/py-470-num-islands/,
+    cursorAfter: "470",
+  }
+  {
+    micro: 470,
+    id: "py-470-num-islands",
+    title: "DSA Num Islands",
+    solution: `def num_islands(grid):
+    if not grid:
         return 0
-    return 1 + max(max_depth(root.left), max_depth(root.right))
+    rows, cols = len(grid), len(grid[0])
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] != "1":
+            return
+        grid[r][c] = "0"
+        dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1)
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == "1":
+                count += 1
+                dfs(r, c)
+    return count
 
-root = TreeNode(3)
-root.left = TreeNode(9)
-root.right = TreeNode(20)
-root.right.left = TreeNode(15)
-root.right.right = TreeNode(7)
-print(max_depth(root))
+print(num_islands([["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]]))
 `,
-    nextUrl: /\/learn\/py-464-is-symmetric/,
-    cursorAfter: "464",
-  },
+    nextUrl: /\\/learn\\/py-471-keys-rooms/,
+    cursorAfter: "471",
+  }
   {
-    micro: 464,
-    id: "py-464-is-symmetric",
-    title: "DSA Is Symmetric",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 471,
+    id: "py-471-keys-rooms",
+    title: "DSA Keys Rooms",
+    solution: `def can_visit_all_rooms(rooms):
+    seen = set()
+    stack = [0]
+    while stack:
+        i = stack.pop()
+        if i in seen:
+            continue
+        seen.add(i)
+        stack.extend(rooms[i])
+    return len(seen) == len(rooms)
 
-def is_symmetric(root):
-    def ok(a, b):
-        if a is None or b is None:
-            return a is b
-        return a.data == b.data and ok(a.left, b.right) and ok(a.right, b.left)
-    return ok(root, root) if root else True
-
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(2)
-root.left.left = TreeNode(3)
-root.left.right = TreeNode(4)
-root.right.left = TreeNode(4)
-root.right.right = TreeNode(3)
-print(is_symmetric(root))
+print(can_visit_all_rooms([[1],[2],[3],[]]))
 `,
-    nextUrl: /\/learn\/py-465-level-averages/,
-    cursorAfter: "465",
-  },
+    nextUrl: /\\/learn\\/py-472-town-judge/,
+    cursorAfter: "472",
+  }
   {
-    micro: 465,
-    id: "py-465-level-averages",
-    title: "DSA Level Averages",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 472,
+    id: "py-472-town-judge",
+    title: "DSA Town Judge",
+    solution: `def find_judge(n, trust):
+    score = [0] * (n + 1)
+    for a, b in trust:
+        score[a] -= 1
+        score[b] += 1
+    for i in range(1, n + 1):
+        if score[i] == n - 1:
+            return i
+    return -1
 
-from collections import deque
-
-def average_of_levels(root):
-    if root is None:
-        return []
-    out = []
-    q = deque([root])
-    while q:
-        n = len(q)
-        s = 0
-        for _ in range(n):
-            node = q.popleft()
-            s += node.data
-            if node.left:
-                q.append(node.left)
-            if node.right:
-                q.append(node.right)
-        out.append(s / n)
-    return out
-
-root = TreeNode(3)
-root.left = TreeNode(9)
-root.right = TreeNode(20)
-root.right.left = TreeNode(15)
-root.right.right = TreeNode(7)
-print(average_of_levels(root))
+print(find_judge(2, [[1,2]]))
 `,
-    nextUrl: /\/learn\/py-466-right-side-view/,
-    cursorAfter: "466",
-  },
+    nextUrl: /\\/learn\\/py-473-max-island/,
+    cursorAfter: "473",
+  }
   {
-    micro: 466,
-    id: "py-466-right-side-view",
-    title: "DSA Right Side View",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 473,
+    id: "py-473-max-island",
+    title: "DSA Max Island",
+    solution: `def max_area_of_island(grid):
+    rows, cols = len(grid), len(grid[0])
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] != 1:
+            return 0
+        grid[r][c] = 0
+        return 1 + dfs(r + 1, c) + dfs(r - 1, c) + dfs(r, c + 1) + dfs(r, c - 1)
+    best = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == 1:
+                best = max(best, dfs(r, c))
+    return best
 
-from collections import deque
-
-def right_side_view(root):
-    if root is None:
-        return []
-    out = []
-    q = deque([root])
-    while q:
-        n = len(q)
-        for i in range(n):
-            node = q.popleft()
-            if i == n - 1:
-                out.append(node.data)
-            if node.left:
-                q.append(node.left)
-            if node.right:
-                q.append(node.right)
-    return out
-
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-root.left.right = TreeNode(5)
-root.right.right = TreeNode(4)
-print(right_side_view(root))
+print(max_area_of_island([[1,0,0],[1,1,0],[0,0,1]]))
 `,
-    nextUrl: /\/learn\/py-467-bst-range-sum/,
-    cursorAfter: "467",
-  },
+    nextUrl: /\\/learn\\/py-474-provinces/,
+    cursorAfter: "474",
+  }
   {
-    micro: 467,
-    id: "py-467-bst-range-sum",
-    title: "DSA BST Range Sum",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 474,
+    id: "py-474-provinces",
+    title: "DSA Provinces",
+    solution: `def find_circle_num(is_connected):
+    n = len(is_connected)
+    seen = [False] * n
+    def dfs(i):
+        for j in range(n):
+            if is_connected[i][j] and not seen[j]:
+                seen[j] = True
+                dfs(j)
+    count = 0
+    for i in range(n):
+        if not seen[i]:
+            seen[i] = True
+            dfs(i)
+            count += 1
+    return count
 
-def range_sum_bst(root, low, high):
-    if root is None:
-        return 0
-    if root.data < low:
-        return range_sum_bst(root.right, low, high)
-    if root.data > high:
-        return range_sum_bst(root.left, low, high)
-    return root.data + range_sum_bst(root.left, low, high) + range_sum_bst(root.right, low, high)
-
-root = TreeNode(10)
-root.left = TreeNode(5)
-root.right = TreeNode(15)
-root.left.left = TreeNode(3)
-root.left.right = TreeNode(7)
-root.right.right = TreeNode(18)
-print(range_sum_bst(root, 7, 15))
+print(find_circle_num([[1,1,0],[1,1,0],[0,0,1]]))
 `,
-    nextUrl: /\/learn\/py-468-min-depth-bt/,
-    cursorAfter: "468",
-  },
-  {
-    micro: 468,
-    id: "py-468-min-depth-bt",
-    title: "DSA Min Depth BT",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-
-def min_depth(root):
-    if root is None:
-        return 0
-    if root.left is None:
-        return 1 + min_depth(root.right)
-    if root.right is None:
-        return 1 + min_depth(root.left)
-    return 1 + min(min_depth(root.left), min_depth(root.right))
-
-root = TreeNode(3)
-root.left = TreeNode(9)
-root.right = TreeNode(20)
-root.right.left = TreeNode(15)
-root.right.right = TreeNode(7)
-print(min_depth(root))
-`,
-    nextUrl: /\/workspace/,
-    cursorAfter: "469",
+    nextUrl: /\\/workspace/,
+    cursorAfter: "475",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:463|464|465|466|467|468)-/);
+    expect(step.id).toMatch(/^py-(?:469|470|471|472|473|474)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -247,7 +190,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 463–468 · trees III", () => {
+test.describe("micro-steps 469–474 · graphs III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
