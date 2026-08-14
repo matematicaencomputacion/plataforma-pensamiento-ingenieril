@@ -564,6 +564,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 556, step_id: "py-556-letter-combos" },
   { level_id: 557, step_id: "py-557-generate-parens" },
   { level_id: 558, step_id: "py-558-word-search" },
+  { level_id: 559, step_id: "py-559-add-digits" },
+  { level_id: 560, step_id: "py-560-ugly-number" },
+  { level_id: 561, step_id: "py-561-count-primes" },
+  { level_id: 562, step_id: "py-562-power-of-three" },
+  { level_id: 563, step_id: "py-563-excel-col" },
+  { level_id: 564, step_id: "py-564-sqrt-int" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

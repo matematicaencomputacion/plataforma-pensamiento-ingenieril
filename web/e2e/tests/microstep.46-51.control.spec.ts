@@ -159,7 +159,7 @@ test.describe("micro-steps 46–51 · control flow family", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 558) {
+      if (nextMicro <= 564) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
