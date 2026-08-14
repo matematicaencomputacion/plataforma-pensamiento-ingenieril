@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=450).
+    /// 1-based index on the workspace micro-step rail (1..=456).
     pub micro_step: i32,
 }
 
@@ -8717,7 +8717,229 @@ print(int_to_roman(1994))",
 
 print(int_to_roman(1994))
 ",
-    next: None, show_type_chips: false, micro_step: 450,
+    next: Some("py-451-build-array-perm"), show_type_chips: false, micro_step: 450,
+};
+
+
+pub const PY451_BUILD_ARRAY_PERM: CodingStep = CodingStep {
+    id: "py-451-build-array-perm", title: "DSA Build Array", objective: "Construir nums[nums[i]].",
+    prompt_md: "**Build Array from Permutation**
+
+Indexación directa. Distinto de running-sum.
+
+**Micro-reto:**
+1. Definí `build_array(nums)`
+2. Definí `build_array(nums)` e imprimí `build_array([0, 2, 1, 5, 3, 4])` (esperado: `[0, 1, 2, 4, 5, 3]`).",
+    starter_code: "# def build_array(...):
+#     ...
+# print(build_array([0, 2, 1, 5, 3, 4]))
+",
+    pytest: "def test_451_build_array_perm(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('build_array'))
+    assert ns['build_array']([0, 2, 1, 5, 3, 4]) == [0, 1, 2, 4, 5, 3]
+    assert ns['build_array']([5, 0, 1, 2, 3, 4]) == [4, 5, 0, 1, 2, 3]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 4, 5, 3]'
+",
+    hint: "def build_array(nums):
+    return [nums[x] for x in nums]
+
+print(build_array([0, 2, 1, 5, 3, 4]))
+",
+    solution_example: "def build_array(nums):
+    return [nums[x] for x in nums]
+
+print(build_array([0, 2, 1, 5, 3, 4]))
+",
+    next: Some("py-452-concat-array"), show_type_chips: false, micro_step: 451,
+};
+
+
+pub const PY452_CONCAT_ARRAY: CodingStep = CodingStep {
+    id: "py-452-concat-array", title: "DSA Concat Array", objective: "Concatenar el array consigo mismo.",
+    prompt_md: "**Concatenation of Array**
+
+Doble longitud.
+
+**Micro-reto:**
+1. Definí `get_concatenation(nums)`
+2. Definí `get_concatenation(nums)` e imprimí con `[1, 2, 1]` (esperado: `[1, 2, 1, 1, 2, 1]`).",
+    starter_code: "# def get_concatenation(...):
+#     ...
+# print(get_concatenation([1, 2, 1]))
+",
+    pytest: "def test_452_concat_array(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('get_concatenation'))
+    assert ns['get_concatenation']([1, 2, 1]) == [1, 2, 1, 1, 2, 1]
+    assert ns['get_concatenation']([1, 3, 2, 1]) == [1, 3, 2, 1, 1, 3, 2, 1]
+    assert capsys.readouterr().out.strip() == '[1, 2, 1, 1, 2, 1]'
+",
+    hint: "def get_concatenation(nums):
+    return nums + nums
+
+print(get_concatenation([1, 2, 1]))
+",
+    solution_example: "def get_concatenation(nums):
+    return nums + nums
+
+print(get_concatenation([1, 2, 1]))
+",
+    next: Some("py-453-shuffle-array"), show_type_chips: false, micro_step: 452,
+};
+
+
+pub const PY453_SHUFFLE_ARRAY: CodingStep = CodingStep {
+    id: "py-453-shuffle-array", title: "DSA Shuffle Array", objective: "Intercalar primera y segunda mitad.",
+    prompt_md: "**Shuffle the Array**
+
+Two pointers sobre n.
+
+**Micro-reto:**
+1. Definí `shuffle(nums, n)`
+2. Definí `shuffle(nums, n)` e imprimí el ejemplo (esperado: `[2, 3, 5, 4, 1, 7]`).",
+    starter_code: "# def shuffle(...):
+#     ...
+# print(shuffle([2, 5, 1, 3, 4, 7], 3))
+",
+    pytest: "def test_453_shuffle_array(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('shuffle'))
+    assert ns['shuffle']([2, 5, 1, 3, 4, 7], 3) == [2, 3, 5, 4, 1, 7]
+    assert ns['shuffle']([1, 1, 2, 2], 2) == [1, 2, 1, 2]
+    assert capsys.readouterr().out.strip() == '[2, 3, 5, 4, 1, 7]'
+",
+    hint: "def shuffle(nums, n):
+    out = []
+    for i in range(n):
+        out.append(nums[i])
+        out.append(nums[i + n])
+    return out
+
+print(shuffle([2, 5, 1, 3, 4, 7], 3))
+",
+    solution_example: "def shuffle(nums, n):
+    out = []
+    for i in range(n):
+        out.append(nums[i])
+        out.append(nums[i + n])
+    return out
+
+print(shuffle([2, 5, 1, 3, 4, 7], 3))
+",
+    next: Some("py-454-kids-candies"), show_type_chips: false, micro_step: 453,
+};
+
+
+pub const PY454_KIDS_CANDIES: CodingStep = CodingStep {
+    id: "py-454-kids-candies", title: "DSA Kids Candies", objective: "Quién alcanza el máximo con extra.",
+    prompt_md: "**Kids With the Greatest Number of Candies**
+
+Comparar c+extra >= max.
+
+**Micro-reto:**
+1. Definí `kids_with_candies(candies, extra)`
+2. Definí `kids_with_candies(candies, extra)` e imprimí el ejemplo.",
+    starter_code: "# def kids_with_candies(...):
+#     ...
+# print(kids_with_candies([2, 3, 5, 1, 3], 3))
+",
+    pytest: "def test_454_kids_candies(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('kids_with_candies'))
+    assert ns['kids_with_candies']([2, 3, 5, 1, 3], 3) == [True, True, True, False, True]
+    assert ns['kids_with_candies']([12, 1, 12], 10) == [True, False, True]
+    assert capsys.readouterr().out.strip() == '[True, True, True, False, True]'
+",
+    hint: "def kids_with_candies(candies, extra):
+    m = max(candies)
+    return [c + extra >= m for c in candies]
+
+print(kids_with_candies([2, 3, 5, 1, 3], 3))
+",
+    solution_example: "def kids_with_candies(candies, extra):
+    m = max(candies)
+    return [c + extra >= m for c in candies]
+
+print(kids_with_candies([2, 3, 5, 1, 3], 3))
+",
+    next: Some("py-455-good-pairs"), show_type_chips: false, micro_step: 454,
+};
+
+
+pub const PY455_GOOD_PAIRS: CodingStep = CodingStep {
+    id: "py-455-good-pairs", title: "DSA Good Pairs", objective: "Contar pares i<j con nums iguales.",
+    prompt_md: "**Number of Good Pairs**
+
+Combinatoria por frecuencia.
+
+**Micro-reto:**
+1. Definí `num_identical_pairs(nums)`
+2. Definí `num_identical_pairs(nums)` e imprimí (esperado: `4`).",
+    starter_code: "# def num_identical_pairs(...):
+#     ...
+# print(num_identical_pairs([1, 2, 3, 1, 1, 3]))
+",
+    pytest: "def test_455_good_pairs(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('num_identical_pairs'))
+    assert ns['num_identical_pairs']([1, 2, 3, 1, 1, 3]) == 4
+    assert ns['num_identical_pairs']([1, 1, 1, 1]) == 6
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def num_identical_pairs(nums):
+    from collections import Counter
+    return sum(c * (c - 1) // 2 for c in Counter(nums).values())
+
+print(num_identical_pairs([1, 2, 3, 1, 1, 3]))
+",
+    solution_example: "def num_identical_pairs(nums):
+    from collections import Counter
+    return sum(c * (c - 1) // 2 for c in Counter(nums).values())
+
+print(num_identical_pairs([1, 2, 3, 1, 1, 3]))
+",
+    next: Some("py-456-smaller-counts"), show_type_chips: false, micro_step: 455,
+};
+
+
+pub const PY456_SMALLER_COUNTS: CodingStep = CodingStep {
+    id: "py-456-smaller-counts", title: "DSA Smaller Counts", objective: "Cuántos valores estrictamente menores.",
+    prompt_md: "**How Many Numbers Are Smaller Than the Current Number**
+
+Conteo por comparación.
+
+**Micro-reto:**
+1. Definí `smaller_numbers_than_current(nums)`
+2. Definí `smaller_numbers_than_current(nums)` e imprimí el ejemplo.",
+    starter_code: "# def smaller_numbers_than_current(...):
+#     ...
+# print(smaller_numbers_than_current([8, 1, 2, 2, 3]))
+",
+    pytest: "def test_456_smaller_counts(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('smaller_numbers_than_current'))
+    assert ns['smaller_numbers_than_current']([8, 1, 2, 2, 3]) == [4, 0, 1, 1, 3]
+    assert ns['smaller_numbers_than_current']([7, 7, 7, 7]) == [0, 0, 0, 0]
+    assert capsys.readouterr().out.strip() == '[4, 0, 1, 1, 3]'
+",
+    hint: "def smaller_numbers_than_current(nums):
+    return [sum(1 for y in nums if y < x) for x in nums]
+
+print(smaller_numbers_than_current([8, 1, 2, 2, 3]))
+",
+    solution_example: "def smaller_numbers_than_current(nums):
+    return [sum(1 for y in nums if y < x) for x in nums]
+
+print(smaller_numbers_than_current([8, 1, 2, 2, 3]))
+",
+    next: None, show_type_chips: false, micro_step: 456,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -9170,7 +9392,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY447_MOVE_ZEROES,
     &PY448_PLUS_ONE,
     &PY449_ROMAN_TO_INT,
-    &PY450_INT_TO_ROMAN
+    &PY450_INT_TO_ROMAN,
+    &PY451_BUILD_ARRAY_PERM,
+    &PY452_CONCAT_ARRAY,
+    &PY453_SHUFFLE_ARRAY,
+    &PY454_KIDS_CANDIES,
+    &PY455_GOOD_PAIRS,
+    &PY456_SMALLER_COUNTS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -9314,7 +9542,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 450);
+            assert!(step.micro_step >= 1 && step.micro_step <= 456);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -9868,7 +10096,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py450_curriculum_chain() {
+    fn py203_to_py456_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -10118,7 +10346,13 @@ mod tests {
             (447, "py-447-move-zeroes", Some("py-448-plus-one")),
             (448, "py-448-plus-one", Some("py-449-roman-to-int")),
             (449, "py-449-roman-to-int", Some("py-450-int-to-roman")),
-            (450, "py-450-int-to-roman", None),
+            (450, "py-450-int-to-roman", Some("py-451-build-array-perm")),
+            (451, "py-451-build-array-perm", Some("py-452-concat-array")),
+            (452, "py-452-concat-array", Some("py-453-shuffle-array")),
+            (453, "py-453-shuffle-array", Some("py-454-kids-candies")),
+            (454, "py-454-kids-candies", Some("py-455-good-pairs")),
+            (455, "py-455-good-pairs", Some("py-456-smaller-counts")),
+            (456, "py-456-smaller-counts", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
