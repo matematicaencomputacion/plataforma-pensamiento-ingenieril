@@ -22,108 +22,136 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 88,
-    id: "py-88-linear-in",
-    title: "DSA Linear Search (in)",
-    solution: `mylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]
-if 4 in mylist:
-    print("Found!")
-else:
-    print("Not found!")
-`,
-    nextUrl: /\/learn\/py-89-linear-search/,
-    cursorAfter: "89",
-  },
-  {
-    micro: 89,
-    id: "py-89-linear-search",
-    title: "DSA Linear Search Index",
-    solution: `def linearSearch(arr, targetVal):
-    for i in range(len(arr)):
-        if arr[i] == targetVal:
-            return i
-    return -1
-mylist = [3, 7, 2, 9, 5, 1, 8, 4, 6]
-x = 4
-print(linearSearch(mylist, x))
-`,
-    nextUrl: /\/learn\/py-90-bubble-sort/,
-    cursorAfter: "90",
-  },
-  {
-    micro: 90,
-    id: "py-90-bubble-sort",
-    title: "DSA Bubble Sort",
-    solution: `mylist = [64, 34, 25, 12, 22, 11, 90, 5]
-n = len(mylist)
-for i in range(n-1):
-    for j in range(n-i-1):
-        if mylist[j] > mylist[j+1]:
-            mylist[j], mylist[j+1] = mylist[j+1], mylist[j]
-print(mylist)
-`,
-    nextUrl: /\/learn\/py-91-binary-search/,
-    cursorAfter: "91",
-  },
-  {
-    micro: 91,
-    id: "py-91-binary-search",
-    title: "DSA Binary Search",
-    solution: `def binarySearch(arr, targetVal):
-    left = 0
-    right = len(arr) - 1
-    while left <= right:
-        mid = (left + right) // 2
-        if arr[mid] == targetVal:
-            return mid
-        if arr[mid] < targetVal:
-            left = mid + 1
+    micro: 517,
+    id: "py-517-two-sum-sorted",
+    title: "DSA Two Sum Sorted",
+    solution: `def two_sum(numbers, target):
+    i, j = 0, len(numbers) - 1
+    while i < j:
+        s = numbers[i] + numbers[j]
+        if s == target:
+            return [i + 1, j + 1]
+        if s < target:
+            i += 1
         else:
-            right = mid - 1
-    return -1
-mylist = [1, 3, 5, 7, 9, 11, 13, 15]
-x = 11
-print(binarySearch(mylist, x))
+            j -= 1
+    return []
+
+print(two_sum([2, 7, 11, 15], 9))
 `,
-    nextUrl: /\/learn\/py-92-selection-sort/,
-    cursorAfter: "92",
+    nextUrl: /\/learn\/py-518-3sum/,
+    cursorAfter: "518",
   },
   {
-    micro: 92,
-    id: "py-92-selection-sort",
-    title: "DSA Selection Sort",
-    solution: `mylist = [64, 34, 25, 12, 22, 11, 90, 5]
-n = len(mylist)
-for i in range(n):
-    min_idx = i
-    for j in range(i+1, n):
-        if mylist[j] < mylist[min_idx]:
-            min_idx = j
-    mylist[i], mylist[min_idx] = mylist[min_idx], mylist[i]
-print(mylist)
+    micro: 518,
+    id: "py-518-3sum",
+    title: "DSA 3Sum",
+    solution: `def three_sum(nums):
+    nums.sort()
+    res = []
+    for i in range(len(nums)):
+        if i and nums[i] == nums[i - 1]:
+            continue
+        l, r = i + 1, len(nums) - 1
+        while l < r:
+            s = nums[i] + nums[l] + nums[r]
+            if s == 0:
+                res.append([nums[i], nums[l], nums[r]])
+                l += 1; r -= 1
+                while l < r and nums[l] == nums[l - 1]:
+                    l += 1
+            elif s < 0:
+                l += 1
+            else:
+                r -= 1
+    return res
+
+print(three_sum([-1, 0, 1, 2, -1, -4]))
 `,
-    nextUrl: /\/learn\/py-93-insertion-sort/,
-    cursorAfter: "93",
+    nextUrl: /\/learn\/py-519-container-water/,
+    cursorAfter: "519",
   },
   {
-    micro: 93,
-    id: "py-93-insertion-sort",
-    title: "DSA Insertion Sort",
-    solution: `mylist = [64, 34, 25, 12, 22, 11, 90, 5]
-n = len(mylist)
-for i in range(1, n):
-    key = mylist[i]
-    j = i - 1
-    while j >= 0 and mylist[j] > key:
-        mylist[j + 1] = mylist[j]
-        j -= 1
-    mylist[j + 1] = key
-print(mylist)
+    micro: 519,
+    id: "py-519-container-water",
+    title: "DSA Container Water",
+    solution: `def max_area(height):
+    i, j = 0, len(height) - 1
+    best = 0
+    while i < j:
+        best = max(best, min(height[i], height[j]) * (j - i))
+        if height[i] < height[j]:
+            i += 1
+        else:
+            j -= 1
+    return best
+
+print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))
 `,
-    nextUrl: /\/learn\/py-94-linked-node/,
-    cursorAfter: "94",
+    nextUrl: /\/learn\/py-520-trap-rain/,
+    cursorAfter: "520",
   },
+  {
+    micro: 520,
+    id: "py-520-trap-rain",
+    title: "DSA Trap Rain",
+    solution: `def trap(height):
+    i, j = 0, len(height) - 1
+    left = right = water = 0
+    while i <= j:
+        if height[i] <= height[j]:
+            left = max(left, height[i])
+            water += left - height[i]
+            i += 1
+        else:
+            right = max(right, height[j])
+            water += right - height[j]
+            j -= 1
+    return water
+
+print(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))
+`,
+    nextUrl: /\/learn\/py-521-remove-dups-sorted/,
+    cursorAfter: "521",
+  },
+  {
+    micro: 521,
+    id: "py-521-remove-dups-sorted",
+    title: "DSA Remove Dups",
+    solution: `def remove_duplicates(nums):
+    w = 1
+    for i in range(1, len(nums)):
+        if nums[i] != nums[w - 1]:
+            nums[w] = nums[i]
+            w += 1
+    return w
+
+print(remove_duplicates([1, 1, 2]))
+`,
+    nextUrl: /\/learn\/py-522-valid-palindrome/,
+    cursorAfter: "522",
+  },
+  {
+    micro: 522,
+    id: "py-522-valid-palindrome",
+    title: "DSA Valid Palindrome",
+    solution: `def is_palindrome(s):
+    t = [c.lower() for c in s if c.isalnum()]
+    return t == t[::-1]
+
+print(is_palindrome("A man, a plan, a canal: Panama"))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "523",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:517|518|519|520|521|522)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -150,7 +178,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 88–93 · DSA Search & Sort", () => {
+test.describe("micro-steps 517–522 · two pointers III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

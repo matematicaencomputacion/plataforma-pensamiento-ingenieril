@@ -12499,7 +12499,368 @@ print(max_profit([7, 1, 5, 3, 6, 4]))
 
 print(max_profit([7, 1, 5, 3, 6, 4]))
 ",
-    next: None, show_type_chips: false, micro_step: 516,
+    next: Some("py-517-two-sum-sorted"), show_type_chips: false, micro_step: 516,
+};
+
+
+pub const PY517_TWO_SUM_SORTED: CodingStep = CodingStep {
+    id: "py-517-two-sum-sorted", title: "DSA Two Sum Sorted", objective: "Suma en array ordenado.",
+    prompt_md: "**Two Sum Sorted**
+
+Suma en array ordenado.
+
+**Micro-reto:**
+1. Definí `two_sum(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 2]`.",
+    starter_code: "# def two_sum(numbers, target):
+#     i, j = 0, len(numbers) - 1
+#     while i < j:
+#         s = numbers[i] + numbers[j]
+#         if s == target:
+#             return [i + 1, j + 1]
+#         if s < target:
+#             i += 1
+#         else:
+#             j -= 1
+#     return []
+#
+# print(two_sum([2, 7, 11, 15], 9))
+",
+    pytest: "def test_517_two_sum_sorted(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('two_sum'))
+    assert ns['two_sum']([2, 7, 11, 15], 9) == [1, 2]
+    assert capsys.readouterr().out.strip() == '[1, 2]'
+",
+    hint: "def two_sum(numbers, target):
+    i, j = 0, len(numbers) - 1
+    while i < j:
+        s = numbers[i] + numbers[j]
+        if s == target:
+            return [i + 1, j + 1]
+        if s < target:
+            i += 1
+        else:
+            j -= 1
+    return []
+
+print(two_sum([2, 7, 11, 15], 9))
+",
+    solution_example: "def two_sum(numbers, target):
+    i, j = 0, len(numbers) - 1
+    while i < j:
+        s = numbers[i] + numbers[j]
+        if s == target:
+            return [i + 1, j + 1]
+        if s < target:
+            i += 1
+        else:
+            j -= 1
+    return []
+
+print(two_sum([2, 7, 11, 15], 9))
+",
+    next: Some("py-518-3sum"), show_type_chips: false, micro_step: 517,
+};
+
+pub const PY518_3SUM: CodingStep = CodingStep {
+    id: "py-518-3sum", title: "DSA 3Sum", objective: "Triples a 0.",
+    prompt_md: "**3Sum**
+
+Triples a 0.
+
+**Micro-reto:**
+1. Definí `three_sum(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[-1, -1, 2], [-1, 0, 1]]`.",
+    starter_code: "# def three_sum(nums):
+#     nums.sort()
+#     res = []
+#     for i in range(len(nums)):
+#         if i and nums[i] == nums[i - 1]:
+#             continue
+#         l, r = i + 1, len(nums) - 1
+#         while l < r:
+#             s = nums[i] + nums[l] + nums[r]
+#             if s == 0:
+#                 res.append([nums[i], nums[l], nums[r]])
+#                 l += 1; r -= 1
+#                 while l < r and nums[l] == nums[l - 1]:
+#                     l += 1
+#             elif s < 0:
+#                 l += 1
+#             else:
+#                 r -= 1
+#     return res
+#
+# print(three_sum([-1, 0, 1, 2, -1, -4]))
+",
+    pytest: "def test_518_3sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('three_sum'))
+    assert ns['three_sum']([-1, 0, 1, 2, -1, -4]) == [[-1, -1, 2], [-1, 0, 1]]
+    assert capsys.readouterr().out.strip() == '[[-1, -1, 2], [-1, 0, 1]]'
+",
+    hint: "def three_sum(nums):
+    nums.sort()
+    res = []
+    for i in range(len(nums)):
+        if i and nums[i] == nums[i - 1]:
+            continue
+        l, r = i + 1, len(nums) - 1
+        while l < r:
+            s = nums[i] + nums[l] + nums[r]
+            if s == 0:
+                res.append([nums[i], nums[l], nums[r]])
+                l += 1; r -= 1
+                while l < r and nums[l] == nums[l - 1]:
+                    l += 1
+            elif s < 0:
+                l += 1
+            else:
+                r -= 1
+    return res
+
+print(three_sum([-1, 0, 1, 2, -1, -4]))
+",
+    solution_example: "def three_sum(nums):
+    nums.sort()
+    res = []
+    for i in range(len(nums)):
+        if i and nums[i] == nums[i - 1]:
+            continue
+        l, r = i + 1, len(nums) - 1
+        while l < r:
+            s = nums[i] + nums[l] + nums[r]
+            if s == 0:
+                res.append([nums[i], nums[l], nums[r]])
+                l += 1; r -= 1
+                while l < r and nums[l] == nums[l - 1]:
+                    l += 1
+            elif s < 0:
+                l += 1
+            else:
+                r -= 1
+    return res
+
+print(three_sum([-1, 0, 1, 2, -1, -4]))
+",
+    next: Some("py-519-container-water"), show_type_chips: false, micro_step: 518,
+};
+
+pub const PY519_CONTAINER_WATER: CodingStep = CodingStep {
+    id: "py-519-container-water", title: "DSA Container Water", objective: "Máxima área.",
+    prompt_md: "**Container Water**
+
+Máxima área.
+
+**Micro-reto:**
+1. Definí `max_area(...)`
+2. Ejecutá el ejemplo del starter; imprimí `49`.",
+    starter_code: "# def max_area(height):
+#     i, j = 0, len(height) - 1
+#     best = 0
+#     while i < j:
+#         best = max(best, min(height[i], height[j]) * (j - i))
+#         if height[i] < height[j]:
+#             i += 1
+#         else:
+#             j -= 1
+#     return best
+#
+# print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))
+",
+    pytest: "def test_519_container_water(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_area'))
+    assert ns['max_area']([1, 8, 6, 2, 5, 4, 8, 3, 7]) == 49
+    assert capsys.readouterr().out.strip() == '49'
+",
+    hint: "def max_area(height):
+    i, j = 0, len(height) - 1
+    best = 0
+    while i < j:
+        best = max(best, min(height[i], height[j]) * (j - i))
+        if height[i] < height[j]:
+            i += 1
+        else:
+            j -= 1
+    return best
+
+print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))
+",
+    solution_example: "def max_area(height):
+    i, j = 0, len(height) - 1
+    best = 0
+    while i < j:
+        best = max(best, min(height[i], height[j]) * (j - i))
+        if height[i] < height[j]:
+            i += 1
+        else:
+            j -= 1
+    return best
+
+print(max_area([1, 8, 6, 2, 5, 4, 8, 3, 7]))
+",
+    next: Some("py-520-trap-rain"), show_type_chips: false, micro_step: 519,
+};
+
+pub const PY520_TRAP_RAIN: CodingStep = CodingStep {
+    id: "py-520-trap-rain", title: "DSA Trap Rain", objective: "Agua atrapada.",
+    prompt_md: "**Trap Rain**
+
+Agua atrapada.
+
+**Micro-reto:**
+1. Definí `trap(...)`
+2. Ejecutá el ejemplo del starter; imprimí `6`.",
+    starter_code: "# def trap(height):
+#     i, j = 0, len(height) - 1
+#     left = right = water = 0
+#     while i <= j:
+#         if height[i] <= height[j]:
+#             left = max(left, height[i])
+#             water += left - height[i]
+#             i += 1
+#         else:
+#             right = max(right, height[j])
+#             water += right - height[j]
+#             j -= 1
+#     return water
+#
+# print(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))
+",
+    pytest: "def test_520_trap_rain(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('trap'))
+    assert ns['trap']([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]) == 6
+    assert capsys.readouterr().out.strip() == '6'
+",
+    hint: "def trap(height):
+    i, j = 0, len(height) - 1
+    left = right = water = 0
+    while i <= j:
+        if height[i] <= height[j]:
+            left = max(left, height[i])
+            water += left - height[i]
+            i += 1
+        else:
+            right = max(right, height[j])
+            water += right - height[j]
+            j -= 1
+    return water
+
+print(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))
+",
+    solution_example: "def trap(height):
+    i, j = 0, len(height) - 1
+    left = right = water = 0
+    while i <= j:
+        if height[i] <= height[j]:
+            left = max(left, height[i])
+            water += left - height[i]
+            i += 1
+        else:
+            right = max(right, height[j])
+            water += right - height[j]
+            j -= 1
+    return water
+
+print(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))
+",
+    next: Some("py-521-remove-dups-sorted"), show_type_chips: false, micro_step: 520,
+};
+
+pub const PY521_REMOVE_DUPS_SORTED: CodingStep = CodingStep {
+    id: "py-521-remove-dups-sorted", title: "DSA Remove Dups", objective: "Únicos in-place.",
+    prompt_md: "**Remove Dups**
+
+Únicos in-place.
+
+**Micro-reto:**
+1. Definí `remove_duplicates(...)`
+2. Ejecutá el ejemplo del starter; imprimí `2`.",
+    starter_code: "# def remove_duplicates(nums):
+#     w = 1
+#     for i in range(1, len(nums)):
+#         if nums[i] != nums[w - 1]:
+#             nums[w] = nums[i]
+#             w += 1
+#     return w
+#
+# print(remove_duplicates([1, 1, 2]))
+",
+    pytest: "def test_521_remove_dups_sorted(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('remove_duplicates'))
+    a = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+    k = ns['remove_duplicates'](a)
+    assert k == 5 and a[:k] == [0, 1, 2, 3, 4]
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def remove_duplicates(nums):
+    w = 1
+    for i in range(1, len(nums)):
+        if nums[i] != nums[w - 1]:
+            nums[w] = nums[i]
+            w += 1
+    return w
+
+print(remove_duplicates([1, 1, 2]))
+",
+    solution_example: "def remove_duplicates(nums):
+    w = 1
+    for i in range(1, len(nums)):
+        if nums[i] != nums[w - 1]:
+            nums[w] = nums[i]
+            w += 1
+    return w
+
+print(remove_duplicates([1, 1, 2]))
+",
+    next: Some("py-522-valid-palindrome"), show_type_chips: false, micro_step: 521,
+};
+
+pub const PY522_VALID_PALINDROME: CodingStep = CodingStep {
+    id: "py-522-valid-palindrome", title: "DSA Valid Palindrome", objective: "Alfanumérico palíndromo.",
+    prompt_md: "**Valid Palindrome**
+
+Alfanumérico palíndromo.
+
+**Micro-reto:**
+1. Definí `is_palindrome(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def is_palindrome(s):
+#     t = [c.lower() for c in s if c.isalnum()]
+#     return t == t[::-1]
+#
+# print(is_palindrome(\"A man, a plan, a canal: Panama\"))
+",
+    pytest: "def test_522_valid_palindrome(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_palindrome'))
+    assert ns['is_palindrome']('A man, a plan, a canal: Panama') is True
+    assert ns['is_palindrome']('race a car') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_palindrome(s):
+    t = [c.lower() for c in s if c.isalnum()]
+    return t == t[::-1]
+
+print(is_palindrome(\"A man, a plan, a canal: Panama\"))
+",
+    solution_example: "def is_palindrome(s):
+    t = [c.lower() for c in s if c.isalnum()]
+    return t == t[::-1]
+
+print(is_palindrome(\"A man, a plan, a canal: Panama\"))
+",
+    next: None, show_type_chips: false, micro_step: 522,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -13018,7 +13379,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY513_CAN_PLACE_FLOWERS,
     &PY514_LEMONADE,
     &PY515_BEST_TIME_STOCK,
-    &PY516_BEST_TIME_STOCK_II
+    &PY516_BEST_TIME_STOCK_II,
+    &PY517_TWO_SUM_SORTED,
+    &PY518_3SUM,
+    &PY519_CONTAINER_WATER,
+    &PY520_TRAP_RAIN,
+    &PY521_REMOVE_DUPS_SORTED,
+    &PY522_VALID_PALINDROME
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -13162,7 +13529,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 516);
+            assert!(step.micro_step >= 1 && step.micro_step <= 522);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -14200,7 +14567,61 @@ mod tests {
 
 
 
-            (516, "py-516-best-time-stock-ii", None),
+            (516, "py-516-best-time-stock-ii", Some("py-517-two-sum-sorted")),
+
+
+
+
+
+
+
+
+            (517, "py-517-two-sum-sorted", Some("py-518-3sum")),
+
+
+
+
+
+
+
+
+            (518, "py-518-3sum", Some("py-519-container-water")),
+
+
+
+
+
+
+
+
+            (519, "py-519-container-water", Some("py-520-trap-rain")),
+
+
+
+
+
+
+
+
+            (520, "py-520-trap-rain", Some("py-521-remove-dups-sorted")),
+
+
+
+
+
+
+
+
+            (521, "py-521-remove-dups-sorted", Some("py-522-valid-palindrome")),
+
+
+
+
+
+
+
+
+            (522, "py-522-valid-palindrome", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
