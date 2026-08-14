@@ -780,6 +780,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 772, step_id: "py-772-bst-vii-lower-boundary" },
   { level_id: 773, step_id: "py-773-bst-vii-dependency-order" },
   { level_id: 774, step_id: "py-774-bst-vii-minimum-transition" },
+  { level_id: 775, step_id: "py-775-trees-vi-canonicalize" },
+  { level_id: 776, step_id: "py-776-trees-vi-prefix-state" },
+  { level_id: 777, step_id: "py-777-trees-vi-bounded-window" },
+  { level_id: 778, step_id: "py-778-trees-vi-lower-boundary" },
+  { level_id: 779, step_id: "py-779-trees-vi-dependency-order" },
+  { level_id: 780, step_id: "py-780-trees-vi-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
