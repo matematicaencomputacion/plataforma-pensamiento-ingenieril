@@ -22319,7 +22319,576 @@ def nearest_exit(maze, entrance):
 
 print(nearest_exit([['+','+','.','+'],['.','.','.','+'],['+','+','+','.']], [1, 2]))
 ",
-    next: None, show_type_chips: false, micro_step: 666,
+    next: Some("py-667-level-order"), show_type_chips: false, micro_step: 666,
+};
+
+
+pub const PY667_LEVEL_ORDER: CodingStep = CodingStep {
+    id: "py-667-level-order", title: "DSA Trees V · Level Order", objective: "Recorrido por niveles de un binario (listas por nivel).",
+    prompt_md: "**Binary Tree Level Order**
+
+BFS con tamaño de cola por nivel; cada ronda es un nivel.
+
+**Micro-reto:**
+1. Definí `level_order(root) con nodos TreeNode(val, left, right)`
+2. Ejecutá el ejemplo; imprimí `[[3], [9, 20], [15, 7]]`.",
+    starter_code: "# from collections import deque
+#
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def level_order(root):
+#     if not root:
+#         return []
+#     out = []
+#     q = deque([root])
+#     while q:
+#         level = []
+#         for _ in range(len(q)):
+#             node = q.popleft()
+#             level.append(node.val)
+#             if node.left:
+#                 q.append(node.left)
+#             if node.right:
+#                 q.append(node.right)
+#         out.append(level)
+#     return out
+#
+# print(level_order(TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))))
+",
+    pytest: "def test_667_level_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('level_order'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))
+    assert ns['level_order'](root) == [[3], [9, 20], [15, 7]]
+    assert ns['level_order'](None) == []
+    assert capsys.readouterr().out.strip() == '[[3], [9, 20], [15, 7]]'
+",
+    hint: "from collections import deque
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def level_order(root):
+    if not root:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        level = []
+        for _ in range(len(q)):
+            node = q.popleft()
+            level.append(node.val)
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+        out.append(level)
+    return out
+
+print(level_order(TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))))
+",
+    solution_example: "from collections import deque
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def level_order(root):
+    if not root:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        level = []
+        for _ in range(len(q)):
+            node = q.popleft()
+            level.append(node.val)
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+        out.append(level)
+    return out
+
+print(level_order(TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))))
+",
+    next: Some("py-668-right-side-view"), show_type_chips: false, micro_step: 667,
+};
+
+pub const PY668_RIGHT_SIDE_VIEW: CodingStep = CodingStep {
+    id: "py-668-right-side-view", title: "DSA Trees V · Right Side View", objective: "Valores visibles desde la derecha (último de cada nivel).",
+    prompt_md: "**Binary Tree Right Side View**
+
+BFS por nivel y quedate con el último nodo de la cola.
+
+**Micro-reto:**
+1. Definí `right_side_view(root)`
+2. Ejecutá el ejemplo; imprimí `[1, 3, 4]`.",
+    starter_code: "# from collections import deque
+#
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def right_side_view(root):
+#     if not root:
+#         return []
+#     out = []
+#     q = deque([root])
+#     while q:
+#         last = None
+#         for _ in range(len(q)):
+#             last = q.popleft()
+#             if last.left:
+#                 q.append(last.left)
+#             if last.right:
+#                 q.append(last.right)
+#         out.append(last.val)
+#     return out
+#
+# print(right_side_view(TreeNode(1, TreeNode(2, None, TreeNode(5)), TreeNode(3, None, TreeNode(4)))))
+",
+    pytest: "def test_668_right_side_view(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('right_side_view'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(1, TreeNode(2, None, TreeNode(5)), TreeNode(3, None, TreeNode(4)))
+    assert ns['right_side_view'](root) == [1, 3, 4]
+    assert ns['right_side_view'](None) == []
+    assert capsys.readouterr().out.strip() == '[1, 3, 4]'
+",
+    hint: "from collections import deque
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def right_side_view(root):
+    if not root:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        last = None
+        for _ in range(len(q)):
+            last = q.popleft()
+            if last.left:
+                q.append(last.left)
+            if last.right:
+                q.append(last.right)
+        out.append(last.val)
+    return out
+
+print(right_side_view(TreeNode(1, TreeNode(2, None, TreeNode(5)), TreeNode(3, None, TreeNode(4)))))
+",
+    solution_example: "from collections import deque
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def right_side_view(root):
+    if not root:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        last = None
+        for _ in range(len(q)):
+            last = q.popleft()
+            if last.left:
+                q.append(last.left)
+            if last.right:
+                q.append(last.right)
+        out.append(last.val)
+    return out
+
+print(right_side_view(TreeNode(1, TreeNode(2, None, TreeNode(5)), TreeNode(3, None, TreeNode(4)))))
+",
+    next: Some("py-669-lowest-common-ancestor"), show_type_chips: false, micro_step: 668,
+};
+
+pub const PY669_LOWEST_COMMON_ANCESTOR: CodingStep = CodingStep {
+    id: "py-669-lowest-common-ancestor", title: "DSA Trees V · LCA Binary Tree", objective: "Ancestro común más bajo de p y q en un binario general.",
+    prompt_md: "**Lowest Common Ancestor**
+
+Si el nodo es p o q, devolvelo; si ambos lados responden, este nodo es el LCA.
+
+**Micro-reto:**
+1. Definí `lowest_common_ancestor(root, p, q)`
+2. Ejecutá el ejemplo; imprimí `3`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def lowest_common_ancestor(root, p, q):
+#     if not root or root is p or root is q:
+#         return root
+#     left = lowest_common_ancestor(root.left, p, q)
+#     right = lowest_common_ancestor(root.right, p, q)
+#     if left and right:
+#         return root
+#     return left or right
+#
+# p=TreeNode(5); q=TreeNode(1); root=TreeNode(3, p, q); print(lowest_common_ancestor(root, p, q).val)
+",
+    pytest: "def test_669_lowest_common_ancestor(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lowest_common_ancestor'))
+    TreeNode = ns['TreeNode']
+    p=TreeNode(5); q=TreeNode(1); root=TreeNode(3, p, q)
+    assert ns['lowest_common_ancestor'](root, p, q) is root
+    r=TreeNode(4); p.left=r
+    assert ns['lowest_common_ancestor'](root, p, r) is p
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def lowest_common_ancestor(root, p, q):
+    if not root or root is p or root is q:
+        return root
+    left = lowest_common_ancestor(root.left, p, q)
+    right = lowest_common_ancestor(root.right, p, q)
+    if left and right:
+        return root
+    return left or right
+
+p=TreeNode(5); q=TreeNode(1); root=TreeNode(3, p, q); print(lowest_common_ancestor(root, p, q).val)
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def lowest_common_ancestor(root, p, q):
+    if not root or root is p or root is q:
+        return root
+    left = lowest_common_ancestor(root.left, p, q)
+    right = lowest_common_ancestor(root.right, p, q)
+    if left and right:
+        return root
+    return left or right
+
+p=TreeNode(5); q=TreeNode(1); root=TreeNode(3, p, q); print(lowest_common_ancestor(root, p, q).val)
+",
+    next: Some("py-670-serialize-tree"), show_type_chips: false, micro_step: 669,
+};
+
+pub const PY670_SERIALIZE_TREE: CodingStep = CodingStep {
+    id: "py-670-serialize-tree", title: "DSA Trees V · Serialize", objective: "Serializar y deserializar un binario con preorder y nulls.",
+    prompt_md: "**Serialize and Deserialize**
+
+Preorder con '#' para null; el deserializer consume un iterador.
+
+**Micro-reto:**
+1. Definí `serialize(root) y deserialize(data) sobre TreeNode`
+2. Ejecutá el ejemplo; imprimí `1,2,#,#,3,4,#,#,5,#,#`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def serialize(root):
+#     out = []
+#     def dfs(node):
+#         if not node:
+#             out.append('#')
+#             return
+#         out.append(str(node.val))
+#         dfs(node.left)
+#         dfs(node.right)
+#     dfs(root)
+#     return ','.join(out)
+#
+# def deserialize(data):
+#     it = iter(data.split(','))
+#     def dfs():
+#         val = next(it)
+#         if val == '#':
+#             return None
+#         node = TreeNode(int(val))
+#         node.left = dfs()
+#         node.right = dfs()
+#         return node
+#     return dfs()
+#
+# root=TreeNode(1, TreeNode(2), TreeNode(3, TreeNode(4), TreeNode(5))); print(serialize(deserialize(serialize(root))))
+",
+    pytest: "def test_670_serialize_tree(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('serialize'))
+    TreeNode = ns['TreeNode']
+    root=TreeNode(1, TreeNode(2), TreeNode(3, TreeNode(4), TreeNode(5)))
+    data = ns['serialize'](root)
+    rev = ns['deserialize'](data)
+    assert ns['serialize'](rev) == data
+    assert ns['serialize'](None) == '#'
+    assert capsys.readouterr().out.strip() == '1,2,#,#,3,4,#,#,5,#,#'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def serialize(root):
+    out = []
+    def dfs(node):
+        if not node:
+            out.append('#')
+            return
+        out.append(str(node.val))
+        dfs(node.left)
+        dfs(node.right)
+    dfs(root)
+    return ','.join(out)
+
+def deserialize(data):
+    it = iter(data.split(','))
+    def dfs():
+        val = next(it)
+        if val == '#':
+            return None
+        node = TreeNode(int(val))
+        node.left = dfs()
+        node.right = dfs()
+        return node
+    return dfs()
+
+root=TreeNode(1, TreeNode(2), TreeNode(3, TreeNode(4), TreeNode(5))); print(serialize(deserialize(serialize(root))))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def serialize(root):
+    out = []
+    def dfs(node):
+        if not node:
+            out.append('#')
+            return
+        out.append(str(node.val))
+        dfs(node.left)
+        dfs(node.right)
+    dfs(root)
+    return ','.join(out)
+
+def deserialize(data):
+    it = iter(data.split(','))
+    def dfs():
+        val = next(it)
+        if val == '#':
+            return None
+        node = TreeNode(int(val))
+        node.left = dfs()
+        node.right = dfs()
+        return node
+    return dfs()
+
+root=TreeNode(1, TreeNode(2), TreeNode(3, TreeNode(4), TreeNode(5))); print(serialize(deserialize(serialize(root))))
+",
+    next: Some("py-671-build-tree-pre-in"), show_type_chips: false, micro_step: 670,
+};
+
+pub const PY671_BUILD_TREE_PRE_IN: CodingStep = CodingStep {
+    id: "py-671-build-tree-pre-in", title: "DSA Trees V · Build Pre/In", objective: "Reconstruir el binario desde preorder e inorder.",
+    prompt_md: "**Construct from Preorder and Inorder**
+
+El primer preorder es la raíz; inorder parte izq/der; un mapa da índices O(1).
+
+**Micro-reto:**
+1. Definí `build_tree(preorder, inorder)`
+2. Ejecutá el ejemplo; imprimí `[3, 9, 20]`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def build_tree(preorder, inorder):
+#     idx = {v: i for i, v in enumerate(inorder)}
+#     pre_i = [0]
+#     def dfs(lo, hi):
+#         if lo > hi:
+#             return None
+#         val = preorder[pre_i[0]]
+#         pre_i[0] += 1
+#         mid = idx[val]
+#         node = TreeNode(val)
+#         node.left = dfs(lo, mid - 1)
+#         node.right = dfs(mid + 1, hi)
+#         return node
+#     return dfs(0, len(inorder) - 1)
+#
+# root=build_tree([3,9,20,15,7],[9,3,15,20,7]); print([root.val, root.left.val, root.right.val])
+",
+    pytest: "def test_671_build_tree_pre_in(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('build_tree'))
+    root = ns['build_tree']([3,9,20,15,7],[9,3,15,20,7])
+    assert root.val == 3 and root.left.val == 9 and root.right.val == 20
+    assert root.right.left.val == 15 and root.right.right.val == 7
+    assert capsys.readouterr().out.strip() == '[3, 9, 20]'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def build_tree(preorder, inorder):
+    idx = {v: i for i, v in enumerate(inorder)}
+    pre_i = [0]
+    def dfs(lo, hi):
+        if lo > hi:
+            return None
+        val = preorder[pre_i[0]]
+        pre_i[0] += 1
+        mid = idx[val]
+        node = TreeNode(val)
+        node.left = dfs(lo, mid - 1)
+        node.right = dfs(mid + 1, hi)
+        return node
+    return dfs(0, len(inorder) - 1)
+
+root=build_tree([3,9,20,15,7],[9,3,15,20,7]); print([root.val, root.left.val, root.right.val])
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def build_tree(preorder, inorder):
+    idx = {v: i for i, v in enumerate(inorder)}
+    pre_i = [0]
+    def dfs(lo, hi):
+        if lo > hi:
+            return None
+        val = preorder[pre_i[0]]
+        pre_i[0] += 1
+        mid = idx[val]
+        node = TreeNode(val)
+        node.left = dfs(lo, mid - 1)
+        node.right = dfs(mid + 1, hi)
+        return node
+    return dfs(0, len(inorder) - 1)
+
+root=build_tree([3,9,20,15,7],[9,3,15,20,7]); print([root.val, root.left.val, root.right.val])
+",
+    next: Some("py-672-max-path-sum"), show_type_chips: false, micro_step: 671,
+};
+
+pub const PY672_MAX_PATH_SUM: CodingStep = CodingStep {
+    id: "py-672-max-path-sum", title: "DSA Trees V · Max Path Sum", objective: "Suma máxima de un camino cualquiera (puede no pasar por la raíz).",
+    prompt_md: "**Binary Tree Maximum Path Sum**
+
+Cada nodo devuelve el mejor brazo; el path que usa ambos hijos actualiza el global.
+
+**Micro-reto:**
+1. Definí `max_path_sum(root)`
+2. Ejecutá el ejemplo; imprimí `42`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def max_path_sum(root):
+#     best = [root.val]
+#     def dfs(node):
+#         if not node:
+#             return 0
+#         left = max(0, dfs(node.left))
+#         right = max(0, dfs(node.right))
+#         best[0] = max(best[0], node.val + left + right)
+#         return node.val + max(left, right)
+#     dfs(root)
+#     return best[0]
+#
+# print(max_path_sum(TreeNode(-10, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))))
+",
+    pytest: "def test_672_max_path_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_path_sum'))
+    TreeNode = ns['TreeNode']
+    assert ns['max_path_sum'](TreeNode(-10, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))) == 42
+    assert ns['max_path_sum'](TreeNode(1, TreeNode(2), TreeNode(3))) == 6
+    assert capsys.readouterr().out.strip() == '42'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def max_path_sum(root):
+    best = [root.val]
+    def dfs(node):
+        if not node:
+            return 0
+        left = max(0, dfs(node.left))
+        right = max(0, dfs(node.right))
+        best[0] = max(best[0], node.val + left + right)
+        return node.val + max(left, right)
+    dfs(root)
+    return best[0]
+
+print(max_path_sum(TreeNode(-10, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def max_path_sum(root):
+    best = [root.val]
+    def dfs(node):
+        if not node:
+            return 0
+        left = max(0, dfs(node.left))
+        right = max(0, dfs(node.right))
+        best[0] = max(best[0], node.val + left + right)
+        return node.val + max(left, right)
+    dfs(root)
+    return best[0]
+
+print(max_path_sum(TreeNode(-10, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))))
+",
+    next: None, show_type_chips: false, micro_step: 672,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -22988,7 +23557,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY663_PATH_WITH_MIN_EFFORT,
     &PY664_SWIM_IN_WATER,
     &PY665_CHEAPEST_BINARY_MAZE,
-    &PY666_MAZE_NEAREST_EXIT
+    &PY666_MAZE_NEAREST_EXIT,
+    &PY667_LEVEL_ORDER,
+    &PY668_RIGHT_SIDE_VIEW,
+    &PY669_LOWEST_COMMON_ANCESTOR,
+    &PY670_SERIALIZE_TREE,
+    &PY671_BUILD_TREE_PRE_IN,
+    &PY672_MAX_PATH_SUM
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -23132,7 +23707,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 666);
+            assert!(step.micro_step >= 1 && step.micro_step <= 672);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -25538,7 +26113,13 @@ mod tests {
             (663, "py-663-path-with-min-effort", Some("py-664-swim-in-water")),
             (664, "py-664-swim-in-water", Some("py-665-cheapest-binary-maze")),
             (665, "py-665-cheapest-binary-maze", Some("py-666-maze-nearest-exit")),
-            (666, "py-666-maze-nearest-exit", None),
+            (666, "py-666-maze-nearest-exit", Some("py-667-level-order")),
+            (667, "py-667-level-order", Some("py-668-right-side-view")),
+            (668, "py-668-right-side-view", Some("py-669-lowest-common-ancestor")),
+            (669, "py-669-lowest-common-ancestor", Some("py-670-serialize-tree")),
+            (670, "py-670-serialize-tree", Some("py-671-build-tree-pre-in")),
+            (671, "py-671-build-tree-pre-in", Some("py-672-max-path-sum")),
+            (672, "py-672-max-path-sum", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

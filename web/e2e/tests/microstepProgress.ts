@@ -672,6 +672,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 664, step_id: "py-664-swim-in-water" },
   { level_id: 665, step_id: "py-665-cheapest-binary-maze" },
   { level_id: 666, step_id: "py-666-maze-nearest-exit" },
+  { level_id: 667, step_id: "py-667-level-order" },
+  { level_id: 668, step_id: "py-668-right-side-view" },
+  { level_id: 669, step_id: "py-669-lowest-common-ancestor" },
+  { level_id: 670, step_id: "py-670-serialize-tree" },
+  { level_id: 671, step_id: "py-671-build-tree-pre-in" },
+  { level_id: 672, step_id: "py-672-max-path-sum" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
