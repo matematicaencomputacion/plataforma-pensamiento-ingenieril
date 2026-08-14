@@ -600,6 +600,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 592, step_id: "py-592-redundant-conn" },
   { level_id: 593, step_id: "py-593-valid-path" },
   { level_id: 594, step_id: "py-594-all-paths" },
+  { level_id: 595, step_id: "py-595-majority-n2" },
+  { level_id: 596, step_id: "py-596-pascal-triangle" },
+  { level_id: 597, step_id: "py-597-plus-one-arr" },
+  { level_id: 598, step_id: "py-598-single-number-ii" },
+  { level_id: 599, step_id: "py-599-valid-mountain" },
+  { level_id: 600, step_id: "py-600-capstone-two-sum" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
