@@ -492,6 +492,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 484, step_id: "py-484-k-closest" },
   { level_id: 485, step_id: "py-485-ugly-number-ii" },
   { level_id: 486, step_id: "py-486-reorg-string" },
+  { level_id: 487, step_id: "py-487-middle-node" },
+  { level_id: 488, step_id: "py-488-has-cycle" },
+  { level_id: 489, step_id: "py-489-reverse-list" },
+  { level_id: 490, step_id: "py-490-merge-two-lists" },
+  { level_id: 491, step_id: "py-491-remove-nth" },
+  { level_id: 492, step_id: "py-492-palindrome-list" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
