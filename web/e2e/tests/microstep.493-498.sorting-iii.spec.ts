@@ -22,121 +22,124 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 413,
-    id: "py-413-valid-anagram",
-    title: "DSA Valid Anagram",
-    solution: `from collections import Counter
-
-def is_anagram(s, t):
-    return Counter(s) == Counter(t)
-
-print(is_anagram("anagram", "nagaram"))
-`,
-    nextUrl: /\/learn\/py-414-group-anagrams/,
-    cursorAfter: "414",
-  },
-  {
-    micro: 414,
-    id: "py-414-group-anagrams",
-    title: "DSA Group Anagrams",
-    solution: `from collections import defaultdict
-
-def group_anagrams(strs):
-    d = defaultdict(list)
-    for s in strs:
-        d["".join(sorted(s))].append(s)
-    return list(d.values())
-
-print(sorted([sorted(g) for g in group_anagrams(["eat", "tea", "tan", "ate", "nat", "bat"])]))
-`,
-    nextUrl: /\/learn\/py-415-longest-common-pref/,
-    cursorAfter: "415",
-  },
-  {
-    micro: 415,
-    id: "py-415-longest-common-pref",
-    title: "DSA Longest Pref",
-    solution: `def longest_common_prefix(strs):
-    if not strs:
-        return ""
-    for i, ch in enumerate(strs[0]):
-        for s in strs[1:]:
-            if i >= len(s) or s[i] != ch:
-                return strs[0][:i]
-    return strs[0]
-
-print(longest_common_prefix(["flower", "flow", "flight"]))
-`,
-    nextUrl: /\/learn\/py-416-is-subsequence/,
-    cursorAfter: "416",
-  },
-  {
-    micro: 416,
-    id: "py-416-is-subsequence",
-    title: "DSA Is Subsequence",
-    solution: `def is_subsequence(s, t):
-    it = iter(t)
-    return all(c in it for c in s)
-
-print(is_subsequence("abc", "ahbgdc"))
-`,
-    nextUrl: /\/learn\/py-417-decode-string/,
-    cursorAfter: "417",
-  },
-  {
-    micro: 417,
-    id: "py-417-decode-string",
-    title: "DSA Decode String",
-    solution: `def decode_string(s):
-    stack = []
-    cur = ""
-    num = 0
-    for ch in s:
-        if ch.isdigit():
-            num = num * 10 + int(ch)
-        elif ch == "[":
-            stack.append((cur, num))
-            cur = ""
-            num = 0
-        elif ch == "]":
-            prev, n = stack.pop()
-            cur = prev + n * cur
+    micro: 493,
+    id: "py-493-sort-colors",
+    title: "DSA Sort Colors",
+    solution: `def sort_colors(nums):
+    lo = mid = 0
+    hi = len(nums) - 1
+    while mid <= hi:
+        if nums[mid] == 0:
+            nums[lo], nums[mid] = nums[mid], nums[lo]
+            lo += 1; mid += 1
+        elif nums[mid] == 1:
+            mid += 1
         else:
-            cur += ch
-    return cur
+            nums[mid], nums[hi] = nums[hi], nums[mid]
+            hi -= 1
+    return nums
 
-print(decode_string("3[a]2[bc]"))
+print(sort_colors([2, 0, 2, 1, 1, 0]))
 `,
-    nextUrl: /\/learn\/py-418-string-compress/,
-    cursorAfter: "418",
+    nextUrl: /\/learn\/py-494-merge-intervals/,
+    cursorAfter: "494",
   },
   {
-    micro: 418,
-    id: "py-418-string-compress",
-    title: "DSA String Compress",
-    solution: `def compress(chars):
-    out = []
-    i = 0
-    while i < len(chars):
-        j = i
-        while j < len(chars) and chars[j] == chars[i]:
-            j += 1
-        out.append(chars[i])
-        if j - i > 1:
-            out.extend(str(j - i))
-        i = j
-    return "".join(out)
+    micro: 494,
+    id: "py-494-merge-intervals",
+    title: "DSA Merge Intervals",
+    solution: `def merge(intervals):
+    intervals.sort()
+    out = [intervals[0]]
+    for s, e in intervals[1:]:
+        if s <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], e)
+        else:
+            out.append([s, e])
+    return out
 
-print(compress(["a", "a", "b", "b", "c", "c", "c"]))
+print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))
 `,
-    nextUrl: /\/learn\/py-419-min-stack/,
-    cursorAfter: "419",
+    nextUrl: /\/learn\/py-495-insert-interval/,
+    cursorAfter: "495",
+  },
+  {
+    micro: 495,
+    id: "py-495-insert-interval",
+    title: "DSA Insert Interval",
+    solution: `def insert(intervals, new_interval):
+    res = []
+    s, e = new_interval
+    i = 0
+    n = len(intervals)
+    while i < n and intervals[i][1] < s:
+        res.append(intervals[i]); i += 1
+    while i < n and intervals[i][0] <= e:
+        s = min(s, intervals[i][0]); e = max(e, intervals[i][1]); i += 1
+    res.append([s, e])
+    res.extend(intervals[i:])
+    return res
+
+print(insert([[1, 3], [6, 9]], [2, 5]))
+`,
+    nextUrl: /\/learn\/py-496-largest-number/,
+    cursorAfter: "496",
+  },
+  {
+    micro: 496,
+    id: "py-496-largest-number",
+    title: "DSA Largest Number",
+    solution: `def largest_number(nums):
+    from functools import cmp_to_key
+    s = [str(x) for x in nums]
+    s.sort(key=cmp_to_key(lambda a, b: (a + b < b + a) - (a + b > b + a)))
+    if s[0] == "0":
+        return "0"
+    return "".join(s)
+
+print(largest_number([10, 2]))
+`,
+    nextUrl: /\/learn\/py-497-sort-by-parity/,
+    cursorAfter: "497",
+  },
+  {
+    micro: 497,
+    id: "py-497-sort-by-parity",
+    title: "DSA Sort Parity",
+    solution: `def sort_array_by_parity(nums):
+    i = 0
+    for j, x in enumerate(nums):
+        if x % 2 == 0:
+            nums[i], nums[j] = nums[j], nums[i]
+            i += 1
+    return nums
+
+print(sort_array_by_parity([3, 1, 2, 4]))
+`,
+    nextUrl: /\/learn\/py-498-wiggle-sort/,
+    cursorAfter: "498",
+  },
+  {
+    micro: 498,
+    id: "py-498-wiggle-sort",
+    title: "DSA Wiggle Sort",
+    solution: `def wiggle_sort(nums):
+    nums.sort()
+    mid = (len(nums) + 1) // 2
+    left, right = nums[:mid][::-1], nums[mid:][::-1]
+    nums[:] = [left[i // 2] if i % 2 == 0 else right[i // 2] for i in range(len(nums))]
+    return nums
+
+print(wiggle_sort([1, 5, 1, 1, 6, 4]))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "499",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:413|414|415|416|417|418)-/);
+    expect(step.id).toMatch(/^py-(?:493|494|495|496|497|498)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -166,7 +169,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 413–418 · strings II", () => {
+test.describe("micro-steps 493–498 · sorting III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

@@ -11151,7 +11151,344 @@ def is_palindrome(head):
 h = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
 print(is_palindrome(h))
 ",
-    next: None, show_type_chips: false, micro_step: 492,
+    next: Some("py-493-sort-colors"), show_type_chips: false, micro_step: 492,
+};
+
+
+pub const PY493_SORT_COLORS: CodingStep = CodingStep {
+    id: "py-493-sort-colors", title: "DSA Sort Colors", objective: "Dutch national flag.",
+    prompt_md: "**Sort Colors**
+
+Dutch national flag.
+
+**Micro-reto:**
+1. Definí `sort_colors(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[0, 0, 1, 1, 2, 2]`.",
+    starter_code: "# def sort_colors(nums):
+#     lo = mid = 0
+#     hi = len(nums) - 1
+#     while mid <= hi:
+#         if nums[mid] == 0:
+#             nums[lo], nums[mid] = nums[mid], nums[lo]
+#             lo += 1; mid += 1
+#         elif nums[mid] == 1:
+#             mid += 1
+#         else:
+#             nums[mid], nums[hi] = nums[hi], nums[mid]
+#             hi -= 1
+#     return nums
+#
+# print(sort_colors([2, 0, 2, 1, 1, 0]))
+",
+    pytest: "def test_493_sort_colors(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('sort_colors'))
+    assert ns['sort_colors']([2, 0, 1]) == [0, 1, 2]
+    assert ns['sort_colors']([2, 0, 2, 1, 1, 0]) == [0, 0, 1, 1, 2, 2]
+    assert capsys.readouterr().out.strip() == '[0, 0, 1, 1, 2, 2]'
+",
+    hint: "def sort_colors(nums):
+    lo = mid = 0
+    hi = len(nums) - 1
+    while mid <= hi:
+        if nums[mid] == 0:
+            nums[lo], nums[mid] = nums[mid], nums[lo]
+            lo += 1; mid += 1
+        elif nums[mid] == 1:
+            mid += 1
+        else:
+            nums[mid], nums[hi] = nums[hi], nums[mid]
+            hi -= 1
+    return nums
+
+print(sort_colors([2, 0, 2, 1, 1, 0]))
+",
+    solution_example: "def sort_colors(nums):
+    lo = mid = 0
+    hi = len(nums) - 1
+    while mid <= hi:
+        if nums[mid] == 0:
+            nums[lo], nums[mid] = nums[mid], nums[lo]
+            lo += 1; mid += 1
+        elif nums[mid] == 1:
+            mid += 1
+        else:
+            nums[mid], nums[hi] = nums[hi], nums[mid]
+            hi -= 1
+    return nums
+
+print(sort_colors([2, 0, 2, 1, 1, 0]))
+",
+    next: Some("py-494-merge-intervals"), show_type_chips: false, micro_step: 493,
+};
+
+pub const PY494_MERGE_INTERVALS: CodingStep = CodingStep {
+    id: "py-494-merge-intervals", title: "DSA Merge Intervals", objective: "Fusionar intervalos.",
+    prompt_md: "**Merge Intervals**
+
+Fusionar intervalos.
+
+**Micro-reto:**
+1. Definí `merge(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[1, 6], [8, 10], [15, 18]]`.",
+    starter_code: "# def merge(intervals):
+#     intervals.sort()
+#     out = [intervals[0]]
+#     for s, e in intervals[1:]:
+#         if s <= out[-1][1]:
+#             out[-1][1] = max(out[-1][1], e)
+#         else:
+#             out.append([s, e])
+#     return out
+#
+# print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))
+",
+    pytest: "def test_494_merge_intervals(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('merge'))
+    assert ns['merge']([[1, 3], [2, 6], [8, 10], [15, 18]]) == [[1, 6], [8, 10], [15, 18]]
+    assert ns['merge']([[1, 4], [4, 5]]) == [[1, 5]]
+    assert capsys.readouterr().out.strip() == '[[1, 6], [8, 10], [15, 18]]'
+",
+    hint: "def merge(intervals):
+    intervals.sort()
+    out = [intervals[0]]
+    for s, e in intervals[1:]:
+        if s <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], e)
+        else:
+            out.append([s, e])
+    return out
+
+print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))
+",
+    solution_example: "def merge(intervals):
+    intervals.sort()
+    out = [intervals[0]]
+    for s, e in intervals[1:]:
+        if s <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], e)
+        else:
+            out.append([s, e])
+    return out
+
+print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))
+",
+    next: Some("py-495-insert-interval"), show_type_chips: false, micro_step: 494,
+};
+
+pub const PY495_INSERT_INTERVAL: CodingStep = CodingStep {
+    id: "py-495-insert-interval", title: "DSA Insert Interval", objective: "Insertar y fusionar.",
+    prompt_md: "**Insert Interval**
+
+Insertar y fusionar.
+
+**Micro-reto:**
+1. Definí `insert(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[1, 5], [6, 9]]`.",
+    starter_code: "# def insert(intervals, new_interval):
+#     res = []
+#     s, e = new_interval
+#     i = 0
+#     n = len(intervals)
+#     while i < n and intervals[i][1] < s:
+#         res.append(intervals[i]); i += 1
+#     while i < n and intervals[i][0] <= e:
+#         s = min(s, intervals[i][0]); e = max(e, intervals[i][1]); i += 1
+#     res.append([s, e])
+#     res.extend(intervals[i:])
+#     return res
+#
+# print(insert([[1, 3], [6, 9]], [2, 5]))
+",
+    pytest: "def test_495_insert_interval(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('insert'))
+    assert ns['insert']([[1, 3], [6, 9]], [2, 5]) == [[1, 5], [6, 9]]
+    assert ns['insert']([], [5, 7]) == [[5, 7]]
+    assert capsys.readouterr().out.strip() == '[[1, 5], [6, 9]]'
+",
+    hint: "def insert(intervals, new_interval):
+    res = []
+    s, e = new_interval
+    i = 0
+    n = len(intervals)
+    while i < n and intervals[i][1] < s:
+        res.append(intervals[i]); i += 1
+    while i < n and intervals[i][0] <= e:
+        s = min(s, intervals[i][0]); e = max(e, intervals[i][1]); i += 1
+    res.append([s, e])
+    res.extend(intervals[i:])
+    return res
+
+print(insert([[1, 3], [6, 9]], [2, 5]))
+",
+    solution_example: "def insert(intervals, new_interval):
+    res = []
+    s, e = new_interval
+    i = 0
+    n = len(intervals)
+    while i < n and intervals[i][1] < s:
+        res.append(intervals[i]); i += 1
+    while i < n and intervals[i][0] <= e:
+        s = min(s, intervals[i][0]); e = max(e, intervals[i][1]); i += 1
+    res.append([s, e])
+    res.extend(intervals[i:])
+    return res
+
+print(insert([[1, 3], [6, 9]], [2, 5]))
+",
+    next: Some("py-496-largest-number"), show_type_chips: false, micro_step: 495,
+};
+
+pub const PY496_LARGEST_NUMBER: CodingStep = CodingStep {
+    id: "py-496-largest-number", title: "DSA Largest Number", objective: "Mayor número concatenando.",
+    prompt_md: "**Largest Number**
+
+Mayor número concatenando.
+
+**Micro-reto:**
+1. Definí `largest_number(...)`
+2. Ejecutá el ejemplo del starter; imprimí `210`.",
+    starter_code: "# def largest_number(nums):
+#     from functools import cmp_to_key
+#     s = [str(x) for x in nums]
+#     s.sort(key=cmp_to_key(lambda a, b: (a + b < b + a) - (a + b > b + a)))
+#     if s[0] == \"0\":
+#         return \"0\"
+#     return \"\".join(s)
+#
+# print(largest_number([10, 2]))
+",
+    pytest: "def test_496_largest_number(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('largest_number'))
+    assert ns['largest_number']([10, 2]) == '210'
+    assert ns['largest_number']([3, 30, 34, 5, 9]) == '9534330'
+    assert capsys.readouterr().out.strip() == '210'
+",
+    hint: "def largest_number(nums):
+    from functools import cmp_to_key
+    s = [str(x) for x in nums]
+    s.sort(key=cmp_to_key(lambda a, b: (a + b < b + a) - (a + b > b + a)))
+    if s[0] == \"0\":
+        return \"0\"
+    return \"\".join(s)
+
+print(largest_number([10, 2]))
+",
+    solution_example: "def largest_number(nums):
+    from functools import cmp_to_key
+    s = [str(x) for x in nums]
+    s.sort(key=cmp_to_key(lambda a, b: (a + b < b + a) - (a + b > b + a)))
+    if s[0] == \"0\":
+        return \"0\"
+    return \"\".join(s)
+
+print(largest_number([10, 2]))
+",
+    next: Some("py-497-sort-by-parity"), show_type_chips: false, micro_step: 496,
+};
+
+pub const PY497_SORT_BY_PARITY: CodingStep = CodingStep {
+    id: "py-497-sort-by-parity", title: "DSA Sort Parity", objective: "Pares primero.",
+    prompt_md: "**Sort Parity**
+
+Pares primero.
+
+**Micro-reto:**
+1. Definí `sort_array_by_parity(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[2, 4, 3, 1]`.",
+    starter_code: "# def sort_array_by_parity(nums):
+#     i = 0
+#     for j, x in enumerate(nums):
+#         if x % 2 == 0:
+#             nums[i], nums[j] = nums[j], nums[i]
+#             i += 1
+#     return nums
+#
+# print(sort_array_by_parity([3, 1, 2, 4]))
+",
+    pytest: "def test_497_sort_by_parity(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('sort_array_by_parity'))
+    r = ns['sort_array_by_parity']([3, 1, 2, 4])
+    assert sorted(r[:2]) == [2, 4] and sorted(r[2:]) == [1, 3]
+    assert capsys.readouterr().out.strip() == '[2, 4, 3, 1]'
+",
+    hint: "def sort_array_by_parity(nums):
+    i = 0
+    for j, x in enumerate(nums):
+        if x % 2 == 0:
+            nums[i], nums[j] = nums[j], nums[i]
+            i += 1
+    return nums
+
+print(sort_array_by_parity([3, 1, 2, 4]))
+",
+    solution_example: "def sort_array_by_parity(nums):
+    i = 0
+    for j, x in enumerate(nums):
+        if x % 2 == 0:
+            nums[i], nums[j] = nums[j], nums[i]
+            i += 1
+    return nums
+
+print(sort_array_by_parity([3, 1, 2, 4]))
+",
+    next: Some("py-498-wiggle-sort"), show_type_chips: false, micro_step: 497,
+};
+
+pub const PY498_WIGGLE_SORT: CodingStep = CodingStep {
+    id: "py-498-wiggle-sort", title: "DSA Wiggle Sort", objective: "nums[0] < nums[1] > nums[2] < ...",
+    prompt_md: "**Wiggle Sort**
+
+nums[0] < nums[1] > nums[2] < ...
+
+**Micro-reto:**
+1. Definí `wiggle_sort(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 6, 1, 5, 1, 4]`.",
+    starter_code: "# def wiggle_sort(nums):
+#     nums.sort()
+#     mid = (len(nums) + 1) // 2
+#     left, right = nums[:mid][::-1], nums[mid:][::-1]
+#     nums[:] = [left[i // 2] if i % 2 == 0 else right[i // 2] for i in range(len(nums))]
+#     return nums
+#
+# print(wiggle_sort([1, 5, 1, 1, 6, 4]))
+",
+    pytest: "def test_498_wiggle_sort(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('wiggle_sort'))
+    r = ns['wiggle_sort']([1, 5, 1, 1, 6, 4])
+    assert all((r[i] < r[i+1]) if i % 2 == 0 else (r[i] > r[i+1]) for i in range(len(r)-1))
+    assert capsys.readouterr().out.strip() == '[1, 6, 1, 5, 1, 4]'
+",
+    hint: "def wiggle_sort(nums):
+    nums.sort()
+    mid = (len(nums) + 1) // 2
+    left, right = nums[:mid][::-1], nums[mid:][::-1]
+    nums[:] = [left[i // 2] if i % 2 == 0 else right[i // 2] for i in range(len(nums))]
+    return nums
+
+print(wiggle_sort([1, 5, 1, 1, 6, 4]))
+",
+    solution_example: "def wiggle_sort(nums):
+    nums.sort()
+    mid = (len(nums) + 1) // 2
+    left, right = nums[:mid][::-1], nums[mid:][::-1]
+    nums[:] = [left[i // 2] if i % 2 == 0 else right[i // 2] for i in range(len(nums))]
+    return nums
+
+print(wiggle_sort([1, 5, 1, 1, 6, 4]))
+",
+    next: None, show_type_chips: false, micro_step: 498,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -11646,7 +11983,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY489_REVERSE_LIST,
     &PY490_MERGE_TWO_LISTS,
     &PY491_REMOVE_NTH,
-    &PY492_PALINDROME_LIST
+    &PY492_PALINDROME_LIST,
+    &PY493_SORT_COLORS,
+    &PY494_MERGE_INTERVALS,
+    &PY495_INSERT_INTERVAL,
+    &PY496_LARGEST_NUMBER,
+    &PY497_SORT_BY_PARITY,
+    &PY498_WIGGLE_SORT
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -11790,7 +12133,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 492);
+            assert!(step.micro_step >= 1 && step.micro_step <= 498);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -12672,7 +13015,37 @@ mod tests {
 
 
 
-            (492, "py-492-palindrome-list", None),
+            (492, "py-492-palindrome-list", Some("py-493-sort-colors")),
+
+
+
+
+            (493, "py-493-sort-colors", Some("py-494-merge-intervals")),
+
+
+
+
+            (494, "py-494-merge-intervals", Some("py-495-insert-interval")),
+
+
+
+
+            (495, "py-495-insert-interval", Some("py-496-largest-number")),
+
+
+
+
+            (496, "py-496-largest-number", Some("py-497-sort-by-parity")),
+
+
+
+
+            (497, "py-497-sort-by-parity", Some("py-498-wiggle-sort")),
+
+
+
+
+            (498, "py-498-wiggle-sort", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

@@ -182,7 +182,7 @@ test.describe("micro-steps 179–184 · stacks / deque", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 492) {
+      if (nextMicro <= 498) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

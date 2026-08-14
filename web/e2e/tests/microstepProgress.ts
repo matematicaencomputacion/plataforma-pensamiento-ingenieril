@@ -498,6 +498,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 490, step_id: "py-490-merge-two-lists" },
   { level_id: 491, step_id: "py-491-remove-nth" },
   { level_id: 492, step_id: "py-492-palindrome-list" },
+  { level_id: 493, step_id: "py-493-sort-colors" },
+  { level_id: 494, step_id: "py-494-merge-intervals" },
+  { level_id: 495, step_id: "py-495-insert-interval" },
+  { level_id: 496, step_id: "py-496-largest-number" },
+  { level_id: 497, step_id: "py-497-sort-by-parity" },
+  { level_id: 498, step_id: "py-498-wiggle-sort" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
