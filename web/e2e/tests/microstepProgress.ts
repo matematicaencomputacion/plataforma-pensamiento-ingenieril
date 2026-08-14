@@ -972,6 +972,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 964, step_id: "py-964-game-theory-i-lower-boundary" },
   { level_id: 965, step_id: "py-965-game-theory-i-dependency-order" },
   { level_id: 966, step_id: "py-966-game-theory-i-minimum-transition" },
+  { level_id: 967, step_id: "py-967-randomized-i-canonicalize" },
+  { level_id: 968, step_id: "py-968-randomized-i-prefix-state" },
+  { level_id: 969, step_id: "py-969-randomized-i-bounded-window" },
+  { level_id: 970, step_id: "py-970-randomized-i-lower-boundary" },
+  { level_id: 971, step_id: "py-971-randomized-i-dependency-order" },
+  { level_id: 972, step_id: "py-972-randomized-i-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
