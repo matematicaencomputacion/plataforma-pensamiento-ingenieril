@@ -42,7 +42,7 @@ print(flood_fill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2))
 `,
     nextUrl: /\/learn\/py-470-num-islands/,
     cursorAfter: "470",
-  }
+  },
   {
     micro: 470,
     id: "py-470-num-islands",
@@ -68,7 +68,7 @@ print(num_islands([["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0",
 `,
     nextUrl: /\/learn\/py-471-keys-rooms/,
     cursorAfter: "471",
-  }
+  },
   {
     micro: 471,
     id: "py-471-keys-rooms",
@@ -88,7 +88,7 @@ print(can_visit_all_rooms([[1],[2],[3],[]]))
 `,
     nextUrl: /\/learn\/py-472-town-judge/,
     cursorAfter: "472",
-  }
+  },
   {
     micro: 472,
     id: "py-472-town-judge",
@@ -107,7 +107,7 @@ print(find_judge(2, [[1,2]]))
 `,
     nextUrl: /\/learn\/py-473-max-island/,
     cursorAfter: "473",
-  }
+  },
   {
     micro: 473,
     id: "py-473-max-island",
@@ -130,7 +130,7 @@ print(max_area_of_island([[1,0,0],[1,1,0],[0,0,1]]))
 `,
     nextUrl: /\/learn\/py-474-provinces/,
     cursorAfter: "474",
-  }
+  },
   {
     micro: 474,
     id: "py-474-provinces",

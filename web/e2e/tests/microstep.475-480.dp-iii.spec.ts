@@ -35,7 +35,7 @@ print(min_cost_climbing_stairs([10, 15, 20]))
 `,
     nextUrl: /\/learn\/py-476-unique-paths/,
     cursorAfter: "476",
-  }
+  },
   {
     micro: 476,
     id: "py-476-unique-paths",
@@ -51,7 +51,7 @@ print(unique_paths(3, 7))
 `,
     nextUrl: /\/learn\/py-477-min-path-sum/,
     cursorAfter: "477",
-  }
+  },
   {
     micro: 477,
     id: "py-477-min-path-sum",
@@ -75,7 +75,7 @@ print(min_path_sum([[1,3,1],[1,5,1],[4,2,1]]))
 `,
     nextUrl: /\/learn\/py-478-integer-break/,
     cursorAfter: "478",
-  }
+  },
   {
     micro: 478,
     id: "py-478-integer-break",
@@ -94,7 +94,7 @@ print(integer_break(10))
 `,
     nextUrl: /\/learn\/py-479-decode-ways/,
     cursorAfter: "479",
-  }
+  },
   {
     micro: 479,
     id: "py-479-decode-ways",
@@ -117,7 +117,7 @@ print(num_decodings("226"))
 `,
     nextUrl: /\/learn\/py-480-rob-circle/,
     cursorAfter: "480",
-  }
+  },
   {
     micro: 480,
     id: "py-480-rob-circle",
