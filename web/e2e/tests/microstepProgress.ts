@@ -588,6 +588,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 580, step_id: "py-580-lru-cache" },
   { level_id: 581, step_id: "py-581-hash-map" },
   { level_id: 582, step_id: "py-582-hash-set" },
+  { level_id: 583, step_id: "py-583-invert-tree" },
+  { level_id: 584, step_id: "py-584-same-tree" },
+  { level_id: 585, step_id: "py-585-diameter-bt" },
+  { level_id: 586, step_id: "py-586-path-sum" },
+  { level_id: 587, step_id: "py-587-sorted-array-bst" },
+  { level_id: 588, step_id: "py-588-kth-small-bst" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

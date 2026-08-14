@@ -22,118 +22,168 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 481,
-    id: "py-481-last-stone",
-    title: "DSA Last Stone",
-    solution: `def last_stone_weight(stones):
-    import heapq
-    h = [-s for s in stones]
-    heapq.heapify(h)
-    while len(h) > 1:
-        a = -heapq.heappop(h)
-        b = -heapq.heappop(h)
-        if a != b:
-            heapq.heappush(h, -(a - b))
-    return -h[0] if h else 0
+    micro: 583,
+    id: "py-583-invert-tree",
+    title: "DSA Invert Tree",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(last_stone_weight([2, 7, 4, 1, 8, 1]))
+def invert_tree(root):
+    if root:
+        root.left, root.right = invert_tree(root.right), invert_tree(root.left)
+    return root
+
+root = TreeNode(4)
+root.left = TreeNode(2); root.right = TreeNode(7)
+root.left.left = TreeNode(1); root.left.right = TreeNode(3)
+root.right.left = TreeNode(6); root.right.right = TreeNode(9)
+invert_tree(root)
+print(root.left.data, root.right.data)
 `,
-    nextUrl: /\/learn\/py-482-kth-largest/,
-    cursorAfter: "482",
+    nextUrl: /\/learn\/py-584-same-tree/,
+    cursorAfter: "584",
   },
   {
-    micro: 482,
-    id: "py-482-kth-largest",
-    title: "DSA Kth Largest",
-    solution: `def find_kth_largest(nums, k):
-    import heapq
-    return heapq.nlargest(k, nums)[-1]
+    micro: 584,
+    id: "py-584-same-tree",
+    title: "DSA Same Tree",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
+def is_same_tree(p, q):
+    if not p or not q:
+        return p is q
+    return p.data == q.data and is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
+
+a = TreeNode(1); a.left = TreeNode(2); a.right = TreeNode(3)
+b = TreeNode(1); b.left = TreeNode(2); b.right = TreeNode(3)
+print(is_same_tree(a, b))
 `,
-    nextUrl: /\/learn\/py-483-top-k-freq/,
-    cursorAfter: "483",
+    nextUrl: /\/learn\/py-585-diameter-bt/,
+    cursorAfter: "585",
   },
   {
-    micro: 483,
-    id: "py-483-top-k-freq",
-    title: "DSA Top K Freq",
-    solution: `def top_k_frequent(nums, k):
-    from collections import Counter
-    import heapq
-    return [x for x, _ in Counter(nums).most_common(k)]
+    micro: 585,
+    id: "py-585-diameter-bt",
+    title: "DSA Diameter BT",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(top_k_frequent([1, 1, 1, 2, 2, 3], 2))
+def diameter_of_binary_tree(root):
+    best = 0
+    def depth(n):
+        nonlocal best
+        if not n:
+            return 0
+        l, r = depth(n.left), depth(n.right)
+        best = max(best, l + r)
+        return 1 + max(l, r)
+    depth(root)
+    return best
+
+root = TreeNode(1)
+root.left = TreeNode(2); root.right = TreeNode(3)
+root.left.left = TreeNode(4); root.left.right = TreeNode(5)
+print(diameter_of_binary_tree(root))
 `,
-    nextUrl: /\/learn\/py-484-k-closest/,
-    cursorAfter: "484",
+    nextUrl: /\/learn\/py-586-path-sum/,
+    cursorAfter: "586",
   },
   {
-    micro: 484,
-    id: "py-484-k-closest",
-    title: "DSA K Closest",
-    solution: `def k_closest(points, k):
-    import heapq
-    return heapq.nsmallest(k, points, key=lambda p: p[0] ** 2 + p[1] ** 2)
+    micro: 586,
+    id: "py-586-path-sum",
+    title: "DSA Path Sum",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(k_closest([[1, 3], [-2, 2]], 1))
+def has_path_sum(root, target):
+    if not root:
+        return False
+    if not root.left and not root.right:
+        return root.data == target
+    return has_path_sum(root.left, target - root.data) or has_path_sum(root.right, target - root.data)
+
+root = TreeNode(5)
+root.left = TreeNode(4); root.right = TreeNode(8)
+root.left.left = TreeNode(11); root.left.left.left = TreeNode(7); root.left.left.right = TreeNode(2)
+root.right.left = TreeNode(13); root.right.right = TreeNode(4); root.right.right.right = TreeNode(1)
+print(has_path_sum(root, 22))
 `,
-    nextUrl: /\/learn\/py-485-ugly-number-ii/,
-    cursorAfter: "485",
+    nextUrl: /\/learn\/py-587-sorted-array-bst/,
+    cursorAfter: "587",
   },
   {
-    micro: 485,
-    id: "py-485-ugly-number-ii",
-    title: "DSA Ugly Number II",
-    solution: `def nth_ugly_number(n):
-    import heapq
-    h = [1]
-    seen = {1}
-    x = 1
-    for _ in range(n):
-        x = heapq.heappop(h)
-        for f in (2, 3, 5):
-            y = x * f
-            if y not in seen:
-                seen.add(y)
-                heapq.heappush(h, y)
-    return x
+    micro: 587,
+    id: "py-587-sorted-array-bst",
+    title: "DSA Array to BST",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(nth_ugly_number(10))
+def sorted_array_to_bst(nums):
+    if not nums:
+        return None
+    m = len(nums) // 2
+    root = TreeNode(nums[m])
+    root.left = sorted_array_to_bst(nums[:m])
+    root.right = sorted_array_to_bst(nums[m + 1:])
+    return root
+
+r = sorted_array_to_bst([-10, -3, 0, 5, 9])
+print(r.data, r.left.data, r.right.data)
 `,
-    nextUrl: /\/learn\/py-486-reorg-string/,
-    cursorAfter: "486",
+    nextUrl: /\/learn\/py-588-kth-small-bst/,
+    cursorAfter: "588",
   },
   {
-    micro: 486,
-    id: "py-486-reorg-string",
-    title: "DSA Reorg String",
-    solution: `def reorganize_string(s):
-    from collections import Counter
-    import heapq
-    h = [(-c, ch) for ch, c in Counter(s).items()]
-    heapq.heapify(h)
-    out = []
-    prev = (0, "")
-    while h:
-        c, ch = heapq.heappop(h)
-        out.append(ch)
-        if prev[0] < 0:
-            heapq.heappush(h, prev)
-        prev = (c + 1, ch)
-    res = "".join(out)
-    return res if len(res) == len(s) else ""
+    micro: 588,
+    id: "py-588-kth-small-bst",
+    title: "DSA Kth Small BST",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(reorganize_string("aab"))
+def kth_smallest(root, k):
+    st = []
+    while True:
+        while root:
+            st.append(root)
+            root = root.left
+        root = st.pop()
+        k -= 1
+        if k == 0:
+            return root.data
+        root = root.right
+
+root = TreeNode(3)
+root.left = TreeNode(1); root.right = TreeNode(4)
+root.left.right = TreeNode(2)
+print(kth_smallest(root, 1))
 `,
     nextUrl: /\/workspace/,
-    cursorAfter: "487",
+    cursorAfter: "589",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:481|482|483|484|485|486)-/);
+    expect(step.id).toMatch(/^py-(?:583|584|585|586|587|588)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -163,7 +213,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 481–486 · heaps III", () => {
+test.describe("micro-steps 583–588 · trees IV", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
