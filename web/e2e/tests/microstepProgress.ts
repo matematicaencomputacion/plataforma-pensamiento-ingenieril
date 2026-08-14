@@ -504,6 +504,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 496, step_id: "py-496-largest-number" },
   { level_id: 497, step_id: "py-497-sort-by-parity" },
   { level_id: 498, step_id: "py-498-wiggle-sort" },
+  { level_id: 499, step_id: "py-499-spiral-order" },
+  { level_id: 500, step_id: "py-500-set-zeroes" },
+  { level_id: 501, step_id: "py-501-rotate-matrix" },
+  { level_id: 502, step_id: "py-502-search-matrix" },
+  { level_id: 503, step_id: "py-503-valid-sudoku" },
+  { level_id: 504, step_id: "py-504-reshape-matrix" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

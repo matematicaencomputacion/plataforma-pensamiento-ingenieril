@@ -22,71 +22,147 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 34,
-    id: "py-34-sets",
-    title: "Python Sets",
-    solution: `thisset = {"apple", "banana", "cherry"}
-print(len(thisset))
+    micro: 499,
+    id: "py-499-spiral-order",
+    title: "DSA Spiral Order",
+    solution: `def spiral_order(matrix):
+    res = []
+    while matrix:
+        res.extend(matrix.pop(0))
+        if matrix and matrix[0]:
+            for row in matrix:
+                res.append(row.pop())
+        if matrix:
+            res.extend(matrix.pop()[::-1])
+        if matrix and matrix[0]:
+            for row in matrix[::-1]:
+                res.append(row.pop(0))
+    return res
+
+print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
 `,
-    nextUrl: /\/learn\/py-35-set-access/,
-    cursorAfter: "35",
+    nextUrl: /\/learn\/py-500-set-zeroes/,
+    cursorAfter: "500",
   },
   {
-    micro: 35,
-    id: "py-35-set-access",
-    title: "Python Access Set Items",
-    solution: `thisset = {"apple", "banana", "cherry"}
-print("banana" in thisset)
+    micro: 500,
+    id: "py-500-set-zeroes",
+    title: "DSA Set Zeroes",
+    solution: `def set_zeroes(matrix):
+    rows, cols = len(matrix), len(matrix[0])
+    r0 = any(matrix[0][j] == 0 for j in range(cols))
+    c0 = any(matrix[i][0] == 0 for i in range(rows))
+    for i in range(1, rows):
+        for j in range(1, cols):
+            if matrix[i][j] == 0:
+                matrix[i][0] = matrix[0][j] = 0
+    for i in range(1, rows):
+        for j in range(1, cols):
+            if matrix[i][0] == 0 or matrix[0][j] == 0:
+                matrix[i][j] = 0
+    if r0:
+        matrix[0] = [0] * cols
+    if c0:
+        for i in range(rows):
+            matrix[i][0] = 0
+    return matrix
+
+print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
 `,
-    nextUrl: /\/learn\/py-36-set-add/,
-    cursorAfter: "36",
+    nextUrl: /\/learn\/py-501-rotate-matrix/,
+    cursorAfter: "501",
   },
   {
-    micro: 36,
-    id: "py-36-set-add",
-    title: "Python Add Set Items",
-    solution: `thisset = {"apple", "banana", "cherry"}
-thisset.add("orange")
-print("orange" in thisset)
+    micro: 501,
+    id: "py-501-rotate-matrix",
+    title: "DSA Rotate Matrix",
+    solution: `def rotate(matrix):
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i + 1, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    for row in matrix:
+        row.reverse()
+    return matrix
+
+print(rotate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
 `,
-    nextUrl: /\/learn\/py-37-set-remove/,
-    cursorAfter: "37",
+    nextUrl: /\/learn\/py-502-search-matrix/,
+    cursorAfter: "502",
   },
   {
-    micro: 37,
-    id: "py-37-set-remove",
-    title: "Python Remove Set Items",
-    solution: `thisset = {"apple", "banana", "cherry"}
-thisset.remove("banana")
-print("banana" in thisset)
+    micro: 502,
+    id: "py-502-search-matrix",
+    title: "DSA Search Matrix",
+    solution: `def search_matrix(matrix, target):
+    if not matrix:
+        return False
+    m, n = len(matrix), len(matrix[0])
+    lo, hi = 0, m * n - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        val = matrix[mid // n][mid % n]
+        if val == target:
+            return True
+        if val < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return False
+
+print(search_matrix([[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], 3))
 `,
-    nextUrl: /\/learn\/py-38-set-loop/,
-    cursorAfter: "38",
+    nextUrl: /\/learn\/py-503-valid-sudoku/,
+    cursorAfter: "503",
   },
   {
-    micro: 38,
-    id: "py-38-set-loop",
-    title: "Python Loop Sets",
-    solution: `thisset = {"apple", "banana", "cherry"}
-for x in thisset:
-    print(x)
+    micro: 503,
+    id: "py-503-valid-sudoku",
+    title: "DSA Valid Sudoku",
+    solution: `def is_valid_sudoku(board):
+    rows = [set() for _ in range(9)]
+    cols = [set() for _ in range(9)]
+    boxes = [set() for _ in range(9)]
+    for i in range(9):
+        for j in range(9):
+            v = board[i][j]
+            if v == ".":
+                continue
+            b = (i // 3) * 3 + j // 3
+            if v in rows[i] or v in cols[j] or v in boxes[b]:
+                return False
+            rows[i].add(v); cols[j].add(v); boxes[b].add(v)
+    return True
+
+board = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]
+print(is_valid_sudoku(board))
 `,
-    nextUrl: /\/learn\/py-39-set-join/,
-    cursorAfter: "39",
+    nextUrl: /\/learn\/py-504-reshape-matrix/,
+    cursorAfter: "504",
   },
   {
-    micro: 39,
-    id: "py-39-set-join",
-    title: "Python Join Sets",
-    solution: `set1 = {"a", "b", "c"}
-set2 = {1, 2, 3}
-set3 = set1.union(set2)
-print(len(set3))
+    micro: 504,
+    id: "py-504-reshape-matrix",
+    title: "DSA Reshape Matrix",
+    solution: `def matrix_reshape(mat, r, c):
+    flat = [x for row in mat for x in row]
+    if r * c != len(flat):
+        return mat
+    return [flat[i * c:(i + 1) * c] for i in range(r)]
+
+print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
 `,
-    nextUrl: /\/learn\/py-40-dictionaries/,
-    cursorAfter: "40",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "505",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:499|500|501|502|503|504)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -113,7 +189,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 34–39 · Sets family", () => {
+test.describe("micro-steps 499–504 · matrix III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

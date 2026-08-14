@@ -11488,7 +11488,401 @@ print(wiggle_sort([1, 5, 1, 1, 6, 4]))
 
 print(wiggle_sort([1, 5, 1, 1, 6, 4]))
 ",
-    next: None, show_type_chips: false, micro_step: 498,
+    next: Some("py-499-spiral-order"), show_type_chips: false, micro_step: 498,
+};
+
+
+pub const PY499_SPIRAL_ORDER: CodingStep = CodingStep {
+    id: "py-499-spiral-order", title: "DSA Spiral Order", objective: "Recorrido en espiral.",
+    prompt_md: "**Spiral Order**
+
+Recorrido en espiral.
+
+**Micro-reto:**
+1. Definí `spiral_order(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 2, 3, 6, 9, 8, 7, 4, 5]`.",
+    starter_code: "# def spiral_order(matrix):
+#     res = []
+#     while matrix:
+#         res.extend(matrix.pop(0))
+#         if matrix and matrix[0]:
+#             for row in matrix:
+#                 res.append(row.pop())
+#         if matrix:
+#             res.extend(matrix.pop()[::-1])
+#         if matrix and matrix[0]:
+#             for row in matrix[::-1]:
+#                 res.append(row.pop(0))
+#     return res
+#
+# print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    pytest: "def test_499_spiral_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('spiral_order'))
+    assert ns['spiral_order']([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) == [1, 2, 3, 6, 9, 8, 7, 4, 5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3, 6, 9, 8, 7, 4, 5]'
+",
+    hint: "def spiral_order(matrix):
+    res = []
+    while matrix:
+        res.extend(matrix.pop(0))
+        if matrix and matrix[0]:
+            for row in matrix:
+                res.append(row.pop())
+        if matrix:
+            res.extend(matrix.pop()[::-1])
+        if matrix and matrix[0]:
+            for row in matrix[::-1]:
+                res.append(row.pop(0))
+    return res
+
+print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    solution_example: "def spiral_order(matrix):
+    res = []
+    while matrix:
+        res.extend(matrix.pop(0))
+        if matrix and matrix[0]:
+            for row in matrix:
+                res.append(row.pop())
+        if matrix:
+            res.extend(matrix.pop()[::-1])
+        if matrix and matrix[0]:
+            for row in matrix[::-1]:
+                res.append(row.pop(0))
+    return res
+
+print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    next: Some("py-500-set-zeroes"), show_type_chips: false, micro_step: 499,
+};
+
+pub const PY500_SET_ZEROES: CodingStep = CodingStep {
+    id: "py-500-set-zeroes", title: "DSA Set Zeroes", objective: "Si cero, anular fila/col.",
+    prompt_md: "**Set Zeroes**
+
+Si cero, anular fila/col.
+
+**Micro-reto:**
+1. Definí `set_zeroes(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[1, 0, 1], [0, 0, 0], [1, 0, 1]]`.",
+    starter_code: "# def set_zeroes(matrix):
+#     rows, cols = len(matrix), len(matrix[0])
+#     r0 = any(matrix[0][j] == 0 for j in range(cols))
+#     c0 = any(matrix[i][0] == 0 for i in range(rows))
+#     for i in range(1, rows):
+#         for j in range(1, cols):
+#             if matrix[i][j] == 0:
+#                 matrix[i][0] = matrix[0][j] = 0
+#     for i in range(1, rows):
+#         for j in range(1, cols):
+#             if matrix[i][0] == 0 or matrix[0][j] == 0:
+#                 matrix[i][j] = 0
+#     if r0:
+#         matrix[0] = [0] * cols
+#     if c0:
+#         for i in range(rows):
+#             matrix[i][0] = 0
+#     return matrix
+#
+# print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
+",
+    pytest: "def test_500_set_zeroes(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('set_zeroes'))
+    assert ns['set_zeroes']([[1, 1, 1], [1, 0, 1], [1, 1, 1]]) == [[1, 0, 1], [0, 0, 0], [1, 0, 1]]
+    assert capsys.readouterr().out.strip() == '[[1, 0, 1], [0, 0, 0], [1, 0, 1]]'
+",
+    hint: "def set_zeroes(matrix):
+    rows, cols = len(matrix), len(matrix[0])
+    r0 = any(matrix[0][j] == 0 for j in range(cols))
+    c0 = any(matrix[i][0] == 0 for i in range(rows))
+    for i in range(1, rows):
+        for j in range(1, cols):
+            if matrix[i][j] == 0:
+                matrix[i][0] = matrix[0][j] = 0
+    for i in range(1, rows):
+        for j in range(1, cols):
+            if matrix[i][0] == 0 or matrix[0][j] == 0:
+                matrix[i][j] = 0
+    if r0:
+        matrix[0] = [0] * cols
+    if c0:
+        for i in range(rows):
+            matrix[i][0] = 0
+    return matrix
+
+print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
+",
+    solution_example: "def set_zeroes(matrix):
+    rows, cols = len(matrix), len(matrix[0])
+    r0 = any(matrix[0][j] == 0 for j in range(cols))
+    c0 = any(matrix[i][0] == 0 for i in range(rows))
+    for i in range(1, rows):
+        for j in range(1, cols):
+            if matrix[i][j] == 0:
+                matrix[i][0] = matrix[0][j] = 0
+    for i in range(1, rows):
+        for j in range(1, cols):
+            if matrix[i][0] == 0 or matrix[0][j] == 0:
+                matrix[i][j] = 0
+    if r0:
+        matrix[0] = [0] * cols
+    if c0:
+        for i in range(rows):
+            matrix[i][0] = 0
+    return matrix
+
+print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
+",
+    next: Some("py-501-rotate-matrix"), show_type_chips: false, micro_step: 500,
+};
+
+pub const PY501_ROTATE_MATRIX: CodingStep = CodingStep {
+    id: "py-501-rotate-matrix", title: "DSA Rotate Matrix", objective: "Rotar 90° clockwise.",
+    prompt_md: "**Rotate Matrix**
+
+Rotar 90° clockwise.
+
+**Micro-reto:**
+1. Definí `rotate(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[7, 4, 1], [8, 5, 2], [9, 6, 3]]`.",
+    starter_code: "# def rotate(matrix):
+#     n = len(matrix)
+#     for i in range(n):
+#         for j in range(i + 1, n):
+#             matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+#     for row in matrix:
+#         row.reverse()
+#     return matrix
+#
+# print(rotate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    pytest: "def test_501_rotate_matrix(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('rotate'))
+    assert ns['rotate']([[1, 2], [3, 4]]) == [[3, 1], [4, 2]]
+    assert capsys.readouterr().out.strip() == '[[7, 4, 1], [8, 5, 2], [9, 6, 3]]'
+",
+    hint: "def rotate(matrix):
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i + 1, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    for row in matrix:
+        row.reverse()
+    return matrix
+
+print(rotate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    solution_example: "def rotate(matrix):
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i + 1, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    for row in matrix:
+        row.reverse()
+    return matrix
+
+print(rotate([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+",
+    next: Some("py-502-search-matrix"), show_type_chips: false, micro_step: 501,
+};
+
+pub const PY502_SEARCH_MATRIX: CodingStep = CodingStep {
+    id: "py-502-search-matrix", title: "DSA Search Matrix", objective: "Buscar en matriz ordenada.",
+    prompt_md: "**Search Matrix**
+
+Buscar en matriz ordenada.
+
+**Micro-reto:**
+1. Definí `search_matrix(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def search_matrix(matrix, target):
+#     if not matrix:
+#         return False
+#     m, n = len(matrix), len(matrix[0])
+#     lo, hi = 0, m * n - 1
+#     while lo <= hi:
+#         mid = (lo + hi) // 2
+#         val = matrix[mid // n][mid % n]
+#         if val == target:
+#             return True
+#         if val < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid - 1
+#     return False
+#
+# print(search_matrix([[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], 3))
+",
+    pytest: "def test_502_search_matrix(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('search_matrix'))
+    assert ns['search_matrix']([[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], 3) is True
+    assert ns['search_matrix']([[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], 13) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def search_matrix(matrix, target):
+    if not matrix:
+        return False
+    m, n = len(matrix), len(matrix[0])
+    lo, hi = 0, m * n - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        val = matrix[mid // n][mid % n]
+        if val == target:
+            return True
+        if val < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return False
+
+print(search_matrix([[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], 3))
+",
+    solution_example: "def search_matrix(matrix, target):
+    if not matrix:
+        return False
+    m, n = len(matrix), len(matrix[0])
+    lo, hi = 0, m * n - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        val = matrix[mid // n][mid % n]
+        if val == target:
+            return True
+        if val < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return False
+
+print(search_matrix([[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], 3))
+",
+    next: Some("py-503-valid-sudoku"), show_type_chips: false, micro_step: 502,
+};
+
+pub const PY503_VALID_SUDOKU: CodingStep = CodingStep {
+    id: "py-503-valid-sudoku", title: "DSA Valid Sudoku", objective: "Tablero 9x9 válido.",
+    prompt_md: "**Valid Sudoku**
+
+Tablero 9x9 válido.
+
+**Micro-reto:**
+1. Definí `is_valid_sudoku(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def is_valid_sudoku(board):
+#     rows = [set() for _ in range(9)]
+#     cols = [set() for _ in range(9)]
+#     boxes = [set() for _ in range(9)]
+#     for i in range(9):
+#         for j in range(9):
+#             v = board[i][j]
+#             if v == \".\":
+#                 continue
+#             b = (i // 3) * 3 + j // 3
+#             if v in rows[i] or v in cols[j] or v in boxes[b]:
+#                 return False
+#             rows[i].add(v); cols[j].add(v); boxes[b].add(v)
+#     return True
+#
+# board = [[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]
+# print(is_valid_sudoku(board))
+",
+    pytest: "def test_503_valid_sudoku(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_valid_sudoku'))
+    board = [['5','3','.','.','7','.','.','.','.'],['6','.','.','1','9','5','.','.','.'],['.','9','8','.','.','.','.','6','.'],['8','.','.','.','6','.','.','.','3'],['4','.','.','8','.','3','.','.','1'],['7','.','.','.','2','.','.','.','6'],['.','6','.','.','.','.','2','8','.'],['.','.','.','4','1','9','.','.','5'],['.','.','.','.','8','.','.','7','9']]
+    assert ns['is_valid_sudoku'](board) is True
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_valid_sudoku(board):
+    rows = [set() for _ in range(9)]
+    cols = [set() for _ in range(9)]
+    boxes = [set() for _ in range(9)]
+    for i in range(9):
+        for j in range(9):
+            v = board[i][j]
+            if v == \".\":
+                continue
+            b = (i // 3) * 3 + j // 3
+            if v in rows[i] or v in cols[j] or v in boxes[b]:
+                return False
+            rows[i].add(v); cols[j].add(v); boxes[b].add(v)
+    return True
+
+board = [[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]
+print(is_valid_sudoku(board))
+",
+    solution_example: "def is_valid_sudoku(board):
+    rows = [set() for _ in range(9)]
+    cols = [set() for _ in range(9)]
+    boxes = [set() for _ in range(9)]
+    for i in range(9):
+        for j in range(9):
+            v = board[i][j]
+            if v == \".\":
+                continue
+            b = (i // 3) * 3 + j // 3
+            if v in rows[i] or v in cols[j] or v in boxes[b]:
+                return False
+            rows[i].add(v); cols[j].add(v); boxes[b].add(v)
+    return True
+
+board = [[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]
+print(is_valid_sudoku(board))
+",
+    next: Some("py-504-reshape-matrix"), show_type_chips: false, micro_step: 503,
+};
+
+pub const PY504_RESHAPE_MATRIX: CodingStep = CodingStep {
+    id: "py-504-reshape-matrix", title: "DSA Reshape Matrix", objective: "Reshape r x c.",
+    prompt_md: "**Reshape Matrix**
+
+Reshape r x c.
+
+**Micro-reto:**
+1. Definí `matrix_reshape(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[1, 2, 3, 4]]`.",
+    starter_code: "# def matrix_reshape(mat, r, c):
+#     flat = [x for row in mat for x in row]
+#     if r * c != len(flat):
+#         return mat
+#     return [flat[i * c:(i + 1) * c] for i in range(r)]
+#
+# print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
+",
+    pytest: "def test_504_reshape_matrix(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('matrix_reshape'))
+    assert ns['matrix_reshape']([[1, 2], [3, 4]], 1, 4) == [[1, 2, 3, 4]]
+    assert ns['matrix_reshape']([[1, 2], [3, 4]], 2, 4) == [[1, 2], [3, 4]]
+    assert capsys.readouterr().out.strip() == '[[1, 2, 3, 4]]'
+",
+    hint: "def matrix_reshape(mat, r, c):
+    flat = [x for row in mat for x in row]
+    if r * c != len(flat):
+        return mat
+    return [flat[i * c:(i + 1) * c] for i in range(r)]
+
+print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
+",
+    solution_example: "def matrix_reshape(mat, r, c):
+    flat = [x for row in mat for x in row]
+    if r * c != len(flat):
+        return mat
+    return [flat[i * c:(i + 1) * c] for i in range(r)]
+
+print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
+",
+    next: None, show_type_chips: false, micro_step: 504,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -11989,7 +12383,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY495_INSERT_INTERVAL,
     &PY496_LARGEST_NUMBER,
     &PY497_SORT_BY_PARITY,
-    &PY498_WIGGLE_SORT
+    &PY498_WIGGLE_SORT,
+    &PY499_SPIRAL_ORDER,
+    &PY500_SET_ZEROES,
+    &PY501_ROTATE_MATRIX,
+    &PY502_SEARCH_MATRIX,
+    &PY503_VALID_SUDOKU,
+    &PY504_RESHAPE_MATRIX
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -12133,7 +12533,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 498);
+            assert!(step.micro_step >= 1 && step.micro_step <= 504);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -13045,7 +13445,43 @@ mod tests {
 
 
 
-            (498, "py-498-wiggle-sort", None),
+            (498, "py-498-wiggle-sort", Some("py-499-spiral-order")),
+
+
+
+
+
+            (499, "py-499-spiral-order", Some("py-500-set-zeroes")),
+
+
+
+
+
+            (500, "py-500-set-zeroes", Some("py-501-rotate-matrix")),
+
+
+
+
+
+            (501, "py-501-rotate-matrix", Some("py-502-search-matrix")),
+
+
+
+
+
+            (502, "py-502-search-matrix", Some("py-503-valid-sudoku")),
+
+
+
+
+
+            (503, "py-503-valid-sudoku", Some("py-504-reshape-matrix")),
+
+
+
+
+
+            (504, "py-504-reshape-matrix", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

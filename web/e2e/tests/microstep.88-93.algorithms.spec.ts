@@ -187,7 +187,7 @@ test.describe("micro-steps 88–93 · DSA Search & Sort", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 498) {
+      if (nextMicro <= 504) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
