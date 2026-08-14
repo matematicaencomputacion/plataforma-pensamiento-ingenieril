@@ -194,7 +194,7 @@ test.describe("micro-steps 299–304 · bit manipulation II", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 516) {
+      if (nextMicro <= 522) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

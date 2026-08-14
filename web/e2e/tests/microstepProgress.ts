@@ -522,6 +522,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 514, step_id: "py-514-lemonade" },
   { level_id: 515, step_id: "py-515-best-time-stock" },
   { level_id: 516, step_id: "py-516-best-time-stock-ii" },
+  { level_id: 517, step_id: "py-517-two-sum-sorted" },
+  { level_id: 518, step_id: "py-518-3sum" },
+  { level_id: 519, step_id: "py-519-container-water" },
+  { level_id: 520, step_id: "py-520-trap-rain" },
+  { level_id: 521, step_id: "py-521-remove-dups-sorted" },
+  { level_id: 522, step_id: "py-522-valid-palindrome" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
