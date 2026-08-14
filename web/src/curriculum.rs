@@ -25845,8 +25845,723 @@ def kth_smallest(nums, k):
 
 print(kth_smallest([7, 10, 4, 3, 20, 15], 3))
 ",
-    next: None, show_type_chips: false, micro_step: 702,
+    next: Some("py-703-segtree-sum"), show_type_chips: false, micro_step: 702,
 };
+
+pub const PY703_SEGTREE_SUM: CodingStep = CodingStep {
+    id: "py-703-segtree-sum", title: "DSA SegTree · Range Sum", objective: "Segment tree de sumas con update puntual y query de rango.",
+    prompt_md: "**Segment Tree Range Sum**
+
+Árbol 1-based `t[v]`; hijos `2v` y `2v+1`. Query recorta `[l, r]` contra `[tl, tr]`.
+
+**Micro-reto:**
+1. Definí `class SegSum` con `update` y `query`
+2. nums=`[1, 3, 5, 7, 9, 11]`; imprimí `[15, 22]` (query 1..3, update idx 1→10, query 1..3).",
+    starter_code: "# class SegSum:
+#     def __init__(self, nums):
+#         self.n = len(nums)
+#         self.t = [0] * (4 * self.n)
+#         self._build(nums, 1, 0, self.n - 1)
+#     def _build(self, a, v, tl, tr):
+#         if tl == tr:
+#             self.t[v] = a[tl]
+#             return
+#         tm = (tl + tr) // 2
+#         self._build(a, v * 2, tl, tm)
+#         self._build(a, v * 2 + 1, tm + 1, tr)
+#         self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+#     def update(self, idx, val):
+#         self._upd(1, 0, self.n - 1, idx, val)
+#     def _upd(self, v, tl, tr, idx, val):
+#         if tl == tr:
+#             self.t[v] = val
+#             return
+#         tm = (tl + tr) // 2
+#         if idx <= tm:
+#             self._upd(v * 2, tl, tm, idx, val)
+#         else:
+#             self._upd(v * 2 + 1, tm + 1, tr, idx, val)
+#         self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+#     def query(self, l, r):
+#         return self._qry(1, 0, self.n - 1, l, r)
+#     def _qry(self, v, tl, tr, l, r):
+#         if l > r:
+#             return 0
+#         if l == tl and r == tr:
+#             return self.t[v]
+#         tm = (tl + tr) // 2
+#         return self._qry(v * 2, tl, tm, l, min(r, tm)) + self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)
+#
+# st = SegSum([1, 3, 5, 7, 9, 11])
+# a = st.query(1, 3)
+# st.update(1, 10)
+# print([a, st.query(1, 3)])
+",
+    pytest: "def test_703_segtree_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    st = ns['SegSum']([1, 3, 5, 7, 9, 11])
+    assert st.query(1, 3) == 15
+    st.update(1, 10)
+    assert st.query(1, 3) == 22
+    assert capsys.readouterr().out.strip() == '[15, 22]'
+",
+    hint: "class SegSum:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def update(self, idx, val):
+        self._upd(1, 0, self.n - 1, idx, val)
+    def _upd(self, v, tl, tr, idx, val):
+        if tl == tr:
+            self.t[v] = val
+            return
+        tm = (tl + tr) // 2
+        if idx <= tm:
+            self._upd(v * 2, tl, tm, idx, val)
+        else:
+            self._upd(v * 2 + 1, tm + 1, tr, idx, val)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return 0
+        if l == tl and r == tr:
+            return self.t[v]
+        tm = (tl + tr) // 2
+        return self._qry(v * 2, tl, tm, l, min(r, tm)) + self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)
+
+st = SegSum([1, 3, 5, 7, 9, 11])
+a = st.query(1, 3)
+st.update(1, 10)
+print([a, st.query(1, 3)])
+",
+    solution_example: "class SegSum:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def update(self, idx, val):
+        self._upd(1, 0, self.n - 1, idx, val)
+    def _upd(self, v, tl, tr, idx, val):
+        if tl == tr:
+            self.t[v] = val
+            return
+        tm = (tl + tr) // 2
+        if idx <= tm:
+            self._upd(v * 2, tl, tm, idx, val)
+        else:
+            self._upd(v * 2 + 1, tm + 1, tr, idx, val)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return 0
+        if l == tl and r == tr:
+            return self.t[v]
+        tm = (tl + tr) // 2
+        return self._qry(v * 2, tl, tm, l, min(r, tm)) + self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)
+
+st = SegSum([1, 3, 5, 7, 9, 11])
+a = st.query(1, 3)
+st.update(1, 10)
+print([a, st.query(1, 3)])
+",
+    next: Some("py-704-segtree-min"), show_type_chips: false, micro_step: 703,
+};
+
+pub const PY704_SEGTREE_MIN: CodingStep = CodingStep {
+    id: "py-704-segtree-min", title: "DSA SegTree · Range Min", objective: "Mínimo de un rango con segment tree (identidad +inf).",
+    prompt_md: "**Segment Tree Range Minimum**
+
+Igual estructura que la suma, combinando con `min`.
+
+**Micro-reto:**
+1. Definí `class SegMin` con `query(l, r)`
+2. Ejecutá `[1, 3, 2, 7, 9, 11]` query 1..4; imprimí `2`.",
+    starter_code: "# class SegMin:
+#     def __init__(self, nums):
+#         self.n = len(nums)
+#         self.t = [0] * (4 * self.n)
+#         self._build(nums, 1, 0, self.n - 1)
+#     def _build(self, a, v, tl, tr):
+#         if tl == tr:
+#             self.t[v] = a[tl]
+#             return
+#         tm = (tl + tr) // 2
+#         self._build(a, v * 2, tl, tm)
+#         self._build(a, v * 2 + 1, tm + 1, tr)
+#         self.t[v] = min(self.t[v * 2], self.t[v * 2 + 1])
+#     def query(self, l, r):
+#         return self._qry(1, 0, self.n - 1, l, r)
+#     def _qry(self, v, tl, tr, l, r):
+#         if l > r:
+#             return 10 ** 18
+#         if l == tl and r == tr:
+#             return self.t[v]
+#         tm = (tl + tr) // 2
+#         return min(self._qry(v * 2, tl, tm, l, min(r, tm)), self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r))
+#
+# print(SegMin([1, 3, 2, 7, 9, 11]).query(1, 4))
+",
+    pytest: "def test_704_segtree_min(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    sm = ns['SegMin']([1, 3, 2, 7, 9, 11])
+    assert sm.query(1, 4) == 2
+    assert sm.query(3, 5) == 7
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "class SegMin:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = min(self.t[v * 2], self.t[v * 2 + 1])
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return 10 ** 18
+        if l == tl and r == tr:
+            return self.t[v]
+        tm = (tl + tr) // 2
+        return min(self._qry(v * 2, tl, tm, l, min(r, tm)), self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r))
+
+print(SegMin([1, 3, 2, 7, 9, 11]).query(1, 4))
+",
+    solution_example: "class SegMin:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = min(self.t[v * 2], self.t[v * 2 + 1])
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return 10 ** 18
+        if l == tl and r == tr:
+            return self.t[v]
+        tm = (tl + tr) // 2
+        return min(self._qry(v * 2, tl, tm, l, min(r, tm)), self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r))
+
+print(SegMin([1, 3, 2, 7, 9, 11]).query(1, 4))
+",
+    next: Some("py-705-segtree-max"), show_type_chips: false, micro_step: 704,
+};
+
+pub const PY705_SEGTREE_MAX: CodingStep = CodingStep {
+    id: "py-705-segtree-max", title: "DSA SegTree · Range Max", objective: "Máximo de un rango (identidad -inf).",
+    prompt_md: "**Segment Tree Range Maximum**
+
+Combiná hijos con `max`.
+
+**Micro-reto:**
+1. Definí `class SegMax` con `query(l, r)`
+2. Ejecutá `[1, 3, 2, 7, 9, 11]` query 2..5; imprimí `11`.",
+    starter_code: "# class SegMax:
+#     def __init__(self, nums):
+#         self.n = len(nums)
+#         self.t = [0] * (4 * self.n)
+#         self._build(nums, 1, 0, self.n - 1)
+#     def _build(self, a, v, tl, tr):
+#         if tl == tr:
+#             self.t[v] = a[tl]
+#             return
+#         tm = (tl + tr) // 2
+#         self._build(a, v * 2, tl, tm)
+#         self._build(a, v * 2 + 1, tm + 1, tr)
+#         self.t[v] = max(self.t[v * 2], self.t[v * 2 + 1])
+#     def query(self, l, r):
+#         return self._qry(1, 0, self.n - 1, l, r)
+#     def _qry(self, v, tl, tr, l, r):
+#         if l > r:
+#             return -10 ** 18
+#         if l == tl and r == tr:
+#             return self.t[v]
+#         tm = (tl + tr) // 2
+#         return max(self._qry(v * 2, tl, tm, l, min(r, tm)), self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r))
+#
+# print(SegMax([1, 3, 2, 7, 9, 11]).query(2, 5))
+",
+    pytest: "def test_705_segtree_max(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    sx = ns['SegMax']([1, 3, 2, 7, 9, 11])
+    assert sx.query(0, 2) == 3
+    assert sx.query(2, 5) == 11
+    assert capsys.readouterr().out.strip() == '11'
+",
+    hint: "class SegMax:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = max(self.t[v * 2], self.t[v * 2 + 1])
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return -10 ** 18
+        if l == tl and r == tr:
+            return self.t[v]
+        tm = (tl + tr) // 2
+        return max(self._qry(v * 2, tl, tm, l, min(r, tm)), self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r))
+
+print(SegMax([1, 3, 2, 7, 9, 11]).query(2, 5))
+",
+    solution_example: "class SegMax:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = max(self.t[v * 2], self.t[v * 2 + 1])
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return -10 ** 18
+        if l == tl and r == tr:
+            return self.t[v]
+        tm = (tl + tr) // 2
+        return max(self._qry(v * 2, tl, tm, l, min(r, tm)), self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r))
+
+print(SegMax([1, 3, 2, 7, 9, 11]).query(2, 5))
+",
+    next: Some("py-706-segtree-xor"), show_type_chips: false, micro_step: 705,
+};
+
+pub const PY706_SEGTREE_XOR: CodingStep = CodingStep {
+    id: "py-706-segtree-xor", title: "DSA SegTree · Range XOR", objective: "XOR de un rango; la identidad es 0.",
+    prompt_md: "**Segment Tree Range XOR**
+
+`t[v] = t[2v] ^ t[2v+1]`.
+
+**Micro-reto:**
+1. Definí `class SegXor` con `query(l, r)`
+2. Ejecutá `[1, 3, 4, 5]` query 0..3; imprimí `3`.",
+    starter_code: "# class SegXor:
+#     def __init__(self, nums):
+#         self.n = len(nums)
+#         self.t = [0] * (4 * self.n)
+#         self._build(nums, 1, 0, self.n - 1)
+#     def _build(self, a, v, tl, tr):
+#         if tl == tr:
+#             self.t[v] = a[tl]
+#             return
+#         tm = (tl + tr) // 2
+#         self._build(a, v * 2, tl, tm)
+#         self._build(a, v * 2 + 1, tm + 1, tr)
+#         self.t[v] = self.t[v * 2] ^ self.t[v * 2 + 1]
+#     def query(self, l, r):
+#         return self._qry(1, 0, self.n - 1, l, r)
+#     def _qry(self, v, tl, tr, l, r):
+#         if l > r:
+#             return 0
+#         if l == tl and r == tr:
+#             return self.t[v]
+#         tm = (tl + tr) // 2
+#         return self._qry(v * 2, tl, tm, l, min(r, tm)) ^ self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)
+#
+# print(SegXor([1, 3, 4, 5]).query(0, 3))
+",
+    pytest: "def test_706_segtree_xor(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    sx = ns['SegXor']([1, 3, 4, 5])
+    assert sx.query(0, 3) == 3
+    assert sx.query(1, 2) == 7
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "class SegXor:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = self.t[v * 2] ^ self.t[v * 2 + 1]
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return 0
+        if l == tl and r == tr:
+            return self.t[v]
+        tm = (tl + tr) // 2
+        return self._qry(v * 2, tl, tm, l, min(r, tm)) ^ self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)
+
+print(SegXor([1, 3, 4, 5]).query(0, 3))
+",
+    solution_example: "class SegXor:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = self.t[v * 2] ^ self.t[v * 2 + 1]
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return 0
+        if l == tl and r == tr:
+            return self.t[v]
+        tm = (tl + tr) // 2
+        return self._qry(v * 2, tl, tm, l, min(r, tm)) ^ self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)
+
+print(SegXor([1, 3, 4, 5]).query(0, 3))
+",
+    next: Some("py-707-segtree-kth"), show_type_chips: false, micro_step: 706,
+};
+
+pub const PY707_SEGTREE_KTH: CodingStep = CodingStep {
+    id: "py-707-segtree-kth", title: "DSA SegTree · Kth Value", objective: "k-ésimo valor (0-based ranks) bajando por el hijo cuya suma cubre k.",
+    prompt_md: "**Kth via Segment Tree**
+
+Cada hoja es una frecuencia; si `t[2v] >= k` bajás izquierda, si no k -= t[2v] y bajás derecha.
+
+**Micro-reto:**
+1. Definí `class SegKth` con `add(idx, delta)` y `kth(k)` 1-based
+2. Insertá `[2, 0, 2, 1]` en un universo 0..4; imprimí `[0, 1, 2]`.",
+    starter_code: "# class SegKth:
+#     def __init__(self, n):
+#         self.n = n
+#         self.t = [0] * (4 * n)
+#     def add(self, idx, delta):
+#         self._upd(1, 0, self.n - 1, idx, delta)
+#     def _upd(self, v, tl, tr, idx, delta):
+#         if tl == tr:
+#             self.t[v] += delta
+#             return
+#         tm = (tl + tr) // 2
+#         if idx <= tm:
+#             self._upd(v * 2, tl, tm, idx, delta)
+#         else:
+#             self._upd(v * 2 + 1, tm + 1, tr, idx, delta)
+#         self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+#     def kth(self, k):
+#         return self._kth(1, 0, self.n - 1, k)
+#     def _kth(self, v, tl, tr, k):
+#         if tl == tr:
+#             return tl
+#         tm = (tl + tr) // 2
+#         if self.t[v * 2] >= k:
+#             return self._kth(v * 2, tl, tm, k)
+#         return self._kth(v * 2 + 1, tm + 1, tr, k - self.t[v * 2])
+#
+# sk = SegKth(5)
+# for x in [2, 0, 2, 1]:
+#     sk.add(x, 1)
+# print([sk.kth(1), sk.kth(2), sk.kth(3)])
+",
+    pytest: "def test_707_segtree_kth(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    sk = ns['SegKth'](5)
+    for x in [2, 0, 2, 1]:
+        sk.add(x, 1)
+    assert [sk.kth(1), sk.kth(2), sk.kth(3)] == [0, 1, 2]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2]'
+",
+    hint: "class SegKth:
+    def __init__(self, n):
+        self.n = n
+        self.t = [0] * (4 * n)
+    def add(self, idx, delta):
+        self._upd(1, 0, self.n - 1, idx, delta)
+    def _upd(self, v, tl, tr, idx, delta):
+        if tl == tr:
+            self.t[v] += delta
+            return
+        tm = (tl + tr) // 2
+        if idx <= tm:
+            self._upd(v * 2, tl, tm, idx, delta)
+        else:
+            self._upd(v * 2 + 1, tm + 1, tr, idx, delta)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def kth(self, k):
+        return self._kth(1, 0, self.n - 1, k)
+    def _kth(self, v, tl, tr, k):
+        if tl == tr:
+            return tl
+        tm = (tl + tr) // 2
+        if self.t[v * 2] >= k:
+            return self._kth(v * 2, tl, tm, k)
+        return self._kth(v * 2 + 1, tm + 1, tr, k - self.t[v * 2])
+
+sk = SegKth(5)
+for x in [2, 0, 2, 1]:
+    sk.add(x, 1)
+print([sk.kth(1), sk.kth(2), sk.kth(3)])
+",
+    solution_example: "class SegKth:
+    def __init__(self, n):
+        self.n = n
+        self.t = [0] * (4 * n)
+    def add(self, idx, delta):
+        self._upd(1, 0, self.n - 1, idx, delta)
+    def _upd(self, v, tl, tr, idx, delta):
+        if tl == tr:
+            self.t[v] += delta
+            return
+        tm = (tl + tr) // 2
+        if idx <= tm:
+            self._upd(v * 2, tl, tm, idx, delta)
+        else:
+            self._upd(v * 2 + 1, tm + 1, tr, idx, delta)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def kth(self, k):
+        return self._kth(1, 0, self.n - 1, k)
+    def _kth(self, v, tl, tr, k):
+        if tl == tr:
+            return tl
+        tm = (tl + tr) // 2
+        if self.t[v * 2] >= k:
+            return self._kth(v * 2, tl, tm, k)
+        return self._kth(v * 2 + 1, tm + 1, tr, k - self.t[v * 2])
+
+sk = SegKth(5)
+for x in [2, 0, 2, 1]:
+    sk.add(x, 1)
+print([sk.kth(1), sk.kth(2), sk.kth(3)])
+",
+    next: Some("py-708-lazy-segtree"), show_type_chips: false, micro_step: 707,
+};
+
+pub const PY708_LAZY_SEGTREE: CodingStep = CodingStep {
+    id: "py-708-lazy-segtree", title: "DSA SegTree · Lazy Add", objective: "Range add + range sum con lazy propagation.",
+    prompt_md: "**Lazy Segment Tree**
+
+`lz[v]` se empuja a los hijos antes de bajar; el nodo guarda la suma ya actualizada.
+
+**Micro-reto:**
+1. Definí `class LazySeg` con `range_add(l, r, delta)` y `query(l, r)`
+2. `[1, 2, 3, 4, 5]`, add +10 en 1..3; imprimí `query(0, 4)` → `45`.",
+    starter_code: "# class LazySeg:
+#     def __init__(self, nums):
+#         self.n = len(nums)
+#         self.t = [0] * (4 * self.n)
+#         self.lz = [0] * (4 * self.n)
+#         self._build(nums, 1, 0, self.n - 1)
+#     def _build(self, a, v, tl, tr):
+#         if tl == tr:
+#             self.t[v] = a[tl]
+#             return
+#         tm = (tl + tr) // 2
+#         self._build(a, v * 2, tl, tm)
+#         self._build(a, v * 2 + 1, tm + 1, tr)
+#         self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+#     def _push(self, v, tl, tr):
+#         if not self.lz[v]:
+#             return
+#         tm = (tl + tr) // 2
+#         for ch, l, r in ((v * 2, tl, tm), (v * 2 + 1, tm + 1, tr)):
+#             self.t[ch] += self.lz[v] * (r - l + 1)
+#             self.lz[ch] += self.lz[v]
+#         self.lz[v] = 0
+#     def range_add(self, l, r, delta):
+#         self._add(1, 0, self.n - 1, l, r, delta)
+#     def _add(self, v, tl, tr, l, r, delta):
+#         if l > r:
+#             return
+#         if l == tl and r == tr:
+#             self.t[v] += delta * (tr - tl + 1)
+#             self.lz[v] += delta
+#             return
+#         self._push(v, tl, tr)
+#         tm = (tl + tr) // 2
+#         self._add(v * 2, tl, tm, l, min(r, tm), delta)
+#         self._add(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r, delta)
+#         self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+#     def query(self, l, r):
+#         return self._qry(1, 0, self.n - 1, l, r)
+#     def _qry(self, v, tl, tr, l, r):
+#         if l > r:
+#             return 0
+#         if l == tl and r == tr:
+#             return self.t[v]
+#         self._push(v, tl, tr)
+#         tm = (tl + tr) // 2
+#         return self._qry(v * 2, tl, tm, l, min(r, tm)) + self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)
+#
+# ls = LazySeg([1, 2, 3, 4, 5])
+# ls.range_add(1, 3, 10)
+# print(ls.query(0, 4))
+",
+    pytest: "def test_708_lazy_segtree(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    ls = ns['LazySeg']([1, 2, 3, 4, 5])
+    ls.range_add(1, 3, 10)
+    assert ls.query(0, 4) == 45
+    assert ls.query(1, 3) == 39
+    assert capsys.readouterr().out.strip() == '45'
+",
+    hint: "class LazySeg:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self.lz = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def _push(self, v, tl, tr):
+        if not self.lz[v]:
+            return
+        tm = (tl + tr) // 2
+        for ch, l, r in ((v * 2, tl, tm), (v * 2 + 1, tm + 1, tr)):
+            self.t[ch] += self.lz[v] * (r - l + 1)
+            self.lz[ch] += self.lz[v]
+        self.lz[v] = 0
+    def range_add(self, l, r, delta):
+        self._add(1, 0, self.n - 1, l, r, delta)
+    def _add(self, v, tl, tr, l, r, delta):
+        if l > r:
+            return
+        if l == tl and r == tr:
+            self.t[v] += delta * (tr - tl + 1)
+            self.lz[v] += delta
+            return
+        self._push(v, tl, tr)
+        tm = (tl + tr) // 2
+        self._add(v * 2, tl, tm, l, min(r, tm), delta)
+        self._add(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r, delta)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return 0
+        if l == tl and r == tr:
+            return self.t[v]
+        self._push(v, tl, tr)
+        tm = (tl + tr) // 2
+        return self._qry(v * 2, tl, tm, l, min(r, tm)) + self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)
+
+ls = LazySeg([1, 2, 3, 4, 5])
+ls.range_add(1, 3, 10)
+print(ls.query(0, 4))
+",
+    solution_example: "class LazySeg:
+    def __init__(self, nums):
+        self.n = len(nums)
+        self.t = [0] * (4 * self.n)
+        self.lz = [0] * (4 * self.n)
+        self._build(nums, 1, 0, self.n - 1)
+    def _build(self, a, v, tl, tr):
+        if tl == tr:
+            self.t[v] = a[tl]
+            return
+        tm = (tl + tr) // 2
+        self._build(a, v * 2, tl, tm)
+        self._build(a, v * 2 + 1, tm + 1, tr)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def _push(self, v, tl, tr):
+        if not self.lz[v]:
+            return
+        tm = (tl + tr) // 2
+        for ch, l, r in ((v * 2, tl, tm), (v * 2 + 1, tm + 1, tr)):
+            self.t[ch] += self.lz[v] * (r - l + 1)
+            self.lz[ch] += self.lz[v]
+        self.lz[v] = 0
+    def range_add(self, l, r, delta):
+        self._add(1, 0, self.n - 1, l, r, delta)
+    def _add(self, v, tl, tr, l, r, delta):
+        if l > r:
+            return
+        if l == tl and r == tr:
+            self.t[v] += delta * (tr - tl + 1)
+            self.lz[v] += delta
+            return
+        self._push(v, tl, tr)
+        tm = (tl + tr) // 2
+        self._add(v * 2, tl, tm, l, min(r, tm), delta)
+        self._add(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r, delta)
+        self.t[v] = self.t[v * 2] + self.t[v * 2 + 1]
+    def query(self, l, r):
+        return self._qry(1, 0, self.n - 1, l, r)
+    def _qry(self, v, tl, tr, l, r):
+        if l > r:
+            return 0
+        if l == tl and r == tr:
+            return self.t[v]
+        self._push(v, tl, tr)
+        tm = (tl + tr) // 2
+        return self._qry(v * 2, tl, tm, l, min(r, tm)) + self._qry(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r)
+
+ls = LazySeg([1, 2, 3, 4, 5])
+ls.range_add(1, 3, 10)
+print(ls.query(0, 4))
+",
+    next: None, show_type_chips: false, micro_step: 708,
+};
+
 
 
 
@@ -26554,7 +27269,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY699_COUNT_INVERSIONS,
     &PY700_REVERSE_PAIRS,
     &PY701_COUNT_SMALLER,
-    &PY702_FENWICK_KTH
+    &PY702_FENWICK_KTH,
+    &PY703_SEGTREE_SUM,
+    &PY704_SEGTREE_MIN,
+    &PY705_SEGTREE_MAX,
+    &PY706_SEGTREE_XOR,
+    &PY707_SEGTREE_KTH,
+    &PY708_LAZY_SEGTREE
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -26698,7 +27419,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 702);
+            assert!(step.micro_step >= 1 && step.micro_step <= 708);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -29140,7 +29861,13 @@ mod tests {
             (699, "py-699-count-inversions", Some("py-700-reverse-pairs")),
             (700, "py-700-reverse-pairs", Some("py-701-count-smaller")),
             (701, "py-701-count-smaller", Some("py-702-fenwick-kth")),
-            (702, "py-702-fenwick-kth", None),
+            (702, "py-702-fenwick-kth", Some("py-703-segtree-sum")),
+            (703, "py-703-segtree-sum", Some("py-704-segtree-min")),
+            (704, "py-704-segtree-min", Some("py-705-segtree-max")),
+            (705, "py-705-segtree-max", Some("py-706-segtree-xor")),
+            (706, "py-706-segtree-xor", Some("py-707-segtree-kth")),
+            (707, "py-707-segtree-kth", Some("py-708-lazy-segtree")),
+            (708, "py-708-lazy-segtree", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
