@@ -864,6 +864,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 856, step_id: "py-856-backtracking-v-lower-boundary" },
   { level_id: 857, step_id: "py-857-backtracking-v-dependency-order" },
   { level_id: 858, step_id: "py-858-backtracking-v-minimum-transition" },
+  { level_id: 859, step_id: "py-859-bitmask-iv-canonicalize" },
+  { level_id: 860, step_id: "py-860-bitmask-iv-prefix-state" },
+  { level_id: 861, step_id: "py-861-bitmask-iv-bounded-window" },
+  { level_id: 862, step_id: "py-862-bitmask-iv-lower-boundary" },
+  { level_id: 863, step_id: "py-863-bitmask-iv-dependency-order" },
+  { level_id: 864, step_id: "py-864-bitmask-iv-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
