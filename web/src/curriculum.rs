@@ -41375,7 +41375,324 @@ print(minimum_transition_randomized_i([10, 15, 20]))
 
 print(minimum_transition_randomized_i([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 972,
+    next: Some("py-973-offline-queries-i-canonicalize"), show_type_chips: false, micro_step: 972,
+};
+
+
+pub const PY973_OFFLINE_QUERIES_I_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-973-offline-queries-i-canonicalize", title: "DSA Offline Queries I · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de Offline Queries I.",
+    prompt_md: "**Offline Queries I: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_offline_queries_i(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_offline_queries_i(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_offline_queries_i([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_973_offline_queries_i_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_offline_queries_i'))
+    assert ns['canonicalize_offline_queries_i']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_offline_queries_i']([]) == []
+    assert ns['canonicalize_offline_queries_i']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_offline_queries_i(values):
+    return sorted(set(values))
+
+print(canonicalize_offline_queries_i([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_offline_queries_i(values):
+    return sorted(set(values))
+
+print(canonicalize_offline_queries_i([3, 1, 2, 3, 1]))
+",
+    next: Some("py-974-offline-queries-i-prefix-state"), show_type_chips: false, micro_step: 973,
+};
+
+pub const PY974_OFFLINE_QUERIES_I_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-974-offline-queries-i-prefix-state", title: "DSA Offline Queries I · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de Offline Queries I.",
+    prompt_md: "**Offline Queries I: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_offline_queries_i(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_offline_queries_i(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_offline_queries_i([3, 1, 4]))
+",
+    pytest: "def test_974_offline_queries_i_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_offline_queries_i'))
+    assert ns['prefix_state_offline_queries_i']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_offline_queries_i']([]) == []
+    assert ns['prefix_state_offline_queries_i']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_offline_queries_i(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_offline_queries_i([3, 1, 4]))
+",
+    solution_example: "def prefix_state_offline_queries_i(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_offline_queries_i([3, 1, 4]))
+",
+    next: Some("py-975-offline-queries-i-bounded-window"), show_type_chips: false, micro_step: 974,
+};
+
+pub const PY975_OFFLINE_QUERIES_I_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-975-offline-queries-i-bounded-window", title: "DSA Offline Queries I · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de Offline Queries I.",
+    prompt_md: "**Offline Queries I: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_offline_queries_i(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_offline_queries_i(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_offline_queries_i([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_975_offline_queries_i_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_offline_queries_i'))
+    assert ns['best_window_offline_queries_i']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_offline_queries_i']([4], 1) == 4
+    assert ns['best_window_offline_queries_i']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_offline_queries_i(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_offline_queries_i([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_offline_queries_i(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_offline_queries_i([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-976-offline-queries-i-lower-boundary"), show_type_chips: false, micro_step: 975,
+};
+
+pub const PY976_OFFLINE_QUERIES_I_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-976-offline-queries-i-lower-boundary", title: "DSA Offline Queries I · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de Offline Queries I.",
+    prompt_md: "**Offline Queries I: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_offline_queries_i(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_offline_queries_i(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_offline_queries_i([1, 3, 3, 7], 3))
+",
+    pytest: "def test_976_offline_queries_i_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_offline_queries_i'))
+    assert ns['lower_boundary_offline_queries_i']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_offline_queries_i']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_offline_queries_i']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_offline_queries_i(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_offline_queries_i([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_offline_queries_i(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_offline_queries_i([1, 3, 3, 7], 3))
+",
+    next: Some("py-977-offline-queries-i-dependency-order"), show_type_chips: false, micro_step: 976,
+};
+
+pub const PY977_OFFLINE_QUERIES_I_DEPENDENCY_ORDER: CodingStep = CodingStep {
+    id: "py-977-offline-queries-i-dependency-order", title: "DSA Offline Queries I · Dependency Order", objective: "Recorrer dependencias sin duplicar trabajo en un escenario de Offline Queries I.",
+    prompt_md: "**Offline Queries I: laboratorio 5**
+
+La cola separa descubrimiento de procesamiento; seen garantiza que cada nodo entra una sola vez.
+
+**Micro-reto:**
+1. Definí `dependency_order_offline_queries_i(graph, start)`
+2. Ejecutá el ejemplo; imprimí `[0, 1, 2, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def dependency_order_offline_queries_i(graph, start):
+#     queue = deque([start])
+#     seen = {start}
+#     order = []
+#     while queue:
+#         node = queue.popleft()
+#         order.append(node)
+#         for neighbor in graph[node]:
+#             if neighbor not in seen:
+#                 seen.add(neighbor)
+#                 queue.append(neighbor)
+#     return order
+#
+# print(dependency_order_offline_queries_i([[1, 2], [3], [3], []], 0))
+",
+    pytest: "def test_977_offline_queries_i_dependency_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('dependency_order_offline_queries_i'))
+    assert ns['dependency_order_offline_queries_i']([[1, 2], [3], [3], []], 0) == [0, 1, 2, 3]
+    assert ns['dependency_order_offline_queries_i']([[]], 0) == [0]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import deque
+
+def dependency_order_offline_queries_i(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_offline_queries_i([[1, 2], [3], [3], []], 0))
+",
+    solution_example: "from collections import deque
+
+def dependency_order_offline_queries_i(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_offline_queries_i([[1, 2], [3], [3], []], 0))
+",
+    next: Some("py-978-offline-queries-i-minimum-transition"), show_type_chips: false, micro_step: 977,
+};
+
+pub const PY978_OFFLINE_QUERIES_I_MINIMUM_TRANSITION: CodingStep = CodingStep {
+    id: "py-978-offline-queries-i-minimum-transition", title: "DSA Offline Queries I · Minimum Transition", objective: "Optimizar transiciones locales conservando solo el estado necesario de Offline Queries I.",
+    prompt_md: "**Offline Queries I: laboratorio 6**
+
+La recurrencia depende de dos estados previos; comprimirlos mantiene O(1) memoria.
+
+**Micro-reto:**
+1. Definí `minimum_transition_offline_queries_i(cost)`
+2. Ejecutá el ejemplo; imprimí `15`.",
+    starter_code: "# def minimum_transition_offline_queries_i(cost):
+#     two_back = one_back = 0
+#     for value in cost:
+#         two_back, one_back = one_back, value + min(two_back, one_back)
+#     return min(two_back, one_back)
+#
+# print(minimum_transition_offline_queries_i([10, 15, 20]))
+",
+    pytest: "def test_978_offline_queries_i_minimum_transition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_transition_offline_queries_i'))
+    assert ns['minimum_transition_offline_queries_i']([10, 15, 20]) == 15
+    assert ns['minimum_transition_offline_queries_i']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def minimum_transition_offline_queries_i(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_offline_queries_i([10, 15, 20]))
+",
+    solution_example: "def minimum_transition_offline_queries_i(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_offline_queries_i([10, 15, 20]))
+",
+    next: None, show_type_chips: false, micro_step: 978,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -42350,7 +42667,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY969_RANDOMIZED_I_BOUNDED_WINDOW,
     &PY970_RANDOMIZED_I_LOWER_BOUNDARY,
     &PY971_RANDOMIZED_I_DEPENDENCY_ORDER,
-    &PY972_RANDOMIZED_I_MINIMUM_TRANSITION
+    &PY972_RANDOMIZED_I_MINIMUM_TRANSITION,
+    &PY973_OFFLINE_QUERIES_I_CANONICALIZE,
+    &PY974_OFFLINE_QUERIES_I_PREFIX_STATE,
+    &PY975_OFFLINE_QUERIES_I_BOUNDED_WINDOW,
+    &PY976_OFFLINE_QUERIES_I_LOWER_BOUNDARY,
+    &PY977_OFFLINE_QUERIES_I_DEPENDENCY_ORDER,
+    &PY978_OFFLINE_QUERIES_I_MINIMUM_TRANSITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -42494,7 +42817,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 972);
+            assert!(step.micro_step >= 1 && step.micro_step <= 978);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -45206,7 +45529,13 @@ mod tests {
             (969, "py-969-randomized-i-bounded-window", Some("py-970-randomized-i-lower-boundary")),
             (970, "py-970-randomized-i-lower-boundary", Some("py-971-randomized-i-dependency-order")),
             (971, "py-971-randomized-i-dependency-order", Some("py-972-randomized-i-minimum-transition")),
-            (972, "py-972-randomized-i-minimum-transition", None),
+            (972, "py-972-randomized-i-minimum-transition", Some("py-973-offline-queries-i-canonicalize")),
+            (973, "py-973-offline-queries-i-canonicalize", Some("py-974-offline-queries-i-prefix-state")),
+            (974, "py-974-offline-queries-i-prefix-state", Some("py-975-offline-queries-i-bounded-window")),
+            (975, "py-975-offline-queries-i-bounded-window", Some("py-976-offline-queries-i-lower-boundary")),
+            (976, "py-976-offline-queries-i-lower-boundary", Some("py-977-offline-queries-i-dependency-order")),
+            (977, "py-977-offline-queries-i-dependency-order", Some("py-978-offline-queries-i-minimum-transition")),
+            (978, "py-978-offline-queries-i-minimum-transition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
