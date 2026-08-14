@@ -18300,7 +18300,468 @@ print(number_of_points([[1, 3], [2, 4]]))
 
 print(number_of_points([[1, 3], [2, 4]]))
 ",
-    next: None, show_type_chips: false, micro_step: 612,
+    next: Some("py-613-sliding-max"), show_type_chips: false, micro_step: 612,
+};
+
+
+pub const PY613_SLIDING_MAX: CodingStep = CodingStep {
+    id: "py-613-sliding-max", title: "DSA Mono Deque · Sliding Maximum", objective: "Máximo de cada ventana de tamaño k con una deque de índices decrecientes.",
+    prompt_md: "**Sliding Window Maximum**
+
+La frente de la deque siempre guarda el máximo vigente; expulsá índices fuera de ventana.
+
+**Micro-reto:**
+1. Definí `max_sliding_window(nums, k)`
+2. Ejecutá el ejemplo; imprimí `[3, 3, 5, 5, 6, 7]`.",
+    starter_code: "# from collections import deque
+#
+# def max_sliding_window(nums, k):
+#     q = deque()
+#     out = []
+#     for i, value in enumerate(nums):
+#         while q and nums[q[-1]] <= value:
+#             q.pop()
+#         q.append(i)
+#         if q[0] <= i - k:
+#             q.popleft()
+#         if i >= k - 1:
+#             out.append(nums[q[0]])
+#     return out
+#
+# print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
+",
+    pytest: "def test_613_sliding_max(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_sliding_window'))
+    assert ns['max_sliding_window']([1, 3, -1, -3, 5, 3, 6, 7], 3) == [3, 3, 5, 5, 6, 7]
+    assert ns['max_sliding_window']([1], 1) == [1]
+    assert capsys.readouterr().out.strip() == '[3, 3, 5, 5, 6, 7]'
+",
+    hint: "from collections import deque
+
+def max_sliding_window(nums, k):
+    q = deque()
+    out = []
+    for i, value in enumerate(nums):
+        while q and nums[q[-1]] <= value:
+            q.pop()
+        q.append(i)
+        if q[0] <= i - k:
+            q.popleft()
+        if i >= k - 1:
+            out.append(nums[q[0]])
+    return out
+
+print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
+",
+    solution_example: "from collections import deque
+
+def max_sliding_window(nums, k):
+    q = deque()
+    out = []
+    for i, value in enumerate(nums):
+        while q and nums[q[-1]] <= value:
+            q.pop()
+        q.append(i)
+        if q[0] <= i - k:
+            q.popleft()
+        if i >= k - 1:
+            out.append(nums[q[0]])
+    return out
+
+print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
+",
+    next: Some("py-614-sliding-min"), show_type_chips: false, micro_step: 613,
+};
+
+pub const PY614_SLIDING_MIN: CodingStep = CodingStep {
+    id: "py-614-sliding-min", title: "DSA Mono Deque · Sliding Minimum", objective: "Mínimo de cada ventana de tamaño k con deque creciente.",
+    prompt_md: "**Sliding Window Minimum**
+
+Simétrico al máximo: expulsá mayores por la cola y caducados por la frente.
+
+**Micro-reto:**
+1. Definí `min_sliding_window(nums, k)`
+2. Ejecutá el ejemplo; imprimí `[-1, -3, -3, -3, 3, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def min_sliding_window(nums, k):
+#     q = deque()
+#     out = []
+#     for i, value in enumerate(nums):
+#         while q and nums[q[-1]] >= value:
+#             q.pop()
+#         q.append(i)
+#         if q[0] <= i - k:
+#             q.popleft()
+#         if i >= k - 1:
+#             out.append(nums[q[0]])
+#     return out
+#
+# print(min_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
+",
+    pytest: "def test_614_sliding_min(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('min_sliding_window'))
+    assert ns['min_sliding_window']([1, 3, -1, -3, 5, 3, 6, 7], 3) == [-1, -3, -3, -3, 3, 3]
+    assert ns['min_sliding_window']([9, 8, 7], 2) == [8, 7]
+    assert capsys.readouterr().out.strip() == '[-1, -3, -3, -3, 3, 3]'
+",
+    hint: "from collections import deque
+
+def min_sliding_window(nums, k):
+    q = deque()
+    out = []
+    for i, value in enumerate(nums):
+        while q and nums[q[-1]] >= value:
+            q.pop()
+        q.append(i)
+        if q[0] <= i - k:
+            q.popleft()
+        if i >= k - 1:
+            out.append(nums[q[0]])
+    return out
+
+print(min_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
+",
+    solution_example: "from collections import deque
+
+def min_sliding_window(nums, k):
+    q = deque()
+    out = []
+    for i, value in enumerate(nums):
+        while q and nums[q[-1]] >= value:
+            q.pop()
+        q.append(i)
+        if q[0] <= i - k:
+            q.popleft()
+        if i >= k - 1:
+            out.append(nums[q[0]])
+    return out
+
+print(min_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
+",
+    next: Some("py-615-shortest-subarray"), show_type_chips: false, micro_step: 614,
+};
+
+pub const PY615_SHORTEST_SUBARRAY: CodingStep = CodingStep {
+    id: "py-615-shortest-subarray", title: "DSA Mono Deque · Shortest Subarray", objective: "Longitud mínima de un subarray cuya suma es al menos k (prefijos + deque).",
+    prompt_md: "**Shortest Subarray with Sum at Least K**
+
+Deque de prefijos crecientes: si prefix[i] - prefix[q[0]] >= k, podés recortar la frente.
+
+**Micro-reto:**
+1. Definí `shortest_subarray(nums, k)`
+2. Ejecutá el ejemplo; imprimí `3`.",
+    starter_code: "# from collections import deque
+#
+# def shortest_subarray(nums, k):
+#     prefix = [0]
+#     for value in nums:
+#         prefix.append(prefix[-1] + value)
+#     q = deque()
+#     best = len(nums) + 1
+#     for i, total in enumerate(prefix):
+#         while q and total - prefix[q[0]] >= k:
+#             best = min(best, i - q.popleft())
+#         while q and prefix[q[-1]] >= total:
+#             q.pop()
+#         q.append(i)
+#     return best if best <= len(nums) else -1
+#
+# print(shortest_subarray([2, -1, 2], 3))
+",
+    pytest: "def test_615_shortest_subarray(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('shortest_subarray'))
+    assert ns['shortest_subarray']([2, -1, 2], 3) == 3
+    assert ns['shortest_subarray']([1, 2], 4) == -1
+    assert ns['shortest_subarray']([1], 1) == 1
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "from collections import deque
+
+def shortest_subarray(nums, k):
+    prefix = [0]
+    for value in nums:
+        prefix.append(prefix[-1] + value)
+    q = deque()
+    best = len(nums) + 1
+    for i, total in enumerate(prefix):
+        while q and total - prefix[q[0]] >= k:
+            best = min(best, i - q.popleft())
+        while q and prefix[q[-1]] >= total:
+            q.pop()
+        q.append(i)
+    return best if best <= len(nums) else -1
+
+print(shortest_subarray([2, -1, 2], 3))
+",
+    solution_example: "from collections import deque
+
+def shortest_subarray(nums, k):
+    prefix = [0]
+    for value in nums:
+        prefix.append(prefix[-1] + value)
+    q = deque()
+    best = len(nums) + 1
+    for i, total in enumerate(prefix):
+        while q and total - prefix[q[0]] >= k:
+            best = min(best, i - q.popleft())
+        while q and prefix[q[-1]] >= total:
+            q.pop()
+        q.append(i)
+    return best if best <= len(nums) else -1
+
+print(shortest_subarray([2, -1, 2], 3))
+",
+    next: Some("py-616-constrained-subseq"), show_type_chips: false, micro_step: 615,
+};
+
+pub const PY616_CONSTRAINED_SUBSEQ: CodingStep = CodingStep {
+    id: "py-616-constrained-subseq", title: "DSA Mono Deque · Constrained Subseq", objective: "Máxima suma de subsecuencia con índices a distancia ≤ k.",
+    prompt_md: "**Constrained Subsequence Sum**
+
+dp[i] = nums[i] + max(0, max dp en (i-k..i)); la deque guarda ese máximo.
+
+**Micro-reto:**
+1. Definí `constrained_subset_sum(nums, k)`
+2. Ejecutá el ejemplo; imprimí `37`.",
+    starter_code: "# from collections import deque
+#
+# def constrained_subset_sum(nums, k):
+#     n = len(nums)
+#     dp = nums[:]
+#     q = deque()
+#     best = nums[0]
+#     for i in range(n):
+#         if q and q[0] < i - k:
+#             q.popleft()
+#         if q:
+#             dp[i] = max(dp[i], nums[i] + dp[q[0]])
+#         best = max(best, dp[i])
+#         while q and dp[q[-1]] <= dp[i]:
+#             q.pop()
+#         q.append(i)
+#     return best
+#
+# print(constrained_subset_sum([10, 2, -10, 5, 20], 2))
+",
+    pytest: "def test_616_constrained_subseq(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('constrained_subset_sum'))
+    assert ns['constrained_subset_sum']([10, 2, -10, 5, 20], 2) == 37
+    assert ns['constrained_subset_sum']([-1, -2, -3], 1) == -1
+    assert capsys.readouterr().out.strip() == '37'
+",
+    hint: "from collections import deque
+
+def constrained_subset_sum(nums, k):
+    n = len(nums)
+    dp = nums[:]
+    q = deque()
+    best = nums[0]
+    for i in range(n):
+        if q and q[0] < i - k:
+            q.popleft()
+        if q:
+            dp[i] = max(dp[i], nums[i] + dp[q[0]])
+        best = max(best, dp[i])
+        while q and dp[q[-1]] <= dp[i]:
+            q.pop()
+        q.append(i)
+    return best
+
+print(constrained_subset_sum([10, 2, -10, 5, 20], 2))
+",
+    solution_example: "from collections import deque
+
+def constrained_subset_sum(nums, k):
+    n = len(nums)
+    dp = nums[:]
+    q = deque()
+    best = nums[0]
+    for i in range(n):
+        if q and q[0] < i - k:
+            q.popleft()
+        if q:
+            dp[i] = max(dp[i], nums[i] + dp[q[0]])
+        best = max(best, dp[i])
+        while q and dp[q[-1]] <= dp[i]:
+            q.pop()
+        q.append(i)
+    return best
+
+print(constrained_subset_sum([10, 2, -10, 5, 20], 2))
+",
+    next: Some("py-617-jump-game-vi"), show_type_chips: false, micro_step: 616,
+};
+
+pub const PY617_JUMP_GAME_VI: CodingStep = CodingStep {
+    id: "py-617-jump-game-vi", title: "DSA Mono Deque · Jump Game VI", objective: "Máximo puntaje saltando a lo sumo k pasos hacia adelante.",
+    prompt_md: "**Jump Game VI**
+
+dp[i] = nums[i] + max(dp[i-k..i-1]); deque decreciente de candidatos.
+
+**Micro-reto:**
+1. Definí `max_result(nums, k)`
+2. Ejecutá el ejemplo; imprimí `7`.",
+    starter_code: "# from collections import deque
+#
+# def max_result(nums, k):
+#     n = len(nums)
+#     dp = [0] * n
+#     dp[0] = nums[0]
+#     q = deque([0])
+#     for i in range(1, n):
+#         while q and q[0] < i - k:
+#             q.popleft()
+#         dp[i] = nums[i] + dp[q[0]]
+#         while q and dp[q[-1]] <= dp[i]:
+#             q.pop()
+#         q.append(i)
+#     return dp[-1]
+#
+# print(max_result([1, -1, -2, 4, -7, 3], 2))
+",
+    pytest: "def test_617_jump_game_vi(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_result'))
+    assert ns['max_result']([1, -1, -2, 4, -7, 3], 2) == 7
+    assert ns['max_result']([10, -5, -2, 4, 0, 3], 3) == 17
+    assert capsys.readouterr().out.strip() == '7'
+",
+    hint: "from collections import deque
+
+def max_result(nums, k):
+    n = len(nums)
+    dp = [0] * n
+    dp[0] = nums[0]
+    q = deque([0])
+    for i in range(1, n):
+        while q and q[0] < i - k:
+            q.popleft()
+        dp[i] = nums[i] + dp[q[0]]
+        while q and dp[q[-1]] <= dp[i]:
+            q.pop()
+        q.append(i)
+    return dp[-1]
+
+print(max_result([1, -1, -2, 4, -7, 3], 2))
+",
+    solution_example: "from collections import deque
+
+def max_result(nums, k):
+    n = len(nums)
+    dp = [0] * n
+    dp[0] = nums[0]
+    q = deque([0])
+    for i in range(1, n):
+        while q and q[0] < i - k:
+            q.popleft()
+        dp[i] = nums[i] + dp[q[0]]
+        while q and dp[q[-1]] <= dp[i]:
+            q.pop()
+        q.append(i)
+    return dp[-1]
+
+print(max_result([1, -1, -2, 4, -7, 3], 2))
+",
+    next: Some("py-618-longest-cont-subarray"), show_type_chips: false, micro_step: 617,
+};
+
+pub const PY618_LONGEST_CONT_SUBARRAY: CodingStep = CodingStep {
+    id: "py-618-longest-cont-subarray", title: "DSA Mono Deque · Limit Difference", objective: "Longitud máxima de subarray cuyo max-min es ≤ limit.",
+    prompt_md: "**Longest Continuous Subarray**
+
+Dos deques (max y min) + dos punteros: avanzá left cuando max-min supera el límite.
+
+**Micro-reto:**
+1. Definí `longest_subarray(nums, limit)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# from collections import deque
+#
+# def longest_subarray(nums, limit):
+#     maxq, minq = deque(), deque()
+#     left = best = 0
+#     for right, value in enumerate(nums):
+#         while maxq and nums[maxq[-1]] < value:
+#             maxq.pop()
+#         while minq and nums[minq[-1]] > value:
+#             minq.pop()
+#         maxq.append(right)
+#         minq.append(right)
+#         while nums[maxq[0]] - nums[minq[0]] > limit:
+#             if maxq[0] == left:
+#                 maxq.popleft()
+#             if minq[0] == left:
+#                 minq.popleft()
+#             left += 1
+#         best = max(best, right - left + 1)
+#     return best
+#
+# print(longest_subarray([8, 2, 4, 7], 4))
+",
+    pytest: "def test_618_longest_cont_subarray(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('longest_subarray'))
+    assert ns['longest_subarray']([8, 2, 4, 7], 4) == 2
+    assert ns['longest_subarray']([10, 1, 2, 4, 7, 2], 5) == 4
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "from collections import deque
+
+def longest_subarray(nums, limit):
+    maxq, minq = deque(), deque()
+    left = best = 0
+    for right, value in enumerate(nums):
+        while maxq and nums[maxq[-1]] < value:
+            maxq.pop()
+        while minq and nums[minq[-1]] > value:
+            minq.pop()
+        maxq.append(right)
+        minq.append(right)
+        while nums[maxq[0]] - nums[minq[0]] > limit:
+            if maxq[0] == left:
+                maxq.popleft()
+            if minq[0] == left:
+                minq.popleft()
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+
+print(longest_subarray([8, 2, 4, 7], 4))
+",
+    solution_example: "from collections import deque
+
+def longest_subarray(nums, limit):
+    maxq, minq = deque(), deque()
+    left = best = 0
+    for right, value in enumerate(nums):
+        while maxq and nums[maxq[-1]] < value:
+            maxq.pop()
+        while minq and nums[minq[-1]] > value:
+            minq.pop()
+        maxq.append(right)
+        minq.append(right)
+        while nums[maxq[0]] - nums[minq[0]] > limit:
+            if maxq[0] == left:
+                maxq.popleft()
+            if minq[0] == left:
+                minq.popleft()
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+
+print(longest_subarray([8, 2, 4, 7], 4))
+",
+    next: None, show_type_chips: false, micro_step: 618,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -18915,7 +19376,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY609_CAR_POOLING,
     &PY610_RANGE_ADDITION_II,
     &PY611_POPULATION_YEAR,
-    &PY612_POINTS_THAT_INTERSECT
+    &PY612_POINTS_THAT_INTERSECT,
+    &PY613_SLIDING_MAX,
+    &PY614_SLIDING_MIN,
+    &PY615_SHORTEST_SUBARRAY,
+    &PY616_CONSTRAINED_SUBSEQ,
+    &PY617_JUMP_GAME_VI,
+    &PY618_LONGEST_CONT_SUBARRAY
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -19059,7 +19526,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 612);
+            assert!(step.micro_step >= 1 && step.micro_step <= 618);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -21411,7 +21878,13 @@ mod tests {
             (609, "py-609-car-pooling", Some("py-610-range-addition-ii")),
             (610, "py-610-range-addition-ii", Some("py-611-population-year")),
             (611, "py-611-population-year", Some("py-612-points-that-intersect")),
-            (612, "py-612-points-that-intersect", None),
+            (612, "py-612-points-that-intersect", Some("py-613-sliding-max")),
+            (613, "py-613-sliding-max", Some("py-614-sliding-min")),
+            (614, "py-614-sliding-min", Some("py-615-shortest-subarray")),
+            (615, "py-615-shortest-subarray", Some("py-616-constrained-subseq")),
+            (616, "py-616-constrained-subseq", Some("py-617-jump-game-vi")),
+            (617, "py-617-jump-game-vi", Some("py-618-longest-cont-subarray")),
+            (618, "py-618-longest-cont-subarray", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

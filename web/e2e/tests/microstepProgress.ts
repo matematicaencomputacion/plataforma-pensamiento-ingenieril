@@ -618,6 +618,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 610, step_id: "py-610-range-addition-ii" },
   { level_id: 611, step_id: "py-611-population-year" },
   { level_id: 612, step_id: "py-612-points-that-intersect" },
+  { level_id: 613, step_id: "py-613-sliding-max" },
+  { level_id: 614, step_id: "py-614-sliding-min" },
+  { level_id: 615, step_id: "py-615-shortest-subarray" },
+  { level_id: 616, step_id: "py-616-constrained-subseq" },
+  { level_id: 617, step_id: "py-617-jump-game-vi" },
+  { level_id: 618, step_id: "py-618-longest-cont-subarray" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
