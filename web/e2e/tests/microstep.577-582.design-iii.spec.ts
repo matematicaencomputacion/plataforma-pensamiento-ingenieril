@@ -22,104 +22,170 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 377,
-    id: "py-377-single-number",
-    title: "DSA Single Number",
-    solution: `def single_number(nums):
-    x = 0
-    for n in nums:
-        x ^= n
-    return x
+    micro: 577,
+    id: "py-577-min-stack",
+    title: "DSA Min Stack",
+    solution: `class MinStack:
+    def __init__(self):
+        self.st = []
+        self.mn = []
+    def push(self, val):
+        self.st.append(val)
+        self.mn.append(val if not self.mn else min(val, self.mn[-1]))
+    def pop(self):
+        self.st.pop(); self.mn.pop()
+    def top(self):
+        return self.st[-1]
+    def get_min(self):
+        return self.mn[-1]
 
-print(single_number([2, 2, 1]))
+s = MinStack()
+s.push(-2); s.push(0); s.push(-3)
+print([s.get_min(), s.top()])
+s.pop()
+print([s.get_min(), s.top()])
 `,
-    nextUrl: /\/learn\/py-378-hamming-weight/,
-    cursorAfter: "378",
+    nextUrl: /\/learn\/py-578-my-queue/,
+    cursorAfter: "578",
   },
   {
-    micro: 378,
-    id: "py-378-hamming-weight",
-    title: "DSA Hamming Weight",
-    solution: `def hamming_weight(n):
-    c = 0
-    while n:
-        n &= n - 1
-        c += 1
-    return c
+    micro: 578,
+    id: "py-578-my-queue",
+    title: "DSA Stack Queue",
+    solution: `class MyQueue:
+    def __init__(self):
+        self.a, self.b = [], []
+    def push(self, x):
+        self.a.append(x)
+    def pop(self):
+        self.peek()
+        return self.b.pop()
+    def peek(self):
+        if not self.b:
+            while self.a:
+                self.b.append(self.a.pop())
+        return self.b[-1]
+    def empty(self):
+        return not self.a and not self.b
 
-print(hamming_weight(11))
+q = MyQueue()
+q.push(1); q.push(2)
+print([q.peek(), q.pop(), q.empty()])
 `,
-    nextUrl: /\/learn\/py-379-counting-bits/,
-    cursorAfter: "379",
+    nextUrl: /\/learn\/py-579-my-stack/,
+    cursorAfter: "579",
   },
   {
-    micro: 379,
-    id: "py-379-counting-bits",
-    title: "DSA Counting Bits",
-    solution: `def count_bits(n):
-    dp = [0] * (n + 1)
-    for i in range(1, n + 1):
-        dp[i] = dp[i >> 1] + (i & 1)
-    return dp
+    micro: 579,
+    id: "py-579-my-stack",
+    title: "DSA Queue Stack",
+    solution: `class MyStack:
+    def __init__(self):
+        from collections import deque
+        self.q = deque()
+    def push(self, x):
+        self.q.append(x)
+        for _ in range(len(self.q) - 1):
+            self.q.append(self.q.popleft())
+    def pop(self):
+        return self.q.popleft()
+    def top(self):
+        return self.q[0]
+    def empty(self):
+        return not self.q
 
-print(count_bits(5))
+s = MyStack()
+s.push(1); s.push(2)
+print([s.top(), s.pop(), s.empty()])
 `,
-    nextUrl: /\/learn\/py-380-reverse-bits/,
-    cursorAfter: "380",
+    nextUrl: /\/learn\/py-580-lru-cache/,
+    cursorAfter: "580",
   },
   {
-    micro: 380,
-    id: "py-380-reverse-bits",
-    title: "DSA Reverse Bits",
-    solution: `def reverse_bits(n):
-    out = 0
-    for _ in range(32):
-        out = (out << 1) | (n & 1)
-        n >>= 1
-    return out
+    micro: 580,
+    id: "py-580-lru-cache",
+    title: "DSA LRU Cache",
+    solution: `class LRUCache:
+    def __init__(self, cap):
+        from collections import OrderedDict
+        self.cap = cap
+        self.d = OrderedDict()
+    def get(self, key):
+        if key not in self.d:
+            return -1
+        self.d.move_to_end(key)
+        return self.d[key]
+    def put(self, key, value):
+        if key in self.d:
+            self.d.move_to_end(key)
+        self.d[key] = value
+        if len(self.d) > self.cap:
+            self.d.popitem(last=False)
 
-print(reverse_bits(43261596))
+c = LRUCache(2)
+c.put(1, 1); c.put(2, 2)
+print([c.get(1)])
+c.put(3, 3)
+print([c.get(2), c.get(3)])
 `,
-    nextUrl: /\/learn\/py-381-missing-number/,
-    cursorAfter: "381",
+    nextUrl: /\/learn\/py-581-hash-map/,
+    cursorAfter: "581",
   },
   {
-    micro: 381,
-    id: "py-381-missing-number",
-    title: "DSA Missing Number",
-    solution: `def missing_number(nums):
-    x = len(nums)
-    for i, v in enumerate(nums):
-        x ^= i ^ v
-    return x
+    micro: 581,
+    id: "py-581-hash-map",
+    title: "DSA Hash Map",
+    solution: `class MyHashMap:
+    def __init__(self):
+        self.d = {}
+    def put(self, key, value):
+        self.d[key] = value
+    def get(self, key):
+        return self.d.get(key, -1)
+    def remove(self, key):
+        self.d.pop(key, None)
 
-print(missing_number([3, 0, 1]))
+m = MyHashMap()
+m.put(1, 1); m.put(2, 2)
+print([m.get(1), m.get(3)])
+m.put(2, 1)
+print([m.get(2)])
+m.remove(2)
+print([m.get(2)])
 `,
-    nextUrl: /\/learn\/py-382-sum-two-ints/,
-    cursorAfter: "382",
+    nextUrl: /\/learn\/py-582-hash-set/,
+    cursorAfter: "582",
   },
   {
-    micro: 382,
-    id: "py-382-sum-two-ints",
-    title: "DSA Sum Two Ints",
-    solution: `def get_sum(a, b):
-    MASK = 0xFFFFFFFF
-    while b & MASK:
-        carry = (a & b) << 1
-        a = (a ^ b) & MASK
-        b = carry
-    return a if a <= 0x7FFFFFFF else ~(a ^ MASK)
+    micro: 582,
+    id: "py-582-hash-set",
+    title: "DSA Hash Set",
+    solution: `class MyHashSet:
+    def __init__(self):
+        self.s = set()
+    def add(self, key):
+        self.s.add(key)
+    def remove(self, key):
+        self.s.discard(key)
+    def contains(self, key):
+        return key in self.s
 
-print(get_sum(1, 2))
+h = MyHashSet()
+h.add(1); h.add(2)
+print([h.contains(1), h.contains(3)])
+h.add(2)
+print([h.contains(2)])
+h.remove(2)
+print([h.contains(2)])
 `,
-    nextUrl: /\/learn\/py-383-num-islands/,
-    cursorAfter: "383",
+    nextUrl: /\/workspace/,
+    cursorAfter: "583",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:377|378|379|380|381|382)-/);
+    expect(step.id).toMatch(/^py-(?:577|578|579|580|581|582)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -149,7 +215,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 377–382 · bit manipulation II", () => {
+test.describe("micro-steps 577–582 · design III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

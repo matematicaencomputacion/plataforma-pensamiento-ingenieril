@@ -582,6 +582,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 574, step_id: "py-574-shuffle-2n" },
   { level_id: 575, step_id: "py-575-decompress-rle" },
   { level_id: 576, step_id: "py-576-create-target" },
+  { level_id: 577, step_id: "py-577-min-stack" },
+  { level_id: 578, step_id: "py-578-my-queue" },
+  { level_id: 579, step_id: "py-579-my-stack" },
+  { level_id: 580, step_id: "py-580-lru-cache" },
+  { level_id: 581, step_id: "py-581-hash-map" },
+  { level_id: 582, step_id: "py-582-hash-set" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
