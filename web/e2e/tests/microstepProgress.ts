@@ -858,6 +858,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 850, step_id: "py-850-dp-strings-v-lower-boundary" },
   { level_id: 851, step_id: "py-851-dp-strings-v-dependency-order" },
   { level_id: 852, step_id: "py-852-dp-strings-v-minimum-transition" },
+  { level_id: 853, step_id: "py-853-backtracking-v-canonicalize" },
+  { level_id: 854, step_id: "py-854-backtracking-v-prefix-state" },
+  { level_id: 855, step_id: "py-855-backtracking-v-bounded-window" },
+  { level_id: 856, step_id: "py-856-backtracking-v-lower-boundary" },
+  { level_id: 857, step_id: "py-857-backtracking-v-dependency-order" },
+  { level_id: 858, step_id: "py-858-backtracking-v-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
