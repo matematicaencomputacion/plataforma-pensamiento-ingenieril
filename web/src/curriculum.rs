@@ -9681,7 +9681,342 @@ root.right.left = TreeNode(15)
 root.right.right = TreeNode(7)
 print(min_depth(root))
 ",
-    next: None, show_type_chips: false, micro_step: 468,
+    next: Some("py-469-flood-fill"), show_type_chips: false, micro_step: 468,
+};
+
+
+pub const PY469_FLOOD_FILL: CodingStep = CodingStep {
+    id: "py-469-flood-fill", title: "DSA Flood Fill", objective: "Rellenar región conectada.",
+    prompt_md: "**Flood Fill**
+
+DFS/BFS desde (sr, sc).
+
+**Micro-reto:**
+1. Definí `flood_fill(image, sr, sc, color)`
+2. Imprimí `flood_fill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2)` (esperado: `[[2, 2, 2], [2, 2, 0], [2, 0, 1]]`).",
+    starter_code: "# def flood_fill(...):
+#     ...
+# print(flood_fill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2))
+",
+    pytest: "def test_469_flood_fill(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('flood_fill'))
+    assert ns['flood_fill']([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2) == [[2,2,2],[2,2,0],[2,0,1]]
+    assert ns['flood_fill']([[0,0,0],[0,0,0]], 0, 0, 0) == [[0,0,0],[0,0,0]]
+    assert capsys.readouterr().out.strip() == '[[2, 2, 2], [2, 2, 0], [2, 0, 1]]'
+",
+    hint: "def flood_fill(image, sr, sc, color):
+    start = image[sr][sc]
+    if start == color:
+        return image
+    rows, cols = len(image), len(image[0])
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols or image[r][c] != start:
+            return
+        image[r][c] = color
+        dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1)
+    dfs(sr, sc)
+    return image
+
+print(flood_fill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2))
+",
+    solution_example: "def flood_fill(image, sr, sc, color):
+    start = image[sr][sc]
+    if start == color:
+        return image
+    rows, cols = len(image), len(image[0])
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols or image[r][c] != start:
+            return
+        image[r][c] = color
+        dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1)
+    dfs(sr, sc)
+    return image
+
+print(flood_fill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2))
+",
+    next: Some("py-470-num-islands"), show_type_chips: false, micro_step: 469,
+};
+
+pub const PY470_NUM_ISLANDS: CodingStep = CodingStep {
+    id: "py-470-num-islands", title: "DSA Num Islands", objective: "Contar islas en grilla.",
+    prompt_md: "**Number of Islands**
+
+DFS sobre celdas `'1'`.
+
+**Micro-reto:**
+1. Definí `num_islands(grid)`
+2. Imprimí `num_islands([[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]])` (esperado: `3`).",
+    starter_code: "# def num_islands(...):
+#     ...
+# print(num_islands([[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]))
+",
+    pytest: "def test_470_num_islands(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('num_islands'))
+    g1 = [[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]
+    assert ns['num_islands']([row[:] for row in g1]) == 3
+    g2 = [[\"1\",\"1\",\"1\"],[\"0\",\"1\",\"0\"],[\"1\",\"1\",\"1\"]]
+    assert ns['num_islands']([row[:] for row in g2]) == 1
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def num_islands(grid):
+    if not grid:
+        return 0
+    rows, cols = len(grid), len(grid[0])
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] != \"1\":
+            return
+        grid[r][c] = \"0\"
+        dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1)
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == \"1\":
+                count += 1
+                dfs(r, c)
+    return count
+
+print(num_islands([[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]))
+",
+    solution_example: "def num_islands(grid):
+    if not grid:
+        return 0
+    rows, cols = len(grid), len(grid[0])
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] != \"1\":
+            return
+        grid[r][c] = \"0\"
+        dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1)
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == \"1\":
+                count += 1
+                dfs(r, c)
+    return count
+
+print(num_islands([[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]))
+",
+    next: Some("py-471-keys-rooms"), show_type_chips: false, micro_step: 470,
+};
+
+pub const PY471_KEYS_ROOMS: CodingStep = CodingStep {
+    id: "py-471-keys-rooms", title: "DSA Keys Rooms", objective: "¿Se visitan todas las habitaciones?",
+    prompt_md: "**Keys and Rooms**
+
+DFS/BFS con llaves.
+
+**Micro-reto:**
+1. Definí `can_visit_all_rooms(rooms)`
+2. Imprimí `can_visit_all_rooms([[1],[2],[3],[]])` (esperado: `True`).",
+    starter_code: "# def can_visit_all_rooms(...):
+#     ...
+# print(can_visit_all_rooms([[1],[2],[3],[]]))
+",
+    pytest: "def test_471_keys_rooms(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('can_visit_all_rooms'))
+    assert ns['can_visit_all_rooms']([[1],[2],[3],[]]) is True
+    assert ns['can_visit_all_rooms']([[1,3],[3,0,1],[2],[0]]) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def can_visit_all_rooms(rooms):
+    seen = set()
+    stack = [0]
+    while stack:
+        i = stack.pop()
+        if i in seen:
+            continue
+        seen.add(i)
+        stack.extend(rooms[i])
+    return len(seen) == len(rooms)
+
+print(can_visit_all_rooms([[1],[2],[3],[]]))
+",
+    solution_example: "def can_visit_all_rooms(rooms):
+    seen = set()
+    stack = [0]
+    while stack:
+        i = stack.pop()
+        if i in seen:
+            continue
+        seen.add(i)
+        stack.extend(rooms[i])
+    return len(seen) == len(rooms)
+
+print(can_visit_all_rooms([[1],[2],[3],[]]))
+",
+    next: Some("py-472-town-judge"), show_type_chips: false, micro_step: 471,
+};
+
+pub const PY472_TOWN_JUDGE: CodingStep = CodingStep {
+    id: "py-472-town-judge", title: "DSA Town Judge", objective: "Encontrar el juez del pueblo.",
+    prompt_md: "**Find the Town Judge**
+
+Grado entrante/saliente.
+
+**Micro-reto:**
+1. Definí `find_judge(n, trust)`
+2. Imprimí `find_judge(2, [[1,2]])` (esperado: `2`).",
+    starter_code: "# def find_judge(...):
+#     ...
+# print(find_judge(2, [[1,2]]))
+",
+    pytest: "def test_472_town_judge(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_judge'))
+    assert ns['find_judge'](2, [[1,2]]) == 2
+    assert ns['find_judge'](3, [[1,3],[2,3]]) == 3
+    assert ns['find_judge'](3, [[1,3],[2,3],[3,1]]) == -1
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def find_judge(n, trust):
+    score = [0] * (n + 1)
+    for a, b in trust:
+        score[a] -= 1
+        score[b] += 1
+    for i in range(1, n + 1):
+        if score[i] == n - 1:
+            return i
+    return -1
+
+print(find_judge(2, [[1,2]]))
+",
+    solution_example: "def find_judge(n, trust):
+    score = [0] * (n + 1)
+    for a, b in trust:
+        score[a] -= 1
+        score[b] += 1
+    for i in range(1, n + 1):
+        if score[i] == n - 1:
+            return i
+    return -1
+
+print(find_judge(2, [[1,2]]))
+",
+    next: Some("py-473-max-island"), show_type_chips: false, micro_step: 472,
+};
+
+pub const PY473_MAX_ISLAND: CodingStep = CodingStep {
+    id: "py-473-max-island", title: "DSA Max Island", objective: "Área máxima de isla.",
+    prompt_md: "**Max Area of Island**
+
+DFS contando celdas.
+
+**Micro-reto:**
+1. Definí `max_area_of_island(grid)`
+2. Imprimí `max_area_of_island([[1,0,0],[1,1,0],[0,0,1]])` (esperado: `3`).",
+    starter_code: "# def max_area_of_island(...):
+#     ...
+# print(max_area_of_island([[1,0,0],[1,1,0],[0,0,1]]))
+",
+    pytest: "def test_473_max_island(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_area_of_island'))
+    g1 = [[1,0,0],[1,1,0],[0,0,1]]
+    assert ns['max_area_of_island']([row[:] for row in g1]) == 3
+    assert ns['max_area_of_island']([[0,0,0],[0,0,0]]) == 0
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def max_area_of_island(grid):
+    rows, cols = len(grid), len(grid[0])
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] != 1:
+            return 0
+        grid[r][c] = 0
+        return 1 + dfs(r + 1, c) + dfs(r - 1, c) + dfs(r, c + 1) + dfs(r, c - 1)
+    best = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == 1:
+                best = max(best, dfs(r, c))
+    return best
+
+print(max_area_of_island([[1,0,0],[1,1,0],[0,0,1]]))
+",
+    solution_example: "def max_area_of_island(grid):
+    rows, cols = len(grid), len(grid[0])
+    def dfs(r, c):
+        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] != 1:
+            return 0
+        grid[r][c] = 0
+        return 1 + dfs(r + 1, c) + dfs(r - 1, c) + dfs(r, c + 1) + dfs(r, c - 1)
+    best = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == 1:
+                best = max(best, dfs(r, c))
+    return best
+
+print(max_area_of_island([[1,0,0],[1,1,0],[0,0,1]]))
+",
+    next: Some("py-474-provinces"), show_type_chips: false, micro_step: 473,
+};
+
+pub const PY474_PROVINCES: CodingStep = CodingStep {
+    id: "py-474-provinces", title: "DSA Provinces", objective: "Contar provincias (componentes).",
+    prompt_md: "**Number of Provinces**
+
+Componentes conexas en matriz.
+
+**Micro-reto:**
+1. Definí `find_circle_num(is_connected)`
+2. Imprimí `find_circle_num([[1,1,0],[1,1,0],[0,0,1]])` (esperado: `2`).",
+    starter_code: "# def find_circle_num(...):
+#     ...
+# print(find_circle_num([[1,1,0],[1,1,0],[0,0,1]]))
+",
+    pytest: "def test_474_provinces(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_circle_num'))
+    assert ns['find_circle_num']([[1,1,0],[1,1,0],[0,0,1]]) == 2
+    assert ns['find_circle_num']([[1,0,0],[0,1,0],[0,0,1]]) == 3
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def find_circle_num(is_connected):
+    n = len(is_connected)
+    seen = [False] * n
+    def dfs(i):
+        for j in range(n):
+            if is_connected[i][j] and not seen[j]:
+                seen[j] = True
+                dfs(j)
+    count = 0
+    for i in range(n):
+        if not seen[i]:
+            seen[i] = True
+            dfs(i)
+            count += 1
+    return count
+
+print(find_circle_num([[1,1,0],[1,1,0],[0,0,1]]))
+",
+    solution_example: "def find_circle_num(is_connected):
+    n = len(is_connected)
+    seen = [False] * n
+    def dfs(i):
+        for j in range(n):
+            if is_connected[i][j] and not seen[j]:
+                seen[j] = True
+                dfs(j)
+    count = 0
+    for i in range(n):
+        if not seen[i]:
+            seen[i] = True
+            dfs(i)
+            count += 1
+    return count
+
+print(find_circle_num([[1,1,0],[1,1,0],[0,0,1]]))
+",
+    next: None, show_type_chips: false, micro_step: 474,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -10152,7 +10487,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY465_LEVEL_AVERAGES,
     &PY466_RIGHT_SIDE_VIEW,
     &PY467_BST_RANGE_SUM,
-    &PY468_MIN_DEPTH_BT
+    &PY468_MIN_DEPTH_BT,
+    &PY469_FLOOD_FILL,
+    &PY470_NUM_ISLANDS,
+    &PY471_KEYS_ROOMS,
+    &PY472_TOWN_JUDGE,
+    &PY473_MAX_ISLAND,
+    &PY474_PROVINCES
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -10296,7 +10637,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 468);
+            assert!(step.micro_step >= 1 && step.micro_step <= 474);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -11118,7 +11459,13 @@ mod tests {
             (465, "py-465-level-averages", Some("py-466-right-side-view")),
             (466, "py-466-right-side-view", Some("py-467-bst-range-sum")),
             (467, "py-467-bst-range-sum", Some("py-468-min-depth-bt")),
-            (468, "py-468-min-depth-bt", None),
+            (468, "py-468-min-depth-bt", Some("py-469-flood-fill")),
+            (469, "py-469-flood-fill", Some("py-470-num-islands")),
+            (470, "py-470-num-islands", Some("py-471-keys-rooms")),
+            (471, "py-471-keys-rooms", Some("py-472-town-judge")),
+            (472, "py-472-town-judge", Some("py-473-max-island")),
+            (473, "py-473-max-island", Some("py-474-provinces")),
+            (474, "py-474-provinces", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

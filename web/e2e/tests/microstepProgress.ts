@@ -474,6 +474,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 466, step_id: "py-466-right-side-view" },
   { level_id: 467, step_id: "py-467-bst-range-sum" },
   { level_id: 468, step_id: "py-468-min-depth-bt" },
+  { level_id: 469, step_id: "py-469-flood-fill" },
+  { level_id: 470, step_id: "py-470-num-islands" },
+  { level_id: 471, step_id: "py-471-keys-rooms" },
+  { level_id: 472, step_id: "py-472-town-judge" },
+  { level_id: 473, step_id: "py-473-max-island" },
+  { level_id: 474, step_id: "py-474-provinces" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
