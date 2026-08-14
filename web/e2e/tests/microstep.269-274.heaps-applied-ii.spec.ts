@@ -239,7 +239,7 @@ test.describe("micro-steps 269–274 · heaps aplicados II", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 552) {
+      if (nextMicro <= 558) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

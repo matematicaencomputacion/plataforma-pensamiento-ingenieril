@@ -22,145 +22,138 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 94,
-    id: "py-94-linked-node",
-    title: "DSA Linked List Node",
-    solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-node1 = Node(7)
-node2 = Node(11)
-node1.next = node2
-print(node1.next.data)
+    micro: 553,
+    id: "py-553-subsets",
+    title: "DSA Subsets",
+    solution: `def subsets(nums):
+    res = [[]]
+    for x in nums:
+        res += [r + [x] for r in res]
+    return res
+
+print(subsets([1, 2, 3]))
 `,
-    nextUrl: /\/learn\/py-95-linked-traverse/,
-    cursorAfter: "95",
+    nextUrl: /\/learn\/py-554-permute/,
+    cursorAfter: "554",
   },
   {
-    micro: 95,
-    id: "py-95-linked-traverse",
-    title: "DSA Linked List Traverse",
-    solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-def traverse(head):
-    current = head
-    while current:
-        print(current.data, end=" ")
-        current = current.next
-    print()
-node1 = Node(7)
-node2 = Node(11)
-node3 = Node(3)
-node1.next = node2
-node2.next = node3
-traverse(node1)
+    micro: 554,
+    id: "py-554-permute",
+    title: "DSA Permute",
+    solution: `def permute(nums):
+    res = []
+    def bt(path, used):
+        if len(path) == len(nums):
+            res.append(path[:]); return
+        for i, x in enumerate(nums):
+            if used[i]:
+                continue
+            used[i] = True
+            path.append(x)
+            bt(path, used)
+            path.pop()
+            used[i] = False
+    bt([], [False] * len(nums))
+    return res
+
+print(permute([1, 2, 3]))
 `,
-    nextUrl: /\/learn\/py-96-linked-lowest/,
-    cursorAfter: "96",
+    nextUrl: /\/learn\/py-555-combination-sum/,
+    cursorAfter: "555",
   },
   {
-    micro: 96,
-    id: "py-96-linked-lowest",
-    title: "DSA Linked List Lowest",
-    solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-def findLowestValue(head):
-    minValue = head.data
-    current = head.next
-    while current:
-        if current.data < minValue:
-            minValue = current.data
-        current = current.next
-    return minValue
-node1 = Node(7)
-node2 = Node(11)
-node3 = Node(3)
-node4 = Node(2)
-node5 = Node(9)
-node1.next = node2
-node2.next = node3
-node3.next = node4
-node4.next = node5
-print(findLowestValue(node1))
+    micro: 555,
+    id: "py-555-combination-sum",
+    title: "DSA Comb Sum",
+    solution: `def combination_sum(candidates, target):
+    res = []
+    def bt(start, remain, path):
+        if remain == 0:
+            res.append(path[:]); return
+        for i in range(start, len(candidates)):
+            x = candidates[i]
+            if x > remain:
+                continue
+            path.append(x)
+            bt(i, remain - x, path)
+            path.pop()
+    bt(0, target, [])
+    return res
+
+print(combination_sum([2, 3, 6, 7], 7))
 `,
-    nextUrl: /\/learn\/py-97-recursion/,
-    cursorAfter: "97",
+    nextUrl: /\/learn\/py-556-letter-combos/,
+    cursorAfter: "556",
   },
   {
-    micro: 97,
-    id: "py-97-recursion",
-    title: "Python Recursion (factorial)",
-    solution: `def factorial(n):
-    if n == 1:
-        return 1
-    else:
-        return n * factorial(n - 1)
-print(factorial(5))
+    micro: 556,
+    id: "py-556-letter-combos",
+    title: "DSA Letter Combos",
+    solution: `def letter_combinations(digits):
+    if not digits:
+        return []
+    m = {"2": "abc", "3": "def", "4": "ghi", "5": "jkl", "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz"}
+    res = [""]
+    for d in digits:
+        res = [p + c for p in res for c in m[d]]
+    return res
+
+print(letter_combinations("23"))
 `,
-    nextUrl: /\/learn\/py-98-fibonacci/,
-    cursorAfter: "98",
+    nextUrl: /\/learn\/py-557-generate-parens/,
+    cursorAfter: "557",
   },
   {
-    micro: 98,
-    id: "py-98-fibonacci",
-    title: "Python Recursion (Fibonacci)",
-    solution: `def fib(n):
-    if n == 0:
-        return 0
-    if n == 1:
-        return 1
-    return fib(n - 1) + fib(n - 2)
-print(fib(7))
+    micro: 557,
+    id: "py-557-generate-parens",
+    title: "DSA Generate Parens",
+    solution: `def generate_parenthesis(n):
+    res = []
+    def bt(s, op, cl):
+        if len(s) == 2 * n:
+            res.append(s); return
+        if op < n:
+            bt(s + "(", op + 1, cl)
+        if cl < op:
+            bt(s + ")", op, cl + 1)
+    bt("", 0, 0)
+    return res
+
+print(generate_parenthesis(3))
 `,
-    nextUrl: /\/learn\/py-99-quicksort/,
-    cursorAfter: "99",
+    nextUrl: /\/learn\/py-558-word-search/,
+    cursorAfter: "558",
   },
   {
-    micro: 99,
-    id: "py-99-quicksort",
-    title: "DSA Quicksort",
-    solution: `def partition(array, low, high):
-    pivot = array[high]
-    i = low - 1
-    for j in range(low, high):
-        if array[j] <= pivot:
-            i += 1
-            array[i], array[j] = array[j], array[i]
-    array[i+1], array[high] = array[high], array[i+1]
-    return i+1
-def quicksort(array, low=0, high=None):
-    if high is None:
-        high = len(array) - 1
-    if low < high:
-        pivot_index = partition(array, low, high)
-        quicksort(array, low, pivot_index-1)
-        quicksort(array, pivot_index+1, high)
-mylist = [64, 34, 25, 5, 22, 11, 90, 12]
-quicksort(mylist)
-print(mylist)
+    micro: 558,
+    id: "py-558-word-search",
+    title: "DSA Word Search",
+    solution: `def exist(board, word):
+    rows, cols = len(board), len(board[0])
+    def dfs(r, c, i):
+        if i == len(word):
+            return True
+        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[i]:
+            return False
+        tmp, board[r][c] = board[r][c], "#"
+        ok = dfs(r+1,c,i+1) or dfs(r-1,c,i+1) or dfs(r,c+1,i+1) or dfs(r,c-1,i+1)
+        board[r][c] = tmp
+        return ok
+    return any(dfs(i, j, 0) for i in range(rows) for j in range(cols))
+
+print(exist([["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], "ABCCED"))
 `,
-    nextUrl: /\/learn\/py-100-hash-count/,
-    cursorAfter: "100",
-  },
-  {
-    micro: 100,
-    id: "py-100-hash-count",
-    title: "DSA Hash Tables (count)",
-    solution: `mylist = ["apple", "banana", "apple", "cherry", "banana", "apple"]
-counts = {}
-for x in mylist:
-    counts[x] = counts.get(x, 0) + 1
-print(counts["apple"])
-`,
-    nextUrl: /\/learn\/py-101-linked-delete/,
-    cursorAfter: "101",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "559",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:553|554|555|556|557|558)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -187,7 +180,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 94–100 · Linked Lists / Recursion / Quicksort / Hash", () => {
+test.describe("micro-steps 553–558 · backtrack III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
@@ -223,8 +216,7 @@ test.describe("micro-steps 94–100 · Linked Lists / Recursion / Quicksort / Ha
       await expect(
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
-      if (step.micro < 100) {
-        const nextMicro = step.micro + 1;
+      const nextMicro = step.micro + 1;
       if (nextMicro <= 558) {
         await expect(
           page.locator(
@@ -235,7 +227,6 @@ test.describe("micro-steps 94–100 · Linked Lists / Recursion / Quicksort / Ha
         await expect(
           page.locator(`#workspace-microstep-link-${nextMicro}`),
         ).toHaveCount(0);
-      }
       }
 
       await page.locator(`#workspace-microstep-link-${step.micro}`).click();

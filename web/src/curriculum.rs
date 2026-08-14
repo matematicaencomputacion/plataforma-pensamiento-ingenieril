@@ -14756,7 +14756,373 @@ print(missing_number([3, 0, 1]))
 
 print(missing_number([3, 0, 1]))
 ",
-    next: None, show_type_chips: false, micro_step: 552,
+    next: Some("py-553-subsets"), show_type_chips: false, micro_step: 552,
+};
+
+
+pub const PY553_SUBSETS: CodingStep = CodingStep {
+    id: "py-553-subsets", title: "DSA Subsets", objective: "Todos los subsets.",
+    prompt_md: "**Subsets**
+
+Todos los subsets.
+
+**Micro-reto:**
+1. Definí `subsets(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]`.",
+    starter_code: "# def subsets(nums):
+#     res = [[]]
+#     for x in nums:
+#         res += [r + [x] for r in res]
+#     return res
+#
+# print(subsets([1, 2, 3]))
+",
+    pytest: "def test_553_subsets(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('subsets'))
+    r = ns['subsets']([1, 2, 3])
+    assert sorted(r) == [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]
+    assert capsys.readouterr().out.strip() == '[[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]'
+",
+    hint: "def subsets(nums):
+    res = [[]]
+    for x in nums:
+        res += [r + [x] for r in res]
+    return res
+
+print(subsets([1, 2, 3]))
+",
+    solution_example: "def subsets(nums):
+    res = [[]]
+    for x in nums:
+        res += [r + [x] for r in res]
+    return res
+
+print(subsets([1, 2, 3]))
+",
+    next: Some("py-554-permute"), show_type_chips: false, micro_step: 553,
+};
+
+pub const PY554_PERMUTE: CodingStep = CodingStep {
+    id: "py-554-permute", title: "DSA Permute", objective: "Permutaciones.",
+    prompt_md: "**Permute**
+
+Permutaciones.
+
+**Micro-reto:**
+1. Definí `permute(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]`.",
+    starter_code: "# def permute(nums):
+#     res = []
+#     def bt(path, used):
+#         if len(path) == len(nums):
+#             res.append(path[:]); return
+#         for i, x in enumerate(nums):
+#             if used[i]:
+#                 continue
+#             used[i] = True
+#             path.append(x)
+#             bt(path, used)
+#             path.pop()
+#             used[i] = False
+#     bt([], [False] * len(nums))
+#     return res
+#
+# print(permute([1, 2, 3]))
+",
+    pytest: "def test_554_permute(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('permute'))
+    assert ns['permute']([1, 2]) == [[1, 2], [2, 1]]
+    assert capsys.readouterr().out.strip() == '[[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]'
+",
+    hint: "def permute(nums):
+    res = []
+    def bt(path, used):
+        if len(path) == len(nums):
+            res.append(path[:]); return
+        for i, x in enumerate(nums):
+            if used[i]:
+                continue
+            used[i] = True
+            path.append(x)
+            bt(path, used)
+            path.pop()
+            used[i] = False
+    bt([], [False] * len(nums))
+    return res
+
+print(permute([1, 2, 3]))
+",
+    solution_example: "def permute(nums):
+    res = []
+    def bt(path, used):
+        if len(path) == len(nums):
+            res.append(path[:]); return
+        for i, x in enumerate(nums):
+            if used[i]:
+                continue
+            used[i] = True
+            path.append(x)
+            bt(path, used)
+            path.pop()
+            used[i] = False
+    bt([], [False] * len(nums))
+    return res
+
+print(permute([1, 2, 3]))
+",
+    next: Some("py-555-combination-sum"), show_type_chips: false, micro_step: 554,
+};
+
+pub const PY555_COMBINATION_SUM: CodingStep = CodingStep {
+    id: "py-555-combination-sum", title: "DSA Comb Sum", objective: "Combinaciones a target.",
+    prompt_md: "**Comb Sum**
+
+Combinaciones a target.
+
+**Micro-reto:**
+1. Definí `combination_sum(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[2, 2, 3], [7]]`.",
+    starter_code: "# def combination_sum(candidates, target):
+#     res = []
+#     def bt(start, remain, path):
+#         if remain == 0:
+#             res.append(path[:]); return
+#         for i in range(start, len(candidates)):
+#             x = candidates[i]
+#             if x > remain:
+#                 continue
+#             path.append(x)
+#             bt(i, remain - x, path)
+#             path.pop()
+#     bt(0, target, [])
+#     return res
+#
+# print(combination_sum([2, 3, 6, 7], 7))
+",
+    pytest: "def test_555_combination_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('combination_sum'))
+    assert ns['combination_sum']([2, 3, 6, 7], 7) == [[2, 2, 3], [7]]
+    assert capsys.readouterr().out.strip() == '[[2, 2, 3], [7]]'
+",
+    hint: "def combination_sum(candidates, target):
+    res = []
+    def bt(start, remain, path):
+        if remain == 0:
+            res.append(path[:]); return
+        for i in range(start, len(candidates)):
+            x = candidates[i]
+            if x > remain:
+                continue
+            path.append(x)
+            bt(i, remain - x, path)
+            path.pop()
+    bt(0, target, [])
+    return res
+
+print(combination_sum([2, 3, 6, 7], 7))
+",
+    solution_example: "def combination_sum(candidates, target):
+    res = []
+    def bt(start, remain, path):
+        if remain == 0:
+            res.append(path[:]); return
+        for i in range(start, len(candidates)):
+            x = candidates[i]
+            if x > remain:
+                continue
+            path.append(x)
+            bt(i, remain - x, path)
+            path.pop()
+    bt(0, target, [])
+    return res
+
+print(combination_sum([2, 3, 6, 7], 7))
+",
+    next: Some("py-556-letter-combos"), show_type_chips: false, micro_step: 555,
+};
+
+pub const PY556_LETTER_COMBOS: CodingStep = CodingStep {
+    id: "py-556-letter-combos", title: "DSA Letter Combos", objective: "Combos de teclado.",
+    prompt_md: "**Letter Combos**
+
+Combos de teclado.
+
+**Micro-reto:**
+1. Definí `letter_combinations(...)`
+2. Ejecutá el ejemplo del starter; imprimí `['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf']`.",
+    starter_code: "# def letter_combinations(digits):
+#     if not digits:
+#         return []
+#     m = {\"2\": \"abc\", \"3\": \"def\", \"4\": \"ghi\", \"5\": \"jkl\", \"6\": \"mno\", \"7\": \"pqrs\", \"8\": \"tuv\", \"9\": \"wxyz\"}
+#     res = [\"\"]
+#     for d in digits:
+#         res = [p + c for p in res for c in m[d]]
+#     return res
+#
+# print(letter_combinations(\"23\"))
+",
+    pytest: "def test_556_letter_combos(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('letter_combinations'))
+    assert ns['letter_combinations']('23') == ['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf']
+    assert capsys.readouterr().out.strip() == \"['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf']\"
+",
+    hint: "def letter_combinations(digits):
+    if not digits:
+        return []
+    m = {\"2\": \"abc\", \"3\": \"def\", \"4\": \"ghi\", \"5\": \"jkl\", \"6\": \"mno\", \"7\": \"pqrs\", \"8\": \"tuv\", \"9\": \"wxyz\"}
+    res = [\"\"]
+    for d in digits:
+        res = [p + c for p in res for c in m[d]]
+    return res
+
+print(letter_combinations(\"23\"))
+",
+    solution_example: "def letter_combinations(digits):
+    if not digits:
+        return []
+    m = {\"2\": \"abc\", \"3\": \"def\", \"4\": \"ghi\", \"5\": \"jkl\", \"6\": \"mno\", \"7\": \"pqrs\", \"8\": \"tuv\", \"9\": \"wxyz\"}
+    res = [\"\"]
+    for d in digits:
+        res = [p + c for p in res for c in m[d]]
+    return res
+
+print(letter_combinations(\"23\"))
+",
+    next: Some("py-557-generate-parens"), show_type_chips: false, micro_step: 556,
+};
+
+pub const PY557_GENERATE_PARENS: CodingStep = CodingStep {
+    id: "py-557-generate-parens", title: "DSA Generate Parens", objective: "Paréntesis válidos.",
+    prompt_md: "**Generate Parens**
+
+Paréntesis válidos.
+
+**Micro-reto:**
+1. Definí `generate_parenthesis(...)`
+2. Ejecutá el ejemplo del starter; imprimí `['((()))', '(()())', '(())()', '()(())', '()()()']`.",
+    starter_code: "# def generate_parenthesis(n):
+#     res = []
+#     def bt(s, op, cl):
+#         if len(s) == 2 * n:
+#             res.append(s); return
+#         if op < n:
+#             bt(s + \"(\", op + 1, cl)
+#         if cl < op:
+#             bt(s + \")\", op, cl + 1)
+#     bt(\"\", 0, 0)
+#     return res
+#
+# print(generate_parenthesis(3))
+",
+    pytest: "def test_557_generate_parens(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('generate_parenthesis'))
+    assert ns['generate_parenthesis'](3) == ['((()))', '(()())', '(())()', '()(())', '()()()']
+    assert capsys.readouterr().out.strip() == \"['((()))', '(()())', '(())()', '()(())', '()()()']\"
+",
+    hint: "def generate_parenthesis(n):
+    res = []
+    def bt(s, op, cl):
+        if len(s) == 2 * n:
+            res.append(s); return
+        if op < n:
+            bt(s + \"(\", op + 1, cl)
+        if cl < op:
+            bt(s + \")\", op, cl + 1)
+    bt(\"\", 0, 0)
+    return res
+
+print(generate_parenthesis(3))
+",
+    solution_example: "def generate_parenthesis(n):
+    res = []
+    def bt(s, op, cl):
+        if len(s) == 2 * n:
+            res.append(s); return
+        if op < n:
+            bt(s + \"(\", op + 1, cl)
+        if cl < op:
+            bt(s + \")\", op, cl + 1)
+    bt(\"\", 0, 0)
+    return res
+
+print(generate_parenthesis(3))
+",
+    next: Some("py-558-word-search"), show_type_chips: false, micro_step: 557,
+};
+
+pub const PY558_WORD_SEARCH: CodingStep = CodingStep {
+    id: "py-558-word-search", title: "DSA Word Search", objective: "Palabra en board.",
+    prompt_md: "**Word Search**
+
+Palabra en board.
+
+**Micro-reto:**
+1. Definí `exist(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def exist(board, word):
+#     rows, cols = len(board), len(board[0])
+#     def dfs(r, c, i):
+#         if i == len(word):
+#             return True
+#         if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[i]:
+#             return False
+#         tmp, board[r][c] = board[r][c], \"#\"
+#         ok = dfs(r+1,c,i+1) or dfs(r-1,c,i+1) or dfs(r,c+1,i+1) or dfs(r,c-1,i+1)
+#         board[r][c] = tmp
+#         return ok
+#     return any(dfs(i, j, 0) for i in range(rows) for j in range(cols))
+#
+# print(exist([[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], \"ABCCED\"))
+",
+    pytest: "def test_558_word_search(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('exist'))
+    assert ns['exist']([['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'ABCCED') is True
+    assert ns['exist']([['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'ABCB') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def exist(board, word):
+    rows, cols = len(board), len(board[0])
+    def dfs(r, c, i):
+        if i == len(word):
+            return True
+        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[i]:
+            return False
+        tmp, board[r][c] = board[r][c], \"#\"
+        ok = dfs(r+1,c,i+1) or dfs(r-1,c,i+1) or dfs(r,c+1,i+1) or dfs(r,c-1,i+1)
+        board[r][c] = tmp
+        return ok
+    return any(dfs(i, j, 0) for i in range(rows) for j in range(cols))
+
+print(exist([[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], \"ABCCED\"))
+",
+    solution_example: "def exist(board, word):
+    rows, cols = len(board), len(board[0])
+    def dfs(r, c, i):
+        if i == len(word):
+            return True
+        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[i]:
+            return False
+        tmp, board[r][c] = board[r][c], \"#\"
+        ok = dfs(r+1,c,i+1) or dfs(r-1,c,i+1) or dfs(r,c+1,i+1) or dfs(r,c-1,i+1)
+        board[r][c] = tmp
+        return ok
+    return any(dfs(i, j, 0) for i in range(rows) for j in range(cols))
+
+print(exist([[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], \"ABCCED\"))
+",
+    next: None, show_type_chips: false, micro_step: 558,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -15311,7 +15677,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY549_COUNTING_BITS,
     &PY550_REVERSE_BITS,
     &PY551_SUM_TWO_INTS,
-    &PY552_MISSING_NUMBER
+    &PY552_MISSING_NUMBER,
+    &PY553_SUBSETS,
+    &PY554_PERMUTE,
+    &PY555_COMBINATION_SUM,
+    &PY556_LETTER_COMBOS,
+    &PY557_GENERATE_PARENS,
+    &PY558_WORD_SEARCH
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -15455,7 +15827,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 552);
+            assert!(step.micro_step >= 1 && step.micro_step <= 558);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -16907,7 +17279,97 @@ mod tests {
 
 
 
-            (552, "py-552-missing-number", None),
+            (552, "py-552-missing-number", Some("py-553-subsets")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (553, "py-553-subsets", Some("py-554-permute")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (554, "py-554-permute", Some("py-555-combination-sum")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (555, "py-555-combination-sum", Some("py-556-letter-combos")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (556, "py-556-letter-combos", Some("py-557-generate-parens")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (557, "py-557-generate-parens", Some("py-558-word-search")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (558, "py-558-word-search", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
