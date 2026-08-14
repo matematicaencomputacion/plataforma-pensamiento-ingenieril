@@ -22,160 +22,102 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 179,
-    id: "py-179-daily-temps",
-    title: "DSA Daily Temperatures",
-    solution: `def daily_temperatures(temps):
-    n = len(temps)
-    ans = [0] * n
-    stack = []
-    for i, t in enumerate(temps):
-        while stack and temps[stack[-1]] < t:
-            j = stack.pop()
-            ans[j] = i - j
-        stack.append(i)
-    return ans
-print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
+    micro: 547,
+    id: "py-547-single-number",
+    title: "DSA Single Number",
+    solution: `def single_number(nums):
+    x = 0
+    for n in nums:
+        x ^= n
+    return x
+
+print(single_number([4, 1, 2, 1, 2]))
 `,
-    nextUrl: /\/learn\/py-180-next-greater/,
-    cursorAfter: "180",
+    nextUrl: /\/learn\/py-548-hamming-dist/,
+    cursorAfter: "548",
   },
   {
-    micro: 180,
-    id: "py-180-next-greater",
-    title: "DSA Next Greater Element",
-    solution: `def next_greater(nums):
+    micro: 548,
+    id: "py-548-hamming-dist",
+    title: "DSA Hamming Dist",
+    solution: `def hamming_distance(x, y):
+    return (x ^ y).bit_count()
+
+print(hamming_distance(1, 4))
+`,
+    nextUrl: /\/learn\/py-549-counting-bits/,
+    cursorAfter: "549",
+  },
+  {
+    micro: 549,
+    id: "py-549-counting-bits",
+    title: "DSA Counting Bits",
+    solution: `def count_bits(n):
+    ans = [0] * (n + 1)
+    for i in range(1, n + 1):
+        ans[i] = ans[i >> 1] + (i & 1)
+    return ans
+
+print(count_bits(5))
+`,
+    nextUrl: /\/learn\/py-550-reverse-bits/,
+    cursorAfter: "550",
+  },
+  {
+    micro: 550,
+    id: "py-550-reverse-bits",
+    title: "DSA Reverse Bits",
+    solution: `def reverse_bits(n):
+    res = 0
+    for _ in range(32):
+        res = (res << 1) | (n & 1)
+        n >>= 1
+    return res
+
+print(reverse_bits(43261596))
+`,
+    nextUrl: /\/learn\/py-551-sum-two-ints/,
+    cursorAfter: "551",
+  },
+  {
+    micro: 551,
+    id: "py-551-sum-two-ints",
+    title: "DSA Sum Two Ints",
+    solution: `def get_sum(a, b):
+    MASK = 0xFFFFFFFF
+    MAX = 0x7FFFFFFF
+    while b & MASK:
+        carry = (a & b) << 1
+        a = (a ^ b) & MASK
+        b = carry & MASK
+    return a if a <= MAX else ~(a ^ MASK)
+
+print(get_sum(1, 2))
+`,
+    nextUrl: /\/learn\/py-552-missing-number/,
+    cursorAfter: "552",
+  },
+  {
+    micro: 552,
+    id: "py-552-missing-number",
+    title: "DSA Missing Number",
+    solution: `def missing_number(nums):
     n = len(nums)
-    ans = [-1] * n
-    stack = []
-    for i, x in enumerate(nums):
-        while stack and nums[stack[-1]] < x:
-            ans[stack.pop()] = x
-        stack.append(i)
-    return ans
-print(next_greater([2, 1, 2, 4, 3]))
+    return n * (n + 1) // 2 - sum(nums)
+
+print(missing_number([3, 0, 1]))
 `,
-    nextUrl: /\/learn\/py-181-eval-rpn/,
-    cursorAfter: "181",
-  },
-  {
-    micro: 181,
-    id: "py-181-eval-rpn",
-    title: "DSA Evaluate RPN",
-    solution: `def eval_rpn(tokens):
-    stack = []
-    for t in tokens:
-        if t in '+-*/':
-            b, a = stack.pop(), stack.pop()
-            if t == '+':
-                stack.append(a + b)
-            elif t == '-':
-                stack.append(a - b)
-            elif t == '*':
-                stack.append(a * b)
-            else:
-                stack.append(int(a / b))
-        else:
-            stack.append(int(t))
-    return stack[0]
-print(eval_rpn(['2', '1', '+', '3', '*']))
-`,
-    nextUrl: /\/learn\/py-182-queue-stacks/,
-    cursorAfter: "182",
-  },
-  {
-    micro: 182,
-    id: "py-182-queue-stacks",
-    title: "DSA Queue With Stacks",
-    solution: `class MyQueue:
-    def __init__(self):
-        self.inn = []
-        self.out = []
-
-    def push(self, x):
-        self.inn.append(x)
-
-    def pop(self):
-        self.peek()
-        return self.out.pop()
-
-    def peek(self):
-        if not self.out:
-            while self.inn:
-                self.out.append(self.inn.pop())
-        return self.out[-1]
-
-    def empty(self):
-        return not self.inn and not self.out
-
-q = MyQueue()
-q.push(1)
-q.push(2)
-print([q.peek(), q.pop(), q.empty()])
-`,
-    nextUrl: /\/learn\/py-183-sliding-max/,
-    cursorAfter: "183",
-  },
-  {
-    micro: 183,
-    id: "py-183-sliding-max",
-    title: "DSA Sliding Window Maximum",
-    solution: `from collections import deque
-
-def max_sliding_window(nums, k):
-    dq = deque()
-    out = []
-    for i, x in enumerate(nums):
-        while dq and dq[0] <= i - k:
-            dq.popleft()
-        while dq and nums[dq[-1]] <= x:
-            dq.pop()
-        dq.append(i)
-        if i >= k - 1:
-            out.append(nums[dq[0]])
-    return out
-print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
-`,
-    nextUrl: /\/learn\/py-184-min-stack/,
-    cursorAfter: "184",
-  },
-  {
-    micro: 184,
-    id: "py-184-min-stack",
-    title: "DSA Min Stack",
-    solution: `class MinStack:
-    def __init__(self):
-        self.stack = []
-        self.mins = []
-
-    def push(self, val):
-        self.stack.append(val)
-        self.mins.append(val if not self.mins else min(val, self.mins[-1]))
-
-    def pop(self):
-        self.stack.pop()
-        self.mins.pop()
-
-    def top(self):
-        return self.stack[-1]
-
-    def get_min(self):
-        return self.mins[-1]
-
-s = MinStack()
-s.push(-2)
-s.push(0)
-s.push(-3)
-a = s.get_min()
-s.pop()
-b = s.top()
-c = s.get_min()
-print([a, b, c])
-`,
-    nextUrl: /\/learn\/py-185-first-last/,
-    cursorAfter: "185",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "553",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:547|548|549|550|551|552)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -202,7 +144,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 179–184 · stacks / deque", () => {
+test.describe("micro-steps 547–552 · bit III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

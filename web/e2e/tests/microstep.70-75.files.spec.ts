@@ -156,7 +156,7 @@ test.describe("micro-steps 70–75 · File Handling + User Input", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 546) {
+      if (nextMicro <= 552) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
