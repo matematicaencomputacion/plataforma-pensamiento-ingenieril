@@ -30280,7 +30280,324 @@ print(minimum_transition_queues_vi([10, 15, 20]))
 
 print(minimum_transition_queues_vi([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 762,
+    next: Some("py-763-linked-lists-v-canonicalize"), show_type_chips: false, micro_step: 762,
+};
+
+
+pub const PY763_LINKED_LISTS_V_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-763-linked-lists-v-canonicalize", title: "DSA Linked Lists V · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de Linked Lists V.",
+    prompt_md: "**Linked Lists V: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_linked_lists_v(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_linked_lists_v(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_linked_lists_v([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_763_linked_lists_v_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_linked_lists_v'))
+    assert ns['canonicalize_linked_lists_v']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_linked_lists_v']([]) == []
+    assert ns['canonicalize_linked_lists_v']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_linked_lists_v(values):
+    return sorted(set(values))
+
+print(canonicalize_linked_lists_v([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_linked_lists_v(values):
+    return sorted(set(values))
+
+print(canonicalize_linked_lists_v([3, 1, 2, 3, 1]))
+",
+    next: Some("py-764-linked-lists-v-prefix-state"), show_type_chips: false, micro_step: 763,
+};
+
+pub const PY764_LINKED_LISTS_V_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-764-linked-lists-v-prefix-state", title: "DSA Linked Lists V · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de Linked Lists V.",
+    prompt_md: "**Linked Lists V: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_linked_lists_v(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_linked_lists_v(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_linked_lists_v([3, 1, 4]))
+",
+    pytest: "def test_764_linked_lists_v_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_linked_lists_v'))
+    assert ns['prefix_state_linked_lists_v']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_linked_lists_v']([]) == []
+    assert ns['prefix_state_linked_lists_v']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_linked_lists_v(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_linked_lists_v([3, 1, 4]))
+",
+    solution_example: "def prefix_state_linked_lists_v(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_linked_lists_v([3, 1, 4]))
+",
+    next: Some("py-765-linked-lists-v-bounded-window"), show_type_chips: false, micro_step: 764,
+};
+
+pub const PY765_LINKED_LISTS_V_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-765-linked-lists-v-bounded-window", title: "DSA Linked Lists V · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de Linked Lists V.",
+    prompt_md: "**Linked Lists V: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_linked_lists_v(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_linked_lists_v(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_linked_lists_v([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_765_linked_lists_v_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_linked_lists_v'))
+    assert ns['best_window_linked_lists_v']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_linked_lists_v']([4], 1) == 4
+    assert ns['best_window_linked_lists_v']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_linked_lists_v(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_linked_lists_v([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_linked_lists_v(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_linked_lists_v([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-766-linked-lists-v-lower-boundary"), show_type_chips: false, micro_step: 765,
+};
+
+pub const PY766_LINKED_LISTS_V_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-766-linked-lists-v-lower-boundary", title: "DSA Linked Lists V · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de Linked Lists V.",
+    prompt_md: "**Linked Lists V: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_linked_lists_v(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_linked_lists_v(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_linked_lists_v([1, 3, 3, 7], 3))
+",
+    pytest: "def test_766_linked_lists_v_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_linked_lists_v'))
+    assert ns['lower_boundary_linked_lists_v']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_linked_lists_v']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_linked_lists_v']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_linked_lists_v(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_linked_lists_v([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_linked_lists_v(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_linked_lists_v([1, 3, 3, 7], 3))
+",
+    next: Some("py-767-linked-lists-v-dependency-order"), show_type_chips: false, micro_step: 766,
+};
+
+pub const PY767_LINKED_LISTS_V_DEPENDENCY_ORDER: CodingStep = CodingStep {
+    id: "py-767-linked-lists-v-dependency-order", title: "DSA Linked Lists V · Dependency Order", objective: "Recorrer dependencias sin duplicar trabajo en un escenario de Linked Lists V.",
+    prompt_md: "**Linked Lists V: laboratorio 5**
+
+La cola separa descubrimiento de procesamiento; seen garantiza que cada nodo entra una sola vez.
+
+**Micro-reto:**
+1. Definí `dependency_order_linked_lists_v(graph, start)`
+2. Ejecutá el ejemplo; imprimí `[0, 1, 2, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def dependency_order_linked_lists_v(graph, start):
+#     queue = deque([start])
+#     seen = {start}
+#     order = []
+#     while queue:
+#         node = queue.popleft()
+#         order.append(node)
+#         for neighbor in graph[node]:
+#             if neighbor not in seen:
+#                 seen.add(neighbor)
+#                 queue.append(neighbor)
+#     return order
+#
+# print(dependency_order_linked_lists_v([[1, 2], [3], [3], []], 0))
+",
+    pytest: "def test_767_linked_lists_v_dependency_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('dependency_order_linked_lists_v'))
+    assert ns['dependency_order_linked_lists_v']([[1, 2], [3], [3], []], 0) == [0, 1, 2, 3]
+    assert ns['dependency_order_linked_lists_v']([[]], 0) == [0]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import deque
+
+def dependency_order_linked_lists_v(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_linked_lists_v([[1, 2], [3], [3], []], 0))
+",
+    solution_example: "from collections import deque
+
+def dependency_order_linked_lists_v(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_linked_lists_v([[1, 2], [3], [3], []], 0))
+",
+    next: Some("py-768-linked-lists-v-minimum-transition"), show_type_chips: false, micro_step: 767,
+};
+
+pub const PY768_LINKED_LISTS_V_MINIMUM_TRANSITION: CodingStep = CodingStep {
+    id: "py-768-linked-lists-v-minimum-transition", title: "DSA Linked Lists V · Minimum Transition", objective: "Optimizar transiciones locales conservando solo el estado necesario de Linked Lists V.",
+    prompt_md: "**Linked Lists V: laboratorio 6**
+
+La recurrencia depende de dos estados previos; comprimirlos mantiene O(1) memoria.
+
+**Micro-reto:**
+1. Definí `minimum_transition_linked_lists_v(cost)`
+2. Ejecutá el ejemplo; imprimí `15`.",
+    starter_code: "# def minimum_transition_linked_lists_v(cost):
+#     two_back = one_back = 0
+#     for value in cost:
+#         two_back, one_back = one_back, value + min(two_back, one_back)
+#     return min(two_back, one_back)
+#
+# print(minimum_transition_linked_lists_v([10, 15, 20]))
+",
+    pytest: "def test_768_linked_lists_v_minimum_transition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_transition_linked_lists_v'))
+    assert ns['minimum_transition_linked_lists_v']([10, 15, 20]) == 15
+    assert ns['minimum_transition_linked_lists_v']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def minimum_transition_linked_lists_v(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_linked_lists_v([10, 15, 20]))
+",
+    solution_example: "def minimum_transition_linked_lists_v(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_linked_lists_v([10, 15, 20]))
+",
+    next: None, show_type_chips: false, micro_step: 768,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -31045,7 +31362,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY759_QUEUES_VI_BOUNDED_WINDOW,
     &PY760_QUEUES_VI_LOWER_BOUNDARY,
     &PY761_QUEUES_VI_DEPENDENCY_ORDER,
-    &PY762_QUEUES_VI_MINIMUM_TRANSITION
+    &PY762_QUEUES_VI_MINIMUM_TRANSITION,
+    &PY763_LINKED_LISTS_V_CANONICALIZE,
+    &PY764_LINKED_LISTS_V_PREFIX_STATE,
+    &PY765_LINKED_LISTS_V_BOUNDED_WINDOW,
+    &PY766_LINKED_LISTS_V_LOWER_BOUNDARY,
+    &PY767_LINKED_LISTS_V_DEPENDENCY_ORDER,
+    &PY768_LINKED_LISTS_V_MINIMUM_TRANSITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -31189,7 +31512,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 762);
+            assert!(step.micro_step >= 1 && step.micro_step <= 768);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -33691,7 +34014,13 @@ mod tests {
             (759, "py-759-queues-vi-bounded-window", Some("py-760-queues-vi-lower-boundary")),
             (760, "py-760-queues-vi-lower-boundary", Some("py-761-queues-vi-dependency-order")),
             (761, "py-761-queues-vi-dependency-order", Some("py-762-queues-vi-minimum-transition")),
-            (762, "py-762-queues-vi-minimum-transition", None),
+            (762, "py-762-queues-vi-minimum-transition", Some("py-763-linked-lists-v-canonicalize")),
+            (763, "py-763-linked-lists-v-canonicalize", Some("py-764-linked-lists-v-prefix-state")),
+            (764, "py-764-linked-lists-v-prefix-state", Some("py-765-linked-lists-v-bounded-window")),
+            (765, "py-765-linked-lists-v-bounded-window", Some("py-766-linked-lists-v-lower-boundary")),
+            (766, "py-766-linked-lists-v-lower-boundary", Some("py-767-linked-lists-v-dependency-order")),
+            (767, "py-767-linked-lists-v-dependency-order", Some("py-768-linked-lists-v-minimum-transition")),
+            (768, "py-768-linked-lists-v-minimum-transition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
