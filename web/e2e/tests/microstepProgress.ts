@@ -798,6 +798,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 790, step_id: "py-790-graph-bfs-vi-lower-boundary" },
   { level_id: 791, step_id: "py-791-graph-bfs-vi-dependency-order" },
   { level_id: 792, step_id: "py-792-graph-bfs-vi-minimum-transition" },
+  { level_id: 793, step_id: "py-793-toposort-iv-canonicalize" },
+  { level_id: 794, step_id: "py-794-toposort-iv-prefix-state" },
+  { level_id: 795, step_id: "py-795-toposort-iv-bounded-window" },
+  { level_id: 796, step_id: "py-796-toposort-iv-lower-boundary" },
+  { level_id: 797, step_id: "py-797-toposort-iv-dependency-order" },
+  { level_id: 798, step_id: "py-798-toposort-iv-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
