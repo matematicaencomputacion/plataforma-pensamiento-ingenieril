@@ -606,6 +606,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 598, step_id: "py-598-single-number-ii" },
   { level_id: 599, step_id: "py-599-valid-mountain" },
   { level_id: 600, step_id: "py-600-capstone-two-sum" },
+  { level_id: 601, step_id: "py-601-subarray-sum-k" },
+  { level_id: 602, step_id: "py-602-pivot-index" },
+  { level_id: 603, step_id: "py-603-range-sum-query" },
+  { level_id: 604, step_id: "py-604-continuous-subarray" },
+  { level_id: 605, step_id: "py-605-subarrays-divisible-k" },
+  { level_id: 606, step_id: "py-606-max-subarray-len-k" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
