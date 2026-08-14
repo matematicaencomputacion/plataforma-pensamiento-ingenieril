@@ -966,6 +966,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 958, step_id: "py-958-graph-matching-i-lower-boundary" },
   { level_id: 959, step_id: "py-959-graph-matching-i-dependency-order" },
   { level_id: 960, step_id: "py-960-graph-matching-i-minimum-transition" },
+  { level_id: 961, step_id: "py-961-game-theory-i-canonicalize" },
+  { level_id: 962, step_id: "py-962-game-theory-i-prefix-state" },
+  { level_id: 963, step_id: "py-963-game-theory-i-bounded-window" },
+  { level_id: 964, step_id: "py-964-game-theory-i-lower-boundary" },
+  { level_id: 965, step_id: "py-965-game-theory-i-dependency-order" },
+  { level_id: 966, step_id: "py-966-game-theory-i-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
