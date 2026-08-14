@@ -690,6 +690,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 682, step_id: "py-682-split-list-parts" },
   { level_id: 683, step_id: "py-683-add-two-numbers-ii" },
   { level_id: 684, step_id: "py-684-remove-zero-sum" },
+  { level_id: 685, step_id: "py-685-furthest-building" },
+  { level_id: 686, step_id: "py-686-k-smallest-pairs" },
+  { level_id: 687, step_id: "py-687-kth-largest-stream" },
+  { level_id: 688, step_id: "py-688-connect-sticks" },
+  { level_id: 689, step_id: "py-689-ipo" },
+  { level_id: 690, step_id: "py-690-frequency-sort" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
