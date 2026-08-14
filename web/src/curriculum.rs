@@ -10359,7 +10359,326 @@ print(rob([2, 3, 2]))
 
 print(rob([2, 3, 2]))
 ",
-    next: None, show_type_chips: false, micro_step: 480,
+    next: Some("py-481-last-stone"), show_type_chips: false, micro_step: 480,
+};
+
+
+pub const PY481_LAST_STONE: CodingStep = CodingStep {
+    id: "py-481-last-stone", title: "DSA Last Stone", objective: "Última piedra tras chocar.",
+    prompt_md: "**Last Stone**
+
+Última piedra tras chocar.
+
+**Micro-reto:**
+1. Definí `last_stone_weight(...)`
+2. Ejecutá el ejemplo del starter; imprimí `1`.",
+    starter_code: "# def last_stone_weight(stones):
+#     import heapq
+#     h = [-s for s in stones]
+#     heapq.heapify(h)
+#     while len(h) > 1:
+#         a = -heapq.heappop(h)
+#         b = -heapq.heappop(h)
+#         if a != b:
+#             heapq.heappush(h, -(a - b))
+#     return -h[0] if h else 0
+#
+# print(last_stone_weight([2, 7, 4, 1, 8, 1]))
+",
+    pytest: "def test_481_last_stone(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('last_stone_weight'))
+    assert ns['last_stone_weight']([2, 7, 4, 1, 8, 1]) == 1
+    assert ns['last_stone_weight']([1]) == 1
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def last_stone_weight(stones):
+    import heapq
+    h = [-s for s in stones]
+    heapq.heapify(h)
+    while len(h) > 1:
+        a = -heapq.heappop(h)
+        b = -heapq.heappop(h)
+        if a != b:
+            heapq.heappush(h, -(a - b))
+    return -h[0] if h else 0
+
+print(last_stone_weight([2, 7, 4, 1, 8, 1]))
+",
+    solution_example: "def last_stone_weight(stones):
+    import heapq
+    h = [-s for s in stones]
+    heapq.heapify(h)
+    while len(h) > 1:
+        a = -heapq.heappop(h)
+        b = -heapq.heappop(h)
+        if a != b:
+            heapq.heappush(h, -(a - b))
+    return -h[0] if h else 0
+
+print(last_stone_weight([2, 7, 4, 1, 8, 1]))
+",
+    next: Some("py-482-kth-largest"), show_type_chips: false, micro_step: 481,
+};
+
+pub const PY482_KTH_LARGEST: CodingStep = CodingStep {
+    id: "py-482-kth-largest", title: "DSA Kth Largest", objective: "K-ésimo mayor en stream.",
+    prompt_md: "**Kth Largest**
+
+K-ésimo mayor en stream.
+
+**Micro-reto:**
+1. Definí `find_kth_largest(...)`
+2. Ejecutá el ejemplo del starter; imprimí `5`.",
+    starter_code: "# def find_kth_largest(nums, k):
+#     import heapq
+#     return heapq.nlargest(k, nums)[-1]
+#
+# print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
+",
+    pytest: "def test_482_kth_largest(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_kth_largest'))
+    assert ns['find_kth_largest']([3, 2, 1, 5, 6, 4], 2) == 5
+    assert ns['find_kth_largest']([3, 2, 3, 1, 2, 4, 5, 5, 6], 4) == 4
+    assert capsys.readouterr().out.strip() == '5'
+",
+    hint: "def find_kth_largest(nums, k):
+    import heapq
+    return heapq.nlargest(k, nums)[-1]
+
+print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
+",
+    solution_example: "def find_kth_largest(nums, k):
+    import heapq
+    return heapq.nlargest(k, nums)[-1]
+
+print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
+",
+    next: Some("py-483-top-k-freq"), show_type_chips: false, micro_step: 482,
+};
+
+pub const PY483_TOP_K_FREQ: CodingStep = CodingStep {
+    id: "py-483-top-k-freq", title: "DSA Top K Freq", objective: "K más frecuentes.",
+    prompt_md: "**Top K Freq**
+
+K más frecuentes.
+
+**Micro-reto:**
+1. Definí `top_k_frequent(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 2]`.",
+    starter_code: "# def top_k_frequent(nums, k):
+#     from collections import Counter
+#     import heapq
+#     return [x for x, _ in Counter(nums).most_common(k)]
+#
+# print(top_k_frequent([1, 1, 1, 2, 2, 3], 2))
+",
+    pytest: "def test_483_top_k_freq(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('top_k_frequent'))
+    assert sorted(ns['top_k_frequent']([1, 1, 1, 2, 2, 3], 2)) == [1, 2]
+    assert ns['top_k_frequent']([1], 1) == [1]
+    assert capsys.readouterr().out.strip() == '[1, 2]'
+",
+    hint: "def top_k_frequent(nums, k):
+    from collections import Counter
+    import heapq
+    return [x for x, _ in Counter(nums).most_common(k)]
+
+print(top_k_frequent([1, 1, 1, 2, 2, 3], 2))
+",
+    solution_example: "def top_k_frequent(nums, k):
+    from collections import Counter
+    import heapq
+    return [x for x, _ in Counter(nums).most_common(k)]
+
+print(top_k_frequent([1, 1, 1, 2, 2, 3], 2))
+",
+    next: Some("py-484-k-closest"), show_type_chips: false, micro_step: 483,
+};
+
+pub const PY484_K_CLOSEST: CodingStep = CodingStep {
+    id: "py-484-k-closest", title: "DSA K Closest", objective: "K puntos más cercanos al origen.",
+    prompt_md: "**K Closest**
+
+K puntos más cercanos al origen.
+
+**Micro-reto:**
+1. Definí `k_closest(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[-2, 2]]`.",
+    starter_code: "# def k_closest(points, k):
+#     import heapq
+#     return heapq.nsmallest(k, points, key=lambda p: p[0] ** 2 + p[1] ** 2)
+#
+# print(k_closest([[1, 3], [-2, 2]], 1))
+",
+    pytest: "def test_484_k_closest(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('k_closest'))
+    assert ns['k_closest']([[1, 3], [-2, 2]], 1) == [[-2, 2]]
+    assert ns['k_closest']([[3, 3], [5, -1], [-2, 4]], 2)
+    assert capsys.readouterr().out.strip() == '[[-2, 2]]'
+",
+    hint: "def k_closest(points, k):
+    import heapq
+    return heapq.nsmallest(k, points, key=lambda p: p[0] ** 2 + p[1] ** 2)
+
+print(k_closest([[1, 3], [-2, 2]], 1))
+",
+    solution_example: "def k_closest(points, k):
+    import heapq
+    return heapq.nsmallest(k, points, key=lambda p: p[0] ** 2 + p[1] ** 2)
+
+print(k_closest([[1, 3], [-2, 2]], 1))
+",
+    next: Some("py-485-ugly-number-ii"), show_type_chips: false, micro_step: 484,
+};
+
+pub const PY485_UGLY_NUMBER_II: CodingStep = CodingStep {
+    id: "py-485-ugly-number-ii", title: "DSA Ugly Number II", objective: "N-ésimo ugly number.",
+    prompt_md: "**Ugly Number II**
+
+N-ésimo ugly number.
+
+**Micro-reto:**
+1. Definí `nth_ugly_number(...)`
+2. Ejecutá el ejemplo del starter; imprimí `12`.",
+    starter_code: "# def nth_ugly_number(n):
+#     import heapq
+#     h = [1]
+#     seen = {1}
+#     x = 1
+#     for _ in range(n):
+#         x = heapq.heappop(h)
+#         for f in (2, 3, 5):
+#             y = x * f
+#             if y not in seen:
+#                 seen.add(y)
+#                 heapq.heappush(h, y)
+#     return x
+#
+# print(nth_ugly_number(10))
+",
+    pytest: "def test_485_ugly_number_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('nth_ugly_number'))
+    assert ns['nth_ugly_number'](1) == 1
+    assert ns['nth_ugly_number'](10) == 12
+    assert capsys.readouterr().out.strip() == '12'
+",
+    hint: "def nth_ugly_number(n):
+    import heapq
+    h = [1]
+    seen = {1}
+    x = 1
+    for _ in range(n):
+        x = heapq.heappop(h)
+        for f in (2, 3, 5):
+            y = x * f
+            if y not in seen:
+                seen.add(y)
+                heapq.heappush(h, y)
+    return x
+
+print(nth_ugly_number(10))
+",
+    solution_example: "def nth_ugly_number(n):
+    import heapq
+    h = [1]
+    seen = {1}
+    x = 1
+    for _ in range(n):
+        x = heapq.heappop(h)
+        for f in (2, 3, 5):
+            y = x * f
+            if y not in seen:
+                seen.add(y)
+                heapq.heappush(h, y)
+    return x
+
+print(nth_ugly_number(10))
+",
+    next: Some("py-486-reorg-string"), show_type_chips: false, micro_step: 485,
+};
+
+pub const PY486_REORG_STRING: CodingStep = CodingStep {
+    id: "py-486-reorg-string", title: "DSA Reorg String", objective: "Reorganizar para no adyacentes iguales.",
+    prompt_md: "**Reorg String**
+
+Reorganizar para no adyacentes iguales.
+
+**Micro-reto:**
+1. Definí `reorganize_string(...)`
+2. Ejecutá el ejemplo del starter; imprimí `aba`.",
+    starter_code: "# def reorganize_string(s):
+#     from collections import Counter
+#     import heapq
+#     h = [(-c, ch) for ch, c in Counter(s).items()]
+#     heapq.heapify(h)
+#     out = []
+#     prev = (0, \"\")
+#     while h:
+#         c, ch = heapq.heappop(h)
+#         out.append(ch)
+#         if prev[0] < 0:
+#             heapq.heappush(h, prev)
+#         prev = (c + 1, ch)
+#     res = \"\".join(out)
+#     return res if len(res) == len(s) else \"\"
+#
+# print(reorganize_string(\"aab\"))
+",
+    pytest: "def test_486_reorg_string(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('reorganize_string'))
+    assert ns['reorganize_string']('aab') in ('aba',)
+    assert ns['reorganize_string']('aaab') == ''
+    assert capsys.readouterr().out.strip() == 'aba'
+",
+    hint: "def reorganize_string(s):
+    from collections import Counter
+    import heapq
+    h = [(-c, ch) for ch, c in Counter(s).items()]
+    heapq.heapify(h)
+    out = []
+    prev = (0, \"\")
+    while h:
+        c, ch = heapq.heappop(h)
+        out.append(ch)
+        if prev[0] < 0:
+            heapq.heappush(h, prev)
+        prev = (c + 1, ch)
+    res = \"\".join(out)
+    return res if len(res) == len(s) else \"\"
+
+print(reorganize_string(\"aab\"))
+",
+    solution_example: "def reorganize_string(s):
+    from collections import Counter
+    import heapq
+    h = [(-c, ch) for ch, c in Counter(s).items()]
+    heapq.heapify(h)
+    out = []
+    prev = (0, \"\")
+    while h:
+        c, ch = heapq.heappop(h)
+        out.append(ch)
+        if prev[0] < 0:
+            heapq.heappush(h, prev)
+        prev = (c + 1, ch)
+    res = \"\".join(out)
+    return res if len(res) == len(s) else \"\"
+
+print(reorganize_string(\"aab\"))
+",
+    next: None, show_type_chips: false, micro_step: 486,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -10842,7 +11161,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY477_MIN_PATH_SUM,
     &PY478_INTEGER_BREAK,
     &PY479_DECODE_WAYS,
-    &PY480_ROB_CIRCLE
+    &PY480_ROB_CIRCLE,
+    &PY481_LAST_STONE,
+    &PY482_KTH_LARGEST,
+    &PY483_TOP_K_FREQ,
+    &PY484_K_CLOSEST,
+    &PY485_UGLY_NUMBER_II,
+    &PY486_REORG_STRING
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -10986,7 +11311,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 480);
+            assert!(step.micro_step >= 1 && step.micro_step <= 486);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -11826,7 +12151,25 @@ mod tests {
 
             (479, "py-479-decode-ways", Some("py-480-rob-circle")),
 
-            (480, "py-480-rob-circle", None),
+            (480, "py-480-rob-circle", Some("py-481-last-stone")),
+
+
+            (481, "py-481-last-stone", Some("py-482-kth-largest")),
+
+
+            (482, "py-482-kth-largest", Some("py-483-top-k-freq")),
+
+
+            (483, "py-483-top-k-freq", Some("py-484-k-closest")),
+
+
+            (484, "py-484-k-closest", Some("py-485-ugly-number-ii")),
+
+
+            (485, "py-485-ugly-number-ii", Some("py-486-reorg-string")),
+
+
+            (486, "py-486-reorg-string", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
