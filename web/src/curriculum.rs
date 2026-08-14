@@ -10016,7 +10016,350 @@ print(find_circle_num([[1,1,0],[1,1,0],[0,0,1]]))
 
 print(find_circle_num([[1,1,0],[1,1,0],[0,0,1]]))
 ",
-    next: None, show_type_chips: false, micro_step: 474,
+    next: Some("py-475-min-cost-stairs"), show_type_chips: false, micro_step: 474,
+};
+
+
+pub const PY475_MIN_COST_STAIRS: CodingStep = CodingStep {
+    id: "py-475-min-cost-stairs", title: "DSA Min Cost Stairs", objective: "Costo mínimo de subir escaleras.",
+    prompt_md: "**Min Cost Stairs**
+
+Costo mínimo de subir escaleras.
+
+**Micro-reto:**
+1. Definí `min_cost_climbing_stairs(...)`
+2. Ejecutá el ejemplo del starter; imprimí `15`.",
+    starter_code: "# def min_cost_climbing_stairs(cost):
+#     a = b = 0
+#     for c in cost:
+#         a, b = b, c + min(a, b)
+#     return min(a, b)
+#
+# print(min_cost_climbing_stairs([10, 15, 20]))
+",
+    pytest: "def test_475_min_cost_stairs(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('min_cost_climbing_stairs'))
+    assert ns['min_cost_climbing_stairs']([10, 15, 20]) == 15
+    assert ns['min_cost_climbing_stairs']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def min_cost_climbing_stairs(cost):
+    a = b = 0
+    for c in cost:
+        a, b = b, c + min(a, b)
+    return min(a, b)
+
+print(min_cost_climbing_stairs([10, 15, 20]))
+",
+    solution_example: "def min_cost_climbing_stairs(cost):
+    a = b = 0
+    for c in cost:
+        a, b = b, c + min(a, b)
+    return min(a, b)
+
+print(min_cost_climbing_stairs([10, 15, 20]))
+",
+    next: Some("py-476-unique-paths"), show_type_chips: false, micro_step: 475,
+};
+
+pub const PY476_UNIQUE_PATHS: CodingStep = CodingStep {
+    id: "py-476-unique-paths", title: "DSA Unique Paths", objective: "Caminos en grilla m x n.",
+    prompt_md: "**Unique Paths**
+
+Caminos en grilla m x n.
+
+**Micro-reto:**
+1. Definí `unique_paths(...)`
+2. Ejecutá el ejemplo del starter; imprimí `28`.",
+    starter_code: "# def unique_paths(m, n):
+#     row = [1] * n
+#     for _ in range(1, m):
+#         for j in range(1, n):
+#             row[j] += row[j - 1]
+#     return row[-1]
+#
+# print(unique_paths(3, 7))
+",
+    pytest: "def test_476_unique_paths(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('unique_paths'))
+    assert ns['unique_paths'](3, 7) == 28
+    assert ns['unique_paths'](3, 2) == 3
+    assert capsys.readouterr().out.strip() == '28'
+",
+    hint: "def unique_paths(m, n):
+    row = [1] * n
+    for _ in range(1, m):
+        for j in range(1, n):
+            row[j] += row[j - 1]
+    return row[-1]
+
+print(unique_paths(3, 7))
+",
+    solution_example: "def unique_paths(m, n):
+    row = [1] * n
+    for _ in range(1, m):
+        for j in range(1, n):
+            row[j] += row[j - 1]
+    return row[-1]
+
+print(unique_paths(3, 7))
+",
+    next: Some("py-477-min-path-sum"), show_type_chips: false, micro_step: 476,
+};
+
+pub const PY477_MIN_PATH_SUM: CodingStep = CodingStep {
+    id: "py-477-min-path-sum", title: "DSA Min Path Sum", objective: "Suma mínima en grilla.",
+    prompt_md: "**Min Path Sum**
+
+Suma mínima en grilla.
+
+**Micro-reto:**
+1. Definí `min_path_sum(...)`
+2. Ejecutá el ejemplo del starter; imprimí `7`.",
+    starter_code: "# def min_path_sum(grid):
+#     m, n = len(grid), len(grid[0])
+#     dp = [0] * n
+#     for i in range(m):
+#         for j in range(n):
+#             if i == 0 and j == 0:
+#                 dp[j] = grid[i][j]
+#             elif i == 0:
+#                 dp[j] = dp[j - 1] + grid[i][j]
+#             elif j == 0:
+#                 dp[j] = dp[j] + grid[i][j]
+#             else:
+#                 dp[j] = min(dp[j], dp[j - 1]) + grid[i][j]
+#     return dp[-1]
+#
+# print(min_path_sum([[1,3,1],[1,5,1],[4,2,1]]))
+",
+    pytest: "def test_477_min_path_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('min_path_sum'))
+    assert ns['min_path_sum']([[1,3,1],[1,5,1],[4,2,1]]) == 7
+    assert ns['min_path_sum']([[1,2,3],[4,5,6]]) == 12
+    assert capsys.readouterr().out.strip() == '7'
+",
+    hint: "def min_path_sum(grid):
+    m, n = len(grid), len(grid[0])
+    dp = [0] * n
+    for i in range(m):
+        for j in range(n):
+            if i == 0 and j == 0:
+                dp[j] = grid[i][j]
+            elif i == 0:
+                dp[j] = dp[j - 1] + grid[i][j]
+            elif j == 0:
+                dp[j] = dp[j] + grid[i][j]
+            else:
+                dp[j] = min(dp[j], dp[j - 1]) + grid[i][j]
+    return dp[-1]
+
+print(min_path_sum([[1,3,1],[1,5,1],[4,2,1]]))
+",
+    solution_example: "def min_path_sum(grid):
+    m, n = len(grid), len(grid[0])
+    dp = [0] * n
+    for i in range(m):
+        for j in range(n):
+            if i == 0 and j == 0:
+                dp[j] = grid[i][j]
+            elif i == 0:
+                dp[j] = dp[j - 1] + grid[i][j]
+            elif j == 0:
+                dp[j] = dp[j] + grid[i][j]
+            else:
+                dp[j] = min(dp[j], dp[j - 1]) + grid[i][j]
+    return dp[-1]
+
+print(min_path_sum([[1,3,1],[1,5,1],[4,2,1]]))
+",
+    next: Some("py-478-integer-break"), show_type_chips: false, micro_step: 477,
+};
+
+pub const PY478_INTEGER_BREAK: CodingStep = CodingStep {
+    id: "py-478-integer-break", title: "DSA Integer Break", objective: "Máximo producto partiendo n.",
+    prompt_md: "**Integer Break**
+
+Máximo producto partiendo n.
+
+**Micro-reto:**
+1. Definí `integer_break(...)`
+2. Ejecutá el ejemplo del starter; imprimí `36`.",
+    starter_code: "# def integer_break(n):
+#     if n <= 3:
+#         return n - 1
+#     q, r = divmod(n, 3)
+#     if r == 0:
+#         return 3 ** q
+#     if r == 1:
+#         return 3 ** (q - 1) * 4
+#     return 3 ** q * 2
+#
+# print(integer_break(10))
+",
+    pytest: "def test_478_integer_break(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('integer_break'))
+    assert ns['integer_break'](2) == 1
+    assert ns['integer_break'](10) == 36
+    assert capsys.readouterr().out.strip() == '36'
+",
+    hint: "def integer_break(n):
+    if n <= 3:
+        return n - 1
+    q, r = divmod(n, 3)
+    if r == 0:
+        return 3 ** q
+    if r == 1:
+        return 3 ** (q - 1) * 4
+    return 3 ** q * 2
+
+print(integer_break(10))
+",
+    solution_example: "def integer_break(n):
+    if n <= 3:
+        return n - 1
+    q, r = divmod(n, 3)
+    if r == 0:
+        return 3 ** q
+    if r == 1:
+        return 3 ** (q - 1) * 4
+    return 3 ** q * 2
+
+print(integer_break(10))
+",
+    next: Some("py-479-decode-ways"), show_type_chips: false, micro_step: 478,
+};
+
+pub const PY479_DECODE_WAYS: CodingStep = CodingStep {
+    id: "py-479-decode-ways", title: "DSA Decode Ways", objective: "Formas de decodificar dígitos.",
+    prompt_md: "**Decode Ways**
+
+Formas de decodificar dígitos.
+
+**Micro-reto:**
+1. Definí `num_decodings(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3`.",
+    starter_code: "# def num_decodings(s):
+#     if not s or s[0] == \"0\":
+#         return 0
+#     a, b = 1, 1
+#     for i in range(1, len(s)):
+#         cur = 0
+#         if s[i] != \"0\":
+#             cur += b
+#         two = int(s[i - 1:i + 1])
+#         if 10 <= two <= 26:
+#             cur += a
+#         a, b = b, cur
+#     return b
+#
+# print(num_decodings(\"226\"))
+",
+    pytest: "def test_479_decode_ways(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('num_decodings'))
+    assert ns['num_decodings']('12') == 2
+    assert ns['num_decodings']('226') == 3
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def num_decodings(s):
+    if not s or s[0] == \"0\":
+        return 0
+    a, b = 1, 1
+    for i in range(1, len(s)):
+        cur = 0
+        if s[i] != \"0\":
+            cur += b
+        two = int(s[i - 1:i + 1])
+        if 10 <= two <= 26:
+            cur += a
+        a, b = b, cur
+    return b
+
+print(num_decodings(\"226\"))
+",
+    solution_example: "def num_decodings(s):
+    if not s or s[0] == \"0\":
+        return 0
+    a, b = 1, 1
+    for i in range(1, len(s)):
+        cur = 0
+        if s[i] != \"0\":
+            cur += b
+        two = int(s[i - 1:i + 1])
+        if 10 <= two <= 26:
+            cur += a
+        a, b = b, cur
+    return b
+
+print(num_decodings(\"226\"))
+",
+    next: Some("py-480-rob-circle"), show_type_chips: false, micro_step: 479,
+};
+
+pub const PY480_ROB_CIRCLE: CodingStep = CodingStep {
+    id: "py-480-rob-circle", title: "DSA Rob Circle", objective: "House robber circular.",
+    prompt_md: "**Rob Circle**
+
+House robber circular.
+
+**Micro-reto:**
+1. Definí `rob(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3`.",
+    starter_code: "# def rob(nums):
+#     def linear(arr):
+#         a = b = 0
+#         for x in arr:
+#             a, b = b, max(b, a + x)
+#         return b
+#     if len(nums) == 1:
+#         return nums[0]
+#     return max(linear(nums[:-1]), linear(nums[1:]))
+#
+# print(rob([2, 3, 2]))
+",
+    pytest: "def test_480_rob_circle(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('rob'))
+    assert ns['rob']([2, 3, 2]) == 3
+    assert ns['rob']([1, 2, 3, 1]) == 4
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def rob(nums):
+    def linear(arr):
+        a = b = 0
+        for x in arr:
+            a, b = b, max(b, a + x)
+        return b
+    if len(nums) == 1:
+        return nums[0]
+    return max(linear(nums[:-1]), linear(nums[1:]))
+
+print(rob([2, 3, 2]))
+",
+    solution_example: "def rob(nums):
+    def linear(arr):
+        a = b = 0
+        for x in arr:
+            a, b = b, max(b, a + x)
+        return b
+    if len(nums) == 1:
+        return nums[0]
+    return max(linear(nums[:-1]), linear(nums[1:]))
+
+print(rob([2, 3, 2]))
+",
+    next: None, show_type_chips: false, micro_step: 480,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -10493,7 +10836,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY471_KEYS_ROOMS,
     &PY472_TOWN_JUDGE,
     &PY473_MAX_ISLAND,
-    &PY474_PROVINCES
+    &PY474_PROVINCES,
+    &PY475_MIN_COST_STAIRS,
+    &PY476_UNIQUE_PATHS,
+    &PY477_MIN_PATH_SUM,
+    &PY478_INTEGER_BREAK,
+    &PY479_DECODE_WAYS,
+    &PY480_ROB_CIRCLE
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -10637,7 +10986,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 474);
+            assert!(step.micro_step >= 1 && step.micro_step <= 480);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -11465,7 +11814,19 @@ mod tests {
             (471, "py-471-keys-rooms", Some("py-472-town-judge")),
             (472, "py-472-town-judge", Some("py-473-max-island")),
             (473, "py-473-max-island", Some("py-474-provinces")),
-            (474, "py-474-provinces", None),
+            (474, "py-474-provinces", Some("py-475-min-cost-stairs")),
+
+            (475, "py-475-min-cost-stairs", Some("py-476-unique-paths")),
+
+            (476, "py-476-unique-paths", Some("py-477-min-path-sum")),
+
+            (477, "py-477-min-path-sum", Some("py-478-integer-break")),
+
+            (478, "py-478-integer-break", Some("py-479-decode-ways")),
+
+            (479, "py-479-decode-ways", Some("py-480-rob-circle")),
+
+            (480, "py-480-rob-circle", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
