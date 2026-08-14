@@ -882,6 +882,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 874, step_id: "py-874-combinatorics-iii-lower-boundary" },
   { level_id: 875, step_id: "py-875-combinatorics-iii-dependency-order" },
   { level_id: 876, step_id: "py-876-combinatorics-iii-minimum-transition" },
+  { level_id: 877, step_id: "py-877-geometry-ii-canonicalize" },
+  { level_id: 878, step_id: "py-878-geometry-ii-prefix-state" },
+  { level_id: 879, step_id: "py-879-geometry-ii-bounded-window" },
+  { level_id: 880, step_id: "py-880-geometry-ii-lower-boundary" },
+  { level_id: 881, step_id: "py-881-geometry-ii-dependency-order" },
+  { level_id: 882, step_id: "py-882-geometry-ii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
