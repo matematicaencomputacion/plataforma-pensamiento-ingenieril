@@ -978,6 +978,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 970, step_id: "py-970-randomized-i-lower-boundary" },
   { level_id: 971, step_id: "py-971-randomized-i-dependency-order" },
   { level_id: 972, step_id: "py-972-randomized-i-minimum-transition" },
+  { level_id: 973, step_id: "py-973-offline-queries-i-canonicalize" },
+  { level_id: 974, step_id: "py-974-offline-queries-i-prefix-state" },
+  { level_id: 975, step_id: "py-975-offline-queries-i-bounded-window" },
+  { level_id: 976, step_id: "py-976-offline-queries-i-lower-boundary" },
+  { level_id: 977, step_id: "py-977-offline-queries-i-dependency-order" },
+  { level_id: 978, step_id: "py-978-offline-queries-i-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
