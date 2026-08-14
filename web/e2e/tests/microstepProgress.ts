@@ -558,6 +558,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 550, step_id: "py-550-reverse-bits" },
   { level_id: 551, step_id: "py-551-sum-two-ints" },
   { level_id: 552, step_id: "py-552-missing-number" },
+  { level_id: 553, step_id: "py-553-subsets" },
+  { level_id: 554, step_id: "py-554-permute" },
+  { level_id: 555, step_id: "py-555-combination-sum" },
+  { level_id: 556, step_id: "py-556-letter-combos" },
+  { level_id: 557, step_id: "py-557-generate-parens" },
+  { level_id: 558, step_id: "py-558-word-search" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
