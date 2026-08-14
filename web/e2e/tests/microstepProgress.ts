@@ -990,6 +990,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 982, step_id: "py-982-meet-in-middle-i-lower-boundary" },
   { level_id: 983, step_id: "py-983-meet-in-middle-i-dependency-order" },
   { level_id: 984, step_id: "py-984-meet-in-middle-i-minimum-transition" },
+  { level_id: 985, step_id: "py-985-matrix-exponentiation-i-canonicalize" },
+  { level_id: 986, step_id: "py-986-matrix-exponentiation-i-prefix-state" },
+  { level_id: 987, step_id: "py-987-matrix-exponentiation-i-bounded-window" },
+  { level_id: 988, step_id: "py-988-matrix-exponentiation-i-lower-boundary" },
+  { level_id: 989, step_id: "py-989-matrix-exponentiation-i-dependency-order" },
+  { level_id: 990, step_id: "py-990-matrix-exponentiation-i-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
