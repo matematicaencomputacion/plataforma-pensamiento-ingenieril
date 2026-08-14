@@ -22,69 +22,114 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 16,
-    id: "py-16-booleans",
-    title: "Python Booleans",
-    solution: `print(10 > 9)
-print(10 == 9)
-print(10 < 9)
+    micro: 505,
+    id: "py-505-group-anagrams",
+    title: "DSA Group Anagrams",
+    solution: `def group_anagrams(strs):
+    from collections import defaultdict
+    d = defaultdict(list)
+    for s in strs:
+        d[tuple(sorted(s))].append(s)
+    return list(d.values())
+
+print(sorted([sorted(g) for g in group_anagrams(["eat", "tea", "tan", "ate", "nat", "bat"])]))
 `,
-    nextUrl: /\/learn\/py-17-operators/,
-    cursorAfter: "17",
+    nextUrl: /\/learn\/py-506-longest-consec/,
+    cursorAfter: "506",
   },
   {
-    micro: 17,
-    id: "py-17-operators",
-    title: "Python Operators",
-    solution: `print(10 + 5)
+    micro: 506,
+    id: "py-506-longest-consec",
+    title: "DSA Longest Consec",
+    solution: `def longest_consecutive(nums):
+    s = set(nums)
+    best = 0
+    for x in s:
+        if x - 1 not in s:
+            y = x
+            while y in s:
+                y += 1
+            best = max(best, y - x)
+    return best
+
+print(longest_consecutive([100, 4, 200, 1, 3, 2]))
 `,
-    nextUrl: /\/learn\/py-18-lists/,
-    cursorAfter: "18",
+    nextUrl: /\/learn\/py-507-word-pattern/,
+    cursorAfter: "507",
   },
   {
-    micro: 18,
-    id: "py-18-lists",
-    title: "Python Lists",
-    solution: `thislist = ["apple", "banana", "cherry"]
-print(thislist)
-print(len(thislist))
+    micro: 507,
+    id: "py-507-word-pattern",
+    title: "DSA Word Pattern",
+    solution: `def word_pattern(pattern, s):
+    words = s.split()
+    if len(pattern) != len(words):
+        return False
+    p2w, w2p = {}, {}
+    for p, w in zip(pattern, words):
+        if p2w.get(p, w) != w or w2p.get(w, p) != p:
+            return False
+        p2w[p] = w; w2p[w] = p
+    return True
+
+print(word_pattern("abba", "dog cat cat dog"))
 `,
-    nextUrl: /\/learn\/py-19-list-access/,
-    cursorAfter: "19",
+    nextUrl: /\/learn\/py-508-isomorphic/,
+    cursorAfter: "508",
   },
   {
-    micro: 19,
-    id: "py-19-list-access",
-    title: "Python Access List Items",
-    solution: `thislist = ["apple", "banana", "cherry"]
-print(thislist[1])
+    micro: 508,
+    id: "py-508-isomorphic",
+    title: "DSA Isomorphic",
+    solution: `def is_isomorphic(s, t):
+    if len(s) != len(t):
+        return False
+    a, b = {}, {}
+    for x, y in zip(s, t):
+        if a.get(x, y) != y or b.get(y, x) != x:
+            return False
+        a[x] = y; b[y] = x
+    return True
+
+print(is_isomorphic("egg", "add"))
 `,
-    nextUrl: /\/learn\/py-20-list-change/,
-    cursorAfter: "20",
+    nextUrl: /\/learn\/py-509-find-diff/,
+    cursorAfter: "509",
   },
   {
-    micro: 20,
-    id: "py-20-list-change",
-    title: "Python Change List Items",
-    solution: `thislist = ["apple", "banana", "cherry"]
-thislist[1] = "blackcurrant"
-print(thislist)
+    micro: 509,
+    id: "py-509-find-diff",
+    title: "DSA Find Diff",
+    solution: `def find_the_difference(s, t):
+    from collections import Counter
+    return (Counter(t) - Counter(s)).most_common(1)[0][0]
+
+print(find_the_difference("abcd", "abcde"))
 `,
-    nextUrl: /\/learn\/py-21-list-add/,
-    cursorAfter: "21",
+    nextUrl: /\/learn\/py-510-ransom-note/,
+    cursorAfter: "510",
   },
   {
-    micro: 21,
-    id: "py-21-list-add",
-    title: "Python Add List Items",
-    solution: `thislist = ["apple", "banana", "cherry"]
-thislist.append("orange")
-print(thislist)
+    micro: 510,
+    id: "py-510-ransom-note",
+    title: "DSA Ransom Note",
+    solution: `def can_construct(ransom_note, magazine):
+    from collections import Counter
+    return not (Counter(ransom_note) - Counter(magazine))
+
+print(can_construct("aa", "aab"))
 `,
-    nextUrl: /\/learn\/py-22-list-remove/,
-    cursorAfter: "22",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "511",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:505|506|507|508|509|510)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -111,7 +156,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 16–21 · Booleans, Operators, Lists", () => {
+test.describe("micro-steps 505–510 · hashing III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

@@ -11882,7 +11882,305 @@ print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
 
 print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
 ",
-    next: None, show_type_chips: false, micro_step: 504,
+    next: Some("py-505-group-anagrams"), show_type_chips: false, micro_step: 504,
+};
+
+
+pub const PY505_GROUP_ANAGRAMS: CodingStep = CodingStep {
+    id: "py-505-group-anagrams", title: "DSA Group Anagrams", objective: "Agrupar anagramas.",
+    prompt_md: "**Group Anagrams**
+
+Agrupar anagramas.
+
+**Micro-reto:**
+1. Definí `group_anagrams(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]`.",
+    starter_code: "# def group_anagrams(strs):
+#     from collections import defaultdict
+#     d = defaultdict(list)
+#     for s in strs:
+#         d[tuple(sorted(s))].append(s)
+#     return list(d.values())
+#
+# print(sorted([sorted(g) for g in group_anagrams([\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"])]))
+",
+    pytest: "def test_505_group_anagrams(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('group_anagrams'))
+    r = ns['group_anagrams'](['eat', 'tea', 'tan', 'ate', 'nat', 'bat'])
+    assert sorted(sorted(g) for g in r) == [['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]
+    assert capsys.readouterr().out.strip() == \"[['ate', 'eat', 'tea'], ['bat'], ['nat', 'tan']]\"
+",
+    hint: "def group_anagrams(strs):
+    from collections import defaultdict
+    d = defaultdict(list)
+    for s in strs:
+        d[tuple(sorted(s))].append(s)
+    return list(d.values())
+
+print(sorted([sorted(g) for g in group_anagrams([\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"])]))
+",
+    solution_example: "def group_anagrams(strs):
+    from collections import defaultdict
+    d = defaultdict(list)
+    for s in strs:
+        d[tuple(sorted(s))].append(s)
+    return list(d.values())
+
+print(sorted([sorted(g) for g in group_anagrams([\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"])]))
+",
+    next: Some("py-506-longest-consec"), show_type_chips: false, micro_step: 505,
+};
+
+pub const PY506_LONGEST_CONSEC: CodingStep = CodingStep {
+    id: "py-506-longest-consec", title: "DSA Longest Consec", objective: "Racha más larga.",
+    prompt_md: "**Longest Consec**
+
+Racha más larga.
+
+**Micro-reto:**
+1. Definí `longest_consecutive(...)`
+2. Ejecutá el ejemplo del starter; imprimí `4`.",
+    starter_code: "# def longest_consecutive(nums):
+#     s = set(nums)
+#     best = 0
+#     for x in s:
+#         if x - 1 not in s:
+#             y = x
+#             while y in s:
+#                 y += 1
+#             best = max(best, y - x)
+#     return best
+#
+# print(longest_consecutive([100, 4, 200, 1, 3, 2]))
+",
+    pytest: "def test_506_longest_consec(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('longest_consecutive'))
+    assert ns['longest_consecutive']([100, 4, 200, 1, 3, 2]) == 4
+    assert ns['longest_consecutive']([0, 3, 7, 2, 5, 8, 4, 6, 0, 1]) == 9
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def longest_consecutive(nums):
+    s = set(nums)
+    best = 0
+    for x in s:
+        if x - 1 not in s:
+            y = x
+            while y in s:
+                y += 1
+            best = max(best, y - x)
+    return best
+
+print(longest_consecutive([100, 4, 200, 1, 3, 2]))
+",
+    solution_example: "def longest_consecutive(nums):
+    s = set(nums)
+    best = 0
+    for x in s:
+        if x - 1 not in s:
+            y = x
+            while y in s:
+                y += 1
+            best = max(best, y - x)
+    return best
+
+print(longest_consecutive([100, 4, 200, 1, 3, 2]))
+",
+    next: Some("py-507-word-pattern"), show_type_chips: false, micro_step: 506,
+};
+
+pub const PY507_WORD_PATTERN: CodingStep = CodingStep {
+    id: "py-507-word-pattern", title: "DSA Word Pattern", objective: "¿Patrón bijección?",
+    prompt_md: "**Word Pattern**
+
+¿Patrón bijección?
+
+**Micro-reto:**
+1. Definí `word_pattern(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def word_pattern(pattern, s):
+#     words = s.split()
+#     if len(pattern) != len(words):
+#         return False
+#     p2w, w2p = {}, {}
+#     for p, w in zip(pattern, words):
+#         if p2w.get(p, w) != w or w2p.get(w, p) != p:
+#             return False
+#         p2w[p] = w; w2p[w] = p
+#     return True
+#
+# print(word_pattern(\"abba\", \"dog cat cat dog\"))
+",
+    pytest: "def test_507_word_pattern(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('word_pattern'))
+    assert ns['word_pattern']('abba', 'dog cat cat dog') is True
+    assert ns['word_pattern']('abba', 'dog cat cat fish') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def word_pattern(pattern, s):
+    words = s.split()
+    if len(pattern) != len(words):
+        return False
+    p2w, w2p = {}, {}
+    for p, w in zip(pattern, words):
+        if p2w.get(p, w) != w or w2p.get(w, p) != p:
+            return False
+        p2w[p] = w; w2p[w] = p
+    return True
+
+print(word_pattern(\"abba\", \"dog cat cat dog\"))
+",
+    solution_example: "def word_pattern(pattern, s):
+    words = s.split()
+    if len(pattern) != len(words):
+        return False
+    p2w, w2p = {}, {}
+    for p, w in zip(pattern, words):
+        if p2w.get(p, w) != w or w2p.get(w, p) != p:
+            return False
+        p2w[p] = w; w2p[w] = p
+    return True
+
+print(word_pattern(\"abba\", \"dog cat cat dog\"))
+",
+    next: Some("py-508-isomorphic"), show_type_chips: false, micro_step: 507,
+};
+
+pub const PY508_ISOMORPHIC: CodingStep = CodingStep {
+    id: "py-508-isomorphic", title: "DSA Isomorphic", objective: "¿Cadenas isomorfas?",
+    prompt_md: "**Isomorphic**
+
+¿Cadenas isomorfas?
+
+**Micro-reto:**
+1. Definí `is_isomorphic(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def is_isomorphic(s, t):
+#     if len(s) != len(t):
+#         return False
+#     a, b = {}, {}
+#     for x, y in zip(s, t):
+#         if a.get(x, y) != y or b.get(y, x) != x:
+#             return False
+#         a[x] = y; b[y] = x
+#     return True
+#
+# print(is_isomorphic(\"egg\", \"add\"))
+",
+    pytest: "def test_508_isomorphic(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_isomorphic'))
+    assert ns['is_isomorphic']('egg', 'add') is True
+    assert ns['is_isomorphic']('foo', 'bar') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_isomorphic(s, t):
+    if len(s) != len(t):
+        return False
+    a, b = {}, {}
+    for x, y in zip(s, t):
+        if a.get(x, y) != y or b.get(y, x) != x:
+            return False
+        a[x] = y; b[y] = x
+    return True
+
+print(is_isomorphic(\"egg\", \"add\"))
+",
+    solution_example: "def is_isomorphic(s, t):
+    if len(s) != len(t):
+        return False
+    a, b = {}, {}
+    for x, y in zip(s, t):
+        if a.get(x, y) != y or b.get(y, x) != x:
+            return False
+        a[x] = y; b[y] = x
+    return True
+
+print(is_isomorphic(\"egg\", \"add\"))
+",
+    next: Some("py-509-find-diff"), show_type_chips: false, micro_step: 508,
+};
+
+pub const PY509_FIND_DIFF: CodingStep = CodingStep {
+    id: "py-509-find-diff", title: "DSA Find Diff", objective: "Letra extra.",
+    prompt_md: "**Find Diff**
+
+Letra extra.
+
+**Micro-reto:**
+1. Definí `find_the_difference(...)`
+2. Ejecutá el ejemplo del starter; imprimí `e`.",
+    starter_code: "# def find_the_difference(s, t):
+#     from collections import Counter
+#     return (Counter(t) - Counter(s)).most_common(1)[0][0]
+#
+# print(find_the_difference(\"abcd\", \"abcde\"))
+",
+    pytest: "def test_509_find_diff(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_the_difference'))
+    assert ns['find_the_difference']('abcd', 'abcde') == 'e'
+    assert ns['find_the_difference']('', 'y') == 'y'
+    assert capsys.readouterr().out.strip() == 'e'
+",
+    hint: "def find_the_difference(s, t):
+    from collections import Counter
+    return (Counter(t) - Counter(s)).most_common(1)[0][0]
+
+print(find_the_difference(\"abcd\", \"abcde\"))
+",
+    solution_example: "def find_the_difference(s, t):
+    from collections import Counter
+    return (Counter(t) - Counter(s)).most_common(1)[0][0]
+
+print(find_the_difference(\"abcd\", \"abcde\"))
+",
+    next: Some("py-510-ransom-note"), show_type_chips: false, micro_step: 509,
+};
+
+pub const PY510_RANSOM_NOTE: CodingStep = CodingStep {
+    id: "py-510-ransom-note", title: "DSA Ransom Note", objective: "¿Se puede formar?",
+    prompt_md: "**Ransom Note**
+
+¿Se puede formar?
+
+**Micro-reto:**
+1. Definí `can_construct(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def can_construct(ransom_note, magazine):
+#     from collections import Counter
+#     return not (Counter(ransom_note) - Counter(magazine))
+#
+# print(can_construct(\"aa\", \"aab\"))
+",
+    pytest: "def test_510_ransom_note(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('can_construct'))
+    assert ns['can_construct']('aa', 'aab') is True
+    assert ns['can_construct']('aa', 'ab') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def can_construct(ransom_note, magazine):
+    from collections import Counter
+    return not (Counter(ransom_note) - Counter(magazine))
+
+print(can_construct(\"aa\", \"aab\"))
+",
+    solution_example: "def can_construct(ransom_note, magazine):
+    from collections import Counter
+    return not (Counter(ransom_note) - Counter(magazine))
+
+print(can_construct(\"aa\", \"aab\"))
+",
+    next: None, show_type_chips: false, micro_step: 510,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -12389,7 +12687,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY501_ROTATE_MATRIX,
     &PY502_SEARCH_MATRIX,
     &PY503_VALID_SUDOKU,
-    &PY504_RESHAPE_MATRIX
+    &PY504_RESHAPE_MATRIX,
+    &PY505_GROUP_ANAGRAMS,
+    &PY506_LONGEST_CONSEC,
+    &PY507_WORD_PATTERN,
+    &PY508_ISOMORPHIC,
+    &PY509_FIND_DIFF,
+    &PY510_RANSOM_NOTE
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -12533,7 +12837,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 504);
+            assert!(step.micro_step >= 1 && step.micro_step <= 510);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -13481,7 +13785,49 @@ mod tests {
 
 
 
-            (504, "py-504-reshape-matrix", None),
+            (504, "py-504-reshape-matrix", Some("py-505-group-anagrams")),
+
+
+
+
+
+
+            (505, "py-505-group-anagrams", Some("py-506-longest-consec")),
+
+
+
+
+
+
+            (506, "py-506-longest-consec", Some("py-507-word-pattern")),
+
+
+
+
+
+
+            (507, "py-507-word-pattern", Some("py-508-isomorphic")),
+
+
+
+
+
+
+            (508, "py-508-isomorphic", Some("py-509-find-diff")),
+
+
+
+
+
+
+            (509, "py-509-find-diff", Some("py-510-ransom-note")),
+
+
+
+
+
+
+            (510, "py-510-ransom-note", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

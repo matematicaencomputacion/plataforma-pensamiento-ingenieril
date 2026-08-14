@@ -510,6 +510,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 502, step_id: "py-502-search-matrix" },
   { level_id: 503, step_id: "py-503-valid-sudoku" },
   { level_id: 504, step_id: "py-504-reshape-matrix" },
+  { level_id: 505, step_id: "py-505-group-anagrams" },
+  { level_id: 506, step_id: "py-506-longest-consec" },
+  { level_id: 507, step_id: "py-507-word-pattern" },
+  { level_id: 508, step_id: "py-508-isomorphic" },
+  { level_id: 509, step_id: "py-509-find-diff" },
+  { level_id: 510, step_id: "py-510-ransom-note" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
