@@ -17631,7 +17631,311 @@ print(two_sum([2, 7, 11, 15], 9))
 
 print(two_sum([2, 7, 11, 15], 9))
 ",
-    next: None, show_type_chips: false, micro_step: 600,
+    next: Some("py-601-subarray-sum-k"), show_type_chips: false, micro_step: 600,
+};
+
+pub const PY601_SUBARRAY_SUM_K: CodingStep = CodingStep {
+    id: "py-601-subarray-sum-k", title: "DSA Prefix Sum IV · Subarray Sum K", objective: "Contar subarrays cuya suma es k con prefijos y frecuencias.",
+    prompt_md: "**Subarray Sum Equals K**
+
+Un prefijo anterior `prefix - k` convierte el tramo intermedio en suma `k`.
+
+**Micro-reto:**
+1. Definí `subarray_sum(nums, k)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# def subarray_sum(nums, k):
+#     ...
+#
+# print(subarray_sum([1, 1, 1], 2))
+",
+    pytest: "def test_601_subarray_sum_k(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('subarray_sum'))
+    assert ns['subarray_sum']([1, 1, 1], 2) == 2
+    assert ns['subarray_sum']([1, -1, 0], 0) == 3
+    assert ns['subarray_sum']([], 0) == 0
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def subarray_sum(nums, k):
+    frequencies = {0: 1}
+    prefix = total = 0
+    for value in nums:
+        prefix += value
+        total += frequencies.get(prefix - k, 0)
+        frequencies[prefix] = frequencies.get(prefix, 0) + 1
+    return total
+
+print(subarray_sum([1, 1, 1], 2))
+",
+    solution_example: "def subarray_sum(nums, k):
+    frequencies = {0: 1}
+    prefix = total = 0
+    for value in nums:
+        prefix += value
+        total += frequencies.get(prefix - k, 0)
+        frequencies[prefix] = frequencies.get(prefix, 0) + 1
+    return total
+
+print(subarray_sum([1, 1, 1], 2))
+",
+    next: Some("py-602-pivot-index"), show_type_chips: false, micro_step: 601,
+};
+
+pub const PY602_PIVOT_INDEX: CodingStep = CodingStep {
+    id: "py-602-pivot-index", title: "DSA Prefix Sum IV · Pivot Index", objective: "Encontrar el primer índice que equilibra las sumas laterales.",
+    prompt_md: "**Find Pivot Index**
+
+La suma derecha se deriva del total: no hace falta construir dos arrays auxiliares.
+
+**Micro-reto:**
+1. Definí `pivot_index(nums)`
+2. Ejecutá el ejemplo; imprimí `3`.",
+    starter_code: "# def pivot_index(nums):
+#     ...
+#
+# print(pivot_index([1, 7, 3, 6, 5, 6]))
+",
+    pytest: "def test_602_pivot_index(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('pivot_index'))
+    assert ns['pivot_index']([1, 7, 3, 6, 5, 6]) == 3
+    assert ns['pivot_index']([1, 2, 3]) == -1
+    assert ns['pivot_index']([2, 1, -1]) == 0
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def pivot_index(nums):
+    total = sum(nums)
+    left = 0
+    for index, value in enumerate(nums):
+        if left == total - left - value:
+            return index
+        left += value
+    return -1
+
+print(pivot_index([1, 7, 3, 6, 5, 6]))
+",
+    solution_example: "def pivot_index(nums):
+    total = sum(nums)
+    left = 0
+    for index, value in enumerate(nums):
+        if left == total - left - value:
+            return index
+        left += value
+    return -1
+
+print(pivot_index([1, 7, 3, 6, 5, 6]))
+",
+    next: Some("py-603-range-sum-query"), show_type_chips: false, micro_step: 602,
+};
+
+pub const PY603_RANGE_SUM_QUERY: CodingStep = CodingStep {
+    id: "py-603-range-sum-query", title: "DSA Prefix Sum IV · Range Query", objective: "Responder sumas de rangos inmutables en tiempo constante.",
+    prompt_md: "**Range Sum Query — Immutable**
+
+Guardá un prefijo con cero inicial; `prefix[right + 1] - prefix[left]` responde cada consulta.
+
+**Micro-reto:**
+1. Definí la clase `NumArray` con `sum_range(left, right)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# class NumArray:
+#     def __init__(self, nums):
+#         ...
+#
+#     def sum_range(self, left, right):
+#         ...
+#
+# print(NumArray([-2, 0, 3, -5, 2, -1]).sum_range(0, 2))
+",
+    pytest: "def test_603_range_sum_query(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    cls = ns.get('NumArray')
+    assert cls is not None
+    ranges = cls([-2, 0, 3, -5, 2, -1])
+    assert ranges.sum_range(0, 2) == 1
+    assert ranges.sum_range(2, 5) == -1
+    assert ranges.sum_range(0, 5) == -3
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "class NumArray:
+    def __init__(self, nums):
+        self.prefix = [0]
+        for value in nums:
+            self.prefix.append(self.prefix[-1] + value)
+
+    def sum_range(self, left, right):
+        return self.prefix[right + 1] - self.prefix[left]
+
+print(NumArray([-2, 0, 3, -5, 2, -1]).sum_range(0, 2))
+",
+    solution_example: "class NumArray:
+    def __init__(self, nums):
+        self.prefix = [0]
+        for value in nums:
+            self.prefix.append(self.prefix[-1] + value)
+
+    def sum_range(self, left, right):
+        return self.prefix[right + 1] - self.prefix[left]
+
+print(NumArray([-2, 0, 3, -5, 2, -1]).sum_range(0, 2))
+",
+    next: Some("py-604-continuous-subarray"), show_type_chips: false, micro_step: 603,
+};
+
+pub const PY604_CONTINUOUS_SUBARRAY: CodingStep = CodingStep {
+    id: "py-604-continuous-subarray", title: "DSA Prefix Sum IV · Multiple of K", objective: "Detectar un subarray de longitud mínima dos cuya suma sea múltiplo de k.",
+    prompt_md: "**Continuous Subarray Sum**
+
+Dos prefijos con el mismo resto delimitan una suma divisible por `k`; conservá el índice más temprano.
+
+**Micro-reto:**
+1. Definí `check_subarray_sum(nums, k)`
+2. Ejecutá el ejemplo; imprimí `True`.",
+    starter_code: "# def check_subarray_sum(nums, k):
+#     ...
+#
+# print(check_subarray_sum([23, 2, 4, 6, 7], 6))
+",
+    pytest: "def test_604_continuous_subarray(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('check_subarray_sum'))
+    assert ns['check_subarray_sum']([23, 2, 4, 6, 7], 6) is True
+    assert ns['check_subarray_sum']([23, 2, 6, 4, 7], 13) is False
+    assert ns['check_subarray_sum']([0, 0], 0) is True
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def check_subarray_sum(nums, k):
+    first = {0: -1}
+    prefix = 0
+    for index, value in enumerate(nums):
+        prefix += value
+        remainder = prefix if k == 0 else prefix % k
+        if remainder in first:
+            if index - first[remainder] >= 2:
+                return True
+        else:
+            first[remainder] = index
+    return False
+
+print(check_subarray_sum([23, 2, 4, 6, 7], 6))
+",
+    solution_example: "def check_subarray_sum(nums, k):
+    first = {0: -1}
+    prefix = 0
+    for index, value in enumerate(nums):
+        prefix += value
+        remainder = prefix if k == 0 else prefix % k
+        if remainder in first:
+            if index - first[remainder] >= 2:
+                return True
+        else:
+            first[remainder] = index
+    return False
+
+print(check_subarray_sum([23, 2, 4, 6, 7], 6))
+",
+    next: Some("py-605-subarrays-divisible-k"), show_type_chips: false, micro_step: 604,
+};
+
+pub const PY605_SUBARRAYS_DIVISIBLE_K: CodingStep = CodingStep {
+    id: "py-605-subarrays-divisible-k", title: "DSA Prefix Sum IV · Divisible Subarrays", objective: "Contar todos los subarrays con suma divisible por k.",
+    prompt_md: "**Subarray Sums Divisible by K**
+
+Cada par de prefijos con el mismo resto aporta un subarray divisible.
+
+**Micro-reto:**
+1. Definí `subarrays_div_by_k(nums, k)`
+2. Ejecutá el ejemplo; imprimí `7`.",
+    starter_code: "# def subarrays_div_by_k(nums, k):
+#     ...
+#
+# print(subarrays_div_by_k([4, 5, 0, -2, -3, 1], 5))
+",
+    pytest: "def test_605_subarrays_divisible_k(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('subarrays_div_by_k'))
+    assert ns['subarrays_div_by_k']([4, 5, 0, -2, -3, 1], 5) == 7
+    assert ns['subarrays_div_by_k']([5], 9) == 0
+    assert ns['subarrays_div_by_k']([0, 0], 3) == 3
+    assert capsys.readouterr().out.strip() == '7'
+",
+    hint: "def subarrays_div_by_k(nums, k):
+    frequencies = {0: 1}
+    prefix = total = 0
+    for value in nums:
+        prefix = (prefix + value) % k
+        total += frequencies.get(prefix, 0)
+        frequencies[prefix] = frequencies.get(prefix, 0) + 1
+    return total
+
+print(subarrays_div_by_k([4, 5, 0, -2, -3, 1], 5))
+",
+    solution_example: "def subarrays_div_by_k(nums, k):
+    frequencies = {0: 1}
+    prefix = total = 0
+    for value in nums:
+        prefix = (prefix + value) % k
+        total += frequencies.get(prefix, 0)
+        frequencies[prefix] = frequencies.get(prefix, 0) + 1
+    return total
+
+print(subarrays_div_by_k([4, 5, 0, -2, -3, 1], 5))
+",
+    next: Some("py-606-max-subarray-len-k"), show_type_chips: false, micro_step: 605,
+};
+
+pub const PY606_MAX_SUBARRAY_LEN_K: CodingStep = CodingStep {
+    id: "py-606-max-subarray-len-k", title: "DSA Prefix Sum IV · Longest Sum K", objective: "Maximizar la longitud de un subarray cuya suma es k.",
+    prompt_md: "**Maximum Size Subarray Sum Equals K**
+
+Conservá la primera posición de cada prefijo: es la que produce el tramo más largo.
+
+**Micro-reto:**
+1. Definí `max_subarray_len(nums, k)`
+2. Ejecutá el ejemplo; imprimí `4`.",
+    starter_code: "# def max_subarray_len(nums, k):
+#     ...
+#
+# print(max_subarray_len([1, -1, 5, -2, 3], 3))
+",
+    pytest: "def test_606_max_subarray_len_k(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_subarray_len'))
+    assert ns['max_subarray_len']([1, -1, 5, -2, 3], 3) == 4
+    assert ns['max_subarray_len']([-2, -1, 2, 1], 1) == 2
+    assert ns['max_subarray_len']([], 0) == 0
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def max_subarray_len(nums, k):
+    first = {0: -1}
+    prefix = longest = 0
+    for index, value in enumerate(nums):
+        prefix += value
+        if prefix - k in first:
+            longest = max(longest, index - first[prefix - k])
+        first.setdefault(prefix, index)
+    return longest
+
+print(max_subarray_len([1, -1, 5, -2, 3], 3))
+",
+    solution_example: "def max_subarray_len(nums, k):
+    first = {0: -1}
+    prefix = longest = 0
+    for index, value in enumerate(nums):
+        prefix += value
+        if prefix - k in first:
+            longest = max(longest, index - first[prefix - k])
+        first.setdefault(prefix, index)
+    return longest
+
+print(max_subarray_len([1, -1, 5, -2, 3], 3))
+",
+    next: None, show_type_chips: false, micro_step: 606,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -18234,7 +18538,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY597_PLUS_ONE_ARR,
     &PY598_SINGLE_NUMBER_II,
     &PY599_VALID_MOUNTAIN,
-    &PY600_CAPSTONE_TWO_SUM
+    &PY600_CAPSTONE_TWO_SUM,
+    &PY601_SUBARRAY_SUM_K,
+    &PY602_PIVOT_INDEX,
+    &PY603_RANGE_SUM_QUERY,
+    &PY604_CONTINUOUS_SUBARRAY,
+    &PY605_SUBARRAYS_DIVISIBLE_K,
+    &PY606_MAX_SUBARRAY_LEN_K
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -18378,7 +18688,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 600);
+            assert!(step.micro_step >= 1 && step.micro_step <= 606);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -20718,7 +21028,13 @@ mod tests {
 
 
 
-            (600, "py-600-capstone-two-sum", None),
+            (600, "py-600-capstone-two-sum", Some("py-601-subarray-sum-k")),
+            (601, "py-601-subarray-sum-k", Some("py-602-pivot-index")),
+            (602, "py-602-pivot-index", Some("py-603-range-sum-query")),
+            (603, "py-603-range-sum-query", Some("py-604-continuous-subarray")),
+            (604, "py-604-continuous-subarray", Some("py-605-subarrays-divisible-k")),
+            (605, "py-605-subarrays-divisible-k", Some("py-606-max-subarray-len-k")),
+            (606, "py-606-max-subarray-len-k", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
