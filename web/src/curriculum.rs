@@ -15122,7 +15122,302 @@ print(exist([[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"
 
 print(exist([[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], \"ABCCED\"))
 ",
-    next: None, show_type_chips: false, micro_step: 558,
+    next: Some("py-559-add-digits"), show_type_chips: false, micro_step: 558,
+};
+
+
+pub const PY559_ADD_DIGITS: CodingStep = CodingStep {
+    id: "py-559-add-digits", title: "DSA Add Digits", objective: "Suma digital.",
+    prompt_md: "**Add Digits**
+
+Suma digital.
+
+**Micro-reto:**
+1. Definí `add_digits(...)`
+2. Ejecutá el ejemplo del starter; imprimí `2`.",
+    starter_code: "# def add_digits(num):
+#     return 0 if num == 0 else 1 + (num - 1) % 9
+#
+# print(add_digits(38))
+",
+    pytest: "def test_559_add_digits(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('add_digits'))
+    assert ns['add_digits'](38) == 2
+    assert ns['add_digits'](0) == 0
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def add_digits(num):
+    return 0 if num == 0 else 1 + (num - 1) % 9
+
+print(add_digits(38))
+",
+    solution_example: "def add_digits(num):
+    return 0 if num == 0 else 1 + (num - 1) % 9
+
+print(add_digits(38))
+",
+    next: Some("py-560-ugly-number"), show_type_chips: false, micro_step: 559,
+};
+
+pub const PY560_UGLY_NUMBER: CodingStep = CodingStep {
+    id: "py-560-ugly-number", title: "DSA Ugly Number", objective: "¿Solo 2/3/5?",
+    prompt_md: "**Ugly Number**
+
+¿Solo 2/3/5?
+
+**Micro-reto:**
+1. Definí `is_ugly(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def is_ugly(n):
+#     if n <= 0:
+#         return False
+#     for f in (2, 3, 5):
+#         while n % f == 0:
+#             n //= f
+#     return n == 1
+#
+# print(is_ugly(6))
+",
+    pytest: "def test_560_ugly_number(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_ugly'))
+    assert ns['is_ugly'](6) is True
+    assert ns['is_ugly'](14) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_ugly(n):
+    if n <= 0:
+        return False
+    for f in (2, 3, 5):
+        while n % f == 0:
+            n //= f
+    return n == 1
+
+print(is_ugly(6))
+",
+    solution_example: "def is_ugly(n):
+    if n <= 0:
+        return False
+    for f in (2, 3, 5):
+        while n % f == 0:
+            n //= f
+    return n == 1
+
+print(is_ugly(6))
+",
+    next: Some("py-561-count-primes"), show_type_chips: false, micro_step: 560,
+};
+
+pub const PY561_COUNT_PRIMES: CodingStep = CodingStep {
+    id: "py-561-count-primes", title: "DSA Count Primes", objective: "Primos < n.",
+    prompt_md: "**Count Primes**
+
+Primos < n.
+
+**Micro-reto:**
+1. Definí `count_primes(...)`
+2. Ejecutá el ejemplo del starter; imprimí `4`.",
+    starter_code: "# def count_primes(n):
+#     if n < 3:
+#         return 0
+#     sieve = [True] * n
+#     sieve[0] = sieve[1] = False
+#     p = 2
+#     while p * p < n:
+#         if sieve[p]:
+#             sieve[p * p:n:p] = [False] * len(sieve[p * p:n:p])
+#         p += 1
+#     return sum(sieve)
+#
+# print(count_primes(10))
+",
+    pytest: "def test_561_count_primes(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('count_primes'))
+    assert ns['count_primes'](10) == 4
+    assert ns['count_primes'](0) == 0
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def count_primes(n):
+    if n < 3:
+        return 0
+    sieve = [True] * n
+    sieve[0] = sieve[1] = False
+    p = 2
+    while p * p < n:
+        if sieve[p]:
+            sieve[p * p:n:p] = [False] * len(sieve[p * p:n:p])
+        p += 1
+    return sum(sieve)
+
+print(count_primes(10))
+",
+    solution_example: "def count_primes(n):
+    if n < 3:
+        return 0
+    sieve = [True] * n
+    sieve[0] = sieve[1] = False
+    p = 2
+    while p * p < n:
+        if sieve[p]:
+            sieve[p * p:n:p] = [False] * len(sieve[p * p:n:p])
+        p += 1
+    return sum(sieve)
+
+print(count_primes(10))
+",
+    next: Some("py-562-power-of-three"), show_type_chips: false, micro_step: 561,
+};
+
+pub const PY562_POWER_OF_THREE: CodingStep = CodingStep {
+    id: "py-562-power-of-three", title: "DSA Power of Three", objective: "¿Potencia de 3?",
+    prompt_md: "**Power of Three**
+
+¿Potencia de 3?
+
+**Micro-reto:**
+1. Definí `is_power_of_three(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def is_power_of_three(n):
+#     if n <= 0:
+#         return False
+#     while n % 3 == 0:
+#         n //= 3
+#     return n == 1
+#
+# print(is_power_of_three(27))
+",
+    pytest: "def test_562_power_of_three(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_power_of_three'))
+    assert ns['is_power_of_three'](27) is True
+    assert ns['is_power_of_three'](0) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_power_of_three(n):
+    if n <= 0:
+        return False
+    while n % 3 == 0:
+        n //= 3
+    return n == 1
+
+print(is_power_of_three(27))
+",
+    solution_example: "def is_power_of_three(n):
+    if n <= 0:
+        return False
+    while n % 3 == 0:
+        n //= 3
+    return n == 1
+
+print(is_power_of_three(27))
+",
+    next: Some("py-563-excel-col"), show_type_chips: false, micro_step: 562,
+};
+
+pub const PY563_EXCEL_COL: CodingStep = CodingStep {
+    id: "py-563-excel-col", title: "DSA Excel Col", objective: "Título a número.",
+    prompt_md: "**Excel Col**
+
+Título a número.
+
+**Micro-reto:**
+1. Definí `title_to_number(...)`
+2. Ejecutá el ejemplo del starter; imprimí `28`.",
+    starter_code: "# def title_to_number(col):
+#     n = 0
+#     for ch in col:
+#         n = n * 26 + (ord(ch) - 64)
+#     return n
+#
+# print(title_to_number(\"AB\"))
+",
+    pytest: "def test_563_excel_col(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('title_to_number'))
+    assert ns['title_to_number']('A') == 1
+    assert ns['title_to_number']('AB') == 28
+    assert capsys.readouterr().out.strip() == '28'
+",
+    hint: "def title_to_number(col):
+    n = 0
+    for ch in col:
+        n = n * 26 + (ord(ch) - 64)
+    return n
+
+print(title_to_number(\"AB\"))
+",
+    solution_example: "def title_to_number(col):
+    n = 0
+    for ch in col:
+        n = n * 26 + (ord(ch) - 64)
+    return n
+
+print(title_to_number(\"AB\"))
+",
+    next: Some("py-564-sqrt-int"), show_type_chips: false, micro_step: 563,
+};
+
+pub const PY564_SQRT_INT: CodingStep = CodingStep {
+    id: "py-564-sqrt-int", title: "DSA Sqrt Int", objective: "Raíz entera.",
+    prompt_md: "**Sqrt Int**
+
+Raíz entera.
+
+**Micro-reto:**
+1. Definí `my_sqrt(...)`
+2. Ejecutá el ejemplo del starter; imprimí `2`.",
+    starter_code: "# def my_sqrt(x):
+#     lo, hi = 0, x
+#     while lo <= hi:
+#         mid = (lo + hi) // 2
+#         if mid * mid <= x:
+#             lo = mid + 1
+#         else:
+#             hi = mid - 1
+#     return hi
+#
+# print(my_sqrt(8))
+",
+    pytest: "def test_564_sqrt_int(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('my_sqrt'))
+    assert ns['my_sqrt'](4) == 2
+    assert ns['my_sqrt'](8) == 2
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def my_sqrt(x):
+    lo, hi = 0, x
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if mid * mid <= x:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return hi
+
+print(my_sqrt(8))
+",
+    solution_example: "def my_sqrt(x):
+    lo, hi = 0, x
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if mid * mid <= x:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return hi
+
+print(my_sqrt(8))
+",
+    next: None, show_type_chips: false, micro_step: 564,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -15683,7 +15978,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY555_COMBINATION_SUM,
     &PY556_LETTER_COMBOS,
     &PY557_GENERATE_PARENS,
-    &PY558_WORD_SEARCH
+    &PY558_WORD_SEARCH,
+    &PY559_ADD_DIGITS,
+    &PY560_UGLY_NUMBER,
+    &PY561_COUNT_PRIMES,
+    &PY562_POWER_OF_THREE,
+    &PY563_EXCEL_COL,
+    &PY564_SQRT_INT
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -15827,7 +16128,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 558);
+            assert!(step.micro_step >= 1 && step.micro_step <= 564);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -17369,7 +17670,103 @@ mod tests {
 
 
 
-            (558, "py-558-word-search", None),
+            (558, "py-558-word-search", Some("py-559-add-digits")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (559, "py-559-add-digits", Some("py-560-ugly-number")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (560, "py-560-ugly-number", Some("py-561-count-primes")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (561, "py-561-count-primes", Some("py-562-power-of-three")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (562, "py-562-power-of-three", Some("py-563-excel-col")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (563, "py-563-excel-col", Some("py-564-sqrt-int")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (564, "py-564-sqrt-int", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

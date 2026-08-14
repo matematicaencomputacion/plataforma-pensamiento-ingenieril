@@ -22,120 +22,113 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 161,
-    id: "py-161-reverse-list",
-    title: "DSA Reverse List",
-    solution: `def reverse_list(nums: list):
-    return nums[::-1]
-print(reverse_list([1, 2, 3, 4]))
-`,
-    nextUrl: /\/learn\/py-162-merge-sorted/,
-    cursorAfter: "162",
-  },
-  {
-    micro: 162,
-    id: "py-162-merge-sorted",
-    title: "DSA Merge Sorted Lists",
-    solution: `def merge_sorted(a, b):
-    result = []
-    i = j = 0
-    while i < len(a) and j < len(b):
-        if a[i] <= b[j]:
-            result.append(a[i])
-            i += 1
-        else:
-            result.append(b[j])
-            j += 1
-    return result + a[i:] + b[j:]
-print(merge_sorted([1, 2, 4], [1, 3, 4]))
-`,
-    nextUrl: /\/learn\/py-163-linked-cycle/,
-    cursorAfter: "163",
-  },
-  {
-    micro: 163,
-    id: "py-163-linked-cycle",
-    title: "DSA Linked List Cycle",
-    solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
+    micro: 559,
+    id: "py-559-add-digits",
+    title: "DSA Add Digits",
+    solution: `def add_digits(num):
+    return 0 if num == 0 else 1 + (num - 1) % 9
 
-def has_cycle(head):
-    slow = fast = head
-    while fast is not None and fast.next is not None:
-        slow = slow.next
-        fast = fast.next.next
-        if slow is fast:
-            return True
-    return False
+print(add_digits(38))
+`,
+    nextUrl: /\/learn\/py-560-ugly-number/,
+    cursorAfter: "560",
+  },
+  {
+    micro: 560,
+    id: "py-560-ugly-number",
+    title: "DSA Ugly Number",
+    solution: `def is_ugly(n):
+    if n <= 0:
+        return False
+    for f in (2, 3, 5):
+        while n % f == 0:
+            n //= f
+    return n == 1
 
-node1 = Node(3)
-node2 = Node(2)
-node3 = Node(0)
-node4 = Node(-4)
-node1.next = node2
-node2.next = node3
-node3.next = node4
-node4.next = node2
-print(has_cycle(node1))
+print(is_ugly(6))
 `,
-    nextUrl: /\/learn\/py-164-valid-palindrome/,
-    cursorAfter: "164",
+    nextUrl: /\/learn\/py-561-count-primes/,
+    cursorAfter: "561",
   },
   {
-    micro: 164,
-    id: "py-164-valid-palindrome",
-    title: "DSA Valid Palindrome",
-    solution: `def is_palindrome(s):
-    cleaned = ''.join(ch.casefold() for ch in s if ch.isalnum())
-    return cleaned == cleaned[::-1]
-print(is_palindrome('A man, a plan, a canal: Panama'))
+    micro: 561,
+    id: "py-561-count-primes",
+    title: "DSA Count Primes",
+    solution: `def count_primes(n):
+    if n < 3:
+        return 0
+    sieve = [True] * n
+    sieve[0] = sieve[1] = False
+    p = 2
+    while p * p < n:
+        if sieve[p]:
+            sieve[p * p:n:p] = [False] * len(sieve[p * p:n:p])
+        p += 1
+    return sum(sieve)
+
+print(count_primes(10))
 `,
-    nextUrl: /\/learn\/py-165-common-prefix/,
-    cursorAfter: "165",
+    nextUrl: /\/learn\/py-562-power-of-three/,
+    cursorAfter: "562",
   },
   {
-    micro: 165,
-    id: "py-165-common-prefix",
-    title: "DSA Longest Common Prefix",
-    solution: `def longest_common_prefix(strs):
-    if not strs:
-        return ''
-    prefix = strs[0]
-    for word in strs[1:]:
-        while not word.startswith(prefix):
-            prefix = prefix[:-1]
-            if not prefix:
-                return ''
-    return prefix
-print(longest_common_prefix(['flower', 'flow', 'flight']))
+    micro: 562,
+    id: "py-562-power-of-three",
+    title: "DSA Power of Three",
+    solution: `def is_power_of_three(n):
+    if n <= 0:
+        return False
+    while n % 3 == 0:
+        n //= 3
+    return n == 1
+
+print(is_power_of_three(27))
 `,
-    nextUrl: /\/learn\/py-166-roman-to-int/,
-    cursorAfter: "166",
+    nextUrl: /\/learn\/py-563-excel-col/,
+    cursorAfter: "563",
   },
   {
-    micro: 166,
-    id: "py-166-roman-to-int",
-    title: "DSA Roman to Integer",
-    solution: `def roman_to_int(s):
-    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
-    total = 0
-    previous = 0
-    for symbol in reversed(s):
-        value = values[symbol]
-        if value < previous:
-            total -= value
+    micro: 563,
+    id: "py-563-excel-col",
+    title: "DSA Excel Col",
+    solution: `def title_to_number(col):
+    n = 0
+    for ch in col:
+        n = n * 26 + (ord(ch) - 64)
+    return n
+
+print(title_to_number("AB"))
+`,
+    nextUrl: /\/learn\/py-564-sqrt-int/,
+    cursorAfter: "564",
+  },
+  {
+    micro: 564,
+    id: "py-564-sqrt-int",
+    title: "DSA Sqrt Int",
+    solution: `def my_sqrt(x):
+    lo, hi = 0, x
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if mid * mid <= x:
+            lo = mid + 1
         else:
-            total += value
-            previous = value
-    return total
-print(roman_to_int('MCMXCIV'))
+            hi = mid - 1
+    return hi
+
+print(my_sqrt(8))
 `,
-    nextUrl: /\/learn\/py-167-invert-tree/,
-    cursorAfter: "167",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "565",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:559|560|561|562|563|564)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -162,7 +155,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 161–166 · lists / strings", () => {
+test.describe("micro-steps 559–564 · math IV", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
