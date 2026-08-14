@@ -996,6 +996,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 988, step_id: "py-988-matrix-exponentiation-i-lower-boundary" },
   { level_id: 989, step_id: "py-989-matrix-exponentiation-i-dependency-order" },
   { level_id: 990, step_id: "py-990-matrix-exponentiation-i-minimum-transition" },
+  { level_id: 991, step_id: "py-991-computational-geometry-iii-canonicalize" },
+  { level_id: 992, step_id: "py-992-computational-geometry-iii-prefix-state" },
+  { level_id: 993, step_id: "py-993-computational-geometry-iii-bounded-window" },
+  { level_id: 994, step_id: "py-994-computational-geometry-iii-lower-boundary" },
+  { level_id: 995, step_id: "py-995-computational-geometry-iii-dependency-order" },
+  { level_id: 996, step_id: "py-996-computational-geometry-iii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
