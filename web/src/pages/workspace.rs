@@ -10,7 +10,7 @@ use crate::session::SessionCtx;
 
 /// Placeholder rail for the upcoming Python micro-challenges (scaffold only).
 /// Rail capacity toward the 1000-micro-step roadmap (cells beyond filled curriculum stay locked).
-const MICRO_STEP_COUNT: i32 = 978;
+const MICRO_STEP_COUNT: i32 = 984;
 
 #[component]
 pub fn WorkspacePage() -> impl IntoView {
@@ -191,7 +191,7 @@ fn MicroStepRail(
         <ol
             class="workspace__microsteps"
             id="workspace-microsteps"
-            aria-label="Python micro-step challenges 1 to 978"
+            aria-label="Python micro-step challenges 1 to 984"
             data-current-level=move || current_level.get().to_string()
         >
             {(1..=MICRO_STEP_COUNT)
