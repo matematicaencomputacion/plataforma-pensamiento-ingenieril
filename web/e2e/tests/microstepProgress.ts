@@ -594,6 +594,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 586, step_id: "py-586-path-sum" },
   { level_id: 587, step_id: "py-587-sorted-array-bst" },
   { level_id: 588, step_id: "py-588-kth-small-bst" },
+  { level_id: 589, step_id: "py-589-clone-graph" },
+  { level_id: 590, step_id: "py-590-course-schedule" },
+  { level_id: 591, step_id: "py-591-network-delay" },
+  { level_id: 592, step_id: "py-592-redundant-conn" },
+  { level_id: 593, step_id: "py-593-valid-path" },
+  { level_id: 594, step_id: "py-594-all-paths" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
