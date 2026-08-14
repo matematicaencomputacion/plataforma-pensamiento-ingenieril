@@ -40,7 +40,7 @@ const FAMILY: FamilyStep[] = [
 
 print(flood_fill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2))
 `,
-    nextUrl: /\\/learn\\/py-470-num-islands/,
+    nextUrl: /\/learn\/py-470-num-islands/,
     cursorAfter: "470",
   }
   {
@@ -66,7 +66,7 @@ print(flood_fill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2))
 
 print(num_islands([["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]]))
 `,
-    nextUrl: /\\/learn\\/py-471-keys-rooms/,
+    nextUrl: /\/learn\/py-471-keys-rooms/,
     cursorAfter: "471",
   }
   {
@@ -86,7 +86,7 @@ print(num_islands([["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0",
 
 print(can_visit_all_rooms([[1],[2],[3],[]]))
 `,
-    nextUrl: /\\/learn\\/py-472-town-judge/,
+    nextUrl: /\/learn\/py-472-town-judge/,
     cursorAfter: "472",
   }
   {
@@ -105,7 +105,7 @@ print(can_visit_all_rooms([[1],[2],[3],[]]))
 
 print(find_judge(2, [[1,2]]))
 `,
-    nextUrl: /\\/learn\\/py-473-max-island/,
+    nextUrl: /\/learn\/py-473-max-island/,
     cursorAfter: "473",
   }
   {
@@ -128,7 +128,7 @@ print(find_judge(2, [[1,2]]))
 
 print(max_area_of_island([[1,0,0],[1,1,0],[0,0,1]]))
 `,
-    nextUrl: /\\/learn\\/py-474-provinces/,
+    nextUrl: /\/learn\/py-474-provinces/,
     cursorAfter: "474",
   }
   {
@@ -153,7 +153,7 @@ print(max_area_of_island([[1,0,0],[1,1,0],[0,0,1]]))
 
 print(find_circle_num([[1,1,0],[1,1,0],[0,0,1]]))
 `,
-    nextUrl: /\\/workspace/,
+    nextUrl: /\/workspace/,
     cursorAfter: "475",
   }
 ];
