@@ -20446,7 +20446,357 @@ print(bag_of_tokens_score([100, 200, 300, 400], 200))
 
 print(bag_of_tokens_score([100, 200, 300, 400], 200))
 ",
-    next: None, show_type_chips: false, micro_step: 642,
+    next: Some("py-643-coin-change-ii"), show_type_chips: false, micro_step: 642,
+};
+
+
+pub const PY643_COIN_CHANGE_II: CodingStep = CodingStep {
+    id: "py-643-coin-change-ii", title: "DSA DP Knapsack · Coin Change II", objective: "Número de combinaciones para formar amount con coins (orden no importa).",
+    prompt_md: "**Coin Change II**
+
+dp[x] += dp[x-coin] iterando coins por fuera para no contar permutaciones.
+
+**Micro-reto:**
+1. Definí `change(amount, coins)`
+2. Ejecutá el ejemplo; imprimí `4`.",
+    starter_code: "# def change(amount, coins):
+#     dp = [0] * (amount + 1)
+#     dp[0] = 1
+#     for coin in coins:
+#         for x in range(coin, amount + 1):
+#             dp[x] += dp[x - coin]
+#     return dp[amount]
+#
+# print(change(5, [1, 2, 5]))
+",
+    pytest: "def test_643_coin_change_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('change'))
+    assert ns['change'](5, [1, 2, 5]) == 4
+    assert ns['change'](3, [2]) == 0
+    assert ns['change'](10, [10]) == 1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def change(amount, coins):
+    dp = [0] * (amount + 1)
+    dp[0] = 1
+    for coin in coins:
+        for x in range(coin, amount + 1):
+            dp[x] += dp[x - coin]
+    return dp[amount]
+
+print(change(5, [1, 2, 5]))
+",
+    solution_example: "def change(amount, coins):
+    dp = [0] * (amount + 1)
+    dp[0] = 1
+    for coin in coins:
+        for x in range(coin, amount + 1):
+            dp[x] += dp[x - coin]
+    return dp[amount]
+
+print(change(5, [1, 2, 5]))
+",
+    next: Some("py-644-target-sum"), show_type_chips: false, micro_step: 643,
+};
+
+pub const PY644_TARGET_SUM: CodingStep = CodingStep {
+    id: "py-644-target-sum", title: "DSA DP Knapsack · Target Sum", objective: "Formas de asignar +/- a cada número para sumar target.",
+    prompt_md: "**Target Sum**
+
+Equivalente a un subconjunto de suma (total+target)/2 si es par y factible.
+
+**Micro-reto:**
+1. Definí `find_target_sum_ways(nums, target)`
+2. Ejecutá el ejemplo; imprimí `5`.",
+    starter_code: "# def find_target_sum_ways(nums, target):
+#     total = sum(nums)
+#     if (total + target) % 2 or abs(target) > total:
+#         return 0
+#     need = (total + target) // 2
+#     dp = [0] * (need + 1)
+#     dp[0] = 1
+#     for x in nums:
+#         for s in range(need, x - 1, -1):
+#             dp[s] += dp[s - x]
+#     return dp[need]
+#
+# print(find_target_sum_ways([1, 1, 1, 1, 1], 3))
+",
+    pytest: "def test_644_target_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_target_sum_ways'))
+    assert ns['find_target_sum_ways']([1, 1, 1, 1, 1], 3) == 5
+    assert ns['find_target_sum_ways']([1], 1) == 1
+    assert capsys.readouterr().out.strip() == '5'
+",
+    hint: "def find_target_sum_ways(nums, target):
+    total = sum(nums)
+    if (total + target) % 2 or abs(target) > total:
+        return 0
+    need = (total + target) // 2
+    dp = [0] * (need + 1)
+    dp[0] = 1
+    for x in nums:
+        for s in range(need, x - 1, -1):
+            dp[s] += dp[s - x]
+    return dp[need]
+
+print(find_target_sum_ways([1, 1, 1, 1, 1], 3))
+",
+    solution_example: "def find_target_sum_ways(nums, target):
+    total = sum(nums)
+    if (total + target) % 2 or abs(target) > total:
+        return 0
+    need = (total + target) // 2
+    dp = [0] * (need + 1)
+    dp[0] = 1
+    for x in nums:
+        for s in range(need, x - 1, -1):
+            dp[s] += dp[s - x]
+    return dp[need]
+
+print(find_target_sum_ways([1, 1, 1, 1, 1], 3))
+",
+    next: Some("py-645-last-stone-ii"), show_type_chips: false, micro_step: 644,
+};
+
+pub const PY645_LAST_STONE_II: CodingStep = CodingStep {
+    id: "py-645-last-stone-ii", title: "DSA DP Knapsack · Last Stone II", objective: "Mínima piedra restante tras chocar piedras (knapsack de partición).",
+    prompt_md: "**Last Stone Weight II**
+
+Minimizar |total - 2*subset|; subset hasta total//2.
+
+**Micro-reto:**
+1. Definí `last_stone_weight_ii(stones)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def last_stone_weight_ii(stones):
+#     total = sum(stones)
+#     need = total // 2
+#     dp = [False] * (need + 1)
+#     dp[0] = True
+#     for x in stones:
+#         for s in range(need, x - 1, -1):
+#             dp[s] = dp[s] or dp[s - x]
+#     for s in range(need, -1, -1):
+#         if dp[s]:
+#             return total - 2 * s
+#     return total
+#
+# print(last_stone_weight_ii([2, 7, 4, 1, 8, 1]))
+",
+    pytest: "def test_645_last_stone_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('last_stone_weight_ii'))
+    assert ns['last_stone_weight_ii']([2, 7, 4, 1, 8, 1]) == 1
+    assert ns['last_stone_weight_ii']([31, 26, 33, 21, 40]) == 5
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def last_stone_weight_ii(stones):
+    total = sum(stones)
+    need = total // 2
+    dp = [False] * (need + 1)
+    dp[0] = True
+    for x in stones:
+        for s in range(need, x - 1, -1):
+            dp[s] = dp[s] or dp[s - x]
+    for s in range(need, -1, -1):
+        if dp[s]:
+            return total - 2 * s
+    return total
+
+print(last_stone_weight_ii([2, 7, 4, 1, 8, 1]))
+",
+    solution_example: "def last_stone_weight_ii(stones):
+    total = sum(stones)
+    need = total // 2
+    dp = [False] * (need + 1)
+    dp[0] = True
+    for x in stones:
+        for s in range(need, x - 1, -1):
+            dp[s] = dp[s] or dp[s - x]
+    for s in range(need, -1, -1):
+        if dp[s]:
+            return total - 2 * s
+    return total
+
+print(last_stone_weight_ii([2, 7, 4, 1, 8, 1]))
+",
+    next: Some("py-646-ones-and-zeroes"), show_type_chips: false, micro_step: 645,
+};
+
+pub const PY646_ONES_AND_ZEROES: CodingStep = CodingStep {
+    id: "py-646-ones-and-zeroes", title: "DSA DP Knapsack · Ones and Zeroes", objective: "Máximo de strings con a lo sumo m ceros y n unos.",
+    prompt_md: "**Ones and Zeroes**
+
+Knapsack 2D: dp[j][k] = max tomando o no el string con cost (zeros, ones).
+
+**Micro-reto:**
+1. Definí `find_max_form(strs, m, n)`
+2. Ejecutá el ejemplo; imprimí `4`.",
+    starter_code: "# def find_max_form(strs, m, n):
+#     dp = [[0] * (n + 1) for _ in range(m + 1)]
+#     for s in strs:
+#         zeros = s.count('0')
+#         ones = len(s) - zeros
+#         for j in range(m, zeros - 1, -1):
+#             for k in range(n, ones - 1, -1):
+#                 dp[j][k] = max(dp[j][k], 1 + dp[j - zeros][k - ones])
+#     return dp[m][n]
+#
+# print(find_max_form(['10', '0001', '111001', '1', '0'], 5, 3))
+",
+    pytest: "def test_646_ones_and_zeroes(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_max_form'))
+    assert ns['find_max_form'](['10', '0001', '111001', '1', '0'], 5, 3) == 4
+    assert ns['find_max_form'](['10', '0', '1'], 1, 1) == 2
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def find_max_form(strs, m, n):
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for s in strs:
+        zeros = s.count('0')
+        ones = len(s) - zeros
+        for j in range(m, zeros - 1, -1):
+            for k in range(n, ones - 1, -1):
+                dp[j][k] = max(dp[j][k], 1 + dp[j - zeros][k - ones])
+    return dp[m][n]
+
+print(find_max_form(['10', '0001', '111001', '1', '0'], 5, 3))
+",
+    solution_example: "def find_max_form(strs, m, n):
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for s in strs:
+        zeros = s.count('0')
+        ones = len(s) - zeros
+        for j in range(m, zeros - 1, -1):
+            for k in range(n, ones - 1, -1):
+                dp[j][k] = max(dp[j][k], 1 + dp[j - zeros][k - ones])
+    return dp[m][n]
+
+print(find_max_form(['10', '0001', '111001', '1', '0'], 5, 3))
+",
+    next: Some("py-647-combination-sum-iv"), show_type_chips: false, micro_step: 646,
+};
+
+pub const PY647_COMBINATION_SUM_IV: CodingStep = CodingStep {
+    id: "py-647-combination-sum-iv", title: "DSA DP Knapsack · Combination Sum IV", objective: "Número de permutaciones que suman target con nums positivos.",
+    prompt_md: "**Combination Sum IV**
+
+dp[x] += dp[x-num] iterando x por fuera: ahora sí cuentan el orden.
+
+**Micro-reto:**
+1. Definí `combination_sum4(nums, target)`
+2. Ejecutá el ejemplo; imprimí `7`.",
+    starter_code: "# def combination_sum4(nums, target):
+#     dp = [0] * (target + 1)
+#     dp[0] = 1
+#     for x in range(1, target + 1):
+#         for num in nums:
+#             if num <= x:
+#                 dp[x] += dp[x - num]
+#     return dp[target]
+#
+# print(combination_sum4([1, 2, 3], 4))
+",
+    pytest: "def test_647_combination_sum_iv(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('combination_sum4'))
+    assert ns['combination_sum4']([1, 2, 3], 4) == 7
+    assert ns['combination_sum4']([9], 3) == 0
+    assert capsys.readouterr().out.strip() == '7'
+",
+    hint: "def combination_sum4(nums, target):
+    dp = [0] * (target + 1)
+    dp[0] = 1
+    for x in range(1, target + 1):
+        for num in nums:
+            if num <= x:
+                dp[x] += dp[x - num]
+    return dp[target]
+
+print(combination_sum4([1, 2, 3], 4))
+",
+    solution_example: "def combination_sum4(nums, target):
+    dp = [0] * (target + 1)
+    dp[0] = 1
+    for x in range(1, target + 1):
+        for num in nums:
+            if num <= x:
+                dp[x] += dp[x - num]
+    return dp[target]
+
+print(combination_sum4([1, 2, 3], 4))
+",
+    next: Some("py-648-can-partition"), show_type_chips: false, micro_step: 647,
+};
+
+pub const PY648_CAN_PARTITION: CodingStep = CodingStep {
+    id: "py-648-can-partition", title: "DSA DP Knapsack · Equal Partition", objective: "¿Se puede partir el array en dos subconjuntos de igual suma?",
+    prompt_md: "**Partition Equal Subset Sum**
+
+Si total es par, knapsack booleano hacia total/2.
+
+**Micro-reto:**
+1. Definí `can_partition(nums)`
+2. Ejecutá el ejemplo; imprimí `True`.",
+    starter_code: "# def can_partition(nums):
+#     total = sum(nums)
+#     if total % 2:
+#         return False
+#     need = total // 2
+#     dp = [False] * (need + 1)
+#     dp[0] = True
+#     for x in nums:
+#         for s in range(need, x - 1, -1):
+#             dp[s] = dp[s] or dp[s - x]
+#     return dp[need]
+#
+# print(can_partition([1, 5, 11, 5]))
+",
+    pytest: "def test_648_can_partition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('can_partition'))
+    assert ns['can_partition']([1, 5, 11, 5]) is True
+    assert ns['can_partition']([1, 2, 3, 5]) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def can_partition(nums):
+    total = sum(nums)
+    if total % 2:
+        return False
+    need = total // 2
+    dp = [False] * (need + 1)
+    dp[0] = True
+    for x in nums:
+        for s in range(need, x - 1, -1):
+            dp[s] = dp[s] or dp[s - x]
+    return dp[need]
+
+print(can_partition([1, 5, 11, 5]))
+",
+    solution_example: "def can_partition(nums):
+    total = sum(nums)
+    if total % 2:
+        return False
+    need = total // 2
+    dp = [False] * (need + 1)
+    dp[0] = True
+    for x in nums:
+        for s in range(need, x - 1, -1):
+            dp[s] = dp[s] or dp[s - x]
+    return dp[need]
+
+print(can_partition([1, 5, 11, 5]))
+",
+    next: None, show_type_chips: false, micro_step: 648,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -21091,7 +21441,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY639_RECONSTRUCT_QUEUE,
     &PY640_PARTITION_LABELS,
     &PY641_TASK_SCHEDULER,
-    &PY642_BAG_OF_TOKENS
+    &PY642_BAG_OF_TOKENS,
+    &PY643_COIN_CHANGE_II,
+    &PY644_TARGET_SUM,
+    &PY645_LAST_STONE_II,
+    &PY646_ONES_AND_ZEROES,
+    &PY647_COMBINATION_SUM_IV,
+    &PY648_CAN_PARTITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -21235,7 +21591,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 642);
+            assert!(step.micro_step >= 1 && step.micro_step <= 648);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -23617,7 +23973,13 @@ mod tests {
             (639, "py-639-reconstruct-queue", Some("py-640-partition-labels")),
             (640, "py-640-partition-labels", Some("py-641-task-scheduler")),
             (641, "py-641-task-scheduler", Some("py-642-bag-of-tokens")),
-            (642, "py-642-bag-of-tokens", None),
+            (642, "py-642-bag-of-tokens", Some("py-643-coin-change-ii")),
+            (643, "py-643-coin-change-ii", Some("py-644-target-sum")),
+            (644, "py-644-target-sum", Some("py-645-last-stone-ii")),
+            (645, "py-645-last-stone-ii", Some("py-646-ones-and-zeroes")),
+            (646, "py-646-ones-and-zeroes", Some("py-647-combination-sum-iv")),
+            (647, "py-647-combination-sum-iv", Some("py-648-can-partition")),
+            (648, "py-648-can-partition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

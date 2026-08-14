@@ -648,6 +648,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 640, step_id: "py-640-partition-labels" },
   { level_id: 641, step_id: "py-641-task-scheduler" },
   { level_id: 642, step_id: "py-642-bag-of-tokens" },
+  { level_id: 643, step_id: "py-643-coin-change-ii" },
+  { level_id: 644, step_id: "py-644-target-sum" },
+  { level_id: 645, step_id: "py-645-last-stone-ii" },
+  { level_id: 646, step_id: "py-646-ones-and-zeroes" },
+  { level_id: 647, step_id: "py-647-combination-sum-iv" },
+  { level_id: 648, step_id: "py-648-can-partition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
