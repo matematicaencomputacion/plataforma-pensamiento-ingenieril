@@ -22,124 +22,113 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 493,
-    id: "py-493-sort-colors",
-    title: "DSA Sort Colors",
-    solution: `def sort_colors(nums):
-    lo = mid = 0
-    hi = len(nums) - 1
-    while mid <= hi:
-        if nums[mid] == 0:
-            nums[lo], nums[mid] = nums[mid], nums[lo]
-            lo += 1; mid += 1
-        elif nums[mid] == 1:
-            mid += 1
-        else:
-            nums[mid], nums[hi] = nums[hi], nums[mid]
-            hi -= 1
-    return nums
+    micro: 595,
+    id: "py-595-majority-n2",
+    title: "DSA Majority N2",
+    solution: `def majority_element(nums):
+    cand = None; cnt = 0
+    for x in nums:
+        if cnt == 0:
+            cand = x
+        cnt += 1 if x == cand else -1
+    return cand
 
-print(sort_colors([2, 0, 2, 1, 1, 0]))
+print(majority_element([3, 2, 3]))
 `,
-    nextUrl: /\/learn\/py-494-merge-intervals/,
-    cursorAfter: "494",
+    nextUrl: /\/learn\/py-596-pascal-triangle/,
+    cursorAfter: "596",
   },
   {
-    micro: 494,
-    id: "py-494-merge-intervals",
-    title: "DSA Merge Intervals",
-    solution: `def merge(intervals):
-    intervals.sort()
-    out = [intervals[0]]
-    for s, e in intervals[1:]:
-        if s <= out[-1][1]:
-            out[-1][1] = max(out[-1][1], e)
-        else:
-            out.append([s, e])
-    return out
+    micro: 596,
+    id: "py-596-pascal-triangle",
+    title: "DSA Pascal Triangle",
+    solution: `def generate(num_rows):
+    rows = [[1]]
+    for i in range(1, num_rows):
+        prev = rows[-1]
+        rows.append([1] + [prev[j] + prev[j + 1] for j in range(len(prev) - 1)] + [1])
+    return rows
 
-print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))
+print(generate(5))
 `,
-    nextUrl: /\/learn\/py-495-insert-interval/,
-    cursorAfter: "495",
+    nextUrl: /\/learn\/py-597-plus-one-arr/,
+    cursorAfter: "597",
   },
   {
-    micro: 495,
-    id: "py-495-insert-interval",
-    title: "DSA Insert Interval",
-    solution: `def insert(intervals, new_interval):
-    res = []
-    s, e = new_interval
+    micro: 597,
+    id: "py-597-plus-one-arr",
+    title: "DSA Plus One Arr",
+    solution: `def plus_one(digits):
+    for i in range(len(digits) - 1, -1, -1):
+        if digits[i] < 9:
+            digits[i] += 1
+            return digits
+        digits[i] = 0
+    return [1] + digits
+
+print(plus_one([1, 2, 3]))
+`,
+    nextUrl: /\/learn\/py-598-single-number-ii/,
+    cursorAfter: "598",
+  },
+  {
+    micro: 598,
+    id: "py-598-single-number-ii",
+    title: "DSA Single II",
+    solution: `def single_number(nums):
+    ones = twos = 0
+    for x in nums:
+        ones = (ones ^ x) & ~twos
+        twos = (twos ^ x) & ~ones
+    return ones
+
+print(single_number([2, 2, 3, 2]))
+`,
+    nextUrl: /\/learn\/py-599-valid-mountain/,
+    cursorAfter: "599",
+  },
+  {
+    micro: 599,
+    id: "py-599-valid-mountain",
+    title: "DSA Valid Mountain",
+    solution: `def valid_mountain_array(arr):
+    n = len(arr)
     i = 0
-    n = len(intervals)
-    while i < n and intervals[i][1] < s:
-        res.append(intervals[i]); i += 1
-    while i < n and intervals[i][0] <= e:
-        s = min(s, intervals[i][0]); e = max(e, intervals[i][1]); i += 1
-    res.append([s, e])
-    res.extend(intervals[i:])
-    return res
+    while i + 1 < n and arr[i] < arr[i + 1]:
+        i += 1
+    if i == 0 or i == n - 1:
+        return False
+    while i + 1 < n and arr[i] > arr[i + 1]:
+        i += 1
+    return i == n - 1
 
-print(insert([[1, 3], [6, 9]], [2, 5]))
+print(valid_mountain_array([0, 3, 2, 1]))
 `,
-    nextUrl: /\/learn\/py-496-largest-number/,
-    cursorAfter: "496",
+    nextUrl: /\/learn\/py-600-capstone-two-sum/,
+    cursorAfter: "600",
   },
   {
-    micro: 496,
-    id: "py-496-largest-number",
-    title: "DSA Largest Number",
-    solution: `def largest_number(nums):
-    from functools import cmp_to_key
-    s = [str(x) for x in nums]
-    s.sort(key=cmp_to_key(lambda a, b: (a + b < b + a) - (a + b > b + a)))
-    if s[0] == "0":
-        return "0"
-    return "".join(s)
+    micro: 600,
+    id: "py-600-capstone-two-sum",
+    title: "DSA Capstone Two Sum",
+    solution: `def two_sum(nums, target):
+    seen = {}
+    for i, x in enumerate(nums):
+        if target - x in seen:
+            return [seen[target - x], i]
+        seen[x] = i
+    return []
 
-print(largest_number([10, 2]))
-`,
-    nextUrl: /\/learn\/py-497-sort-by-parity/,
-    cursorAfter: "497",
-  },
-  {
-    micro: 497,
-    id: "py-497-sort-by-parity",
-    title: "DSA Sort Parity",
-    solution: `def sort_array_by_parity(nums):
-    i = 0
-    for j, x in enumerate(nums):
-        if x % 2 == 0:
-            nums[i], nums[j] = nums[j], nums[i]
-            i += 1
-    return nums
-
-print(sort_array_by_parity([3, 1, 2, 4]))
-`,
-    nextUrl: /\/learn\/py-498-wiggle-sort/,
-    cursorAfter: "498",
-  },
-  {
-    micro: 498,
-    id: "py-498-wiggle-sort",
-    title: "DSA Wiggle Sort",
-    solution: `def wiggle_sort(nums):
-    nums.sort()
-    mid = (len(nums) + 1) // 2
-    left, right = nums[:mid][::-1], nums[mid:][::-1]
-    nums[:] = [left[i // 2] if i % 2 == 0 else right[i // 2] for i in range(len(nums))]
-    return nums
-
-print(wiggle_sort([1, 5, 1, 1, 6, 4]))
+print(two_sum([2, 7, 11, 15], 9))
 `,
     nextUrl: /\/workspace/,
-    cursorAfter: "499",
+    cursorAfter: "601",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:493|494|495|496|497|498)-/);
+    expect(step.id).toMatch(/^py-(?:595|596|597|598|599|600)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -169,7 +158,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 493–498 · sorting III", () => {
+test.describe("micro-steps 595–600 · cap 600", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

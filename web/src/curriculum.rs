@@ -17328,7 +17328,310 @@ print(all_paths_source_target([[1, 2], [3], [3], []]))
 
 print(all_paths_source_target([[1, 2], [3], [3], []]))
 ",
-    next: None, show_type_chips: false, micro_step: 594,
+    next: Some("py-595-majority-n2"), show_type_chips: false, micro_step: 594,
+};
+
+
+pub const PY595_MAJORITY_N2: CodingStep = CodingStep {
+    id: "py-595-majority-n2", title: "DSA Majority N2", objective: "Mayoría n/2.",
+    prompt_md: "**Majority N2**
+
+Mayoría n/2.
+
+**Micro-reto:**
+1. Definí `majority_element(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3`.",
+    starter_code: "# def majority_element(nums):
+#     cand = None; cnt = 0
+#     for x in nums:
+#         if cnt == 0:
+#             cand = x
+#         cnt += 1 if x == cand else -1
+#     return cand
+#
+# print(majority_element([3, 2, 3]))
+",
+    pytest: "def test_595_majority_n2(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('majority_element'))
+    assert ns['majority_element']([3, 2, 3]) == 3
+    assert ns['majority_element']([2, 2, 1, 1, 1, 2, 2]) == 2
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def majority_element(nums):
+    cand = None; cnt = 0
+    for x in nums:
+        if cnt == 0:
+            cand = x
+        cnt += 1 if x == cand else -1
+    return cand
+
+print(majority_element([3, 2, 3]))
+",
+    solution_example: "def majority_element(nums):
+    cand = None; cnt = 0
+    for x in nums:
+        if cnt == 0:
+            cand = x
+        cnt += 1 if x == cand else -1
+    return cand
+
+print(majority_element([3, 2, 3]))
+",
+    next: Some("py-596-pascal-triangle"), show_type_chips: false, micro_step: 595,
+};
+
+pub const PY596_PASCAL_TRIANGLE: CodingStep = CodingStep {
+    id: "py-596-pascal-triangle", title: "DSA Pascal Triangle", objective: "n filas de Pascal.",
+    prompt_md: "**Pascal Triangle**
+
+n filas de Pascal.
+
+**Micro-reto:**
+1. Definí `generate(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[1], [1, 1], [1, 2, 1], [1, 3, 3, 1], [1, 4, 6, 4, 1]]`.",
+    starter_code: "# def generate(num_rows):
+#     rows = [[1]]
+#     for i in range(1, num_rows):
+#         prev = rows[-1]
+#         rows.append([1] + [prev[j] + prev[j + 1] for j in range(len(prev) - 1)] + [1])
+#     return rows
+#
+# print(generate(5))
+",
+    pytest: "def test_596_pascal_triangle(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('generate'))
+    assert ns['generate'](5) == [[1], [1, 1], [1, 2, 1], [1, 3, 3, 1], [1, 4, 6, 4, 1]]
+    assert capsys.readouterr().out.strip() == '[[1], [1, 1], [1, 2, 1], [1, 3, 3, 1], [1, 4, 6, 4, 1]]'
+",
+    hint: "def generate(num_rows):
+    rows = [[1]]
+    for i in range(1, num_rows):
+        prev = rows[-1]
+        rows.append([1] + [prev[j] + prev[j + 1] for j in range(len(prev) - 1)] + [1])
+    return rows
+
+print(generate(5))
+",
+    solution_example: "def generate(num_rows):
+    rows = [[1]]
+    for i in range(1, num_rows):
+        prev = rows[-1]
+        rows.append([1] + [prev[j] + prev[j + 1] for j in range(len(prev) - 1)] + [1])
+    return rows
+
+print(generate(5))
+",
+    next: Some("py-597-plus-one-arr"), show_type_chips: false, micro_step: 596,
+};
+
+pub const PY597_PLUS_ONE_ARR: CodingStep = CodingStep {
+    id: "py-597-plus-one-arr", title: "DSA Plus One Arr", objective: "Sumar uno a dígitos.",
+    prompt_md: "**Plus One Arr**
+
+Sumar uno a dígitos.
+
+**Micro-reto:**
+1. Definí `plus_one(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 2, 4]`.",
+    starter_code: "# def plus_one(digits):
+#     for i in range(len(digits) - 1, -1, -1):
+#         if digits[i] < 9:
+#             digits[i] += 1
+#             return digits
+#         digits[i] = 0
+#     return [1] + digits
+#
+# print(plus_one([1, 2, 3]))
+",
+    pytest: "def test_597_plus_one_arr(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('plus_one'))
+    assert ns['plus_one']([1, 2, 3]) == [1, 2, 4]
+    assert ns['plus_one']([9]) == [1, 0]
+    assert capsys.readouterr().out.strip() == '[1, 2, 4]'
+",
+    hint: "def plus_one(digits):
+    for i in range(len(digits) - 1, -1, -1):
+        if digits[i] < 9:
+            digits[i] += 1
+            return digits
+        digits[i] = 0
+    return [1] + digits
+
+print(plus_one([1, 2, 3]))
+",
+    solution_example: "def plus_one(digits):
+    for i in range(len(digits) - 1, -1, -1):
+        if digits[i] < 9:
+            digits[i] += 1
+            return digits
+        digits[i] = 0
+    return [1] + digits
+
+print(plus_one([1, 2, 3]))
+",
+    next: Some("py-598-single-number-ii"), show_type_chips: false, micro_step: 597,
+};
+
+pub const PY598_SINGLE_NUMBER_II: CodingStep = CodingStep {
+    id: "py-598-single-number-ii", title: "DSA Single II", objective: "Único que aparece una vez.",
+    prompt_md: "**Single II**
+
+Único que aparece una vez.
+
+**Micro-reto:**
+1. Definí `single_number(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3`.",
+    starter_code: "# def single_number(nums):
+#     ones = twos = 0
+#     for x in nums:
+#         ones = (ones ^ x) & ~twos
+#         twos = (twos ^ x) & ~ones
+#     return ones
+#
+# print(single_number([2, 2, 3, 2]))
+",
+    pytest: "def test_598_single_number_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('single_number'))
+    assert ns['single_number']([2, 2, 3, 2]) == 3
+    assert ns['single_number']([0, 1, 0, 1, 0, 1, 99]) == 99
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def single_number(nums):
+    ones = twos = 0
+    for x in nums:
+        ones = (ones ^ x) & ~twos
+        twos = (twos ^ x) & ~ones
+    return ones
+
+print(single_number([2, 2, 3, 2]))
+",
+    solution_example: "def single_number(nums):
+    ones = twos = 0
+    for x in nums:
+        ones = (ones ^ x) & ~twos
+        twos = (twos ^ x) & ~ones
+    return ones
+
+print(single_number([2, 2, 3, 2]))
+",
+    next: Some("py-599-valid-mountain"), show_type_chips: false, micro_step: 598,
+};
+
+pub const PY599_VALID_MOUNTAIN: CodingStep = CodingStep {
+    id: "py-599-valid-mountain", title: "DSA Valid Mountain", objective: "¿Array montaña?",
+    prompt_md: "**Valid Mountain**
+
+¿Array montaña?
+
+**Micro-reto:**
+1. Definí `valid_mountain_array(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def valid_mountain_array(arr):
+#     n = len(arr)
+#     i = 0
+#     while i + 1 < n and arr[i] < arr[i + 1]:
+#         i += 1
+#     if i == 0 or i == n - 1:
+#         return False
+#     while i + 1 < n and arr[i] > arr[i + 1]:
+#         i += 1
+#     return i == n - 1
+#
+# print(valid_mountain_array([0, 3, 2, 1]))
+",
+    pytest: "def test_599_valid_mountain(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('valid_mountain_array'))
+    assert ns['valid_mountain_array']([0, 3, 2, 1]) is True
+    assert ns['valid_mountain_array']([3, 5, 5]) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def valid_mountain_array(arr):
+    n = len(arr)
+    i = 0
+    while i + 1 < n and arr[i] < arr[i + 1]:
+        i += 1
+    if i == 0 or i == n - 1:
+        return False
+    while i + 1 < n and arr[i] > arr[i + 1]:
+        i += 1
+    return i == n - 1
+
+print(valid_mountain_array([0, 3, 2, 1]))
+",
+    solution_example: "def valid_mountain_array(arr):
+    n = len(arr)
+    i = 0
+    while i + 1 < n and arr[i] < arr[i + 1]:
+        i += 1
+    if i == 0 or i == n - 1:
+        return False
+    while i + 1 < n and arr[i] > arr[i + 1]:
+        i += 1
+    return i == n - 1
+
+print(valid_mountain_array([0, 3, 2, 1]))
+",
+    next: Some("py-600-capstone-two-sum"), show_type_chips: false, micro_step: 599,
+};
+
+pub const PY600_CAPSTONE_TWO_SUM: CodingStep = CodingStep {
+    id: "py-600-capstone-two-sum", title: "DSA Capstone Two Sum", objective: "Índices que suman target.",
+    prompt_md: "**Capstone Two Sum**
+
+Índices que suman target.
+
+**Micro-reto:**
+1. Definí `two_sum(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[0, 1]`.",
+    starter_code: "# def two_sum(nums, target):
+#     seen = {}
+#     for i, x in enumerate(nums):
+#         if target - x in seen:
+#             return [seen[target - x], i]
+#         seen[x] = i
+#     return []
+#
+# print(two_sum([2, 7, 11, 15], 9))
+",
+    pytest: "def test_600_capstone_two_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('two_sum'))
+    assert ns['two_sum']([2, 7, 11, 15], 9) == [0, 1]
+    assert ns['two_sum']([3, 2, 4], 6) == [1, 2]
+    assert capsys.readouterr().out.strip() == '[0, 1]'
+",
+    hint: "def two_sum(nums, target):
+    seen = {}
+    for i, x in enumerate(nums):
+        if target - x in seen:
+            return [seen[target - x], i]
+        seen[x] = i
+    return []
+
+print(two_sum([2, 7, 11, 15], 9))
+",
+    solution_example: "def two_sum(nums, target):
+    seen = {}
+    for i, x in enumerate(nums):
+        if target - x in seen:
+            return [seen[target - x], i]
+        seen[x] = i
+    return []
+
+print(two_sum([2, 7, 11, 15], 9))
+",
+    next: None, show_type_chips: false, micro_step: 600,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -17925,7 +18228,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY591_NETWORK_DELAY,
     &PY592_REDUNDANT_CONN,
     &PY593_VALID_PATH,
-    &PY594_ALL_PATHS
+    &PY594_ALL_PATHS,
+    &PY595_MAJORITY_N2,
+    &PY596_PASCAL_TRIANGLE,
+    &PY597_PLUS_ONE_ARR,
+    &PY598_SINGLE_NUMBER_II,
+    &PY599_VALID_MOUNTAIN,
+    &PY600_CAPSTONE_TWO_SUM
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -18069,7 +18378,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 594);
+            assert!(step.micro_step >= 1 && step.micro_step <= 600);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -20277,7 +20586,139 @@ mod tests {
 
 
 
-            (594, "py-594-all-paths", None),
+            (594, "py-594-all-paths", Some("py-595-majority-n2")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (595, "py-595-majority-n2", Some("py-596-pascal-triangle")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (596, "py-596-pascal-triangle", Some("py-597-plus-one-arr")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (597, "py-597-plus-one-arr", Some("py-598-single-number-ii")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (598, "py-598-single-number-ii", Some("py-599-valid-mountain")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (599, "py-599-valid-mountain", Some("py-600-capstone-two-sum")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (600, "py-600-capstone-two-sum", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
