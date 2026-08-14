@@ -22,88 +22,91 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 451,
-    id: "py-451-build-array-perm",
-    title: "DSA Build Array",
-    solution: `def build_array(nums):
-    return [nums[x] for x in nums]
+    micro: 457,
+    id: "py-457-defang-ip",
+    title: "DSA Defang IP",
+    solution: `def defang_ipaddr(address):
+    return address.replace(".", "[.]")
 
-print(build_array([0, 2, 1, 5, 3, 4]))
+print(defang_ipaddr("1.1.1.1"))
 `,
-    nextUrl: /\/learn\/py-452-concat-array/,
-    cursorAfter: "452",
+    nextUrl: /\/learn\/py-458-goal-parser/,
+    cursorAfter: "458",
   },
   {
-    micro: 452,
-    id: "py-452-concat-array",
-    title: "DSA Concat Array",
-    solution: `def get_concatenation(nums):
-    return nums + nums
+    micro: 458,
+    id: "py-458-goal-parser",
+    title: "DSA Goal Parser",
+    solution: `def interpret(command):
+    return command.replace("()", "o").replace("(al)", "al")
 
-print(get_concatenation([1, 2, 1]))
+print(interpret("G()(al)"))
 `,
-    nextUrl: /\/learn\/py-453-shuffle-array/,
-    cursorAfter: "453",
+    nextUrl: /\/learn\/py-459-shuffle-string/,
+    cursorAfter: "459",
   },
   {
-    micro: 453,
-    id: "py-453-shuffle-array",
-    title: "DSA Shuffle Array",
-    solution: `def shuffle(nums, n):
-    out = []
-    for i in range(n):
-        out.append(nums[i])
-        out.append(nums[i + n])
-    return out
+    micro: 459,
+    id: "py-459-shuffle-string",
+    title: "DSA Shuffle String",
+    solution: `def restore_string(s, indices):
+    out = [""] * len(s)
+    for ch, i in zip(s, indices):
+        out[i] = ch
+    return "".join(out)
 
-print(shuffle([2, 5, 1, 3, 4, 7], 3))
+print(restore_string("codeleet", [4, 5, 6, 7, 0, 2, 1, 3]))
 `,
-    nextUrl: /\/learn\/py-454-kids-candies/,
-    cursorAfter: "454",
+    nextUrl: /\/learn\/py-460-count-matches/,
+    cursorAfter: "460",
   },
   {
-    micro: 454,
-    id: "py-454-kids-candies",
-    title: "DSA Kids Candies",
-    solution: `def kids_with_candies(candies, extra):
-    m = max(candies)
-    return [c + extra >= m for c in candies]
+    micro: 460,
+    id: "py-460-count-matches",
+    title: "DSA Count Matches",
+    solution: `def count_matches(items, rule_key, rule_value):
+    idx = {"type": 0, "color": 1, "name": 2}[rule_key]
+    return sum(1 for it in items if it[idx] == rule_value)
 
-print(kids_with_candies([2, 3, 5, 1, 3], 3))
+print(count_matches([["phone", "blue", "pixel"], ["computer", "silver", "lenovo"], ["phone", "gold", "iphone"]], "color", "silver"))
 `,
-    nextUrl: /\/learn\/py-455-good-pairs/,
-    cursorAfter: "455",
+    nextUrl: /\/learn\/py-461-split-balanced/,
+    cursorAfter: "461",
   },
   {
-    micro: 455,
-    id: "py-455-good-pairs",
-    title: "DSA Good Pairs",
-    solution: `def num_identical_pairs(nums):
-    from collections import Counter
-    return sum(c * (c - 1) // 2 for c in Counter(nums).values())
+    micro: 461,
+    id: "py-461-split-balanced",
+    title: "DSA Split Balanced",
+    solution: `def balanced_string_split(s):
+    bal = ans = 0
+    for ch in s:
+        bal += 1 if ch == "R" else -1
+        if bal == 0:
+            ans += 1
+    return ans
 
-print(num_identical_pairs([1, 2, 3, 1, 1, 3]))
+print(balanced_string_split("RLRRLLRLRL"))
 `,
-    nextUrl: /\/learn\/py-456-smaller-counts/,
-    cursorAfter: "456",
+    nextUrl: /\/learn\/py-462-max-words/,
+    cursorAfter: "462",
   },
   {
-    micro: 456,
-    id: "py-456-smaller-counts",
-    title: "DSA Smaller Counts",
-    solution: `def smaller_numbers_than_current(nums):
-    return [sum(1 for y in nums if y < x) for x in nums]
+    micro: 462,
+    id: "py-462-max-words",
+    title: "DSA Max Words",
+    solution: `def most_words_found(sentences):
+    return max(len(s.split()) for s in sentences)
 
-print(smaller_numbers_than_current([8, 1, 2, 2, 3]))
+print(most_words_found(["alice and bob love leetcode", "i think so too", "this is great thanks very much"]))
 `,
-    nextUrl: /\/learn\/py-457-defang-ip/,
-    cursorAfter: "457",
+    nextUrl: /\/workspace/,
+    cursorAfter: "463",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:451|452|453|454|455|456)-/);
+    expect(step.id).toMatch(/^py-(?:457|458|459|460|461|462)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -133,7 +136,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 451–456 · arrays III", () => {
+test.describe("micro-steps 457–462 · strings III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

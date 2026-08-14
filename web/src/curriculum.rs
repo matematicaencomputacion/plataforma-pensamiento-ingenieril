@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=456).
+    /// 1-based index on the workspace micro-step rail (1..=462).
     pub micro_step: i32,
 }
 
@@ -8939,7 +8939,234 @@ print(smaller_numbers_than_current([8, 1, 2, 2, 3]))
 
 print(smaller_numbers_than_current([8, 1, 2, 2, 3]))
 ",
-    next: None, show_type_chips: false, micro_step: 456,
+    next: Some("py-457-defang-ip"), show_type_chips: false, micro_step: 456,
+};
+
+
+pub const PY457_DEFANG_IP: CodingStep = CodingStep {
+    id: "py-457-defang-ip", title: "DSA Defang IP", objective: "Reemplazar '.' por '[.]'.",
+    prompt_md: "**Defanging an IP Address**
+
+Replace literal.
+
+**Micro-reto:**
+1. Definí `defang_ipaddr(address)`
+2. Definí `defang_ipaddr(address)` e imprimí con `\"1.1.1.1\"`.",
+    starter_code: "# def defang_ipaddr(...):
+#     ...
+# print(defang_ipaddr(\"1.1.1.1\"))
+",
+    pytest: "def test_457_defang_ip(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('defang_ipaddr'))
+    assert ns['defang_ipaddr'](\"1.1.1.1\") == '1[.]1[.]1[.]1'
+    assert ns['defang_ipaddr'](\"255.100.50.0\") == '255[.]100[.]50[.]0'
+    assert capsys.readouterr().out.strip() == '1[.]1[.]1[.]1'
+",
+    hint: "def defang_ipaddr(address):
+    return address.replace(\".\", \"[.]\")
+
+print(defang_ipaddr(\"1.1.1.1\"))
+",
+    solution_example: "def defang_ipaddr(address):
+    return address.replace(\".\", \"[.]\")
+
+print(defang_ipaddr(\"1.1.1.1\"))
+",
+    next: Some("py-458-goal-parser"), show_type_chips: false, micro_step: 457,
+};
+
+
+pub const PY458_GOAL_PARSER: CodingStep = CodingStep {
+    id: "py-458-goal-parser", title: "DSA Goal Parser", objective: "Interpretar G / () / (al).",
+    prompt_md: "**Goal Parser Interpretation**
+
+Reemplazos encadenados.
+
+**Micro-reto:**
+1. Definí `interpret(command)`
+2. Definí `interpret(command)` e imprimí `\"G()(al)\"` → `Goal`.",
+    starter_code: "# def interpret(...):
+#     ...
+# print(interpret(\"G()(al)\"))
+",
+    pytest: "def test_458_goal_parser(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('interpret'))
+    assert ns['interpret'](\"G()(al)\") == 'Goal'
+    assert ns['interpret'](\"G()()()()(al)\") == 'Gooooal'
+    assert capsys.readouterr().out.strip() == 'Goal'
+",
+    hint: "def interpret(command):
+    return command.replace(\"()\", \"o\").replace(\"(al)\", \"al\")
+
+print(interpret(\"G()(al)\"))
+",
+    solution_example: "def interpret(command):
+    return command.replace(\"()\", \"o\").replace(\"(al)\", \"al\")
+
+print(interpret(\"G()(al)\"))
+",
+    next: Some("py-459-shuffle-string"), show_type_chips: false, micro_step: 458,
+};
+
+
+pub const PY459_SHUFFLE_STRING: CodingStep = CodingStep {
+    id: "py-459-shuffle-string", title: "DSA Shuffle String", objective: "Reordenar s según indices.",
+    prompt_md: "**Shuffle String**
+
+Escribir en array destino.
+
+**Micro-reto:**
+1. Definí `restore_string(s, indices)`
+2. Definí `restore_string(s, indices)` e imprimí el ejemplo.",
+    starter_code: "# def restore_string(...):
+#     ...
+# print(restore_string(\"codeleet\", [4, 5, 6, 7, 0, 2, 1, 3]))
+",
+    pytest: "def test_459_shuffle_string(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('restore_string'))
+    assert ns['restore_string'](\"codeleet\", [4, 5, 6, 7, 0, 2, 1, 3]) == 'leetcode'
+    assert ns['restore_string'](\"aiohn\", [3, 1, 4, 2, 0]) == 'nihao'
+    assert capsys.readouterr().out.strip() == 'leetcode'
+",
+    hint: "def restore_string(s, indices):
+    out = [\"\"] * len(s)
+    for ch, i in zip(s, indices):
+        out[i] = ch
+    return \"\".join(out)
+
+print(restore_string(\"codeleet\", [4, 5, 6, 7, 0, 2, 1, 3]))
+",
+    solution_example: "def restore_string(s, indices):
+    out = [\"\"] * len(s)
+    for ch, i in zip(s, indices):
+        out[i] = ch
+    return \"\".join(out)
+
+print(restore_string(\"codeleet\", [4, 5, 6, 7, 0, 2, 1, 3]))
+",
+    next: Some("py-460-count-matches"), show_type_chips: false, micro_step: 459,
+};
+
+
+pub const PY460_COUNT_MATCHES: CodingStep = CodingStep {
+    id: "py-460-count-matches", title: "DSA Count Matches", objective: "Contar ítems que cumplen la regla.",
+    prompt_md: "**Count Items Matching a Rule**
+
+Map type/color/name → índice.
+
+**Micro-reto:**
+1. Definí `count_matches(items, rule_key, rule_value)`
+2. Definí `count_matches(items, rule_key, rule_value)` e imprimí el ejemplo.",
+    starter_code: "# def count_matches(...):
+#     ...
+# print(count_matches([[\"phone\", \"blue\", \"pixel\"], [\"computer\", \"silver\", \"lenovo\"], [\"phone\", \"gold\", \"iphone\"]], \"color\", \"silver\"))
+",
+    pytest: "def test_460_count_matches(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('count_matches'))
+    assert ns['count_matches']([[\"phone\", \"blue\", \"pixel\"], [\"computer\", \"silver\", \"lenovo\"], [\"phone\", \"gold\", \"iphone\"]], \"color\", \"silver\") == 1
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def count_matches(items, rule_key, rule_value):
+    idx = {\"type\": 0, \"color\": 1, \"name\": 2}[rule_key]
+    return sum(1 for it in items if it[idx] == rule_value)
+
+print(count_matches([[\"phone\", \"blue\", \"pixel\"], [\"computer\", \"silver\", \"lenovo\"], [\"phone\", \"gold\", \"iphone\"]], \"color\", \"silver\"))
+",
+    solution_example: "def count_matches(items, rule_key, rule_value):
+    idx = {\"type\": 0, \"color\": 1, \"name\": 2}[rule_key]
+    return sum(1 for it in items if it[idx] == rule_value)
+
+print(count_matches([[\"phone\", \"blue\", \"pixel\"], [\"computer\", \"silver\", \"lenovo\"], [\"phone\", \"gold\", \"iphone\"]], \"color\", \"silver\"))
+",
+    next: Some("py-461-split-balanced"), show_type_chips: false, micro_step: 460,
+};
+
+
+pub const PY461_SPLIT_BALANCED: CodingStep = CodingStep {
+    id: "py-461-split-balanced", title: "DSA Split Balanced", objective: "Máximo de splits R/L balanceados.",
+    prompt_md: "**Split a String in Balanced Strings**
+
+Balance +1/-1.
+
+**Micro-reto:**
+1. Definí `balanced_string_split(s)`
+2. Definí `balanced_string_split(s)` e imprimí (esperado: `4`).",
+    starter_code: "# def balanced_string_split(...):
+#     ...
+# print(balanced_string_split(\"RLRRLLRLRL\"))
+",
+    pytest: "def test_461_split_balanced(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('balanced_string_split'))
+    assert ns['balanced_string_split'](\"RLRRLLRLRL\") == 4
+    assert ns['balanced_string_split'](\"LLLLRRRR\") == 1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def balanced_string_split(s):
+    bal = ans = 0
+    for ch in s:
+        bal += 1 if ch == \"R\" else -1
+        if bal == 0:
+            ans += 1
+    return ans
+
+print(balanced_string_split(\"RLRRLLRLRL\"))
+",
+    solution_example: "def balanced_string_split(s):
+    bal = ans = 0
+    for ch in s:
+        bal += 1 if ch == \"R\" else -1
+        if bal == 0:
+            ans += 1
+    return ans
+
+print(balanced_string_split(\"RLRRLLRLRL\"))
+",
+    next: Some("py-462-max-words"), show_type_chips: false, micro_step: 461,
+};
+
+
+pub const PY462_MAX_WORDS: CodingStep = CodingStep {
+    id: "py-462-max-words", title: "DSA Max Words", objective: "Máximo de palabras en oraciones.",
+    prompt_md: "**Maximum Number of Words Found in Sentences**
+
+len(split).
+
+**Micro-reto:**
+1. Definí `most_words_found(sentences)`
+2. Definí `most_words_found(sentences)` e imprimí el ejemplo.",
+    starter_code: "# def most_words_found(...):
+#     ...
+# print(most_words_found([\"alice and bob love leetcode\", \"i think so too\", \"this is great thanks very much\"]))
+",
+    pytest: "def test_462_max_words(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('most_words_found'))
+    assert ns['most_words_found']([\"alice and bob love leetcode\", \"i think so too\", \"this is great thanks very much\"]) == 6
+    assert ns['most_words_found']([\"please wait\", \"continue to fight\"]) == 3
+    assert capsys.readouterr().out.strip() == '6'
+",
+    hint: "def most_words_found(sentences):
+    return max(len(s.split()) for s in sentences)
+
+print(most_words_found([\"alice and bob love leetcode\", \"i think so too\", \"this is great thanks very much\"]))
+",
+    solution_example: "def most_words_found(sentences):
+    return max(len(s.split()) for s in sentences)
+
+print(most_words_found([\"alice and bob love leetcode\", \"i think so too\", \"this is great thanks very much\"]))
+",
+    next: None, show_type_chips: false, micro_step: 462,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -9398,7 +9625,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY453_SHUFFLE_ARRAY,
     &PY454_KIDS_CANDIES,
     &PY455_GOOD_PAIRS,
-    &PY456_SMALLER_COUNTS
+    &PY456_SMALLER_COUNTS,
+    &PY457_DEFANG_IP,
+    &PY458_GOAL_PARSER,
+    &PY459_SHUFFLE_STRING,
+    &PY460_COUNT_MATCHES,
+    &PY461_SPLIT_BALANCED,
+    &PY462_MAX_WORDS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -9542,7 +9775,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 456);
+            assert!(step.micro_step >= 1 && step.micro_step <= 462);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -10096,7 +10329,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py456_curriculum_chain() {
+    fn py203_to_py462_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -10352,7 +10585,13 @@ mod tests {
             (453, "py-453-shuffle-array", Some("py-454-kids-candies")),
             (454, "py-454-kids-candies", Some("py-455-good-pairs")),
             (455, "py-455-good-pairs", Some("py-456-smaller-counts")),
-            (456, "py-456-smaller-counts", None),
+            (456, "py-456-smaller-counts", Some("py-457-defang-ip")),
+            (457, "py-457-defang-ip", Some("py-458-goal-parser")),
+            (458, "py-458-goal-parser", Some("py-459-shuffle-string")),
+            (459, "py-459-shuffle-string", Some("py-460-count-matches")),
+            (460, "py-460-count-matches", Some("py-461-split-balanced")),
+            (461, "py-461-split-balanced", Some("py-462-max-words")),
+            (462, "py-462-max-words", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

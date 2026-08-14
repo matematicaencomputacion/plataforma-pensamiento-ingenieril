@@ -462,6 +462,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 454, step_id: "py-454-kids-candies" },
   { level_id: 455, step_id: "py-455-good-pairs" },
   { level_id: 456, step_id: "py-456-smaller-counts" },
+  { level_id: 457, step_id: "py-457-defang-ip" },
+  { level_id: 458, step_id: "py-458-goal-parser" },
+  { level_id: 459, step_id: "py-459-shuffle-string" },
+  { level_id: 460, step_id: "py-460-count-matches" },
+  { level_id: 461, step_id: "py-461-split-balanced" },
+  { level_id: 462, step_id: "py-462-max-words" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
