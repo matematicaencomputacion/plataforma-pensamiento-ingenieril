@@ -654,6 +654,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 646, step_id: "py-646-ones-and-zeroes" },
   { level_id: 647, step_id: "py-647-combination-sum-iv" },
   { level_id: 648, step_id: "py-648-can-partition" },
+  { level_id: 649, step_id: "py-649-num-distinct" },
+  { level_id: 650, step_id: "py-650-is-interleave" },
+  { level_id: 651, step_id: "py-651-min-cut-palindrome" },
+  { level_id: 652, step_id: "py-652-longest-common-subseq" },
+  { level_id: 653, step_id: "py-653-wildcard-match" },
+  { level_id: 654, step_id: "py-654-longest-palindrome-subseq" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
