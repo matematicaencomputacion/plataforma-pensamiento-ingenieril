@@ -1002,6 +1002,10 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 994, step_id: "py-994-computational-geometry-iii-lower-boundary" },
   { level_id: 995, step_id: "py-995-computational-geometry-iii-dependency-order" },
   { level_id: 996, step_id: "py-996-computational-geometry-iii-minimum-transition" },
+  { level_id: 997, step_id: "py-997-advanced-review-i-canonicalize" },
+  { level_id: 998, step_id: "py-998-advanced-review-i-prefix-state" },
+  { level_id: 999, step_id: "py-999-advanced-review-i-bounded-window" },
+  { level_id: 1000, step_id: "py-1000-advanced-review-i-lower-boundary" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

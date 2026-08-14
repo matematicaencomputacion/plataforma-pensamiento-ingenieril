@@ -42643,7 +42643,209 @@ print(minimum_transition_computational_geometry_iii([10, 15, 20]))
 
 print(minimum_transition_computational_geometry_iii([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 996,
+    next: Some("py-997-advanced-review-i-canonicalize"), show_type_chips: false, micro_step: 996,
+};
+
+
+pub const PY997_ADVANCED_REVIEW_I_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-997-advanced-review-i-canonicalize", title: "DSA Advanced DSA Review I · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de Advanced DSA Review I.",
+    prompt_md: "**Advanced DSA Review I: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_advanced_review_i(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_advanced_review_i(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_advanced_review_i([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_997_advanced_review_i_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_advanced_review_i'))
+    assert ns['canonicalize_advanced_review_i']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_advanced_review_i']([]) == []
+    assert ns['canonicalize_advanced_review_i']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_advanced_review_i(values):
+    return sorted(set(values))
+
+print(canonicalize_advanced_review_i([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_advanced_review_i(values):
+    return sorted(set(values))
+
+print(canonicalize_advanced_review_i([3, 1, 2, 3, 1]))
+",
+    next: Some("py-998-advanced-review-i-prefix-state"), show_type_chips: false, micro_step: 997,
+};
+
+pub const PY998_ADVANCED_REVIEW_I_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-998-advanced-review-i-prefix-state", title: "DSA Advanced DSA Review I · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de Advanced DSA Review I.",
+    prompt_md: "**Advanced DSA Review I: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_advanced_review_i(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_advanced_review_i(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_advanced_review_i([3, 1, 4]))
+",
+    pytest: "def test_998_advanced_review_i_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_advanced_review_i'))
+    assert ns['prefix_state_advanced_review_i']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_advanced_review_i']([]) == []
+    assert ns['prefix_state_advanced_review_i']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_advanced_review_i(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_advanced_review_i([3, 1, 4]))
+",
+    solution_example: "def prefix_state_advanced_review_i(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_advanced_review_i([3, 1, 4]))
+",
+    next: Some("py-999-advanced-review-i-bounded-window"), show_type_chips: false, micro_step: 998,
+};
+
+pub const PY999_ADVANCED_REVIEW_I_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-999-advanced-review-i-bounded-window", title: "DSA Advanced DSA Review I · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de Advanced DSA Review I.",
+    prompt_md: "**Advanced DSA Review I: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_advanced_review_i(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_advanced_review_i(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_advanced_review_i([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_999_advanced_review_i_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_advanced_review_i'))
+    assert ns['best_window_advanced_review_i']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_advanced_review_i']([4], 1) == 4
+    assert ns['best_window_advanced_review_i']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_advanced_review_i(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_advanced_review_i([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_advanced_review_i(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_advanced_review_i([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-1000-advanced-review-i-lower-boundary"), show_type_chips: false, micro_step: 999,
+};
+
+pub const PY1000_ADVANCED_REVIEW_I_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-1000-advanced-review-i-lower-boundary", title: "DSA Advanced DSA Review I · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de Advanced DSA Review I.",
+    prompt_md: "**Advanced DSA Review I: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_advanced_review_i(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_advanced_review_i(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_advanced_review_i([1, 3, 3, 7], 3))
+",
+    pytest: "def test_1000_advanced_review_i_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_advanced_review_i'))
+    assert ns['lower_boundary_advanced_review_i']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_advanced_review_i']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_advanced_review_i']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_advanced_review_i(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_advanced_review_i([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_advanced_review_i(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_advanced_review_i([1, 3, 3, 7], 3))
+",
+    next: None, show_type_chips: false, micro_step: 1000,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -43642,7 +43844,11 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY993_COMPUTATIONAL_GEOMETRY_III_BOUNDED_WINDOW,
     &PY994_COMPUTATIONAL_GEOMETRY_III_LOWER_BOUNDARY,
     &PY995_COMPUTATIONAL_GEOMETRY_III_DEPENDENCY_ORDER,
-    &PY996_COMPUTATIONAL_GEOMETRY_III_MINIMUM_TRANSITION
+    &PY996_COMPUTATIONAL_GEOMETRY_III_MINIMUM_TRANSITION,
+    &PY997_ADVANCED_REVIEW_I_CANONICALIZE,
+    &PY998_ADVANCED_REVIEW_I_PREFIX_STATE,
+    &PY999_ADVANCED_REVIEW_I_BOUNDED_WINDOW,
+    &PY1000_ADVANCED_REVIEW_I_LOWER_BOUNDARY
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -43786,7 +43992,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 996);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1000);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -46522,7 +46728,11 @@ mod tests {
             (993, "py-993-computational-geometry-iii-bounded-window", Some("py-994-computational-geometry-iii-lower-boundary")),
             (994, "py-994-computational-geometry-iii-lower-boundary", Some("py-995-computational-geometry-iii-dependency-order")),
             (995, "py-995-computational-geometry-iii-dependency-order", Some("py-996-computational-geometry-iii-minimum-transition")),
-            (996, "py-996-computational-geometry-iii-minimum-transition", None),
+            (996, "py-996-computational-geometry-iii-minimum-transition", Some("py-997-advanced-review-i-canonicalize")),
+            (997, "py-997-advanced-review-i-canonicalize", Some("py-998-advanced-review-i-prefix-state")),
+            (998, "py-998-advanced-review-i-prefix-state", Some("py-999-advanced-review-i-bounded-window")),
+            (999, "py-999-advanced-review-i-bounded-window", Some("py-1000-advanced-review-i-lower-boundary")),
+            (1000, "py-1000-advanced-review-i-lower-boundary", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
