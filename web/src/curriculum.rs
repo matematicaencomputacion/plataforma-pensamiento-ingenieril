@@ -12860,7 +12860,384 @@ print(is_palindrome(\"A man, a plan, a canal: Panama\"))
 
 print(is_palindrome(\"A man, a plan, a canal: Panama\"))
 ",
-    next: None, show_type_chips: false, micro_step: 522,
+    next: Some("py-523-daily-temps"), show_type_chips: false, micro_step: 522,
+};
+
+
+pub const PY523_DAILY_TEMPS: CodingStep = CodingStep {
+    id: "py-523-daily-temps", title: "DSA Daily Temps", objective: "Días hasta más calor.",
+    prompt_md: "**Daily Temps**
+
+Días hasta más calor.
+
+**Micro-reto:**
+1. Definí `daily_temperatures(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 1, 4, 2, 1, 1, 0, 0]`.",
+    starter_code: "# def daily_temperatures(temps):
+#     ans = [0] * len(temps)
+#     st = []
+#     for i, t in enumerate(temps):
+#         while st and temps[st[-1]] < t:
+#             j = st.pop()
+#             ans[j] = i - j
+#         st.append(i)
+#     return ans
+#
+# print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
+",
+    pytest: "def test_523_daily_temps(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('daily_temperatures'))
+    assert ns['daily_temperatures']([73, 74, 75, 71, 69, 72, 76, 73]) == [1, 1, 4, 2, 1, 1, 0, 0]
+    assert capsys.readouterr().out.strip() == '[1, 1, 4, 2, 1, 1, 0, 0]'
+",
+    hint: "def daily_temperatures(temps):
+    ans = [0] * len(temps)
+    st = []
+    for i, t in enumerate(temps):
+        while st and temps[st[-1]] < t:
+            j = st.pop()
+            ans[j] = i - j
+        st.append(i)
+    return ans
+
+print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
+",
+    solution_example: "def daily_temperatures(temps):
+    ans = [0] * len(temps)
+    st = []
+    for i, t in enumerate(temps):
+        while st and temps[st[-1]] < t:
+            j = st.pop()
+            ans[j] = i - j
+        st.append(i)
+    return ans
+
+print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
+",
+    next: Some("py-524-next-greater"), show_type_chips: false, micro_step: 523,
+};
+
+pub const PY524_NEXT_GREATER: CodingStep = CodingStep {
+    id: "py-524-next-greater", title: "DSA Next Greater", objective: "Siguiente mayor circular.",
+    prompt_md: "**Next Greater**
+
+Siguiente mayor circular.
+
+**Micro-reto:**
+1. Definí `next_greater_elements(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[2, -1, 2]`.",
+    starter_code: "# def next_greater_elements(nums):
+#     n = len(nums)
+#     ans = [-1] * n
+#     st = []
+#     for i in range(2 * n):
+#         x = nums[i % n]
+#         while st and nums[st[-1]] < x:
+#             ans[st.pop()] = x
+#         if i < n:
+#             st.append(i)
+#     return ans
+#
+# print(next_greater_elements([1, 2, 1]))
+",
+    pytest: "def test_524_next_greater(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('next_greater_elements'))
+    assert ns['next_greater_elements']([1, 2, 1]) == [2, -1, 2]
+    assert capsys.readouterr().out.strip() == '[2, -1, 2]'
+",
+    hint: "def next_greater_elements(nums):
+    n = len(nums)
+    ans = [-1] * n
+    st = []
+    for i in range(2 * n):
+        x = nums[i % n]
+        while st and nums[st[-1]] < x:
+            ans[st.pop()] = x
+        if i < n:
+            st.append(i)
+    return ans
+
+print(next_greater_elements([1, 2, 1]))
+",
+    solution_example: "def next_greater_elements(nums):
+    n = len(nums)
+    ans = [-1] * n
+    st = []
+    for i in range(2 * n):
+        x = nums[i % n]
+        while st and nums[st[-1]] < x:
+            ans[st.pop()] = x
+        if i < n:
+            st.append(i)
+    return ans
+
+print(next_greater_elements([1, 2, 1]))
+",
+    next: Some("py-525-eval-rpn"), show_type_chips: false, micro_step: 524,
+};
+
+pub const PY525_EVAL_RPN: CodingStep = CodingStep {
+    id: "py-525-eval-rpn", title: "DSA Eval RPN", objective: "Evaluar notación polaca.",
+    prompt_md: "**Eval RPN**
+
+Evaluar notación polaca.
+
+**Micro-reto:**
+1. Definí `eval_rpn(...)`
+2. Ejecutá el ejemplo del starter; imprimí `9`.",
+    starter_code: "# def eval_rpn(tokens):
+#     st = []
+#     for t in tokens:
+#         if t in \"+-*/\":
+#             b, a = st.pop(), st.pop()
+#             if t == \"+\": st.append(a + b)
+#             elif t == \"-\": st.append(a - b)
+#             elif t == \"*\": st.append(a * b)
+#             else: st.append(int(a / b))
+#         else:
+#             st.append(int(t))
+#     return st[0]
+#
+# print(eval_rpn([\"2\", \"1\", \"+\", \"3\", \"*\"]))
+",
+    pytest: "def test_525_eval_rpn(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('eval_rpn'))
+    assert ns['eval_rpn'](['2', '1', '+', '3', '*']) == 9
+    assert ns['eval_rpn'](['4', '13', '5', '/', '+']) == 6
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def eval_rpn(tokens):
+    st = []
+    for t in tokens:
+        if t in \"+-*/\":
+            b, a = st.pop(), st.pop()
+            if t == \"+\": st.append(a + b)
+            elif t == \"-\": st.append(a - b)
+            elif t == \"*\": st.append(a * b)
+            else: st.append(int(a / b))
+        else:
+            st.append(int(t))
+    return st[0]
+
+print(eval_rpn([\"2\", \"1\", \"+\", \"3\", \"*\"]))
+",
+    solution_example: "def eval_rpn(tokens):
+    st = []
+    for t in tokens:
+        if t in \"+-*/\":
+            b, a = st.pop(), st.pop()
+            if t == \"+\": st.append(a + b)
+            elif t == \"-\": st.append(a - b)
+            elif t == \"*\": st.append(a * b)
+            else: st.append(int(a / b))
+        else:
+            st.append(int(t))
+    return st[0]
+
+print(eval_rpn([\"2\", \"1\", \"+\", \"3\", \"*\"]))
+",
+    next: Some("py-526-decode-string"), show_type_chips: false, micro_step: 525,
+};
+
+pub const PY526_DECODE_STRING: CodingStep = CodingStep {
+    id: "py-526-decode-string", title: "DSA Decode String", objective: "k[encoded] decode.",
+    prompt_md: "**Decode String**
+
+k[encoded] decode.
+
+**Micro-reto:**
+1. Definí `decode_string(...)`
+2. Ejecutá el ejemplo del starter; imprimí `aaabcbc`.",
+    starter_code: "# def decode_string(s):
+#     st = []
+#     cur, num = \"\", 0
+#     for ch in s:
+#         if ch.isdigit():
+#             num = num * 10 + int(ch)
+#         elif ch == \"[\":
+#             st.append((cur, num))
+#             cur, num = \"\", 0
+#         elif ch == \"]\":
+#             prev, k = st.pop()
+#             cur = prev + cur * k
+#         else:
+#             cur += ch
+#     return cur
+#
+# print(decode_string(\"3[a]2[bc]\"))
+",
+    pytest: "def test_526_decode_string(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('decode_string'))
+    assert ns['decode_string']('3[a]2[bc]') == 'aaabcbc'
+    assert ns['decode_string']('3[a2[c]]') == 'accaccacc'
+    assert capsys.readouterr().out.strip() == 'aaabcbc'
+",
+    hint: "def decode_string(s):
+    st = []
+    cur, num = \"\", 0
+    for ch in s:
+        if ch.isdigit():
+            num = num * 10 + int(ch)
+        elif ch == \"[\":
+            st.append((cur, num))
+            cur, num = \"\", 0
+        elif ch == \"]\":
+            prev, k = st.pop()
+            cur = prev + cur * k
+        else:
+            cur += ch
+    return cur
+
+print(decode_string(\"3[a]2[bc]\"))
+",
+    solution_example: "def decode_string(s):
+    st = []
+    cur, num = \"\", 0
+    for ch in s:
+        if ch.isdigit():
+            num = num * 10 + int(ch)
+        elif ch == \"[\":
+            st.append((cur, num))
+            cur, num = \"\", 0
+        elif ch == \"]\":
+            prev, k = st.pop()
+            cur = prev + cur * k
+        else:
+            cur += ch
+    return cur
+
+print(decode_string(\"3[a]2[bc]\"))
+",
+    next: Some("py-527-asteroid"), show_type_chips: false, micro_step: 526,
+};
+
+pub const PY527_ASTEROID: CodingStep = CodingStep {
+    id: "py-527-asteroid", title: "DSA Asteroid", objective: "Colisión de asteroides.",
+    prompt_md: "**Asteroid**
+
+Colisión de asteroides.
+
+**Micro-reto:**
+1. Definí `asteroid_collision(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[5, 10]`.",
+    starter_code: "# def asteroid_collision(asteroids):
+#     st = []
+#     for a in asteroids:
+#         while st and a < 0 < st[-1]:
+#             if st[-1] < -a:
+#                 st.pop(); continue
+#             elif st[-1] == -a:
+#                 st.pop()
+#             break
+#         else:
+#             st.append(a)
+#     return st
+#
+# print(asteroid_collision([5, 10, -5]))
+",
+    pytest: "def test_527_asteroid(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('asteroid_collision'))
+    assert ns['asteroid_collision']([5, 10, -5]) == [5, 10]
+    assert ns['asteroid_collision']([8, -8]) == []
+    assert capsys.readouterr().out.strip() == '[5, 10]'
+",
+    hint: "def asteroid_collision(asteroids):
+    st = []
+    for a in asteroids:
+        while st and a < 0 < st[-1]:
+            if st[-1] < -a:
+                st.pop(); continue
+            elif st[-1] == -a:
+                st.pop()
+            break
+        else:
+            st.append(a)
+    return st
+
+print(asteroid_collision([5, 10, -5]))
+",
+    solution_example: "def asteroid_collision(asteroids):
+    st = []
+    for a in asteroids:
+        while st and a < 0 < st[-1]:
+            if st[-1] < -a:
+                st.pop(); continue
+            elif st[-1] == -a:
+                st.pop()
+            break
+        else:
+            st.append(a)
+    return st
+
+print(asteroid_collision([5, 10, -5]))
+",
+    next: Some("py-528-remove-k-digits"), show_type_chips: false, micro_step: 527,
+};
+
+pub const PY528_REMOVE_K_DIGITS: CodingStep = CodingStep {
+    id: "py-528-remove-k-digits", title: "DSA Remove K Digits", objective: "Menor número quitando k.",
+    prompt_md: "**Remove K Digits**
+
+Menor número quitando k.
+
+**Micro-reto:**
+1. Definí `remove_k_digits(...)`
+2. Ejecutá el ejemplo del starter; imprimí `1219`.",
+    starter_code: "# def remove_k_digits(num, k):
+#     st = []
+#     for ch in num:
+#         while k and st and st[-1] > ch:
+#             st.pop(); k -= 1
+#         st.append(ch)
+#     if k:
+#         st = st[:-k]
+#     return \"\".join(st).lstrip(\"0\") or \"0\"
+#
+# print(remove_k_digits(\"1432219\", 3))
+",
+    pytest: "def test_528_remove_k_digits(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('remove_k_digits'))
+    assert ns['remove_k_digits']('1432219', 3) == '1219'
+    assert ns['remove_k_digits']('10200', 1) == '200'
+    assert capsys.readouterr().out.strip() == '1219'
+",
+    hint: "def remove_k_digits(num, k):
+    st = []
+    for ch in num:
+        while k and st and st[-1] > ch:
+            st.pop(); k -= 1
+        st.append(ch)
+    if k:
+        st = st[:-k]
+    return \"\".join(st).lstrip(\"0\") or \"0\"
+
+print(remove_k_digits(\"1432219\", 3))
+",
+    solution_example: "def remove_k_digits(num, k):
+    st = []
+    for ch in num:
+        while k and st and st[-1] > ch:
+            st.pop(); k -= 1
+        st.append(ch)
+    if k:
+        st = st[:-k]
+    return \"\".join(st).lstrip(\"0\") or \"0\"
+
+print(remove_k_digits(\"1432219\", 3))
+",
+    next: None, show_type_chips: false, micro_step: 528,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -13385,7 +13762,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY519_CONTAINER_WATER,
     &PY520_TRAP_RAIN,
     &PY521_REMOVE_DUPS_SORTED,
-    &PY522_VALID_PALINDROME
+    &PY522_VALID_PALINDROME,
+    &PY523_DAILY_TEMPS,
+    &PY524_NEXT_GREATER,
+    &PY525_EVAL_RPN,
+    &PY526_DECODE_STRING,
+    &PY527_ASTEROID,
+    &PY528_REMOVE_K_DIGITS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -13529,7 +13912,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 522);
+            assert!(step.micro_step >= 1 && step.micro_step <= 528);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -14621,7 +15004,67 @@ mod tests {
 
 
 
-            (522, "py-522-valid-palindrome", None),
+            (522, "py-522-valid-palindrome", Some("py-523-daily-temps")),
+
+
+
+
+
+
+
+
+
+            (523, "py-523-daily-temps", Some("py-524-next-greater")),
+
+
+
+
+
+
+
+
+
+            (524, "py-524-next-greater", Some("py-525-eval-rpn")),
+
+
+
+
+
+
+
+
+
+            (525, "py-525-eval-rpn", Some("py-526-decode-string")),
+
+
+
+
+
+
+
+
+
+            (526, "py-526-decode-string", Some("py-527-asteroid")),
+
+
+
+
+
+
+
+
+
+            (527, "py-527-asteroid", Some("py-528-remove-k-digits")),
+
+
+
+
+
+
+
+
+
+            (528, "py-528-remove-k-digits", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

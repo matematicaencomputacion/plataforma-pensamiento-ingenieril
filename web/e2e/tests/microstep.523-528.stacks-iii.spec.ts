@@ -22,138 +22,138 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 347,
-    id: "py-347-next-greater",
-    title: "DSA Next Greater",
-    solution: `def next_greater_element(nums1, nums2):
-    stack = []
-    nxt = {}
-    for x in nums2:
-        while stack and stack[-1] < x:
-            nxt[stack.pop()] = x
-        stack.append(x)
-    return [nxt.get(x, -1) for x in nums1]
-
-print(next_greater_element([4, 1, 2], [1, 3, 4, 2]))
-`,
-    nextUrl: /\/learn\/py-348-next-greater-ii/,
-    cursorAfter: "348",
-  },
-  {
-    micro: 348,
-    id: "py-348-next-greater-ii",
-    title: "DSA Next Greater II",
-    solution: `def next_greater_elements(nums):
-    n = len(nums)
-    out = [-1] * n
-    stack = []
-    for i in range(2 * n):
-        x = nums[i % n]
-        while stack and nums[stack[-1]] < x:
-            out[stack.pop()] = x
-        if i < n:
-            stack.append(i)
-    return out
-
-print(next_greater_elements([1, 2, 1]))
-`,
-    nextUrl: /\/learn\/py-349-daily-temps/,
-    cursorAfter: "349",
-  },
-  {
-    micro: 349,
-    id: "py-349-daily-temps",
+    micro: 523,
+    id: "py-523-daily-temps",
     title: "DSA Daily Temps",
-    solution: `def daily_temperatures(temperatures):
-    n = len(temperatures)
-    out = [0] * n
-    stack = []
-    for i, t in enumerate(temperatures):
-        while stack and temperatures[stack[-1]] < t:
-            j = stack.pop()
-            out[j] = i - j
-        stack.append(i)
-    return out
+    solution: `def daily_temperatures(temps):
+    ans = [0] * len(temps)
+    st = []
+    for i, t in enumerate(temps):
+        while st and temps[st[-1]] < t:
+            j = st.pop()
+            ans[j] = i - j
+        st.append(i)
+    return ans
 
 print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
 `,
-    nextUrl: /\/learn\/py-350-online-stock/,
-    cursorAfter: "350",
+    nextUrl: /\/learn\/py-524-next-greater/,
+    cursorAfter: "524",
   },
   {
-    micro: 350,
-    id: "py-350-online-stock",
-    title: "DSA Online Stock",
-    solution: `class StockSpanner:
-    def __init__(self):
-        self.stack = []
+    micro: 524,
+    id: "py-524-next-greater",
+    title: "DSA Next Greater",
+    solution: `def next_greater_elements(nums):
+    n = len(nums)
+    ans = [-1] * n
+    st = []
+    for i in range(2 * n):
+        x = nums[i % n]
+        while st and nums[st[-1]] < x:
+            ans[st.pop()] = x
+        if i < n:
+            st.append(i)
+    return ans
 
-    def next(self, price):
-        span = 1
-        while self.stack and self.stack[-1][0] <= price:
-            span += self.stack.pop()[1]
-        self.stack.append((price, span))
-        return span
-
-s = StockSpanner()
-print([s.next(p) for p in [100, 80, 60, 70, 60, 75, 85]])
+print(next_greater_elements([1, 2, 1]))
 `,
-    nextUrl: /\/learn\/py-351-sum-subarray-mins/,
-    cursorAfter: "351",
+    nextUrl: /\/learn\/py-525-eval-rpn/,
+    cursorAfter: "525",
   },
   {
-    micro: 351,
-    id: "py-351-sum-subarray-mins",
-    title: "DSA Sum Subarray Mins",
-    solution: `def sum_subarray_mins(arr):
-    MOD = 10**9 + 7
-    n = len(arr)
-    left = [0] * n
-    right = [0] * n
-    stack = []
-    for i, x in enumerate(arr):
-        while stack and arr[stack[-1]] > x:
-            stack.pop()
-        left[i] = i - stack[-1] if stack else i + 1
-        stack.append(i)
-    stack = []
-    for i in range(n - 1, -1, -1):
-        while stack and arr[stack[-1]] >= arr[i]:
-            stack.pop()
-        right[i] = stack[-1] - i if stack else n - i
-        stack.append(i)
-    return sum(a * l * r for a, l, r in zip(arr, left, right)) % MOD
-
-print(sum_subarray_mins([3, 1, 2, 4]))
-`,
-    nextUrl: /\/learn\/py-352-remove-k-dupes/,
-    cursorAfter: "352",
-  },
-  {
-    micro: 352,
-    id: "py-352-remove-k-dupes",
-    title: "DSA Remove K Dupes",
-    solution: `def remove_duplicates(s, k):
-    stack = []
-    for ch in s:
-        if stack and stack[-1][0] == ch:
-            stack[-1][1] += 1
-            if stack[-1][1] == k:
-                stack.pop()
+    micro: 525,
+    id: "py-525-eval-rpn",
+    title: "DSA Eval RPN",
+    solution: `def eval_rpn(tokens):
+    st = []
+    for t in tokens:
+        if t in "+-*/":
+            b, a = st.pop(), st.pop()
+            if t == "+": st.append(a + b)
+            elif t == "-": st.append(a - b)
+            elif t == "*": st.append(a * b)
+            else: st.append(int(a / b))
         else:
-            stack.append([ch, 1])
-    return "".join(ch * c for ch, c in stack)
+            st.append(int(t))
+    return st[0]
 
-print(remove_duplicates("deeedbbcccbdaa", 3))
+print(eval_rpn(["2", "1", "+", "3", "*"]))
 `,
-    nextUrl: /\/learn\/py-353-num-provinces/,
-    cursorAfter: "353",
+    nextUrl: /\/learn\/py-526-decode-string/,
+    cursorAfter: "526",
   },
+  {
+    micro: 526,
+    id: "py-526-decode-string",
+    title: "DSA Decode String",
+    solution: `def decode_string(s):
+    st = []
+    cur, num = "", 0
+    for ch in s:
+        if ch.isdigit():
+            num = num * 10 + int(ch)
+        elif ch == "[":
+            st.append((cur, num))
+            cur, num = "", 0
+        elif ch == "]":
+            prev, k = st.pop()
+            cur = prev + cur * k
+        else:
+            cur += ch
+    return cur
+
+print(decode_string("3[a]2[bc]"))
+`,
+    nextUrl: /\/learn\/py-527-asteroid/,
+    cursorAfter: "527",
+  },
+  {
+    micro: 527,
+    id: "py-527-asteroid",
+    title: "DSA Asteroid",
+    solution: `def asteroid_collision(asteroids):
+    st = []
+    for a in asteroids:
+        while st and a < 0 < st[-1]:
+            if st[-1] < -a:
+                st.pop(); continue
+            elif st[-1] == -a:
+                st.pop()
+            break
+        else:
+            st.append(a)
+    return st
+
+print(asteroid_collision([5, 10, -5]))
+`,
+    nextUrl: /\/learn\/py-528-remove-k-digits/,
+    cursorAfter: "528",
+  },
+  {
+    micro: 528,
+    id: "py-528-remove-k-digits",
+    title: "DSA Remove K Digits",
+    solution: `def remove_k_digits(num, k):
+    st = []
+    for ch in num:
+        while k and st and st[-1] > ch:
+            st.pop(); k -= 1
+        st.append(ch)
+    if k:
+        st = st[:-k]
+    return "".join(st).lstrip("0") or "0"
+
+print(remove_k_digits("1432219", 3))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "529",
+  }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-34[7-9]-|^py-35[0-2]-/);
+    expect(step.id).toMatch(/^py-(?:523|524|525|526|527|528)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -183,7 +183,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 347–352 · monotonic stack II", () => {
+test.describe("micro-steps 523–528 · stacks III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
