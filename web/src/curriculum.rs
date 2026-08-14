@@ -24705,8 +24705,428 @@ def frequency_sort(s):
 
 print(frequency_sort(\"tree\"))
 ",
-    next: None, show_type_chips: false, micro_step: 690,
+    next: Some("py-691-prefix-function"), show_type_chips: false, micro_step: 690,
 };
+
+pub const PY691_PREFIX_FUNCTION: CodingStep = CodingStep {
+    id: "py-691-prefix-function", title: "DSA Strings V · Prefix Function", objective: "Calcular la función de prefijo (LPS / pi) de Knuth-Morris-Pratt.",
+    prompt_md: "**KMP Prefix Function**
+
+`pi[i]` es el mayor borde propio de `s[:i+1]`. El while salta por bordes previos.
+
+**Micro-reto:**
+1. Definí `prefix_function(s)`
+2. Ejecutá `ababaca`; imprimí `[0, 0, 1, 2, 3, 0, 1]`.",
+    starter_code: "# def prefix_function(s):
+#     pi = [0] * len(s)
+#     j = 0
+#     for i in range(1, len(s)):
+#         while j and s[i] != s[j]:
+#             j = pi[j - 1]
+#         if s[i] == s[j]:
+#             j += 1
+#         pi[i] = j
+#     return pi
+#
+# print(prefix_function(\"ababaca\"))
+",
+    pytest: "def test_691_prefix_function(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_function'))
+    assert ns['prefix_function']('ababaca') == [0, 0, 1, 2, 3, 0, 1]
+    assert ns['prefix_function']('aaaa') == [0, 1, 2, 3]
+    assert capsys.readouterr().out.strip() == '[0, 0, 1, 2, 3, 0, 1]'
+",
+    hint: "def prefix_function(s):
+    pi = [0] * len(s)
+    j = 0
+    for i in range(1, len(s)):
+        while j and s[i] != s[j]:
+            j = pi[j - 1]
+        if s[i] == s[j]:
+            j += 1
+        pi[i] = j
+    return pi
+
+print(prefix_function(\"ababaca\"))
+",
+    solution_example: "def prefix_function(s):
+    pi = [0] * len(s)
+    j = 0
+    for i in range(1, len(s)):
+        while j and s[i] != s[j]:
+            j = pi[j - 1]
+        if s[i] == s[j]:
+            j += 1
+        pi[i] = j
+    return pi
+
+print(prefix_function(\"ababaca\"))
+",
+    next: Some("py-692-kmp-search"), show_type_chips: false, micro_step: 691,
+};
+
+pub const PY692_KMP_SEARCH: CodingStep = CodingStep {
+    id: "py-692-kmp-search", title: "DSA Strings V · KMP Search", objective: "Índice de la primera ocurrencia de needle en haystack con KMP (no naive).",
+    prompt_md: "**KMP Search**
+
+Corré needle sobre haystack usando `pi`; si `j` llega a `len(needle)` devolvés el start.
+
+**Micro-reto:**
+1. Definí `kmp_search(haystack, needle)` (y `prefix_function` si hace falta)
+2. Ejecutá `sadbutsad`, `sad`; imprimí `0`.",
+    starter_code: "# def prefix_function(s):
+#     pi = [0] * len(s)
+#     j = 0
+#     for i in range(1, len(s)):
+#         while j and s[i] != s[j]:
+#             j = pi[j - 1]
+#         if s[i] == s[j]:
+#             j += 1
+#         pi[i] = j
+#     return pi
+#
+# def kmp_search(haystack, needle):
+#     if not needle:
+#         return 0
+#     pi = prefix_function(needle)
+#     j = 0
+#     for i, ch in enumerate(haystack):
+#         while j and ch != needle[j]:
+#             j = pi[j - 1]
+#         if ch == needle[j]:
+#             j += 1
+#             if j == len(needle):
+#                 return i - j + 1
+#     return -1
+#
+# print(kmp_search(\"sadbutsad\", \"sad\"))
+",
+    pytest: "def test_692_kmp_search(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('kmp_search'))
+    assert ns['kmp_search']('sadbutsad', 'sad') == 0
+    assert ns['kmp_search']('leetcode', 'leeto') == -1
+    assert ns['kmp_search']('hello', 'll') == 2
+    assert capsys.readouterr().out.strip() == '0'
+",
+    hint: "def prefix_function(s):
+    pi = [0] * len(s)
+    j = 0
+    for i in range(1, len(s)):
+        while j and s[i] != s[j]:
+            j = pi[j - 1]
+        if s[i] == s[j]:
+            j += 1
+        pi[i] = j
+    return pi
+
+def kmp_search(haystack, needle):
+    if not needle:
+        return 0
+    pi = prefix_function(needle)
+    j = 0
+    for i, ch in enumerate(haystack):
+        while j and ch != needle[j]:
+            j = pi[j - 1]
+        if ch == needle[j]:
+            j += 1
+            if j == len(needle):
+                return i - j + 1
+    return -1
+
+print(kmp_search(\"sadbutsad\", \"sad\"))
+",
+    solution_example: "def prefix_function(s):
+    pi = [0] * len(s)
+    j = 0
+    for i in range(1, len(s)):
+        while j and s[i] != s[j]:
+            j = pi[j - 1]
+        if s[i] == s[j]:
+            j += 1
+        pi[i] = j
+    return pi
+
+def kmp_search(haystack, needle):
+    if not needle:
+        return 0
+    pi = prefix_function(needle)
+    j = 0
+    for i, ch in enumerate(haystack):
+        while j and ch != needle[j]:
+            j = pi[j - 1]
+        if ch == needle[j]:
+            j += 1
+            if j == len(needle):
+                return i - j + 1
+    return -1
+
+print(kmp_search(\"sadbutsad\", \"sad\"))
+",
+    next: Some("py-693-z-function"), show_type_chips: false, micro_step: 692,
+};
+
+pub const PY693_Z_FUNCTION: CodingStep = CodingStep {
+    id: "py-693-z-function", title: "DSA Strings V · Z Function", objective: "Array Z: z[i] = LCP de s[i:] con s[0:].",
+    prompt_md: "**Z-algorithm**
+
+Mantené la ventana `[l, r]` del match más a la derecha; copiá z[i-l] cuando i está dentro.
+
+**Micro-reto:**
+1. Definí `z_function(s)`
+2. Ejecutá `aabcaabxaaaz`; imprimí `[0, 1, 0, 0, 3, 1, 0, 0, 2, 2, 1, 0]`.",
+    starter_code: "# def z_function(s):
+#     n = len(s)
+#     z = [0] * n
+#     l = r = 0
+#     for i in range(1, n):
+#         if i <= r:
+#             z[i] = min(r - i + 1, z[i - l])
+#         while i + z[i] < n and s[z[i]] == s[i + z[i]]:
+#             z[i] += 1
+#         if i + z[i] - 1 > r:
+#             l, r = i, i + z[i] - 1
+#     return z
+#
+# print(z_function(\"aabcaabxaaaz\"))
+",
+    pytest: "def test_693_z_function(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('z_function'))
+    assert ns['z_function']('aabcaabxaaaz') == [0, 1, 0, 0, 3, 1, 0, 0, 2, 2, 1, 0]
+    assert ns['z_function']('aaaa') == [0, 3, 2, 1]
+    assert capsys.readouterr().out.strip() == '[0, 1, 0, 0, 3, 1, 0, 0, 2, 2, 1, 0]'
+",
+    hint: "def z_function(s):
+    n = len(s)
+    z = [0] * n
+    l = r = 0
+    for i in range(1, n):
+        if i <= r:
+            z[i] = min(r - i + 1, z[i - l])
+        while i + z[i] < n and s[z[i]] == s[i + z[i]]:
+            z[i] += 1
+        if i + z[i] - 1 > r:
+            l, r = i, i + z[i] - 1
+    return z
+
+print(z_function(\"aabcaabxaaaz\"))
+",
+    solution_example: "def z_function(s):
+    n = len(s)
+    z = [0] * n
+    l = r = 0
+    for i in range(1, n):
+        if i <= r:
+            z[i] = min(r - i + 1, z[i - l])
+        while i + z[i] < n and s[z[i]] == s[i + z[i]]:
+            z[i] += 1
+        if i + z[i] - 1 > r:
+            l, r = i, i + z[i] - 1
+    return z
+
+print(z_function(\"aabcaabxaaaz\"))
+",
+    next: Some("py-694-rabin-karp"), show_type_chips: false, micro_step: 693,
+};
+
+pub const PY694_RABIN_KARP: CodingStep = CodingStep {
+    id: "py-694-rabin-karp", title: "DSA Strings V · Rabin-Karp", objective: "Rolling hash con verificación para el primer match.",
+    prompt_md: "**Rabin-Karp**
+
+Hash rolling base 256 mod 1e9+7; si los hashes coinciden, verificá el slice.
+
+**Micro-reto:**
+1. Definí `rabin_karp(haystack, needle)`
+2. Ejecutá `hello`, `ll`; imprimí `2`.",
+    starter_code: "# def rabin_karp(haystack, needle):
+#     n, m = len(haystack), len(needle)
+#     if m == 0:
+#         return 0
+#     if m > n:
+#         return -1
+#     base, mod = 256, 10 ** 9 + 7
+#     h = pow(base, m - 1, mod)
+#     th = ph = 0
+#     for i in range(m):
+#         th = (th * base + ord(haystack[i])) % mod
+#         ph = (ph * base + ord(needle[i])) % mod
+#     for i in range(n - m + 1):
+#         if th == ph and haystack[i:i + m] == needle:
+#             return i
+#         if i + m < n:
+#             th = ((th - ord(haystack[i]) * h) * base + ord(haystack[i + m])) % mod
+#     return -1
+#
+# print(rabin_karp(\"hello\", \"ll\"))
+",
+    pytest: "def test_694_rabin_karp(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('rabin_karp'))
+    assert ns['rabin_karp']('hello', 'll') == 2
+    assert ns['rabin_karp']('aaaaa', 'bba') == -1
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def rabin_karp(haystack, needle):
+    n, m = len(haystack), len(needle)
+    if m == 0:
+        return 0
+    if m > n:
+        return -1
+    base, mod = 256, 10 ** 9 + 7
+    h = pow(base, m - 1, mod)
+    th = ph = 0
+    for i in range(m):
+        th = (th * base + ord(haystack[i])) % mod
+        ph = (ph * base + ord(needle[i])) % mod
+    for i in range(n - m + 1):
+        if th == ph and haystack[i:i + m] == needle:
+            return i
+        if i + m < n:
+            th = ((th - ord(haystack[i]) * h) * base + ord(haystack[i + m])) % mod
+    return -1
+
+print(rabin_karp(\"hello\", \"ll\"))
+",
+    solution_example: "def rabin_karp(haystack, needle):
+    n, m = len(haystack), len(needle)
+    if m == 0:
+        return 0
+    if m > n:
+        return -1
+    base, mod = 256, 10 ** 9 + 7
+    h = pow(base, m - 1, mod)
+    th = ph = 0
+    for i in range(m):
+        th = (th * base + ord(haystack[i])) % mod
+        ph = (ph * base + ord(needle[i])) % mod
+    for i in range(n - m + 1):
+        if th == ph and haystack[i:i + m] == needle:
+            return i
+        if i + m < n:
+            th = ((th - ord(haystack[i]) * h) * base + ord(haystack[i + m])) % mod
+    return -1
+
+print(rabin_karp(\"hello\", \"ll\"))
+",
+    next: Some("py-695-repeated-substring"), show_type_chips: false, micro_step: 694,
+};
+
+pub const PY695_REPEATED_SUBSTRING: CodingStep = CodingStep {
+    id: "py-695-repeated-substring", title: "DSA Strings V · Repeated Pattern", objective: "¿s es repetición de un substring propio? Truco (s+s)[1:-1].",
+    prompt_md: "**Repeated Substring Pattern**
+
+`s` se construye con un bloque repetido iff aparece en `(s+s)[1:-1]`.
+
+**Micro-reto:**
+1. Definí `repeated_substring_pattern(s)`
+2. Ejecutá `abab`; imprimí `True`.",
+    starter_code: "# def repeated_substring_pattern(s):
+#     return s in (s + s)[1:-1]
+#
+# print(repeated_substring_pattern(\"abab\"))
+",
+    pytest: "def test_695_repeated_substring(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('repeated_substring_pattern'))
+    assert ns['repeated_substring_pattern']('abab') is True
+    assert ns['repeated_substring_pattern']('aba') is False
+    assert ns['repeated_substring_pattern']('abcabcabcabc') is True
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def repeated_substring_pattern(s):
+    return s in (s + s)[1:-1]
+
+print(repeated_substring_pattern(\"abab\"))
+",
+    solution_example: "def repeated_substring_pattern(s):
+    return s in (s + s)[1:-1]
+
+print(repeated_substring_pattern(\"abab\"))
+",
+    next: Some("py-696-shortest-palindrome"), show_type_chips: false, micro_step: 695,
+};
+
+pub const PY696_SHORTEST_PALINDROME: CodingStep = CodingStep {
+    id: "py-696-shortest-palindrome", title: "DSA Strings V · Shortest Palindrome", objective: "Agregar el mínimo prefijo para que s sea palíndromo (KMP de s#rev).",
+    prompt_md: "**Shortest Palindrome**
+
+`pi` de `s + '#' + s[::-1]` te da el palíndromo prefijo más largo; anteponé el resto revertido.
+
+**Micro-reto:**
+1. Definí `shortest_palindrome(s)`
+2. Ejecutá `aacecaaa`; imprimí `aaacecaaa`.",
+    starter_code: "# def prefix_function(s):
+#     pi = [0] * len(s)
+#     j = 0
+#     for i in range(1, len(s)):
+#         while j and s[i] != s[j]:
+#             j = pi[j - 1]
+#         if s[i] == s[j]:
+#             j += 1
+#         pi[i] = j
+#     return pi
+#
+# def shortest_palindrome(s):
+#     rev = s[::-1]
+#     pi = prefix_function(s + \"#\" + rev)
+#     return rev[: len(s) - pi[-1]] + s
+#
+# print(shortest_palindrome(\"aacecaaa\"))
+",
+    pytest: "def test_696_shortest_palindrome(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('shortest_palindrome'))
+    assert ns['shortest_palindrome']('aacecaaa') == 'aaacecaaa'
+    assert ns['shortest_palindrome']('abcd') == 'dcbabcd'
+    assert capsys.readouterr().out.strip() == 'aaacecaaa'
+",
+    hint: "def prefix_function(s):
+    pi = [0] * len(s)
+    j = 0
+    for i in range(1, len(s)):
+        while j and s[i] != s[j]:
+            j = pi[j - 1]
+        if s[i] == s[j]:
+            j += 1
+        pi[i] = j
+    return pi
+
+def shortest_palindrome(s):
+    rev = s[::-1]
+    pi = prefix_function(s + \"#\" + rev)
+    return rev[: len(s) - pi[-1]] + s
+
+print(shortest_palindrome(\"aacecaaa\"))
+",
+    solution_example: "def prefix_function(s):
+    pi = [0] * len(s)
+    j = 0
+    for i in range(1, len(s)):
+        while j and s[i] != s[j]:
+            j = pi[j - 1]
+        if s[i] == s[j]:
+            j += 1
+        pi[i] = j
+    return pi
+
+def shortest_palindrome(s):
+    rev = s[::-1]
+    pi = prefix_function(s + \"#\" + rev)
+    return rev[: len(s) - pi[-1]] + s
+
+print(shortest_palindrome(\"aacecaaa\"))
+",
+    next: None, show_type_chips: false, micro_step: 696,
+};
+
 
 
 
@@ -25400,7 +25820,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY687_KTH_LARGEST_STREAM,
     &PY688_CONNECT_STICKS,
     &PY689_IPO,
-    &PY690_FREQUENCY_SORT
+    &PY690_FREQUENCY_SORT,
+    &PY691_PREFIX_FUNCTION,
+    &PY692_KMP_SEARCH,
+    &PY693_Z_FUNCTION,
+    &PY694_RABIN_KARP,
+    &PY695_REPEATED_SUBSTRING,
+    &PY696_SHORTEST_PALINDROME
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -25544,7 +25970,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 690);
+            assert!(step.micro_step >= 1 && step.micro_step <= 696);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -27974,7 +28400,13 @@ mod tests {
             (687, "py-687-kth-largest-stream", Some("py-688-connect-sticks")),
             (688, "py-688-connect-sticks", Some("py-689-ipo")),
             (689, "py-689-ipo", Some("py-690-frequency-sort")),
-            (690, "py-690-frequency-sort", None),
+            (690, "py-690-frequency-sort", Some("py-691-prefix-function")),
+            (691, "py-691-prefix-function", Some("py-692-kmp-search")),
+            (692, "py-692-kmp-search", Some("py-693-z-function")),
+            (693, "py-693-z-function", Some("py-694-rabin-karp")),
+            (694, "py-694-rabin-karp", Some("py-695-repeated-substring")),
+            (695, "py-695-repeated-substring", Some("py-696-shortest-palindrome")),
+            (696, "py-696-shortest-palindrome", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

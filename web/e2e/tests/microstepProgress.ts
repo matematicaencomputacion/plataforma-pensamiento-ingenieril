@@ -696,6 +696,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 688, step_id: "py-688-connect-sticks" },
   { level_id: 689, step_id: "py-689-ipo" },
   { level_id: 690, step_id: "py-690-frequency-sort" },
+  { level_id: 691, step_id: "py-691-prefix-function" },
+  { level_id: 692, step_id: "py-692-kmp-search" },
+  { level_id: 693, step_id: "py-693-z-function" },
+  { level_id: 694, step_id: "py-694-rabin-karp" },
+  { level_id: 695, step_id: "py-695-repeated-substring" },
+  { level_id: 696, step_id: "py-696-shortest-palindrome" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
