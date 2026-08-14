@@ -732,6 +732,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 724, step_id: "py-724-arrays-vi-lower-boundary" },
   { level_id: 725, step_id: "py-725-arrays-vi-dependency-order" },
   { level_id: 726, step_id: "py-726-arrays-vi-minimum-transition" },
+  { level_id: 727, step_id: "py-727-binary-search-vi-canonicalize" },
+  { level_id: 728, step_id: "py-728-binary-search-vi-prefix-state" },
+  { level_id: 729, step_id: "py-729-binary-search-vi-bounded-window" },
+  { level_id: 730, step_id: "py-730-binary-search-vi-lower-boundary" },
+  { level_id: 731, step_id: "py-731-binary-search-vi-dependency-order" },
+  { level_id: 732, step_id: "py-732-binary-search-vi-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
