@@ -552,6 +552,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 544, step_id: "py-544-find-anagrams" },
   { level_id: 545, step_id: "py-545-max-sliding" },
   { level_id: 546, step_id: "py-546-length-k-distinct" },
+  { level_id: 547, step_id: "py-547-single-number" },
+  { level_id: 548, step_id: "py-548-hamming-dist" },
+  { level_id: 549, step_id: "py-549-counting-bits" },
+  { level_id: 550, step_id: "py-550-reverse-bits" },
+  { level_id: 551, step_id: "py-551-sum-two-ints" },
+  { level_id: 552, step_id: "py-552-missing-number" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

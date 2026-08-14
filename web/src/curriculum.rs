@@ -14495,7 +14495,268 @@ print(length_of_longest_substring_k_distinct(\"eceba\", 2))
 
 print(length_of_longest_substring_k_distinct(\"eceba\", 2))
 ",
-    next: None, show_type_chips: false, micro_step: 546,
+    next: Some("py-547-single-number"), show_type_chips: false, micro_step: 546,
+};
+
+
+pub const PY547_SINGLE_NUMBER: CodingStep = CodingStep {
+    id: "py-547-single-number", title: "DSA Single Number", objective: "XOR único.",
+    prompt_md: "**Single Number**
+
+XOR único.
+
+**Micro-reto:**
+1. Definí `single_number(...)`
+2. Ejecutá el ejemplo del starter; imprimí `4`.",
+    starter_code: "# def single_number(nums):
+#     x = 0
+#     for n in nums:
+#         x ^= n
+#     return x
+#
+# print(single_number([4, 1, 2, 1, 2]))
+",
+    pytest: "def test_547_single_number(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('single_number'))
+    assert ns['single_number']([2, 2, 1]) == 1
+    assert ns['single_number']([4, 1, 2, 1, 2]) == 4
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def single_number(nums):
+    x = 0
+    for n in nums:
+        x ^= n
+    return x
+
+print(single_number([4, 1, 2, 1, 2]))
+",
+    solution_example: "def single_number(nums):
+    x = 0
+    for n in nums:
+        x ^= n
+    return x
+
+print(single_number([4, 1, 2, 1, 2]))
+",
+    next: Some("py-548-hamming-dist"), show_type_chips: false, micro_step: 547,
+};
+
+pub const PY548_HAMMING_DIST: CodingStep = CodingStep {
+    id: "py-548-hamming-dist", title: "DSA Hamming Dist", objective: "Bits distintos.",
+    prompt_md: "**Hamming Dist**
+
+Bits distintos.
+
+**Micro-reto:**
+1. Definí `hamming_distance(...)`
+2. Ejecutá el ejemplo del starter; imprimí `2`.",
+    starter_code: "# def hamming_distance(x, y):
+#     return (x ^ y).bit_count()
+#
+# print(hamming_distance(1, 4))
+",
+    pytest: "def test_548_hamming_dist(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('hamming_distance'))
+    assert ns['hamming_distance'](1, 4) == 2
+    assert ns['hamming_distance'](3, 1) == 1
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def hamming_distance(x, y):
+    return (x ^ y).bit_count()
+
+print(hamming_distance(1, 4))
+",
+    solution_example: "def hamming_distance(x, y):
+    return (x ^ y).bit_count()
+
+print(hamming_distance(1, 4))
+",
+    next: Some("py-549-counting-bits"), show_type_chips: false, micro_step: 548,
+};
+
+pub const PY549_COUNTING_BITS: CodingStep = CodingStep {
+    id: "py-549-counting-bits", title: "DSA Counting Bits", objective: "Bits por número 0..n.",
+    prompt_md: "**Counting Bits**
+
+Bits por número 0..n.
+
+**Micro-reto:**
+1. Definí `count_bits(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[0, 1, 1, 2, 1, 2]`.",
+    starter_code: "# def count_bits(n):
+#     ans = [0] * (n + 1)
+#     for i in range(1, n + 1):
+#         ans[i] = ans[i >> 1] + (i & 1)
+#     return ans
+#
+# print(count_bits(5))
+",
+    pytest: "def test_549_counting_bits(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('count_bits'))
+    assert ns['count_bits'](2) == [0, 1, 1]
+    assert ns['count_bits'](5) == [0, 1, 1, 2, 1, 2]
+    assert capsys.readouterr().out.strip() == '[0, 1, 1, 2, 1, 2]'
+",
+    hint: "def count_bits(n):
+    ans = [0] * (n + 1)
+    for i in range(1, n + 1):
+        ans[i] = ans[i >> 1] + (i & 1)
+    return ans
+
+print(count_bits(5))
+",
+    solution_example: "def count_bits(n):
+    ans = [0] * (n + 1)
+    for i in range(1, n + 1):
+        ans[i] = ans[i >> 1] + (i & 1)
+    return ans
+
+print(count_bits(5))
+",
+    next: Some("py-550-reverse-bits"), show_type_chips: false, micro_step: 549,
+};
+
+pub const PY550_REVERSE_BITS: CodingStep = CodingStep {
+    id: "py-550-reverse-bits", title: "DSA Reverse Bits", objective: "Revertir 32 bits.",
+    prompt_md: "**Reverse Bits**
+
+Revertir 32 bits.
+
+**Micro-reto:**
+1. Definí `reverse_bits(...)`
+2. Ejecutá el ejemplo del starter; imprimí `964176192`.",
+    starter_code: "# def reverse_bits(n):
+#     res = 0
+#     for _ in range(32):
+#         res = (res << 1) | (n & 1)
+#         n >>= 1
+#     return res
+#
+# print(reverse_bits(43261596))
+",
+    pytest: "def test_550_reverse_bits(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('reverse_bits'))
+    assert ns['reverse_bits'](43261596) == 964176192
+    assert capsys.readouterr().out.strip() == '964176192'
+",
+    hint: "def reverse_bits(n):
+    res = 0
+    for _ in range(32):
+        res = (res << 1) | (n & 1)
+        n >>= 1
+    return res
+
+print(reverse_bits(43261596))
+",
+    solution_example: "def reverse_bits(n):
+    res = 0
+    for _ in range(32):
+        res = (res << 1) | (n & 1)
+        n >>= 1
+    return res
+
+print(reverse_bits(43261596))
+",
+    next: Some("py-551-sum-two-ints"), show_type_chips: false, micro_step: 550,
+};
+
+pub const PY551_SUM_TWO_INTS: CodingStep = CodingStep {
+    id: "py-551-sum-two-ints", title: "DSA Sum Two Ints", objective: "Suma sin +.",
+    prompt_md: "**Sum Two Ints**
+
+Suma sin +.
+
+**Micro-reto:**
+1. Definí `get_sum(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3`.",
+    starter_code: "# def get_sum(a, b):
+#     MASK = 0xFFFFFFFF
+#     MAX = 0x7FFFFFFF
+#     while b & MASK:
+#         carry = (a & b) << 1
+#         a = (a ^ b) & MASK
+#         b = carry & MASK
+#     return a if a <= MAX else ~(a ^ MASK)
+#
+# print(get_sum(1, 2))
+",
+    pytest: "def test_551_sum_two_ints(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('get_sum'))
+    assert ns['get_sum'](1, 2) == 3
+    assert ns['get_sum'](2, 3) == 5
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def get_sum(a, b):
+    MASK = 0xFFFFFFFF
+    MAX = 0x7FFFFFFF
+    while b & MASK:
+        carry = (a & b) << 1
+        a = (a ^ b) & MASK
+        b = carry & MASK
+    return a if a <= MAX else ~(a ^ MASK)
+
+print(get_sum(1, 2))
+",
+    solution_example: "def get_sum(a, b):
+    MASK = 0xFFFFFFFF
+    MAX = 0x7FFFFFFF
+    while b & MASK:
+        carry = (a & b) << 1
+        a = (a ^ b) & MASK
+        b = carry & MASK
+    return a if a <= MAX else ~(a ^ MASK)
+
+print(get_sum(1, 2))
+",
+    next: Some("py-552-missing-number"), show_type_chips: false, micro_step: 551,
+};
+
+pub const PY552_MISSING_NUMBER: CodingStep = CodingStep {
+    id: "py-552-missing-number", title: "DSA Missing Number", objective: "Falta 0..n.",
+    prompt_md: "**Missing Number**
+
+Falta 0..n.
+
+**Micro-reto:**
+1. Definí `missing_number(...)`
+2. Ejecutá el ejemplo del starter; imprimí `2`.",
+    starter_code: "# def missing_number(nums):
+#     n = len(nums)
+#     return n * (n + 1) // 2 - sum(nums)
+#
+# print(missing_number([3, 0, 1]))
+",
+    pytest: "def test_552_missing_number(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('missing_number'))
+    assert ns['missing_number']([3, 0, 1]) == 2
+    assert ns['missing_number']([0, 1]) == 2
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def missing_number(nums):
+    n = len(nums)
+    return n * (n + 1) // 2 - sum(nums)
+
+print(missing_number([3, 0, 1]))
+",
+    solution_example: "def missing_number(nums):
+    n = len(nums)
+    return n * (n + 1) // 2 - sum(nums)
+
+print(missing_number([3, 0, 1]))
+",
+    next: None, show_type_chips: false, micro_step: 552,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -15044,7 +15305,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY543_MIN_WINDOW,
     &PY544_FIND_ANAGRAMS,
     &PY545_MAX_SLIDING,
-    &PY546_LENGTH_K_DISTINCT
+    &PY546_LENGTH_K_DISTINCT,
+    &PY547_SINGLE_NUMBER,
+    &PY548_HAMMING_DIST,
+    &PY549_COUNTING_BITS,
+    &PY550_REVERSE_BITS,
+    &PY551_SUM_TWO_INTS,
+    &PY552_MISSING_NUMBER
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -15188,7 +15455,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 546);
+            assert!(step.micro_step >= 1 && step.micro_step <= 552);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -16556,7 +16823,91 @@ mod tests {
 
 
 
-            (546, "py-546-length-k-distinct", None),
+            (546, "py-546-length-k-distinct", Some("py-547-single-number")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (547, "py-547-single-number", Some("py-548-hamming-dist")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (548, "py-548-hamming-dist", Some("py-549-counting-bits")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (549, "py-549-counting-bits", Some("py-550-reverse-bits")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (550, "py-550-reverse-bits", Some("py-551-sum-two-ints")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (551, "py-551-sum-two-ints", Some("py-552-missing-number")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (552, "py-552-missing-number", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
