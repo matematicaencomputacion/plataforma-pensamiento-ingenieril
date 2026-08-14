@@ -738,6 +738,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 730, step_id: "py-730-binary-search-vi-lower-boundary" },
   { level_id: 731, step_id: "py-731-binary-search-vi-dependency-order" },
   { level_id: 732, step_id: "py-732-binary-search-vi-minimum-transition" },
+  { level_id: 733, step_id: "py-733-sliding-window-vi-canonicalize" },
+  { level_id: 734, step_id: "py-734-sliding-window-vi-prefix-state" },
+  { level_id: 735, step_id: "py-735-sliding-window-vi-bounded-window" },
+  { level_id: 736, step_id: "py-736-sliding-window-vi-lower-boundary" },
+  { level_id: 737, step_id: "py-737-sliding-window-vi-dependency-order" },
+  { level_id: 738, step_id: "py-738-sliding-window-vi-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
