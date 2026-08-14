@@ -39473,7 +39473,324 @@ print(minimum_transition_string_matching_iii([10, 15, 20]))
 
 print(minimum_transition_string_matching_iii([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 936,
+    next: Some("py-937-rolling-hash-ii-canonicalize"), show_type_chips: false, micro_step: 936,
+};
+
+
+pub const PY937_ROLLING_HASH_II_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-937-rolling-hash-ii-canonicalize", title: "DSA Rolling Hash II · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de Rolling Hash II.",
+    prompt_md: "**Rolling Hash II: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_rolling_hash_ii(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_rolling_hash_ii(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_rolling_hash_ii([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_937_rolling_hash_ii_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_rolling_hash_ii'))
+    assert ns['canonicalize_rolling_hash_ii']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_rolling_hash_ii']([]) == []
+    assert ns['canonicalize_rolling_hash_ii']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_rolling_hash_ii(values):
+    return sorted(set(values))
+
+print(canonicalize_rolling_hash_ii([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_rolling_hash_ii(values):
+    return sorted(set(values))
+
+print(canonicalize_rolling_hash_ii([3, 1, 2, 3, 1]))
+",
+    next: Some("py-938-rolling-hash-ii-prefix-state"), show_type_chips: false, micro_step: 937,
+};
+
+pub const PY938_ROLLING_HASH_II_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-938-rolling-hash-ii-prefix-state", title: "DSA Rolling Hash II · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de Rolling Hash II.",
+    prompt_md: "**Rolling Hash II: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_rolling_hash_ii(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_rolling_hash_ii(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_rolling_hash_ii([3, 1, 4]))
+",
+    pytest: "def test_938_rolling_hash_ii_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_rolling_hash_ii'))
+    assert ns['prefix_state_rolling_hash_ii']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_rolling_hash_ii']([]) == []
+    assert ns['prefix_state_rolling_hash_ii']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_rolling_hash_ii(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_rolling_hash_ii([3, 1, 4]))
+",
+    solution_example: "def prefix_state_rolling_hash_ii(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_rolling_hash_ii([3, 1, 4]))
+",
+    next: Some("py-939-rolling-hash-ii-bounded-window"), show_type_chips: false, micro_step: 938,
+};
+
+pub const PY939_ROLLING_HASH_II_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-939-rolling-hash-ii-bounded-window", title: "DSA Rolling Hash II · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de Rolling Hash II.",
+    prompt_md: "**Rolling Hash II: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_rolling_hash_ii(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_rolling_hash_ii(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_rolling_hash_ii([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_939_rolling_hash_ii_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_rolling_hash_ii'))
+    assert ns['best_window_rolling_hash_ii']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_rolling_hash_ii']([4], 1) == 4
+    assert ns['best_window_rolling_hash_ii']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_rolling_hash_ii(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_rolling_hash_ii([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_rolling_hash_ii(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_rolling_hash_ii([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-940-rolling-hash-ii-lower-boundary"), show_type_chips: false, micro_step: 939,
+};
+
+pub const PY940_ROLLING_HASH_II_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-940-rolling-hash-ii-lower-boundary", title: "DSA Rolling Hash II · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de Rolling Hash II.",
+    prompt_md: "**Rolling Hash II: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_rolling_hash_ii(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_rolling_hash_ii(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_rolling_hash_ii([1, 3, 3, 7], 3))
+",
+    pytest: "def test_940_rolling_hash_ii_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_rolling_hash_ii'))
+    assert ns['lower_boundary_rolling_hash_ii']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_rolling_hash_ii']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_rolling_hash_ii']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_rolling_hash_ii(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_rolling_hash_ii([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_rolling_hash_ii(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_rolling_hash_ii([1, 3, 3, 7], 3))
+",
+    next: Some("py-941-rolling-hash-ii-dependency-order"), show_type_chips: false, micro_step: 940,
+};
+
+pub const PY941_ROLLING_HASH_II_DEPENDENCY_ORDER: CodingStep = CodingStep {
+    id: "py-941-rolling-hash-ii-dependency-order", title: "DSA Rolling Hash II · Dependency Order", objective: "Recorrer dependencias sin duplicar trabajo en un escenario de Rolling Hash II.",
+    prompt_md: "**Rolling Hash II: laboratorio 5**
+
+La cola separa descubrimiento de procesamiento; seen garantiza que cada nodo entra una sola vez.
+
+**Micro-reto:**
+1. Definí `dependency_order_rolling_hash_ii(graph, start)`
+2. Ejecutá el ejemplo; imprimí `[0, 1, 2, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def dependency_order_rolling_hash_ii(graph, start):
+#     queue = deque([start])
+#     seen = {start}
+#     order = []
+#     while queue:
+#         node = queue.popleft()
+#         order.append(node)
+#         for neighbor in graph[node]:
+#             if neighbor not in seen:
+#                 seen.add(neighbor)
+#                 queue.append(neighbor)
+#     return order
+#
+# print(dependency_order_rolling_hash_ii([[1, 2], [3], [3], []], 0))
+",
+    pytest: "def test_941_rolling_hash_ii_dependency_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('dependency_order_rolling_hash_ii'))
+    assert ns['dependency_order_rolling_hash_ii']([[1, 2], [3], [3], []], 0) == [0, 1, 2, 3]
+    assert ns['dependency_order_rolling_hash_ii']([[]], 0) == [0]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import deque
+
+def dependency_order_rolling_hash_ii(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_rolling_hash_ii([[1, 2], [3], [3], []], 0))
+",
+    solution_example: "from collections import deque
+
+def dependency_order_rolling_hash_ii(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_rolling_hash_ii([[1, 2], [3], [3], []], 0))
+",
+    next: Some("py-942-rolling-hash-ii-minimum-transition"), show_type_chips: false, micro_step: 941,
+};
+
+pub const PY942_ROLLING_HASH_II_MINIMUM_TRANSITION: CodingStep = CodingStep {
+    id: "py-942-rolling-hash-ii-minimum-transition", title: "DSA Rolling Hash II · Minimum Transition", objective: "Optimizar transiciones locales conservando solo el estado necesario de Rolling Hash II.",
+    prompt_md: "**Rolling Hash II: laboratorio 6**
+
+La recurrencia depende de dos estados previos; comprimirlos mantiene O(1) memoria.
+
+**Micro-reto:**
+1. Definí `minimum_transition_rolling_hash_ii(cost)`
+2. Ejecutá el ejemplo; imprimí `15`.",
+    starter_code: "# def minimum_transition_rolling_hash_ii(cost):
+#     two_back = one_back = 0
+#     for value in cost:
+#         two_back, one_back = one_back, value + min(two_back, one_back)
+#     return min(two_back, one_back)
+#
+# print(minimum_transition_rolling_hash_ii([10, 15, 20]))
+",
+    pytest: "def test_942_rolling_hash_ii_minimum_transition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_transition_rolling_hash_ii'))
+    assert ns['minimum_transition_rolling_hash_ii']([10, 15, 20]) == 15
+    assert ns['minimum_transition_rolling_hash_ii']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def minimum_transition_rolling_hash_ii(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_rolling_hash_ii([10, 15, 20]))
+",
+    solution_example: "def minimum_transition_rolling_hash_ii(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_rolling_hash_ii([10, 15, 20]))
+",
+    next: None, show_type_chips: false, micro_step: 942,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -40412,7 +40729,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY933_STRING_MATCHING_III_BOUNDED_WINDOW,
     &PY934_STRING_MATCHING_III_LOWER_BOUNDARY,
     &PY935_STRING_MATCHING_III_DEPENDENCY_ORDER,
-    &PY936_STRING_MATCHING_III_MINIMUM_TRANSITION
+    &PY936_STRING_MATCHING_III_MINIMUM_TRANSITION,
+    &PY937_ROLLING_HASH_II_CANONICALIZE,
+    &PY938_ROLLING_HASH_II_PREFIX_STATE,
+    &PY939_ROLLING_HASH_II_BOUNDED_WINDOW,
+    &PY940_ROLLING_HASH_II_LOWER_BOUNDARY,
+    &PY941_ROLLING_HASH_II_DEPENDENCY_ORDER,
+    &PY942_ROLLING_HASH_II_MINIMUM_TRANSITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -40556,7 +40879,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 936);
+            assert!(step.micro_step >= 1 && step.micro_step <= 942);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -43232,7 +43555,13 @@ mod tests {
             (933, "py-933-string-matching-iii-bounded-window", Some("py-934-string-matching-iii-lower-boundary")),
             (934, "py-934-string-matching-iii-lower-boundary", Some("py-935-string-matching-iii-dependency-order")),
             (935, "py-935-string-matching-iii-dependency-order", Some("py-936-string-matching-iii-minimum-transition")),
-            (936, "py-936-string-matching-iii-minimum-transition", None),
+            (936, "py-936-string-matching-iii-minimum-transition", Some("py-937-rolling-hash-ii-canonicalize")),
+            (937, "py-937-rolling-hash-ii-canonicalize", Some("py-938-rolling-hash-ii-prefix-state")),
+            (938, "py-938-rolling-hash-ii-prefix-state", Some("py-939-rolling-hash-ii-bounded-window")),
+            (939, "py-939-rolling-hash-ii-bounded-window", Some("py-940-rolling-hash-ii-lower-boundary")),
+            (940, "py-940-rolling-hash-ii-lower-boundary", Some("py-941-rolling-hash-ii-dependency-order")),
+            (941, "py-941-rolling-hash-ii-dependency-order", Some("py-942-rolling-hash-ii-minimum-transition")),
+            (942, "py-942-rolling-hash-ii-minimum-transition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
