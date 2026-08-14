@@ -17,7 +17,7 @@ pub struct CodingStep {
     pub next: Option<&'static str>,
     /// Show variable type chips under the enunciado.
     pub show_type_chips: bool,
-    /// 1-based index on the workspace micro-step rail (1..=462).
+    /// 1-based index on the workspace micro-step rail (1..=468).
     pub micro_step: i32,
 }
 
@@ -9166,7 +9166,522 @@ print(most_words_found([\"alice and bob love leetcode\", \"i think so too\", \"t
 
 print(most_words_found([\"alice and bob love leetcode\", \"i think so too\", \"this is great thanks very much\"]))
 ",
-    next: None, show_type_chips: false, micro_step: 462,
+    next: Some("py-463-max-depth-bt"), show_type_chips: false, micro_step: 462,
+};
+
+
+pub const PY463_MAX_DEPTH_BT: CodingStep = CodingStep {
+    id: "py-463-max-depth-bt", title: "DSA Max Depth BT", objective: "Profundidad máxima.",
+    prompt_md: "**Maximum Depth of Binary Tree**
+
+DFS 1+max. Distinto de treeHeight foundations.
+
+**Micro-reto:**
+1. Definí `max_depth(...)`
+2. Definí `max_depth(root)` sobre el árbol demo; imprimí `3`.",
+    starter_code: "# class TreeNode:
+#     ...
+# def max_depth(root):
+#     ...
+# root = ...
+# print(max_depth(root))
+",
+    pytest: "def test_463_max_depth_bt(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_depth'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(3)
+    root.left = TreeNode(9)
+    root.right = TreeNode(20)
+    root.right.left = TreeNode(15)
+    root.right.right = TreeNode(7)
+    assert ns['max_depth'](root) == 3
+    assert ns['max_depth'](None) == 0
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def max_depth(root):
+    if root is None:
+        return 0
+    return 1 + max(max_depth(root.left), max_depth(root.right))
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(max_depth(root))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def max_depth(root):
+    if root is None:
+        return 0
+    return 1 + max(max_depth(root.left), max_depth(root.right))
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(max_depth(root))
+",
+    next: Some("py-464-is-symmetric"), show_type_chips: false, micro_step: 463,
+};
+
+
+pub const PY464_IS_SYMMETRIC: CodingStep = CodingStep {
+    id: "py-464-is-symmetric", title: "DSA Is Symmetric", objective: "¿Árbol espejo?",
+    prompt_md: "**Symmetric Tree**
+
+DFS espejo left/right.
+
+**Micro-reto:**
+1. Definí `is_symmetric(...)`
+2. Definí `is_symmetric(root)`; imprimí `True` en el demo.",
+    starter_code: "# class TreeNode:
+#     ...
+# def is_symmetric(root):
+#     ...
+# root = ...
+# print(is_symmetric(root))
+",
+    pytest: "def test_464_is_symmetric(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_symmetric'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(1)
+    root.left = TreeNode(2)
+    root.right = TreeNode(2)
+    root.left.left = TreeNode(3)
+    root.left.right = TreeNode(4)
+    root.right.left = TreeNode(4)
+    root.right.right = TreeNode(3)
+    assert ns['is_symmetric'](root) is True
+    bad = TreeNode(1)
+    bad.left = TreeNode(2)
+    bad.right = TreeNode(2)
+    bad.left.right = TreeNode(3)
+    bad.right.right = TreeNode(3)
+    assert ns['is_symmetric'](bad) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def is_symmetric(root):
+    def ok(a, b):
+        if a is None or b is None:
+            return a is b
+        return a.data == b.data and ok(a.left, b.right) and ok(a.right, b.left)
+    return ok(root, root) if root else True
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(2)
+root.left.left = TreeNode(3)
+root.left.right = TreeNode(4)
+root.right.left = TreeNode(4)
+root.right.right = TreeNode(3)
+print(is_symmetric(root))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def is_symmetric(root):
+    def ok(a, b):
+        if a is None or b is None:
+            return a is b
+        return a.data == b.data and ok(a.left, b.right) and ok(a.right, b.left)
+    return ok(root, root) if root else True
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(2)
+root.left.left = TreeNode(3)
+root.left.right = TreeNode(4)
+root.right.left = TreeNode(4)
+root.right.right = TreeNode(3)
+print(is_symmetric(root))
+",
+    next: Some("py-465-level-averages"), show_type_chips: false, micro_step: 464,
+};
+
+
+pub const PY465_LEVEL_AVERAGES: CodingStep = CodingStep {
+    id: "py-465-level-averages", title: "DSA Level Averages", objective: "Promedio por nivel.",
+    prompt_md: "**Average of Levels in Binary Tree**
+
+BFS sum/count.
+
+**Micro-reto:**
+1. Definí `average_of_levels(...)`
+2. Definí `average_of_levels(root)`; imprimí `[3.0, 14.5, 11.0]`.",
+    starter_code: "# class TreeNode:
+#     ...
+# def average_of_levels(root):
+#     ...
+# root = ...
+# print(average_of_levels(root))
+",
+    pytest: "def test_465_level_averages(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('average_of_levels'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(3)
+    root.left = TreeNode(9)
+    root.right = TreeNode(20)
+    root.right.left = TreeNode(15)
+    root.right.right = TreeNode(7)
+    assert ns['average_of_levels'](root) == [3.0, 14.5, 11.0]
+    assert ns['average_of_levels'](None) == []
+    assert capsys.readouterr().out.strip() == '[3.0, 14.5, 11.0]'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+from collections import deque
+
+def average_of_levels(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        n = len(q)
+        s = 0
+        for _ in range(n):
+            node = q.popleft()
+            s += node.data
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+        out.append(s / n)
+    return out
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(average_of_levels(root))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+from collections import deque
+
+def average_of_levels(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        n = len(q)
+        s = 0
+        for _ in range(n):
+            node = q.popleft()
+            s += node.data
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+        out.append(s / n)
+    return out
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(average_of_levels(root))
+",
+    next: Some("py-466-right-side-view"), show_type_chips: false, micro_step: 465,
+};
+
+
+pub const PY466_RIGHT_SIDE_VIEW: CodingStep = CodingStep {
+    id: "py-466-right-side-view", title: "DSA Right Side View", objective: "Vista derecha del árbol.",
+    prompt_md: "**Binary Tree Right Side View**
+
+BFS último de cada nivel.
+
+**Micro-reto:**
+1. Definí `right_side_view(...)`
+2. Definí `right_side_view(root)`; imprimí `[1, 3, 4]`.",
+    starter_code: "# class TreeNode:
+#     ...
+# def right_side_view(root):
+#     ...
+# root = ...
+# print(right_side_view(root))
+",
+    pytest: "def test_466_right_side_view(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('right_side_view'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(1)
+    root.left = TreeNode(2)
+    root.right = TreeNode(3)
+    root.left.right = TreeNode(5)
+    root.right.right = TreeNode(4)
+    assert ns['right_side_view'](root) == [1, 3, 4]
+    assert ns['right_side_view'](None) == []
+    assert capsys.readouterr().out.strip() == '[1, 3, 4]'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+from collections import deque
+
+def right_side_view(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        n = len(q)
+        for i in range(n):
+            node = q.popleft()
+            if i == n - 1:
+                out.append(node.data)
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+    return out
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.right = TreeNode(5)
+root.right.right = TreeNode(4)
+print(right_side_view(root))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+from collections import deque
+
+def right_side_view(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        n = len(q)
+        for i in range(n):
+            node = q.popleft()
+            if i == n - 1:
+                out.append(node.data)
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+    return out
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.right = TreeNode(5)
+root.right.right = TreeNode(4)
+print(right_side_view(root))
+",
+    next: Some("py-467-bst-range-sum"), show_type_chips: false, micro_step: 466,
+};
+
+
+pub const PY467_BST_RANGE_SUM: CodingStep = CodingStep {
+    id: "py-467-bst-range-sum", title: "DSA BST Range Sum", objective: "Suma de valores en [low, high].",
+    prompt_md: "**Range Sum of BST**
+
+Poda por rangos BST.
+
+**Micro-reto:**
+1. Definí `range_sum_bst(...)`
+2. Definí `range_sum_bst(root, low, high)`; imprimí `32`.",
+    starter_code: "# class TreeNode:
+#     ...
+# def range_sum_bst(root, low, high):
+#     ...
+# root = ...
+# print(range_sum_bst(root, 7, 15))
+",
+    pytest: "def test_467_bst_range_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('range_sum_bst'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(10)
+    root.left = TreeNode(5)
+    root.right = TreeNode(15)
+    root.left.left = TreeNode(3)
+    root.left.right = TreeNode(7)
+    root.right.right = TreeNode(18)
+    assert ns['range_sum_bst'](root, 7, 15) == 32
+    assert ns['range_sum_bst'](root, 6, 10) == 17
+    assert capsys.readouterr().out.strip() == '32'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def range_sum_bst(root, low, high):
+    if root is None:
+        return 0
+    if root.data < low:
+        return range_sum_bst(root.right, low, high)
+    if root.data > high:
+        return range_sum_bst(root.left, low, high)
+    return root.data + range_sum_bst(root.left, low, high) + range_sum_bst(root.right, low, high)
+
+root = TreeNode(10)
+root.left = TreeNode(5)
+root.right = TreeNode(15)
+root.left.left = TreeNode(3)
+root.left.right = TreeNode(7)
+root.right.right = TreeNode(18)
+print(range_sum_bst(root, 7, 15))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def range_sum_bst(root, low, high):
+    if root is None:
+        return 0
+    if root.data < low:
+        return range_sum_bst(root.right, low, high)
+    if root.data > high:
+        return range_sum_bst(root.left, low, high)
+    return root.data + range_sum_bst(root.left, low, high) + range_sum_bst(root.right, low, high)
+
+root = TreeNode(10)
+root.left = TreeNode(5)
+root.right = TreeNode(15)
+root.left.left = TreeNode(3)
+root.left.right = TreeNode(7)
+root.right.right = TreeNode(18)
+print(range_sum_bst(root, 7, 15))
+",
+    next: Some("py-468-min-depth-bt"), show_type_chips: false, micro_step: 467,
+};
+
+
+pub const PY468_MIN_DEPTH_BT: CodingStep = CodingStep {
+    id: "py-468-min-depth-bt", title: "DSA Min Depth BT", objective: "Profundidad mínima a una hoja.",
+    prompt_md: "**Minimum Depth of Binary Tree**
+
+Cuidado con hijo único.
+
+**Micro-reto:**
+1. Definí `min_depth(...)`
+2. Definí `min_depth(root)`; imprimí `2`.",
+    starter_code: "# class TreeNode:
+#     ...
+# def min_depth(root):
+#     ...
+# root = ...
+# print(min_depth(root))
+",
+    pytest: "def test_468_min_depth_bt(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('min_depth'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(3)
+    root.left = TreeNode(9)
+    root.right = TreeNode(20)
+    root.right.left = TreeNode(15)
+    root.right.right = TreeNode(7)
+    assert ns['min_depth'](root) == 2
+    skew = TreeNode(2)
+    skew.right = TreeNode(3)
+    skew.right.right = TreeNode(4)
+    assert ns['min_depth'](skew) == 3
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def min_depth(root):
+    if root is None:
+        return 0
+    if root.left is None:
+        return 1 + min_depth(root.right)
+    if root.right is None:
+        return 1 + min_depth(root.left)
+    return 1 + min(min_depth(root.left), min_depth(root.right))
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(min_depth(root))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def min_depth(root):
+    if root is None:
+        return 0
+    if root.left is None:
+        return 1 + min_depth(root.right)
+    if root.right is None:
+        return 1 + min_depth(root.left)
+    return 1 + min(min_depth(root.left), min_depth(root.right))
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(min_depth(root))
+",
+    next: None, show_type_chips: false, micro_step: 468,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -9631,7 +10146,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY459_SHUFFLE_STRING,
     &PY460_COUNT_MATCHES,
     &PY461_SPLIT_BALANCED,
-    &PY462_MAX_WORDS
+    &PY462_MAX_WORDS,
+    &PY463_MAX_DEPTH_BT,
+    &PY464_IS_SYMMETRIC,
+    &PY465_LEVEL_AVERAGES,
+    &PY466_RIGHT_SIDE_VIEW,
+    &PY467_BST_RANGE_SUM,
+    &PY468_MIN_DEPTH_BT
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -9775,7 +10296,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 462);
+            assert!(step.micro_step >= 1 && step.micro_step <= 468);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -10329,7 +10850,7 @@ mod tests {
     }
 
     #[test]
-    fn py203_to_py462_curriculum_chain() {
+    fn py203_to_py468_curriculum_chain() {
         let ids = [
             (202, "py-202-perfect-squares", Some("py-203-num-islands")),
             (203, "py-203-num-islands", Some("py-204-clone-graph")),
@@ -10591,7 +11112,13 @@ mod tests {
             (459, "py-459-shuffle-string", Some("py-460-count-matches")),
             (460, "py-460-count-matches", Some("py-461-split-balanced")),
             (461, "py-461-split-balanced", Some("py-462-max-words")),
-            (462, "py-462-max-words", None),
+            (462, "py-462-max-words", Some("py-463-max-depth-bt")),
+            (463, "py-463-max-depth-bt", Some("py-464-is-symmetric")),
+            (464, "py-464-is-symmetric", Some("py-465-level-averages")),
+            (465, "py-465-level-averages", Some("py-466-right-side-view")),
+            (466, "py-466-right-side-view", Some("py-467-bst-range-sum")),
+            (467, "py-467-bst-range-sum", Some("py-468-min-depth-bt")),
+            (468, "py-468-min-depth-bt", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

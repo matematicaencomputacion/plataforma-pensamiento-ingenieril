@@ -468,6 +468,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 460, step_id: "py-460-count-matches" },
   { level_id: 461, step_id: "py-461-split-balanced" },
   { level_id: 462, step_id: "py-462-max-words" },
+  { level_id: 463, step_id: "py-463-max-depth-bt" },
+  { level_id: 464, step_id: "py-464-is-symmetric" },
+  { level_id: 465, step_id: "py-465-level-averages" },
+  { level_id: 466, step_id: "py-466-right-side-view" },
+  { level_id: 467, step_id: "py-467-bst-range-sum" },
+  { level_id: 468, step_id: "py-468-min-depth-bt" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

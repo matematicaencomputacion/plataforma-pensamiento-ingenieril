@@ -22,91 +22,202 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 457,
-    id: "py-457-defang-ip",
-    title: "DSA Defang IP",
-    solution: `def defang_ipaddr(address):
-    return address.replace(".", "[.]")
+    micro: 463,
+    id: "py-463-max-depth-bt",
+    title: "DSA Max Depth BT",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(defang_ipaddr("1.1.1.1"))
+def max_depth(root):
+    if root is None:
+        return 0
+    return 1 + max(max_depth(root.left), max_depth(root.right))
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(max_depth(root))
 `,
-    nextUrl: /\/learn\/py-458-goal-parser/,
-    cursorAfter: "458",
+    nextUrl: /\/learn\/py-464-is-symmetric/,
+    cursorAfter: "464",
   },
   {
-    micro: 458,
-    id: "py-458-goal-parser",
-    title: "DSA Goal Parser",
-    solution: `def interpret(command):
-    return command.replace("()", "o").replace("(al)", "al")
+    micro: 464,
+    id: "py-464-is-symmetric",
+    title: "DSA Is Symmetric",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(interpret("G()(al)"))
+def is_symmetric(root):
+    def ok(a, b):
+        if a is None or b is None:
+            return a is b
+        return a.data == b.data and ok(a.left, b.right) and ok(a.right, b.left)
+    return ok(root, root) if root else True
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(2)
+root.left.left = TreeNode(3)
+root.left.right = TreeNode(4)
+root.right.left = TreeNode(4)
+root.right.right = TreeNode(3)
+print(is_symmetric(root))
 `,
-    nextUrl: /\/learn\/py-459-shuffle-string/,
-    cursorAfter: "459",
+    nextUrl: /\/learn\/py-465-level-averages/,
+    cursorAfter: "465",
   },
   {
-    micro: 459,
-    id: "py-459-shuffle-string",
-    title: "DSA Shuffle String",
-    solution: `def restore_string(s, indices):
-    out = [""] * len(s)
-    for ch, i in zip(s, indices):
-        out[i] = ch
-    return "".join(out)
+    micro: 465,
+    id: "py-465-level-averages",
+    title: "DSA Level Averages",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(restore_string("codeleet", [4, 5, 6, 7, 0, 2, 1, 3]))
+from collections import deque
+
+def average_of_levels(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        n = len(q)
+        s = 0
+        for _ in range(n):
+            node = q.popleft()
+            s += node.data
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+        out.append(s / n)
+    return out
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(average_of_levels(root))
 `,
-    nextUrl: /\/learn\/py-460-count-matches/,
-    cursorAfter: "460",
+    nextUrl: /\/learn\/py-466-right-side-view/,
+    cursorAfter: "466",
   },
   {
-    micro: 460,
-    id: "py-460-count-matches",
-    title: "DSA Count Matches",
-    solution: `def count_matches(items, rule_key, rule_value):
-    idx = {"type": 0, "color": 1, "name": 2}[rule_key]
-    return sum(1 for it in items if it[idx] == rule_value)
+    micro: 466,
+    id: "py-466-right-side-view",
+    title: "DSA Right Side View",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(count_matches([["phone", "blue", "pixel"], ["computer", "silver", "lenovo"], ["phone", "gold", "iphone"]], "color", "silver"))
+from collections import deque
+
+def right_side_view(root):
+    if root is None:
+        return []
+    out = []
+    q = deque([root])
+    while q:
+        n = len(q)
+        for i in range(n):
+            node = q.popleft()
+            if i == n - 1:
+                out.append(node.data)
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+    return out
+
+root = TreeNode(1)
+root.left = TreeNode(2)
+root.right = TreeNode(3)
+root.left.right = TreeNode(5)
+root.right.right = TreeNode(4)
+print(right_side_view(root))
 `,
-    nextUrl: /\/learn\/py-461-split-balanced/,
-    cursorAfter: "461",
+    nextUrl: /\/learn\/py-467-bst-range-sum/,
+    cursorAfter: "467",
   },
   {
-    micro: 461,
-    id: "py-461-split-balanced",
-    title: "DSA Split Balanced",
-    solution: `def balanced_string_split(s):
-    bal = ans = 0
-    for ch in s:
-        bal += 1 if ch == "R" else -1
-        if bal == 0:
-            ans += 1
-    return ans
+    micro: 467,
+    id: "py-467-bst-range-sum",
+    title: "DSA BST Range Sum",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(balanced_string_split("RLRRLLRLRL"))
+def range_sum_bst(root, low, high):
+    if root is None:
+        return 0
+    if root.data < low:
+        return range_sum_bst(root.right, low, high)
+    if root.data > high:
+        return range_sum_bst(root.left, low, high)
+    return root.data + range_sum_bst(root.left, low, high) + range_sum_bst(root.right, low, high)
+
+root = TreeNode(10)
+root.left = TreeNode(5)
+root.right = TreeNode(15)
+root.left.left = TreeNode(3)
+root.left.right = TreeNode(7)
+root.right.right = TreeNode(18)
+print(range_sum_bst(root, 7, 15))
 `,
-    nextUrl: /\/learn\/py-462-max-words/,
-    cursorAfter: "462",
+    nextUrl: /\/learn\/py-468-min-depth-bt/,
+    cursorAfter: "468",
   },
   {
-    micro: 462,
-    id: "py-462-max-words",
-    title: "DSA Max Words",
-    solution: `def most_words_found(sentences):
-    return max(len(s.split()) for s in sentences)
+    micro: 468,
+    id: "py-468-min-depth-bt",
+    title: "DSA Min Depth BT",
+    solution: `class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
 
-print(most_words_found(["alice and bob love leetcode", "i think so too", "this is great thanks very much"]))
+def min_depth(root):
+    if root is None:
+        return 0
+    if root.left is None:
+        return 1 + min_depth(root.right)
+    if root.right is None:
+        return 1 + min_depth(root.left)
+    return 1 + min(min_depth(root.left), min_depth(root.right))
+
+root = TreeNode(3)
+root.left = TreeNode(9)
+root.right = TreeNode(20)
+root.right.left = TreeNode(15)
+root.right.right = TreeNode(7)
+print(min_depth(root))
 `,
-    nextUrl: /\/learn\/py-463-max-depth-bt/,
-    cursorAfter: "463",
+    nextUrl: /\/workspace/,
+    cursorAfter: "469",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:457|458|459|460|461|462)-/);
+    expect(step.id).toMatch(/^py-(?:463|464|465|466|467|468)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -136,7 +247,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 457–462 · strings III", () => {
+test.describe("micro-steps 463–468 · trees III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
