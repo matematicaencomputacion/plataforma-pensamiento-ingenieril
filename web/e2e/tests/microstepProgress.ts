@@ -684,6 +684,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 676, step_id: "py-676-sorted-array-bst" },
   { level_id: 677, step_id: "py-677-lca-bst" },
   { level_id: 678, step_id: "py-678-bst-to-gst" },
+  { level_id: 679, step_id: "py-679-reverse-between" },
+  { level_id: 680, step_id: "py-680-odd-even-list" },
+  { level_id: 681, step_id: "py-681-partition-list" },
+  { level_id: 682, step_id: "py-682-split-list-parts" },
+  { level_id: 683, step_id: "py-683-add-two-numbers-ii" },
+  { level_id: 684, step_id: "py-684-remove-zero-sum" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

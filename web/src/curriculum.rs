@@ -23416,8 +23416,887 @@ def inorder(root):
 root = TreeNode(4, TreeNode(1, TreeNode(0), TreeNode(2, None, TreeNode(3))), TreeNode(6, TreeNode(5), TreeNode(7, None, TreeNode(8))))
 print(inorder(bst_to_gst(root)))
 ",
-    next: None, show_type_chips: false, micro_step: 678,
+    next: Some("py-679-reverse-between"), show_type_chips: false, micro_step: 678,
 };
+
+pub const PY679_REVERSE_BETWEEN: CodingStep = CodingStep {
+    id: "py-679-reverse-between", title: "DSA Lists IV · Reverse Between", objective: "Revertir el sublist entre left y right (1-indexado, inclusivo).",
+    prompt_md: "**Reverse Linked List II**
+
+Dummy + pred; el tramo se rota nodo a nodo sin un segundo reverse.
+
+**Micro-reto:**
+1. Definí `reverse_between(head, left, right)` con `ListNode`
+2. Ejecutá `1→2→3→4→5`, left=2, right=4; imprimí `[1, 4, 3, 2, 5]`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def to_list(head):
+#     out = []
+#     while head:
+#         out.append(head.val)
+#         head = head.next
+#     return out
+#
+# def from_list(vals):
+#     dummy = ListNode(0)
+#     cur = dummy
+#     for v in vals:
+#         cur.next = ListNode(v)
+#         cur = cur.next
+#     return dummy.next
+#
+# def reverse_between(head, left, right):
+#     dummy = ListNode(0, head)
+#     pred = dummy
+#     for _ in range(left - 1):
+#         pred = pred.next
+#     cur = pred.next
+#     for _ in range(right - left):
+#         nxt = cur.next
+#         cur.next = nxt.next
+#         nxt.next = pred.next
+#         pred.next = nxt
+#     return dummy.next
+#
+# print(to_list(reverse_between(from_list([1, 2, 3, 4, 5]), 2, 4)))
+",
+    pytest: "def test_679_reverse_between(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    ListNode = ns['ListNode']
+    def from_list(vals):
+        dummy = ListNode(0)
+        cur = dummy
+        for v in vals:
+            cur.next = ListNode(v)
+            cur = cur.next
+        return dummy.next
+    def to_list(head):
+        out = []
+        while head:
+            out.append(head.val)
+            head = head.next
+        return out
+    assert callable(ns.get('reverse_between'))
+    assert to_list(ns['reverse_between'](from_list([1, 2, 3, 4, 5]), 2, 4)) == [1, 4, 3, 2, 5]
+    assert to_list(ns['reverse_between'](from_list([5]), 1, 1)) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 4, 3, 2, 5]'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def reverse_between(head, left, right):
+    dummy = ListNode(0, head)
+    pred = dummy
+    for _ in range(left - 1):
+        pred = pred.next
+    cur = pred.next
+    for _ in range(right - left):
+        nxt = cur.next
+        cur.next = nxt.next
+        nxt.next = pred.next
+        pred.next = nxt
+    return dummy.next
+
+print(to_list(reverse_between(from_list([1, 2, 3, 4, 5]), 2, 4)))
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def reverse_between(head, left, right):
+    dummy = ListNode(0, head)
+    pred = dummy
+    for _ in range(left - 1):
+        pred = pred.next
+    cur = pred.next
+    for _ in range(right - left):
+        nxt = cur.next
+        cur.next = nxt.next
+        nxt.next = pred.next
+        pred.next = nxt
+    return dummy.next
+
+print(to_list(reverse_between(from_list([1, 2, 3, 4, 5]), 2, 4)))
+",
+    next: Some("py-680-odd-even-list"), show_type_chips: false, micro_step: 679,
+};
+
+pub const PY680_ODD_EVEN_LIST: CodingStep = CodingStep {
+    id: "py-680-odd-even-list", title: "DSA Lists IV · Odd Even", objective: "Agrupar nodos impares y luego pares por índice (1-based), in-place.",
+    prompt_md: "**Odd Even Linked List**
+
+Dos colas: odd y even; al final odd apunta al head de even.
+
+**Micro-reto:**
+1. Definí `odd_even_list(head)`
+2. Ejecutá `1→2→3→4→5`; imprimí `[1, 3, 5, 2, 4]`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def to_list(head):
+#     out = []
+#     while head:
+#         out.append(head.val)
+#         head = head.next
+#     return out
+#
+# def from_list(vals):
+#     dummy = ListNode(0)
+#     cur = dummy
+#     for v in vals:
+#         cur.next = ListNode(v)
+#         cur = cur.next
+#     return dummy.next
+#
+# def odd_even_list(head):
+#     if not head or not head.next:
+#         return head
+#     odd, even, even_head = head, head.next, head.next
+#     while even and even.next:
+#         odd.next = even.next
+#         odd = odd.next
+#         even.next = odd.next
+#         even = even.next
+#     odd.next = even_head
+#     return head
+#
+# print(to_list(odd_even_list(from_list([1, 2, 3, 4, 5]))))
+",
+    pytest: "def test_680_odd_even_list(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    ListNode = ns['ListNode']
+    def from_list(vals):
+        dummy = ListNode(0)
+        cur = dummy
+        for v in vals:
+            cur.next = ListNode(v)
+            cur = cur.next
+        return dummy.next
+    def to_list(head):
+        out = []
+        while head:
+            out.append(head.val)
+            head = head.next
+        return out
+    assert callable(ns.get('odd_even_list'))
+    assert to_list(ns['odd_even_list'](from_list([1, 2, 3, 4, 5]))) == [1, 3, 5, 2, 4]
+    assert to_list(ns['odd_even_list'](from_list([2, 1, 3, 5, 6, 4, 7]))) == [2, 3, 6, 7, 1, 5, 4]
+    assert capsys.readouterr().out.strip() == '[1, 3, 5, 2, 4]'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def odd_even_list(head):
+    if not head or not head.next:
+        return head
+    odd, even, even_head = head, head.next, head.next
+    while even and even.next:
+        odd.next = even.next
+        odd = odd.next
+        even.next = odd.next
+        even = even.next
+    odd.next = even_head
+    return head
+
+print(to_list(odd_even_list(from_list([1, 2, 3, 4, 5]))))
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def odd_even_list(head):
+    if not head or not head.next:
+        return head
+    odd, even, even_head = head, head.next, head.next
+    while even and even.next:
+        odd.next = even.next
+        odd = odd.next
+        even.next = odd.next
+        even = even.next
+    odd.next = even_head
+    return head
+
+print(to_list(odd_even_list(from_list([1, 2, 3, 4, 5]))))
+",
+    next: Some("py-681-partition-list"), show_type_chips: false, micro_step: 680,
+};
+
+pub const PY681_PARTITION_LIST: CodingStep = CodingStep {
+    id: "py-681-partition-list", title: "DSA Lists IV · Partition", objective: "Particionar alrededor de x preservando el orden relativo.",
+    prompt_md: "**Partition List**
+
+Dos dummy: menores que x y el resto; concatená al final.
+
+**Micro-reto:**
+1. Definí `partition(head, x)`
+2. Ejecutá `1→4→3→2→5→2`, x=3; imprimí `[1, 2, 2, 4, 3, 5]`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def to_list(head):
+#     out = []
+#     while head:
+#         out.append(head.val)
+#         head = head.next
+#     return out
+#
+# def from_list(vals):
+#     dummy = ListNode(0)
+#     cur = dummy
+#     for v in vals:
+#         cur.next = ListNode(v)
+#         cur = cur.next
+#     return dummy.next
+#
+# def partition(head, x):
+#     before = before_h = ListNode(0)
+#     after = after_h = ListNode(0)
+#     while head:
+#         if head.val < x:
+#             before.next = head
+#             before = before.next
+#         else:
+#             after.next = head
+#             after = after.next
+#         head = head.next
+#     after.next = None
+#     before.next = after_h.next
+#     return before_h.next
+#
+# print(to_list(partition(from_list([1, 4, 3, 2, 5, 2]), 3)))
+",
+    pytest: "def test_681_partition_list(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    ListNode = ns['ListNode']
+    def from_list(vals):
+        dummy = ListNode(0)
+        cur = dummy
+        for v in vals:
+            cur.next = ListNode(v)
+            cur = cur.next
+        return dummy.next
+    def to_list(head):
+        out = []
+        while head:
+            out.append(head.val)
+            head = head.next
+        return out
+    assert callable(ns.get('partition'))
+    assert to_list(ns['partition'](from_list([1, 4, 3, 2, 5, 2]), 3)) == [1, 2, 2, 4, 3, 5]
+    assert to_list(ns['partition'](from_list([2, 1]), 2)) == [1, 2]
+    assert capsys.readouterr().out.strip() == '[1, 2, 2, 4, 3, 5]'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def partition(head, x):
+    before = before_h = ListNode(0)
+    after = after_h = ListNode(0)
+    while head:
+        if head.val < x:
+            before.next = head
+            before = before.next
+        else:
+            after.next = head
+            after = after.next
+        head = head.next
+    after.next = None
+    before.next = after_h.next
+    return before_h.next
+
+print(to_list(partition(from_list([1, 4, 3, 2, 5, 2]), 3)))
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def partition(head, x):
+    before = before_h = ListNode(0)
+    after = after_h = ListNode(0)
+    while head:
+        if head.val < x:
+            before.next = head
+            before = before.next
+        else:
+            after.next = head
+            after = after.next
+        head = head.next
+    after.next = None
+    before.next = after_h.next
+    return before_h.next
+
+print(to_list(partition(from_list([1, 4, 3, 2, 5, 2]), 3)))
+",
+    next: Some("py-682-split-list-parts"), show_type_chips: false, micro_step: 681,
+};
+
+pub const PY682_SPLIT_LIST_PARTS: CodingStep = CodingStep {
+    id: "py-682-split-list-parts", title: "DSA Lists IV · Split Parts", objective: "Partir la lista en k partes de tamaños lo más iguales posible.",
+    prompt_md: "**Split Linked List in Parts**
+
+`n//k` extra 1 a las primeras `n%k` partes; cortá los `next`.
+
+**Micro-reto:**
+1. Definí `split_list_to_parts(head, k)` que devuelve k heads
+2. Ejecutá 1..10 con k=3; imprimí `[[1, 2, 3, 4], [5, 6, 7], [8, 9, 10]]`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def to_list(head):
+#     out = []
+#     while head:
+#         out.append(head.val)
+#         head = head.next
+#     return out
+#
+# def from_list(vals):
+#     dummy = ListNode(0)
+#     cur = dummy
+#     for v in vals:
+#         cur.next = ListNode(v)
+#         cur = cur.next
+#     return dummy.next
+#
+# def split_list_to_parts(head, k):
+#     n, cur = 0, head
+#     while cur:
+#         n += 1
+#         cur = cur.next
+#     q, r = divmod(n, k)
+#     parts = []
+#     cur = head
+#     for i in range(k):
+#         parts.append(cur)
+#         size = q + (1 if i < r else 0)
+#         for _ in range(max(0, size - 1)):
+#             if cur:
+#                 cur = cur.next
+#         if cur:
+#             nxt = cur.next
+#             cur.next = None
+#             cur = nxt
+#     return parts
+#
+# print([to_list(p) for p in split_list_to_parts(from_list([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 3)])
+",
+    pytest: "def test_682_split_list_parts(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    ListNode = ns['ListNode']
+    def from_list(vals):
+        dummy = ListNode(0)
+        cur = dummy
+        for v in vals:
+            cur.next = ListNode(v)
+            cur = cur.next
+        return dummy.next
+    def to_list(head):
+        out = []
+        while head:
+            out.append(head.val)
+            head = head.next
+        return out
+    assert callable(ns.get('split_list_to_parts'))
+    parts = ns['split_list_to_parts'](from_list([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 3)
+    assert [to_list(p) for p in parts] == [[1, 2, 3, 4], [5, 6, 7], [8, 9, 10]]
+    empty = ns['split_list_to_parts'](None, 3)
+    assert [to_list(p) for p in empty] == [[], [], []]
+    assert capsys.readouterr().out.strip() == '[[1, 2, 3, 4], [5, 6, 7], [8, 9, 10]]'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def split_list_to_parts(head, k):
+    n, cur = 0, head
+    while cur:
+        n += 1
+        cur = cur.next
+    q, r = divmod(n, k)
+    parts = []
+    cur = head
+    for i in range(k):
+        parts.append(cur)
+        size = q + (1 if i < r else 0)
+        for _ in range(max(0, size - 1)):
+            if cur:
+                cur = cur.next
+        if cur:
+            nxt = cur.next
+            cur.next = None
+            cur = nxt
+    return parts
+
+print([to_list(p) for p in split_list_to_parts(from_list([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 3)])
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def split_list_to_parts(head, k):
+    n, cur = 0, head
+    while cur:
+        n += 1
+        cur = cur.next
+    q, r = divmod(n, k)
+    parts = []
+    cur = head
+    for i in range(k):
+        parts.append(cur)
+        size = q + (1 if i < r else 0)
+        for _ in range(max(0, size - 1)):
+            if cur:
+                cur = cur.next
+        if cur:
+            nxt = cur.next
+            cur.next = None
+            cur = nxt
+    return parts
+
+print([to_list(p) for p in split_list_to_parts(from_list([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 3)])
+",
+    next: Some("py-683-add-two-numbers-ii"), show_type_chips: false, micro_step: 682,
+};
+
+pub const PY683_ADD_TWO_NUMBERS_II: CodingStep = CodingStep {
+    id: "py-683-add-two-numbers-ii", title: "DSA Lists IV · Add Two II", objective: "Sumar dos enteros MSB-first con pilas (sin revertir las listas).",
+    prompt_md: "**Add Two Numbers II**
+
+Apilá ambos números y construí el resultado de atrás hacia adelante.
+
+**Micro-reto:**
+1. Definí `add_two_numbers(l1, l2)`
+2. Sumá `7→2→4→3` + `5→6→4`; imprimí `[7, 8, 0, 7]`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def to_list(head):
+#     out = []
+#     while head:
+#         out.append(head.val)
+#         head = head.next
+#     return out
+#
+# def from_list(vals):
+#     dummy = ListNode(0)
+#     cur = dummy
+#     for v in vals:
+#         cur.next = ListNode(v)
+#         cur = cur.next
+#     return dummy.next
+#
+# def add_two_numbers(l1, l2):
+#     s1, s2 = [], []
+#     while l1:
+#         s1.append(l1.val)
+#         l1 = l1.next
+#     while l2:
+#         s2.append(l2.val)
+#         l2 = l2.next
+#     carry, dummy = 0, None
+#     while s1 or s2 or carry:
+#         carry += (s1.pop() if s1 else 0) + (s2.pop() if s2 else 0)
+#         node = ListNode(carry % 10)
+#         node.next = dummy
+#         dummy = node
+#         carry //= 10
+#     return dummy
+#
+# print(to_list(add_two_numbers(from_list([7, 2, 4, 3]), from_list([5, 6, 4]))))
+",
+    pytest: "def test_683_add_two_numbers_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    ListNode = ns['ListNode']
+    def from_list(vals):
+        dummy = ListNode(0)
+        cur = dummy
+        for v in vals:
+            cur.next = ListNode(v)
+            cur = cur.next
+        return dummy.next
+    def to_list(head):
+        out = []
+        while head:
+            out.append(head.val)
+            head = head.next
+        return out
+    assert callable(ns.get('add_two_numbers'))
+    assert to_list(ns['add_two_numbers'](from_list([7, 2, 4, 3]), from_list([5, 6, 4]))) == [7, 8, 0, 7]
+    assert to_list(ns['add_two_numbers'](from_list([5]), from_list([5]))) == [1, 0]
+    assert capsys.readouterr().out.strip() == '[7, 8, 0, 7]'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def add_two_numbers(l1, l2):
+    s1, s2 = [], []
+    while l1:
+        s1.append(l1.val)
+        l1 = l1.next
+    while l2:
+        s2.append(l2.val)
+        l2 = l2.next
+    carry, dummy = 0, None
+    while s1 or s2 or carry:
+        carry += (s1.pop() if s1 else 0) + (s2.pop() if s2 else 0)
+        node = ListNode(carry % 10)
+        node.next = dummy
+        dummy = node
+        carry //= 10
+    return dummy
+
+print(to_list(add_two_numbers(from_list([7, 2, 4, 3]), from_list([5, 6, 4]))))
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def add_two_numbers(l1, l2):
+    s1, s2 = [], []
+    while l1:
+        s1.append(l1.val)
+        l1 = l1.next
+    while l2:
+        s2.append(l2.val)
+        l2 = l2.next
+    carry, dummy = 0, None
+    while s1 or s2 or carry:
+        carry += (s1.pop() if s1 else 0) + (s2.pop() if s2 else 0)
+        node = ListNode(carry % 10)
+        node.next = dummy
+        dummy = node
+        carry //= 10
+    return dummy
+
+print(to_list(add_two_numbers(from_list([7, 2, 4, 3]), from_list([5, 6, 4]))))
+",
+    next: Some("py-684-remove-zero-sum"), show_type_chips: false, micro_step: 683,
+};
+
+pub const PY684_REMOVE_ZERO_SUM: CodingStep = CodingStep {
+    id: "py-684-remove-zero-sum", title: "DSA Lists IV · Zero Sum", objective: "Borrar sublistas consecutivas cuya suma es 0 (prefijos + última ocurrencia).",
+    prompt_md: "**Remove Zero Sum Consecutive Nodes**
+
+Dos pasadas: recordá el último nodo de cada prefijo; recableá al siguiente de esa suma.
+
+**Micro-reto:**
+1. Definí `remove_zero_sum_sublists(head)`
+2. Ejecutá `1→2→-3→3→1`; imprimí `[3, 1]`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def to_list(head):
+#     out = []
+#     while head:
+#         out.append(head.val)
+#         head = head.next
+#     return out
+#
+# def from_list(vals):
+#     dummy = ListNode(0)
+#     cur = dummy
+#     for v in vals:
+#         cur.next = ListNode(v)
+#         cur = cur.next
+#     return dummy.next
+#
+# def remove_zero_sum_sublists(head):
+#     dummy = ListNode(0, head)
+#     seen = {}
+#     s, cur = 0, dummy
+#     while cur:
+#         s += cur.val
+#         seen[s] = cur
+#         cur = cur.next
+#     s, cur = 0, dummy
+#     while cur:
+#         s += cur.val
+#         cur.next = seen[s].next
+#         cur = cur.next
+#     return dummy.next
+#
+# print(to_list(remove_zero_sum_sublists(from_list([1, 2, -3, 3, 1]))))
+",
+    pytest: "def test_684_remove_zero_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    ListNode = ns['ListNode']
+    def from_list(vals):
+        dummy = ListNode(0)
+        cur = dummy
+        for v in vals:
+            cur.next = ListNode(v)
+            cur = cur.next
+        return dummy.next
+    def to_list(head):
+        out = []
+        while head:
+            out.append(head.val)
+            head = head.next
+        return out
+    assert callable(ns.get('remove_zero_sum_sublists'))
+    assert to_list(ns['remove_zero_sum_sublists'](from_list([1, 2, -3, 3, 1]))) == [3, 1]
+    assert to_list(ns['remove_zero_sum_sublists'](from_list([1, 2, 3, -3, 4]))) == [1, 2, 4]
+    assert capsys.readouterr().out.strip() == '[3, 1]'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def remove_zero_sum_sublists(head):
+    dummy = ListNode(0, head)
+    seen = {}
+    s, cur = 0, dummy
+    while cur:
+        s += cur.val
+        seen[s] = cur
+        cur = cur.next
+    s, cur = 0, dummy
+    while cur:
+        s += cur.val
+        cur.next = seen[s].next
+        cur = cur.next
+    return dummy.next
+
+print(to_list(remove_zero_sum_sublists(from_list([1, 2, -3, 3, 1]))))
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+def from_list(vals):
+    dummy = ListNode(0)
+    cur = dummy
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+def remove_zero_sum_sublists(head):
+    dummy = ListNode(0, head)
+    seen = {}
+    s, cur = 0, dummy
+    while cur:
+        s += cur.val
+        seen[s] = cur
+        cur = cur.next
+    s, cur = 0, dummy
+    while cur:
+        s += cur.val
+        cur.next = seen[s].next
+        cur = cur.next
+    return dummy.next
+
+print(to_list(remove_zero_sum_sublists(from_list([1, 2, -3, 3, 1]))))
+",
+    next: None, show_type_chips: false, micro_step: 684,
+};
+
 
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -24097,7 +24976,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY675_DELETE_BST,
     &PY676_SORTED_ARRAY_BST,
     &PY677_LCA_BST,
-    &PY678_BST_TO_GST
+    &PY678_BST_TO_GST,
+    &PY679_REVERSE_BETWEEN,
+    &PY680_ODD_EVEN_LIST,
+    &PY681_PARTITION_LIST,
+    &PY682_SPLIT_LIST_PARTS,
+    &PY683_ADD_TWO_NUMBERS_II,
+    &PY684_REMOVE_ZERO_SUM
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -24241,7 +25126,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 678);
+            assert!(step.micro_step >= 1 && step.micro_step <= 684);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -26659,7 +27544,13 @@ mod tests {
             (675, "py-675-delete-bst", Some("py-676-sorted-array-bst")),
             (676, "py-676-sorted-array-bst", Some("py-677-lca-bst")),
             (677, "py-677-lca-bst", Some("py-678-bst-to-gst")),
-            (678, "py-678-bst-to-gst", None),
+            (678, "py-678-bst-to-gst", Some("py-679-reverse-between")),
+            (679, "py-679-reverse-between", Some("py-680-odd-even-list")),
+            (680, "py-680-odd-even-list", Some("py-681-partition-list")),
+            (681, "py-681-partition-list", Some("py-682-split-list-parts")),
+            (682, "py-682-split-list-parts", Some("py-683-add-two-numbers-ii")),
+            (683, "py-683-add-two-numbers-ii", Some("py-684-remove-zero-sum")),
+            (684, "py-684-remove-zero-sum", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
