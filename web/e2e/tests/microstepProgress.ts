@@ -774,6 +774,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 766, step_id: "py-766-linked-lists-v-lower-boundary" },
   { level_id: 767, step_id: "py-767-linked-lists-v-dependency-order" },
   { level_id: 768, step_id: "py-768-linked-lists-v-minimum-transition" },
+  { level_id: 769, step_id: "py-769-bst-vii-canonicalize" },
+  { level_id: 770, step_id: "py-770-bst-vii-prefix-state" },
+  { level_id: 771, step_id: "py-771-bst-vii-bounded-window" },
+  { level_id: 772, step_id: "py-772-bst-vii-lower-boundary" },
+  { level_id: 773, step_id: "py-773-bst-vii-dependency-order" },
+  { level_id: 774, step_id: "py-774-bst-vii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
