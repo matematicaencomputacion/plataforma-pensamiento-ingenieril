@@ -642,6 +642,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 634, step_id: "py-634-interval-intersect" },
   { level_id: 635, step_id: "py-635-burst-balloons-arrows" },
   { level_id: 636, step_id: "py-636-video-stitching" },
+  { level_id: 637, step_id: "py-637-jump-game-ii" },
+  { level_id: 638, step_id: "py-638-candy" },
+  { level_id: 639, step_id: "py-639-reconstruct-queue" },
+  { level_id: 640, step_id: "py-640-partition-labels" },
+  { level_id: 641, step_id: "py-641-task-scheduler" },
+  { level_id: 642, step_id: "py-642-bag-of-tokens" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
