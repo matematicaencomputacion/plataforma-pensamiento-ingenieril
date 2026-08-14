@@ -942,6 +942,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 934, step_id: "py-934-string-matching-iii-lower-boundary" },
   { level_id: 935, step_id: "py-935-string-matching-iii-dependency-order" },
   { level_id: 936, step_id: "py-936-string-matching-iii-minimum-transition" },
+  { level_id: 937, step_id: "py-937-rolling-hash-ii-canonicalize" },
+  { level_id: 938, step_id: "py-938-rolling-hash-ii-prefix-state" },
+  { level_id: 939, step_id: "py-939-rolling-hash-ii-bounded-window" },
+  { level_id: 940, step_id: "py-940-rolling-hash-ii-lower-boundary" },
+  { level_id: 941, step_id: "py-941-rolling-hash-ii-dependency-order" },
+  { level_id: 942, step_id: "py-942-rolling-hash-ii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
