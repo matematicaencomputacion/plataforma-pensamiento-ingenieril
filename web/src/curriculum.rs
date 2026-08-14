@@ -19720,7 +19720,383 @@ print(find_maximum_xor([3, 10, 5, 25, 2, 8]))
 
 print(find_maximum_xor([3, 10, 5, 25, 2, 8]))
 ",
-    next: None, show_type_chips: false, micro_step: 630,
+    next: Some("py-631-insert-interval"), show_type_chips: false, micro_step: 630,
+};
+
+
+pub const PY631_INSERT_INTERVAL: CodingStep = CodingStep {
+    id: "py-631-insert-interval", title: "DSA Intervals IV · Insert Interval", objective: "Insertar un intervalo en una lista ordenada y fusionar solapes.",
+    prompt_md: "**Insert Interval**
+
+Copiá los que terminan antes, fusioná los que solapan, y anexá el resto.
+
+**Micro-reto:**
+1. Definí `insert(intervals, new_interval)`
+2. Ejecutá el ejemplo; imprimí `[[1, 5], [6, 9]]`.",
+    starter_code: "# def insert(intervals, new_interval):
+#     out = []
+#     i, n = 0, len(intervals)
+#     s, e = new_interval
+#     while i < n and intervals[i][1] < s:
+#         out.append(intervals[i]); i += 1
+#     while i < n and intervals[i][0] <= e:
+#         s = min(s, intervals[i][0]); e = max(e, intervals[i][1]); i += 1
+#     out.append([s, e])
+#     out.extend(intervals[i:])
+#     return out
+#
+# print(insert([[1, 3], [6, 9]], [2, 5]))
+",
+    pytest: "def test_631_insert_interval(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('insert'))
+    assert ns['insert']([[1, 3], [6, 9]], [2, 5]) == [[1, 5], [6, 9]]
+    assert ns['insert']([], [4, 8]) == [[4, 8]]
+    assert capsys.readouterr().out.strip() == '[[1, 5], [6, 9]]'
+",
+    hint: "def insert(intervals, new_interval):
+    out = []
+    i, n = 0, len(intervals)
+    s, e = new_interval
+    while i < n and intervals[i][1] < s:
+        out.append(intervals[i]); i += 1
+    while i < n and intervals[i][0] <= e:
+        s = min(s, intervals[i][0]); e = max(e, intervals[i][1]); i += 1
+    out.append([s, e])
+    out.extend(intervals[i:])
+    return out
+
+print(insert([[1, 3], [6, 9]], [2, 5]))
+",
+    solution_example: "def insert(intervals, new_interval):
+    out = []
+    i, n = 0, len(intervals)
+    s, e = new_interval
+    while i < n and intervals[i][1] < s:
+        out.append(intervals[i]); i += 1
+    while i < n and intervals[i][0] <= e:
+        s = min(s, intervals[i][0]); e = max(e, intervals[i][1]); i += 1
+    out.append([s, e])
+    out.extend(intervals[i:])
+    return out
+
+print(insert([[1, 3], [6, 9]], [2, 5]))
+",
+    next: Some("py-632-erase-overlap"), show_type_chips: false, micro_step: 631,
+};
+
+pub const PY632_ERASE_OVERLAP: CodingStep = CodingStep {
+    id: "py-632-erase-overlap", title: "DSA Intervals IV · Erase Overlap", objective: "Mínimo de intervalos a borrar para que el resto no se solape.",
+    prompt_md: "**Non-overlapping Intervals**
+
+Greedy por fin más temprano: si el siguiente empieza antes del fin actual, borralo.
+
+**Micro-reto:**
+1. Definí `erase_overlap_intervals(intervals)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def erase_overlap_intervals(intervals):
+#     intervals.sort(key=lambda x: x[1])
+#     end = float('-inf')
+#     keep = 0
+#     for s, e in intervals:
+#         if s >= end:
+#             keep += 1
+#             end = e
+#     return len(intervals) - keep
+#
+# print(erase_overlap_intervals([[1, 2], [2, 3], [3, 4], [1, 3]]))
+",
+    pytest: "def test_632_erase_overlap(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('erase_overlap_intervals'))
+    assert ns['erase_overlap_intervals']([[1, 2], [2, 3], [3, 4], [1, 3]]) == 1
+    assert ns['erase_overlap_intervals']([[1, 2], [1, 2], [1, 2]]) == 2
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def erase_overlap_intervals(intervals):
+    intervals.sort(key=lambda x: x[1])
+    end = float('-inf')
+    keep = 0
+    for s, e in intervals:
+        if s >= end:
+            keep += 1
+            end = e
+    return len(intervals) - keep
+
+print(erase_overlap_intervals([[1, 2], [2, 3], [3, 4], [1, 3]]))
+",
+    solution_example: "def erase_overlap_intervals(intervals):
+    intervals.sort(key=lambda x: x[1])
+    end = float('-inf')
+    keep = 0
+    for s, e in intervals:
+        if s >= end:
+            keep += 1
+            end = e
+    return len(intervals) - keep
+
+print(erase_overlap_intervals([[1, 2], [2, 3], [3, 4], [1, 3]]))
+",
+    next: Some("py-633-min-meeting-rooms"), show_type_chips: false, micro_step: 632,
+};
+
+pub const PY633_MIN_MEETING_ROOMS: CodingStep = CodingStep {
+    id: "py-633-min-meeting-rooms", title: "DSA Intervals IV · Meeting Rooms", objective: "Mínimo de salas para cubrir todos los intervalos.",
+    prompt_md: "**Meeting Rooms II**
+
+Ordená starts y ends; un start antes que un end exige una sala extra.
+
+**Micro-reto:**
+1. Definí `min_meeting_rooms(intervals)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# def min_meeting_rooms(intervals):
+#     starts = sorted(s for s, _ in intervals)
+#     ends = sorted(e for _, e in intervals)
+#     i = rooms = best = 0
+#     for s in starts:
+#         rooms += 1
+#         while i < len(ends) and ends[i] <= s:
+#             rooms -= 1
+#             i += 1
+#         best = max(best, rooms)
+#     return best
+#
+# print(min_meeting_rooms([[0, 30], [5, 10], [15, 20]]))
+",
+    pytest: "def test_633_min_meeting_rooms(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('min_meeting_rooms'))
+    assert ns['min_meeting_rooms']([[0, 30], [5, 10], [15, 20]]) == 2
+    assert ns['min_meeting_rooms']([[7, 10], [2, 4]]) == 1
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def min_meeting_rooms(intervals):
+    starts = sorted(s for s, _ in intervals)
+    ends = sorted(e for _, e in intervals)
+    i = rooms = best = 0
+    for s in starts:
+        rooms += 1
+        while i < len(ends) and ends[i] <= s:
+            rooms -= 1
+            i += 1
+        best = max(best, rooms)
+    return best
+
+print(min_meeting_rooms([[0, 30], [5, 10], [15, 20]]))
+",
+    solution_example: "def min_meeting_rooms(intervals):
+    starts = sorted(s for s, _ in intervals)
+    ends = sorted(e for _, e in intervals)
+    i = rooms = best = 0
+    for s in starts:
+        rooms += 1
+        while i < len(ends) and ends[i] <= s:
+            rooms -= 1
+            i += 1
+        best = max(best, rooms)
+    return best
+
+print(min_meeting_rooms([[0, 30], [5, 10], [15, 20]]))
+",
+    next: Some("py-634-interval-intersect"), show_type_chips: false, micro_step: 633,
+};
+
+pub const PY634_INTERVAL_INTERSECT: CodingStep = CodingStep {
+    id: "py-634-interval-intersect", title: "DSA Intervals IV · Intersections", objective: "Intersección de dos listas de intervalos ordenados y disjuntos.",
+    prompt_md: "**Interval List Intersections**
+
+Avanzá el intervalo que termina primero; el overlap es max(start) / min(end).
+
+**Micro-reto:**
+1. Definí `interval_intersection(first, second)`
+2. Ejecutá el ejemplo; imprimí `[[1, 2], [5, 5], [8, 10], [15, 23], [24, 24], [25, 25]]`.",
+    starter_code: "# def interval_intersection(first, second):
+#     i = j = 0
+#     out = []
+#     while i < len(first) and j < len(second):
+#         lo = max(first[i][0], second[j][0])
+#         hi = min(first[i][1], second[j][1])
+#         if lo <= hi:
+#             out.append([lo, hi])
+#         if first[i][1] < second[j][1]:
+#             i += 1
+#         else:
+#             j += 1
+#     return out
+#
+# print(interval_intersection([[0, 2], [5, 10], [13, 23], [24, 25]], [[1, 5], [8, 12], [15, 24], [25, 26]]))
+",
+    pytest: "def test_634_interval_intersect(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('interval_intersection'))
+    assert ns['interval_intersection']([[0, 2], [5, 10]], [[1, 5], [8, 12]]) == [[1, 2], [5, 5], [8, 10]]
+    assert ns['interval_intersection']([], [[1, 2]]) == []
+    assert capsys.readouterr().out.strip() == '[[1, 2], [5, 5], [8, 10], [15, 23], [24, 24], [25, 25]]'
+",
+    hint: "def interval_intersection(first, second):
+    i = j = 0
+    out = []
+    while i < len(first) and j < len(second):
+        lo = max(first[i][0], second[j][0])
+        hi = min(first[i][1], second[j][1])
+        if lo <= hi:
+            out.append([lo, hi])
+        if first[i][1] < second[j][1]:
+            i += 1
+        else:
+            j += 1
+    return out
+
+print(interval_intersection([[0, 2], [5, 10], [13, 23], [24, 25]], [[1, 5], [8, 12], [15, 24], [25, 26]]))
+",
+    solution_example: "def interval_intersection(first, second):
+    i = j = 0
+    out = []
+    while i < len(first) and j < len(second):
+        lo = max(first[i][0], second[j][0])
+        hi = min(first[i][1], second[j][1])
+        if lo <= hi:
+            out.append([lo, hi])
+        if first[i][1] < second[j][1]:
+            i += 1
+        else:
+            j += 1
+    return out
+
+print(interval_intersection([[0, 2], [5, 10], [13, 23], [24, 25]], [[1, 5], [8, 12], [15, 24], [25, 26]]))
+",
+    next: Some("py-635-burst-balloons-arrows"), show_type_chips: false, micro_step: 634,
+};
+
+pub const PY635_BURST_BALLOONS_ARROWS: CodingStep = CodingStep {
+    id: "py-635-burst-balloons-arrows", title: "DSA Intervals IV · Min Arrows", objective: "Mínimo de flechas para reventar globos [start, end] en el eje X.",
+    prompt_md: "**Minimum Number of Arrows**
+
+Ordená por fin; una flecha en el fin cubre todos los que empiezan ≤ ese fin.
+
+**Micro-reto:**
+1. Definí `find_min_arrow_shots(points)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# def find_min_arrow_shots(points):
+#     points.sort(key=lambda p: p[1])
+#     arrows = 0
+#     end = float('-inf')
+#     for s, e in points:
+#         if s > end:
+#             arrows += 1
+#             end = e
+#     return arrows
+#
+# print(find_min_arrow_shots([[10, 16], [2, 8], [1, 6], [7, 12]]))
+",
+    pytest: "def test_635_burst_balloons_arrows(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_min_arrow_shots'))
+    assert ns['find_min_arrow_shots']([[10, 16], [2, 8], [1, 6], [7, 12]]) == 2
+    assert ns['find_min_arrow_shots']([[1, 2], [3, 4], [5, 6], [7, 8]]) == 4
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def find_min_arrow_shots(points):
+    points.sort(key=lambda p: p[1])
+    arrows = 0
+    end = float('-inf')
+    for s, e in points:
+        if s > end:
+            arrows += 1
+            end = e
+    return arrows
+
+print(find_min_arrow_shots([[10, 16], [2, 8], [1, 6], [7, 12]]))
+",
+    solution_example: "def find_min_arrow_shots(points):
+    points.sort(key=lambda p: p[1])
+    arrows = 0
+    end = float('-inf')
+    for s, e in points:
+        if s > end:
+            arrows += 1
+            end = e
+    return arrows
+
+print(find_min_arrow_shots([[10, 16], [2, 8], [1, 6], [7, 12]]))
+",
+    next: Some("py-636-video-stitching"), show_type_chips: false, micro_step: 635,
+};
+
+pub const PY636_VIDEO_STITCHING: CodingStep = CodingStep {
+    id: "py-636-video-stitching", title: "DSA Intervals IV · Video Stitching", objective: "Mínimo de clips para cubrir [0, time], o -1 si es imposible.",
+    prompt_md: "**Video Stitching**
+
+Greedy de alcance: entre los clips que cubren el punto actual, tomá el que llega más lejos.
+
+**Micro-reto:**
+1. Definí `video_stitching(clips, time)`
+2. Ejecutá el ejemplo; imprimí `3`.",
+    starter_code: "# def video_stitching(clips, time):
+#     farthest = [0] * (time + 1)
+#     for s, e in clips:
+#         if s <= time:
+#             farthest[s] = max(farthest[s], min(e, time))
+#     used = cur = reach = 0
+#     for i in range(time):
+#         reach = max(reach, farthest[i])
+#         if i == cur:
+#             if reach == cur:
+#                 return -1
+#             used += 1
+#             cur = reach
+#     return used
+#
+# print(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))
+",
+    pytest: "def test_636_video_stitching(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('video_stitching'))
+    assert ns['video_stitching']([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10) == 3
+    assert ns['video_stitching']([[0, 1], [1, 2]], 5) == -1
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def video_stitching(clips, time):
+    farthest = [0] * (time + 1)
+    for s, e in clips:
+        if s <= time:
+            farthest[s] = max(farthest[s], min(e, time))
+    used = cur = reach = 0
+    for i in range(time):
+        reach = max(reach, farthest[i])
+        if i == cur:
+            if reach == cur:
+                return -1
+            used += 1
+            cur = reach
+    return used
+
+print(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))
+",
+    solution_example: "def video_stitching(clips, time):
+    farthest = [0] * (time + 1)
+    for s, e in clips:
+        if s <= time:
+            farthest[s] = max(farthest[s], min(e, time))
+    used = cur = reach = 0
+    for i in range(time):
+        reach = max(reach, farthest[i])
+        if i == cur:
+            if reach == cur:
+                return -1
+            used += 1
+            cur = reach
+    return used
+
+print(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))
+",
+    next: None, show_type_chips: false, micro_step: 636,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -20353,7 +20729,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY627_LONGEST_WORD_DICT,
     &PY628_MAP_SUM,
     &PY629_COUNT_PREFIX_PAIRS,
-    &PY630_MAX_XOR_TWO
+    &PY630_MAX_XOR_TWO,
+    &PY631_INSERT_INTERVAL,
+    &PY632_ERASE_OVERLAP,
+    &PY633_MIN_MEETING_ROOMS,
+    &PY634_INTERVAL_INTERSECT,
+    &PY635_BURST_BALLOONS_ARROWS,
+    &PY636_VIDEO_STITCHING
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -20497,7 +20879,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 630);
+            assert!(step.micro_step >= 1 && step.micro_step <= 636);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -22867,7 +23249,13 @@ mod tests {
             (627, "py-627-longest-word-dict", Some("py-628-map-sum")),
             (628, "py-628-map-sum", Some("py-629-count-prefix-pairs")),
             (629, "py-629-count-prefix-pairs", Some("py-630-max-xor-two")),
-            (630, "py-630-max-xor-two", None),
+            (630, "py-630-max-xor-two", Some("py-631-insert-interval")),
+            (631, "py-631-insert-interval", Some("py-632-erase-overlap")),
+            (632, "py-632-erase-overlap", Some("py-633-min-meeting-rooms")),
+            (633, "py-633-min-meeting-rooms", Some("py-634-interval-intersect")),
+            (634, "py-634-interval-intersect", Some("py-635-burst-balloons-arrows")),
+            (635, "py-635-burst-balloons-arrows", Some("py-636-video-stitching")),
+            (636, "py-636-video-stitching", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
