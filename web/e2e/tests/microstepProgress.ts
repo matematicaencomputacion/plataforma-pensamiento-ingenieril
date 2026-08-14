@@ -636,6 +636,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 628, step_id: "py-628-map-sum" },
   { level_id: 629, step_id: "py-629-count-prefix-pairs" },
   { level_id: 630, step_id: "py-630-max-xor-two" },
+  { level_id: 631, step_id: "py-631-insert-interval" },
+  { level_id: 632, step_id: "py-632-erase-overlap" },
+  { level_id: 633, step_id: "py-633-min-meeting-rooms" },
+  { level_id: 634, step_id: "py-634-interval-intersect" },
+  { level_id: 635, step_id: "py-635-burst-balloons-arrows" },
+  { level_id: 636, step_id: "py-636-video-stitching" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
