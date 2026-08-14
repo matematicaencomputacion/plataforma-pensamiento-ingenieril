@@ -15909,7 +15909,495 @@ print(create_target_array([0, 1, 2, 3, 4], [0, 1, 2, 2, 1]))
 
 print(create_target_array([0, 1, 2, 3, 4], [0, 1, 2, 2, 1]))
 ",
-    next: None, show_type_chips: false, micro_step: 576,
+    next: Some("py-577-min-stack"), show_type_chips: false, micro_step: 576,
+};
+
+
+pub const PY577_MIN_STACK: CodingStep = CodingStep {
+    id: "py-577-min-stack", title: "DSA Min Stack", objective: "Stack con min O(1).",
+    prompt_md: "**Min Stack**
+
+Stack con min O(1).
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[-3, -3]
+[-2, 0]`.",
+    starter_code: "# class MinStack:
+#     def __init__(self):
+#         self.st = []
+#         self.mn = []
+#     def push(self, val):
+#         self.st.append(val)
+#         self.mn.append(val if not self.mn else min(val, self.mn[-1]))
+#     def pop(self):
+#         self.st.pop(); self.mn.pop()
+#     def top(self):
+#         return self.st[-1]
+#     def get_min(self):
+#         return self.mn[-1]
+#
+# s = MinStack()
+# s.push(-2); s.push(0); s.push(-3)
+# print([s.get_min(), s.top()])
+# s.pop()
+# print([s.get_min(), s.top()])
+",
+    pytest: "def test_577_min_stack(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    s = ns['MinStack'](); s.push(-2); s.push(0); s.push(-3)
+    assert s.get_min() == -3
+    s.pop()
+    assert s.get_min() == -2 and s.top() == 0
+    assert capsys.readouterr().out.strip() == '[-3, -3]\\n[-2, 0]'
+",
+    hint: "class MinStack:
+    def __init__(self):
+        self.st = []
+        self.mn = []
+    def push(self, val):
+        self.st.append(val)
+        self.mn.append(val if not self.mn else min(val, self.mn[-1]))
+    def pop(self):
+        self.st.pop(); self.mn.pop()
+    def top(self):
+        return self.st[-1]
+    def get_min(self):
+        return self.mn[-1]
+
+s = MinStack()
+s.push(-2); s.push(0); s.push(-3)
+print([s.get_min(), s.top()])
+s.pop()
+print([s.get_min(), s.top()])
+",
+    solution_example: "class MinStack:
+    def __init__(self):
+        self.st = []
+        self.mn = []
+    def push(self, val):
+        self.st.append(val)
+        self.mn.append(val if not self.mn else min(val, self.mn[-1]))
+    def pop(self):
+        self.st.pop(); self.mn.pop()
+    def top(self):
+        return self.st[-1]
+    def get_min(self):
+        return self.mn[-1]
+
+s = MinStack()
+s.push(-2); s.push(0); s.push(-3)
+print([s.get_min(), s.top()])
+s.pop()
+print([s.get_min(), s.top()])
+",
+    next: Some("py-578-my-queue"), show_type_chips: false, micro_step: 577,
+};
+
+pub const PY578_MY_QUEUE: CodingStep = CodingStep {
+    id: "py-578-my-queue", title: "DSA Stack Queue", objective: "Cola con dos stacks.",
+    prompt_md: "**Stack Queue**
+
+Cola con dos stacks.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 1, False]`.",
+    starter_code: "# class MyQueue:
+#     def __init__(self):
+#         self.a, self.b = [], []
+#     def push(self, x):
+#         self.a.append(x)
+#     def pop(self):
+#         self.peek()
+#         return self.b.pop()
+#     def peek(self):
+#         if not self.b:
+#             while self.a:
+#                 self.b.append(self.a.pop())
+#         return self.b[-1]
+#     def empty(self):
+#         return not self.a and not self.b
+#
+# q = MyQueue()
+# q.push(1); q.push(2)
+# print([q.peek(), q.pop(), q.empty()])
+",
+    pytest: "def test_578_my_queue(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    q = ns['MyQueue'](); q.push(1); q.push(2)
+    assert q.peek() == 1 and q.pop() == 1 and q.empty() is False
+    assert capsys.readouterr().out.strip() == '[1, 1, False]'
+",
+    hint: "class MyQueue:
+    def __init__(self):
+        self.a, self.b = [], []
+    def push(self, x):
+        self.a.append(x)
+    def pop(self):
+        self.peek()
+        return self.b.pop()
+    def peek(self):
+        if not self.b:
+            while self.a:
+                self.b.append(self.a.pop())
+        return self.b[-1]
+    def empty(self):
+        return not self.a and not self.b
+
+q = MyQueue()
+q.push(1); q.push(2)
+print([q.peek(), q.pop(), q.empty()])
+",
+    solution_example: "class MyQueue:
+    def __init__(self):
+        self.a, self.b = [], []
+    def push(self, x):
+        self.a.append(x)
+    def pop(self):
+        self.peek()
+        return self.b.pop()
+    def peek(self):
+        if not self.b:
+            while self.a:
+                self.b.append(self.a.pop())
+        return self.b[-1]
+    def empty(self):
+        return not self.a and not self.b
+
+q = MyQueue()
+q.push(1); q.push(2)
+print([q.peek(), q.pop(), q.empty()])
+",
+    next: Some("py-579-my-stack"), show_type_chips: false, micro_step: 578,
+};
+
+pub const PY579_MY_STACK: CodingStep = CodingStep {
+    id: "py-579-my-stack", title: "DSA Queue Stack", objective: "Stack con colas.",
+    prompt_md: "**Queue Stack**
+
+Stack con colas.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[2, 2, False]`.",
+    starter_code: "# class MyStack:
+#     def __init__(self):
+#         from collections import deque
+#         self.q = deque()
+#     def push(self, x):
+#         self.q.append(x)
+#         for _ in range(len(self.q) - 1):
+#             self.q.append(self.q.popleft())
+#     def pop(self):
+#         return self.q.popleft()
+#     def top(self):
+#         return self.q[0]
+#     def empty(self):
+#         return not self.q
+#
+# s = MyStack()
+# s.push(1); s.push(2)
+# print([s.top(), s.pop(), s.empty()])
+",
+    pytest: "def test_579_my_stack(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    s = ns['MyStack'](); s.push(1); s.push(2)
+    assert s.top() == 2 and s.pop() == 2 and s.empty() is False
+    assert capsys.readouterr().out.strip() == '[2, 2, False]'
+",
+    hint: "class MyStack:
+    def __init__(self):
+        from collections import deque
+        self.q = deque()
+    def push(self, x):
+        self.q.append(x)
+        for _ in range(len(self.q) - 1):
+            self.q.append(self.q.popleft())
+    def pop(self):
+        return self.q.popleft()
+    def top(self):
+        return self.q[0]
+    def empty(self):
+        return not self.q
+
+s = MyStack()
+s.push(1); s.push(2)
+print([s.top(), s.pop(), s.empty()])
+",
+    solution_example: "class MyStack:
+    def __init__(self):
+        from collections import deque
+        self.q = deque()
+    def push(self, x):
+        self.q.append(x)
+        for _ in range(len(self.q) - 1):
+            self.q.append(self.q.popleft())
+    def pop(self):
+        return self.q.popleft()
+    def top(self):
+        return self.q[0]
+    def empty(self):
+        return not self.q
+
+s = MyStack()
+s.push(1); s.push(2)
+print([s.top(), s.pop(), s.empty()])
+",
+    next: Some("py-580-lru-cache"), show_type_chips: false, micro_step: 579,
+};
+
+pub const PY580_LRU_CACHE: CodingStep = CodingStep {
+    id: "py-580-lru-cache", title: "DSA LRU Cache", objective: "Cache LRU.",
+    prompt_md: "**LRU Cache**
+
+Cache LRU.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1]
+[-1, 3]`.",
+    starter_code: "# class LRUCache:
+#     def __init__(self, cap):
+#         from collections import OrderedDict
+#         self.cap = cap
+#         self.d = OrderedDict()
+#     def get(self, key):
+#         if key not in self.d:
+#             return -1
+#         self.d.move_to_end(key)
+#         return self.d[key]
+#     def put(self, key, value):
+#         if key in self.d:
+#             self.d.move_to_end(key)
+#         self.d[key] = value
+#         if len(self.d) > self.cap:
+#             self.d.popitem(last=False)
+#
+# c = LRUCache(2)
+# c.put(1, 1); c.put(2, 2)
+# print([c.get(1)])
+# c.put(3, 3)
+# print([c.get(2), c.get(3)])
+",
+    pytest: "def test_580_lru_cache(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    c = ns['LRUCache'](2); c.put(1,1); c.put(2,2)
+    assert c.get(1) == 1
+    c.put(3,3)
+    assert c.get(2) == -1 and c.get(3) == 3
+    assert capsys.readouterr().out.strip() == '[1]\\n[-1, 3]'
+",
+    hint: "class LRUCache:
+    def __init__(self, cap):
+        from collections import OrderedDict
+        self.cap = cap
+        self.d = OrderedDict()
+    def get(self, key):
+        if key not in self.d:
+            return -1
+        self.d.move_to_end(key)
+        return self.d[key]
+    def put(self, key, value):
+        if key in self.d:
+            self.d.move_to_end(key)
+        self.d[key] = value
+        if len(self.d) > self.cap:
+            self.d.popitem(last=False)
+
+c = LRUCache(2)
+c.put(1, 1); c.put(2, 2)
+print([c.get(1)])
+c.put(3, 3)
+print([c.get(2), c.get(3)])
+",
+    solution_example: "class LRUCache:
+    def __init__(self, cap):
+        from collections import OrderedDict
+        self.cap = cap
+        self.d = OrderedDict()
+    def get(self, key):
+        if key not in self.d:
+            return -1
+        self.d.move_to_end(key)
+        return self.d[key]
+    def put(self, key, value):
+        if key in self.d:
+            self.d.move_to_end(key)
+        self.d[key] = value
+        if len(self.d) > self.cap:
+            self.d.popitem(last=False)
+
+c = LRUCache(2)
+c.put(1, 1); c.put(2, 2)
+print([c.get(1)])
+c.put(3, 3)
+print([c.get(2), c.get(3)])
+",
+    next: Some("py-581-hash-map"), show_type_chips: false, micro_step: 580,
+};
+
+pub const PY581_HASH_MAP: CodingStep = CodingStep {
+    id: "py-581-hash-map", title: "DSA Hash Map", objective: "Mapa simple.",
+    prompt_md: "**Hash Map**
+
+Mapa simple.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, -1]
+[1]
+[-1]`.",
+    starter_code: "# class MyHashMap:
+#     def __init__(self):
+#         self.d = {}
+#     def put(self, key, value):
+#         self.d[key] = value
+#     def get(self, key):
+#         return self.d.get(key, -1)
+#     def remove(self, key):
+#         self.d.pop(key, None)
+#
+# m = MyHashMap()
+# m.put(1, 1); m.put(2, 2)
+# print([m.get(1), m.get(3)])
+# m.put(2, 1)
+# print([m.get(2)])
+# m.remove(2)
+# print([m.get(2)])
+",
+    pytest: "def test_581_hash_map(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    m = ns['MyHashMap'](); m.put(1,1); m.put(2,2)
+    assert m.get(1) == 1 and m.get(3) == -1
+    m.put(2,1); assert m.get(2) == 1
+    m.remove(2); assert m.get(2) == -1
+    assert capsys.readouterr().out.strip() == '[1, -1]\\n[1]\\n[-1]'
+",
+    hint: "class MyHashMap:
+    def __init__(self):
+        self.d = {}
+    def put(self, key, value):
+        self.d[key] = value
+    def get(self, key):
+        return self.d.get(key, -1)
+    def remove(self, key):
+        self.d.pop(key, None)
+
+m = MyHashMap()
+m.put(1, 1); m.put(2, 2)
+print([m.get(1), m.get(3)])
+m.put(2, 1)
+print([m.get(2)])
+m.remove(2)
+print([m.get(2)])
+",
+    solution_example: "class MyHashMap:
+    def __init__(self):
+        self.d = {}
+    def put(self, key, value):
+        self.d[key] = value
+    def get(self, key):
+        return self.d.get(key, -1)
+    def remove(self, key):
+        self.d.pop(key, None)
+
+m = MyHashMap()
+m.put(1, 1); m.put(2, 2)
+print([m.get(1), m.get(3)])
+m.put(2, 1)
+print([m.get(2)])
+m.remove(2)
+print([m.get(2)])
+",
+    next: Some("py-582-hash-set"), show_type_chips: false, micro_step: 581,
+};
+
+pub const PY582_HASH_SET: CodingStep = CodingStep {
+    id: "py-582-hash-set", title: "DSA Hash Set", objective: "Set simple.",
+    prompt_md: "**Hash Set**
+
+Set simple.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[True, False]
+[True]
+[False]`.",
+    starter_code: "# class MyHashSet:
+#     def __init__(self):
+#         self.s = set()
+#     def add(self, key):
+#         self.s.add(key)
+#     def remove(self, key):
+#         self.s.discard(key)
+#     def contains(self, key):
+#         return key in self.s
+#
+# h = MyHashSet()
+# h.add(1); h.add(2)
+# print([h.contains(1), h.contains(3)])
+# h.add(2)
+# print([h.contains(2)])
+# h.remove(2)
+# print([h.contains(2)])
+",
+    pytest: "def test_582_hash_set(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    h = ns['MyHashSet'](); h.add(1); h.add(2)
+    assert h.contains(1) is True and h.contains(3) is False
+    h.remove(2); assert h.contains(2) is False
+    assert capsys.readouterr().out.strip() == '[True, False]\\n[True]\\n[False]'
+",
+    hint: "class MyHashSet:
+    def __init__(self):
+        self.s = set()
+    def add(self, key):
+        self.s.add(key)
+    def remove(self, key):
+        self.s.discard(key)
+    def contains(self, key):
+        return key in self.s
+
+h = MyHashSet()
+h.add(1); h.add(2)
+print([h.contains(1), h.contains(3)])
+h.add(2)
+print([h.contains(2)])
+h.remove(2)
+print([h.contains(2)])
+",
+    solution_example: "class MyHashSet:
+    def __init__(self):
+        self.s = set()
+    def add(self, key):
+        self.s.add(key)
+    def remove(self, key):
+        self.s.discard(key)
+    def contains(self, key):
+        return key in self.s
+
+h = MyHashSet()
+h.add(1); h.add(2)
+print([h.contains(1), h.contains(3)])
+h.add(2)
+print([h.contains(2)])
+h.remove(2)
+print([h.contains(2)])
+",
+    next: None, show_type_chips: false, micro_step: 582,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -16488,7 +16976,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY573_NUM_IDENTICAL_PAIRS,
     &PY574_SHUFFLE_2N,
     &PY575_DECOMPRESS_RLE,
-    &PY576_CREATE_TARGET
+    &PY576_CREATE_TARGET,
+    &PY577_MIN_STACK,
+    &PY578_MY_QUEUE,
+    &PY579_MY_STACK,
+    &PY580_LRU_CACHE,
+    &PY581_HASH_MAP,
+    &PY582_HASH_SET
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -16632,7 +17126,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 576);
+            assert!(step.micro_step >= 1 && step.micro_step <= 582);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -18480,7 +18974,121 @@ mod tests {
 
 
 
-            (576, "py-576-create-target", None),
+            (576, "py-576-create-target", Some("py-577-min-stack")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (577, "py-577-min-stack", Some("py-578-my-queue")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (578, "py-578-my-queue", Some("py-579-my-stack")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (579, "py-579-my-stack", Some("py-580-lru-cache")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (580, "py-580-lru-cache", Some("py-581-hash-map")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (581, "py-581-hash-map", Some("py-582-hash-set")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (582, "py-582-hash-set", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
