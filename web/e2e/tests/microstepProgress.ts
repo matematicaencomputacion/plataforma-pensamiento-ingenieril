@@ -678,6 +678,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 670, step_id: "py-670-serialize-tree" },
   { level_id: 671, step_id: "py-671-build-tree-pre-in" },
   { level_id: 672, step_id: "py-672-max-path-sum" },
+  { level_id: 673, step_id: "py-673-search-bst" },
+  { level_id: 674, step_id: "py-674-insert-bst" },
+  { level_id: 675, step_id: "py-675-delete-bst" },
+  { level_id: 676, step_id: "py-676-sorted-array-bst" },
+  { level_id: 677, step_id: "py-677-lca-bst" },
+  { level_id: 678, step_id: "py-678-bst-to-gst" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
