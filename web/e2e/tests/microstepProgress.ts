@@ -948,6 +948,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 940, step_id: "py-940-rolling-hash-ii-lower-boundary" },
   { level_id: 941, step_id: "py-941-rolling-hash-ii-dependency-order" },
   { level_id: 942, step_id: "py-942-rolling-hash-ii-minimum-transition" },
+  { level_id: 943, step_id: "py-943-suffix-structures-i-canonicalize" },
+  { level_id: 944, step_id: "py-944-suffix-structures-i-prefix-state" },
+  { level_id: 945, step_id: "py-945-suffix-structures-i-bounded-window" },
+  { level_id: 946, step_id: "py-946-suffix-structures-i-lower-boundary" },
+  { level_id: 947, step_id: "py-947-suffix-structures-i-dependency-order" },
+  { level_id: 948, step_id: "py-948-suffix-structures-i-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
