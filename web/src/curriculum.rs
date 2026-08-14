@@ -16397,7 +16397,485 @@ print([h.contains(2)])
 h.remove(2)
 print([h.contains(2)])
 ",
-    next: None, show_type_chips: false, micro_step: 582,
+    next: Some("py-583-invert-tree"), show_type_chips: false, micro_step: 582,
+};
+
+
+pub const PY583_INVERT_TREE: CodingStep = CodingStep {
+    id: "py-583-invert-tree", title: "DSA Invert Tree", objective: "Invertir binario.",
+    prompt_md: "**Invert Tree**
+
+Invertir binario.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `7 2`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, data):
+#         self.data = data
+#         self.left = None
+#         self.right = None
+#
+# def invert_tree(root):
+#     if root:
+#         root.left, root.right = invert_tree(root.right), invert_tree(root.left)
+#     return root
+#
+# root = TreeNode(4)
+# root.left = TreeNode(2); root.right = TreeNode(7)
+# root.left.left = TreeNode(1); root.left.right = TreeNode(3)
+# root.right.left = TreeNode(6); root.right.right = TreeNode(9)
+# invert_tree(root)
+# print(root.left.data, root.right.data)
+",
+    pytest: "def test_583_invert_tree(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    TreeNode = ns['TreeNode']
+    r = TreeNode(2); r.left = TreeNode(1); r.right = TreeNode(3)
+    ns['invert_tree'](r)
+    assert r.left.data == 3 and r.right.data == 1
+    assert capsys.readouterr().out.strip() == '7 2'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def invert_tree(root):
+    if root:
+        root.left, root.right = invert_tree(root.right), invert_tree(root.left)
+    return root
+
+root = TreeNode(4)
+root.left = TreeNode(2); root.right = TreeNode(7)
+root.left.left = TreeNode(1); root.left.right = TreeNode(3)
+root.right.left = TreeNode(6); root.right.right = TreeNode(9)
+invert_tree(root)
+print(root.left.data, root.right.data)
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def invert_tree(root):
+    if root:
+        root.left, root.right = invert_tree(root.right), invert_tree(root.left)
+    return root
+
+root = TreeNode(4)
+root.left = TreeNode(2); root.right = TreeNode(7)
+root.left.left = TreeNode(1); root.left.right = TreeNode(3)
+root.right.left = TreeNode(6); root.right.right = TreeNode(9)
+invert_tree(root)
+print(root.left.data, root.right.data)
+",
+    next: Some("py-584-same-tree"), show_type_chips: false, micro_step: 583,
+};
+
+pub const PY584_SAME_TREE: CodingStep = CodingStep {
+    id: "py-584-same-tree", title: "DSA Same Tree", objective: "¿Árboles iguales?",
+    prompt_md: "**Same Tree**
+
+¿Árboles iguales?
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, data):
+#         self.data = data
+#         self.left = None
+#         self.right = None
+#
+# def is_same_tree(p, q):
+#     if not p or not q:
+#         return p is q
+#     return p.data == q.data and is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
+#
+# a = TreeNode(1); a.left = TreeNode(2); a.right = TreeNode(3)
+# b = TreeNode(1); b.left = TreeNode(2); b.right = TreeNode(3)
+# print(is_same_tree(a, b))
+",
+    pytest: "def test_584_same_tree(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    TreeNode = ns['TreeNode']
+    assert ns['is_same_tree'](TreeNode(1), TreeNode(1)) is True
+    assert ns['is_same_tree'](TreeNode(1), TreeNode(2)) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def is_same_tree(p, q):
+    if not p or not q:
+        return p is q
+    return p.data == q.data and is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
+
+a = TreeNode(1); a.left = TreeNode(2); a.right = TreeNode(3)
+b = TreeNode(1); b.left = TreeNode(2); b.right = TreeNode(3)
+print(is_same_tree(a, b))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def is_same_tree(p, q):
+    if not p or not q:
+        return p is q
+    return p.data == q.data and is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
+
+a = TreeNode(1); a.left = TreeNode(2); a.right = TreeNode(3)
+b = TreeNode(1); b.left = TreeNode(2); b.right = TreeNode(3)
+print(is_same_tree(a, b))
+",
+    next: Some("py-585-diameter-bt"), show_type_chips: false, micro_step: 584,
+};
+
+pub const PY585_DIAMETER_BT: CodingStep = CodingStep {
+    id: "py-585-diameter-bt", title: "DSA Diameter BT", objective: "Diámetro del árbol.",
+    prompt_md: "**Diameter BT**
+
+Diámetro del árbol.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, data):
+#         self.data = data
+#         self.left = None
+#         self.right = None
+#
+# def diameter_of_binary_tree(root):
+#     best = 0
+#     def depth(n):
+#         nonlocal best
+#         if not n:
+#             return 0
+#         l, r = depth(n.left), depth(n.right)
+#         best = max(best, l + r)
+#         return 1 + max(l, r)
+#     depth(root)
+#     return best
+#
+# root = TreeNode(1)
+# root.left = TreeNode(2); root.right = TreeNode(3)
+# root.left.left = TreeNode(4); root.left.right = TreeNode(5)
+# print(diameter_of_binary_tree(root))
+",
+    pytest: "def test_585_diameter_bt(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    TreeNode = ns['TreeNode']
+    r = TreeNode(1); r.left = TreeNode(2)
+    assert ns['diameter_of_binary_tree'](r) == 1
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def diameter_of_binary_tree(root):
+    best = 0
+    def depth(n):
+        nonlocal best
+        if not n:
+            return 0
+        l, r = depth(n.left), depth(n.right)
+        best = max(best, l + r)
+        return 1 + max(l, r)
+    depth(root)
+    return best
+
+root = TreeNode(1)
+root.left = TreeNode(2); root.right = TreeNode(3)
+root.left.left = TreeNode(4); root.left.right = TreeNode(5)
+print(diameter_of_binary_tree(root))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def diameter_of_binary_tree(root):
+    best = 0
+    def depth(n):
+        nonlocal best
+        if not n:
+            return 0
+        l, r = depth(n.left), depth(n.right)
+        best = max(best, l + r)
+        return 1 + max(l, r)
+    depth(root)
+    return best
+
+root = TreeNode(1)
+root.left = TreeNode(2); root.right = TreeNode(3)
+root.left.left = TreeNode(4); root.left.right = TreeNode(5)
+print(diameter_of_binary_tree(root))
+",
+    next: Some("py-586-path-sum"), show_type_chips: false, micro_step: 585,
+};
+
+pub const PY586_PATH_SUM: CodingStep = CodingStep {
+    id: "py-586-path-sum", title: "DSA Path Sum", objective: "¿Existe path a target?",
+    prompt_md: "**Path Sum**
+
+¿Existe path a target?
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, data):
+#         self.data = data
+#         self.left = None
+#         self.right = None
+#
+# def has_path_sum(root, target):
+#     if not root:
+#         return False
+#     if not root.left and not root.right:
+#         return root.data == target
+#     return has_path_sum(root.left, target - root.data) or has_path_sum(root.right, target - root.data)
+#
+# root = TreeNode(5)
+# root.left = TreeNode(4); root.right = TreeNode(8)
+# root.left.left = TreeNode(11); root.left.left.left = TreeNode(7); root.left.left.right = TreeNode(2)
+# root.right.left = TreeNode(13); root.right.right = TreeNode(4); root.right.right.right = TreeNode(1)
+# print(has_path_sum(root, 22))
+",
+    pytest: "def test_586_path_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    TreeNode = ns['TreeNode']
+    r = TreeNode(1); r.left = TreeNode(2)
+    assert ns['has_path_sum'](r, 3) is True
+    assert ns['has_path_sum'](r, 1) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def has_path_sum(root, target):
+    if not root:
+        return False
+    if not root.left and not root.right:
+        return root.data == target
+    return has_path_sum(root.left, target - root.data) or has_path_sum(root.right, target - root.data)
+
+root = TreeNode(5)
+root.left = TreeNode(4); root.right = TreeNode(8)
+root.left.left = TreeNode(11); root.left.left.left = TreeNode(7); root.left.left.right = TreeNode(2)
+root.right.left = TreeNode(13); root.right.right = TreeNode(4); root.right.right.right = TreeNode(1)
+print(has_path_sum(root, 22))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def has_path_sum(root, target):
+    if not root:
+        return False
+    if not root.left and not root.right:
+        return root.data == target
+    return has_path_sum(root.left, target - root.data) or has_path_sum(root.right, target - root.data)
+
+root = TreeNode(5)
+root.left = TreeNode(4); root.right = TreeNode(8)
+root.left.left = TreeNode(11); root.left.left.left = TreeNode(7); root.left.left.right = TreeNode(2)
+root.right.left = TreeNode(13); root.right.right = TreeNode(4); root.right.right.right = TreeNode(1)
+print(has_path_sum(root, 22))
+",
+    next: Some("py-587-sorted-array-bst"), show_type_chips: false, micro_step: 586,
+};
+
+pub const PY587_SORTED_ARRAY_BST: CodingStep = CodingStep {
+    id: "py-587-sorted-array-bst", title: "DSA Array to BST", objective: "Array ordenado a BST.",
+    prompt_md: "**Array to BST**
+
+Array ordenado a BST.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `0 -3 9`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, data):
+#         self.data = data
+#         self.left = None
+#         self.right = None
+#
+# def sorted_array_to_bst(nums):
+#     if not nums:
+#         return None
+#     m = len(nums) // 2
+#     root = TreeNode(nums[m])
+#     root.left = sorted_array_to_bst(nums[:m])
+#     root.right = sorted_array_to_bst(nums[m + 1:])
+#     return root
+#
+# r = sorted_array_to_bst([-10, -3, 0, 5, 9])
+# print(r.data, r.left.data, r.right.data)
+",
+    pytest: "def test_587_sorted_array_bst(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    TreeNode = ns['TreeNode']
+    r = ns['sorted_array_to_bst']([-10, -3, 0, 5, 9])
+    assert r.data == 0
+    assert capsys.readouterr().out.strip() == '0 -3 9'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def sorted_array_to_bst(nums):
+    if not nums:
+        return None
+    m = len(nums) // 2
+    root = TreeNode(nums[m])
+    root.left = sorted_array_to_bst(nums[:m])
+    root.right = sorted_array_to_bst(nums[m + 1:])
+    return root
+
+r = sorted_array_to_bst([-10, -3, 0, 5, 9])
+print(r.data, r.left.data, r.right.data)
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def sorted_array_to_bst(nums):
+    if not nums:
+        return None
+    m = len(nums) // 2
+    root = TreeNode(nums[m])
+    root.left = sorted_array_to_bst(nums[:m])
+    root.right = sorted_array_to_bst(nums[m + 1:])
+    return root
+
+r = sorted_array_to_bst([-10, -3, 0, 5, 9])
+print(r.data, r.left.data, r.right.data)
+",
+    next: Some("py-588-kth-small-bst"), show_type_chips: false, micro_step: 587,
+};
+
+pub const PY588_KTH_SMALL_BST: CodingStep = CodingStep {
+    id: "py-588-kth-small-bst", title: "DSA Kth Small BST", objective: "K-ésimo menor en BST.",
+    prompt_md: "**Kth Small BST**
+
+K-ésimo menor en BST.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `1`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, data):
+#         self.data = data
+#         self.left = None
+#         self.right = None
+#
+# def kth_smallest(root, k):
+#     st = []
+#     while True:
+#         while root:
+#             st.append(root)
+#             root = root.left
+#         root = st.pop()
+#         k -= 1
+#         if k == 0:
+#             return root.data
+#         root = root.right
+#
+# root = TreeNode(3)
+# root.left = TreeNode(1); root.right = TreeNode(4)
+# root.left.right = TreeNode(2)
+# print(kth_smallest(root, 1))
+",
+    pytest: "def test_588_kth_small_bst(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    TreeNode = ns['TreeNode']
+    r = TreeNode(3); r.left = TreeNode(1); r.right = TreeNode(4); r.left.right = TreeNode(2)
+    assert ns['kth_smallest'](r, 1) == 1
+    assert ns['kth_smallest'](r, 3) == 3
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def kth_smallest(root, k):
+    st = []
+    while True:
+        while root:
+            st.append(root)
+            root = root.left
+        root = st.pop()
+        k -= 1
+        if k == 0:
+            return root.data
+        root = root.right
+
+root = TreeNode(3)
+root.left = TreeNode(1); root.right = TreeNode(4)
+root.left.right = TreeNode(2)
+print(kth_smallest(root, 1))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+def kth_smallest(root, k):
+    st = []
+    while True:
+        while root:
+            st.append(root)
+            root = root.left
+        root = st.pop()
+        k -= 1
+        if k == 0:
+            return root.data
+        root = root.right
+
+root = TreeNode(3)
+root.left = TreeNode(1); root.right = TreeNode(4)
+root.left.right = TreeNode(2)
+print(kth_smallest(root, 1))
+",
+    next: None, show_type_chips: false, micro_step: 588,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -16982,7 +17460,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY579_MY_STACK,
     &PY580_LRU_CACHE,
     &PY581_HASH_MAP,
-    &PY582_HASH_SET
+    &PY582_HASH_SET,
+    &PY583_INVERT_TREE,
+    &PY584_SAME_TREE,
+    &PY585_DIAMETER_BT,
+    &PY586_PATH_SUM,
+    &PY587_SORTED_ARRAY_BST,
+    &PY588_KTH_SMALL_BST
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -17126,7 +17610,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 582);
+            assert!(step.micro_step >= 1 && step.micro_step <= 588);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -19088,7 +19572,127 @@ mod tests {
 
 
 
-            (582, "py-582-hash-set", None),
+            (582, "py-582-hash-set", Some("py-583-invert-tree")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (583, "py-583-invert-tree", Some("py-584-same-tree")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (584, "py-584-same-tree", Some("py-585-diameter-bt")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (585, "py-585-diameter-bt", Some("py-586-path-sum")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (586, "py-586-path-sum", Some("py-587-sorted-array-bst")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (587, "py-587-sorted-array-bst", Some("py-588-kth-small-bst")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (588, "py-588-kth-small-bst", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
