@@ -726,6 +726,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 718, step_id: "py-718-binpow" },
   { level_id: 719, step_id: "py-719-mod-inverse" },
   { level_id: 720, step_id: "py-720-crt" },
+  { level_id: 721, step_id: "py-721-arrays-vi-canonicalize" },
+  { level_id: 722, step_id: "py-722-arrays-vi-prefix-state" },
+  { level_id: 723, step_id: "py-723-arrays-vi-bounded-window" },
+  { level_id: 724, step_id: "py-724-arrays-vi-lower-boundary" },
+  { level_id: 725, step_id: "py-725-arrays-vi-dependency-order" },
+  { level_id: 726, step_id: "py-726-arrays-vi-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
