@@ -930,6 +930,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 922, step_id: "py-922-sparse-table-ii-lower-boundary" },
   { level_id: 923, step_id: "py-923-sparse-table-ii-dependency-order" },
   { level_id: 924, step_id: "py-924-sparse-table-ii-minimum-transition" },
+  { level_id: 925, step_id: "py-925-binary-lifting-ii-canonicalize" },
+  { level_id: 926, step_id: "py-926-binary-lifting-ii-prefix-state" },
+  { level_id: 927, step_id: "py-927-binary-lifting-ii-bounded-window" },
+  { level_id: 928, step_id: "py-928-binary-lifting-ii-lower-boundary" },
+  { level_id: 929, step_id: "py-929-binary-lifting-ii-dependency-order" },
+  { level_id: 930, step_id: "py-930-binary-lifting-ii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
