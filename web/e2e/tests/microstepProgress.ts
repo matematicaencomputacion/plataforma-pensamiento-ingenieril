@@ -576,6 +576,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 568, step_id: "py-568-valid-anagram" },
   { level_id: 569, step_id: "py-569-first-uniq" },
   { level_id: 570, step_id: "py-570-add-binary" },
+  { level_id: 571, step_id: "py-571-running-sum" },
+  { level_id: 572, step_id: "py-572-richest-customer" },
+  { level_id: 573, step_id: "py-573-num-identical-pairs" },
+  { level_id: 574, step_id: "py-574-shuffle-2n" },
+  { level_id: 575, step_id: "py-575-decompress-rle" },
+  { level_id: 576, step_id: "py-576-create-target" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

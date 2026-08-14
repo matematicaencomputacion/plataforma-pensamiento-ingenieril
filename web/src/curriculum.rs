@@ -15667,7 +15667,249 @@ print(add_binary(\"11\", \"1\"))
 
 print(add_binary(\"11\", \"1\"))
 ",
-    next: None, show_type_chips: false, micro_step: 570,
+    next: Some("py-571-running-sum"), show_type_chips: false, micro_step: 570,
+};
+
+
+pub const PY571_RUNNING_SUM: CodingStep = CodingStep {
+    id: "py-571-running-sum", title: "DSA Running Sum", objective: "Suma acumulada.",
+    prompt_md: "**Running Sum**
+
+Suma acumulada.
+
+**Micro-reto:**
+1. Definí `running_sum(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 3, 6, 10]`.",
+    starter_code: "# def running_sum(nums):
+#     for i in range(1, len(nums)):
+#         nums[i] += nums[i - 1]
+#     return nums
+#
+# print(running_sum([1, 2, 3, 4]))
+",
+    pytest: "def test_571_running_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('running_sum'))
+    assert ns['running_sum']([1, 2, 3, 4]) == [1, 3, 6, 10]
+    assert capsys.readouterr().out.strip() == '[1, 3, 6, 10]'
+",
+    hint: "def running_sum(nums):
+    for i in range(1, len(nums)):
+        nums[i] += nums[i - 1]
+    return nums
+
+print(running_sum([1, 2, 3, 4]))
+",
+    solution_example: "def running_sum(nums):
+    for i in range(1, len(nums)):
+        nums[i] += nums[i - 1]
+    return nums
+
+print(running_sum([1, 2, 3, 4]))
+",
+    next: Some("py-572-richest-customer"), show_type_chips: false, micro_step: 571,
+};
+
+pub const PY572_RICHEST_CUSTOMER: CodingStep = CodingStep {
+    id: "py-572-richest-customer", title: "DSA Richest", objective: "Max wealth.",
+    prompt_md: "**Richest**
+
+Max wealth.
+
+**Micro-reto:**
+1. Definí `maximum_wealth(...)`
+2. Ejecutá el ejemplo del starter; imprimí `6`.",
+    starter_code: "# def maximum_wealth(accounts):
+#     return max(sum(row) for row in accounts)
+#
+# print(maximum_wealth([[1, 2, 3], [3, 2, 1]]))
+",
+    pytest: "def test_572_richest_customer(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('maximum_wealth'))
+    assert ns['maximum_wealth']([[1, 2, 3], [3, 2, 1]]) == 6
+    assert ns['maximum_wealth']([[1, 5], [7, 3], [3, 5]]) == 10
+    assert capsys.readouterr().out.strip() == '6'
+",
+    hint: "def maximum_wealth(accounts):
+    return max(sum(row) for row in accounts)
+
+print(maximum_wealth([[1, 2, 3], [3, 2, 1]]))
+",
+    solution_example: "def maximum_wealth(accounts):
+    return max(sum(row) for row in accounts)
+
+print(maximum_wealth([[1, 2, 3], [3, 2, 1]]))
+",
+    next: Some("py-573-num-identical-pairs"), show_type_chips: false, micro_step: 572,
+};
+
+pub const PY573_NUM_IDENTICAL_PAIRS: CodingStep = CodingStep {
+    id: "py-573-num-identical-pairs", title: "DSA Good Pairs II", objective: "Pares iguales.",
+    prompt_md: "**Good Pairs II**
+
+Pares iguales.
+
+**Micro-reto:**
+1. Definí `num_identical_pairs(...)`
+2. Ejecutá el ejemplo del starter; imprimí `4`.",
+    starter_code: "# def num_identical_pairs(nums):
+#     from collections import Counter
+#     return sum(c * (c - 1) // 2 for c in Counter(nums).values())
+#
+# print(num_identical_pairs([1, 2, 3, 1, 1, 3]))
+",
+    pytest: "def test_573_num_identical_pairs(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('num_identical_pairs'))
+    assert ns['num_identical_pairs']([1, 2, 3, 1, 1, 3]) == 4
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def num_identical_pairs(nums):
+    from collections import Counter
+    return sum(c * (c - 1) // 2 for c in Counter(nums).values())
+
+print(num_identical_pairs([1, 2, 3, 1, 1, 3]))
+",
+    solution_example: "def num_identical_pairs(nums):
+    from collections import Counter
+    return sum(c * (c - 1) // 2 for c in Counter(nums).values())
+
+print(num_identical_pairs([1, 2, 3, 1, 1, 3]))
+",
+    next: Some("py-574-shuffle-2n"), show_type_chips: false, micro_step: 573,
+};
+
+pub const PY574_SHUFFLE_2N: CodingStep = CodingStep {
+    id: "py-574-shuffle-2n", title: "DSA Shuffle 2N", objective: "Intercalar x/y.",
+    prompt_md: "**Shuffle 2N**
+
+Intercalar x/y.
+
+**Micro-reto:**
+1. Definí `shuffle(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[2, 3, 5, 4, 1, 7]`.",
+    starter_code: "# def shuffle(nums, n):
+#     res = []
+#     for i in range(n):
+#         res.append(nums[i]); res.append(nums[i + n])
+#     return res
+#
+# print(shuffle([2, 5, 1, 3, 4, 7], 3))
+",
+    pytest: "def test_574_shuffle_2n(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('shuffle'))
+    assert ns['shuffle']([2, 5, 1, 3, 4, 7], 3) == [2, 3, 5, 4, 1, 7]
+    assert capsys.readouterr().out.strip() == '[2, 3, 5, 4, 1, 7]'
+",
+    hint: "def shuffle(nums, n):
+    res = []
+    for i in range(n):
+        res.append(nums[i]); res.append(nums[i + n])
+    return res
+
+print(shuffle([2, 5, 1, 3, 4, 7], 3))
+",
+    solution_example: "def shuffle(nums, n):
+    res = []
+    for i in range(n):
+        res.append(nums[i]); res.append(nums[i + n])
+    return res
+
+print(shuffle([2, 5, 1, 3, 4, 7], 3))
+",
+    next: Some("py-575-decompress-rle"), show_type_chips: false, micro_step: 574,
+};
+
+pub const PY575_DECOMPRESS_RLE: CodingStep = CodingStep {
+    id: "py-575-decompress-rle", title: "DSA Decompress RLE", objective: "Pares freq/val.",
+    prompt_md: "**Decompress RLE**
+
+Pares freq/val.
+
+**Micro-reto:**
+1. Definí `decompress_rl_elist(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[2, 4, 4, 4]`.",
+    starter_code: "# def decompress_rl_elist(nums):
+#     res = []
+#     for i in range(0, len(nums), 2):
+#         res.extend([nums[i + 1]] * nums[i])
+#     return res
+#
+# print(decompress_rl_elist([1, 2, 3, 4]))
+",
+    pytest: "def test_575_decompress_rle(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('decompress_rl_elist'))
+    assert ns['decompress_rl_elist']([1, 2, 3, 4]) == [2, 4, 4, 4]
+    assert capsys.readouterr().out.strip() == '[2, 4, 4, 4]'
+",
+    hint: "def decompress_rl_elist(nums):
+    res = []
+    for i in range(0, len(nums), 2):
+        res.extend([nums[i + 1]] * nums[i])
+    return res
+
+print(decompress_rl_elist([1, 2, 3, 4]))
+",
+    solution_example: "def decompress_rl_elist(nums):
+    res = []
+    for i in range(0, len(nums), 2):
+        res.extend([nums[i + 1]] * nums[i])
+    return res
+
+print(decompress_rl_elist([1, 2, 3, 4]))
+",
+    next: Some("py-576-create-target"), show_type_chips: false, micro_step: 575,
+};
+
+pub const PY576_CREATE_TARGET: CodingStep = CodingStep {
+    id: "py-576-create-target", title: "DSA Create Target", objective: "Insertar en índice.",
+    prompt_md: "**Create Target**
+
+Insertar en índice.
+
+**Micro-reto:**
+1. Definí `create_target_array(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[0, 4, 1, 3, 2]`.",
+    starter_code: "# def create_target_array(nums, index):
+#     res = []
+#     for n, i in zip(nums, index):
+#         res.insert(i, n)
+#     return res
+#
+# print(create_target_array([0, 1, 2, 3, 4], [0, 1, 2, 2, 1]))
+",
+    pytest: "def test_576_create_target(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('create_target_array'))
+    assert ns['create_target_array']([0, 1, 2, 3, 4], [0, 1, 2, 2, 1]) == [0, 4, 1, 3, 2]
+    assert capsys.readouterr().out.strip() == '[0, 4, 1, 3, 2]'
+",
+    hint: "def create_target_array(nums, index):
+    res = []
+    for n, i in zip(nums, index):
+        res.insert(i, n)
+    return res
+
+print(create_target_array([0, 1, 2, 3, 4], [0, 1, 2, 2, 1]))
+",
+    solution_example: "def create_target_array(nums, index):
+    res = []
+    for n, i in zip(nums, index):
+        res.insert(i, n)
+    return res
+
+print(create_target_array([0, 1, 2, 3, 4], [0, 1, 2, 2, 1]))
+",
+    next: None, show_type_chips: false, micro_step: 576,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -16240,7 +16482,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY567_STR_STR,
     &PY568_VALID_ANAGRAM,
     &PY569_FIRST_UNIQ,
-    &PY570_ADD_BINARY
+    &PY570_ADD_BINARY,
+    &PY571_RUNNING_SUM,
+    &PY572_RICHEST_CUSTOMER,
+    &PY573_NUM_IDENTICAL_PAIRS,
+    &PY574_SHUFFLE_2N,
+    &PY575_DECOMPRESS_RLE,
+    &PY576_CREATE_TARGET
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -16384,7 +16632,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 570);
+            assert!(step.micro_step >= 1 && step.micro_step <= 576);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -18124,7 +18372,115 @@ mod tests {
 
 
 
-            (570, "py-570-add-binary", None),
+            (570, "py-570-add-binary", Some("py-571-running-sum")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (571, "py-571-running-sum", Some("py-572-richest-customer")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (572, "py-572-richest-customer", Some("py-573-num-identical-pairs")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (573, "py-573-num-identical-pairs", Some("py-574-shuffle-2n")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (574, "py-574-shuffle-2n", Some("py-575-decompress-rle")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (575, "py-575-decompress-rle", Some("py-576-create-target")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (576, "py-576-create-target", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
