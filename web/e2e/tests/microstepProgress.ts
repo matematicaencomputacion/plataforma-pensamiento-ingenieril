@@ -846,6 +846,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 838, step_id: "py-838-greedy-v-lower-boundary" },
   { level_id: 839, step_id: "py-839-greedy-v-dependency-order" },
   { level_id: 840, step_id: "py-840-greedy-v-minimum-transition" },
+  { level_id: 841, step_id: "py-841-dp-arrays-v-canonicalize" },
+  { level_id: 842, step_id: "py-842-dp-arrays-v-prefix-state" },
+  { level_id: 843, step_id: "py-843-dp-arrays-v-bounded-window" },
+  { level_id: 844, step_id: "py-844-dp-arrays-v-lower-boundary" },
+  { level_id: 845, step_id: "py-845-dp-arrays-v-dependency-order" },
+  { level_id: 846, step_id: "py-846-dp-arrays-v-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
