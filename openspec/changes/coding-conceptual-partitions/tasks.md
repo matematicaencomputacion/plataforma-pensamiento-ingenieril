@@ -26,4 +26,4 @@
 
 - [x] 5.1 `make web-test` (concepts + compile) — 66 ok
 - [x] 5.2 E2E: login → `/concepts/1` → drill → `/learn/...` (`concepts.partitions.spec.ts`)
-- [ ] 5.3 PR TED slides; gate Backend+Frontend (Playwright no bloqueante)
+- [x] 5.3 PR TED slides (#232); gate Backend+Frontend (Playwright no bloqueante)
