@@ -702,6 +702,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 694, step_id: "py-694-rabin-karp" },
   { level_id: 695, step_id: "py-695-repeated-substring" },
   { level_id: 696, step_id: "py-696-shortest-palindrome" },
+  { level_id: 697, step_id: "py-697-fenwick-prefix" },
+  { level_id: 698, step_id: "py-698-num-array-bit" },
+  { level_id: 699, step_id: "py-699-count-inversions" },
+  { level_id: 700, step_id: "py-700-reverse-pairs" },
+  { level_id: 701, step_id: "py-701-count-smaller" },
+  { level_id: 702, step_id: "py-702-fenwick-kth" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

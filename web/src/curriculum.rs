@@ -25124,8 +25124,730 @@ def shortest_palindrome(s):
 
 print(shortest_palindrome(\"aacecaaa\"))
 ",
-    next: None, show_type_chips: false, micro_step: 696,
+    next: Some("py-697-fenwick-prefix"), show_type_chips: false, micro_step: 696,
 };
+
+pub const PY697_FENWICK_PREFIX: CodingStep = CodingStep {
+    id: "py-697-fenwick-prefix", title: "DSA Fenwick · Prefix Sum", objective: "Árbol de Fenwick: add en O(log n) y prefix sum en O(log n).",
+    prompt_md: "**Fenwick Tree (BIT)**
+
+Índices 1-based internos; `i += i & -i` al actualizar, `i -= i & -i` al consultar.
+
+**Micro-reto:**
+1. Definí `class Fenwick` con `add(i, delta)` y `prefix(i)` (i 0-based)
+2. Cargá `[1, 2, 3, 4, 5]`; imprimí `prefix(4)` → `15`.",
+    starter_code: "# class Fenwick:
+#     def __init__(self, n):
+#         self.bit = [0] * (n + 1)
+#     def add(self, i, delta):
+#         i += 1
+#         while i < len(self.bit):
+#             self.bit[i] += delta
+#             i += i & -i
+#     def prefix(self, i):
+#         i += 1
+#         s = 0
+#         while i > 0:
+#             s += self.bit[i]
+#             i -= i & -i
+#         return s
+#     def range_sum(self, l, r):
+#         if l == 0:
+#             return self.prefix(r)
+#         return self.prefix(r) - self.prefix(l - 1)
+#
+# fw = Fenwick(5)
+# for i, v in enumerate([1, 2, 3, 4, 5]):
+#     fw.add(i, v)
+# print(fw.prefix(4))
+",
+    pytest: "def test_697_fenwick_prefix(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    Fenwick = ns['Fenwick']
+    fw = Fenwick(5)
+    for i, v in enumerate([1, 2, 3, 4, 5]):
+        fw.add(i, v)
+    assert fw.prefix(4) == 15
+    assert fw.range_sum(1, 3) == 9
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+fw = Fenwick(5)
+for i, v in enumerate([1, 2, 3, 4, 5]):
+    fw.add(i, v)
+print(fw.prefix(4))
+",
+    solution_example: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+fw = Fenwick(5)
+for i, v in enumerate([1, 2, 3, 4, 5]):
+    fw.add(i, v)
+print(fw.prefix(4))
+",
+    next: Some("py-698-num-array-bit"), show_type_chips: false, micro_step: 697,
+};
+
+pub const PY698_NUM_ARRAY_BIT: CodingStep = CodingStep {
+    id: "py-698-num-array-bit", title: "DSA Fenwick · Mutable Range", objective: "Range sum mutable: update puntual + sum_range con Fenwick.",
+    prompt_md: "**Range Sum Query - Mutable**
+
+`update` aplica el delta `val - old`; `sum_range` es prefix(r) - prefix(l-1).
+
+**Micro-reto:**
+1. Definí `class NumArray` con `update` y `sum_range`
+2. nums=`[1, 3, 5]`; imprimí `[9, 8]` tras sum(0,2), update(1,2), sum(0,2).",
+    starter_code: "# class Fenwick:
+#     def __init__(self, n):
+#         self.bit = [0] * (n + 1)
+#     def add(self, i, delta):
+#         i += 1
+#         while i < len(self.bit):
+#             self.bit[i] += delta
+#             i += i & -i
+#     def prefix(self, i):
+#         i += 1
+#         s = 0
+#         while i > 0:
+#             s += self.bit[i]
+#             i -= i & -i
+#         return s
+#     def range_sum(self, l, r):
+#         if l == 0:
+#             return self.prefix(r)
+#         return self.prefix(r) - self.prefix(l - 1)
+#
+# class NumArray:
+#     def __init__(self, nums):
+#         self.nums = list(nums)
+#         self.fw = Fenwick(len(nums))
+#         for i, v in enumerate(nums):
+#             self.fw.add(i, v)
+#     def update(self, index, val):
+#         self.fw.add(index, val - self.nums[index])
+#         self.nums[index] = val
+#     def sum_range(self, left, right):
+#         return self.fw.range_sum(left, right)
+#
+# na = NumArray([1, 3, 5])
+# a = na.sum_range(0, 2)
+# na.update(1, 2)
+# print([a, na.sum_range(0, 2)])
+",
+    pytest: "def test_698_num_array_bit(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    na = ns['NumArray']([1, 3, 5])
+    assert na.sum_range(0, 2) == 9
+    na.update(1, 2)
+    assert na.sum_range(0, 2) == 8
+    assert capsys.readouterr().out.strip() == '[9, 8]'
+",
+    hint: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+class NumArray:
+    def __init__(self, nums):
+        self.nums = list(nums)
+        self.fw = Fenwick(len(nums))
+        for i, v in enumerate(nums):
+            self.fw.add(i, v)
+    def update(self, index, val):
+        self.fw.add(index, val - self.nums[index])
+        self.nums[index] = val
+    def sum_range(self, left, right):
+        return self.fw.range_sum(left, right)
+
+na = NumArray([1, 3, 5])
+a = na.sum_range(0, 2)
+na.update(1, 2)
+print([a, na.sum_range(0, 2)])
+",
+    solution_example: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+class NumArray:
+    def __init__(self, nums):
+        self.nums = list(nums)
+        self.fw = Fenwick(len(nums))
+        for i, v in enumerate(nums):
+            self.fw.add(i, v)
+    def update(self, index, val):
+        self.fw.add(index, val - self.nums[index])
+        self.nums[index] = val
+    def sum_range(self, left, right):
+        return self.fw.range_sum(left, right)
+
+na = NumArray([1, 3, 5])
+a = na.sum_range(0, 2)
+na.update(1, 2)
+print([a, na.sum_range(0, 2)])
+",
+    next: Some("py-699-count-inversions"), show_type_chips: false, micro_step: 698,
+};
+
+pub const PY699_COUNT_INVERSIONS: CodingStep = CodingStep {
+    id: "py-699-count-inversions", title: "DSA Fenwick · Inversions", objective: "Contar inversiones recorriendo de derecha a izquierda con frecuencias.",
+    prompt_md: "**Count Inversions**
+
+Comprimí valores; para cada x, sumá cuántos estrictamente menores ya vistos a la derecha.
+
+**Micro-reto:**
+1. Definí `count_inversions(nums)`
+2. Ejecutá `[2, 4, 1, 3, 5]`; imprimí `3`.",
+    starter_code: "# class Fenwick:
+#     def __init__(self, n):
+#         self.bit = [0] * (n + 1)
+#     def add(self, i, delta):
+#         i += 1
+#         while i < len(self.bit):
+#             self.bit[i] += delta
+#             i += i & -i
+#     def prefix(self, i):
+#         i += 1
+#         s = 0
+#         while i > 0:
+#             s += self.bit[i]
+#             i -= i & -i
+#         return s
+#     def range_sum(self, l, r):
+#         if l == 0:
+#             return self.prefix(r)
+#         return self.prefix(r) - self.prefix(l - 1)
+#
+# def count_inversions(nums):
+#     ranks = {v: i for i, v in enumerate(sorted(set(nums)))}
+#     fw = Fenwick(len(ranks))
+#     inv = 0
+#     for x in reversed(nums):
+#         r = ranks[x]
+#         if r:
+#             inv += fw.prefix(r - 1)
+#         fw.add(r, 1)
+#     return inv
+#
+# print(count_inversions([2, 4, 1, 3, 5]))
+",
+    pytest: "def test_699_count_inversions(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('count_inversions'))
+    assert ns['count_inversions']([2, 4, 1, 3, 5]) == 3
+    assert ns['count_inversions']([5, 4, 3, 2, 1]) == 10
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+def count_inversions(nums):
+    ranks = {v: i for i, v in enumerate(sorted(set(nums)))}
+    fw = Fenwick(len(ranks))
+    inv = 0
+    for x in reversed(nums):
+        r = ranks[x]
+        if r:
+            inv += fw.prefix(r - 1)
+        fw.add(r, 1)
+    return inv
+
+print(count_inversions([2, 4, 1, 3, 5]))
+",
+    solution_example: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+def count_inversions(nums):
+    ranks = {v: i for i, v in enumerate(sorted(set(nums)))}
+    fw = Fenwick(len(ranks))
+    inv = 0
+    for x in reversed(nums):
+        r = ranks[x]
+        if r:
+            inv += fw.prefix(r - 1)
+        fw.add(r, 1)
+    return inv
+
+print(count_inversions([2, 4, 1, 3, 5]))
+",
+    next: Some("py-700-reverse-pairs"), show_type_chips: false, micro_step: 699,
+};
+
+pub const PY700_REVERSE_PAIRS: CodingStep = CodingStep {
+    id: "py-700-reverse-pairs", title: "DSA Fenwick · Reverse Pairs", objective: "Pares i<j con nums[i] > 2*nums[j] (Fenwick sobre valores y 2x).",
+    prompt_md: "**Reverse Pairs**
+
+Al ir de izquierda a derecha, consultá cuántos ya insertados son > 2x y después insertá x.
+
+**Micro-reto:**
+1. Definí `reverse_pairs(nums)`
+2. Ejecutá `[1, 3, 2, 3, 1]`; imprimí `2`.",
+    starter_code: "# class Fenwick:
+#     def __init__(self, n):
+#         self.bit = [0] * (n + 1)
+#     def add(self, i, delta):
+#         i += 1
+#         while i < len(self.bit):
+#             self.bit[i] += delta
+#             i += i & -i
+#     def prefix(self, i):
+#         i += 1
+#         s = 0
+#         while i > 0:
+#             s += self.bit[i]
+#             i -= i & -i
+#         return s
+#     def range_sum(self, l, r):
+#         if l == 0:
+#             return self.prefix(r)
+#         return self.prefix(r) - self.prefix(l - 1)
+#
+# def reverse_pairs(nums):
+#     vals = sorted(set(nums + [2 * x for x in nums]))
+#     rank = {v: i for i, v in enumerate(vals)}
+#     fw = Fenwick(len(vals))
+#     ans = 0
+#     last = len(vals) - 1
+#     for x in nums:
+#         lo = rank[2 * x] + 1
+#         if lo <= last:
+#             ans += fw.range_sum(lo, last)
+#         fw.add(rank[x], 1)
+#     return ans
+#
+# print(reverse_pairs([1, 3, 2, 3, 1]))
+",
+    pytest: "def test_700_reverse_pairs(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('reverse_pairs'))
+    assert ns['reverse_pairs']([1, 3, 2, 3, 1]) == 2
+    assert ns['reverse_pairs']([2, 4, 3, 5, 1]) == 3
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+def reverse_pairs(nums):
+    vals = sorted(set(nums + [2 * x for x in nums]))
+    rank = {v: i for i, v in enumerate(vals)}
+    fw = Fenwick(len(vals))
+    ans = 0
+    last = len(vals) - 1
+    for x in nums:
+        lo = rank[2 * x] + 1
+        if lo <= last:
+            ans += fw.range_sum(lo, last)
+        fw.add(rank[x], 1)
+    return ans
+
+print(reverse_pairs([1, 3, 2, 3, 1]))
+",
+    solution_example: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+def reverse_pairs(nums):
+    vals = sorted(set(nums + [2 * x for x in nums]))
+    rank = {v: i for i, v in enumerate(vals)}
+    fw = Fenwick(len(vals))
+    ans = 0
+    last = len(vals) - 1
+    for x in nums:
+        lo = rank[2 * x] + 1
+        if lo <= last:
+            ans += fw.range_sum(lo, last)
+        fw.add(rank[x], 1)
+    return ans
+
+print(reverse_pairs([1, 3, 2, 3, 1]))
+",
+    next: Some("py-701-count-smaller"), show_type_chips: false, micro_step: 700,
+};
+
+pub const PY701_COUNT_SMALLER: CodingStep = CodingStep {
+    id: "py-701-count-smaller", title: "DSA Fenwick · Count Smaller", objective: "Para cada índice, cuántos estrictamente menores hay a la derecha.",
+    prompt_md: "**Count of Smaller Numbers After Self**
+
+Igual que inversiones, pero guardás el prefix por posición.
+
+**Micro-reto:**
+1. Definí `count_smaller(nums)`
+2. Ejecutá `[5, 2, 6, 1]`; imprimí `[2, 1, 1, 0]`.",
+    starter_code: "# class Fenwick:
+#     def __init__(self, n):
+#         self.bit = [0] * (n + 1)
+#     def add(self, i, delta):
+#         i += 1
+#         while i < len(self.bit):
+#             self.bit[i] += delta
+#             i += i & -i
+#     def prefix(self, i):
+#         i += 1
+#         s = 0
+#         while i > 0:
+#             s += self.bit[i]
+#             i -= i & -i
+#         return s
+#     def range_sum(self, l, r):
+#         if l == 0:
+#             return self.prefix(r)
+#         return self.prefix(r) - self.prefix(l - 1)
+#
+# def count_smaller(nums):
+#     ranks = {v: i for i, v in enumerate(sorted(set(nums)))}
+#     fw = Fenwick(len(ranks))
+#     out = [0] * len(nums)
+#     for i in range(len(nums) - 1, -1, -1):
+#         r = ranks[nums[i]]
+#         out[i] = fw.prefix(r - 1) if r else 0
+#         fw.add(r, 1)
+#     return out
+#
+# print(count_smaller([5, 2, 6, 1]))
+",
+    pytest: "def test_701_count_smaller(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('count_smaller'))
+    assert ns['count_smaller']([5, 2, 6, 1]) == [2, 1, 1, 0]
+    assert ns['count_smaller']([-1]) == [0]
+    assert capsys.readouterr().out.strip() == '[2, 1, 1, 0]'
+",
+    hint: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+def count_smaller(nums):
+    ranks = {v: i for i, v in enumerate(sorted(set(nums)))}
+    fw = Fenwick(len(ranks))
+    out = [0] * len(nums)
+    for i in range(len(nums) - 1, -1, -1):
+        r = ranks[nums[i]]
+        out[i] = fw.prefix(r - 1) if r else 0
+        fw.add(r, 1)
+    return out
+
+print(count_smaller([5, 2, 6, 1]))
+",
+    solution_example: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+def count_smaller(nums):
+    ranks = {v: i for i, v in enumerate(sorted(set(nums)))}
+    fw = Fenwick(len(ranks))
+    out = [0] * len(nums)
+    for i in range(len(nums) - 1, -1, -1):
+        r = ranks[nums[i]]
+        out[i] = fw.prefix(r - 1) if r else 0
+        fw.add(r, 1)
+    return out
+
+print(count_smaller([5, 2, 6, 1]))
+",
+    next: Some("py-702-fenwick-kth"), show_type_chips: false, micro_step: 701,
+};
+
+pub const PY702_FENWICK_KTH: CodingStep = CodingStep {
+    id: "py-702-fenwick-kth", title: "DSA Fenwick · Kth Smallest", objective: "k-ésimo menor con frecuencias en Fenwick + binary search sobre ranks.",
+    prompt_md: "**Kth Smallest via Fenwick**
+
+Insertá frecuencias; buscá el menor rank cuyo prefix ≥ k.
+
+**Micro-reto:**
+1. Definí `kth_smallest(nums, k)` (k 1-based)
+2. Ejecutá `[7, 10, 4, 3, 20, 15]`, k=3; imprimí `7`.",
+    starter_code: "# class Fenwick:
+#     def __init__(self, n):
+#         self.bit = [0] * (n + 1)
+#     def add(self, i, delta):
+#         i += 1
+#         while i < len(self.bit):
+#             self.bit[i] += delta
+#             i += i & -i
+#     def prefix(self, i):
+#         i += 1
+#         s = 0
+#         while i > 0:
+#             s += self.bit[i]
+#             i -= i & -i
+#         return s
+#     def range_sum(self, l, r):
+#         if l == 0:
+#             return self.prefix(r)
+#         return self.prefix(r) - self.prefix(l - 1)
+#
+# def kth_smallest(nums, k):
+#     vals = sorted(set(nums))
+#     rank = {v: i for i, v in enumerate(vals)}
+#     fw = Fenwick(len(vals))
+#     for x in nums:
+#         fw.add(rank[x], 1)
+#     lo, hi = 0, len(vals) - 1
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if fw.prefix(mid) >= k:
+#             hi = mid
+#         else:
+#             lo = mid + 1
+#     return vals[lo]
+#
+# print(kth_smallest([7, 10, 4, 3, 20, 15], 3))
+",
+    pytest: "def test_702_fenwick_kth(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('kth_smallest'))
+    assert ns['kth_smallest']([7, 10, 4, 3, 20, 15], 3) == 7
+    assert ns['kth_smallest']([7, 10, 4, 3, 20, 15], 4) == 10
+    assert capsys.readouterr().out.strip() == '7'
+",
+    hint: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+def kth_smallest(nums, k):
+    vals = sorted(set(nums))
+    rank = {v: i for i, v in enumerate(vals)}
+    fw = Fenwick(len(vals))
+    for x in nums:
+        fw.add(rank[x], 1)
+    lo, hi = 0, len(vals) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if fw.prefix(mid) >= k:
+            hi = mid
+        else:
+            lo = mid + 1
+    return vals[lo]
+
+print(kth_smallest([7, 10, 4, 3, 20, 15], 3))
+",
+    solution_example: "class Fenwick:
+    def __init__(self, n):
+        self.bit = [0] * (n + 1)
+    def add(self, i, delta):
+        i += 1
+        while i < len(self.bit):
+            self.bit[i] += delta
+            i += i & -i
+    def prefix(self, i):
+        i += 1
+        s = 0
+        while i > 0:
+            s += self.bit[i]
+            i -= i & -i
+        return s
+    def range_sum(self, l, r):
+        if l == 0:
+            return self.prefix(r)
+        return self.prefix(r) - self.prefix(l - 1)
+
+def kth_smallest(nums, k):
+    vals = sorted(set(nums))
+    rank = {v: i for i, v in enumerate(vals)}
+    fw = Fenwick(len(vals))
+    for x in nums:
+        fw.add(rank[x], 1)
+    lo, hi = 0, len(vals) - 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if fw.prefix(mid) >= k:
+            hi = mid
+        else:
+            lo = mid + 1
+    return vals[lo]
+
+print(kth_smallest([7, 10, 4, 3, 20, 15], 3))
+",
+    next: None, show_type_chips: false, micro_step: 702,
+};
+
 
 
 
@@ -25826,7 +26548,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY693_Z_FUNCTION,
     &PY694_RABIN_KARP,
     &PY695_REPEATED_SUBSTRING,
-    &PY696_SHORTEST_PALINDROME
+    &PY696_SHORTEST_PALINDROME,
+    &PY697_FENWICK_PREFIX,
+    &PY698_NUM_ARRAY_BIT,
+    &PY699_COUNT_INVERSIONS,
+    &PY700_REVERSE_PAIRS,
+    &PY701_COUNT_SMALLER,
+    &PY702_FENWICK_KTH
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -25970,7 +26698,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 696);
+            assert!(step.micro_step >= 1 && step.micro_step <= 702);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -28406,7 +29134,13 @@ mod tests {
             (693, "py-693-z-function", Some("py-694-rabin-karp")),
             (694, "py-694-rabin-karp", Some("py-695-repeated-substring")),
             (695, "py-695-repeated-substring", Some("py-696-shortest-palindrome")),
-            (696, "py-696-shortest-palindrome", None),
+            (696, "py-696-shortest-palindrome", Some("py-697-fenwick-prefix")),
+            (697, "py-697-fenwick-prefix", Some("py-698-num-array-bit")),
+            (698, "py-698-num-array-bit", Some("py-699-count-inversions")),
+            (699, "py-699-count-inversions", Some("py-700-reverse-pairs")),
+            (700, "py-700-reverse-pairs", Some("py-701-count-smaller")),
+            (701, "py-701-count-smaller", Some("py-702-fenwick-kth")),
+            (702, "py-702-fenwick-kth", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
