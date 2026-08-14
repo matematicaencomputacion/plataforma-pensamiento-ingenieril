@@ -17935,7 +17935,372 @@ print(max_subarray_len([1, -1, 5, -2, 3], 3))
 
 print(max_subarray_len([1, -1, 5, -2, 3], 3))
 ",
-    next: None, show_type_chips: false, micro_step: 606,
+    next: Some("py-607-range-addition"), show_type_chips: false, micro_step: 606,
+};
+
+
+pub const PY607_RANGE_ADDITION: CodingStep = CodingStep {
+    id: "py-607-range-addition", title: "DSA Diff Array · Range Addition", objective: "Aplicar incrementos de rango y reconstruir el array con un barrido.",
+    prompt_md: "**Range Addition**
+
+Marcá +val en left y -val en right+1; el prefijo recupera el array final.
+
+**Micro-reto:**
+1. Definí `get_modified_array(length, updates)`
+2. Ejecutá el ejemplo; imprimí `[-2, 0, 3, 5, 3]`.",
+    starter_code: "# def get_modified_array(length, updates):
+#     diff = [0] * (length + 1)
+#     for left, right, val in updates:
+#         diff[left] += val
+#         diff[right + 1] -= val
+#     out = []
+#     running = 0
+#     for i in range(length):
+#         running += diff[i]
+#         out.append(running)
+#     return out
+#
+# print(get_modified_array(5, [[1, 3, 2], [2, 4, 3], [0, 2, -2]]))
+",
+    pytest: "def test_607_range_addition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('get_modified_array'))
+    assert ns['get_modified_array'](5, [[1, 3, 2], [2, 4, 3], [0, 2, -2]]) == [-2, 0, 3, 5, 3]
+    assert ns['get_modified_array'](1, [[0, 0, 100]]) == [100]
+    assert ns['get_modified_array'](3, []) == [0, 0, 0]
+    assert capsys.readouterr().out.strip() == '[-2, 0, 3, 5, 3]'
+",
+    hint: "def get_modified_array(length, updates):
+    diff = [0] * (length + 1)
+    for left, right, val in updates:
+        diff[left] += val
+        diff[right + 1] -= val
+    out = []
+    running = 0
+    for i in range(length):
+        running += diff[i]
+        out.append(running)
+    return out
+
+print(get_modified_array(5, [[1, 3, 2], [2, 4, 3], [0, 2, -2]]))
+",
+    solution_example: "def get_modified_array(length, updates):
+    diff = [0] * (length + 1)
+    for left, right, val in updates:
+        diff[left] += val
+        diff[right + 1] -= val
+    out = []
+    running = 0
+    for i in range(length):
+        running += diff[i]
+        out.append(running)
+    return out
+
+print(get_modified_array(5, [[1, 3, 2], [2, 4, 3], [0, 2, -2]]))
+",
+    next: Some("py-608-flight-bookings"), show_type_chips: false, micro_step: 607,
+};
+
+pub const PY608_FLIGHT_BOOKINGS: CodingStep = CodingStep {
+    id: "py-608-flight-bookings", title: "DSA Diff Array · Flight Bookings", objective: "Acumular reservas de asientos sobre rangos de vuelos.",
+    prompt_md: "**Corporate Flight Bookings**
+
+Cada booking [first, last, seats] es un update inclusivo; devolvés el ocupado por vuelo.
+
+**Micro-reto:**
+1. Definí `corp_flight_bookings(bookings, n)`
+2. Ejecutá el ejemplo; imprimí `[10, 55, 45, 25, 25]`.",
+    starter_code: "# def corp_flight_bookings(bookings, n):
+#     diff = [0] * (n + 1)
+#     for first, last, seats in bookings:
+#         diff[first - 1] += seats
+#         diff[last] -= seats
+#     out = []
+#     running = 0
+#     for i in range(n):
+#         running += diff[i]
+#         out.append(running)
+#     return out
+#
+# print(corp_flight_bookings([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5))
+",
+    pytest: "def test_608_flight_bookings(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('corp_flight_bookings'))
+    assert ns['corp_flight_bookings']([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5) == [10, 55, 45, 25, 25]
+    assert ns['corp_flight_bookings']([[1, 1, 5]], 1) == [5]
+    assert capsys.readouterr().out.strip() == '[10, 55, 45, 25, 25]'
+",
+    hint: "def corp_flight_bookings(bookings, n):
+    diff = [0] * (n + 1)
+    for first, last, seats in bookings:
+        diff[first - 1] += seats
+        diff[last] -= seats
+    out = []
+    running = 0
+    for i in range(n):
+        running += diff[i]
+        out.append(running)
+    return out
+
+print(corp_flight_bookings([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5))
+",
+    solution_example: "def corp_flight_bookings(bookings, n):
+    diff = [0] * (n + 1)
+    for first, last, seats in bookings:
+        diff[first - 1] += seats
+        diff[last] -= seats
+    out = []
+    running = 0
+    for i in range(n):
+        running += diff[i]
+        out.append(running)
+    return out
+
+print(corp_flight_bookings([[1, 2, 10], [2, 3, 20], [2, 5, 25]], 5))
+",
+    next: Some("py-609-car-pooling"), show_type_chips: false, micro_step: 608,
+};
+
+pub const PY609_CAR_POOLING: CodingStep = CodingStep {
+    id: "py-609-car-pooling", title: "DSA Diff Array · Car Pooling", objective: "Decidir si un auto con capacidad fija puede cubrir todos los viajes.",
+    prompt_md: "**Car Pooling**
+
+Subidas y bajadas son +passengers / -passengers en el eje de kilómetros.
+
+**Micro-reto:**
+1. Definí `car_pooling(trips, capacity)`
+2. Ejecutá el ejemplo; imprimí `False`.",
+    starter_code: "# def car_pooling(trips, capacity):
+#     diff = [0] * 1001
+#     for passengers, start, end in trips:
+#         diff[start] += passengers
+#         diff[end] -= passengers
+#     load = 0
+#     for delta in diff:
+#         load += delta
+#         if load > capacity:
+#             return False
+#     return True
+#
+# print(car_pooling([[2, 1, 5], [3, 3, 7]], 4))
+",
+    pytest: "def test_609_car_pooling(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('car_pooling'))
+    assert ns['car_pooling']([[2, 1, 5], [3, 3, 7]], 4) is False
+    assert ns['car_pooling']([[2, 1, 5], [3, 3, 7]], 5) is True
+    assert ns['car_pooling']([[2, 1, 5]], 2) is True
+    assert capsys.readouterr().out.strip() == 'False'
+",
+    hint: "def car_pooling(trips, capacity):
+    diff = [0] * 1001
+    for passengers, start, end in trips:
+        diff[start] += passengers
+        diff[end] -= passengers
+    load = 0
+    for delta in diff:
+        load += delta
+        if load > capacity:
+            return False
+    return True
+
+print(car_pooling([[2, 1, 5], [3, 3, 7]], 4))
+",
+    solution_example: "def car_pooling(trips, capacity):
+    diff = [0] * 1001
+    for passengers, start, end in trips:
+        diff[start] += passengers
+        diff[end] -= passengers
+    load = 0
+    for delta in diff:
+        load += delta
+        if load > capacity:
+            return False
+    return True
+
+print(car_pooling([[2, 1, 5], [3, 3, 7]], 4))
+",
+    next: Some("py-610-range-addition-ii"), show_type_chips: false, micro_step: 609,
+};
+
+pub const PY610_RANGE_ADDITION_II: CodingStep = CodingStep {
+    id: "py-610-range-addition-ii", title: "DSA Diff Array · Max Count", objective: "Contar cuántas celdas quedan con el máximo tras updates [0..a) x [0..b).",
+    prompt_md: "**Range Addition II**
+
+El máximo vive en la intersección de todos los rectángulos: min(a) * min(b).
+
+**Micro-reto:**
+1. Definí `max_count(m, n, ops)`
+2. Ejecutá el ejemplo; imprimí `4`.",
+    starter_code: "# def max_count(m, n, ops):
+#     min_a, min_b = m, n
+#     for a, b in ops:
+#         min_a = min(min_a, a)
+#         min_b = min(min_b, b)
+#     return min_a * min_b
+#
+# print(max_count(3, 3, [[2, 2], [3, 3]]))
+",
+    pytest: "def test_610_range_addition_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_count'))
+    assert ns['max_count'](3, 3, [[2, 2], [3, 3]]) == 4
+    assert ns['max_count'](3, 3, []) == 9
+    assert ns['max_count'](1, 1, [[1, 1]]) == 1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def max_count(m, n, ops):
+    min_a, min_b = m, n
+    for a, b in ops:
+        min_a = min(min_a, a)
+        min_b = min(min_b, b)
+    return min_a * min_b
+
+print(max_count(3, 3, [[2, 2], [3, 3]]))
+",
+    solution_example: "def max_count(m, n, ops):
+    min_a, min_b = m, n
+    for a, b in ops:
+        min_a = min(min_a, a)
+        min_b = min(min_b, b)
+    return min_a * min_b
+
+print(max_count(3, 3, [[2, 2], [3, 3]]))
+",
+    next: Some("py-611-population-year"), show_type_chips: false, micro_step: 610,
+};
+
+pub const PY611_POPULATION_YEAR: CodingStep = CodingStep {
+    id: "py-611-population-year", title: "DSA Diff Array · Max Population", objective: "Encontrar el año más temprano con máxima población viva.",
+    prompt_md: "**Maximum Population Year**
+
+birth += 1 y death -= 1; barré el eje temporal y conservá el máximo.
+
+**Micro-reto:**
+1. Definí `maximum_population(logs)`
+2. Ejecutá el ejemplo; imprimí `1993`.",
+    starter_code: "# def maximum_population(logs):
+#     diff = [0] * 101
+#     for birth, death in logs:
+#         diff[birth - 1950] += 1
+#         diff[death - 1950] -= 1
+#     best = year = running = 0
+#     for i, delta in enumerate(diff):
+#         running += delta
+#         if running > best:
+#             best = running
+#             year = 1950 + i
+#     return year
+#
+# print(maximum_population([[1993, 1999], [2000, 2010]]))
+",
+    pytest: "def test_611_population_year(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('maximum_population'))
+    assert ns['maximum_population']([[1993, 1999], [2000, 2010]]) == 1993
+    assert ns['maximum_population']([[1950, 1961], [1960, 1971], [1970, 1981]]) == 1960
+    assert capsys.readouterr().out.strip() == '1993'
+",
+    hint: "def maximum_population(logs):
+    diff = [0] * 101
+    for birth, death in logs:
+        diff[birth - 1950] += 1
+        diff[death - 1950] -= 1
+    best = year = running = 0
+    for i, delta in enumerate(diff):
+        running += delta
+        if running > best:
+            best = running
+            year = 1950 + i
+    return year
+
+print(maximum_population([[1993, 1999], [2000, 2010]]))
+",
+    solution_example: "def maximum_population(logs):
+    diff = [0] * 101
+    for birth, death in logs:
+        diff[birth - 1950] += 1
+        diff[death - 1950] -= 1
+    best = year = running = 0
+    for i, delta in enumerate(diff):
+        running += delta
+        if running > best:
+            best = running
+            year = 1950 + i
+    return year
+
+print(maximum_population([[1993, 1999], [2000, 2010]]))
+",
+    next: Some("py-612-points-that-intersect"), show_type_chips: false, micro_step: 611,
+};
+
+pub const PY612_POINTS_THAT_INTERSECT: CodingStep = CodingStep {
+    id: "py-612-points-that-intersect", title: "DSA Diff Array · Intersecting Points", objective: "Contar puntos cubiertos por al menos dos segmentos inclusivos.",
+    prompt_md: "**Number of Points That Intersect**
+
+Diferencia en 0..100: +1 al inicio, -1 tras el fin; acumulá coberturas ≥ 2.
+
+**Micro-reto:**
+1. Definí `number_of_points(nums)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# def number_of_points(nums):
+#     diff = [0] * 102
+#     for start, end in nums:
+#         diff[start] += 1
+#         diff[end + 1] -= 1
+#     cover = total = 0
+#     for i in range(1, 101):
+#         cover += diff[i]
+#         if cover >= 2:
+#             total += 1
+#     return total
+#
+# print(number_of_points([[1, 3], [2, 4]]))
+",
+    pytest: "def test_612_points_that_intersect(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('number_of_points'))
+    assert ns['number_of_points']([[1, 3], [2, 4]]) == 2
+    assert ns['number_of_points']([[1, 1], [2, 2]]) == 0
+    assert ns['number_of_points']([[1, 5], [2, 3], [3, 4]]) == 3
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def number_of_points(nums):
+    diff = [0] * 102
+    for start, end in nums:
+        diff[start] += 1
+        diff[end + 1] -= 1
+    cover = total = 0
+    for i in range(1, 101):
+        cover += diff[i]
+        if cover >= 2:
+            total += 1
+    return total
+
+print(number_of_points([[1, 3], [2, 4]]))
+",
+    solution_example: "def number_of_points(nums):
+    diff = [0] * 102
+    for start, end in nums:
+        diff[start] += 1
+        diff[end + 1] -= 1
+    cover = total = 0
+    for i in range(1, 101):
+        cover += diff[i]
+        if cover >= 2:
+            total += 1
+    return total
+
+print(number_of_points([[1, 3], [2, 4]]))
+",
+    next: None, show_type_chips: false, micro_step: 612,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -18544,7 +18909,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY603_RANGE_SUM_QUERY,
     &PY604_CONTINUOUS_SUBARRAY,
     &PY605_SUBARRAYS_DIVISIBLE_K,
-    &PY606_MAX_SUBARRAY_LEN_K
+    &PY606_MAX_SUBARRAY_LEN_K,
+    &PY607_RANGE_ADDITION,
+    &PY608_FLIGHT_BOOKINGS,
+    &PY609_CAR_POOLING,
+    &PY610_RANGE_ADDITION_II,
+    &PY611_POPULATION_YEAR,
+    &PY612_POINTS_THAT_INTERSECT
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -18688,7 +19059,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 606);
+            assert!(step.micro_step >= 1 && step.micro_step <= 612);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -21034,7 +21405,13 @@ mod tests {
             (603, "py-603-range-sum-query", Some("py-604-continuous-subarray")),
             (604, "py-604-continuous-subarray", Some("py-605-subarrays-divisible-k")),
             (605, "py-605-subarrays-divisible-k", Some("py-606-max-subarray-len-k")),
-            (606, "py-606-max-subarray-len-k", None),
+            (606, "py-606-max-subarray-len-k", Some("py-607-range-addition")),
+            (607, "py-607-range-addition", Some("py-608-flight-bookings")),
+            (608, "py-608-flight-bookings", Some("py-609-car-pooling")),
+            (609, "py-609-car-pooling", Some("py-610-range-addition-ii")),
+            (610, "py-610-range-addition-ii", Some("py-611-population-year")),
+            (611, "py-611-population-year", Some("py-612-points-that-intersect")),
+            (612, "py-612-points-that-intersect", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
