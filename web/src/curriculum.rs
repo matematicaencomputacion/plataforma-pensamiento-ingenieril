@@ -37254,7 +37254,324 @@ print(minimum_transition_difference_arrays_ii([10, 15, 20]))
 
 print(minimum_transition_difference_arrays_ii([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 894,
+    next: Some("py-895-monotonic-stack-v-canonicalize"), show_type_chips: false, micro_step: 894,
+};
+
+
+pub const PY895_MONOTONIC_STACK_V_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-895-monotonic-stack-v-canonicalize", title: "DSA Monotonic Stack V · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de Monotonic Stack V.",
+    prompt_md: "**Monotonic Stack V: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_monotonic_stack_v(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_monotonic_stack_v(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_monotonic_stack_v([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_895_monotonic_stack_v_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_monotonic_stack_v'))
+    assert ns['canonicalize_monotonic_stack_v']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_monotonic_stack_v']([]) == []
+    assert ns['canonicalize_monotonic_stack_v']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_monotonic_stack_v(values):
+    return sorted(set(values))
+
+print(canonicalize_monotonic_stack_v([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_monotonic_stack_v(values):
+    return sorted(set(values))
+
+print(canonicalize_monotonic_stack_v([3, 1, 2, 3, 1]))
+",
+    next: Some("py-896-monotonic-stack-v-prefix-state"), show_type_chips: false, micro_step: 895,
+};
+
+pub const PY896_MONOTONIC_STACK_V_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-896-monotonic-stack-v-prefix-state", title: "DSA Monotonic Stack V · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de Monotonic Stack V.",
+    prompt_md: "**Monotonic Stack V: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_monotonic_stack_v(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_monotonic_stack_v(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_monotonic_stack_v([3, 1, 4]))
+",
+    pytest: "def test_896_monotonic_stack_v_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_monotonic_stack_v'))
+    assert ns['prefix_state_monotonic_stack_v']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_monotonic_stack_v']([]) == []
+    assert ns['prefix_state_monotonic_stack_v']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_monotonic_stack_v(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_monotonic_stack_v([3, 1, 4]))
+",
+    solution_example: "def prefix_state_monotonic_stack_v(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_monotonic_stack_v([3, 1, 4]))
+",
+    next: Some("py-897-monotonic-stack-v-bounded-window"), show_type_chips: false, micro_step: 896,
+};
+
+pub const PY897_MONOTONIC_STACK_V_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-897-monotonic-stack-v-bounded-window", title: "DSA Monotonic Stack V · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de Monotonic Stack V.",
+    prompt_md: "**Monotonic Stack V: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_monotonic_stack_v(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_monotonic_stack_v(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_monotonic_stack_v([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_897_monotonic_stack_v_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_monotonic_stack_v'))
+    assert ns['best_window_monotonic_stack_v']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_monotonic_stack_v']([4], 1) == 4
+    assert ns['best_window_monotonic_stack_v']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_monotonic_stack_v(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_monotonic_stack_v([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_monotonic_stack_v(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_monotonic_stack_v([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-898-monotonic-stack-v-lower-boundary"), show_type_chips: false, micro_step: 897,
+};
+
+pub const PY898_MONOTONIC_STACK_V_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-898-monotonic-stack-v-lower-boundary", title: "DSA Monotonic Stack V · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de Monotonic Stack V.",
+    prompt_md: "**Monotonic Stack V: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_monotonic_stack_v(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_monotonic_stack_v(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_monotonic_stack_v([1, 3, 3, 7], 3))
+",
+    pytest: "def test_898_monotonic_stack_v_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_monotonic_stack_v'))
+    assert ns['lower_boundary_monotonic_stack_v']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_monotonic_stack_v']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_monotonic_stack_v']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_monotonic_stack_v(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_monotonic_stack_v([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_monotonic_stack_v(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_monotonic_stack_v([1, 3, 3, 7], 3))
+",
+    next: Some("py-899-monotonic-stack-v-dependency-order"), show_type_chips: false, micro_step: 898,
+};
+
+pub const PY899_MONOTONIC_STACK_V_DEPENDENCY_ORDER: CodingStep = CodingStep {
+    id: "py-899-monotonic-stack-v-dependency-order", title: "DSA Monotonic Stack V · Dependency Order", objective: "Recorrer dependencias sin duplicar trabajo en un escenario de Monotonic Stack V.",
+    prompt_md: "**Monotonic Stack V: laboratorio 5**
+
+La cola separa descubrimiento de procesamiento; seen garantiza que cada nodo entra una sola vez.
+
+**Micro-reto:**
+1. Definí `dependency_order_monotonic_stack_v(graph, start)`
+2. Ejecutá el ejemplo; imprimí `[0, 1, 2, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def dependency_order_monotonic_stack_v(graph, start):
+#     queue = deque([start])
+#     seen = {start}
+#     order = []
+#     while queue:
+#         node = queue.popleft()
+#         order.append(node)
+#         for neighbor in graph[node]:
+#             if neighbor not in seen:
+#                 seen.add(neighbor)
+#                 queue.append(neighbor)
+#     return order
+#
+# print(dependency_order_monotonic_stack_v([[1, 2], [3], [3], []], 0))
+",
+    pytest: "def test_899_monotonic_stack_v_dependency_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('dependency_order_monotonic_stack_v'))
+    assert ns['dependency_order_monotonic_stack_v']([[1, 2], [3], [3], []], 0) == [0, 1, 2, 3]
+    assert ns['dependency_order_monotonic_stack_v']([[]], 0) == [0]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import deque
+
+def dependency_order_monotonic_stack_v(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_monotonic_stack_v([[1, 2], [3], [3], []], 0))
+",
+    solution_example: "from collections import deque
+
+def dependency_order_monotonic_stack_v(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_monotonic_stack_v([[1, 2], [3], [3], []], 0))
+",
+    next: Some("py-900-monotonic-stack-v-minimum-transition"), show_type_chips: false, micro_step: 899,
+};
+
+pub const PY900_MONOTONIC_STACK_V_MINIMUM_TRANSITION: CodingStep = CodingStep {
+    id: "py-900-monotonic-stack-v-minimum-transition", title: "DSA Monotonic Stack V · Minimum Transition", objective: "Optimizar transiciones locales conservando solo el estado necesario de Monotonic Stack V.",
+    prompt_md: "**Monotonic Stack V: laboratorio 6**
+
+La recurrencia depende de dos estados previos; comprimirlos mantiene O(1) memoria.
+
+**Micro-reto:**
+1. Definí `minimum_transition_monotonic_stack_v(cost)`
+2. Ejecutá el ejemplo; imprimí `15`.",
+    starter_code: "# def minimum_transition_monotonic_stack_v(cost):
+#     two_back = one_back = 0
+#     for value in cost:
+#         two_back, one_back = one_back, value + min(two_back, one_back)
+#     return min(two_back, one_back)
+#
+# print(minimum_transition_monotonic_stack_v([10, 15, 20]))
+",
+    pytest: "def test_900_monotonic_stack_v_minimum_transition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_transition_monotonic_stack_v'))
+    assert ns['minimum_transition_monotonic_stack_v']([10, 15, 20]) == 15
+    assert ns['minimum_transition_monotonic_stack_v']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def minimum_transition_monotonic_stack_v(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_monotonic_stack_v([10, 15, 20]))
+",
+    solution_example: "def minimum_transition_monotonic_stack_v(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_monotonic_stack_v([10, 15, 20]))
+",
+    next: None, show_type_chips: false, micro_step: 900,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -38151,7 +38468,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY891_DIFFERENCE_ARRAYS_II_BOUNDED_WINDOW,
     &PY892_DIFFERENCE_ARRAYS_II_LOWER_BOUNDARY,
     &PY893_DIFFERENCE_ARRAYS_II_DEPENDENCY_ORDER,
-    &PY894_DIFFERENCE_ARRAYS_II_MINIMUM_TRANSITION
+    &PY894_DIFFERENCE_ARRAYS_II_MINIMUM_TRANSITION,
+    &PY895_MONOTONIC_STACK_V_CANONICALIZE,
+    &PY896_MONOTONIC_STACK_V_PREFIX_STATE,
+    &PY897_MONOTONIC_STACK_V_BOUNDED_WINDOW,
+    &PY898_MONOTONIC_STACK_V_LOWER_BOUNDARY,
+    &PY899_MONOTONIC_STACK_V_DEPENDENCY_ORDER,
+    &PY900_MONOTONIC_STACK_V_MINIMUM_TRANSITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -38295,7 +38618,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 894);
+            assert!(step.micro_step >= 1 && step.micro_step <= 900);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -40929,7 +41252,13 @@ mod tests {
             (891, "py-891-difference-arrays-ii-bounded-window", Some("py-892-difference-arrays-ii-lower-boundary")),
             (892, "py-892-difference-arrays-ii-lower-boundary", Some("py-893-difference-arrays-ii-dependency-order")),
             (893, "py-893-difference-arrays-ii-dependency-order", Some("py-894-difference-arrays-ii-minimum-transition")),
-            (894, "py-894-difference-arrays-ii-minimum-transition", None),
+            (894, "py-894-difference-arrays-ii-minimum-transition", Some("py-895-monotonic-stack-v-canonicalize")),
+            (895, "py-895-monotonic-stack-v-canonicalize", Some("py-896-monotonic-stack-v-prefix-state")),
+            (896, "py-896-monotonic-stack-v-prefix-state", Some("py-897-monotonic-stack-v-bounded-window")),
+            (897, "py-897-monotonic-stack-v-bounded-window", Some("py-898-monotonic-stack-v-lower-boundary")),
+            (898, "py-898-monotonic-stack-v-lower-boundary", Some("py-899-monotonic-stack-v-dependency-order")),
+            (899, "py-899-monotonic-stack-v-dependency-order", Some("py-900-monotonic-stack-v-minimum-transition")),
+            (900, "py-900-monotonic-stack-v-minimum-transition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

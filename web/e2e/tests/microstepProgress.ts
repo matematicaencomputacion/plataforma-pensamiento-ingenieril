@@ -900,6 +900,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 892, step_id: "py-892-difference-arrays-ii-lower-boundary" },
   { level_id: 893, step_id: "py-893-difference-arrays-ii-dependency-order" },
   { level_id: 894, step_id: "py-894-difference-arrays-ii-minimum-transition" },
+  { level_id: 895, step_id: "py-895-monotonic-stack-v-canonicalize" },
+  { level_id: 896, step_id: "py-896-monotonic-stack-v-prefix-state" },
+  { level_id: 897, step_id: "py-897-monotonic-stack-v-bounded-window" },
+  { level_id: 898, step_id: "py-898-monotonic-stack-v-lower-boundary" },
+  { level_id: 899, step_id: "py-899-monotonic-stack-v-dependency-order" },
+  { level_id: 900, step_id: "py-900-monotonic-stack-v-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
