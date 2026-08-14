@@ -960,6 +960,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 952, step_id: "py-952-network-flow-i-lower-boundary" },
   { level_id: 953, step_id: "py-953-network-flow-i-dependency-order" },
   { level_id: 954, step_id: "py-954-network-flow-i-minimum-transition" },
+  { level_id: 955, step_id: "py-955-graph-matching-i-canonicalize" },
+  { level_id: 956, step_id: "py-956-graph-matching-i-prefix-state" },
+  { level_id: 957, step_id: "py-957-graph-matching-i-bounded-window" },
+  { level_id: 958, step_id: "py-958-graph-matching-i-lower-boundary" },
+  { level_id: 959, step_id: "py-959-graph-matching-i-dependency-order" },
+  { level_id: 960, step_id: "py-960-graph-matching-i-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
