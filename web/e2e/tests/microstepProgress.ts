@@ -768,6 +768,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 760, step_id: "py-760-queues-vi-lower-boundary" },
   { level_id: 761, step_id: "py-761-queues-vi-dependency-order" },
   { level_id: 762, step_id: "py-762-queues-vi-minimum-transition" },
+  { level_id: 763, step_id: "py-763-linked-lists-v-canonicalize" },
+  { level_id: 764, step_id: "py-764-linked-lists-v-prefix-state" },
+  { level_id: 765, step_id: "py-765-linked-lists-v-bounded-window" },
+  { level_id: 766, step_id: "py-766-linked-lists-v-lower-boundary" },
+  { level_id: 767, step_id: "py-767-linked-lists-v-dependency-order" },
+  { level_id: 768, step_id: "py-768-linked-lists-v-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
