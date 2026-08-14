@@ -27676,8 +27676,387 @@ parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [
 up = build_up(parent)
 print(jump_to_depth(up, depth, 3, 1))
 ",
-    next: None, show_type_chips: false, micro_step: 714,
+    next: Some("py-715-sieve-primes"), show_type_chips: false, micro_step: 714,
 };
+
+pub const PY715_SIEVE_PRIMES: CodingStep = CodingStep {
+    id: "py-715-sieve-primes", title: "DSA NT · Sieve", objective: "Criba de Eratóstenes: primos ≤ n.",
+    prompt_md: "**Sieve of Eratosthenes**
+
+Marcá múltiplos desde `i*i`; juntá los True.
+
+**Micro-reto:**
+1. Definí `sieve(n)`
+2. Ejecutá `sieve(20)`; imprimí `[2, 3, 5, 7, 11, 13, 17, 19]`.",
+    starter_code: "# def sieve(n):
+#     is_p = [False, False] + [True] * (n - 1)
+#     primes = []
+#     for i in range(2, n + 1):
+#         if is_p[i]:
+#             primes.append(i)
+#             for j in range(i * i, n + 1, i):
+#                 is_p[j] = False
+#     return primes
+#
+# print(sieve(20))
+",
+    pytest: "def test_715_sieve_primes(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['sieve'](20) == [2, 3, 5, 7, 11, 13, 17, 19]
+    assert ns['sieve'](2) == [2]
+    assert capsys.readouterr().out.strip() == '[2, 3, 5, 7, 11, 13, 17, 19]'
+",
+    hint: "def sieve(n):
+    is_p = [False, False] + [True] * (n - 1)
+    primes = []
+    for i in range(2, n + 1):
+        if is_p[i]:
+            primes.append(i)
+            for j in range(i * i, n + 1, i):
+                is_p[j] = False
+    return primes
+
+print(sieve(20))
+",
+    solution_example: "def sieve(n):
+    is_p = [False, False] + [True] * (n - 1)
+    primes = []
+    for i in range(2, n + 1):
+        if is_p[i]:
+            primes.append(i)
+            for j in range(i * i, n + 1, i):
+                is_p[j] = False
+    return primes
+
+print(sieve(20))
+",
+    next: Some("py-716-euler-phi"), show_type_chips: false, micro_step: 715,
+};
+
+pub const PY716_EULER_PHI: CodingStep = CodingStep {
+    id: "py-716-euler-phi", title: "DSA NT · Euler Phi", objective: "φ(n): enteros en 1..n coprimos con n.",
+    prompt_md: "**Euler's Totient**
+
+Para cada primo p | n, `r -= r // p`.
+
+**Micro-reto:**
+1. Definí `euler_phi(n)`
+2. Ejecutá `euler_phi(12)`; imprimí `4`.",
+    starter_code: "# def euler_phi(n):
+#     r, x, i = n, n, 2
+#     while i * i <= x:
+#         if x % i == 0:
+#             while x % i == 0:
+#                 x //= i
+#             r -= r // i
+#         i += 1
+#     if x > 1:
+#         r -= r // x
+#     return r
+#
+# print(euler_phi(12))
+",
+    pytest: "def test_716_euler_phi(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['euler_phi'](12) == 4
+    assert ns['euler_phi'](7) == 6
+    assert ns['euler_phi'](1) == 1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def euler_phi(n):
+    r, x, i = n, n, 2
+    while i * i <= x:
+        if x % i == 0:
+            while x % i == 0:
+                x //= i
+            r -= r // i
+        i += 1
+    if x > 1:
+        r -= r // x
+    return r
+
+print(euler_phi(12))
+",
+    solution_example: "def euler_phi(n):
+    r, x, i = n, n, 2
+    while i * i <= x:
+        if x % i == 0:
+            while x % i == 0:
+                x //= i
+            r -= r // i
+        i += 1
+    if x > 1:
+        r -= r // x
+    return r
+
+print(euler_phi(12))
+",
+    next: Some("py-717-linear-sieve"), show_type_chips: false, micro_step: 716,
+};
+
+pub const PY717_LINEAR_SIEVE: CodingStep = CodingStep {
+    id: "py-717-linear-sieve", title: "DSA NT · Linear Sieve", objective: "Criba lineal: primos y smallest prime factor en O(n).",
+    prompt_md: "**Linear Sieve (SPF)**
+
+Cada compuesto se marca una sola vez por su menor primo.
+
+**Micro-reto:**
+1. Definí `linear_sieve(n) -> (primes, spf)`
+2. n=20; imprimí `[primes, spf[18], spf[19]]` → `[[2, 3, 5, 7, 11, 13, 17, 19], 2, 19]`.",
+    starter_code: "# def linear_sieve(n):
+#     spf = list(range(n + 1))
+#     primes = []
+#     for i in range(2, n + 1):
+#         if spf[i] == i:
+#             primes.append(i)
+#         for p in primes:
+#             if p > spf[i] or i * p > n:
+#                 break
+#             spf[i * p] = p
+#     return primes, spf
+#
+# primes, spf = linear_sieve(20)
+# print([primes, spf[18], spf[19]])
+",
+    pytest: "def test_717_linear_sieve(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    primes, spf = ns['linear_sieve'](20)
+    assert primes == [2, 3, 5, 7, 11, 13, 17, 19]
+    assert spf[18] == 2 and spf[19] == 19
+    assert capsys.readouterr().out.strip() == '[[2, 3, 5, 7, 11, 13, 17, 19], 2, 19]'
+",
+    hint: "def linear_sieve(n):
+    spf = list(range(n + 1))
+    primes = []
+    for i in range(2, n + 1):
+        if spf[i] == i:
+            primes.append(i)
+        for p in primes:
+            if p > spf[i] or i * p > n:
+                break
+            spf[i * p] = p
+    return primes, spf
+
+primes, spf = linear_sieve(20)
+print([primes, spf[18], spf[19]])
+",
+    solution_example: "def linear_sieve(n):
+    spf = list(range(n + 1))
+    primes = []
+    for i in range(2, n + 1):
+        if spf[i] == i:
+            primes.append(i)
+        for p in primes:
+            if p > spf[i] or i * p > n:
+                break
+            spf[i * p] = p
+    return primes, spf
+
+primes, spf = linear_sieve(20)
+print([primes, spf[18], spf[19]])
+",
+    next: Some("py-718-binpow"), show_type_chips: false, micro_step: 717,
+};
+
+pub const PY718_BINPOW: CodingStep = CodingStep {
+    id: "py-718-binpow", title: "DSA NT · Binpow", objective: "Exponenciación binaria modular.",
+    prompt_md: "**Modular Fast Pow**
+
+Si el bit está prendido, multiplicá; siempre elevá a al cuadrado.
+
+**Micro-reto:**
+1. Definí `binpow(a, e, mod)`
+2. `2**10 % 1000`; imprimí `24`.",
+    starter_code: "# def binpow(a, e, mod):
+#     r = 1
+#     a %= mod
+#     while e:
+#         if e & 1:
+#             r = r * a % mod
+#         a = a * a % mod
+#         e >>= 1
+#     return r
+#
+# print(binpow(2, 10, 1000))
+",
+    pytest: "def test_718_binpow(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['binpow'](2, 10, 1000) == 24
+    assert ns['binpow'](3, 5, 7) == 5
+    assert capsys.readouterr().out.strip() == '24'
+",
+    hint: "def binpow(a, e, mod):
+    r = 1
+    a %= mod
+    while e:
+        if e & 1:
+            r = r * a % mod
+        a = a * a % mod
+        e >>= 1
+    return r
+
+print(binpow(2, 10, 1000))
+",
+    solution_example: "def binpow(a, e, mod):
+    r = 1
+    a %= mod
+    while e:
+        if e & 1:
+            r = r * a % mod
+        a = a * a % mod
+        e >>= 1
+    return r
+
+print(binpow(2, 10, 1000))
+",
+    next: Some("py-719-mod-inverse"), show_type_chips: false, micro_step: 718,
+};
+
+pub const PY719_MOD_INVERSE: CodingStep = CodingStep {
+    id: "py-719-mod-inverse", title: "DSA NT · Mod Inverse", objective: "Inverso modular con Fermat (mod primo): a^(p-2).",
+    prompt_md: "**Modular Inverse**
+
+Si `mod` es primo, `inv(a) = a^(mod-2)`.
+
+**Micro-reto:**
+1. Definí `mod_inverse(a, mod)` (y `binpow`)
+2. Inverso de 3 mod 11; imprimí `4`.",
+    starter_code: "# def binpow(a, e, mod):
+#     r = 1
+#     a %= mod
+#     while e:
+#         if e & 1:
+#             r = r * a % mod
+#         a = a * a % mod
+#         e >>= 1
+#     return r
+#
+# def mod_inverse(a, mod):
+#     return binpow(a, mod - 2, mod)
+#
+# print(mod_inverse(3, 11))
+",
+    pytest: "def test_719_mod_inverse(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['mod_inverse'](3, 11) == 4
+    assert 3 * ns['mod_inverse'](3, 11) % 11 == 1
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def binpow(a, e, mod):
+    r = 1
+    a %= mod
+    while e:
+        if e & 1:
+            r = r * a % mod
+        a = a * a % mod
+        e >>= 1
+    return r
+
+def mod_inverse(a, mod):
+    return binpow(a, mod - 2, mod)
+
+print(mod_inverse(3, 11))
+",
+    solution_example: "def binpow(a, e, mod):
+    r = 1
+    a %= mod
+    while e:
+        if e & 1:
+            r = r * a % mod
+        a = a * a % mod
+        e >>= 1
+    return r
+
+def mod_inverse(a, mod):
+    return binpow(a, mod - 2, mod)
+
+print(mod_inverse(3, 11))
+",
+    next: Some("py-720-crt"), show_type_chips: false, micro_step: 719,
+};
+
+pub const PY720_CRT: CodingStep = CodingStep {
+    id: "py-720-crt", title: "DSA NT · CRT", objective: "Teorema chino del resto para dos módulos coprimos.",
+    prompt_md: "**Chinese Remainder Theorem**
+
+`x = a1 + k*m1` con `k = (a2-a1) * inv(m1) (mod m2)`.
+
+**Micro-reto:**
+1. Definí `crt(a1, m1, a2, m2)`
+2. x≡2 (mod 3), x≡3 (mod 5); imprimí `8`.",
+    starter_code: "# def binpow(a, e, mod):
+#     r = 1
+#     a %= mod
+#     while e:
+#         if e & 1:
+#             r = r * a % mod
+#         a = a * a % mod
+#         e >>= 1
+#     return r
+#
+# def mod_inverse(a, mod):
+#     return binpow(a, mod - 2, mod)
+#
+# def crt(a1, m1, a2, m2):
+#     k = (a2 - a1) * mod_inverse(m1 % m2, m2) % m2
+#     return (a1 + k * m1) % (m1 * m2)
+#
+# print(crt(2, 3, 3, 5))
+",
+    pytest: "def test_720_crt(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['crt'](2, 3, 3, 5) == 8
+    assert ns['crt'](2, 3, 3, 5) % 3 == 2
+    assert ns['crt'](2, 3, 3, 5) % 5 == 3
+    assert capsys.readouterr().out.strip() == '8'
+",
+    hint: "def binpow(a, e, mod):
+    r = 1
+    a %= mod
+    while e:
+        if e & 1:
+            r = r * a % mod
+        a = a * a % mod
+        e >>= 1
+    return r
+
+def mod_inverse(a, mod):
+    return binpow(a, mod - 2, mod)
+
+def crt(a1, m1, a2, m2):
+    k = (a2 - a1) * mod_inverse(m1 % m2, m2) % m2
+    return (a1 + k * m1) % (m1 * m2)
+
+print(crt(2, 3, 3, 5))
+",
+    solution_example: "def binpow(a, e, mod):
+    r = 1
+    a %= mod
+    while e:
+        if e & 1:
+            r = r * a % mod
+        a = a * a % mod
+        e >>= 1
+    return r
+
+def mod_inverse(a, mod):
+    return binpow(a, mod - 2, mod)
+
+def crt(a1, m1, a2, m2):
+    k = (a2 - a1) * mod_inverse(m1 % m2, m2) % m2
+    return (a1 + k * m1) % (m1 * m2)
+
+print(crt(2, 3, 3, 5))
+",
+    next: None, show_type_chips: false, micro_step: 720,
+};
+
 
 
 
@@ -28399,7 +28778,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY711_KTH_ANCESTOR,
     &PY712_LCA_LIFT,
     &PY713_TREE_DIST,
-    &PY714_JUMP_DEPTH
+    &PY714_JUMP_DEPTH,
+    &PY715_SIEVE_PRIMES,
+    &PY716_EULER_PHI,
+    &PY717_LINEAR_SIEVE,
+    &PY718_BINPOW,
+    &PY719_MOD_INVERSE,
+    &PY720_CRT
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -28543,7 +28928,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 714);
+            assert!(step.micro_step >= 1 && step.micro_step <= 720);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -30997,7 +31382,13 @@ mod tests {
             (711, "py-711-kth-ancestor", Some("py-712-lca-lift")),
             (712, "py-712-lca-lift", Some("py-713-tree-dist")),
             (713, "py-713-tree-dist", Some("py-714-jump-depth")),
-            (714, "py-714-jump-depth", None),
+            (714, "py-714-jump-depth", Some("py-715-sieve-primes")),
+            (715, "py-715-sieve-primes", Some("py-716-euler-phi")),
+            (716, "py-716-euler-phi", Some("py-717-linear-sieve")),
+            (717, "py-717-linear-sieve", Some("py-718-binpow")),
+            (718, "py-718-binpow", Some("py-719-mod-inverse")),
+            (719, "py-719-mod-inverse", Some("py-720-crt")),
+            (720, "py-720-crt", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
