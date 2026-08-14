@@ -612,6 +612,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 604, step_id: "py-604-continuous-subarray" },
   { level_id: 605, step_id: "py-605-subarrays-divisible-k" },
   { level_id: 606, step_id: "py-606-max-subarray-len-k" },
+  { level_id: 607, step_id: "py-607-range-addition" },
+  { level_id: 608, step_id: "py-608-flight-bookings" },
+  { level_id: 609, step_id: "py-609-car-pooling" },
+  { level_id: 610, step_id: "py-610-range-addition-ii" },
+  { level_id: 611, step_id: "py-611-population-year" },
+  { level_id: 612, step_id: "py-612-points-that-intersect" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
