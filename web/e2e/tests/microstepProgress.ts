@@ -744,6 +744,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 736, step_id: "py-736-sliding-window-vi-lower-boundary" },
   { level_id: 737, step_id: "py-737-sliding-window-vi-dependency-order" },
   { level_id: 738, step_id: "py-738-sliding-window-vi-minimum-transition" },
+  { level_id: 739, step_id: "py-739-two-pointers-vi-canonicalize" },
+  { level_id: 740, step_id: "py-740-two-pointers-vi-prefix-state" },
+  { level_id: 741, step_id: "py-741-two-pointers-vi-bounded-window" },
+  { level_id: 742, step_id: "py-742-two-pointers-vi-lower-boundary" },
+  { level_id: 743, step_id: "py-743-two-pointers-vi-dependency-order" },
+  { level_id: 744, step_id: "py-744-two-pointers-vi-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
