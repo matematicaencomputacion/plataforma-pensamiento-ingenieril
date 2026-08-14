@@ -10678,7 +10678,480 @@ print(reorganize_string(\"aab\"))
 
 print(reorganize_string(\"aab\"))
 ",
-    next: None, show_type_chips: false, micro_step: 486,
+    next: Some("py-487-middle-node"), show_type_chips: false, micro_step: 486,
+};
+
+
+pub const PY487_MIDDLE_NODE: CodingStep = CodingStep {
+    id: "py-487-middle-node", title: "DSA Middle Node", objective: "Nodo del medio.",
+    prompt_md: "**Middle Node**
+
+Nodo del medio.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def middle_node(head):
+#     slow = fast = head
+#     while fast and fast.next:
+#         slow = slow.next
+#         fast = fast.next.next
+#     return slow
+#
+# a = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+# print(middle_node(a).val)
+",
+    pytest: "def test_487_middle_node(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    ListNode = ns['ListNode']
+    a = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+    assert ns['middle_node'](a).val == 3
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def middle_node(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow
+
+a = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+print(middle_node(a).val)
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def middle_node(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow
+
+a = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+print(middle_node(a).val)
+",
+    next: Some("py-488-has-cycle"), show_type_chips: false, micro_step: 487,
+};
+
+pub const PY488_HAS_CYCLE: CodingStep = CodingStep {
+    id: "py-488-has-cycle", title: "DSA Has Cycle", objective: "Detectar ciclo.",
+    prompt_md: "**Has Cycle**
+
+Detectar ciclo.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def has_cycle(head):
+#     slow = fast = head
+#     while fast and fast.next:
+#         slow = slow.next
+#         fast = fast.next.next
+#         if slow is fast:
+#             return True
+#     return False
+#
+# a = ListNode(3); b = ListNode(2); c = ListNode(0); d = ListNode(-4)
+# a.next, b.next, c.next, d.next = b, c, d, b
+# print(has_cycle(a))
+",
+    pytest: "def test_488_has_cycle(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    ListNode = ns['ListNode']
+    a = ListNode(1); a.next = a
+    assert ns['has_cycle'](a) is True
+    assert ns['has_cycle'](ListNode(1)) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def has_cycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            return True
+    return False
+
+a = ListNode(3); b = ListNode(2); c = ListNode(0); d = ListNode(-4)
+a.next, b.next, c.next, d.next = b, c, d, b
+print(has_cycle(a))
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def has_cycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            return True
+    return False
+
+a = ListNode(3); b = ListNode(2); c = ListNode(0); d = ListNode(-4)
+a.next, b.next, c.next, d.next = b, c, d, b
+print(has_cycle(a))
+",
+    next: Some("py-489-reverse-list"), show_type_chips: false, micro_step: 488,
+};
+
+pub const PY489_REVERSE_LIST: CodingStep = CodingStep {
+    id: "py-489-reverse-list", title: "DSA Reverse List", objective: "Revertir lista.",
+    prompt_md: "**Reverse List**
+
+Revertir lista.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3 2 1`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def reverse_list(head):
+#     prev = None
+#     cur = head
+#     while cur:
+#         nxt = cur.next
+#         cur.next = prev
+#         prev = cur
+#         cur = nxt
+#     return prev
+#
+# h = ListNode(1, ListNode(2, ListNode(3)))
+# r = reverse_list(h)
+# print(r.val, r.next.val, r.next.next.val)
+",
+    pytest: "def test_489_reverse_list(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    ListNode = ns['ListNode']
+    r = ns['reverse_list'](ListNode(1, ListNode(2)))
+    assert r.val == 2 and r.next.val == 1
+    assert capsys.readouterr().out.strip() == '3 2 1'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def reverse_list(head):
+    prev = None
+    cur = head
+    while cur:
+        nxt = cur.next
+        cur.next = prev
+        prev = cur
+        cur = nxt
+    return prev
+
+h = ListNode(1, ListNode(2, ListNode(3)))
+r = reverse_list(h)
+print(r.val, r.next.val, r.next.next.val)
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def reverse_list(head):
+    prev = None
+    cur = head
+    while cur:
+        nxt = cur.next
+        cur.next = prev
+        prev = cur
+        cur = nxt
+    return prev
+
+h = ListNode(1, ListNode(2, ListNode(3)))
+r = reverse_list(h)
+print(r.val, r.next.val, r.next.next.val)
+",
+    next: Some("py-490-merge-two-lists"), show_type_chips: false, micro_step: 489,
+};
+
+pub const PY490_MERGE_TWO_LISTS: CodingStep = CodingStep {
+    id: "py-490-merge-two-lists", title: "DSA Merge Two Lists", objective: "Merge de dos listas ordenadas.",
+    prompt_md: "**Merge Two Lists**
+
+Merge de dos listas ordenadas.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 1, 2, 3, 4, 4]`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def merge_two_lists(a, b):
+#     dummy = ListNode(0)
+#     cur = dummy
+#     while a and b:
+#         if a.val <= b.val:
+#             cur.next, a = a, a.next
+#         else:
+#             cur.next, b = b, b.next
+#         cur = cur.next
+#     cur.next = a or b
+#     return dummy.next
+#
+# a = ListNode(1, ListNode(2, ListNode(4)))
+# b = ListNode(1, ListNode(3, ListNode(4)))
+# h = merge_two_lists(a, b)
+# vals = []
+# while h:
+#     vals.append(h.val); h = h.next
+# print(vals)
+",
+    pytest: "def test_490_merge_two_lists(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    ListNode = ns['ListNode']
+    h = ns['merge_two_lists'](ListNode(1), ListNode(2))
+    assert h.val == 1 and h.next.val == 2
+    assert capsys.readouterr().out.strip() == '[1, 1, 2, 3, 4, 4]'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def merge_two_lists(a, b):
+    dummy = ListNode(0)
+    cur = dummy
+    while a and b:
+        if a.val <= b.val:
+            cur.next, a = a, a.next
+        else:
+            cur.next, b = b, b.next
+        cur = cur.next
+    cur.next = a or b
+    return dummy.next
+
+a = ListNode(1, ListNode(2, ListNode(4)))
+b = ListNode(1, ListNode(3, ListNode(4)))
+h = merge_two_lists(a, b)
+vals = []
+while h:
+    vals.append(h.val); h = h.next
+print(vals)
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def merge_two_lists(a, b):
+    dummy = ListNode(0)
+    cur = dummy
+    while a and b:
+        if a.val <= b.val:
+            cur.next, a = a, a.next
+        else:
+            cur.next, b = b, b.next
+        cur = cur.next
+    cur.next = a or b
+    return dummy.next
+
+a = ListNode(1, ListNode(2, ListNode(4)))
+b = ListNode(1, ListNode(3, ListNode(4)))
+h = merge_two_lists(a, b)
+vals = []
+while h:
+    vals.append(h.val); h = h.next
+print(vals)
+",
+    next: Some("py-491-remove-nth"), show_type_chips: false, micro_step: 490,
+};
+
+pub const PY491_REMOVE_NTH: CodingStep = CodingStep {
+    id: "py-491-remove-nth", title: "DSA Remove Nth", objective: "Sacar n-ésimo desde el final.",
+    prompt_md: "**Remove Nth**
+
+Sacar n-ésimo desde el final.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[1, 2, 3, 5]`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def remove_nth_from_end(head, n):
+#     dummy = ListNode(0, head)
+#     fast = slow = dummy
+#     for _ in range(n + 1):
+#         fast = fast.next
+#     while fast:
+#         fast = fast.next
+#         slow = slow.next
+#     slow.next = slow.next.next
+#     return dummy.next
+#
+# h = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+# r = remove_nth_from_end(h, 2)
+# vals = []
+# while r:
+#     vals.append(r.val); r = r.next
+# print(vals)
+",
+    pytest: "def test_491_remove_nth(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    ListNode = ns['ListNode']
+    r = ns['remove_nth_from_end'](ListNode(1, ListNode(2)), 1)
+    assert r.val == 1 and r.next is None
+    assert capsys.readouterr().out.strip() == '[1, 2, 3, 5]'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def remove_nth_from_end(head, n):
+    dummy = ListNode(0, head)
+    fast = slow = dummy
+    for _ in range(n + 1):
+        fast = fast.next
+    while fast:
+        fast = fast.next
+        slow = slow.next
+    slow.next = slow.next.next
+    return dummy.next
+
+h = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+r = remove_nth_from_end(h, 2)
+vals = []
+while r:
+    vals.append(r.val); r = r.next
+print(vals)
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def remove_nth_from_end(head, n):
+    dummy = ListNode(0, head)
+    fast = slow = dummy
+    for _ in range(n + 1):
+        fast = fast.next
+    while fast:
+        fast = fast.next
+        slow = slow.next
+    slow.next = slow.next.next
+    return dummy.next
+
+h = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+r = remove_nth_from_end(h, 2)
+vals = []
+while r:
+    vals.append(r.val); r = r.next
+print(vals)
+",
+    next: Some("py-492-palindrome-list"), show_type_chips: false, micro_step: 491,
+};
+
+pub const PY492_PALINDROME_LIST: CodingStep = CodingStep {
+    id: "py-492-palindrome-list", title: "DSA Palindrome List", objective: "¿Lista palíndromo?",
+    prompt_md: "**Palindrome List**
+
+¿Lista palíndromo?
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+#
+# def is_palindrome(head):
+#     vals = []
+#     while head:
+#         vals.append(head.val)
+#         head = head.next
+#     return vals == vals[::-1]
+#
+# h = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
+# print(is_palindrome(h))
+",
+    pytest: "def test_492_palindrome_list(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    ListNode = ns['ListNode']
+    assert ns['is_palindrome'](ListNode(1, ListNode(2, ListNode(1)))) is True
+    assert ns['is_palindrome'](ListNode(1, ListNode(2))) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def is_palindrome(head):
+    vals = []
+    while head:
+        vals.append(head.val)
+        head = head.next
+    return vals == vals[::-1]
+
+h = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
+print(is_palindrome(h))
+",
+    solution_example: "class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def is_palindrome(head):
+    vals = []
+    while head:
+        vals.append(head.val)
+        head = head.next
+    return vals == vals[::-1]
+
+h = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
+print(is_palindrome(h))
+",
+    next: None, show_type_chips: false, micro_step: 492,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -11167,7 +11640,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY483_TOP_K_FREQ,
     &PY484_K_CLOSEST,
     &PY485_UGLY_NUMBER_II,
-    &PY486_REORG_STRING
+    &PY486_REORG_STRING,
+    &PY487_MIDDLE_NODE,
+    &PY488_HAS_CYCLE,
+    &PY489_REVERSE_LIST,
+    &PY490_MERGE_TWO_LISTS,
+    &PY491_REMOVE_NTH,
+    &PY492_PALINDROME_LIST
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -11311,7 +11790,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 486);
+            assert!(step.micro_step >= 1 && step.micro_step <= 492);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -12169,7 +12648,31 @@ mod tests {
             (485, "py-485-ugly-number-ii", Some("py-486-reorg-string")),
 
 
-            (486, "py-486-reorg-string", None),
+            (486, "py-486-reorg-string", Some("py-487-middle-node")),
+
+
+
+            (487, "py-487-middle-node", Some("py-488-has-cycle")),
+
+
+
+            (488, "py-488-has-cycle", Some("py-489-reverse-list")),
+
+
+
+            (489, "py-489-reverse-list", Some("py-490-merge-two-lists")),
+
+
+
+            (490, "py-490-merge-two-lists", Some("py-491-remove-nth")),
+
+
+
+            (491, "py-491-remove-nth", Some("py-492-palindrome-list")),
+
+
+
+            (492, "py-492-palindrome-list", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

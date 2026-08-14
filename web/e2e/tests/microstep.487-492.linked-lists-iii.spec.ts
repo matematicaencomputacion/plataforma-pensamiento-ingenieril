@@ -22,169 +22,170 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 167,
-    id: "py-167-invert-tree",
-    title: "DSA Invert Binary Tree",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 487,
+    id: "py-487-middle-node",
+    title: "DSA Middle Node",
+    solution: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
 
-def invert_tree(root):
-    if root is None:
-        return None
-    root.left, root.right = invert_tree(root.right), invert_tree(root.left)
-    return root
+def middle_node(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow
 
-def level_order(root):
-    if root is None:
-        return []
-    result = []
-    queue = [root]
-    while queue:
-        node = queue.pop(0)
-        result.append(node.data)
-        if node.left:
-            queue.append(node.left)
-        if node.right:
-            queue.append(node.right)
-    return result
-
-root = TreeNode(4)
-root.left = TreeNode(2)
-root.right = TreeNode(7)
-root.left.left = TreeNode(1)
-root.left.right = TreeNode(3)
-root.right.left = TreeNode(6)
-root.right.right = TreeNode(9)
-invert_tree(root)
-print(level_order(root))
+a = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+print(middle_node(a).val)
 `,
-    nextUrl: /\/learn\/py-168-same-tree/,
-    cursorAfter: "168",
+    nextUrl: /\/learn\/py-488-has-cycle/,
+    cursorAfter: "488",
   },
   {
-    micro: 168,
-    id: "py-168-same-tree",
-    title: "DSA Same Tree",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 488,
+    id: "py-488-has-cycle",
+    title: "DSA Has Cycle",
+    solution: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
 
-def is_same_tree(p, q):
-    if p is None and q is None:
-        return True
-    if p is None or q is None or p.data != q.data:
-        return False
-    return is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
+def has_cycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            return True
+    return False
 
-p = TreeNode(1)
-p.left = TreeNode(2)
-p.right = TreeNode(3)
-q = TreeNode(1)
-q.left = TreeNode(2)
-q.right = TreeNode(3)
-print(is_same_tree(p, q))
+a = ListNode(3); b = ListNode(2); c = ListNode(0); d = ListNode(-4)
+a.next, b.next, c.next, d.next = b, c, d, b
+print(has_cycle(a))
 `,
-    nextUrl: /\/learn\/py-169-max-depth/,
-    cursorAfter: "169",
+    nextUrl: /\/learn\/py-489-reverse-list/,
+    cursorAfter: "489",
   },
   {
-    micro: 169,
-    id: "py-169-max-depth",
-    title: "DSA Maximum Depth",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 489,
+    id: "py-489-reverse-list",
+    title: "DSA Reverse List",
+    solution: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
 
-def max_depth(root):
-    if root is None:
-        return 0
-    return 1 + max(max_depth(root.left), max_depth(root.right))
+def reverse_list(head):
+    prev = None
+    cur = head
+    while cur:
+        nxt = cur.next
+        cur.next = prev
+        prev = cur
+        cur = nxt
+    return prev
 
-root = TreeNode(3)
-root.left = TreeNode(9)
-root.right = TreeNode(20)
-root.right.left = TreeNode(15)
-root.right.right = TreeNode(7)
-print(max_depth(root))
+h = ListNode(1, ListNode(2, ListNode(3)))
+r = reverse_list(h)
+print(r.val, r.next.val, r.next.next.val)
 `,
-    nextUrl: /\/learn\/py-170-spiral-matrix/,
-    cursorAfter: "170",
+    nextUrl: /\/learn\/py-490-merge-two-lists/,
+    cursorAfter: "490",
   },
   {
-    micro: 170,
-    id: "py-170-spiral-matrix",
-    title: "DSA Spiral Matrix",
-    solution: `def spiral_order(matrix):
-    if not matrix:
-        return []
-    result = []
-    top, bottom = 0, len(matrix) - 1
-    left, right = 0, len(matrix[0]) - 1
-    while top <= bottom and left <= right:
-        for j in range(left, right + 1):
-            result.append(matrix[top][j])
-        top += 1
-        for i in range(top, bottom + 1):
-            result.append(matrix[i][right])
-        right -= 1
-        if top <= bottom:
-            for j in range(right, left - 1, -1):
-                result.append(matrix[bottom][j])
-            bottom -= 1
-        if left <= right:
-            for i in range(bottom, top - 1, -1):
-                result.append(matrix[i][left])
-            left += 1
-    return result
-print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+    micro: 490,
+    id: "py-490-merge-two-lists",
+    title: "DSA Merge Two Lists",
+    solution: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def merge_two_lists(a, b):
+    dummy = ListNode(0)
+    cur = dummy
+    while a and b:
+        if a.val <= b.val:
+            cur.next, a = a, a.next
+        else:
+            cur.next, b = b, b.next
+        cur = cur.next
+    cur.next = a or b
+    return dummy.next
+
+a = ListNode(1, ListNode(2, ListNode(4)))
+b = ListNode(1, ListNode(3, ListNode(4)))
+h = merge_two_lists(a, b)
+vals = []
+while h:
+    vals.append(h.val); h = h.next
+print(vals)
 `,
-    nextUrl: /\/learn\/py-171-set-zeroes/,
-    cursorAfter: "171",
+    nextUrl: /\/learn\/py-491-remove-nth/,
+    cursorAfter: "491",
   },
   {
-    micro: 171,
-    id: "py-171-set-zeroes",
-    title: "DSA Set Matrix Zeroes",
-    solution: `def set_zeroes(matrix):
-    rows = set()
-    cols = set()
-    for i in range(len(matrix)):
-        for j in range(len(matrix[0])):
-            if matrix[i][j] == 0:
-                rows.add(i)
-                cols.add(j)
-    for i in range(len(matrix)):
-        for j in range(len(matrix[0])):
-            if i in rows or j in cols:
-                matrix[i][j] = 0
-    return matrix
-print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
+    micro: 491,
+    id: "py-491-remove-nth",
+    title: "DSA Remove Nth",
+    solution: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def remove_nth_from_end(head, n):
+    dummy = ListNode(0, head)
+    fast = slow = dummy
+    for _ in range(n + 1):
+        fast = fast.next
+    while fast:
+        fast = fast.next
+        slow = slow.next
+    slow.next = slow.next.next
+    return dummy.next
+
+h = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+r = remove_nth_from_end(h, 2)
+vals = []
+while r:
+    vals.append(r.val); r = r.next
+print(vals)
 `,
-    nextUrl: /\/learn\/py-172-subsets/,
-    cursorAfter: "172",
+    nextUrl: /\/learn\/py-492-palindrome-list/,
+    cursorAfter: "492",
   },
   {
-    micro: 172,
-    id: "py-172-subsets",
-    title: "DSA Subsets",
-    solution: `def subsets(nums):
-    result = [[]]
-    for n in nums:
-        result += [subset + [n] for subset in result]
-    return result
-print(sorted(subsets([1, 2])))
+    micro: 492,
+    id: "py-492-palindrome-list",
+    title: "DSA Palindrome List",
+    solution: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def is_palindrome(head):
+    vals = []
+    while head:
+        vals.append(head.val)
+        head = head.next
+    return vals == vals[::-1]
+
+h = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
+print(is_palindrome(h))
 `,
-    nextUrl: /\/learn\/py-173-jump-game/,
-    cursorAfter: "173",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "493",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:487|488|489|490|491|492)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -211,7 +212,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 167–172 · trees / matrices", () => {
+test.describe("micro-steps 487–492 · linked lists III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
