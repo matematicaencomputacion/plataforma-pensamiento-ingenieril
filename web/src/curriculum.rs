@@ -12180,7 +12180,326 @@ print(can_construct(\"aa\", \"aab\"))
 
 print(can_construct(\"aa\", \"aab\"))
 ",
-    next: None, show_type_chips: false, micro_step: 510,
+    next: Some("py-511-jump-game"), show_type_chips: false, micro_step: 510,
+};
+
+
+pub const PY511_JUMP_GAME: CodingStep = CodingStep {
+    id: "py-511-jump-game", title: "DSA Jump Game", objective: "¿Se llega al final?",
+    prompt_md: "**Jump Game**
+
+¿Se llega al final?
+
+**Micro-reto:**
+1. Definí `can_jump(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def can_jump(nums):
+#     reach = 0
+#     for i, x in enumerate(nums):
+#         if i > reach:
+#             return False
+#         reach = max(reach, i + x)
+#     return True
+#
+# print(can_jump([2, 3, 1, 1, 4]))
+",
+    pytest: "def test_511_jump_game(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('can_jump'))
+    assert ns['can_jump']([2, 3, 1, 1, 4]) is True
+    assert ns['can_jump']([3, 2, 1, 0, 4]) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def can_jump(nums):
+    reach = 0
+    for i, x in enumerate(nums):
+        if i > reach:
+            return False
+        reach = max(reach, i + x)
+    return True
+
+print(can_jump([2, 3, 1, 1, 4]))
+",
+    solution_example: "def can_jump(nums):
+    reach = 0
+    for i, x in enumerate(nums):
+        if i > reach:
+            return False
+        reach = max(reach, i + x)
+    return True
+
+print(can_jump([2, 3, 1, 1, 4]))
+",
+    next: Some("py-512-jump-game-ii"), show_type_chips: false, micro_step: 511,
+};
+
+pub const PY512_JUMP_GAME_II: CodingStep = CodingStep {
+    id: "py-512-jump-game-ii", title: "DSA Jump Game II", objective: "Mínimos saltos.",
+    prompt_md: "**Jump Game II**
+
+Mínimos saltos.
+
+**Micro-reto:**
+1. Definí `jump(...)`
+2. Ejecutá el ejemplo del starter; imprimí `2`.",
+    starter_code: "# def jump(nums):
+#     jumps = end = far = 0
+#     for i in range(len(nums) - 1):
+#         far = max(far, i + nums[i])
+#         if i == end:
+#             jumps += 1
+#             end = far
+#     return jumps
+#
+# print(jump([2, 3, 1, 1, 4]))
+",
+    pytest: "def test_512_jump_game_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('jump'))
+    assert ns['jump']([2, 3, 1, 1, 4]) == 2
+    assert ns['jump']([2, 3, 0, 1, 4]) == 2
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def jump(nums):
+    jumps = end = far = 0
+    for i in range(len(nums) - 1):
+        far = max(far, i + nums[i])
+        if i == end:
+            jumps += 1
+            end = far
+    return jumps
+
+print(jump([2, 3, 1, 1, 4]))
+",
+    solution_example: "def jump(nums):
+    jumps = end = far = 0
+    for i in range(len(nums) - 1):
+        far = max(far, i + nums[i])
+        if i == end:
+            jumps += 1
+            end = far
+    return jumps
+
+print(jump([2, 3, 1, 1, 4]))
+",
+    next: Some("py-513-can-place-flowers"), show_type_chips: false, micro_step: 512,
+};
+
+pub const PY513_CAN_PLACE_FLOWERS: CodingStep = CodingStep {
+    id: "py-513-can-place-flowers", title: "DSA Place Flowers", objective: "¿n flores en plot?",
+    prompt_md: "**Place Flowers**
+
+¿n flores en plot?
+
+**Micro-reto:**
+1. Definí `can_place_flowers(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def can_place_flowers(flowerbed, n):
+#     bed = [0] + flowerbed + [0]
+#     for i in range(1, len(bed) - 1):
+#         if bed[i - 1] == bed[i] == bed[i + 1] == 0:
+#             bed[i] = 1
+#             n -= 1
+#     return n <= 0
+#
+# print(can_place_flowers([1, 0, 0, 0, 1], 1))
+",
+    pytest: "def test_513_can_place_flowers(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('can_place_flowers'))
+    assert ns['can_place_flowers']([1, 0, 0, 0, 1], 1) is True
+    assert ns['can_place_flowers']([1, 0, 0, 0, 1], 2) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def can_place_flowers(flowerbed, n):
+    bed = [0] + flowerbed + [0]
+    for i in range(1, len(bed) - 1):
+        if bed[i - 1] == bed[i] == bed[i + 1] == 0:
+            bed[i] = 1
+            n -= 1
+    return n <= 0
+
+print(can_place_flowers([1, 0, 0, 0, 1], 1))
+",
+    solution_example: "def can_place_flowers(flowerbed, n):
+    bed = [0] + flowerbed + [0]
+    for i in range(1, len(bed) - 1):
+        if bed[i - 1] == bed[i] == bed[i + 1] == 0:
+            bed[i] = 1
+            n -= 1
+    return n <= 0
+
+print(can_place_flowers([1, 0, 0, 0, 1], 1))
+",
+    next: Some("py-514-lemonade"), show_type_chips: false, micro_step: 513,
+};
+
+pub const PY514_LEMONADE: CodingStep = CodingStep {
+    id: "py-514-lemonade", title: "DSA Lemonade", objective: "Cambio con 5/10/20.",
+    prompt_md: "**Lemonade**
+
+Cambio con 5/10/20.
+
+**Micro-reto:**
+1. Definí `lemonade_change(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def lemonade_change(bills):
+#     five = ten = 0
+#     for b in bills:
+#         if b == 5:
+#             five += 1
+#         elif b == 10:
+#             if not five:
+#                 return False
+#             five -= 1; ten += 1
+#         else:
+#             if ten and five:
+#                 ten -= 1; five -= 1
+#             elif five >= 3:
+#                 five -= 3
+#             else:
+#                 return False
+#     return True
+#
+# print(lemonade_change([5, 5, 5, 10, 20]))
+",
+    pytest: "def test_514_lemonade(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lemonade_change'))
+    assert ns['lemonade_change']([5, 5, 5, 10, 20]) is True
+    assert ns['lemonade_change']([5, 5, 10, 10, 20]) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def lemonade_change(bills):
+    five = ten = 0
+    for b in bills:
+        if b == 5:
+            five += 1
+        elif b == 10:
+            if not five:
+                return False
+            five -= 1; ten += 1
+        else:
+            if ten and five:
+                ten -= 1; five -= 1
+            elif five >= 3:
+                five -= 3
+            else:
+                return False
+    return True
+
+print(lemonade_change([5, 5, 5, 10, 20]))
+",
+    solution_example: "def lemonade_change(bills):
+    five = ten = 0
+    for b in bills:
+        if b == 5:
+            five += 1
+        elif b == 10:
+            if not five:
+                return False
+            five -= 1; ten += 1
+        else:
+            if ten and five:
+                ten -= 1; five -= 1
+            elif five >= 3:
+                five -= 3
+            else:
+                return False
+    return True
+
+print(lemonade_change([5, 5, 5, 10, 20]))
+",
+    next: Some("py-515-best-time-stock"), show_type_chips: false, micro_step: 514,
+};
+
+pub const PY515_BEST_TIME_STOCK: CodingStep = CodingStep {
+    id: "py-515-best-time-stock", title: "DSA Best Time Stock", objective: "Una transacción.",
+    prompt_md: "**Best Time Stock**
+
+Una transacción.
+
+**Micro-reto:**
+1. Definí `max_profit(...)`
+2. Ejecutá el ejemplo del starter; imprimí `5`.",
+    starter_code: "# def max_profit(prices):
+#     mn = prices[0]
+#     best = 0
+#     for p in prices:
+#         mn = min(mn, p)
+#         best = max(best, p - mn)
+#     return best
+#
+# print(max_profit([7, 1, 5, 3, 6, 4]))
+",
+    pytest: "def test_515_best_time_stock(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_profit'))
+    assert ns['max_profit']([7, 1, 5, 3, 6, 4]) == 5
+    assert ns['max_profit']([7, 6, 4, 3, 1]) == 0
+    assert capsys.readouterr().out.strip() == '5'
+",
+    hint: "def max_profit(prices):
+    mn = prices[0]
+    best = 0
+    for p in prices:
+        mn = min(mn, p)
+        best = max(best, p - mn)
+    return best
+
+print(max_profit([7, 1, 5, 3, 6, 4]))
+",
+    solution_example: "def max_profit(prices):
+    mn = prices[0]
+    best = 0
+    for p in prices:
+        mn = min(mn, p)
+        best = max(best, p - mn)
+    return best
+
+print(max_profit([7, 1, 5, 3, 6, 4]))
+",
+    next: Some("py-516-best-time-stock-ii"), show_type_chips: false, micro_step: 515,
+};
+
+pub const PY516_BEST_TIME_STOCK_II: CodingStep = CodingStep {
+    id: "py-516-best-time-stock-ii", title: "DSA Stock II", objective: "Múltiples transacciones.",
+    prompt_md: "**Stock II**
+
+Múltiples transacciones.
+
+**Micro-reto:**
+1. Definí `max_profit(...)`
+2. Ejecutá el ejemplo del starter; imprimí `7`.",
+    starter_code: "# def max_profit(prices):
+#     return sum(max(prices[i] - prices[i - 1], 0) for i in range(1, len(prices)))
+#
+# print(max_profit([7, 1, 5, 3, 6, 4]))
+",
+    pytest: "def test_516_best_time_stock_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_profit'))
+    assert ns['max_profit']([7, 1, 5, 3, 6, 4]) == 7
+    assert ns['max_profit']([1, 2, 3, 4, 5]) == 4
+    assert capsys.readouterr().out.strip() == '7'
+",
+    hint: "def max_profit(prices):
+    return sum(max(prices[i] - prices[i - 1], 0) for i in range(1, len(prices)))
+
+print(max_profit([7, 1, 5, 3, 6, 4]))
+",
+    solution_example: "def max_profit(prices):
+    return sum(max(prices[i] - prices[i - 1], 0) for i in range(1, len(prices)))
+
+print(max_profit([7, 1, 5, 3, 6, 4]))
+",
+    next: None, show_type_chips: false, micro_step: 516,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -12693,7 +13012,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY507_WORD_PATTERN,
     &PY508_ISOMORPHIC,
     &PY509_FIND_DIFF,
-    &PY510_RANSOM_NOTE
+    &PY510_RANSOM_NOTE,
+    &PY511_JUMP_GAME,
+    &PY512_JUMP_GAME_II,
+    &PY513_CAN_PLACE_FLOWERS,
+    &PY514_LEMONADE,
+    &PY515_BEST_TIME_STOCK,
+    &PY516_BEST_TIME_STOCK_II
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -12837,7 +13162,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 510);
+            assert!(step.micro_step >= 1 && step.micro_step <= 516);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -13827,7 +14152,55 @@ mod tests {
 
 
 
-            (510, "py-510-ransom-note", None),
+            (510, "py-510-ransom-note", Some("py-511-jump-game")),
+
+
+
+
+
+
+
+            (511, "py-511-jump-game", Some("py-512-jump-game-ii")),
+
+
+
+
+
+
+
+            (512, "py-512-jump-game-ii", Some("py-513-can-place-flowers")),
+
+
+
+
+
+
+
+            (513, "py-513-can-place-flowers", Some("py-514-lemonade")),
+
+
+
+
+
+
+
+            (514, "py-514-lemonade", Some("py-515-best-time-stock")),
+
+
+
+
+
+
+
+            (515, "py-515-best-time-stock", Some("py-516-best-time-stock-ii")),
+
+
+
+
+
+
+
+            (516, "py-516-best-time-stock-ii", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

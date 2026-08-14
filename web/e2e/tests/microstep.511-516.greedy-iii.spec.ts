@@ -22,118 +22,118 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 365,
-    id: "py-365-kth-largest",
-    title: "DSA Kth Largest",
-    solution: `import heapq
+    micro: 511,
+    id: "py-511-jump-game",
+    title: "DSA Jump Game",
+    solution: `def can_jump(nums):
+    reach = 0
+    for i, x in enumerate(nums):
+        if i > reach:
+            return False
+        reach = max(reach, i + x)
+    return True
 
-def find_kth_largest(nums, k):
-    return heapq.nlargest(k, nums)[-1]
-
-print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
+print(can_jump([2, 3, 1, 1, 4]))
 `,
-    nextUrl: /\/learn\/py-366-top-k-frequent/,
-    cursorAfter: "366",
+    nextUrl: /\/learn\/py-512-jump-game-ii/,
+    cursorAfter: "512",
   },
   {
-    micro: 366,
-    id: "py-366-top-k-frequent",
-    title: "DSA Top K Frequent",
-    solution: `from collections import Counter
+    micro: 512,
+    id: "py-512-jump-game-ii",
+    title: "DSA Jump Game II",
+    solution: `def jump(nums):
+    jumps = end = far = 0
+    for i in range(len(nums) - 1):
+        far = max(far, i + nums[i])
+        if i == end:
+            jumps += 1
+            end = far
+    return jumps
 
-def top_k_frequent(nums, k):
-    return [x for x, _ in Counter(nums).most_common(k)]
-
-print(sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)))
+print(jump([2, 3, 1, 1, 4]))
 `,
-    nextUrl: /\/learn\/py-367-merge-k-lists/,
-    cursorAfter: "367",
+    nextUrl: /\/learn\/py-513-can-place-flowers/,
+    cursorAfter: "513",
   },
   {
-    micro: 367,
-    id: "py-367-merge-k-lists",
-    title: "DSA Merge K Lists",
-    solution: `import heapq
+    micro: 513,
+    id: "py-513-can-place-flowers",
+    title: "DSA Place Flowers",
+    solution: `def can_place_flowers(flowerbed, n):
+    bed = [0] + flowerbed + [0]
+    for i in range(1, len(bed) - 1):
+        if bed[i - 1] == bed[i] == bed[i + 1] == 0:
+            bed[i] = 1
+            n -= 1
+    return n <= 0
 
-def merge_k_lists(lists):
-    return list(heapq.merge(*lists))
-
-print(merge_k_lists([[1, 4, 5], [1, 3, 4], [2, 6]]))
+print(can_place_flowers([1, 0, 0, 0, 1], 1))
 `,
-    nextUrl: /\/learn\/py-368-ugly-number-ii/,
-    cursorAfter: "368",
+    nextUrl: /\/learn\/py-514-lemonade/,
+    cursorAfter: "514",
   },
   {
-    micro: 368,
-    id: "py-368-ugly-number-ii",
-    title: "DSA Ugly Number II",
-    solution: `import heapq
+    micro: 514,
+    id: "py-514-lemonade",
+    title: "DSA Lemonade",
+    solution: `def lemonade_change(bills):
+    five = ten = 0
+    for b in bills:
+        if b == 5:
+            five += 1
+        elif b == 10:
+            if not five:
+                return False
+            five -= 1; ten += 1
+        else:
+            if ten and five:
+                ten -= 1; five -= 1
+            elif five >= 3:
+                five -= 3
+            else:
+                return False
+    return True
 
-def nth_ugly_number(n):
-    h = [1]
-    seen = {1}
-    x = 1
-    for _ in range(n):
-        x = heapq.heappop(h)
-        for f in (2, 3, 5):
-            y = x * f
-            if y not in seen:
-                seen.add(y)
-                heapq.heappush(h, y)
-    return x
-
-print(nth_ugly_number(10))
+print(lemonade_change([5, 5, 5, 10, 20]))
 `,
-    nextUrl: /\/learn\/py-369-task-scheduler/,
-    cursorAfter: "369",
+    nextUrl: /\/learn\/py-515-best-time-stock/,
+    cursorAfter: "515",
   },
   {
-    micro: 369,
-    id: "py-369-task-scheduler",
-    title: "DSA Task Scheduler",
-    solution: `from collections import Counter
+    micro: 515,
+    id: "py-515-best-time-stock",
+    title: "DSA Best Time Stock",
+    solution: `def max_profit(prices):
+    mn = prices[0]
+    best = 0
+    for p in prices:
+        mn = min(mn, p)
+        best = max(best, p - mn)
+    return best
 
-def least_interval(tasks, n):
-    freq = list(Counter(tasks).values())
-    m = max(freq)
-    cnt = freq.count(m)
-    return max(len(tasks), (m - 1) * (n + 1) + cnt)
-
-print(least_interval(["A", "A", "A", "B", "B", "B"], 2))
+print(max_profit([7, 1, 5, 3, 6, 4]))
 `,
-    nextUrl: /\/learn\/py-370-reorganize-string/,
-    cursorAfter: "370",
+    nextUrl: /\/learn\/py-516-best-time-stock-ii/,
+    cursorAfter: "516",
   },
   {
-    micro: 370,
-    id: "py-370-reorganize-string",
-    title: "DSA Reorganize String",
-    solution: `import heapq
-from collections import Counter
+    micro: 516,
+    id: "py-516-best-time-stock-ii",
+    title: "DSA Stock II",
+    solution: `def max_profit(prices):
+    return sum(max(prices[i] - prices[i - 1], 0) for i in range(1, len(prices)))
 
-def reorganize_string(s):
-    h = [(-c, ch) for ch, c in Counter(s).items()]
-    heapq.heapify(h)
-    out = []
-    prev = (0, "")
-    while h:
-        c, ch = heapq.heappop(h)
-        out.append(ch)
-        if prev[0] < 0:
-            heapq.heappush(h, prev)
-        prev = (c + 1, ch)
-    return "".join(out) if len(out) == len(s) else ""
-
-print(reorganize_string("aab"))
+print(max_profit([7, 1, 5, 3, 6, 4]))
 `,
-    nextUrl: /\/learn\/py-371-longest-substr/,
-    cursorAfter: "371",
+    nextUrl: /\/workspace/,
+    cursorAfter: "517",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:365|366|367|368|369|370)-/);
+    expect(step.id).toMatch(/^py-(?:511|512|513|514|515|516)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -163,7 +163,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 365–370 · heaps II", () => {
+test.describe("micro-steps 511–516 · greedy III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

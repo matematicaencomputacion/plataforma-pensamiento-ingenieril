@@ -516,6 +516,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 508, step_id: "py-508-isomorphic" },
   { level_id: 509, step_id: "py-509-find-diff" },
   { level_id: 510, step_id: "py-510-ransom-note" },
+  { level_id: 511, step_id: "py-511-jump-game" },
+  { level_id: 512, step_id: "py-512-jump-game-ii" },
+  { level_id: 513, step_id: "py-513-can-place-flowers" },
+  { level_id: 514, step_id: "py-514-lemonade" },
+  { level_id: 515, step_id: "py-515-best-time-stock" },
+  { level_id: 516, step_id: "py-516-best-time-stock-ii" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
