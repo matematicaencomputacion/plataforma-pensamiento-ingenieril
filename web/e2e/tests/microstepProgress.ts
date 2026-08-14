@@ -480,6 +480,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 472, step_id: "py-472-town-judge" },
   { level_id: 473, step_id: "py-473-max-island" },
   { level_id: 474, step_id: "py-474-provinces" },
+  { level_id: 475, step_id: "py-475-min-cost-stairs" },
+  { level_id: 476, step_id: "py-476-unique-paths" },
+  { level_id: 477, step_id: "py-477-min-path-sum" },
+  { level_id: 478, step_id: "py-478-integer-break" },
+  { level_id: 479, step_id: "py-479-decode-ways" },
+  { level_id: 480, step_id: "py-480-rob-circle" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

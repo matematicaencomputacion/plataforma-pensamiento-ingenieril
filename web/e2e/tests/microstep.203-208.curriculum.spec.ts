@@ -243,7 +243,7 @@ test.describe("micro-steps 203–208 · curriculum", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 304) {
+      if (nextMicro <= 480) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

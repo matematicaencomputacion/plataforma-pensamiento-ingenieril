@@ -22,169 +22,129 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 167,
-    id: "py-167-invert-tree",
-    title: "DSA Invert Binary Tree",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 475,
+    id: "py-475-min-cost-stairs",
+    title: "DSA Min Cost Stairs",
+    solution: `def min_cost_climbing_stairs(cost):
+    a = b = 0
+    for c in cost:
+        a, b = b, c + min(a, b)
+    return min(a, b)
 
-def invert_tree(root):
-    if root is None:
-        return None
-    root.left, root.right = invert_tree(root.right), invert_tree(root.left)
-    return root
-
-def level_order(root):
-    if root is None:
-        return []
-    result = []
-    queue = [root]
-    while queue:
-        node = queue.pop(0)
-        result.append(node.data)
-        if node.left:
-            queue.append(node.left)
-        if node.right:
-            queue.append(node.right)
-    return result
-
-root = TreeNode(4)
-root.left = TreeNode(2)
-root.right = TreeNode(7)
-root.left.left = TreeNode(1)
-root.left.right = TreeNode(3)
-root.right.left = TreeNode(6)
-root.right.right = TreeNode(9)
-invert_tree(root)
-print(level_order(root))
+print(min_cost_climbing_stairs([10, 15, 20]))
 `,
-    nextUrl: /\/learn\/py-168-same-tree/,
-    cursorAfter: "168",
-  },
+    nextUrl: /\/learn\/py-476-unique-paths/,
+    cursorAfter: "476",
+  }
   {
-    micro: 168,
-    id: "py-168-same-tree",
-    title: "DSA Same Tree",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 476,
+    id: "py-476-unique-paths",
+    title: "DSA Unique Paths",
+    solution: `def unique_paths(m, n):
+    row = [1] * n
+    for _ in range(1, m):
+        for j in range(1, n):
+            row[j] += row[j - 1]
+    return row[-1]
 
-def is_same_tree(p, q):
-    if p is None and q is None:
-        return True
-    if p is None or q is None or p.data != q.data:
-        return False
-    return is_same_tree(p.left, q.left) and is_same_tree(p.right, q.right)
-
-p = TreeNode(1)
-p.left = TreeNode(2)
-p.right = TreeNode(3)
-q = TreeNode(1)
-q.left = TreeNode(2)
-q.right = TreeNode(3)
-print(is_same_tree(p, q))
+print(unique_paths(3, 7))
 `,
-    nextUrl: /\/learn\/py-169-max-depth/,
-    cursorAfter: "169",
-  },
+    nextUrl: /\/learn\/py-477-min-path-sum/,
+    cursorAfter: "477",
+  }
   {
-    micro: 169,
-    id: "py-169-max-depth",
-    title: "DSA Maximum Depth",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
+    micro: 477,
+    id: "py-477-min-path-sum",
+    title: "DSA Min Path Sum",
+    solution: `def min_path_sum(grid):
+    m, n = len(grid), len(grid[0])
+    dp = [0] * n
+    for i in range(m):
+        for j in range(n):
+            if i == 0 and j == 0:
+                dp[j] = grid[i][j]
+            elif i == 0:
+                dp[j] = dp[j - 1] + grid[i][j]
+            elif j == 0:
+                dp[j] = dp[j] + grid[i][j]
+            else:
+                dp[j] = min(dp[j], dp[j - 1]) + grid[i][j]
+    return dp[-1]
 
-def max_depth(root):
-    if root is None:
+print(min_path_sum([[1,3,1],[1,5,1],[4,2,1]]))
+`,
+    nextUrl: /\/learn\/py-478-integer-break/,
+    cursorAfter: "478",
+  }
+  {
+    micro: 478,
+    id: "py-478-integer-break",
+    title: "DSA Integer Break",
+    solution: `def integer_break(n):
+    if n <= 3:
+        return n - 1
+    q, r = divmod(n, 3)
+    if r == 0:
+        return 3 ** q
+    if r == 1:
+        return 3 ** (q - 1) * 4
+    return 3 ** q * 2
+
+print(integer_break(10))
+`,
+    nextUrl: /\/learn\/py-479-decode-ways/,
+    cursorAfter: "479",
+  }
+  {
+    micro: 479,
+    id: "py-479-decode-ways",
+    title: "DSA Decode Ways",
+    solution: `def num_decodings(s):
+    if not s or s[0] == "0":
         return 0
-    return 1 + max(max_depth(root.left), max_depth(root.right))
+    a, b = 1, 1
+    for i in range(1, len(s)):
+        cur = 0
+        if s[i] != "0":
+            cur += b
+        two = int(s[i - 1:i + 1])
+        if 10 <= two <= 26:
+            cur += a
+        a, b = b, cur
+    return b
 
-root = TreeNode(3)
-root.left = TreeNode(9)
-root.right = TreeNode(20)
-root.right.left = TreeNode(15)
-root.right.right = TreeNode(7)
-print(max_depth(root))
+print(num_decodings("226"))
 `,
-    nextUrl: /\/learn\/py-170-spiral-matrix/,
-    cursorAfter: "170",
-  },
+    nextUrl: /\/learn\/py-480-rob-circle/,
+    cursorAfter: "480",
+  }
   {
-    micro: 170,
-    id: "py-170-spiral-matrix",
-    title: "DSA Spiral Matrix",
-    solution: `def spiral_order(matrix):
-    if not matrix:
-        return []
-    result = []
-    top, bottom = 0, len(matrix) - 1
-    left, right = 0, len(matrix[0]) - 1
-    while top <= bottom and left <= right:
-        for j in range(left, right + 1):
-            result.append(matrix[top][j])
-        top += 1
-        for i in range(top, bottom + 1):
-            result.append(matrix[i][right])
-        right -= 1
-        if top <= bottom:
-            for j in range(right, left - 1, -1):
-                result.append(matrix[bottom][j])
-            bottom -= 1
-        if left <= right:
-            for i in range(bottom, top - 1, -1):
-                result.append(matrix[i][left])
-            left += 1
-    return result
-print(spiral_order([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))
+    micro: 480,
+    id: "py-480-rob-circle",
+    title: "DSA Rob Circle",
+    solution: `def rob(nums):
+    def linear(arr):
+        a = b = 0
+        for x in arr:
+            a, b = b, max(b, a + x)
+        return b
+    if len(nums) == 1:
+        return nums[0]
+    return max(linear(nums[:-1]), linear(nums[1:]))
+
+print(rob([2, 3, 2]))
 `,
-    nextUrl: /\/learn\/py-171-set-zeroes/,
-    cursorAfter: "171",
-  },
-  {
-    micro: 171,
-    id: "py-171-set-zeroes",
-    title: "DSA Set Matrix Zeroes",
-    solution: `def set_zeroes(matrix):
-    rows = set()
-    cols = set()
-    for i in range(len(matrix)):
-        for j in range(len(matrix[0])):
-            if matrix[i][j] == 0:
-                rows.add(i)
-                cols.add(j)
-    for i in range(len(matrix)):
-        for j in range(len(matrix[0])):
-            if i in rows or j in cols:
-                matrix[i][j] = 0
-    return matrix
-print(set_zeroes([[1, 1, 1], [1, 0, 1], [1, 1, 1]]))
-`,
-    nextUrl: /\/learn\/py-172-subsets/,
-    cursorAfter: "172",
-  },
-  {
-    micro: 172,
-    id: "py-172-subsets",
-    title: "DSA Subsets",
-    solution: `def subsets(nums):
-    result = [[]]
-    for n in nums:
-        result += [subset + [n] for subset in result]
-    return result
-print(sorted(subsets([1, 2])))
-`,
-    nextUrl: /\/learn\/py-173-jump-game/,
-    cursorAfter: "173",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "481",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:475|476|477|478|479|480)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -211,7 +171,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 167–172 · trees / matrices", () => {
+test.describe("micro-steps 475–480 · DP III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
