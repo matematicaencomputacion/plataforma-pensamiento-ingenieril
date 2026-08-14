@@ -906,6 +906,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 898, step_id: "py-898-monotonic-stack-v-lower-boundary" },
   { level_id: 899, step_id: "py-899-monotonic-stack-v-dependency-order" },
   { level_id: 900, step_id: "py-900-monotonic-stack-v-minimum-transition" },
+  { level_id: 901, step_id: "py-901-monotonic-queue-ii-canonicalize" },
+  { level_id: 902, step_id: "py-902-monotonic-queue-ii-prefix-state" },
+  { level_id: 903, step_id: "py-903-monotonic-queue-ii-bounded-window" },
+  { level_id: 904, step_id: "py-904-monotonic-queue-ii-lower-boundary" },
+  { level_id: 905, step_id: "py-905-monotonic-queue-ii-dependency-order" },
+  { level_id: 906, step_id: "py-906-monotonic-queue-ii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
