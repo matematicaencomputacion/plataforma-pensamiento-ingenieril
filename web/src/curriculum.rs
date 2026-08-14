@@ -15417,7 +15417,257 @@ print(my_sqrt(8))
 
 print(my_sqrt(8))
 ",
-    next: None, show_type_chips: false, micro_step: 564,
+    next: Some("py-565-reverse-words"), show_type_chips: false, micro_step: 564,
+};
+
+
+pub const PY565_REVERSE_WORDS: CodingStep = CodingStep {
+    id: "py-565-reverse-words", title: "DSA Reverse Words", objective: "Revertir palabras.",
+    prompt_md: "**Reverse Words**
+
+Revertir palabras.
+
+**Micro-reto:**
+1. Definí `reverse_words(...)`
+2. Ejecutá el ejemplo del starter; imprimí `blue is sky the`.",
+    starter_code: "# def reverse_words(s):
+#     return \" \".join(s.split()[::-1])
+#
+# print(reverse_words(\"the sky is blue\"))
+",
+    pytest: "def test_565_reverse_words(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('reverse_words'))
+    assert ns['reverse_words']('the sky is blue') == 'blue is sky the'
+    assert ns['reverse_words']('  hello world  ') == 'world hello'
+    assert capsys.readouterr().out.strip() == 'blue is sky the'
+",
+    hint: "def reverse_words(s):
+    return \" \".join(s.split()[::-1])
+
+print(reverse_words(\"the sky is blue\"))
+",
+    solution_example: "def reverse_words(s):
+    return \" \".join(s.split()[::-1])
+
+print(reverse_words(\"the sky is blue\"))
+",
+    next: Some("py-566-longest-common-prefix"), show_type_chips: false, micro_step: 565,
+};
+
+pub const PY566_LONGEST_COMMON_PREFIX: CodingStep = CodingStep {
+    id: "py-566-longest-common-prefix", title: "DSA LCP", objective: "Prefijo común.",
+    prompt_md: "**LCP**
+
+Prefijo común.
+
+**Micro-reto:**
+1. Definí `longest_common_prefix(...)`
+2. Ejecutá el ejemplo del starter; imprimí `fl`.",
+    starter_code: "# def longest_common_prefix(strs):
+#     if not strs:
+#         return \"\"
+#     p = strs[0]
+#     for s in strs[1:]:
+#         while not s.startswith(p):
+#             p = p[:-1]
+#             if not p:
+#                 return \"\"
+#     return p
+#
+# print(longest_common_prefix([\"flower\", \"flow\", \"flight\"]))
+",
+    pytest: "def test_566_longest_common_prefix(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('longest_common_prefix'))
+    assert ns['longest_common_prefix'](['flower', 'flow', 'flight']) == 'fl'
+    assert ns['longest_common_prefix'](['dog', 'racecar', 'car']) == ''
+    assert capsys.readouterr().out.strip() == 'fl'
+",
+    hint: "def longest_common_prefix(strs):
+    if not strs:
+        return \"\"
+    p = strs[0]
+    for s in strs[1:]:
+        while not s.startswith(p):
+            p = p[:-1]
+            if not p:
+                return \"\"
+    return p
+
+print(longest_common_prefix([\"flower\", \"flow\", \"flight\"]))
+",
+    solution_example: "def longest_common_prefix(strs):
+    if not strs:
+        return \"\"
+    p = strs[0]
+    for s in strs[1:]:
+        while not s.startswith(p):
+            p = p[:-1]
+            if not p:
+                return \"\"
+    return p
+
+print(longest_common_prefix([\"flower\", \"flow\", \"flight\"]))
+",
+    next: Some("py-567-str-str"), show_type_chips: false, micro_step: 566,
+};
+
+pub const PY567_STR_STR: CodingStep = CodingStep {
+    id: "py-567-str-str", title: "DSA Str Str", objective: "Índice de needle.",
+    prompt_md: "**Str Str**
+
+Índice de needle.
+
+**Micro-reto:**
+1. Definí `str_str(...)`
+2. Ejecutá el ejemplo del starter; imprimí `0`.",
+    starter_code: "# def str_str(haystack, needle):
+#     return haystack.find(needle)
+#
+# print(str_str(\"sadbutsad\", \"sad\"))
+",
+    pytest: "def test_567_str_str(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('str_str'))
+    assert ns['str_str']('sadbutsad', 'sad') == 0
+    assert ns['str_str']('leetcode', 'leeto') == -1
+    assert capsys.readouterr().out.strip() == '0'
+",
+    hint: "def str_str(haystack, needle):
+    return haystack.find(needle)
+
+print(str_str(\"sadbutsad\", \"sad\"))
+",
+    solution_example: "def str_str(haystack, needle):
+    return haystack.find(needle)
+
+print(str_str(\"sadbutsad\", \"sad\"))
+",
+    next: Some("py-568-valid-anagram"), show_type_chips: false, micro_step: 567,
+};
+
+pub const PY568_VALID_ANAGRAM: CodingStep = CodingStep {
+    id: "py-568-valid-anagram", title: "DSA Valid Anagram", objective: "¿Anagramas?",
+    prompt_md: "**Valid Anagram**
+
+¿Anagramas?
+
+**Micro-reto:**
+1. Definí `is_anagram(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def is_anagram(s, t):
+#     return sorted(s) == sorted(t)
+#
+# print(is_anagram(\"anagram\", \"nagaram\"))
+",
+    pytest: "def test_568_valid_anagram(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_anagram'))
+    assert ns['is_anagram']('anagram', 'nagaram') is True
+    assert ns['is_anagram']('rat', 'car') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_anagram(s, t):
+    return sorted(s) == sorted(t)
+
+print(is_anagram(\"anagram\", \"nagaram\"))
+",
+    solution_example: "def is_anagram(s, t):
+    return sorted(s) == sorted(t)
+
+print(is_anagram(\"anagram\", \"nagaram\"))
+",
+    next: Some("py-569-first-uniq"), show_type_chips: false, micro_step: 568,
+};
+
+pub const PY569_FIRST_UNIQ: CodingStep = CodingStep {
+    id: "py-569-first-uniq", title: "DSA First Uniq", objective: "Primer único.",
+    prompt_md: "**First Uniq**
+
+Primer único.
+
+**Micro-reto:**
+1. Definí `first_uniq_char(...)`
+2. Ejecutá el ejemplo del starter; imprimí `0`.",
+    starter_code: "# def first_uniq_char(s):
+#     from collections import Counter
+#     c = Counter(s)
+#     for i, ch in enumerate(s):
+#         if c[ch] == 1:
+#             return i
+#     return -1
+#
+# print(first_uniq_char(\"leetcode\"))
+",
+    pytest: "def test_569_first_uniq(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('first_uniq_char'))
+    assert ns['first_uniq_char']('leetcode') == 0
+    assert ns['first_uniq_char']('aabb') == -1
+    assert capsys.readouterr().out.strip() == '0'
+",
+    hint: "def first_uniq_char(s):
+    from collections import Counter
+    c = Counter(s)
+    for i, ch in enumerate(s):
+        if c[ch] == 1:
+            return i
+    return -1
+
+print(first_uniq_char(\"leetcode\"))
+",
+    solution_example: "def first_uniq_char(s):
+    from collections import Counter
+    c = Counter(s)
+    for i, ch in enumerate(s):
+        if c[ch] == 1:
+            return i
+    return -1
+
+print(first_uniq_char(\"leetcode\"))
+",
+    next: Some("py-570-add-binary"), show_type_chips: false, micro_step: 569,
+};
+
+pub const PY570_ADD_BINARY: CodingStep = CodingStep {
+    id: "py-570-add-binary", title: "DSA Add Binary", objective: "Suma binaria.",
+    prompt_md: "**Add Binary**
+
+Suma binaria.
+
+**Micro-reto:**
+1. Definí `add_binary(...)`
+2. Ejecutá el ejemplo del starter; imprimí `100`.",
+    starter_code: "# def add_binary(a, b):
+#     return bin(int(a, 2) + int(b, 2))[2:]
+#
+# print(add_binary(\"11\", \"1\"))
+",
+    pytest: "def test_570_add_binary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('add_binary'))
+    assert ns['add_binary']('11', '1') == '100'
+    assert ns['add_binary']('1010', '1011') == '10101'
+    assert capsys.readouterr().out.strip() == '100'
+",
+    hint: "def add_binary(a, b):
+    return bin(int(a, 2) + int(b, 2))[2:]
+
+print(add_binary(\"11\", \"1\"))
+",
+    solution_example: "def add_binary(a, b):
+    return bin(int(a, 2) + int(b, 2))[2:]
+
+print(add_binary(\"11\", \"1\"))
+",
+    next: None, show_type_chips: false, micro_step: 570,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -15984,7 +16234,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY561_COUNT_PRIMES,
     &PY562_POWER_OF_THREE,
     &PY563_EXCEL_COL,
-    &PY564_SQRT_INT
+    &PY564_SQRT_INT,
+    &PY565_REVERSE_WORDS,
+    &PY566_LONGEST_COMMON_PREFIX,
+    &PY567_STR_STR,
+    &PY568_VALID_ANAGRAM,
+    &PY569_FIRST_UNIQ,
+    &PY570_ADD_BINARY
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -16128,7 +16384,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 564);
+            assert!(step.micro_step >= 1 && step.micro_step <= 570);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -17766,7 +18022,109 @@ mod tests {
 
 
 
-            (564, "py-564-sqrt-int", None),
+            (564, "py-564-sqrt-int", Some("py-565-reverse-words")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (565, "py-565-reverse-words", Some("py-566-longest-common-prefix")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (566, "py-566-longest-common-prefix", Some("py-567-str-str")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (567, "py-567-str-str", Some("py-568-valid-anagram")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (568, "py-568-valid-anagram", Some("py-569-first-uniq")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (569, "py-569-first-uniq", Some("py-570-add-binary")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (570, "py-570-add-binary", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

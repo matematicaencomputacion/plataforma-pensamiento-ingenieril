@@ -149,7 +149,7 @@ test.describe("micro-steps 40–45 · Dictionaries family", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 564) {
+      if (nextMicro <= 570) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

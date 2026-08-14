@@ -570,6 +570,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 562, step_id: "py-562-power-of-three" },
   { level_id: 563, step_id: "py-563-excel-col" },
   { level_id: 564, step_id: "py-564-sqrt-int" },
+  { level_id: 565, step_id: "py-565-reverse-words" },
+  { level_id: 566, step_id: "py-566-longest-common-prefix" },
+  { level_id: 567, step_id: "py-567-str-str" },
+  { level_id: 568, step_id: "py-568-valid-anagram" },
+  { level_id: 569, step_id: "py-569-first-uniq" },
+  { level_id: 570, step_id: "py-570-add-binary" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
