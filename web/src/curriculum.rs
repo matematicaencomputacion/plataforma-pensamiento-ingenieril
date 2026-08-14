@@ -16875,7 +16875,460 @@ root.left = TreeNode(1); root.right = TreeNode(4)
 root.left.right = TreeNode(2)
 print(kth_smallest(root, 1))
 ",
-    next: None, show_type_chips: false, micro_step: 588,
+    next: Some("py-589-clone-graph"), show_type_chips: false, micro_step: 588,
+};
+
+
+pub const PY589_CLONE_GRAPH: CodingStep = CodingStep {
+    id: "py-589-clone-graph", title: "DSA Clone Graph", objective: "Clonar grafo.",
+    prompt_md: "**Clone Graph**
+
+Clonar grafo.
+
+**Micro-reto:**
+1. Definí `__init__(...)`
+2. Ejecutá el ejemplo del starter; imprimí `1 2 True`.",
+    starter_code: "# class Node:
+#     def __init__(self, val=0, neighbors=None):
+#         self.val = val
+#         self.neighbors = neighbors or []
+#
+# def clone_graph(node):
+#     if not node:
+#         return None
+#     mp = {}
+#     def dfs(n):
+#         if n in mp:
+#             return mp[n]
+#         c = Node(n.val)
+#         mp[n] = c
+#         c.neighbors = [dfs(x) for x in n.neighbors]
+#         return c
+#     return dfs(node)
+#
+# a = Node(1); b = Node(2)
+# a.neighbors = [b]; b.neighbors = [a]
+# c = clone_graph(a)
+# print(c.val, c.neighbors[0].val, c is not a)
+",
+    pytest: "def test_589_clone_graph(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('__init__'))
+    Node = ns['Node']
+    a = Node(1); b = Node(2); a.neighbors=[b]; b.neighbors=[a]
+    c = ns['clone_graph'](a)
+    assert c.val == 1 and c is not a and c.neighbors[0].val == 2
+    assert capsys.readouterr().out.strip() == '1 2 True'
+",
+    hint: "class Node:
+    def __init__(self, val=0, neighbors=None):
+        self.val = val
+        self.neighbors = neighbors or []
+
+def clone_graph(node):
+    if not node:
+        return None
+    mp = {}
+    def dfs(n):
+        if n in mp:
+            return mp[n]
+        c = Node(n.val)
+        mp[n] = c
+        c.neighbors = [dfs(x) for x in n.neighbors]
+        return c
+    return dfs(node)
+
+a = Node(1); b = Node(2)
+a.neighbors = [b]; b.neighbors = [a]
+c = clone_graph(a)
+print(c.val, c.neighbors[0].val, c is not a)
+",
+    solution_example: "class Node:
+    def __init__(self, val=0, neighbors=None):
+        self.val = val
+        self.neighbors = neighbors or []
+
+def clone_graph(node):
+    if not node:
+        return None
+    mp = {}
+    def dfs(n):
+        if n in mp:
+            return mp[n]
+        c = Node(n.val)
+        mp[n] = c
+        c.neighbors = [dfs(x) for x in n.neighbors]
+        return c
+    return dfs(node)
+
+a = Node(1); b = Node(2)
+a.neighbors = [b]; b.neighbors = [a]
+c = clone_graph(a)
+print(c.val, c.neighbors[0].val, c is not a)
+",
+    next: Some("py-590-course-schedule"), show_type_chips: false, micro_step: 589,
+};
+
+pub const PY590_COURSE_SCHEDULE: CodingStep = CodingStep {
+    id: "py-590-course-schedule", title: "DSA Course Schedule", objective: "¿Se pueden cursar?",
+    prompt_md: "**Course Schedule**
+
+¿Se pueden cursar?
+
+**Micro-reto:**
+1. Definí `can_finish(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def can_finish(num_courses, prereq):
+#     from collections import defaultdict
+#     g = defaultdict(list)
+#     indeg = [0] * num_courses
+#     for a, b in prereq:
+#         g[b].append(a); indeg[a] += 1
+#     q = [i for i in range(num_courses) if indeg[i] == 0]
+#     seen = 0
+#     while q:
+#         u = q.pop()
+#         seen += 1
+#         for v in g[u]:
+#             indeg[v] -= 1
+#             if indeg[v] == 0:
+#                 q.append(v)
+#     return seen == num_courses
+#
+# print(can_finish(2, [[1, 0]]))
+",
+    pytest: "def test_590_course_schedule(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('can_finish'))
+    assert ns['can_finish'](2, [[1, 0]]) is True
+    assert ns['can_finish'](2, [[1, 0], [0, 1]]) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def can_finish(num_courses, prereq):
+    from collections import defaultdict
+    g = defaultdict(list)
+    indeg = [0] * num_courses
+    for a, b in prereq:
+        g[b].append(a); indeg[a] += 1
+    q = [i for i in range(num_courses) if indeg[i] == 0]
+    seen = 0
+    while q:
+        u = q.pop()
+        seen += 1
+        for v in g[u]:
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                q.append(v)
+    return seen == num_courses
+
+print(can_finish(2, [[1, 0]]))
+",
+    solution_example: "def can_finish(num_courses, prereq):
+    from collections import defaultdict
+    g = defaultdict(list)
+    indeg = [0] * num_courses
+    for a, b in prereq:
+        g[b].append(a); indeg[a] += 1
+    q = [i for i in range(num_courses) if indeg[i] == 0]
+    seen = 0
+    while q:
+        u = q.pop()
+        seen += 1
+        for v in g[u]:
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                q.append(v)
+    return seen == num_courses
+
+print(can_finish(2, [[1, 0]]))
+",
+    next: Some("py-591-network-delay"), show_type_chips: false, micro_step: 590,
+};
+
+pub const PY591_NETWORK_DELAY: CodingStep = CodingStep {
+    id: "py-591-network-delay", title: "DSA Network Delay", objective: "Tiempo de delay Dijkstra.",
+    prompt_md: "**Network Delay**
+
+Tiempo de delay Dijkstra.
+
+**Micro-reto:**
+1. Definí `network_delay_time(...)`
+2. Ejecutá el ejemplo del starter; imprimí `2`.",
+    starter_code: "# def network_delay_time(times, n, k):
+#     import heapq
+#     from collections import defaultdict
+#     g = defaultdict(list)
+#     for u, v, w in times:
+#         g[u].append((v, w))
+#     dist = {k: 0}
+#     h = [(0, k)]
+#     while h:
+#         d, u = heapq.heappop(h)
+#         if d > dist.get(u, 10**9):
+#             continue
+#         for v, w in g[u]:
+#             nd = d + w
+#             if nd < dist.get(v, 10**9):
+#                 dist[v] = nd
+#                 heapq.heappush(h, (nd, v))
+#     return max(dist.values()) if len(dist) == n else -1
+#
+# print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))
+",
+    pytest: "def test_591_network_delay(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('network_delay_time'))
+    assert ns['network_delay_time']([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2) == 2
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def network_delay_time(times, n, k):
+    import heapq
+    from collections import defaultdict
+    g = defaultdict(list)
+    for u, v, w in times:
+        g[u].append((v, w))
+    dist = {k: 0}
+    h = [(0, k)]
+    while h:
+        d, u = heapq.heappop(h)
+        if d > dist.get(u, 10**9):
+            continue
+        for v, w in g[u]:
+            nd = d + w
+            if nd < dist.get(v, 10**9):
+                dist[v] = nd
+                heapq.heappush(h, (nd, v))
+    return max(dist.values()) if len(dist) == n else -1
+
+print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))
+",
+    solution_example: "def network_delay_time(times, n, k):
+    import heapq
+    from collections import defaultdict
+    g = defaultdict(list)
+    for u, v, w in times:
+        g[u].append((v, w))
+    dist = {k: 0}
+    h = [(0, k)]
+    while h:
+        d, u = heapq.heappop(h)
+        if d > dist.get(u, 10**9):
+            continue
+        for v, w in g[u]:
+            nd = d + w
+            if nd < dist.get(v, 10**9):
+                dist[v] = nd
+                heapq.heappush(h, (nd, v))
+    return max(dist.values()) if len(dist) == n else -1
+
+print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))
+",
+    next: Some("py-592-redundant-conn"), show_type_chips: false, micro_step: 591,
+};
+
+pub const PY592_REDUNDANT_CONN: CodingStep = CodingStep {
+    id: "py-592-redundant-conn", title: "DSA Redundant Conn", objective: "Arista extra Union-Find.",
+    prompt_md: "**Redundant Conn**
+
+Arista extra Union-Find.
+
+**Micro-reto:**
+1. Definí `find_redundant_connection(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[2, 3]`.",
+    starter_code: "# def find_redundant_connection(edges):
+#     p = list(range(len(edges) + 1))
+#     def find(x):
+#         while p[x] != x:
+#             p[x] = p[p[x]]
+#             x = p[x]
+#         return x
+#     for a, b in edges:
+#         pa, pb = find(a), find(b)
+#         if pa == pb:
+#             return [a, b]
+#         p[pa] = pb
+#     return []
+#
+# print(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))
+",
+    pytest: "def test_592_redundant_conn(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_redundant_connection'))
+    assert ns['find_redundant_connection']([[1, 2], [1, 3], [2, 3]]) == [2, 3]
+    assert capsys.readouterr().out.strip() == '[2, 3]'
+",
+    hint: "def find_redundant_connection(edges):
+    p = list(range(len(edges) + 1))
+    def find(x):
+        while p[x] != x:
+            p[x] = p[p[x]]
+            x = p[x]
+        return x
+    for a, b in edges:
+        pa, pb = find(a), find(b)
+        if pa == pb:
+            return [a, b]
+        p[pa] = pb
+    return []
+
+print(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))
+",
+    solution_example: "def find_redundant_connection(edges):
+    p = list(range(len(edges) + 1))
+    def find(x):
+        while p[x] != x:
+            p[x] = p[p[x]]
+            x = p[x]
+        return x
+    for a, b in edges:
+        pa, pb = find(a), find(b)
+        if pa == pb:
+            return [a, b]
+        p[pa] = pb
+    return []
+
+print(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))
+",
+    next: Some("py-593-valid-path"), show_type_chips: false, micro_step: 592,
+};
+
+pub const PY593_VALID_PATH: CodingStep = CodingStep {
+    id: "py-593-valid-path", title: "DSA Valid Path", objective: "Camino en grafo no dirigido.",
+    prompt_md: "**Valid Path**
+
+Camino en grafo no dirigido.
+
+**Micro-reto:**
+1. Definí `valid_path(...)`
+2. Ejecutá el ejemplo del starter; imprimí `True`.",
+    starter_code: "# def valid_path(n, edges, source, dest):
+#     from collections import defaultdict, deque
+#     g = defaultdict(list)
+#     for a, b in edges:
+#         g[a].append(b); g[b].append(a)
+#     seen = {source}
+#     q = deque([source])
+#     while q:
+#         u = q.popleft()
+#         if u == dest:
+#             return True
+#         for v in g[u]:
+#             if v not in seen:
+#                 seen.add(v); q.append(v)
+#     return False
+#
+# print(valid_path(3, [[0, 1], [1, 2], [2, 0]], 0, 2))
+",
+    pytest: "def test_593_valid_path(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('valid_path'))
+    assert ns['valid_path'](3, [[0, 1], [1, 2], [2, 0]], 0, 2) is True
+    assert ns['valid_path'](6, [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]], 0, 5) is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def valid_path(n, edges, source, dest):
+    from collections import defaultdict, deque
+    g = defaultdict(list)
+    for a, b in edges:
+        g[a].append(b); g[b].append(a)
+    seen = {source}
+    q = deque([source])
+    while q:
+        u = q.popleft()
+        if u == dest:
+            return True
+        for v in g[u]:
+            if v not in seen:
+                seen.add(v); q.append(v)
+    return False
+
+print(valid_path(3, [[0, 1], [1, 2], [2, 0]], 0, 2))
+",
+    solution_example: "def valid_path(n, edges, source, dest):
+    from collections import defaultdict, deque
+    g = defaultdict(list)
+    for a, b in edges:
+        g[a].append(b); g[b].append(a)
+    seen = {source}
+    q = deque([source])
+    while q:
+        u = q.popleft()
+        if u == dest:
+            return True
+        for v in g[u]:
+            if v not in seen:
+                seen.add(v); q.append(v)
+    return False
+
+print(valid_path(3, [[0, 1], [1, 2], [2, 0]], 0, 2))
+",
+    next: Some("py-594-all-paths"), show_type_chips: false, micro_step: 593,
+};
+
+pub const PY594_ALL_PATHS: CodingStep = CodingStep {
+    id: "py-594-all-paths", title: "DSA All Paths", objective: "Todos los paths 0→n-1 DAG.",
+    prompt_md: "**All Paths**
+
+Todos los paths 0→n-1 DAG.
+
+**Micro-reto:**
+1. Definí `all_paths_source_target(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[[0, 1, 3], [0, 2, 3]]`.",
+    starter_code: "# def all_paths_source_target(graph):
+#     res = []
+#     def dfs(u, path):
+#         if u == len(graph) - 1:
+#             res.append(path[:]); return
+#         for v in graph[u]:
+#             path.append(v)
+#             dfs(v, path)
+#             path.pop()
+#     dfs(0, [0])
+#     return res
+#
+# print(all_paths_source_target([[1, 2], [3], [3], []]))
+",
+    pytest: "def test_594_all_paths(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('all_paths_source_target'))
+    assert ns['all_paths_source_target']([[1, 2], [3], [3], []]) == [[0, 1, 3], [0, 2, 3]]
+    assert capsys.readouterr().out.strip() == '[[0, 1, 3], [0, 2, 3]]'
+",
+    hint: "def all_paths_source_target(graph):
+    res = []
+    def dfs(u, path):
+        if u == len(graph) - 1:
+            res.append(path[:]); return
+        for v in graph[u]:
+            path.append(v)
+            dfs(v, path)
+            path.pop()
+    dfs(0, [0])
+    return res
+
+print(all_paths_source_target([[1, 2], [3], [3], []]))
+",
+    solution_example: "def all_paths_source_target(graph):
+    res = []
+    def dfs(u, path):
+        if u == len(graph) - 1:
+            res.append(path[:]); return
+        for v in graph[u]:
+            path.append(v)
+            dfs(v, path)
+            path.pop()
+    dfs(0, [0])
+    return res
+
+print(all_paths_source_target([[1, 2], [3], [3], []]))
+",
+    next: None, show_type_chips: false, micro_step: 594,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -17466,7 +17919,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY585_DIAMETER_BT,
     &PY586_PATH_SUM,
     &PY587_SORTED_ARRAY_BST,
-    &PY588_KTH_SMALL_BST
+    &PY588_KTH_SMALL_BST,
+    &PY589_CLONE_GRAPH,
+    &PY590_COURSE_SCHEDULE,
+    &PY591_NETWORK_DELAY,
+    &PY592_REDUNDANT_CONN,
+    &PY593_VALID_PATH,
+    &PY594_ALL_PATHS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -17610,7 +18069,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 588);
+            assert!(step.micro_step >= 1 && step.micro_step <= 594);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -19692,7 +20151,133 @@ mod tests {
 
 
 
-            (588, "py-588-kth-small-bst", None),
+            (588, "py-588-kth-small-bst", Some("py-589-clone-graph")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (589, "py-589-clone-graph", Some("py-590-course-schedule")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (590, "py-590-course-schedule", Some("py-591-network-delay")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (591, "py-591-network-delay", Some("py-592-redundant-conn")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (592, "py-592-redundant-conn", Some("py-593-valid-path")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (593, "py-593-valid-path", Some("py-594-all-paths")),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (594, "py-594-all-paths", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

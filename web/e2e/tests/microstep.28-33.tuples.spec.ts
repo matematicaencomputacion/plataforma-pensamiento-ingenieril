@@ -155,7 +155,7 @@ test.describe("micro-steps 28–33 · Tuples family", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 588) {
+      if (nextMicro <= 594) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

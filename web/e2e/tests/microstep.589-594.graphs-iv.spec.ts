@@ -22,120 +22,166 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 161,
-    id: "py-161-reverse-list",
-    title: "DSA Reverse List",
-    solution: `def reverse_list(nums: list):
-    return nums[::-1]
-print(reverse_list([1, 2, 3, 4]))
-`,
-    nextUrl: /\/learn\/py-162-merge-sorted/,
-    cursorAfter: "162",
-  },
-  {
-    micro: 162,
-    id: "py-162-merge-sorted",
-    title: "DSA Merge Sorted Lists",
-    solution: `def merge_sorted(a, b):
-    result = []
-    i = j = 0
-    while i < len(a) and j < len(b):
-        if a[i] <= b[j]:
-            result.append(a[i])
-            i += 1
-        else:
-            result.append(b[j])
-            j += 1
-    return result + a[i:] + b[j:]
-print(merge_sorted([1, 2, 4], [1, 3, 4]))
-`,
-    nextUrl: /\/learn\/py-163-linked-cycle/,
-    cursorAfter: "163",
-  },
-  {
-    micro: 163,
-    id: "py-163-linked-cycle",
-    title: "DSA Linked List Cycle",
+    micro: 589,
+    id: "py-589-clone-graph",
+    title: "DSA Clone Graph",
     solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
+    def __init__(self, val=0, neighbors=None):
+        self.val = val
+        self.neighbors = neighbors or []
 
-def has_cycle(head):
-    slow = fast = head
-    while fast is not None and fast.next is not None:
-        slow = slow.next
-        fast = fast.next.next
-        if slow is fast:
+def clone_graph(node):
+    if not node:
+        return None
+    mp = {}
+    def dfs(n):
+        if n in mp:
+            return mp[n]
+        c = Node(n.val)
+        mp[n] = c
+        c.neighbors = [dfs(x) for x in n.neighbors]
+        return c
+    return dfs(node)
+
+a = Node(1); b = Node(2)
+a.neighbors = [b]; b.neighbors = [a]
+c = clone_graph(a)
+print(c.val, c.neighbors[0].val, c is not a)
+`,
+    nextUrl: /\/learn\/py-590-course-schedule/,
+    cursorAfter: "590",
+  },
+  {
+    micro: 590,
+    id: "py-590-course-schedule",
+    title: "DSA Course Schedule",
+    solution: `def can_finish(num_courses, prereq):
+    from collections import defaultdict
+    g = defaultdict(list)
+    indeg = [0] * num_courses
+    for a, b in prereq:
+        g[b].append(a); indeg[a] += 1
+    q = [i for i in range(num_courses) if indeg[i] == 0]
+    seen = 0
+    while q:
+        u = q.pop()
+        seen += 1
+        for v in g[u]:
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                q.append(v)
+    return seen == num_courses
+
+print(can_finish(2, [[1, 0]]))
+`,
+    nextUrl: /\/learn\/py-591-network-delay/,
+    cursorAfter: "591",
+  },
+  {
+    micro: 591,
+    id: "py-591-network-delay",
+    title: "DSA Network Delay",
+    solution: `def network_delay_time(times, n, k):
+    import heapq
+    from collections import defaultdict
+    g = defaultdict(list)
+    for u, v, w in times:
+        g[u].append((v, w))
+    dist = {k: 0}
+    h = [(0, k)]
+    while h:
+        d, u = heapq.heappop(h)
+        if d > dist.get(u, 10**9):
+            continue
+        for v, w in g[u]:
+            nd = d + w
+            if nd < dist.get(v, 10**9):
+                dist[v] = nd
+                heapq.heappush(h, (nd, v))
+    return max(dist.values()) if len(dist) == n else -1
+
+print(network_delay_time([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2))
+`,
+    nextUrl: /\/learn\/py-592-redundant-conn/,
+    cursorAfter: "592",
+  },
+  {
+    micro: 592,
+    id: "py-592-redundant-conn",
+    title: "DSA Redundant Conn",
+    solution: `def find_redundant_connection(edges):
+    p = list(range(len(edges) + 1))
+    def find(x):
+        while p[x] != x:
+            p[x] = p[p[x]]
+            x = p[x]
+        return x
+    for a, b in edges:
+        pa, pb = find(a), find(b)
+        if pa == pb:
+            return [a, b]
+        p[pa] = pb
+    return []
+
+print(find_redundant_connection([[1, 2], [1, 3], [2, 3]]))
+`,
+    nextUrl: /\/learn\/py-593-valid-path/,
+    cursorAfter: "593",
+  },
+  {
+    micro: 593,
+    id: "py-593-valid-path",
+    title: "DSA Valid Path",
+    solution: `def valid_path(n, edges, source, dest):
+    from collections import defaultdict, deque
+    g = defaultdict(list)
+    for a, b in edges:
+        g[a].append(b); g[b].append(a)
+    seen = {source}
+    q = deque([source])
+    while q:
+        u = q.popleft()
+        if u == dest:
             return True
+        for v in g[u]:
+            if v not in seen:
+                seen.add(v); q.append(v)
     return False
 
-node1 = Node(3)
-node2 = Node(2)
-node3 = Node(0)
-node4 = Node(-4)
-node1.next = node2
-node2.next = node3
-node3.next = node4
-node4.next = node2
-print(has_cycle(node1))
+print(valid_path(3, [[0, 1], [1, 2], [2, 0]], 0, 2))
 `,
-    nextUrl: /\/learn\/py-164-valid-palindrome/,
-    cursorAfter: "164",
+    nextUrl: /\/learn\/py-594-all-paths/,
+    cursorAfter: "594",
   },
   {
-    micro: 164,
-    id: "py-164-valid-palindrome",
-    title: "DSA Valid Palindrome",
-    solution: `def is_palindrome(s):
-    cleaned = ''.join(ch.casefold() for ch in s if ch.isalnum())
-    return cleaned == cleaned[::-1]
-print(is_palindrome('A man, a plan, a canal: Panama'))
+    micro: 594,
+    id: "py-594-all-paths",
+    title: "DSA All Paths",
+    solution: `def all_paths_source_target(graph):
+    res = []
+    def dfs(u, path):
+        if u == len(graph) - 1:
+            res.append(path[:]); return
+        for v in graph[u]:
+            path.append(v)
+            dfs(v, path)
+            path.pop()
+    dfs(0, [0])
+    return res
+
+print(all_paths_source_target([[1, 2], [3], [3], []]))
 `,
-    nextUrl: /\/learn\/py-165-common-prefix/,
-    cursorAfter: "165",
-  },
-  {
-    micro: 165,
-    id: "py-165-common-prefix",
-    title: "DSA Longest Common Prefix",
-    solution: `def longest_common_prefix(strs):
-    if not strs:
-        return ''
-    prefix = strs[0]
-    for word in strs[1:]:
-        while not word.startswith(prefix):
-            prefix = prefix[:-1]
-            if not prefix:
-                return ''
-    return prefix
-print(longest_common_prefix(['flower', 'flow', 'flight']))
-`,
-    nextUrl: /\/learn\/py-166-roman-to-int/,
-    cursorAfter: "166",
-  },
-  {
-    micro: 166,
-    id: "py-166-roman-to-int",
-    title: "DSA Roman to Integer",
-    solution: `def roman_to_int(s):
-    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
-    total = 0
-    previous = 0
-    for symbol in reversed(s):
-        value = values[symbol]
-        if value < previous:
-            total -= value
-        else:
-            total += value
-            previous = value
-    return total
-print(roman_to_int('MCMXCIV'))
-`,
-    nextUrl: /\/learn\/py-167-invert-tree/,
-    cursorAfter: "167",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "595",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:589|590|591|592|593|594)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -162,7 +208,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 161–166 · lists / strings", () => {
+test.describe("micro-steps 589–594 · graphs IV", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
