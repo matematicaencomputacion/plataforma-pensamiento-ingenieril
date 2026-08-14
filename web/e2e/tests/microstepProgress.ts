@@ -894,6 +894,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 886, step_id: "py-886-prefix-sums-v-lower-boundary" },
   { level_id: 887, step_id: "py-887-prefix-sums-v-dependency-order" },
   { level_id: 888, step_id: "py-888-prefix-sums-v-minimum-transition" },
+  { level_id: 889, step_id: "py-889-difference-arrays-ii-canonicalize" },
+  { level_id: 890, step_id: "py-890-difference-arrays-ii-prefix-state" },
+  { level_id: 891, step_id: "py-891-difference-arrays-ii-bounded-window" },
+  { level_id: 892, step_id: "py-892-difference-arrays-ii-lower-boundary" },
+  { level_id: 893, step_id: "py-893-difference-arrays-ii-dependency-order" },
+  { level_id: 894, step_id: "py-894-difference-arrays-ii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
