@@ -546,6 +546,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 538, step_id: "py-538-first-bad" },
   { level_id: 539, step_id: "py-539-search-range" },
   { level_id: 540, step_id: "py-540-koko-bananas" },
+  { level_id: 541, step_id: "py-541-max-vowels" },
+  { level_id: 542, step_id: "py-542-longest-ones" },
+  { level_id: 543, step_id: "py-543-min-window" },
+  { level_id: 544, step_id: "py-544-find-anagrams" },
+  { level_id: 545, step_id: "py-545-max-sliding" },
+  { level_id: 546, step_id: "py-546-length-k-distinct" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

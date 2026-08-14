@@ -14096,7 +14096,406 @@ print(min_eating_speed([3, 6, 7, 11], 8))
 
 print(min_eating_speed([3, 6, 7, 11], 8))
 ",
-    next: None, show_type_chips: false, micro_step: 540,
+    next: Some("py-541-max-vowels"), show_type_chips: false, micro_step: 540,
+};
+
+
+pub const PY541_MAX_VOWELS: CodingStep = CodingStep {
+    id: "py-541-max-vowels", title: "DSA Max Vowels", objective: "Máx vocales en k.",
+    prompt_md: "**Max Vowels**
+
+Máx vocales en k.
+
+**Micro-reto:**
+1. Definí `max_vowels(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3`.",
+    starter_code: "# def max_vowels(s, k):
+#     vowels = set(\"aeiou\")
+#     cur = sum(1 for c in s[:k] if c in vowels)
+#     best = cur
+#     for i in range(k, len(s)):
+#         cur += (s[i] in vowels) - (s[i - k] in vowels)
+#         best = max(best, cur)
+#     return best
+#
+# print(max_vowels(\"abciiidef\", 3))
+",
+    pytest: "def test_541_max_vowels(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_vowels'))
+    assert ns['max_vowels']('abciiidef', 3) == 3
+    assert ns['max_vowels']('aeiou', 2) == 2
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def max_vowels(s, k):
+    vowels = set(\"aeiou\")
+    cur = sum(1 for c in s[:k] if c in vowels)
+    best = cur
+    for i in range(k, len(s)):
+        cur += (s[i] in vowels) - (s[i - k] in vowels)
+        best = max(best, cur)
+    return best
+
+print(max_vowels(\"abciiidef\", 3))
+",
+    solution_example: "def max_vowels(s, k):
+    vowels = set(\"aeiou\")
+    cur = sum(1 for c in s[:k] if c in vowels)
+    best = cur
+    for i in range(k, len(s)):
+        cur += (s[i] in vowels) - (s[i - k] in vowels)
+        best = max(best, cur)
+    return best
+
+print(max_vowels(\"abciiidef\", 3))
+",
+    next: Some("py-542-longest-ones"), show_type_chips: false, micro_step: 541,
+};
+
+pub const PY542_LONGEST_ONES: CodingStep = CodingStep {
+    id: "py-542-longest-ones", title: "DSA Longest Ones", objective: "Max 1s flipping k zeros.",
+    prompt_md: "**Longest Ones**
+
+Max 1s flipping k zeros.
+
+**Micro-reto:**
+1. Definí `longest_ones(...)`
+2. Ejecutá el ejemplo del starter; imprimí `6`.",
+    starter_code: "# def longest_ones(nums, k):
+#     i = zeros = best = 0
+#     for j, x in enumerate(nums):
+#         zeros += x == 0
+#         while zeros > k:
+#             zeros -= nums[i] == 0
+#             i += 1
+#         best = max(best, j - i + 1)
+#     return best
+#
+# print(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))
+",
+    pytest: "def test_542_longest_ones(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('longest_ones'))
+    assert ns['longest_ones']([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2) == 6
+    assert capsys.readouterr().out.strip() == '6'
+",
+    hint: "def longest_ones(nums, k):
+    i = zeros = best = 0
+    for j, x in enumerate(nums):
+        zeros += x == 0
+        while zeros > k:
+            zeros -= nums[i] == 0
+            i += 1
+        best = max(best, j - i + 1)
+    return best
+
+print(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))
+",
+    solution_example: "def longest_ones(nums, k):
+    i = zeros = best = 0
+    for j, x in enumerate(nums):
+        zeros += x == 0
+        while zeros > k:
+            zeros -= nums[i] == 0
+            i += 1
+        best = max(best, j - i + 1)
+    return best
+
+print(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))
+",
+    next: Some("py-543-min-window"), show_type_chips: false, micro_step: 542,
+};
+
+pub const PY543_MIN_WINDOW: CodingStep = CodingStep {
+    id: "py-543-min-window", title: "DSA Min Window", objective: "Mínima ventana que cubre t.",
+    prompt_md: "**Min Window**
+
+Mínima ventana que cubre t.
+
+**Micro-reto:**
+1. Definí `min_window(...)`
+2. Ejecutá el ejemplo del starter; imprimí `BANC`.",
+    starter_code: "# def min_window(s, t):
+#     from collections import Counter
+#     need = Counter(t)
+#     missing = len(t)
+#     i = start = 0
+#     best = (float(\"inf\"), 0, 0)
+#     for j, ch in enumerate(s, 1):
+#         if need[ch] > 0:
+#             missing -= 1
+#         need[ch] -= 1
+#         if missing == 0:
+#             while i < j and need[s[i]] < 0:
+#                 need[s[i]] += 1
+#                 i += 1
+#             if j - i < best[0]:
+#                 best = (j - i, i, j)
+#             need[s[i]] += 1
+#             missing += 1
+#             i += 1
+#     return \"\" if best[0] == float(\"inf\") else s[best[1]:best[2]]
+#
+# print(min_window(\"ADOBECODEBANC\", \"ABC\"))
+",
+    pytest: "def test_543_min_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('min_window'))
+    assert ns['min_window']('ADOBECODEBANC', 'ABC') == 'BANC'
+    assert capsys.readouterr().out.strip() == 'BANC'
+",
+    hint: "def min_window(s, t):
+    from collections import Counter
+    need = Counter(t)
+    missing = len(t)
+    i = start = 0
+    best = (float(\"inf\"), 0, 0)
+    for j, ch in enumerate(s, 1):
+        if need[ch] > 0:
+            missing -= 1
+        need[ch] -= 1
+        if missing == 0:
+            while i < j and need[s[i]] < 0:
+                need[s[i]] += 1
+                i += 1
+            if j - i < best[0]:
+                best = (j - i, i, j)
+            need[s[i]] += 1
+            missing += 1
+            i += 1
+    return \"\" if best[0] == float(\"inf\") else s[best[1]:best[2]]
+
+print(min_window(\"ADOBECODEBANC\", \"ABC\"))
+",
+    solution_example: "def min_window(s, t):
+    from collections import Counter
+    need = Counter(t)
+    missing = len(t)
+    i = start = 0
+    best = (float(\"inf\"), 0, 0)
+    for j, ch in enumerate(s, 1):
+        if need[ch] > 0:
+            missing -= 1
+        need[ch] -= 1
+        if missing == 0:
+            while i < j and need[s[i]] < 0:
+                need[s[i]] += 1
+                i += 1
+            if j - i < best[0]:
+                best = (j - i, i, j)
+            need[s[i]] += 1
+            missing += 1
+            i += 1
+    return \"\" if best[0] == float(\"inf\") else s[best[1]:best[2]]
+
+print(min_window(\"ADOBECODEBANC\", \"ABC\"))
+",
+    next: Some("py-544-find-anagrams"), show_type_chips: false, micro_step: 543,
+};
+
+pub const PY544_FIND_ANAGRAMS: CodingStep = CodingStep {
+    id: "py-544-find-anagrams", title: "DSA Find Anagrams", objective: "Índices de anagramas.",
+    prompt_md: "**Find Anagrams**
+
+Índices de anagramas.
+
+**Micro-reto:**
+1. Definí `find_anagrams(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[0, 6]`.",
+    starter_code: "# def find_anagrams(s, p):
+#     from collections import Counter
+#     need, cur = Counter(p), Counter()
+#     k, res = len(p), []
+#     for i, ch in enumerate(s):
+#         cur[ch] += 1
+#         if i >= k:
+#             old = s[i - k]
+#             cur[old] -= 1
+#             if cur[old] == 0:
+#                 del cur[old]
+#         if i >= k - 1 and cur == need:
+#             res.append(i - k + 1)
+#     return res
+#
+# print(find_anagrams(\"cbaebabacd\", \"abc\"))
+",
+    pytest: "def test_544_find_anagrams(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_anagrams'))
+    assert ns['find_anagrams']('cbaebabacd', 'abc') == [0, 6]
+    assert capsys.readouterr().out.strip() == '[0, 6]'
+",
+    hint: "def find_anagrams(s, p):
+    from collections import Counter
+    need, cur = Counter(p), Counter()
+    k, res = len(p), []
+    for i, ch in enumerate(s):
+        cur[ch] += 1
+        if i >= k:
+            old = s[i - k]
+            cur[old] -= 1
+            if cur[old] == 0:
+                del cur[old]
+        if i >= k - 1 and cur == need:
+            res.append(i - k + 1)
+    return res
+
+print(find_anagrams(\"cbaebabacd\", \"abc\"))
+",
+    solution_example: "def find_anagrams(s, p):
+    from collections import Counter
+    need, cur = Counter(p), Counter()
+    k, res = len(p), []
+    for i, ch in enumerate(s):
+        cur[ch] += 1
+        if i >= k:
+            old = s[i - k]
+            cur[old] -= 1
+            if cur[old] == 0:
+                del cur[old]
+        if i >= k - 1 and cur == need:
+            res.append(i - k + 1)
+    return res
+
+print(find_anagrams(\"cbaebabacd\", \"abc\"))
+",
+    next: Some("py-545-max-sliding"), show_type_chips: false, micro_step: 544,
+};
+
+pub const PY545_MAX_SLIDING: CodingStep = CodingStep {
+    id: "py-545-max-sliding", title: "DSA Max Sliding", objective: "Máximo por ventana k.",
+    prompt_md: "**Max Sliding**
+
+Máximo por ventana k.
+
+**Micro-reto:**
+1. Definí `max_sliding_window(...)`
+2. Ejecutá el ejemplo del starter; imprimí `[3, 3, 5, 5, 6, 7]`.",
+    starter_code: "# def max_sliding_window(nums, k):
+#     from collections import deque
+#     q, out = deque(), []
+#     for i, x in enumerate(nums):
+#         while q and nums[q[-1]] <= x:
+#             q.pop()
+#         q.append(i)
+#         if q[0] <= i - k:
+#             q.popleft()
+#         if i >= k - 1:
+#             out.append(nums[q[0]])
+#     return out
+#
+# print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
+",
+    pytest: "def test_545_max_sliding(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_sliding_window'))
+    assert ns['max_sliding_window']([1, 3, -1, -3, 5, 3, 6, 7], 3) == [3, 3, 5, 5, 6, 7]
+    assert capsys.readouterr().out.strip() == '[3, 3, 5, 5, 6, 7]'
+",
+    hint: "def max_sliding_window(nums, k):
+    from collections import deque
+    q, out = deque(), []
+    for i, x in enumerate(nums):
+        while q and nums[q[-1]] <= x:
+            q.pop()
+        q.append(i)
+        if q[0] <= i - k:
+            q.popleft()
+        if i >= k - 1:
+            out.append(nums[q[0]])
+    return out
+
+print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
+",
+    solution_example: "def max_sliding_window(nums, k):
+    from collections import deque
+    q, out = deque(), []
+    for i, x in enumerate(nums):
+        while q and nums[q[-1]] <= x:
+            q.pop()
+        q.append(i)
+        if q[0] <= i - k:
+            q.popleft()
+        if i >= k - 1:
+            out.append(nums[q[0]])
+    return out
+
+print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
+",
+    next: Some("py-546-length-k-distinct"), show_type_chips: false, micro_step: 545,
+};
+
+pub const PY546_LENGTH_K_DISTINCT: CodingStep = CodingStep {
+    id: "py-546-length-k-distinct", title: "DSA K Distinct", objective: "Max substring con k distinct.",
+    prompt_md: "**K Distinct**
+
+Max substring con k distinct.
+
+**Micro-reto:**
+1. Definí `length_of_longest_substring_k_distinct(...)`
+2. Ejecutá el ejemplo del starter; imprimí `3`.",
+    starter_code: "# def length_of_longest_substring_k_distinct(s, k):
+#     from collections import defaultdict
+#     cnt = defaultdict(int)
+#     i = best = 0
+#     for j, ch in enumerate(s):
+#         cnt[ch] += 1
+#         while len(cnt) > k:
+#             cnt[s[i]] -= 1
+#             if cnt[s[i]] == 0:
+#                 del cnt[s[i]]
+#             i += 1
+#         best = max(best, j - i + 1)
+#     return best
+#
+# print(length_of_longest_substring_k_distinct(\"eceba\", 2))
+",
+    pytest: "def test_546_length_k_distinct(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('length_of_longest_substring_k_distinct'))
+    assert ns['length_of_longest_substring_k_distinct']('eceba', 2) == 3
+    assert ns['length_of_longest_substring_k_distinct']('aa', 1) == 2
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def length_of_longest_substring_k_distinct(s, k):
+    from collections import defaultdict
+    cnt = defaultdict(int)
+    i = best = 0
+    for j, ch in enumerate(s):
+        cnt[ch] += 1
+        while len(cnt) > k:
+            cnt[s[i]] -= 1
+            if cnt[s[i]] == 0:
+                del cnt[s[i]]
+            i += 1
+        best = max(best, j - i + 1)
+    return best
+
+print(length_of_longest_substring_k_distinct(\"eceba\", 2))
+",
+    solution_example: "def length_of_longest_substring_k_distinct(s, k):
+    from collections import defaultdict
+    cnt = defaultdict(int)
+    i = best = 0
+    for j, ch in enumerate(s):
+        cnt[ch] += 1
+        while len(cnt) > k:
+            cnt[s[i]] -= 1
+            if cnt[s[i]] == 0:
+                del cnt[s[i]]
+            i += 1
+        best = max(best, j - i + 1)
+    return best
+
+print(length_of_longest_substring_k_distinct(\"eceba\", 2))
+",
+    next: None, show_type_chips: false, micro_step: 546,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -14639,7 +15038,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY537_PEAK_INDEX,
     &PY538_FIRST_BAD,
     &PY539_SEARCH_RANGE,
-    &PY540_KOKO_BANANAS
+    &PY540_KOKO_BANANAS,
+    &PY541_MAX_VOWELS,
+    &PY542_LONGEST_ONES,
+    &PY543_MIN_WINDOW,
+    &PY544_FIND_ANAGRAMS,
+    &PY545_MAX_SLIDING,
+    &PY546_LENGTH_K_DISTINCT
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -14783,7 +15188,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 540);
+            assert!(step.micro_step >= 1 && step.micro_step <= 546);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -16073,7 +16478,85 @@ mod tests {
 
 
 
-            (540, "py-540-koko-bananas", None),
+            (540, "py-540-koko-bananas", Some("py-541-max-vowels")),
+
+
+
+
+
+
+
+
+
+
+
+
+            (541, "py-541-max-vowels", Some("py-542-longest-ones")),
+
+
+
+
+
+
+
+
+
+
+
+
+            (542, "py-542-longest-ones", Some("py-543-min-window")),
+
+
+
+
+
+
+
+
+
+
+
+
+            (543, "py-543-min-window", Some("py-544-find-anagrams")),
+
+
+
+
+
+
+
+
+
+
+
+
+            (544, "py-544-find-anagrams", Some("py-545-max-sliding")),
+
+
+
+
+
+
+
+
+
+
+
+
+            (545, "py-545-max-sliding", Some("py-546-length-k-distinct")),
+
+
+
+
+
+
+
+
+
+
+
+
+            (546, "py-546-length-k-distinct", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
