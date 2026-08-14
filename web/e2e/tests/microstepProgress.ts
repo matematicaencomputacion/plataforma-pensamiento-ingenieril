@@ -708,6 +708,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 700, step_id: "py-700-reverse-pairs" },
   { level_id: 701, step_id: "py-701-count-smaller" },
   { level_id: 702, step_id: "py-702-fenwick-kth" },
+  { level_id: 703, step_id: "py-703-segtree-sum" },
+  { level_id: 704, step_id: "py-704-segtree-min" },
+  { level_id: 705, step_id: "py-705-segtree-max" },
+  { level_id: 706, step_id: "py-706-segtree-xor" },
+  { level_id: 707, step_id: "py-707-segtree-kth" },
+  { level_id: 708, step_id: "py-708-lazy-segtree" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
