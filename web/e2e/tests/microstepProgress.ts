@@ -828,6 +828,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 820, step_id: "py-820-trie-iv-lower-boundary" },
   { level_id: 821, step_id: "py-821-trie-iv-dependency-order" },
   { level_id: 822, step_id: "py-822-trie-iv-minimum-transition" },
+  { level_id: 823, step_id: "py-823-heaps-v-canonicalize" },
+  { level_id: 824, step_id: "py-824-heaps-v-prefix-state" },
+  { level_id: 825, step_id: "py-825-heaps-v-bounded-window" },
+  { level_id: 826, step_id: "py-826-heaps-v-lower-boundary" },
+  { level_id: 827, step_id: "py-827-heaps-v-dependency-order" },
+  { level_id: 828, step_id: "py-828-heaps-v-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
