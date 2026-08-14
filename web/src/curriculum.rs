@@ -18761,7 +18761,475 @@ def longest_subarray(nums, limit):
 
 print(longest_subarray([8, 2, 4, 7], 4))
 ",
-    next: None, show_type_chips: false, micro_step: 618,
+    next: Some("py-619-equations-possible"), show_type_chips: false, micro_step: 618,
+};
+
+
+pub const PY619_EQUATIONS_POSSIBLE: CodingStep = CodingStep {
+    id: "py-619-equations-possible", title: "DSA Union-Find IV · Equations", objective: "Validar ecuaciones de igualdad y desigualdad con componentes conexas.",
+    prompt_md: "**Satisfiability of Equality Equations**
+
+Uní las igualdades primero; una desigualdad entre la misma componente invalida.
+
+**Micro-reto:**
+1. Definí `equations_possible(equations)`
+2. Ejecutá el ejemplo; imprimí `False`.",
+    starter_code: "# def equations_possible(equations):
+#     parent = list(range(26))
+#     def find(x):
+#         while parent[x] != x:
+#             parent[x] = parent[parent[x]]
+#             x = parent[x]
+#         return x
+#     for eq in equations:
+#         if eq[1] == '=':
+#             parent[find(ord(eq[0]) - 97)] = find(ord(eq[3]) - 97)
+#     for eq in equations:
+#         if eq[1] == '!' and find(ord(eq[0]) - 97) == find(ord(eq[3]) - 97):
+#             return False
+#     return True
+#
+# print(equations_possible(['a==b', 'b!=a']))
+",
+    pytest: "def test_619_equations_possible(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('equations_possible'))
+    assert ns['equations_possible'](['a==b', 'b!=a']) is False
+    assert ns['equations_possible'](['b==a', 'a==b']) is True
+    assert ns['equations_possible'](['a==b', 'b==c', 'a==c']) is True
+    assert capsys.readouterr().out.strip() == 'False'
+",
+    hint: "def equations_possible(equations):
+    parent = list(range(26))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for eq in equations:
+        if eq[1] == '=':
+            parent[find(ord(eq[0]) - 97)] = find(ord(eq[3]) - 97)
+    for eq in equations:
+        if eq[1] == '!' and find(ord(eq[0]) - 97) == find(ord(eq[3]) - 97):
+            return False
+    return True
+
+print(equations_possible(['a==b', 'b!=a']))
+",
+    solution_example: "def equations_possible(equations):
+    parent = list(range(26))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for eq in equations:
+        if eq[1] == '=':
+            parent[find(ord(eq[0]) - 97)] = find(ord(eq[3]) - 97)
+    for eq in equations:
+        if eq[1] == '!' and find(ord(eq[0]) - 97) == find(ord(eq[3]) - 97):
+            return False
+    return True
+
+print(equations_possible(['a==b', 'b!=a']))
+",
+    next: Some("py-620-smallest-string-swaps"), show_type_chips: false, micro_step: 619,
+};
+
+pub const PY620_SMALLEST_STRING_SWAPS: CodingStep = CodingStep {
+    id: "py-620-smallest-string-swaps", title: "DSA Union-Find IV · Swap Letters", objective: "Menor string alcanzable intercambiando pares de índices.",
+    prompt_md: "**Smallest String With Swaps**
+
+Cada componente se puede reordenar: ordená caracteres y posiciones.
+
+**Micro-reto:**
+1. Definí `smallest_string_with_swaps(s, pairs)`
+2. Ejecutá el ejemplo; imprimí `bacd`.",
+    starter_code: "# from collections import defaultdict
+#
+# def smallest_string_with_swaps(s, pairs):
+#     n = len(s)
+#     parent = list(range(n))
+#     def find(x):
+#         while parent[x] != x:
+#             parent[x] = parent[parent[x]]
+#             x = parent[x]
+#         return x
+#     for a, b in pairs:
+#         parent[find(a)] = find(b)
+#     groups = defaultdict(list)
+#     for i in range(n):
+#         groups[find(i)].append(i)
+#     out = list(s)
+#     for idxs in groups.values():
+#         chars = sorted(out[i] for i in idxs)
+#         for i, ch in zip(sorted(idxs), chars):
+#             out[i] = ch
+#     return ''.join(out)
+#
+# print(smallest_string_with_swaps('dcab', [[0, 3], [1, 2]]))
+",
+    pytest: "def test_620_smallest_string_swaps(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('smallest_string_with_swaps'))
+    assert ns['smallest_string_with_swaps']('dcab', [[0, 3], [1, 2]]) == 'bacd'
+    assert ns['smallest_string_with_swaps']('dcab', [[0, 3], [1, 2], [0, 2]]) == 'abcd'
+    assert capsys.readouterr().out.strip() == 'bacd'
+",
+    hint: "from collections import defaultdict
+
+def smallest_string_with_swaps(s, pairs):
+    n = len(s)
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for a, b in pairs:
+        parent[find(a)] = find(b)
+    groups = defaultdict(list)
+    for i in range(n):
+        groups[find(i)].append(i)
+    out = list(s)
+    for idxs in groups.values():
+        chars = sorted(out[i] for i in idxs)
+        for i, ch in zip(sorted(idxs), chars):
+            out[i] = ch
+    return ''.join(out)
+
+print(smallest_string_with_swaps('dcab', [[0, 3], [1, 2]]))
+",
+    solution_example: "from collections import defaultdict
+
+def smallest_string_with_swaps(s, pairs):
+    n = len(s)
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for a, b in pairs:
+        parent[find(a)] = find(b)
+    groups = defaultdict(list)
+    for i in range(n):
+        groups[find(i)].append(i)
+    out = list(s)
+    for idxs in groups.values():
+        chars = sorted(out[i] for i in idxs)
+        for i, ch in zip(sorted(idxs), chars):
+            out[i] = ch
+    return ''.join(out)
+
+print(smallest_string_with_swaps('dcab', [[0, 3], [1, 2]]))
+",
+    next: Some("py-621-provinces"), show_type_chips: false, micro_step: 620,
+};
+
+pub const PY621_PROVINCES: CodingStep = CodingStep {
+    id: "py-621-provinces", title: "DSA Union-Find IV · Provinces", objective: "Contar provincias (componentes) en una matriz de adyacencia.",
+    prompt_md: "**Number of Provinces**
+
+Uní i-j cuando is_connected[i][j] == 1; el resultado es el número de raíces.
+
+**Micro-reto:**
+1. Definí `find_circle_num(is_connected)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# def find_circle_num(is_connected):
+#     n = len(is_connected)
+#     parent = list(range(n))
+#     def find(x):
+#         while parent[x] != x:
+#             parent[x] = parent[parent[x]]
+#             x = parent[x]
+#         return x
+#     for i in range(n):
+#         for j in range(i + 1, n):
+#             if is_connected[i][j]:
+#                 parent[find(i)] = find(j)
+#     return len({find(i) for i in range(n)})
+#
+# print(find_circle_num([[1, 1, 0], [1, 1, 0], [0, 0, 1]]))
+",
+    pytest: "def test_621_provinces(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_circle_num'))
+    assert ns['find_circle_num']([[1, 1, 0], [1, 1, 0], [0, 0, 1]]) == 2
+    assert ns['find_circle_num']([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) == 3
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def find_circle_num(is_connected):
+    n = len(is_connected)
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for i in range(n):
+        for j in range(i + 1, n):
+            if is_connected[i][j]:
+                parent[find(i)] = find(j)
+    return len({find(i) for i in range(n)})
+
+print(find_circle_num([[1, 1, 0], [1, 1, 0], [0, 0, 1]]))
+",
+    solution_example: "def find_circle_num(is_connected):
+    n = len(is_connected)
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for i in range(n):
+        for j in range(i + 1, n):
+            if is_connected[i][j]:
+                parent[find(i)] = find(j)
+    return len({find(i) for i in range(n)})
+
+print(find_circle_num([[1, 1, 0], [1, 1, 0], [0, 0, 1]]))
+",
+    next: Some("py-622-stones-removed"), show_type_chips: false, micro_step: 621,
+};
+
+pub const PY622_STONES_REMOVED: CodingStep = CodingStep {
+    id: "py-622-stones-removed", title: "DSA Union-Find IV · Stones Removed", objective: "Máximo de piedras removibles si comparten fila o columna.",
+    prompt_md: "**Most Stones Removed**
+
+Uní piedras que comparten fila/columna; se pueden dejar una por componente.
+
+**Micro-reto:**
+1. Definí `remove_stones(stones)`
+2. Ejecutá el ejemplo; imprimí `5`.",
+    starter_code: "# def remove_stones(stones):
+#     parent = {}
+#     def find(x):
+#         parent.setdefault(x, x)
+#         while parent[x] != x:
+#             parent[x] = parent[parent[x]]
+#             x = parent[x]
+#         return x
+#     def union(a, b):
+#         parent[find(a)] = find(b)
+#     for r, c in stones:
+#         union(r, ~c)
+#     return len(stones) - len({find(r) for r, c in stones})
+#
+# print(remove_stones([[0, 0], [0, 1], [1, 0], [1, 2], [2, 1], [2, 2]]))
+",
+    pytest: "def test_622_stones_removed(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('remove_stones'))
+    assert ns['remove_stones']([[0, 0], [0, 1], [1, 0], [1, 2], [2, 1], [2, 2]]) == 5
+    assert ns['remove_stones']([[0, 0], [0, 2], [1, 1], [2, 0], [2, 2]]) == 3
+    assert capsys.readouterr().out.strip() == '5'
+",
+    hint: "def remove_stones(stones):
+    parent = {}
+    def find(x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    def union(a, b):
+        parent[find(a)] = find(b)
+    for r, c in stones:
+        union(r, ~c)
+    return len(stones) - len({find(r) for r, c in stones})
+
+print(remove_stones([[0, 0], [0, 1], [1, 0], [1, 2], [2, 1], [2, 2]]))
+",
+    solution_example: "def remove_stones(stones):
+    parent = {}
+    def find(x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    def union(a, b):
+        parent[find(a)] = find(b)
+    for r, c in stones:
+        union(r, ~c)
+    return len(stones) - len({find(r) for r, c in stones})
+
+print(remove_stones([[0, 0], [0, 1], [1, 0], [1, 2], [2, 1], [2, 2]]))
+",
+    next: Some("py-623-similar-string-groups"), show_type_chips: false, micro_step: 622,
+};
+
+pub const PY623_SIMILAR_STRING_GROUPS: CodingStep = CodingStep {
+    id: "py-623-similar-string-groups", title: "DSA Union-Find IV · Similar Groups", objective: "Agrupar strings que difieren en a lo sumo dos posiciones.",
+    prompt_md: "**Similar String Groups**
+
+Uní anagramas-swap: si dos palabras son similares, pertenecen al mismo grupo.
+
+**Micro-reto:**
+1. Definí `num_similar_groups(strs)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# def num_similar_groups(strs):
+#     n = len(strs)
+#     parent = list(range(n))
+#     def find(x):
+#         while parent[x] != x:
+#             parent[x] = parent[parent[x]]
+#             x = parent[x]
+#         return x
+#     def similar(a, b):
+#         diff = 0
+#         for x, y in zip(a, b):
+#             if x != y:
+#                 diff += 1
+#                 if diff > 2:
+#                     return False
+#         return diff in (0, 2)
+#     for i in range(n):
+#         for j in range(i + 1, n):
+#             if similar(strs[i], strs[j]):
+#                 parent[find(i)] = find(j)
+#     return len({find(i) for i in range(n)})
+#
+# print(num_similar_groups(['tars', 'rats', 'arts', 'star']))
+",
+    pytest: "def test_623_similar_string_groups(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('num_similar_groups'))
+    assert ns['num_similar_groups'](['tars', 'rats', 'arts', 'star']) == 2
+    assert ns['num_similar_groups'](['omv', 'ovm']) == 1
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def num_similar_groups(strs):
+    n = len(strs)
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    def similar(a, b):
+        diff = 0
+        for x, y in zip(a, b):
+            if x != y:
+                diff += 1
+                if diff > 2:
+                    return False
+        return diff in (0, 2)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if similar(strs[i], strs[j]):
+                parent[find(i)] = find(j)
+    return len({find(i) for i in range(n)})
+
+print(num_similar_groups(['tars', 'rats', 'arts', 'star']))
+",
+    solution_example: "def num_similar_groups(strs):
+    n = len(strs)
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    def similar(a, b):
+        diff = 0
+        for x, y in zip(a, b):
+            if x != y:
+                diff += 1
+                if diff > 2:
+                    return False
+        return diff in (0, 2)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if similar(strs[i], strs[j]):
+                parent[find(i)] = find(j)
+    return len({find(i) for i in range(n)})
+
+print(num_similar_groups(['tars', 'rats', 'arts', 'star']))
+",
+    next: Some("py-624-graph-valid-tree"), show_type_chips: false, micro_step: 623,
+};
+
+pub const PY624_GRAPH_VALID_TREE: CodingStep = CodingStep {
+    id: "py-624-graph-valid-tree", title: "DSA Union-Find IV · Valid Tree", objective: "Decidir si n nodos y edges forman un árbol.",
+    prompt_md: "**Graph Valid Tree**
+
+Un árbol tiene n-1 aristas y no introduce ciclos al unir.
+
+**Micro-reto:**
+1. Definí `valid_tree(n, edges)`
+2. Ejecutá el ejemplo; imprimí `True`.",
+    starter_code: "# def valid_tree(n, edges):
+#     if len(edges) != n - 1:
+#         return False
+#     parent = list(range(n))
+#     def find(x):
+#         while parent[x] != x:
+#             parent[x] = parent[parent[x]]
+#             x = parent[x]
+#         return x
+#     for a, b in edges:
+#         ra, rb = find(a), find(b)
+#         if ra == rb:
+#             return False
+#         parent[rb] = ra
+#     return True
+#
+# print(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))
+",
+    pytest: "def test_624_graph_valid_tree(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('valid_tree'))
+    assert ns['valid_tree'](5, [[0, 1], [0, 2], [0, 3], [1, 4]]) is True
+    assert ns['valid_tree'](5, [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]]) is False
+    assert ns['valid_tree'](1, []) is True
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def valid_tree(n, edges):
+    if len(edges) != n - 1:
+        return False
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for a, b in edges:
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return False
+        parent[rb] = ra
+    return True
+
+print(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))
+",
+    solution_example: "def valid_tree(n, edges):
+    if len(edges) != n - 1:
+        return False
+    parent = list(range(n))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+    for a, b in edges:
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return False
+        parent[rb] = ra
+    return True
+
+print(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))
+",
+    next: None, show_type_chips: false, micro_step: 624,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -19382,7 +19850,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY615_SHORTEST_SUBARRAY,
     &PY616_CONSTRAINED_SUBSEQ,
     &PY617_JUMP_GAME_VI,
-    &PY618_LONGEST_CONT_SUBARRAY
+    &PY618_LONGEST_CONT_SUBARRAY,
+    &PY619_EQUATIONS_POSSIBLE,
+    &PY620_SMALLEST_STRING_SWAPS,
+    &PY621_PROVINCES,
+    &PY622_STONES_REMOVED,
+    &PY623_SIMILAR_STRING_GROUPS,
+    &PY624_GRAPH_VALID_TREE
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -19526,7 +20000,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 618);
+            assert!(step.micro_step >= 1 && step.micro_step <= 624);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -21884,7 +22358,13 @@ mod tests {
             (615, "py-615-shortest-subarray", Some("py-616-constrained-subseq")),
             (616, "py-616-constrained-subseq", Some("py-617-jump-game-vi")),
             (617, "py-617-jump-game-vi", Some("py-618-longest-cont-subarray")),
-            (618, "py-618-longest-cont-subarray", None),
+            (618, "py-618-longest-cont-subarray", Some("py-619-equations-possible")),
+            (619, "py-619-equations-possible", Some("py-620-smallest-string-swaps")),
+            (620, "py-620-smallest-string-swaps", Some("py-621-provinces")),
+            (621, "py-621-provinces", Some("py-622-stones-removed")),
+            (622, "py-622-stones-removed", Some("py-623-similar-string-groups")),
+            (623, "py-623-similar-string-groups", Some("py-624-graph-valid-tree")),
+            (624, "py-624-graph-valid-tree", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

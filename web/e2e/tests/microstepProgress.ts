@@ -624,6 +624,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 616, step_id: "py-616-constrained-subseq" },
   { level_id: 617, step_id: "py-617-jump-game-vi" },
   { level_id: 618, step_id: "py-618-longest-cont-subarray" },
+  { level_id: 619, step_id: "py-619-equations-possible" },
+  { level_id: 620, step_id: "py-620-smallest-string-swaps" },
+  { level_id: 621, step_id: "py-621-provinces" },
+  { level_id: 622, step_id: "py-622-stones-removed" },
+  { level_id: 623, step_id: "py-623-similar-string-groups" },
+  { level_id: 624, step_id: "py-624-graph-valid-tree" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
