@@ -936,6 +936,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 928, step_id: "py-928-binary-lifting-ii-lower-boundary" },
   { level_id: 929, step_id: "py-929-binary-lifting-ii-dependency-order" },
   { level_id: 930, step_id: "py-930-binary-lifting-ii-minimum-transition" },
+  { level_id: 931, step_id: "py-931-string-matching-iii-canonicalize" },
+  { level_id: 932, step_id: "py-932-string-matching-iii-prefix-state" },
+  { level_id: 933, step_id: "py-933-string-matching-iii-bounded-window" },
+  { level_id: 934, step_id: "py-934-string-matching-iii-lower-boundary" },
+  { level_id: 935, step_id: "py-935-string-matching-iii-dependency-order" },
+  { level_id: 936, step_id: "py-936-string-matching-iii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
