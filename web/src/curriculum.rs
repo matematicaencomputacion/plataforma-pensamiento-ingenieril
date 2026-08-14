@@ -24294,8 +24294,420 @@ def remove_zero_sum_sublists(head):
 
 print(to_list(remove_zero_sum_sublists(from_list([1, 2, -3, 3, 1]))))
 ",
-    next: None, show_type_chips: false, micro_step: 684,
+    next: Some("py-685-furthest-building"), show_type_chips: false, micro_step: 684,
 };
+
+pub const PY685_FURTHEST_BUILDING: CodingStep = CodingStep {
+    id: "py-685-furthest-building", title: "DSA Heaps IV · Furthest Building", objective: "Llegar lo más lejos posible usando ladrillos para los saltos chicos y escaleras para los grandes.",
+    prompt_md: "**Furthest Building You Can Reach**
+
+Min-heap de climbs; si hay más climbs que ladders, el más chico se paga con bricks.
+
+**Micro-reto:**
+1. Definí `furthest_building(heights, bricks, ladders)`
+2. Ejecutá `[4, 2, 7, 6, 9, 14, 12]`, 5 ladrillos, 1 escalera; imprimí `4`.",
+    starter_code: "# import heapq
+#
+# def furthest_building(heights, bricks, ladders):
+#     climbs = []
+#     for i in range(len(heights) - 1):
+#         d = heights[i + 1] - heights[i]
+#         if d <= 0:
+#             continue
+#         heapq.heappush(climbs, d)
+#         if len(climbs) > ladders:
+#             bricks -= heapq.heappop(climbs)
+#             if bricks < 0:
+#                 return i
+#     return len(heights) - 1
+#
+# print(furthest_building([4, 2, 7, 6, 9, 14, 12], 5, 1))
+",
+    pytest: "def test_685_furthest_building(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('furthest_building'))
+    assert ns['furthest_building']([4, 2, 7, 6, 9, 14, 12], 5, 1) == 4
+    assert ns['furthest_building']([4, 12, 2, 7, 3, 18, 20, 3, 19], 10, 2) == 7
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "import heapq
+
+def furthest_building(heights, bricks, ladders):
+    climbs = []
+    for i in range(len(heights) - 1):
+        d = heights[i + 1] - heights[i]
+        if d <= 0:
+            continue
+        heapq.heappush(climbs, d)
+        if len(climbs) > ladders:
+            bricks -= heapq.heappop(climbs)
+            if bricks < 0:
+                return i
+    return len(heights) - 1
+
+print(furthest_building([4, 2, 7, 6, 9, 14, 12], 5, 1))
+",
+    solution_example: "import heapq
+
+def furthest_building(heights, bricks, ladders):
+    climbs = []
+    for i in range(len(heights) - 1):
+        d = heights[i + 1] - heights[i]
+        if d <= 0:
+            continue
+        heapq.heappush(climbs, d)
+        if len(climbs) > ladders:
+            bricks -= heapq.heappop(climbs)
+            if bricks < 0:
+                return i
+    return len(heights) - 1
+
+print(furthest_building([4, 2, 7, 6, 9, 14, 12], 5, 1))
+",
+    next: Some("py-686-k-smallest-pairs"), show_type_chips: false, micro_step: 685,
+};
+
+pub const PY686_K_SMALLEST_PAIRS: CodingStep = CodingStep {
+    id: "py-686-k-smallest-pairs", title: "DSA Heaps IV · K Pairs", objective: "k pares de suma mínima tomados de dos arrays ordenados.",
+    prompt_md: "**Find K Pairs with Smallest Sums**
+
+Min-heap de (suma, i, j); avanzá i sobre nums1 para cada j inicial.
+
+**Micro-reto:**
+1. Definí `k_smallest_pairs(nums1, nums2, k)`
+2. Ejecutá `[1, 7, 11]`, `[2, 4, 6]`, k=3; imprimí `[[1, 2], [1, 4], [1, 6]]`.",
+    starter_code: "# import heapq
+#
+# def k_smallest_pairs(nums1, nums2, k):
+#     if not nums1 or not nums2:
+#         return []
+#     h = [(nums1[0] + nums2[j], 0, j) for j in range(min(k, len(nums2)))]
+#     heapq.heapify(h)
+#     out = []
+#     while h and len(out) < k:
+#         _, i, j = heapq.heappop(h)
+#         out.append([nums1[i], nums2[j]])
+#         if i + 1 < len(nums1):
+#             heapq.heappush(h, (nums1[i + 1] + nums2[j], i + 1, j))
+#     return out
+#
+# print(k_smallest_pairs([1, 7, 11], [2, 4, 6], 3))
+",
+    pytest: "def test_686_k_smallest_pairs(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('k_smallest_pairs'))
+    assert ns['k_smallest_pairs']([1, 7, 11], [2, 4, 6], 3) == [[1, 2], [1, 4], [1, 6]]
+    assert ns['k_smallest_pairs']([1, 1, 2], [1, 2, 3], 2) == [[1, 1], [1, 1]]
+    assert capsys.readouterr().out.strip() == '[[1, 2], [1, 4], [1, 6]]'
+",
+    hint: "import heapq
+
+def k_smallest_pairs(nums1, nums2, k):
+    if not nums1 or not nums2:
+        return []
+    h = [(nums1[0] + nums2[j], 0, j) for j in range(min(k, len(nums2)))]
+    heapq.heapify(h)
+    out = []
+    while h and len(out) < k:
+        _, i, j = heapq.heappop(h)
+        out.append([nums1[i], nums2[j]])
+        if i + 1 < len(nums1):
+            heapq.heappush(h, (nums1[i + 1] + nums2[j], i + 1, j))
+    return out
+
+print(k_smallest_pairs([1, 7, 11], [2, 4, 6], 3))
+",
+    solution_example: "import heapq
+
+def k_smallest_pairs(nums1, nums2, k):
+    if not nums1 or not nums2:
+        return []
+    h = [(nums1[0] + nums2[j], 0, j) for j in range(min(k, len(nums2)))]
+    heapq.heapify(h)
+    out = []
+    while h and len(out) < k:
+        _, i, j = heapq.heappop(h)
+        out.append([nums1[i], nums2[j]])
+        if i + 1 < len(nums1):
+            heapq.heappush(h, (nums1[i + 1] + nums2[j], i + 1, j))
+    return out
+
+print(k_smallest_pairs([1, 7, 11], [2, 4, 6], 3))
+",
+    next: Some("py-687-kth-largest-stream"), show_type_chips: false, micro_step: 686,
+};
+
+pub const PY687_KTH_LARGEST_STREAM: CodingStep = CodingStep {
+    id: "py-687-kth-largest-stream", title: "DSA Heaps IV · Kth Stream", objective: "Mantener el k-ésimo mayor de un stream con un min-heap de tamaño k.",
+    prompt_md: "**Kth Largest Element in a Stream**
+
+Clase `KthLargest(k, nums)` con `add(val)` que devuelve el k-ésimo mayor actual.
+
+**Micro-reto:**
+1. Definí `class KthLargest`
+2. k=3, nums=`[4, 5, 8, 2]`; add 3,5,10,9,4; imprimí `[4, 5, 5, 8, 8]`.",
+    starter_code: "# import heapq
+#
+# class KthLargest:
+#     def __init__(self, k, nums):
+#         self.k = k
+#         self.h = list(nums)
+#         heapq.heapify(self.h)
+#         while len(self.h) > k:
+#             heapq.heappop(self.h)
+#     def add(self, val):
+#         heapq.heappush(self.h, val)
+#         if len(self.h) > self.k:
+#             heapq.heappop(self.h)
+#         return self.h[0]
+#
+# kth = KthLargest(3, [4, 5, 8, 2])
+# print([kth.add(3), kth.add(5), kth.add(10), kth.add(9), kth.add(4)])
+",
+    pytest: "def test_687_kth_largest_stream(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert 'KthLargest' in ns
+    kth = ns['KthLargest'](3, [4, 5, 8, 2])
+    assert [kth.add(3), kth.add(5), kth.add(10), kth.add(9), kth.add(4)] == [4, 5, 5, 8, 8]
+    assert capsys.readouterr().out.strip() == '[4, 5, 5, 8, 8]'
+",
+    hint: "import heapq
+
+class KthLargest:
+    def __init__(self, k, nums):
+        self.k = k
+        self.h = list(nums)
+        heapq.heapify(self.h)
+        while len(self.h) > k:
+            heapq.heappop(self.h)
+    def add(self, val):
+        heapq.heappush(self.h, val)
+        if len(self.h) > self.k:
+            heapq.heappop(self.h)
+        return self.h[0]
+
+kth = KthLargest(3, [4, 5, 8, 2])
+print([kth.add(3), kth.add(5), kth.add(10), kth.add(9), kth.add(4)])
+",
+    solution_example: "import heapq
+
+class KthLargest:
+    def __init__(self, k, nums):
+        self.k = k
+        self.h = list(nums)
+        heapq.heapify(self.h)
+        while len(self.h) > k:
+            heapq.heappop(self.h)
+    def add(self, val):
+        heapq.heappush(self.h, val)
+        if len(self.h) > self.k:
+            heapq.heappop(self.h)
+        return self.h[0]
+
+kth = KthLargest(3, [4, 5, 8, 2])
+print([kth.add(3), kth.add(5), kth.add(10), kth.add(9), kth.add(4)])
+",
+    next: Some("py-688-connect-sticks"), show_type_chips: false, micro_step: 687,
+};
+
+pub const PY688_CONNECT_STICKS: CodingStep = CodingStep {
+    id: "py-688-connect-sticks", title: "DSA Heaps IV · Connect Sticks", objective: "Costo mínimo de unir palos: siempre fusionar los dos más cortos.",
+    prompt_md: "**Minimum Cost to Connect Sticks**
+
+Min-heap: sacá dos, sumá el costo, reinsertá el palo combinado.
+
+**Micro-reto:**
+1. Definí `connect_sticks(sticks)`
+2. Ejecutá `[2, 4, 3]`; imprimí `14`.",
+    starter_code: "# import heapq
+#
+# def connect_sticks(sticks):
+#     heapq.heapify(sticks)
+#     cost = 0
+#     while len(sticks) > 1:
+#         a = heapq.heappop(sticks)
+#         b = heapq.heappop(sticks)
+#         s = a + b
+#         cost += s
+#         heapq.heappush(sticks, s)
+#     return cost
+#
+# print(connect_sticks([2, 4, 3]))
+",
+    pytest: "def test_688_connect_sticks(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('connect_sticks'))
+    assert ns['connect_sticks']([2, 4, 3]) == 14
+    assert ns['connect_sticks']([1, 8, 3, 5]) == 30
+    assert capsys.readouterr().out.strip() == '14'
+",
+    hint: "import heapq
+
+def connect_sticks(sticks):
+    heapq.heapify(sticks)
+    cost = 0
+    while len(sticks) > 1:
+        a = heapq.heappop(sticks)
+        b = heapq.heappop(sticks)
+        s = a + b
+        cost += s
+        heapq.heappush(sticks, s)
+    return cost
+
+print(connect_sticks([2, 4, 3]))
+",
+    solution_example: "import heapq
+
+def connect_sticks(sticks):
+    heapq.heapify(sticks)
+    cost = 0
+    while len(sticks) > 1:
+        a = heapq.heappop(sticks)
+        b = heapq.heappop(sticks)
+        s = a + b
+        cost += s
+        heapq.heappush(sticks, s)
+    return cost
+
+print(connect_sticks([2, 4, 3]))
+",
+    next: Some("py-689-ipo"), show_type_chips: false, micro_step: 688,
+};
+
+pub const PY689_IPO: CodingStep = CodingStep {
+    id: "py-689-ipo", title: "DSA Heaps IV · IPO", objective: "Maximizar capital eligiendo hasta k proyectos asequibles (max-heap de profits).",
+    prompt_md: "**IPO**
+
+Ordená por capital; empujá profits asequibles a un max-heap y tomá el mejor k veces.
+
+**Micro-reto:**
+1. Definí `find_maximized_capital(k, w, profits, capital)`
+2. k=2, w=0, profits=`[1, 2, 3]`, capital=`[0, 1, 1]`; imprimí `4`.",
+    starter_code: "# import heapq
+#
+# def find_maximized_capital(k, w, profits, capital):
+#     projects = sorted(zip(capital, profits))
+#     i, h = 0, []
+#     for _ in range(k):
+#         while i < len(projects) and projects[i][0] <= w:
+#             heapq.heappush(h, -projects[i][1])
+#             i += 1
+#         if not h:
+#             break
+#         w += -heapq.heappop(h)
+#     return w
+#
+# print(find_maximized_capital(2, 0, [1, 2, 3], [0, 1, 1]))
+",
+    pytest: "def test_689_ipo(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('find_maximized_capital'))
+    assert ns['find_maximized_capital'](2, 0, [1, 2, 3], [0, 1, 1]) == 4
+    assert ns['find_maximized_capital'](3, 0, [1, 2, 3], [0, 1, 2]) == 6
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "import heapq
+
+def find_maximized_capital(k, w, profits, capital):
+    projects = sorted(zip(capital, profits))
+    i, h = 0, []
+    for _ in range(k):
+        while i < len(projects) and projects[i][0] <= w:
+            heapq.heappush(h, -projects[i][1])
+            i += 1
+        if not h:
+            break
+        w += -heapq.heappop(h)
+    return w
+
+print(find_maximized_capital(2, 0, [1, 2, 3], [0, 1, 1]))
+",
+    solution_example: "import heapq
+
+def find_maximized_capital(k, w, profits, capital):
+    projects = sorted(zip(capital, profits))
+    i, h = 0, []
+    for _ in range(k):
+        while i < len(projects) and projects[i][0] <= w:
+            heapq.heappush(h, -projects[i][1])
+            i += 1
+        if not h:
+            break
+        w += -heapq.heappop(h)
+    return w
+
+print(find_maximized_capital(2, 0, [1, 2, 3], [0, 1, 1]))
+",
+    next: Some("py-690-frequency-sort"), show_type_chips: false, micro_step: 689,
+};
+
+pub const PY690_FREQUENCY_SORT: CodingStep = CodingStep {
+    id: "py-690-frequency-sort", title: "DSA Heaps IV · Frequency Sort", objective: "Ordenar caracteres por frecuencia decreciente con un heap.",
+    prompt_md: "**Sort Characters By Frequency**
+
+Counter + max-heap `(-count, char)`; desempatá lexicográficamente por el propio char.
+
+**Micro-reto:**
+1. Definí `frequency_sort(s)`
+2. Ejecutá `tree`; imprimí `eetr` (o `eert` si tu heap desempatá al revés — el test acepta el heap `(-c, ch)` → `eetr`).",
+    starter_code: "# import heapq
+# from collections import Counter
+#
+# def frequency_sort(s):
+#     h = [(-c, ch) for ch, c in Counter(s).items()]
+#     heapq.heapify(h)
+#     out = []
+#     while h:
+#         c, ch = heapq.heappop(h)
+#         out.append(ch * (-c))
+#     return ''.join(out)
+#
+# print(frequency_sort(\"tree\"))
+",
+    pytest: "def test_690_frequency_sort(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('frequency_sort'))
+    assert ns['frequency_sort']('tree') == 'eetr'
+    assert ns['frequency_sort']('cccaaa') in ('aaaccc', 'cccaaa')
+    assert capsys.readouterr().out.strip() == 'eetr'
+",
+    hint: "import heapq
+from collections import Counter
+
+def frequency_sort(s):
+    h = [(-c, ch) for ch, c in Counter(s).items()]
+    heapq.heapify(h)
+    out = []
+    while h:
+        c, ch = heapq.heappop(h)
+        out.append(ch * (-c))
+    return ''.join(out)
+
+print(frequency_sort(\"tree\"))
+",
+    solution_example: "import heapq
+from collections import Counter
+
+def frequency_sort(s):
+    h = [(-c, ch) for ch, c in Counter(s).items()]
+    heapq.heapify(h)
+    out = []
+    while h:
+        c, ch = heapq.heappop(h)
+        out.append(ch * (-c))
+    return ''.join(out)
+
+print(frequency_sort(\"tree\"))
+",
+    next: None, show_type_chips: false, micro_step: 690,
+};
+
 
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -24982,7 +25394,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY681_PARTITION_LIST,
     &PY682_SPLIT_LIST_PARTS,
     &PY683_ADD_TWO_NUMBERS_II,
-    &PY684_REMOVE_ZERO_SUM
+    &PY684_REMOVE_ZERO_SUM,
+    &PY685_FURTHEST_BUILDING,
+    &PY686_K_SMALLEST_PAIRS,
+    &PY687_KTH_LARGEST_STREAM,
+    &PY688_CONNECT_STICKS,
+    &PY689_IPO,
+    &PY690_FREQUENCY_SORT
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -25126,7 +25544,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 684);
+            assert!(step.micro_step >= 1 && step.micro_step <= 690);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -27550,7 +27968,13 @@ mod tests {
             (681, "py-681-partition-list", Some("py-682-split-list-parts")),
             (682, "py-682-split-list-parts", Some("py-683-add-two-numbers-ii")),
             (683, "py-683-add-two-numbers-ii", Some("py-684-remove-zero-sum")),
-            (684, "py-684-remove-zero-sum", None),
+            (684, "py-684-remove-zero-sum", Some("py-685-furthest-building")),
+            (685, "py-685-furthest-building", Some("py-686-k-smallest-pairs")),
+            (686, "py-686-k-smallest-pairs", Some("py-687-kth-largest-stream")),
+            (687, "py-687-kth-largest-stream", Some("py-688-connect-sticks")),
+            (688, "py-688-connect-sticks", Some("py-689-ipo")),
+            (689, "py-689-ipo", Some("py-690-frequency-sort")),
+            (690, "py-690-frequency-sort", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
