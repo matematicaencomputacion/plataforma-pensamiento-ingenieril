@@ -660,6 +660,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 652, step_id: "py-652-longest-common-subseq" },
   { level_id: 653, step_id: "py-653-wildcard-match" },
   { level_id: 654, step_id: "py-654-longest-palindrome-subseq" },
+  { level_id: 655, step_id: "py-655-num-islands" },
+  { level_id: 656, step_id: "py-656-max-area-island" },
+  { level_id: 657, step_id: "py-657-surrounded-regions" },
+  { level_id: 658, step_id: "py-658-update-matrix" },
+  { level_id: 659, step_id: "py-659-shortest-bridge" },
+  { level_id: 660, step_id: "py-660-pacific-atlantic" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
