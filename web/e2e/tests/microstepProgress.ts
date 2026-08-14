@@ -954,6 +954,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 946, step_id: "py-946-suffix-structures-i-lower-boundary" },
   { level_id: 947, step_id: "py-947-suffix-structures-i-dependency-order" },
   { level_id: 948, step_id: "py-948-suffix-structures-i-minimum-transition" },
+  { level_id: 949, step_id: "py-949-network-flow-i-canonicalize" },
+  { level_id: 950, step_id: "py-950-network-flow-i-prefix-state" },
+  { level_id: 951, step_id: "py-951-network-flow-i-bounded-window" },
+  { level_id: 952, step_id: "py-952-network-flow-i-lower-boundary" },
+  { level_id: 953, step_id: "py-953-network-flow-i-dependency-order" },
+  { level_id: 954, step_id: "py-954-network-flow-i-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
