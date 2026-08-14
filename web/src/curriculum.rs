@@ -22888,7 +22888,535 @@ def max_path_sum(root):
 
 print(max_path_sum(TreeNode(-10, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))))
 ",
-    next: None, show_type_chips: false, micro_step: 672,
+    next: Some("py-673-search-bst"), show_type_chips: false, micro_step: 672,
+};
+
+pub const PY673_SEARCH_BST: CodingStep = CodingStep {
+    id: "py-673-search-bst", title: "DSA BST VI · Search", objective: "Buscar un valor en un BST y devolver el subárbol (o None).",
+    prompt_md: "**Search in a Binary Search Tree**
+
+Bajás izquierda o derecha según el valor; no hace falta recorrer todo el árbol.
+
+**Micro-reto:**
+1. Definí `search_bst(root, val)` con nodos `TreeNode(val, left, right)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def search_bst(root, val):
+#     if not root or root.val == val:
+#         return root
+#     if val < root.val:
+#         return search_bst(root.left, val)
+#     return search_bst(root.right, val)
+#
+# print(search_bst(TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(7)), 2).val)
+",
+    pytest: "def test_673_search_bst(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('search_bst'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(7))
+    assert ns['search_bst'](root, 2).val == 2
+    assert ns['search_bst'](root, 5) is None
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def search_bst(root, val):
+    if not root or root.val == val:
+        return root
+    if val < root.val:
+        return search_bst(root.left, val)
+    return search_bst(root.right, val)
+
+print(search_bst(TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(7)), 2).val)
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def search_bst(root, val):
+    if not root or root.val == val:
+        return root
+    if val < root.val:
+        return search_bst(root.left, val)
+    return search_bst(root.right, val)
+
+print(search_bst(TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(7)), 2).val)
+",
+    next: Some("py-674-insert-bst"), show_type_chips: false, micro_step: 673,
+};
+
+pub const PY674_INSERT_BST: CodingStep = CodingStep {
+    id: "py-674-insert-bst", title: "DSA BST VI · Insert", objective: "Insertar un valor como hoja respetando el invariante BST.",
+    prompt_md: "**Insert into a Binary Search Tree**
+
+Recursión: si `val` es menor, insertás a la izquierda; si no, a la derecha.
+
+**Micro-reto:**
+1. Definí `insert_into_bst(root, val)` y un `inorder(root)`
+2. Insertá `5` en el ejemplo; imprimí `[1, 2, 3, 4, 5, 7]`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def insert_into_bst(root, val):
+#     if not root:
+#         return TreeNode(val)
+#     if val < root.val:
+#         root.left = insert_into_bst(root.left, val)
+#     else:
+#         root.right = insert_into_bst(root.right, val)
+#     return root
+#
+# def inorder(root):
+#     return inorder(root.left) + [root.val] + inorder(root.right) if root else []
+#
+# root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(7))
+# print(inorder(insert_into_bst(root, 5)))
+",
+    pytest: "def test_674_insert_bst(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('insert_into_bst'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(7))
+    ns['insert_into_bst'](root, 5)
+    def inorder(n):
+        return inorder(n.left) + [n.val] + inorder(n.right) if n else []
+    assert inorder(root) == [1, 2, 3, 4, 5, 7]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3, 4, 5, 7]'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def insert_into_bst(root, val):
+    if not root:
+        return TreeNode(val)
+    if val < root.val:
+        root.left = insert_into_bst(root.left, val)
+    else:
+        root.right = insert_into_bst(root.right, val)
+    return root
+
+def inorder(root):
+    return inorder(root.left) + [root.val] + inorder(root.right) if root else []
+
+root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(7))
+print(inorder(insert_into_bst(root, 5)))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def insert_into_bst(root, val):
+    if not root:
+        return TreeNode(val)
+    if val < root.val:
+        root.left = insert_into_bst(root.left, val)
+    else:
+        root.right = insert_into_bst(root.right, val)
+    return root
+
+def inorder(root):
+    return inorder(root.left) + [root.val] + inorder(root.right) if root else []
+
+root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(7))
+print(inorder(insert_into_bst(root, 5)))
+",
+    next: Some("py-675-delete-bst"), show_type_chips: false, micro_step: 674,
+};
+
+pub const PY675_DELETE_BST: CodingStep = CodingStep {
+    id: "py-675-delete-bst", title: "DSA BST VI · Delete", objective: "Borrar un nodo BST reemplazando con el sucesor inorder si hace falta.",
+    prompt_md: "**Delete Node in a BST**
+
+Tres casos: hoja, un hijo, o dos hijos (copiá el sucesor y borralo del subárbol derecho). El inorder resultante es único.
+
+**Micro-reto:**
+1. Definí `delete_node(root, key)` y `inorder(root)`
+2. Borrá `3` del ejemplo; imprimí `[2, 4, 5, 6, 7]`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def delete_node(root, key):
+#     if not root:
+#         return None
+#     if key < root.val:
+#         root.left = delete_node(root.left, key)
+#     elif key > root.val:
+#         root.right = delete_node(root.right, key)
+#     else:
+#         if not root.left:
+#             return root.right
+#         if not root.right:
+#             return root.left
+#         succ = root.right
+#         while succ.left:
+#             succ = succ.left
+#         root.val = succ.val
+#         root.right = delete_node(root.right, succ.val)
+#     return root
+#
+# def inorder(root):
+#     return inorder(root.left) + [root.val] + inorder(root.right) if root else []
+#
+# root = TreeNode(5, TreeNode(3, TreeNode(2), TreeNode(4)), TreeNode(6, None, TreeNode(7)))
+# print(inorder(delete_node(root, 3)))
+",
+    pytest: "def test_675_delete_bst(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('delete_node'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(5, TreeNode(3, TreeNode(2), TreeNode(4)), TreeNode(6, None, TreeNode(7)))
+    ns['delete_node'](root, 3)
+    def inorder(n):
+        return inorder(n.left) + [n.val] + inorder(n.right) if n else []
+    assert inorder(root) == [2, 4, 5, 6, 7]
+    assert capsys.readouterr().out.strip() == '[2, 4, 5, 6, 7]'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def delete_node(root, key):
+    if not root:
+        return None
+    if key < root.val:
+        root.left = delete_node(root.left, key)
+    elif key > root.val:
+        root.right = delete_node(root.right, key)
+    else:
+        if not root.left:
+            return root.right
+        if not root.right:
+            return root.left
+        succ = root.right
+        while succ.left:
+            succ = succ.left
+        root.val = succ.val
+        root.right = delete_node(root.right, succ.val)
+    return root
+
+def inorder(root):
+    return inorder(root.left) + [root.val] + inorder(root.right) if root else []
+
+root = TreeNode(5, TreeNode(3, TreeNode(2), TreeNode(4)), TreeNode(6, None, TreeNode(7)))
+print(inorder(delete_node(root, 3)))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def delete_node(root, key):
+    if not root:
+        return None
+    if key < root.val:
+        root.left = delete_node(root.left, key)
+    elif key > root.val:
+        root.right = delete_node(root.right, key)
+    else:
+        if not root.left:
+            return root.right
+        if not root.right:
+            return root.left
+        succ = root.right
+        while succ.left:
+            succ = succ.left
+        root.val = succ.val
+        root.right = delete_node(root.right, succ.val)
+    return root
+
+def inorder(root):
+    return inorder(root.left) + [root.val] + inorder(root.right) if root else []
+
+root = TreeNode(5, TreeNode(3, TreeNode(2), TreeNode(4)), TreeNode(6, None, TreeNode(7)))
+print(inorder(delete_node(root, 3)))
+",
+    next: Some("py-676-sorted-array-bst"), show_type_chips: false, micro_step: 675,
+};
+
+pub const PY676_SORTED_ARRAY_BST: CodingStep = CodingStep {
+    id: "py-676-sorted-array-bst", title: "DSA BST VI · Sorted Array", objective: "Construir un BST height-balanced tomando el medio como raíz.",
+    prompt_md: "**Convert Sorted Array to BST**
+
+El medio `(lo+hi)//2` es la raíz; izquierda y derecha son subarrays.
+
+**Micro-reto:**
+1. Definí `sorted_array_to_bst(nums)`
+2. Ejecutá `[-10, -3, 0, 5, 9]`; imprimí `[0, -10, 5]`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def sorted_array_to_bst(nums):
+#     def build(lo, hi):
+#         if lo > hi:
+#             return None
+#         mid = (lo + hi) // 2
+#         return TreeNode(nums[mid], build(lo, mid - 1), build(mid + 1, hi))
+#     return build(0, len(nums) - 1)
+#
+# root = sorted_array_to_bst([-10, -3, 0, 5, 9])
+# print([root.val, root.left.val, root.right.val])
+",
+    pytest: "def test_676_sorted_array_bst(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('sorted_array_to_bst'))
+    root = ns['sorted_array_to_bst']([-10, -3, 0, 5, 9])
+    assert [root.val, root.left.val, root.right.val] == [0, -10, 5]
+    def inorder(n):
+        return inorder(n.left) + [n.val] + inorder(n.right) if n else []
+    assert inorder(root) == [-10, -3, 0, 5, 9]
+    assert capsys.readouterr().out.strip() == '[0, -10, 5]'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def sorted_array_to_bst(nums):
+    def build(lo, hi):
+        if lo > hi:
+            return None
+        mid = (lo + hi) // 2
+        return TreeNode(nums[mid], build(lo, mid - 1), build(mid + 1, hi))
+    return build(0, len(nums) - 1)
+
+root = sorted_array_to_bst([-10, -3, 0, 5, 9])
+print([root.val, root.left.val, root.right.val])
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def sorted_array_to_bst(nums):
+    def build(lo, hi):
+        if lo > hi:
+            return None
+        mid = (lo + hi) // 2
+        return TreeNode(nums[mid], build(lo, mid - 1), build(mid + 1, hi))
+    return build(0, len(nums) - 1)
+
+root = sorted_array_to_bst([-10, -3, 0, 5, 9])
+print([root.val, root.left.val, root.right.val])
+",
+    next: Some("py-677-lca-bst"), show_type_chips: false, micro_step: 676,
+};
+
+pub const PY677_LCA_BST: CodingStep = CodingStep {
+    id: "py-677-lca-bst", title: "DSA BST VI · LCA BST", objective: "Ancestro común más bajo usando la propiedad BST (no DFS general).",
+    prompt_md: "**Lowest Common Ancestor of a BST**
+
+Si ambos valores están a la izquierda o ambos a la derecha, bajás; si no, `root` es el split.
+
+**Micro-reto:**
+1. Definí `lca_bst(root, p, q)` (compará `.val`)
+2. Ejecutá el ejemplo; imprimí `6`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def lca_bst(root, p, q):
+#     while root:
+#         if p.val < root.val and q.val < root.val:
+#             root = root.left
+#         elif p.val > root.val and q.val > root.val:
+#             root = root.right
+#         else:
+#             return root
+#     return None
+#
+# p = TreeNode(2, TreeNode(0), TreeNode(4, TreeNode(3), TreeNode(5)))
+# q = TreeNode(8, TreeNode(7), TreeNode(9))
+# root = TreeNode(6, p, q)
+# print(lca_bst(root, p, q).val)
+",
+    pytest: "def test_677_lca_bst(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lca_bst'))
+    TreeNode = ns['TreeNode']
+    p = TreeNode(2, TreeNode(0), TreeNode(4, TreeNode(3), TreeNode(5)))
+    q = TreeNode(8, TreeNode(7), TreeNode(9))
+    root = TreeNode(6, p, q)
+    assert ns['lca_bst'](root, p, q).val == 6
+    assert ns['lca_bst'](root, p, TreeNode(4)).val == 2
+    assert capsys.readouterr().out.strip() == '6'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def lca_bst(root, p, q):
+    while root:
+        if p.val < root.val and q.val < root.val:
+            root = root.left
+        elif p.val > root.val and q.val > root.val:
+            root = root.right
+        else:
+            return root
+    return None
+
+p = TreeNode(2, TreeNode(0), TreeNode(4, TreeNode(3), TreeNode(5)))
+q = TreeNode(8, TreeNode(7), TreeNode(9))
+root = TreeNode(6, p, q)
+print(lca_bst(root, p, q).val)
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def lca_bst(root, p, q):
+    while root:
+        if p.val < root.val and q.val < root.val:
+            root = root.left
+        elif p.val > root.val and q.val > root.val:
+            root = root.right
+        else:
+            return root
+    return None
+
+p = TreeNode(2, TreeNode(0), TreeNode(4, TreeNode(3), TreeNode(5)))
+q = TreeNode(8, TreeNode(7), TreeNode(9))
+root = TreeNode(6, p, q)
+print(lca_bst(root, p, q).val)
+",
+    next: Some("py-678-bst-to-gst"), show_type_chips: false, micro_step: 677,
+};
+
+pub const PY678_BST_TO_GST: CodingStep = CodingStep {
+    id: "py-678-bst-to-gst", title: "DSA BST VI · Greater Sum", objective: "Convertir un BST en Greater Sum Tree (inorder inverso acumulado).",
+    prompt_md: "**Binary Search Tree to Greater Sum Tree**
+
+Recorrés derecha → nodo → izquierda y vas sumando: cada nodo queda con la suma de todos los valores ≥ él.
+
+**Micro-reto:**
+1. Definí `bst_to_gst(root)` y `inorder(root)`
+2. Ejecutá el ejemplo; imprimí `[36, 36, 35, 33, 30, 26, 21, 15, 8]`.",
+    starter_code: "# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+#
+# def bst_to_gst(root):
+#     acc = [0]
+#     def dfs(node):
+#         if not node:
+#             return
+#         dfs(node.right)
+#         acc[0] += node.val
+#         node.val = acc[0]
+#         dfs(node.left)
+#     dfs(root)
+#     return root
+#
+# def inorder(root):
+#     return inorder(root.left) + [root.val] + inorder(root.right) if root else []
+#
+# root = TreeNode(4, TreeNode(1, TreeNode(0), TreeNode(2, None, TreeNode(3))), TreeNode(6, TreeNode(5), TreeNode(7, None, TreeNode(8))))
+# print(inorder(bst_to_gst(root)))
+",
+    pytest: "def test_678_bst_to_gst(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('bst_to_gst'))
+    TreeNode = ns['TreeNode']
+    root = TreeNode(4, TreeNode(1, TreeNode(0), TreeNode(2, None, TreeNode(3))), TreeNode(6, TreeNode(5), TreeNode(7, None, TreeNode(8))))
+    ns['bst_to_gst'](root)
+    def inorder(n):
+        return inorder(n.left) + [n.val] + inorder(n.right) if n else []
+    assert inorder(root) == [36, 36, 35, 33, 30, 26, 21, 15, 8]
+    assert capsys.readouterr().out.strip() == '[36, 36, 35, 33, 30, 26, 21, 15, 8]'
+",
+    hint: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def bst_to_gst(root):
+    acc = [0]
+    def dfs(node):
+        if not node:
+            return
+        dfs(node.right)
+        acc[0] += node.val
+        node.val = acc[0]
+        dfs(node.left)
+    dfs(root)
+    return root
+
+def inorder(root):
+    return inorder(root.left) + [root.val] + inorder(root.right) if root else []
+
+root = TreeNode(4, TreeNode(1, TreeNode(0), TreeNode(2, None, TreeNode(3))), TreeNode(6, TreeNode(5), TreeNode(7, None, TreeNode(8))))
+print(inorder(bst_to_gst(root)))
+",
+    solution_example: "class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def bst_to_gst(root):
+    acc = [0]
+    def dfs(node):
+        if not node:
+            return
+        dfs(node.right)
+        acc[0] += node.val
+        node.val = acc[0]
+        dfs(node.left)
+    dfs(root)
+    return root
+
+def inorder(root):
+    return inorder(root.left) + [root.val] + inorder(root.right) if root else []
+
+root = TreeNode(4, TreeNode(1, TreeNode(0), TreeNode(2, None, TreeNode(3))), TreeNode(6, TreeNode(5), TreeNode(7, None, TreeNode(8))))
+print(inorder(bst_to_gst(root)))
+",
+    next: None, show_type_chips: false, micro_step: 678,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -23563,7 +24091,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY669_LOWEST_COMMON_ANCESTOR,
     &PY670_SERIALIZE_TREE,
     &PY671_BUILD_TREE_PRE_IN,
-    &PY672_MAX_PATH_SUM
+    &PY672_MAX_PATH_SUM,
+    &PY673_SEARCH_BST,
+    &PY674_INSERT_BST,
+    &PY675_DELETE_BST,
+    &PY676_SORTED_ARRAY_BST,
+    &PY677_LCA_BST,
+    &PY678_BST_TO_GST
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -23707,7 +24241,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 672);
+            assert!(step.micro_step >= 1 && step.micro_step <= 678);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -26119,7 +26653,13 @@ mod tests {
             (669, "py-669-lowest-common-ancestor", Some("py-670-serialize-tree")),
             (670, "py-670-serialize-tree", Some("py-671-build-tree-pre-in")),
             (671, "py-671-build-tree-pre-in", Some("py-672-max-path-sum")),
-            (672, "py-672-max-path-sum", None),
+            (672, "py-672-max-path-sum", Some("py-673-search-bst")),
+            (673, "py-673-search-bst", Some("py-674-insert-bst")),
+            (674, "py-674-insert-bst", Some("py-675-delete-bst")),
+            (675, "py-675-delete-bst", Some("py-676-sorted-array-bst")),
+            (676, "py-676-sorted-array-bst", Some("py-677-lca-bst")),
+            (677, "py-677-lca-bst", Some("py-678-bst-to-gst")),
+            (678, "py-678-bst-to-gst", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
