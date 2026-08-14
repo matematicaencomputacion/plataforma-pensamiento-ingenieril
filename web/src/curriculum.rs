@@ -21214,7 +21214,619 @@ print(longest_palindrome_subseq('bbbab'))
 
 print(longest_palindrome_subseq('bbbab'))
 ",
-    next: None, show_type_chips: false, micro_step: 654,
+    next: Some("py-655-num-islands"), show_type_chips: false, micro_step: 654,
+};
+
+
+pub const PY655_NUM_ISLANDS: CodingStep = CodingStep {
+    id: "py-655-num-islands", title: "DSA Graphs BFS V · Number of Islands", objective: "Contar islas de '1' en una grilla 4-conectada.",
+    prompt_md: "**Number of Islands**
+
+Cada BFS/DFS desde un '1' no visitado pinta una isla y la cuenta.
+
+**Micro-reto:**
+1. Definí `num_islands(grid)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# from collections import deque
+#
+# def num_islands(grid):
+#     if not grid:
+#         return 0
+#     rows, cols = len(grid), len(grid[0])
+#     seen = [[False] * cols for _ in range(rows)]
+#     total = 0
+#     for r in range(rows):
+#         for c in range(cols):
+#             if grid[r][c] != '1' or seen[r][c]:
+#                 continue
+#             total += 1
+#             q = deque([(r, c)])
+#             seen[r][c] = True
+#             while q:
+#                 i, j = q.popleft()
+#                 for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#                     ni, nj = i + di, j + dj
+#                     if 0 <= ni < rows and 0 <= nj < cols and not seen[ni][nj] and grid[ni][nj] == '1':
+#                         seen[ni][nj] = True
+#                         q.append((ni, nj))
+#     return total
+#
+# print(num_islands([['1','1','0'],['1','0','0'],['0','0','1']]))
+",
+    pytest: "def test_655_num_islands(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('num_islands'))
+    assert ns['num_islands']([['1','1','0'],['1','0','0'],['0','0','1']]) == 2
+    assert ns['num_islands']([['0']]) == 0
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "from collections import deque
+
+def num_islands(grid):
+    if not grid:
+        return 0
+    rows, cols = len(grid), len(grid[0])
+    seen = [[False] * cols for _ in range(rows)]
+    total = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] != '1' or seen[r][c]:
+                continue
+            total += 1
+            q = deque([(r, c)])
+            seen[r][c] = True
+            while q:
+                i, j = q.popleft()
+                for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    ni, nj = i + di, j + dj
+                    if 0 <= ni < rows and 0 <= nj < cols and not seen[ni][nj] and grid[ni][nj] == '1':
+                        seen[ni][nj] = True
+                        q.append((ni, nj))
+    return total
+
+print(num_islands([['1','1','0'],['1','0','0'],['0','0','1']]))
+",
+    solution_example: "from collections import deque
+
+def num_islands(grid):
+    if not grid:
+        return 0
+    rows, cols = len(grid), len(grid[0])
+    seen = [[False] * cols for _ in range(rows)]
+    total = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] != '1' or seen[r][c]:
+                continue
+            total += 1
+            q = deque([(r, c)])
+            seen[r][c] = True
+            while q:
+                i, j = q.popleft()
+                for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    ni, nj = i + di, j + dj
+                    if 0 <= ni < rows and 0 <= nj < cols and not seen[ni][nj] and grid[ni][nj] == '1':
+                        seen[ni][nj] = True
+                        q.append((ni, nj))
+    return total
+
+print(num_islands([['1','1','0'],['1','0','0'],['0','0','1']]))
+",
+    next: Some("py-656-max-area-island"), show_type_chips: false, micro_step: 655,
+};
+
+pub const PY656_MAX_AREA_ISLAND: CodingStep = CodingStep {
+    id: "py-656-max-area-island", title: "DSA Graphs BFS V · Max Area", objective: "Área máxima de una isla de 1s (4-conectada).",
+    prompt_md: "**Max Area of Island**
+
+Igual que contar islas, pero acumulá el tamaño de cada componente.
+
+**Micro-reto:**
+1. Definí `max_area_of_island(grid)`
+2. Ejecutá el ejemplo; imprimí `5`.",
+    starter_code: "# from collections import deque
+#
+# def max_area_of_island(grid):
+#     rows, cols = len(grid), len(grid[0])
+#     seen = [[False] * cols for _ in range(rows)]
+#     best = 0
+#     for r in range(rows):
+#         for c in range(cols):
+#             if grid[r][c] != 1 or seen[r][c]:
+#                 continue
+#             area = 0
+#             q = deque([(r, c)])
+#             seen[r][c] = True
+#             while q:
+#                 i, j = q.popleft()
+#                 area += 1
+#                 for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#                     ni, nj = i + di, j + dj
+#                     if 0 <= ni < rows and 0 <= nj < cols and not seen[ni][nj] and grid[ni][nj] == 1:
+#                         seen[ni][nj] = True
+#                         q.append((ni, nj))
+#             best = max(best, area)
+#     return best
+#
+# print(max_area_of_island([[0,0,1,0,0],[1,1,1,0,0],[0,1,0,0,1],[0,0,0,1,1]]))
+",
+    pytest: "def test_656_max_area_island(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('max_area_of_island'))
+    assert ns['max_area_of_island']([[0,0,1,0,0],[1,1,1,0,0],[0,1,0,0,1],[0,0,0,1,1]]) == 5
+    assert ns['max_area_of_island']([[0,0],[0,0]]) == 0
+    assert capsys.readouterr().out.strip() == '5'
+",
+    hint: "from collections import deque
+
+def max_area_of_island(grid):
+    rows, cols = len(grid), len(grid[0])
+    seen = [[False] * cols for _ in range(rows)]
+    best = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] != 1 or seen[r][c]:
+                continue
+            area = 0
+            q = deque([(r, c)])
+            seen[r][c] = True
+            while q:
+                i, j = q.popleft()
+                area += 1
+                for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    ni, nj = i + di, j + dj
+                    if 0 <= ni < rows and 0 <= nj < cols and not seen[ni][nj] and grid[ni][nj] == 1:
+                        seen[ni][nj] = True
+                        q.append((ni, nj))
+            best = max(best, area)
+    return best
+
+print(max_area_of_island([[0,0,1,0,0],[1,1,1,0,0],[0,1,0,0,1],[0,0,0,1,1]]))
+",
+    solution_example: "from collections import deque
+
+def max_area_of_island(grid):
+    rows, cols = len(grid), len(grid[0])
+    seen = [[False] * cols for _ in range(rows)]
+    best = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] != 1 or seen[r][c]:
+                continue
+            area = 0
+            q = deque([(r, c)])
+            seen[r][c] = True
+            while q:
+                i, j = q.popleft()
+                area += 1
+                for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    ni, nj = i + di, j + dj
+                    if 0 <= ni < rows and 0 <= nj < cols and not seen[ni][nj] and grid[ni][nj] == 1:
+                        seen[ni][nj] = True
+                        q.append((ni, nj))
+            best = max(best, area)
+    return best
+
+print(max_area_of_island([[0,0,1,0,0],[1,1,1,0,0],[0,1,0,0,1],[0,0,0,1,1]]))
+",
+    next: Some("py-657-surrounded-regions"), show_type_chips: false, micro_step: 656,
+};
+
+pub const PY657_SURROUNDED_REGIONS: CodingStep = CodingStep {
+    id: "py-657-surrounded-regions", title: "DSA Graphs BFS V · Surrounded Regions", objective: "Capturar 'O' que no tocan el borde, convirtiéndolos en 'X'.",
+    prompt_md: "**Surrounded Regions**
+
+Marcá desde los bordes las O conectadas; el resto del interior se captura.
+
+**Micro-reto:**
+1. Definí `solve(board)`
+2. Ejecutá el ejemplo; imprimí `[['X', 'X', 'X', 'X'], ['X', 'X', 'X', 'X'], ['X', 'X', 'X', 'X'], ['X', 'O', 'X', 'X']]`.",
+    starter_code: "# from collections import deque
+#
+# def solve(board):
+#     if not board:
+#         return
+#     rows, cols = len(board), len(board[0])
+#     q = deque()
+#     for i in range(rows):
+#         for j in (0, cols - 1):
+#             if board[i][j] == 'O':
+#                 q.append((i, j))
+#     for j in range(cols):
+#         for i in (0, rows - 1):
+#             if board[i][j] == 'O':
+#                 q.append((i, j))
+#     while q:
+#         i, j = q.popleft()
+#         if not (0 <= i < rows and 0 <= j < cols) or board[i][j] != 'O':
+#             continue
+#         board[i][j] = 'S'
+#         for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#             q.append((i + di, j + dj))
+#     for i in range(rows):
+#         for j in range(cols):
+#             if board[i][j] == 'O':
+#                 board[i][j] = 'X'
+#             elif board[i][j] == 'S':
+#                 board[i][j] = 'O'
+#
+# b=[['X','X','X','X'],['X','O','O','X'],['X','X','O','X'],['X','O','X','X']]; solve(b); print(b)
+",
+    pytest: "def test_657_surrounded_regions(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('solve'))
+    b=[['X','X','X','X'],['X','O','O','X'],['X','X','O','X'],['X','O','X','X']]
+    ns['solve'](b)
+    assert b == [['X','X','X','X'],['X','X','X','X'],['X','X','X','X'],['X','O','X','X']]
+    c=[['O']]
+    ns['solve'](c)
+    assert c == [['O']]
+    assert capsys.readouterr().out.strip() == '[['X', 'X', 'X', 'X'], ['X', 'X', 'X', 'X'], ['X', 'X', 'X', 'X'], ['X', 'O', 'X', 'X']]'
+",
+    hint: "from collections import deque
+
+def solve(board):
+    if not board:
+        return
+    rows, cols = len(board), len(board[0])
+    q = deque()
+    for i in range(rows):
+        for j in (0, cols - 1):
+            if board[i][j] == 'O':
+                q.append((i, j))
+    for j in range(cols):
+        for i in (0, rows - 1):
+            if board[i][j] == 'O':
+                q.append((i, j))
+    while q:
+        i, j = q.popleft()
+        if not (0 <= i < rows and 0 <= j < cols) or board[i][j] != 'O':
+            continue
+        board[i][j] = 'S'
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            q.append((i + di, j + dj))
+    for i in range(rows):
+        for j in range(cols):
+            if board[i][j] == 'O':
+                board[i][j] = 'X'
+            elif board[i][j] == 'S':
+                board[i][j] = 'O'
+
+b=[['X','X','X','X'],['X','O','O','X'],['X','X','O','X'],['X','O','X','X']]; solve(b); print(b)
+",
+    solution_example: "from collections import deque
+
+def solve(board):
+    if not board:
+        return
+    rows, cols = len(board), len(board[0])
+    q = deque()
+    for i in range(rows):
+        for j in (0, cols - 1):
+            if board[i][j] == 'O':
+                q.append((i, j))
+    for j in range(cols):
+        for i in (0, rows - 1):
+            if board[i][j] == 'O':
+                q.append((i, j))
+    while q:
+        i, j = q.popleft()
+        if not (0 <= i < rows and 0 <= j < cols) or board[i][j] != 'O':
+            continue
+        board[i][j] = 'S'
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            q.append((i + di, j + dj))
+    for i in range(rows):
+        for j in range(cols):
+            if board[i][j] == 'O':
+                board[i][j] = 'X'
+            elif board[i][j] == 'S':
+                board[i][j] = 'O'
+
+b=[['X','X','X','X'],['X','O','O','X'],['X','X','O','X'],['X','O','X','X']]; solve(b); print(b)
+",
+    next: Some("py-658-update-matrix"), show_type_chips: false, micro_step: 657,
+};
+
+pub const PY658_UPDATE_MATRIX: CodingStep = CodingStep {
+    id: "py-658-update-matrix", title: "DSA Graphs BFS V · 01 Matrix", objective: "Distancia al 0 más cercano para cada celda.",
+    prompt_md: "**01 Matrix**
+
+Multi-source BFS desde todos los ceros; cada paso suma 1.
+
+**Micro-reto:**
+1. Definí `update_matrix(mat)`
+2. Ejecutá el ejemplo; imprimí `[[0, 0, 0], [0, 1, 0], [1, 2, 1]]`.",
+    starter_code: "# from collections import deque
+#
+# def update_matrix(mat):
+#     rows, cols = len(mat), len(mat[0])
+#     dist = [[10**9] * cols for _ in range(rows)]
+#     q = deque()
+#     for i in range(rows):
+#         for j in range(cols):
+#             if mat[i][j] == 0:
+#                 dist[i][j] = 0
+#                 q.append((i, j))
+#     while q:
+#         i, j = q.popleft()
+#         for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#             ni, nj = i + di, j + dj
+#             if 0 <= ni < rows and 0 <= nj < cols and dist[ni][nj] > dist[i][j] + 1:
+#                 dist[ni][nj] = dist[i][j] + 1
+#                 q.append((ni, nj))
+#     return dist
+#
+# print(update_matrix([[0,0,0],[0,1,0],[1,1,1]]))
+",
+    pytest: "def test_658_update_matrix(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('update_matrix'))
+    assert ns['update_matrix']([[0,0,0],[0,1,0],[1,1,1]]) == [[0,0,0],[0,1,0],[1,2,1]]
+    assert ns['update_matrix']([[0]]) == [[0]]
+    assert capsys.readouterr().out.strip() == '[[0, 0, 0], [0, 1, 0], [1, 2, 1]]'
+",
+    hint: "from collections import deque
+
+def update_matrix(mat):
+    rows, cols = len(mat), len(mat[0])
+    dist = [[10**9] * cols for _ in range(rows)]
+    q = deque()
+    for i in range(rows):
+        for j in range(cols):
+            if mat[i][j] == 0:
+                dist[i][j] = 0
+                q.append((i, j))
+    while q:
+        i, j = q.popleft()
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < rows and 0 <= nj < cols and dist[ni][nj] > dist[i][j] + 1:
+                dist[ni][nj] = dist[i][j] + 1
+                q.append((ni, nj))
+    return dist
+
+print(update_matrix([[0,0,0],[0,1,0],[1,1,1]]))
+",
+    solution_example: "from collections import deque
+
+def update_matrix(mat):
+    rows, cols = len(mat), len(mat[0])
+    dist = [[10**9] * cols for _ in range(rows)]
+    q = deque()
+    for i in range(rows):
+        for j in range(cols):
+            if mat[i][j] == 0:
+                dist[i][j] = 0
+                q.append((i, j))
+    while q:
+        i, j = q.popleft()
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < rows and 0 <= nj < cols and dist[ni][nj] > dist[i][j] + 1:
+                dist[ni][nj] = dist[i][j] + 1
+                q.append((ni, nj))
+    return dist
+
+print(update_matrix([[0,0,0],[0,1,0],[1,1,1]]))
+",
+    next: Some("py-659-shortest-bridge"), show_type_chips: false, micro_step: 658,
+};
+
+pub const PY659_SHORTEST_BRIDGE: CodingStep = CodingStep {
+    id: "py-659-shortest-bridge", title: "DSA Graphs BFS V · Shortest Bridge", objective: "Mínimo de 0s a voltear para unir las dos islas.",
+    prompt_md: "**Shortest Bridge**
+
+Pintá una isla, BFS hacia afuera hasta tocar la otra; los pasos-1 son el puente.
+
+**Micro-reto:**
+1. Definí `shortest_bridge(grid)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# from collections import deque
+#
+# def shortest_bridge(grid):
+#     n = len(grid)
+#     q = deque()
+#     def paint(i, j):
+#         if not (0 <= i < n and 0 <= j < n) or grid[i][j] != 1:
+#             return
+#         grid[i][j] = 2
+#         q.append((i, j, 0))
+#         for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#             paint(i + di, j + dj)
+#     found = False
+#     for i in range(n):
+#         for j in range(n):
+#             if grid[i][j] == 1:
+#                 paint(i, j)
+#                 found = True
+#                 break
+#         if found:
+#             break
+#     while q:
+#         i, j, d = q.popleft()
+#         for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#             ni, nj = i + di, j + dj
+#             if 0 <= ni < n and 0 <= nj < n:
+#                 if grid[ni][nj] == 1:
+#                     return d
+#                 if grid[ni][nj] == 0:
+#                     grid[ni][nj] = 2
+#                     q.append((ni, nj, d + 1))
+#     return 0
+#
+# print(shortest_bridge([[0,1],[1,0]]))
+",
+    pytest: "def test_659_shortest_bridge(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('shortest_bridge'))
+    assert ns['shortest_bridge']([[0,1],[1,0]]) == 1
+    assert ns['shortest_bridge']([[0,1,0],[0,0,0],[0,0,1]]) == 2
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "from collections import deque
+
+def shortest_bridge(grid):
+    n = len(grid)
+    q = deque()
+    def paint(i, j):
+        if not (0 <= i < n and 0 <= j < n) or grid[i][j] != 1:
+            return
+        grid[i][j] = 2
+        q.append((i, j, 0))
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            paint(i + di, j + dj)
+    found = False
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                paint(i, j)
+                found = True
+                break
+        if found:
+            break
+    while q:
+        i, j, d = q.popleft()
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < n and 0 <= nj < n:
+                if grid[ni][nj] == 1:
+                    return d
+                if grid[ni][nj] == 0:
+                    grid[ni][nj] = 2
+                    q.append((ni, nj, d + 1))
+    return 0
+
+print(shortest_bridge([[0,1],[1,0]]))
+",
+    solution_example: "from collections import deque
+
+def shortest_bridge(grid):
+    n = len(grid)
+    q = deque()
+    def paint(i, j):
+        if not (0 <= i < n and 0 <= j < n) or grid[i][j] != 1:
+            return
+        grid[i][j] = 2
+        q.append((i, j, 0))
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            paint(i + di, j + dj)
+    found = False
+    for i in range(n):
+        for j in range(n):
+            if grid[i][j] == 1:
+                paint(i, j)
+                found = True
+                break
+        if found:
+            break
+    while q:
+        i, j, d = q.popleft()
+        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ni, nj = i + di, j + dj
+            if 0 <= ni < n and 0 <= nj < n:
+                if grid[ni][nj] == 1:
+                    return d
+                if grid[ni][nj] == 0:
+                    grid[ni][nj] = 2
+                    q.append((ni, nj, d + 1))
+    return 0
+
+print(shortest_bridge([[0,1],[1,0]]))
+",
+    next: Some("py-660-pacific-atlantic"), show_type_chips: false, micro_step: 659,
+};
+
+pub const PY660_PACIFIC_ATLANTIC: CodingStep = CodingStep {
+    id: "py-660-pacific-atlantic", title: "DSA Graphs BFS V · Pacific Atlantic", objective: "Celdas desde las que el agua llega a ambos océanos.",
+    prompt_md: "**Pacific Atlantic Water Flow**
+
+BFS inverso desde cada océano subiendo o igualando altura; intersecá alcanzables.
+
+**Micro-reto:**
+1. Definí `pacific_atlantic(heights)`
+2. Ejecutá el ejemplo; imprimí `[[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]]`.",
+    starter_code: "# from collections import deque
+#
+# def pacific_atlantic(heights):
+#     rows, cols = len(heights), len(heights[0])
+#     def reach(starts):
+#         seen = set(starts)
+#         q = deque(starts)
+#         while q:
+#             i, j = q.popleft()
+#             for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+#                 ni, nj = i + di, j + dj
+#                 if 0 <= ni < rows and 0 <= nj < cols and (ni, nj) not in seen and heights[ni][nj] >= heights[i][j]:
+#                     seen.add((ni, nj))
+#                     q.append((ni, nj))
+#         return seen
+#     pac = [(0, j) for j in range(cols)] + [(i, 0) for i in range(rows)]
+#     atl = [(rows - 1, j) for j in range(cols)] + [(i, cols - 1) for i in range(rows)]
+#     both = reach(pac) & reach(atl)
+#     return [[i, j] for i, j in both]
+#
+# print(sorted(pacific_atlantic([[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]])))
+",
+    pytest: "def test_660_pacific_atlantic(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('pacific_atlantic'))
+    got = sorted(ns['pacific_atlantic']([[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]))
+    assert got == [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
+    assert ns['pacific_atlantic']([[1]]) == [[0,0]]
+    assert capsys.readouterr().out.strip() == '[[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]]'
+",
+    hint: "from collections import deque
+
+def pacific_atlantic(heights):
+    rows, cols = len(heights), len(heights[0])
+    def reach(starts):
+        seen = set(starts)
+        q = deque(starts)
+        while q:
+            i, j = q.popleft()
+            for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                ni, nj = i + di, j + dj
+                if 0 <= ni < rows and 0 <= nj < cols and (ni, nj) not in seen and heights[ni][nj] >= heights[i][j]:
+                    seen.add((ni, nj))
+                    q.append((ni, nj))
+        return seen
+    pac = [(0, j) for j in range(cols)] + [(i, 0) for i in range(rows)]
+    atl = [(rows - 1, j) for j in range(cols)] + [(i, cols - 1) for i in range(rows)]
+    both = reach(pac) & reach(atl)
+    return [[i, j] for i, j in both]
+
+print(sorted(pacific_atlantic([[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]])))
+",
+    solution_example: "from collections import deque
+
+def pacific_atlantic(heights):
+    rows, cols = len(heights), len(heights[0])
+    def reach(starts):
+        seen = set(starts)
+        q = deque(starts)
+        while q:
+            i, j = q.popleft()
+            for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                ni, nj = i + di, j + dj
+                if 0 <= ni < rows and 0 <= nj < cols and (ni, nj) not in seen and heights[ni][nj] >= heights[i][j]:
+                    seen.add((ni, nj))
+                    q.append((ni, nj))
+        return seen
+    pac = [(0, j) for j in range(cols)] + [(i, 0) for i in range(rows)]
+    atl = [(rows - 1, j) for j in range(cols)] + [(i, cols - 1) for i in range(rows)]
+    both = reach(pac) & reach(atl)
+    return [[i, j] for i, j in both]
+
+print(sorted(pacific_atlantic([[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]])))
+",
+    next: None, show_type_chips: false, micro_step: 660,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -21871,7 +22483,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY651_MIN_CUT_PALINDROME,
     &PY652_LONGEST_COMMON_SUBSEQ,
     &PY653_WILDCARD_MATCH,
-    &PY654_LONGEST_PALINDROME_SUBSEQ
+    &PY654_LONGEST_PALINDROME_SUBSEQ,
+    &PY655_NUM_ISLANDS,
+    &PY656_MAX_AREA_ISLAND,
+    &PY657_SURROUNDED_REGIONS,
+    &PY658_UPDATE_MATRIX,
+    &PY659_SHORTEST_BRIDGE,
+    &PY660_PACIFIC_ATLANTIC
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -22015,7 +22633,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 654);
+            assert!(step.micro_step >= 1 && step.micro_step <= 660);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -24409,7 +25027,13 @@ mod tests {
             (651, "py-651-min-cut-palindrome", Some("py-652-longest-common-subseq")),
             (652, "py-652-longest-common-subseq", Some("py-653-wildcard-match")),
             (653, "py-653-wildcard-match", Some("py-654-longest-palindrome-subseq")),
-            (654, "py-654-longest-palindrome-subseq", None),
+            (654, "py-654-longest-palindrome-subseq", Some("py-655-num-islands")),
+            (655, "py-655-num-islands", Some("py-656-max-area-island")),
+            (656, "py-656-max-area-island", Some("py-657-surrounded-regions")),
+            (657, "py-657-surrounded-regions", Some("py-658-update-matrix")),
+            (658, "py-658-update-matrix", Some("py-659-shortest-bridge")),
+            (659, "py-659-shortest-bridge", Some("py-660-pacific-atlantic")),
+            (660, "py-660-pacific-atlantic", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
