@@ -20796,7 +20796,425 @@ print(can_partition([1, 5, 11, 5]))
 
 print(can_partition([1, 5, 11, 5]))
 ",
-    next: None, show_type_chips: false, micro_step: 648,
+    next: Some("py-649-num-distinct"), show_type_chips: false, micro_step: 648,
+};
+
+
+pub const PY649_NUM_DISTINCT: CodingStep = CodingStep {
+    id: "py-649-num-distinct", title: "DSA DP Strings IV · Distinct Subsequences", objective: "Cuántas subsecuencias de s igualan t.",
+    prompt_md: "**Distinct Subsequences**
+
+dp[j] se actualiza de atrás: si s[i]==t[j] suma dp[j-1].
+
+**Micro-reto:**
+1. Definí `num_distinct(s, t)`
+2. Ejecutá el ejemplo; imprimí `3`.",
+    starter_code: "# def num_distinct(s, t):
+#     m = len(t)
+#     dp = [0] * (m + 1)
+#     dp[0] = 1
+#     for ch in s:
+#         for j in range(m, 0, -1):
+#             if ch == t[j - 1]:
+#                 dp[j] += dp[j - 1]
+#     return dp[m]
+#
+# print(num_distinct('rabbbit', 'rabbit'))
+",
+    pytest: "def test_649_num_distinct(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('num_distinct'))
+    assert ns['num_distinct']('rabbbit', 'rabbit') == 3
+    assert ns['num_distinct']('babgbag', 'bag') == 5
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def num_distinct(s, t):
+    m = len(t)
+    dp = [0] * (m + 1)
+    dp[0] = 1
+    for ch in s:
+        for j in range(m, 0, -1):
+            if ch == t[j - 1]:
+                dp[j] += dp[j - 1]
+    return dp[m]
+
+print(num_distinct('rabbbit', 'rabbit'))
+",
+    solution_example: "def num_distinct(s, t):
+    m = len(t)
+    dp = [0] * (m + 1)
+    dp[0] = 1
+    for ch in s:
+        for j in range(m, 0, -1):
+            if ch == t[j - 1]:
+                dp[j] += dp[j - 1]
+    return dp[m]
+
+print(num_distinct('rabbbit', 'rabbit'))
+",
+    next: Some("py-650-is-interleave"), show_type_chips: false, micro_step: 649,
+};
+
+pub const PY650_IS_INTERLEAVE: CodingStep = CodingStep {
+    id: "py-650-is-interleave", title: "DSA DP Strings IV · Interleaving", objective: "¿s3 es intercalado de s1 y s2 preservando orden?",
+    prompt_md: "**Interleaving String**
+
+dp[j] usa s1/s2: True si se consume s2[j-1] o s1[i-1] de un estado válido.
+
+**Micro-reto:**
+1. Definí `is_interleave(s1, s2, s3)`
+2. Ejecutá el ejemplo; imprimí `True`.",
+    starter_code: "# def is_interleave(s1, s2, s3):
+#     n, m = len(s1), len(s2)
+#     if n + m != len(s3):
+#         return False
+#     dp = [False] * (m + 1)
+#     dp[0] = True
+#     for j in range(1, m + 1):
+#         dp[j] = dp[j - 1] and s2[j - 1] == s3[j - 1]
+#     for i in range(1, n + 1):
+#         dp[0] = dp[0] and s1[i - 1] == s3[i - 1]
+#         for j in range(1, m + 1):
+#             dp[j] = (dp[j] and s1[i - 1] == s3[i + j - 1]) or (dp[j - 1] and s2[j - 1] == s3[i + j - 1])
+#     return dp[m]
+#
+# print(is_interleave('aabcc', 'dbbca', 'aadbbcbcac'))
+",
+    pytest: "def test_650_is_interleave(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_interleave'))
+    assert ns['is_interleave']('aabcc', 'dbbca', 'aadbbcbcac') is True
+    assert ns['is_interleave']('aabcc', 'dbbca', 'aadbbbaccc') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_interleave(s1, s2, s3):
+    n, m = len(s1), len(s2)
+    if n + m != len(s3):
+        return False
+    dp = [False] * (m + 1)
+    dp[0] = True
+    for j in range(1, m + 1):
+        dp[j] = dp[j - 1] and s2[j - 1] == s3[j - 1]
+    for i in range(1, n + 1):
+        dp[0] = dp[0] and s1[i - 1] == s3[i - 1]
+        for j in range(1, m + 1):
+            dp[j] = (dp[j] and s1[i - 1] == s3[i + j - 1]) or (dp[j - 1] and s2[j - 1] == s3[i + j - 1])
+    return dp[m]
+
+print(is_interleave('aabcc', 'dbbca', 'aadbbcbcac'))
+",
+    solution_example: "def is_interleave(s1, s2, s3):
+    n, m = len(s1), len(s2)
+    if n + m != len(s3):
+        return False
+    dp = [False] * (m + 1)
+    dp[0] = True
+    for j in range(1, m + 1):
+        dp[j] = dp[j - 1] and s2[j - 1] == s3[j - 1]
+    for i in range(1, n + 1):
+        dp[0] = dp[0] and s1[i - 1] == s3[i - 1]
+        for j in range(1, m + 1):
+            dp[j] = (dp[j] and s1[i - 1] == s3[i + j - 1]) or (dp[j - 1] and s2[j - 1] == s3[i + j - 1])
+    return dp[m]
+
+print(is_interleave('aabcc', 'dbbca', 'aadbbcbcac'))
+",
+    next: Some("py-651-min-cut-palindrome"), show_type_chips: false, micro_step: 650,
+};
+
+pub const PY651_MIN_CUT_PALINDROME: CodingStep = CodingStep {
+    id: "py-651-min-cut-palindrome", title: "DSA DP Strings IV · Palindrome Cuts", objective: "Mínimo de cortes para partir s en palíndromos.",
+    prompt_md: "**Palindrome Partitioning II**
+
+dp[i] = min cortes de s[:i]; si s[j:i] es palíndromo, dp[j]+1.
+
+**Micro-reto:**
+1. Definí `min_cut(s)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def min_cut(s):
+#     n = len(s)
+#     pal = [[False] * n for _ in range(n)]
+#     for i in range(n - 1, -1, -1):
+#         for j in range(i, n):
+#             pal[i][j] = s[i] == s[j] and (j - i < 2 or pal[i + 1][j - 1])
+#     dp = [0] * n
+#     for i in range(n):
+#         if pal[0][i]:
+#             dp[i] = 0
+#         else:
+#             dp[i] = min(dp[j] + 1 for j in range(i) if pal[j + 1][i])
+#     return dp[-1]
+#
+# print(min_cut('aab'))
+",
+    pytest: "def test_651_min_cut_palindrome(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('min_cut'))
+    assert ns['min_cut']('aab') == 1
+    assert ns['min_cut']('a') == 0
+    assert ns['min_cut']('ab') == 1
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def min_cut(s):
+    n = len(s)
+    pal = [[False] * n for _ in range(n)]
+    for i in range(n - 1, -1, -1):
+        for j in range(i, n):
+            pal[i][j] = s[i] == s[j] and (j - i < 2 or pal[i + 1][j - 1])
+    dp = [0] * n
+    for i in range(n):
+        if pal[0][i]:
+            dp[i] = 0
+        else:
+            dp[i] = min(dp[j] + 1 for j in range(i) if pal[j + 1][i])
+    return dp[-1]
+
+print(min_cut('aab'))
+",
+    solution_example: "def min_cut(s):
+    n = len(s)
+    pal = [[False] * n for _ in range(n)]
+    for i in range(n - 1, -1, -1):
+        for j in range(i, n):
+            pal[i][j] = s[i] == s[j] and (j - i < 2 or pal[i + 1][j - 1])
+    dp = [0] * n
+    for i in range(n):
+        if pal[0][i]:
+            dp[i] = 0
+        else:
+            dp[i] = min(dp[j] + 1 for j in range(i) if pal[j + 1][i])
+    return dp[-1]
+
+print(min_cut('aab'))
+",
+    next: Some("py-652-longest-common-subseq"), show_type_chips: false, micro_step: 651,
+};
+
+pub const PY652_LONGEST_COMMON_SUBSEQ: CodingStep = CodingStep {
+    id: "py-652-longest-common-subseq", title: "DSA DP Strings IV · LCS Length", objective: "Longitud de la subsecuencia común más larga.",
+    prompt_md: "**Longest Common Subsequence**
+
+dp[i][j] = 1+dp[i-1][j-1] si igual, si no max de saltar un char.
+
+**Micro-reto:**
+1. Definí `longest_common_subsequence(text1, text2)`
+2. Ejecutá el ejemplo; imprimí `3`.",
+    starter_code: "# def longest_common_subsequence(text1, text2):
+#     n, m = len(text1), len(text2)
+#     prev = [0] * (m + 1)
+#     for i in range(1, n + 1):
+#         cur = [0] * (m + 1)
+#         for j in range(1, m + 1):
+#             if text1[i - 1] == text2[j - 1]:
+#                 cur[j] = prev[j - 1] + 1
+#             else:
+#                 cur[j] = max(prev[j], cur[j - 1])
+#         prev = cur
+#     return prev[m]
+#
+# print(longest_common_subsequence('abcde', 'ace'))
+",
+    pytest: "def test_652_longest_common_subseq(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('longest_common_subsequence'))
+    assert ns['longest_common_subsequence']('abcde', 'ace') == 3
+    assert ns['longest_common_subsequence']('abc', 'abc') == 3
+    assert ns['longest_common_subsequence']('abc', 'def') == 0
+    assert capsys.readouterr().out.strip() == '3'
+",
+    hint: "def longest_common_subsequence(text1, text2):
+    n, m = len(text1), len(text2)
+    prev = [0] * (m + 1)
+    for i in range(1, n + 1):
+        cur = [0] * (m + 1)
+        for j in range(1, m + 1):
+            if text1[i - 1] == text2[j - 1]:
+                cur[j] = prev[j - 1] + 1
+            else:
+                cur[j] = max(prev[j], cur[j - 1])
+        prev = cur
+    return prev[m]
+
+print(longest_common_subsequence('abcde', 'ace'))
+",
+    solution_example: "def longest_common_subsequence(text1, text2):
+    n, m = len(text1), len(text2)
+    prev = [0] * (m + 1)
+    for i in range(1, n + 1):
+        cur = [0] * (m + 1)
+        for j in range(1, m + 1):
+            if text1[i - 1] == text2[j - 1]:
+                cur[j] = prev[j - 1] + 1
+            else:
+                cur[j] = max(prev[j], cur[j - 1])
+        prev = cur
+    return prev[m]
+
+print(longest_common_subsequence('abcde', 'ace'))
+",
+    next: Some("py-653-wildcard-match"), show_type_chips: false, micro_step: 652,
+};
+
+pub const PY653_WILDCARD_MATCH: CodingStep = CodingStep {
+    id: "py-653-wildcard-match", title: "DSA DP Strings IV · Wildcard Match", objective: "Match de s contra p con ? y * (glob).",
+    prompt_md: "**Wildcard Matching**
+
+dp[j] para el prefijo de p; * absorbe vacío o un char extra.
+
+**Micro-reto:**
+1. Definí `is_match(s, p)`
+2. Ejecutá el ejemplo; imprimí `True`.",
+    starter_code: "# def is_match(s, p):
+#     n, m = len(s), len(p)
+#     dp = [False] * (m + 1)
+#     dp[0] = True
+#     for j in range(1, m + 1):
+#         dp[j] = dp[j - 1] and p[j - 1] == '*'
+#     for i in range(1, n + 1):
+#         prev = dp[0]
+#         dp[0] = False
+#         for j in range(1, m + 1):
+#             temp = dp[j]
+#             if p[j - 1] == '*':
+#                 dp[j] = dp[j] or dp[j - 1]
+#             elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:
+#                 dp[j] = prev
+#             else:
+#                 dp[j] = False
+#             prev = temp
+#     return dp[m]
+#
+# print(is_match('adceb', '*a*b'))
+",
+    pytest: "def test_653_wildcard_match(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('is_match'))
+    assert ns['is_match']('adceb', '*a*b') is True
+    assert ns['is_match']('aa', 'a') is False
+    assert ns['is_match']('cb', '?a') is False
+    assert capsys.readouterr().out.strip() == 'True'
+",
+    hint: "def is_match(s, p):
+    n, m = len(s), len(p)
+    dp = [False] * (m + 1)
+    dp[0] = True
+    for j in range(1, m + 1):
+        dp[j] = dp[j - 1] and p[j - 1] == '*'
+    for i in range(1, n + 1):
+        prev = dp[0]
+        dp[0] = False
+        for j in range(1, m + 1):
+            temp = dp[j]
+            if p[j - 1] == '*':
+                dp[j] = dp[j] or dp[j - 1]
+            elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:
+                dp[j] = prev
+            else:
+                dp[j] = False
+            prev = temp
+    return dp[m]
+
+print(is_match('adceb', '*a*b'))
+",
+    solution_example: "def is_match(s, p):
+    n, m = len(s), len(p)
+    dp = [False] * (m + 1)
+    dp[0] = True
+    for j in range(1, m + 1):
+        dp[j] = dp[j - 1] and p[j - 1] == '*'
+    for i in range(1, n + 1):
+        prev = dp[0]
+        dp[0] = False
+        for j in range(1, m + 1):
+            temp = dp[j]
+            if p[j - 1] == '*':
+                dp[j] = dp[j] or dp[j - 1]
+            elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:
+                dp[j] = prev
+            else:
+                dp[j] = False
+            prev = temp
+    return dp[m]
+
+print(is_match('adceb', '*a*b'))
+",
+    next: Some("py-654-longest-palindrome-subseq"), show_type_chips: false, micro_step: 653,
+};
+
+pub const PY654_LONGEST_PALINDROME_SUBSEQ: CodingStep = CodingStep {
+    id: "py-654-longest-palindrome-subseq", title: "DSA DP Strings IV · Palindromic Subseq", objective: "Longitud de la subsecuencia palíndroma más larga.",
+    prompt_md: "**Longest Palindromic Subsequence**
+
+LCS(s, reverse(s)) o dp de intervalos: si extremos iguales, +2.
+
+**Micro-reto:**
+1. Definí `longest_palindrome_subseq(s)`
+2. Ejecutá el ejemplo; imprimí `4`.",
+    starter_code: "# def longest_palindrome_subseq(s):
+#     n = len(s)
+#     dp = [0] * n
+#     for i in range(n - 1, -1, -1):
+#         dp[i] = 1
+#         prev = 0
+#         for j in range(i + 1, n):
+#             temp = dp[j]
+#             if s[i] == s[j]:
+#                 dp[j] = prev + 2
+#             else:
+#                 dp[j] = max(dp[j], dp[j - 1])
+#             prev = temp
+#     return dp[-1]
+#
+# print(longest_palindrome_subseq('bbbab'))
+",
+    pytest: "def test_654_longest_palindrome_subseq(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('longest_palindrome_subseq'))
+    assert ns['longest_palindrome_subseq']('bbbab') == 4
+    assert ns['longest_palindrome_subseq']('cbbd') == 2
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def longest_palindrome_subseq(s):
+    n = len(s)
+    dp = [0] * n
+    for i in range(n - 1, -1, -1):
+        dp[i] = 1
+        prev = 0
+        for j in range(i + 1, n):
+            temp = dp[j]
+            if s[i] == s[j]:
+                dp[j] = prev + 2
+            else:
+                dp[j] = max(dp[j], dp[j - 1])
+            prev = temp
+    return dp[-1]
+
+print(longest_palindrome_subseq('bbbab'))
+",
+    solution_example: "def longest_palindrome_subseq(s):
+    n = len(s)
+    dp = [0] * n
+    for i in range(n - 1, -1, -1):
+        dp[i] = 1
+        prev = 0
+        for j in range(i + 1, n):
+            temp = dp[j]
+            if s[i] == s[j]:
+                dp[j] = prev + 2
+            else:
+                dp[j] = max(dp[j], dp[j - 1])
+            prev = temp
+    return dp[-1]
+
+print(longest_palindrome_subseq('bbbab'))
+",
+    next: None, show_type_chips: false, micro_step: 654,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -21447,7 +21865,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY645_LAST_STONE_II,
     &PY646_ONES_AND_ZEROES,
     &PY647_COMBINATION_SUM_IV,
-    &PY648_CAN_PARTITION
+    &PY648_CAN_PARTITION,
+    &PY649_NUM_DISTINCT,
+    &PY650_IS_INTERLEAVE,
+    &PY651_MIN_CUT_PALINDROME,
+    &PY652_LONGEST_COMMON_SUBSEQ,
+    &PY653_WILDCARD_MATCH,
+    &PY654_LONGEST_PALINDROME_SUBSEQ
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -21591,7 +22015,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 648);
+            assert!(step.micro_step >= 1 && step.micro_step <= 654);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -23979,7 +24403,13 @@ mod tests {
             (645, "py-645-last-stone-ii", Some("py-646-ones-and-zeroes")),
             (646, "py-646-ones-and-zeroes", Some("py-647-combination-sum-iv")),
             (647, "py-647-combination-sum-iv", Some("py-648-can-partition")),
-            (648, "py-648-can-partition", None),
+            (648, "py-648-can-partition", Some("py-649-num-distinct")),
+            (649, "py-649-num-distinct", Some("py-650-is-interleave")),
+            (650, "py-650-is-interleave", Some("py-651-min-cut-palindrome")),
+            (651, "py-651-min-cut-palindrome", Some("py-652-longest-common-subseq")),
+            (652, "py-652-longest-common-subseq", Some("py-653-wildcard-match")),
+            (653, "py-653-wildcard-match", Some("py-654-longest-palindrome-subseq")),
+            (654, "py-654-longest-palindrome-subseq", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
