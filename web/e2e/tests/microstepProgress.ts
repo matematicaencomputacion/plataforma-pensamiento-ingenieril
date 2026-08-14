@@ -762,6 +762,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 754, step_id: "py-754-stacks-vi-lower-boundary" },
   { level_id: 755, step_id: "py-755-stacks-vi-dependency-order" },
   { level_id: 756, step_id: "py-756-stacks-vi-minimum-transition" },
+  { level_id: 757, step_id: "py-757-queues-vi-canonicalize" },
+  { level_id: 758, step_id: "py-758-queues-vi-prefix-state" },
+  { level_id: 759, step_id: "py-759-queues-vi-bounded-window" },
+  { level_id: 760, step_id: "py-760-queues-vi-lower-boundary" },
+  { level_id: 761, step_id: "py-761-queues-vi-dependency-order" },
+  { level_id: 762, step_id: "py-762-queues-vi-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
