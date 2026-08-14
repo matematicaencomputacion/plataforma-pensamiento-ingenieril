@@ -870,6 +870,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 862, step_id: "py-862-bitmask-iv-lower-boundary" },
   { level_id: 863, step_id: "py-863-bitmask-iv-dependency-order" },
   { level_id: 864, step_id: "py-864-bitmask-iv-minimum-transition" },
+  { level_id: 865, step_id: "py-865-number-theory-ii-canonicalize" },
+  { level_id: 866, step_id: "py-866-number-theory-ii-prefix-state" },
+  { level_id: 867, step_id: "py-867-number-theory-ii-bounded-window" },
+  { level_id: 868, step_id: "py-868-number-theory-ii-lower-boundary" },
+  { level_id: 869, step_id: "py-869-number-theory-ii-dependency-order" },
+  { level_id: 870, step_id: "py-870-number-theory-ii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
