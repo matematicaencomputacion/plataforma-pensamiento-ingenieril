@@ -528,6 +528,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 520, step_id: "py-520-trap-rain" },
   { level_id: 521, step_id: "py-521-remove-dups-sorted" },
   { level_id: 522, step_id: "py-522-valid-palindrome" },
+  { level_id: 523, step_id: "py-523-daily-temps" },
+  { level_id: 524, step_id: "py-524-next-greater" },
+  { level_id: 525, step_id: "py-525-eval-rpn" },
+  { level_id: 526, step_id: "py-526-decode-string" },
+  { level_id: 527, step_id: "py-527-asteroid" },
+  { level_id: 528, step_id: "py-528-remove-k-digits" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
