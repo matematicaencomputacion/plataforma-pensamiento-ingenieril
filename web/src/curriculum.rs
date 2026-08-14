@@ -39156,7 +39156,324 @@ print(minimum_transition_binary_lifting_ii([10, 15, 20]))
 
 print(minimum_transition_binary_lifting_ii([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 930,
+    next: Some("py-931-string-matching-iii-canonicalize"), show_type_chips: false, micro_step: 930,
+};
+
+
+pub const PY931_STRING_MATCHING_III_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-931-string-matching-iii-canonicalize", title: "DSA String Matching III · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de String Matching III.",
+    prompt_md: "**String Matching III: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_string_matching_iii(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_string_matching_iii(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_string_matching_iii([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_931_string_matching_iii_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_string_matching_iii'))
+    assert ns['canonicalize_string_matching_iii']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_string_matching_iii']([]) == []
+    assert ns['canonicalize_string_matching_iii']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_string_matching_iii(values):
+    return sorted(set(values))
+
+print(canonicalize_string_matching_iii([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_string_matching_iii(values):
+    return sorted(set(values))
+
+print(canonicalize_string_matching_iii([3, 1, 2, 3, 1]))
+",
+    next: Some("py-932-string-matching-iii-prefix-state"), show_type_chips: false, micro_step: 931,
+};
+
+pub const PY932_STRING_MATCHING_III_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-932-string-matching-iii-prefix-state", title: "DSA String Matching III · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de String Matching III.",
+    prompt_md: "**String Matching III: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_string_matching_iii(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_string_matching_iii(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_string_matching_iii([3, 1, 4]))
+",
+    pytest: "def test_932_string_matching_iii_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_string_matching_iii'))
+    assert ns['prefix_state_string_matching_iii']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_string_matching_iii']([]) == []
+    assert ns['prefix_state_string_matching_iii']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_string_matching_iii(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_string_matching_iii([3, 1, 4]))
+",
+    solution_example: "def prefix_state_string_matching_iii(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_string_matching_iii([3, 1, 4]))
+",
+    next: Some("py-933-string-matching-iii-bounded-window"), show_type_chips: false, micro_step: 932,
+};
+
+pub const PY933_STRING_MATCHING_III_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-933-string-matching-iii-bounded-window", title: "DSA String Matching III · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de String Matching III.",
+    prompt_md: "**String Matching III: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_string_matching_iii(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_string_matching_iii(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_string_matching_iii([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_933_string_matching_iii_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_string_matching_iii'))
+    assert ns['best_window_string_matching_iii']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_string_matching_iii']([4], 1) == 4
+    assert ns['best_window_string_matching_iii']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_string_matching_iii(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_string_matching_iii([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_string_matching_iii(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_string_matching_iii([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-934-string-matching-iii-lower-boundary"), show_type_chips: false, micro_step: 933,
+};
+
+pub const PY934_STRING_MATCHING_III_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-934-string-matching-iii-lower-boundary", title: "DSA String Matching III · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de String Matching III.",
+    prompt_md: "**String Matching III: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_string_matching_iii(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_string_matching_iii(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_string_matching_iii([1, 3, 3, 7], 3))
+",
+    pytest: "def test_934_string_matching_iii_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_string_matching_iii'))
+    assert ns['lower_boundary_string_matching_iii']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_string_matching_iii']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_string_matching_iii']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_string_matching_iii(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_string_matching_iii([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_string_matching_iii(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_string_matching_iii([1, 3, 3, 7], 3))
+",
+    next: Some("py-935-string-matching-iii-dependency-order"), show_type_chips: false, micro_step: 934,
+};
+
+pub const PY935_STRING_MATCHING_III_DEPENDENCY_ORDER: CodingStep = CodingStep {
+    id: "py-935-string-matching-iii-dependency-order", title: "DSA String Matching III · Dependency Order", objective: "Recorrer dependencias sin duplicar trabajo en un escenario de String Matching III.",
+    prompt_md: "**String Matching III: laboratorio 5**
+
+La cola separa descubrimiento de procesamiento; seen garantiza que cada nodo entra una sola vez.
+
+**Micro-reto:**
+1. Definí `dependency_order_string_matching_iii(graph, start)`
+2. Ejecutá el ejemplo; imprimí `[0, 1, 2, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def dependency_order_string_matching_iii(graph, start):
+#     queue = deque([start])
+#     seen = {start}
+#     order = []
+#     while queue:
+#         node = queue.popleft()
+#         order.append(node)
+#         for neighbor in graph[node]:
+#             if neighbor not in seen:
+#                 seen.add(neighbor)
+#                 queue.append(neighbor)
+#     return order
+#
+# print(dependency_order_string_matching_iii([[1, 2], [3], [3], []], 0))
+",
+    pytest: "def test_935_string_matching_iii_dependency_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('dependency_order_string_matching_iii'))
+    assert ns['dependency_order_string_matching_iii']([[1, 2], [3], [3], []], 0) == [0, 1, 2, 3]
+    assert ns['dependency_order_string_matching_iii']([[]], 0) == [0]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import deque
+
+def dependency_order_string_matching_iii(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_string_matching_iii([[1, 2], [3], [3], []], 0))
+",
+    solution_example: "from collections import deque
+
+def dependency_order_string_matching_iii(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_string_matching_iii([[1, 2], [3], [3], []], 0))
+",
+    next: Some("py-936-string-matching-iii-minimum-transition"), show_type_chips: false, micro_step: 935,
+};
+
+pub const PY936_STRING_MATCHING_III_MINIMUM_TRANSITION: CodingStep = CodingStep {
+    id: "py-936-string-matching-iii-minimum-transition", title: "DSA String Matching III · Minimum Transition", objective: "Optimizar transiciones locales conservando solo el estado necesario de String Matching III.",
+    prompt_md: "**String Matching III: laboratorio 6**
+
+La recurrencia depende de dos estados previos; comprimirlos mantiene O(1) memoria.
+
+**Micro-reto:**
+1. Definí `minimum_transition_string_matching_iii(cost)`
+2. Ejecutá el ejemplo; imprimí `15`.",
+    starter_code: "# def minimum_transition_string_matching_iii(cost):
+#     two_back = one_back = 0
+#     for value in cost:
+#         two_back, one_back = one_back, value + min(two_back, one_back)
+#     return min(two_back, one_back)
+#
+# print(minimum_transition_string_matching_iii([10, 15, 20]))
+",
+    pytest: "def test_936_string_matching_iii_minimum_transition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_transition_string_matching_iii'))
+    assert ns['minimum_transition_string_matching_iii']([10, 15, 20]) == 15
+    assert ns['minimum_transition_string_matching_iii']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def minimum_transition_string_matching_iii(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_string_matching_iii([10, 15, 20]))
+",
+    solution_example: "def minimum_transition_string_matching_iii(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_string_matching_iii([10, 15, 20]))
+",
+    next: None, show_type_chips: false, micro_step: 936,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -40089,7 +40406,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY927_BINARY_LIFTING_II_BOUNDED_WINDOW,
     &PY928_BINARY_LIFTING_II_LOWER_BOUNDARY,
     &PY929_BINARY_LIFTING_II_DEPENDENCY_ORDER,
-    &PY930_BINARY_LIFTING_II_MINIMUM_TRANSITION
+    &PY930_BINARY_LIFTING_II_MINIMUM_TRANSITION,
+    &PY931_STRING_MATCHING_III_CANONICALIZE,
+    &PY932_STRING_MATCHING_III_PREFIX_STATE,
+    &PY933_STRING_MATCHING_III_BOUNDED_WINDOW,
+    &PY934_STRING_MATCHING_III_LOWER_BOUNDARY,
+    &PY935_STRING_MATCHING_III_DEPENDENCY_ORDER,
+    &PY936_STRING_MATCHING_III_MINIMUM_TRANSITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -40233,7 +40556,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 930);
+            assert!(step.micro_step >= 1 && step.micro_step <= 936);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -42903,7 +43226,13 @@ mod tests {
             (927, "py-927-binary-lifting-ii-bounded-window", Some("py-928-binary-lifting-ii-lower-boundary")),
             (928, "py-928-binary-lifting-ii-lower-boundary", Some("py-929-binary-lifting-ii-dependency-order")),
             (929, "py-929-binary-lifting-ii-dependency-order", Some("py-930-binary-lifting-ii-minimum-transition")),
-            (930, "py-930-binary-lifting-ii-minimum-transition", None),
+            (930, "py-930-binary-lifting-ii-minimum-transition", Some("py-931-string-matching-iii-canonicalize")),
+            (931, "py-931-string-matching-iii-canonicalize", Some("py-932-string-matching-iii-prefix-state")),
+            (932, "py-932-string-matching-iii-prefix-state", Some("py-933-string-matching-iii-bounded-window")),
+            (933, "py-933-string-matching-iii-bounded-window", Some("py-934-string-matching-iii-lower-boundary")),
+            (934, "py-934-string-matching-iii-lower-boundary", Some("py-935-string-matching-iii-dependency-order")),
+            (935, "py-935-string-matching-iii-dependency-order", Some("py-936-string-matching-iii-minimum-transition")),
+            (936, "py-936-string-matching-iii-minimum-transition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
