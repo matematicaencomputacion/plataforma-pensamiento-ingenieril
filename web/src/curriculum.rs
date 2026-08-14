@@ -20096,7 +20096,357 @@ print(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))
 
 print(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))
 ",
-    next: None, show_type_chips: false, micro_step: 636,
+    next: Some("py-637-jump-game-ii"), show_type_chips: false, micro_step: 636,
+};
+
+
+pub const PY637_JUMP_GAME_II: CodingStep = CodingStep {
+    id: "py-637-jump-game-ii", title: "DSA Greedy IV · Jump Game II", objective: "Mínimo de saltos para llegar al último índice.",
+    prompt_md: "**Jump Game II**
+
+Greedy de alcance: cada salto cubre el máximo reachable de la ventana actual.
+
+**Micro-reto:**
+1. Definí `jump(nums)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# def jump(nums):
+#     jumps = end = farthest = 0
+#     for i in range(len(nums) - 1):
+#         farthest = max(farthest, i + nums[i])
+#         if i == end:
+#             jumps += 1
+#             end = farthest
+#     return jumps
+#
+# print(jump([2, 3, 1, 1, 4]))
+",
+    pytest: "def test_637_jump_game_ii(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('jump'))
+    assert ns['jump']([2, 3, 1, 1, 4]) == 2
+    assert ns['jump']([2, 3, 0, 1, 4]) == 2
+    assert ns['jump']([1]) == 0
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def jump(nums):
+    jumps = end = farthest = 0
+    for i in range(len(nums) - 1):
+        farthest = max(farthest, i + nums[i])
+        if i == end:
+            jumps += 1
+            end = farthest
+    return jumps
+
+print(jump([2, 3, 1, 1, 4]))
+",
+    solution_example: "def jump(nums):
+    jumps = end = farthest = 0
+    for i in range(len(nums) - 1):
+        farthest = max(farthest, i + nums[i])
+        if i == end:
+            jumps += 1
+            end = farthest
+    return jumps
+
+print(jump([2, 3, 1, 1, 4]))
+",
+    next: Some("py-638-candy"), show_type_chips: false, micro_step: 637,
+};
+
+pub const PY638_CANDY: CodingStep = CodingStep {
+    id: "py-638-candy", title: "DSA Greedy IV · Candy", objective: "Mínimo de caramelos con ratings estrictamente mayores que vecinos.",
+    prompt_md: "**Candy**
+
+Dos pasadas: izquierda→derecha y derecha→izquierda; tomá el max local.
+
+**Micro-reto:**
+1. Definí `candy(ratings)`
+2. Ejecutá el ejemplo; imprimí `5`.",
+    starter_code: "# def candy(ratings):
+#     n = len(ratings)
+#     give = [1] * n
+#     for i in range(1, n):
+#         if ratings[i] > ratings[i - 1]:
+#             give[i] = give[i - 1] + 1
+#     for i in range(n - 2, -1, -1):
+#         if ratings[i] > ratings[i + 1]:
+#             give[i] = max(give[i], give[i + 1] + 1)
+#     return sum(give)
+#
+# print(candy([1, 0, 2]))
+",
+    pytest: "def test_638_candy(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('candy'))
+    assert ns['candy']([1, 0, 2]) == 5
+    assert ns['candy']([1, 2, 2]) == 4
+    assert capsys.readouterr().out.strip() == '5'
+",
+    hint: "def candy(ratings):
+    n = len(ratings)
+    give = [1] * n
+    for i in range(1, n):
+        if ratings[i] > ratings[i - 1]:
+            give[i] = give[i - 1] + 1
+    for i in range(n - 2, -1, -1):
+        if ratings[i] > ratings[i + 1]:
+            give[i] = max(give[i], give[i + 1] + 1)
+    return sum(give)
+
+print(candy([1, 0, 2]))
+",
+    solution_example: "def candy(ratings):
+    n = len(ratings)
+    give = [1] * n
+    for i in range(1, n):
+        if ratings[i] > ratings[i - 1]:
+            give[i] = give[i - 1] + 1
+    for i in range(n - 2, -1, -1):
+        if ratings[i] > ratings[i + 1]:
+            give[i] = max(give[i], give[i + 1] + 1)
+    return sum(give)
+
+print(candy([1, 0, 2]))
+",
+    next: Some("py-639-reconstruct-queue"), show_type_chips: false, micro_step: 638,
+};
+
+pub const PY639_RECONSTRUCT_QUEUE: CodingStep = CodingStep {
+    id: "py-639-reconstruct-queue", title: "DSA Greedy IV · Queue Reconstruction", objective: "Reconstruir la cola a partir de (altura, personas más altas delante).",
+    prompt_md: "**Queue Reconstruction by Height**
+
+Insertá de mayor a menor; k es el índice porque los más bajos no cuentan.
+
+**Micro-reto:**
+1. Definí `reconstruct_queue(people)`
+2. Ejecutá el ejemplo; imprimí `[[5, 0], [7, 0], [5, 2], [6, 1], [4, 4], [7, 1]]`.",
+    starter_code: "# def reconstruct_queue(people):
+#     people.sort(key=lambda p: (-p[0], p[1]))
+#     out = []
+#     for person in people:
+#         out.insert(person[1], person)
+#     return out
+#
+# print(reconstruct_queue([[7, 0], [4, 4], [7, 1], [5, 0], [6, 1], [5, 2]]))
+",
+    pytest: "def test_639_reconstruct_queue(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('reconstruct_queue'))
+    assert ns['reconstruct_queue']([[7, 0], [4, 4], [7, 1], [5, 0], [6, 1], [5, 2]]) == [[5, 0], [7, 0], [5, 2], [6, 1], [4, 4], [7, 1]]
+    assert ns['reconstruct_queue']([[6, 0], [5, 0], [4, 0], [3, 2], [2, 2], [1, 4]]) == [[4, 0], [5, 0], [2, 2], [3, 2], [1, 4], [6, 0]]
+    assert capsys.readouterr().out.strip() == '[[5, 0], [7, 0], [5, 2], [6, 1], [4, 4], [7, 1]]'
+",
+    hint: "def reconstruct_queue(people):
+    people.sort(key=lambda p: (-p[0], p[1]))
+    out = []
+    for person in people:
+        out.insert(person[1], person)
+    return out
+
+print(reconstruct_queue([[7, 0], [4, 4], [7, 1], [5, 0], [6, 1], [5, 2]]))
+",
+    solution_example: "def reconstruct_queue(people):
+    people.sort(key=lambda p: (-p[0], p[1]))
+    out = []
+    for person in people:
+        out.insert(person[1], person)
+    return out
+
+print(reconstruct_queue([[7, 0], [4, 4], [7, 1], [5, 0], [6, 1], [5, 2]]))
+",
+    next: Some("py-640-partition-labels"), show_type_chips: false, micro_step: 639,
+};
+
+pub const PY640_PARTITION_LABELS: CodingStep = CodingStep {
+    id: "py-640-partition-labels", title: "DSA Greedy IV · Partition Labels", objective: "Partir el string para que cada letra aparezca en una sola parte.",
+    prompt_md: "**Partition Labels**
+
+Guardá la última posición de cada letra y extendé el corte hasta cubrirlas.
+
+**Micro-reto:**
+1. Definí `partition_labels(s)`
+2. Ejecutá el ejemplo; imprimí `[9, 7, 8]`.",
+    starter_code: "# def partition_labels(s):
+#     last = {ch: i for i, ch in enumerate(s)}
+#     out = []
+#     start = end = 0
+#     for i, ch in enumerate(s):
+#         end = max(end, last[ch])
+#         if i == end:
+#             out.append(end - start + 1)
+#             start = i + 1
+#     return out
+#
+# print(partition_labels('ababcbacadefegdehijhklij'))
+",
+    pytest: "def test_640_partition_labels(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('partition_labels'))
+    assert ns['partition_labels']('ababcbacadefegdehijhklij') == [9, 7, 8]
+    assert ns['partition_labels']('eccbbbbdec') == [10]
+    assert capsys.readouterr().out.strip() == '[9, 7, 8]'
+",
+    hint: "def partition_labels(s):
+    last = {ch: i for i, ch in enumerate(s)}
+    out = []
+    start = end = 0
+    for i, ch in enumerate(s):
+        end = max(end, last[ch])
+        if i == end:
+            out.append(end - start + 1)
+            start = i + 1
+    return out
+
+print(partition_labels('ababcbacadefegdehijhklij'))
+",
+    solution_example: "def partition_labels(s):
+    last = {ch: i for i, ch in enumerate(s)}
+    out = []
+    start = end = 0
+    for i, ch in enumerate(s):
+        end = max(end, last[ch])
+        if i == end:
+            out.append(end - start + 1)
+            start = i + 1
+    return out
+
+print(partition_labels('ababcbacadefegdehijhklij'))
+",
+    next: Some("py-641-task-scheduler"), show_type_chips: false, micro_step: 640,
+};
+
+pub const PY641_TASK_SCHEDULER: CodingStep = CodingStep {
+    id: "py-641-task-scheduler", title: "DSA Greedy IV · Task Scheduler", objective: "Mínimo de intervalos para ejecutar tareas con cooldown n entre iguales.",
+    prompt_md: "**Task Scheduler**
+
+El cuello es la tarea más frecuente: (max-1)*(n+1) + empates en el máximo.
+
+**Micro-reto:**
+1. Definí `least_interval(tasks, n)`
+2. Ejecutá el ejemplo; imprimí `8`.",
+    starter_code: "# from collections import Counter
+#
+# def least_interval(tasks, n):
+#     counts = list(Counter(tasks).values())
+#     peak = max(counts)
+#     extra = counts.count(peak)
+#     return max(len(tasks), (peak - 1) * (n + 1) + extra)
+#
+# print(least_interval(['A', 'A', 'A', 'B', 'B', 'B'], 2))
+",
+    pytest: "def test_641_task_scheduler(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('least_interval'))
+    assert ns['least_interval'](['A', 'A', 'A', 'B', 'B', 'B'], 2) == 8
+    assert ns['least_interval'](['A', 'A', 'A', 'B', 'B', 'B'], 0) == 6
+    assert capsys.readouterr().out.strip() == '8'
+",
+    hint: "from collections import Counter
+
+def least_interval(tasks, n):
+    counts = list(Counter(tasks).values())
+    peak = max(counts)
+    extra = counts.count(peak)
+    return max(len(tasks), (peak - 1) * (n + 1) + extra)
+
+print(least_interval(['A', 'A', 'A', 'B', 'B', 'B'], 2))
+",
+    solution_example: "from collections import Counter
+
+def least_interval(tasks, n):
+    counts = list(Counter(tasks).values())
+    peak = max(counts)
+    extra = counts.count(peak)
+    return max(len(tasks), (peak - 1) * (n + 1) + extra)
+
+print(least_interval(['A', 'A', 'A', 'B', 'B', 'B'], 2))
+",
+    next: Some("py-642-bag-of-tokens"), show_type_chips: false, micro_step: 641,
+};
+
+pub const PY642_BAG_OF_TOKENS: CodingStep = CodingStep {
+    id: "py-642-bag-of-tokens", title: "DSA Greedy IV · Bag of Tokens", objective: "Máximo score jugando tokens face-up/face-down con power inicial.",
+    prompt_md: "**Bag of Tokens**
+
+Gasta el token más barato para score; si hace falta, vende el más caro por power.
+
+**Micro-reto:**
+1. Definí `bag_of_tokens_score(tokens, power)`
+2. Ejecutá el ejemplo; imprimí `2`.",
+    starter_code: "# def bag_of_tokens_score(tokens, power):
+#     tokens.sort()
+#     lo, hi = 0, len(tokens) - 1
+#     score = best = 0
+#     while lo <= hi:
+#         if power >= tokens[lo]:
+#             power -= tokens[lo]
+#             lo += 1
+#             score += 1
+#             best = max(best, score)
+#         elif score:
+#             power += tokens[hi]
+#             hi -= 1
+#             score -= 1
+#         else:
+#             break
+#     return best
+#
+# print(bag_of_tokens_score([100, 200, 300, 400], 200))
+",
+    pytest: "def test_642_bag_of_tokens(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('bag_of_tokens_score'))
+    assert ns['bag_of_tokens_score']([100, 200, 300, 400], 200) == 2
+    assert ns['bag_of_tokens_score']([100], 50) == 0
+    assert capsys.readouterr().out.strip() == '2'
+",
+    hint: "def bag_of_tokens_score(tokens, power):
+    tokens.sort()
+    lo, hi = 0, len(tokens) - 1
+    score = best = 0
+    while lo <= hi:
+        if power >= tokens[lo]:
+            power -= tokens[lo]
+            lo += 1
+            score += 1
+            best = max(best, score)
+        elif score:
+            power += tokens[hi]
+            hi -= 1
+            score -= 1
+        else:
+            break
+    return best
+
+print(bag_of_tokens_score([100, 200, 300, 400], 200))
+",
+    solution_example: "def bag_of_tokens_score(tokens, power):
+    tokens.sort()
+    lo, hi = 0, len(tokens) - 1
+    score = best = 0
+    while lo <= hi:
+        if power >= tokens[lo]:
+            power -= tokens[lo]
+            lo += 1
+            score += 1
+            best = max(best, score)
+        elif score:
+            power += tokens[hi]
+            hi -= 1
+            score -= 1
+        else:
+            break
+    return best
+
+print(bag_of_tokens_score([100, 200, 300, 400], 200))
+",
+    next: None, show_type_chips: false, micro_step: 642,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -20735,7 +21085,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY633_MIN_MEETING_ROOMS,
     &PY634_INTERVAL_INTERSECT,
     &PY635_BURST_BALLOONS_ARROWS,
-    &PY636_VIDEO_STITCHING
+    &PY636_VIDEO_STITCHING,
+    &PY637_JUMP_GAME_II,
+    &PY638_CANDY,
+    &PY639_RECONSTRUCT_QUEUE,
+    &PY640_PARTITION_LABELS,
+    &PY641_TASK_SCHEDULER,
+    &PY642_BAG_OF_TOKENS
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -20879,7 +21235,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 636);
+            assert!(step.micro_step >= 1 && step.micro_step <= 642);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -23255,7 +23611,13 @@ mod tests {
             (633, "py-633-min-meeting-rooms", Some("py-634-interval-intersect")),
             (634, "py-634-interval-intersect", Some("py-635-burst-balloons-arrows")),
             (635, "py-635-burst-balloons-arrows", Some("py-636-video-stitching")),
-            (636, "py-636-video-stitching", None),
+            (636, "py-636-video-stitching", Some("py-637-jump-game-ii")),
+            (637, "py-637-jump-game-ii", Some("py-638-candy")),
+            (638, "py-638-candy", Some("py-639-reconstruct-queue")),
+            (639, "py-639-reconstruct-queue", Some("py-640-partition-labels")),
+            (640, "py-640-partition-labels", Some("py-641-task-scheduler")),
+            (641, "py-641-task-scheduler", Some("py-642-bag-of-tokens")),
+            (642, "py-642-bag-of-tokens", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
