@@ -918,6 +918,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 910, step_id: "py-910-fenwick-ii-lower-boundary" },
   { level_id: 911, step_id: "py-911-fenwick-ii-dependency-order" },
   { level_id: 912, step_id: "py-912-fenwick-ii-minimum-transition" },
+  { level_id: 913, step_id: "py-913-segment-tree-ii-canonicalize" },
+  { level_id: 914, step_id: "py-914-segment-tree-ii-prefix-state" },
+  { level_id: 915, step_id: "py-915-segment-tree-ii-bounded-window" },
+  { level_id: 916, step_id: "py-916-segment-tree-ii-lower-boundary" },
+  { level_id: 917, step_id: "py-917-segment-tree-ii-dependency-order" },
+  { level_id: 918, step_id: "py-918-segment-tree-ii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
