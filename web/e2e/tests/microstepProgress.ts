@@ -924,6 +924,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 916, step_id: "py-916-segment-tree-ii-lower-boundary" },
   { level_id: 917, step_id: "py-917-segment-tree-ii-dependency-order" },
   { level_id: 918, step_id: "py-918-segment-tree-ii-minimum-transition" },
+  { level_id: 919, step_id: "py-919-sparse-table-ii-canonicalize" },
+  { level_id: 920, step_id: "py-920-sparse-table-ii-prefix-state" },
+  { level_id: 921, step_id: "py-921-sparse-table-ii-bounded-window" },
+  { level_id: 922, step_id: "py-922-sparse-table-ii-lower-boundary" },
+  { level_id: 923, step_id: "py-923-sparse-table-ii-dependency-order" },
+  { level_id: 924, step_id: "py-924-sparse-table-ii-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
