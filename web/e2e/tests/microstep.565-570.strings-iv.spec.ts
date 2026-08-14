@@ -22,138 +22,98 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 101,
-    id: "py-101-linked-delete",
-    title: "DSA Linked List Delete",
-    solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-def deleteNext(node):
-    if node.next is not None:
-        node.next = node.next.next
-node1 = Node(7)
-node2 = Node(11)
-node3 = Node(3)
-node1.next = node2
-node2.next = node3
-deleteNext(node1)
-print(node1.next.data)
+    micro: 565,
+    id: "py-565-reverse-words",
+    title: "DSA Reverse Words",
+    solution: `def reverse_words(s):
+    return " ".join(s.split()[::-1])
+
+print(reverse_words("the sky is blue"))
 `,
-    nextUrl: /\/learn\/py-102-linked-insert/,
-    cursorAfter: "102",
+    nextUrl: /\/learn\/py-566-longest-common-prefix/,
+    cursorAfter: "566",
   },
   {
-    micro: 102,
-    id: "py-102-linked-insert",
-    title: "DSA Linked List Insert",
-    solution: `class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-def insertAfter(node, newNode):
-    newNode.next = node.next
-    node.next = newNode
-node1 = Node(7)
-node2 = Node(3)
-node1.next = node2
-insertAfter(node1, Node(97))
-print(node1.next.data)
+    micro: 566,
+    id: "py-566-longest-common-prefix",
+    title: "DSA LCP",
+    solution: `def longest_common_prefix(strs):
+    if not strs:
+        return ""
+    p = strs[0]
+    for s in strs[1:]:
+        while not s.startswith(p):
+            p = p[:-1]
+            if not p:
+                return ""
+    return p
+
+print(longest_common_prefix(["flower", "flow", "flight"]))
 `,
-    nextUrl: /\/learn\/py-103-merge-sort/,
-    cursorAfter: "103",
+    nextUrl: /\/learn\/py-567-str-str/,
+    cursorAfter: "567",
   },
   {
-    micro: 103,
-    id: "py-103-merge-sort",
-    title: "DSA Merge Sort",
-    solution: `def merge(left, right):
-    result = []
-    i = j = 0
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-    result.extend(left[i:])
-    result.extend(right[j:])
-    return result
-def mergeSort(arr):
-    if len(arr) <= 1:
-        return arr
-    mid = len(arr) // 2
-    return merge(mergeSort(arr[:mid]), mergeSort(arr[mid:]))
-mylist = [3, 7, 6, -10, 15, 23.5, 55, -13]
-print(mergeSort(mylist))
+    micro: 567,
+    id: "py-567-str-str",
+    title: "DSA Str Str",
+    solution: `def str_str(haystack, needle):
+    return haystack.find(needle)
+
+print(str_str("sadbutsad", "sad"))
 `,
-    nextUrl: /\/learn\/py-104-counting-sort/,
-    cursorAfter: "104",
+    nextUrl: /\/learn\/py-568-valid-anagram/,
+    cursorAfter: "568",
   },
   {
-    micro: 104,
-    id: "py-104-counting-sort",
-    title: "DSA Counting Sort",
-    solution: `def countingSort(arr):
-    if not arr:
-        return []
-    size = max(arr) + 1
-    count = [0] * size
-    for x in arr:
-        count[x] += 1
-    out = []
-    for value, freq in enumerate(count):
-        out.extend([value] * freq)
-    return out
-mylist = [4, 2, 2, 8, 3, 3, 1]
-print(countingSort(mylist))
+    micro: 568,
+    id: "py-568-valid-anagram",
+    title: "DSA Valid Anagram",
+    solution: `def is_anagram(s, t):
+    return sorted(s) == sorted(t)
+
+print(is_anagram("anagram", "nagaram"))
 `,
-    nextUrl: /\/learn\/py-105-tree-node/,
-    cursorAfter: "105",
+    nextUrl: /\/learn\/py-569-first-uniq/,
+    cursorAfter: "569",
   },
   {
-    micro: 105,
-    id: "py-105-tree-node",
-    title: "DSA Binary Tree Node",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-print(root.left.data)
-print(root.right.data)
+    micro: 569,
+    id: "py-569-first-uniq",
+    title: "DSA First Uniq",
+    solution: `def first_uniq_char(s):
+    from collections import Counter
+    c = Counter(s)
+    for i, ch in enumerate(s):
+        if c[ch] == 1:
+            return i
+    return -1
+
+print(first_uniq_char("leetcode"))
 `,
-    nextUrl: /\/learn\/py-106-tree-preorder/,
-    cursorAfter: "106",
+    nextUrl: /\/learn\/py-570-add-binary/,
+    cursorAfter: "570",
   },
   {
-    micro: 106,
-    id: "py-106-tree-preorder",
-    title: "DSA Tree Preorder",
-    solution: `class TreeNode:
-    def __init__(self, data):
-        self.data = data
-        self.left = None
-        self.right = None
-def preorder(node):
-    if node is None:
-        return
-    print(node.data)
-    preorder(node.left)
-    preorder(node.right)
-root = TreeNode(1)
-root.left = TreeNode(2)
-root.right = TreeNode(3)
-preorder(root)
+    micro: 570,
+    id: "py-570-add-binary",
+    title: "DSA Add Binary",
+    solution: `def add_binary(a, b):
+    return bin(int(a, 2) + int(b, 2))[2:]
+
+print(add_binary("11", "1"))
 `,
-    nextUrl: /\/learn\/py-107-tree-inorder/,
-    cursorAfter: "107",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "571",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:565|566|567|568|569|570)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -180,7 +140,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 101–106 · Linked ops / Merge-Counting Sort / Trees", () => {
+test.describe("micro-steps 565–570 · strings IV", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
