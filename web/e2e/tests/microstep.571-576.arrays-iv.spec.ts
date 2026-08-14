@@ -22,74 +22,97 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 10,
-    id: "py-10-strings",
-    title: "Python Strings",
-    solution: `a = "Hello, World!"
-print(a)
-print(len(a))
+    micro: 571,
+    id: "py-571-running-sum",
+    title: "DSA Running Sum",
+    solution: `def running_sum(nums):
+    for i in range(1, len(nums)):
+        nums[i] += nums[i - 1]
+    return nums
+
+print(running_sum([1, 2, 3, 4]))
 `,
-    nextUrl: /\/learn\/py-11-slicing/,
-    cursorAfter: "11",
+    nextUrl: /\/learn\/py-572-richest-customer/,
+    cursorAfter: "572",
   },
   {
-    micro: 11,
-    id: "py-11-slicing",
-    title: "Python Slicing Strings",
-    solution: `b = "Hello, World!"
-slice = b[2:5]
-print(slice)
+    micro: 572,
+    id: "py-572-richest-customer",
+    title: "DSA Richest",
+    solution: `def maximum_wealth(accounts):
+    return max(sum(row) for row in accounts)
+
+print(maximum_wealth([[1, 2, 3], [3, 2, 1]]))
 `,
-    nextUrl: /\/learn\/py-12-modify-strings/,
-    cursorAfter: "12",
+    nextUrl: /\/learn\/py-573-num-identical-pairs/,
+    cursorAfter: "573",
   },
   {
-    micro: 12,
-    id: "py-12-modify-strings",
-    title: "Python Modify Strings",
-    solution: `a = "Hello, World!"
-u = a.upper()
-l = a.lower()
-print(u)
-print(l)
+    micro: 573,
+    id: "py-573-num-identical-pairs",
+    title: "DSA Good Pairs II",
+    solution: `def num_identical_pairs(nums):
+    from collections import Counter
+    return sum(c * (c - 1) // 2 for c in Counter(nums).values())
+
+print(num_identical_pairs([1, 2, 3, 1, 1, 3]))
 `,
-    nextUrl: /\/learn\/py-13-concatenate/,
-    cursorAfter: "13",
+    nextUrl: /\/learn\/py-574-shuffle-2n/,
+    cursorAfter: "574",
   },
   {
-    micro: 13,
-    id: "py-13-concatenate",
-    title: "Python String Concatenation",
-    solution: `a = "Hello"
-b = "World"
-c = a + " " + b
-print(c)
+    micro: 574,
+    id: "py-574-shuffle-2n",
+    title: "DSA Shuffle 2N",
+    solution: `def shuffle(nums, n):
+    res = []
+    for i in range(n):
+        res.append(nums[i]); res.append(nums[i + n])
+    return res
+
+print(shuffle([2, 5, 1, 3, 4, 7], 3))
 `,
-    nextUrl: /\/learn\/py-14-format-strings/,
-    cursorAfter: "14",
+    nextUrl: /\/learn\/py-575-decompress-rle/,
+    cursorAfter: "575",
   },
   {
-    micro: 14,
-    id: "py-14-format-strings",
-    title: "Python Format Strings",
-    solution: `age = 36
-txt = f"My name is John, I am {age}"
-print(txt)
+    micro: 575,
+    id: "py-575-decompress-rle",
+    title: "DSA Decompress RLE",
+    solution: `def decompress_rl_elist(nums):
+    res = []
+    for i in range(0, len(nums), 2):
+        res.extend([nums[i + 1]] * nums[i])
+    return res
+
+print(decompress_rl_elist([1, 2, 3, 4]))
 `,
-    nextUrl: /\/learn\/py-15-escape/,
-    cursorAfter: "15",
+    nextUrl: /\/learn\/py-576-create-target/,
+    cursorAfter: "576",
   },
   {
-    micro: 15,
-    id: "py-15-escape",
-    title: "Python Escape Characters",
-    solution: `txt = "We are the so-called \\"Vikings\\" from the north."
-print(txt)
+    micro: 576,
+    id: "py-576-create-target",
+    title: "DSA Create Target",
+    solution: `def create_target_array(nums, index):
+    res = []
+    for n, i in zip(nums, index):
+        res.insert(i, n)
+    return res
+
+print(create_target_array([0, 1, 2, 3, 4], [0, 1, 2, 2, 1]))
 `,
-    nextUrl: /\/learn\/py-16-booleans/,
-    cursorAfter: "16",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "577",
+  }
 ];
+
+test("declares the contiguous learn-route family", () => {
+  for (const step of FAMILY) {
+    expect(step.id).toMatch(/^py-(?:571|572|573|574|575|576)-/);
+    expect(step.nextUrl).toBeInstanceOf(RegExp);
+  }
+});
 
 function uniqueCreds(micro: number) {
   const password = process.env.PPI_E2E_PASSWORD?.trim() || "secreto12ci";
@@ -116,7 +139,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 10–15 · W3Schools Strings family", () => {
+test.describe("micro-steps 571–576 · arrays IV", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
