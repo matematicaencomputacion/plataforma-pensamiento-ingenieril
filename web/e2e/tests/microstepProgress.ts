@@ -810,6 +810,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 802, step_id: "py-802-union-find-v-lower-boundary" },
   { level_id: 803, step_id: "py-803-union-find-v-dependency-order" },
   { level_id: 804, step_id: "py-804-union-find-v-minimum-transition" },
+  { level_id: 805, step_id: "py-805-shortest-path-v-canonicalize" },
+  { level_id: 806, step_id: "py-806-shortest-path-v-prefix-state" },
+  { level_id: 807, step_id: "py-807-shortest-path-v-bounded-window" },
+  { level_id: 808, step_id: "py-808-shortest-path-v-lower-boundary" },
+  { level_id: 809, step_id: "py-809-shortest-path-v-dependency-order" },
+  { level_id: 810, step_id: "py-810-shortest-path-v-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
