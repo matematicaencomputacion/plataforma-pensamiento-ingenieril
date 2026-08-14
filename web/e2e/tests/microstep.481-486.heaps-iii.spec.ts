@@ -22,198 +22,118 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 335,
-    id: "py-335-implement-trie",
-    title: "DSA Implement Trie",
-    solution: `class Trie:
-    def __init__(self):
-        self.root = {}
+    micro: 481,
+    id: "py-481-last-stone",
+    title: "DSA Last Stone",
+    solution: `def last_stone_weight(stones):
+    import heapq
+    h = [-s for s in stones]
+    heapq.heapify(h)
+    while len(h) > 1:
+        a = -heapq.heappop(h)
+        b = -heapq.heappop(h)
+        if a != b:
+            heapq.heappush(h, -(a - b))
+    return -h[0] if h else 0
 
-    def insert(self, word):
-        node = self.root
-        for ch in word:
-            node = node.setdefault(ch, {})
-        node["$"] = True
-
-    def search(self, word):
-        node = self.root
-        for ch in word:
-            if ch not in node:
-                return False
-            node = node[ch]
-        return bool(node.get("$"))
-
-    def starts_with(self, prefix):
-        node = self.root
-        for ch in prefix:
-            if ch not in node:
-                return False
-            node = node[ch]
-        return True
-
-t = Trie()
-t.insert("apple")
-print([t.search("apple"), t.search("app"), t.starts_with("app")])
+print(last_stone_weight([2, 7, 4, 1, 8, 1]))
 `,
-    nextUrl: /\/learn\/py-336-word-dict/,
-    cursorAfter: "336",
+    nextUrl: /\/learn\/py-482-kth-largest/,
+    cursorAfter: "482",
   },
   {
-    micro: 336,
-    id: "py-336-word-dict",
-    title: "DSA Word Dictionary",
-    solution: `class WordDictionary:
-    def __init__(self):
-        self.root = {}
+    micro: 482,
+    id: "py-482-kth-largest",
+    title: "DSA Kth Largest",
+    solution: `def find_kth_largest(nums, k):
+    import heapq
+    return heapq.nlargest(k, nums)[-1]
 
-    def add_word(self, word):
-        node = self.root
-        for ch in word:
-            node = node.setdefault(ch, {})
-        node["$"] = True
-
-    def search(self, word):
-        def dfs(i, node):
-            if i == len(word):
-                return bool(node.get("$"))
-            ch = word[i]
-            if ch == ".":
-                return any(dfs(i + 1, node[k]) for k in node if k != "$")
-            if ch not in node:
-                return False
-            return dfs(i + 1, node[ch])
-        return dfs(0, self.root)
-
-w = WordDictionary()
-for x in ("bad", "dad", "mad"):
-    w.add_word(x)
-print([w.search("pad"), w.search("bad"), w.search(".ad"), w.search("b..")])
+print(find_kth_largest([3, 2, 1, 5, 6, 4], 2))
 `,
-    nextUrl: /\/learn\/py-337-replace-words/,
-    cursorAfter: "337",
+    nextUrl: /\/learn\/py-483-top-k-freq/,
+    cursorAfter: "483",
   },
   {
-    micro: 337,
-    id: "py-337-replace-words",
-    title: "DSA Replace Words",
-    solution: `def replace_words(dictionary, sentence):
-    root = {}
-    for w in dictionary:
-        node = root
-        for ch in w:
-            node = node.setdefault(ch, {})
-        node["$"] = True
+    micro: 483,
+    id: "py-483-top-k-freq",
+    title: "DSA Top K Freq",
+    solution: `def top_k_frequent(nums, k):
+    from collections import Counter
+    import heapq
+    return [x for x, _ in Counter(nums).most_common(k)]
 
-    def repl(word):
-        node = root
-        pref = []
-        for ch in word:
-            if ch not in node:
-                return word
-            node = node[ch]
-            pref.append(ch)
-            if node.get("$"):
-                return "".join(pref)
-        return word
-
-    return " ".join(repl(w) for w in sentence.split())
-
-print(replace_words(["cat", "bat", "rat"], "the cattle was rattled by the battery"))
+print(top_k_frequent([1, 1, 1, 2, 2, 3], 2))
 `,
-    nextUrl: /\/learn\/py-338-map-sum/,
-    cursorAfter: "338",
+    nextUrl: /\/learn\/py-484-k-closest/,
+    cursorAfter: "484",
   },
   {
-    micro: 338,
-    id: "py-338-map-sum",
-    title: "DSA Map Sum",
-    solution: `class MapSum:
-    def __init__(self):
-        self.root = {}
-        self.vals = {}
+    micro: 484,
+    id: "py-484-k-closest",
+    title: "DSA K Closest",
+    solution: `def k_closest(points, k):
+    import heapq
+    return heapq.nsmallest(k, points, key=lambda p: p[0] ** 2 + p[1] ** 2)
 
-    def insert(self, key, val):
-        delta = val - self.vals.get(key, 0)
-        self.vals[key] = val
-        node = self.root
-        for ch in key:
-            node = node.setdefault(ch, {"#": 0})
-            node["#"] = node.get("#", 0) + delta
-
-    def sum(self, prefix):
-        node = self.root
-        for ch in prefix:
-            if ch not in node:
-                return 0
-            node = node[ch]
-        return node.get("#", 0)
-
-m = MapSum()
-m.insert("apple", 3)
-a = m.sum("ap")
-m.insert("app", 2)
-b = m.sum("ap")
-print([a, b])
+print(k_closest([[1, 3], [-2, 2]], 1))
 `,
-    nextUrl: /\/learn\/py-339-longest-word/,
-    cursorAfter: "339",
+    nextUrl: /\/learn\/py-485-ugly-number-ii/,
+    cursorAfter: "485",
   },
   {
-    micro: 339,
-    id: "py-339-longest-word",
-    title: "DSA Longest Word",
-    solution: `def longest_word(words):
-    words = sorted(words)
-    seen = {""}
-    best = ""
-    for w in words:
-        if w[:-1] in seen:
-            seen.add(w)
-            if len(w) > len(best):
-                best = w
-    return best
+    micro: 485,
+    id: "py-485-ugly-number-ii",
+    title: "DSA Ugly Number II",
+    solution: `def nth_ugly_number(n):
+    import heapq
+    h = [1]
+    seen = {1}
+    x = 1
+    for _ in range(n):
+        x = heapq.heappop(h)
+        for f in (2, 3, 5):
+            y = x * f
+            if y not in seen:
+                seen.add(y)
+                heapq.heappush(h, y)
+    return x
 
-print(longest_word(["w", "wo", "wor", "worl", "world"]))
+print(nth_ugly_number(10))
 `,
-    nextUrl: /\/learn\/py-340-stream-checker/,
-    cursorAfter: "340",
+    nextUrl: /\/learn\/py-486-reorg-string/,
+    cursorAfter: "486",
   },
   {
-    micro: 340,
-    id: "py-340-stream-checker",
-    title: "DSA Stream Checker",
-    solution: `class StreamChecker:
-    def __init__(self, words):
-        self.root = {}
-        self.buf = []
-        for w in words:
-            node = self.root
-            for ch in reversed(w):
-                node = node.setdefault(ch, {})
-            node["$"] = True
+    micro: 486,
+    id: "py-486-reorg-string",
+    title: "DSA Reorg String",
+    solution: `def reorganize_string(s):
+    from collections import Counter
+    import heapq
+    h = [(-c, ch) for ch, c in Counter(s).items()]
+    heapq.heapify(h)
+    out = []
+    prev = (0, "")
+    while h:
+        c, ch = heapq.heappop(h)
+        out.append(ch)
+        if prev[0] < 0:
+            heapq.heappush(h, prev)
+        prev = (c + 1, ch)
+    res = "".join(out)
+    return res if len(res) == len(s) else ""
 
-    def query(self, letter):
-        self.buf.append(letter)
-        node = self.root
-        for ch in reversed(self.buf):
-            if ch not in node:
-                return False
-            node = node[ch]
-            if node.get("$"):
-                return True
-        return False
-
-s = StreamChecker(["cd", "f", "kl"])
-print([s.query(ch) for ch in "cdaf"])
+print(reorganize_string("aab"))
 `,
-    nextUrl: /\/learn\/py-341-range-sum/,
-    cursorAfter: "341",
-  },
+    nextUrl: /\/workspace/,
+    cursorAfter: "487",
+  }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-33[5-9]-|^py-340-/);
+    expect(step.id).toMatch(/^py-(?:481|482|483|484|485|486)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -243,7 +163,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 335–340 · tries II", () => {
+test.describe("micro-steps 481–486 · heaps III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);

@@ -486,6 +486,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 478, step_id: "py-478-integer-break" },
   { level_id: 479, step_id: "py-479-decode-ways" },
   { level_id: 480, step_id: "py-480-rob-circle" },
+  { level_id: 481, step_id: "py-481-last-stone" },
+  { level_id: 482, step_id: "py-482-kth-largest" },
+  { level_id: 483, step_id: "py-483-top-k-freq" },
+  { level_id: 484, step_id: "py-484-k-closest" },
+  { level_id: 485, step_id: "py-485-ugly-number-ii" },
+  { level_id: 486, step_id: "py-486-reorg-string" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

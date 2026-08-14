@@ -129,7 +129,7 @@ test.describe("micro-steps 449–450 · cap 450", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 480) {
+      if (nextMicro <= 486) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
