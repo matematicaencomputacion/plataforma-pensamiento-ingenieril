@@ -148,7 +148,7 @@ test.describe("micro-steps 16–21 · Booleans, Operators, Lists", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 492) {
+      if (nextMicro <= 498) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
