@@ -34084,7 +34084,324 @@ print(minimum_transition_intervals_v([10, 15, 20]))
 
 print(minimum_transition_intervals_v([10, 15, 20]))
 ",
-    next: None, show_type_chips: false, micro_step: 834,
+    next: Some("py-835-greedy-v-canonicalize"), show_type_chips: false, micro_step: 834,
+};
+
+
+pub const PY835_GREEDY_V_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-835-greedy-v-canonicalize", title: "DSA Greedy V · Canonicalize", objective: "Normalizar entradas antes de aplicar invariantes de Greedy V.",
+    prompt_md: "**Greedy V: laboratorio 1**
+
+Ordenar y eliminar duplicados crea una representación canónica, fácil de comparar y probar.
+
+**Micro-reto:**
+1. Definí `canonicalize_greedy_v(values)`
+2. Ejecutá el ejemplo; imprimí `[1, 2, 3]`.",
+    starter_code: "# def canonicalize_greedy_v(values):
+#     return sorted(set(values))
+#
+# print(canonicalize_greedy_v([3, 1, 2, 3, 1]))
+",
+    pytest: "def test_835_greedy_v_canonicalize(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('canonicalize_greedy_v'))
+    assert ns['canonicalize_greedy_v']([3, 1, 2, 3, 1]) == [1, 2, 3]
+    assert ns['canonicalize_greedy_v']([]) == []
+    assert ns['canonicalize_greedy_v']([5, 5]) == [5]
+    assert capsys.readouterr().out.strip() == '[1, 2, 3]'
+",
+    hint: "def canonicalize_greedy_v(values):
+    return sorted(set(values))
+
+print(canonicalize_greedy_v([3, 1, 2, 3, 1]))
+",
+    solution_example: "def canonicalize_greedy_v(values):
+    return sorted(set(values))
+
+print(canonicalize_greedy_v([3, 1, 2, 3, 1]))
+",
+    next: Some("py-836-greedy-v-prefix-state"), show_type_chips: false, micro_step: 835,
+};
+
+pub const PY836_GREEDY_V_PREFIX_STATE: CodingStep = CodingStep {
+    id: "py-836-greedy-v-prefix-state", title: "DSA Greedy V · Prefix State", objective: "Construir estados acumulados reutilizables en consultas de Greedy V.",
+    prompt_md: "**Greedy V: laboratorio 2**
+
+Un único barrido conserva el invariante: state[i] resume exactamente el prefijo hasta i.
+
+**Micro-reto:**
+1. Definí `prefix_state_greedy_v(values)`
+2. Ejecutá el ejemplo; imprimí `[3, 4, 8]`.",
+    starter_code: "# def prefix_state_greedy_v(values):
+#     out = []
+#     running = 0
+#     for value in values:
+#         running += value
+#         out.append(running)
+#     return out
+#
+# print(prefix_state_greedy_v([3, 1, 4]))
+",
+    pytest: "def test_836_greedy_v_prefix_state(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('prefix_state_greedy_v'))
+    assert ns['prefix_state_greedy_v']([3, 1, 4]) == [3, 4, 8]
+    assert ns['prefix_state_greedy_v']([]) == []
+    assert ns['prefix_state_greedy_v']([-2, 5]) == [-2, 3]
+    assert capsys.readouterr().out.strip() == '[3, 4, 8]'
+",
+    hint: "def prefix_state_greedy_v(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_greedy_v([3, 1, 4]))
+",
+    solution_example: "def prefix_state_greedy_v(values):
+    out = []
+    running = 0
+    for value in values:
+        running += value
+        out.append(running)
+    return out
+
+print(prefix_state_greedy_v([3, 1, 4]))
+",
+    next: Some("py-837-greedy-v-bounded-window"), show_type_chips: false, micro_step: 836,
+};
+
+pub const PY837_GREEDY_V_BOUNDED_WINDOW: CodingStep = CodingStep {
+    id: "py-837-greedy-v-bounded-window", title: "DSA Greedy V · Bounded Window", objective: "Responder una consulta contigua manteniendo estado incremental de Greedy V.",
+    prompt_md: "**Greedy V: laboratorio 3**
+
+Al mover la ventana, entra un valor y sale otro: actualizar evita recalcular cada segmento.
+
+**Micro-reto:**
+1. Definí `best_window_greedy_v(values, width)`
+2. Ejecutá el ejemplo; imprimí `9`.",
+    starter_code: "# def best_window_greedy_v(values, width):
+#     if width <= 0 or width > len(values):
+#         raise ValueError(\"invalid width\")
+#     current = sum(values[:width])
+#     best = current
+#     for right in range(width, len(values)):
+#         current += values[right] - values[right - width]
+#         best = max(best, current)
+#     return best
+#
+# print(best_window_greedy_v([2, 1, 5, 1, 3], 3))
+",
+    pytest: "def test_837_greedy_v_bounded_window(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('best_window_greedy_v'))
+    assert ns['best_window_greedy_v']([2, 1, 5, 1, 3], 3) == 9
+    assert ns['best_window_greedy_v']([4], 1) == 4
+    assert ns['best_window_greedy_v']([-3, -2], 1) == -2
+    assert capsys.readouterr().out.strip() == '9'
+",
+    hint: "def best_window_greedy_v(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_greedy_v([2, 1, 5, 1, 3], 3))
+",
+    solution_example: "def best_window_greedy_v(values, width):
+    if width <= 0 or width > len(values):
+        raise ValueError(\"invalid width\")
+    current = sum(values[:width])
+    best = current
+    for right in range(width, len(values)):
+        current += values[right] - values[right - width]
+        best = max(best, current)
+    return best
+
+print(best_window_greedy_v([2, 1, 5, 1, 3], 3))
+",
+    next: Some("py-838-greedy-v-lower-boundary"), show_type_chips: false, micro_step: 837,
+};
+
+pub const PY838_GREEDY_V_LOWER_BOUNDARY: CodingStep = CodingStep {
+    id: "py-838-greedy-v-lower-boundary", title: "DSA Greedy V · Lower Boundary", objective: "Localizar la primera posición factible con el invariante de frontera de Greedy V.",
+    prompt_md: "**Greedy V: laboratorio 4**
+
+El intervalo [lo, hi) siempre contiene la respuesta; cada comparación descarta la mitad.
+
+**Micro-reto:**
+1. Definí `lower_boundary_greedy_v(values, target)`
+2. Ejecutá el ejemplo; imprimí `1`.",
+    starter_code: "# def lower_boundary_greedy_v(values, target):
+#     lo, hi = 0, len(values)
+#     while lo < hi:
+#         mid = (lo + hi) // 2
+#         if values[mid] < target:
+#             lo = mid + 1
+#         else:
+#             hi = mid
+#     return lo
+#
+# print(lower_boundary_greedy_v([1, 3, 3, 7], 3))
+",
+    pytest: "def test_838_greedy_v_lower_boundary(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('lower_boundary_greedy_v'))
+    assert ns['lower_boundary_greedy_v']([1, 3, 3, 7], 3) == 1
+    assert ns['lower_boundary_greedy_v']([1, 3, 7], 5) == 2
+    assert ns['lower_boundary_greedy_v']([], 5) == 0
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def lower_boundary_greedy_v(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_greedy_v([1, 3, 3, 7], 3))
+",
+    solution_example: "def lower_boundary_greedy_v(values, target):
+    lo, hi = 0, len(values)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if values[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+print(lower_boundary_greedy_v([1, 3, 3, 7], 3))
+",
+    next: Some("py-839-greedy-v-dependency-order"), show_type_chips: false, micro_step: 838,
+};
+
+pub const PY839_GREEDY_V_DEPENDENCY_ORDER: CodingStep = CodingStep {
+    id: "py-839-greedy-v-dependency-order", title: "DSA Greedy V · Dependency Order", objective: "Recorrer dependencias sin duplicar trabajo en un escenario de Greedy V.",
+    prompt_md: "**Greedy V: laboratorio 5**
+
+La cola separa descubrimiento de procesamiento; seen garantiza que cada nodo entra una sola vez.
+
+**Micro-reto:**
+1. Definí `dependency_order_greedy_v(graph, start)`
+2. Ejecutá el ejemplo; imprimí `[0, 1, 2, 3]`.",
+    starter_code: "# from collections import deque
+#
+# def dependency_order_greedy_v(graph, start):
+#     queue = deque([start])
+#     seen = {start}
+#     order = []
+#     while queue:
+#         node = queue.popleft()
+#         order.append(node)
+#         for neighbor in graph[node]:
+#             if neighbor not in seen:
+#                 seen.add(neighbor)
+#                 queue.append(neighbor)
+#     return order
+#
+# print(dependency_order_greedy_v([[1, 2], [3], [3], []], 0))
+",
+    pytest: "def test_839_greedy_v_dependency_order(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('dependency_order_greedy_v'))
+    assert ns['dependency_order_greedy_v']([[1, 2], [3], [3], []], 0) == [0, 1, 2, 3]
+    assert ns['dependency_order_greedy_v']([[]], 0) == [0]
+    assert capsys.readouterr().out.strip() == '[0, 1, 2, 3]'
+",
+    hint: "from collections import deque
+
+def dependency_order_greedy_v(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_greedy_v([[1, 2], [3], [3], []], 0))
+",
+    solution_example: "from collections import deque
+
+def dependency_order_greedy_v(graph, start):
+    queue = deque([start])
+    seen = {start}
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+print(dependency_order_greedy_v([[1, 2], [3], [3], []], 0))
+",
+    next: Some("py-840-greedy-v-minimum-transition"), show_type_chips: false, micro_step: 839,
+};
+
+pub const PY840_GREEDY_V_MINIMUM_TRANSITION: CodingStep = CodingStep {
+    id: "py-840-greedy-v-minimum-transition", title: "DSA Greedy V · Minimum Transition", objective: "Optimizar transiciones locales conservando solo el estado necesario de Greedy V.",
+    prompt_md: "**Greedy V: laboratorio 6**
+
+La recurrencia depende de dos estados previos; comprimirlos mantiene O(1) memoria.
+
+**Micro-reto:**
+1. Definí `minimum_transition_greedy_v(cost)`
+2. Ejecutá el ejemplo; imprimí `15`.",
+    starter_code: "# def minimum_transition_greedy_v(cost):
+#     two_back = one_back = 0
+#     for value in cost:
+#         two_back, one_back = one_back, value + min(two_back, one_back)
+#     return min(two_back, one_back)
+#
+# print(minimum_transition_greedy_v([10, 15, 20]))
+",
+    pytest: "def test_840_greedy_v_minimum_transition(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert callable(ns.get('minimum_transition_greedy_v'))
+    assert ns['minimum_transition_greedy_v']([10, 15, 20]) == 15
+    assert ns['minimum_transition_greedy_v']([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+    assert capsys.readouterr().out.strip() == '15'
+",
+    hint: "def minimum_transition_greedy_v(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_greedy_v([10, 15, 20]))
+",
+    solution_example: "def minimum_transition_greedy_v(cost):
+    two_back = one_back = 0
+    for value in cost:
+        two_back, one_back = one_back, value + min(two_back, one_back)
+    return min(two_back, one_back)
+
+print(minimum_transition_greedy_v([10, 15, 20]))
+",
+    next: None, show_type_chips: false, micro_step: 840,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -34921,7 +35238,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY831_INTERVALS_V_BOUNDED_WINDOW,
     &PY832_INTERVALS_V_LOWER_BOUNDARY,
     &PY833_INTERVALS_V_DEPENDENCY_ORDER,
-    &PY834_INTERVALS_V_MINIMUM_TRANSITION
+    &PY834_INTERVALS_V_MINIMUM_TRANSITION,
+    &PY835_GREEDY_V_CANONICALIZE,
+    &PY836_GREEDY_V_PREFIX_STATE,
+    &PY837_GREEDY_V_BOUNDED_WINDOW,
+    &PY838_GREEDY_V_LOWER_BOUNDARY,
+    &PY839_GREEDY_V_DEPENDENCY_ORDER,
+    &PY840_GREEDY_V_MINIMUM_TRANSITION
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -35065,7 +35388,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 834);
+            assert!(step.micro_step >= 1 && step.micro_step <= 840);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -37639,7 +37962,13 @@ mod tests {
             (831, "py-831-intervals-v-bounded-window", Some("py-832-intervals-v-lower-boundary")),
             (832, "py-832-intervals-v-lower-boundary", Some("py-833-intervals-v-dependency-order")),
             (833, "py-833-intervals-v-dependency-order", Some("py-834-intervals-v-minimum-transition")),
-            (834, "py-834-intervals-v-minimum-transition", None),
+            (834, "py-834-intervals-v-minimum-transition", Some("py-835-greedy-v-canonicalize")),
+            (835, "py-835-greedy-v-canonicalize", Some("py-836-greedy-v-prefix-state")),
+            (836, "py-836-greedy-v-prefix-state", Some("py-837-greedy-v-bounded-window")),
+            (837, "py-837-greedy-v-bounded-window", Some("py-838-greedy-v-lower-boundary")),
+            (838, "py-838-greedy-v-lower-boundary", Some("py-839-greedy-v-dependency-order")),
+            (839, "py-839-greedy-v-dependency-order", Some("py-840-greedy-v-minimum-transition")),
+            (840, "py-840-greedy-v-minimum-transition", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

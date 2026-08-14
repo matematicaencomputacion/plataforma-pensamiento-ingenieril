@@ -840,6 +840,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 832, step_id: "py-832-intervals-v-lower-boundary" },
   { level_id: 833, step_id: "py-833-intervals-v-dependency-order" },
   { level_id: 834, step_id: "py-834-intervals-v-minimum-transition" },
+  { level_id: 835, step_id: "py-835-greedy-v-canonicalize" },
+  { level_id: 836, step_id: "py-836-greedy-v-prefix-state" },
+  { level_id: 837, step_id: "py-837-greedy-v-bounded-window" },
+  { level_id: 838, step_id: "py-838-greedy-v-lower-boundary" },
+  { level_id: 839, step_id: "py-839-greedy-v-dependency-order" },
+  { level_id: 840, step_id: "py-840-greedy-v-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
