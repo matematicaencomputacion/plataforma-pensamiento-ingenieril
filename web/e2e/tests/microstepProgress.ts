@@ -888,6 +888,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 880, step_id: "py-880-geometry-ii-lower-boundary" },
   { level_id: 881, step_id: "py-881-geometry-ii-dependency-order" },
   { level_id: 882, step_id: "py-882-geometry-ii-minimum-transition" },
+  { level_id: 883, step_id: "py-883-prefix-sums-v-canonicalize" },
+  { level_id: 884, step_id: "py-884-prefix-sums-v-prefix-state" },
+  { level_id: 885, step_id: "py-885-prefix-sums-v-bounded-window" },
+  { level_id: 886, step_id: "py-886-prefix-sums-v-lower-boundary" },
+  { level_id: 887, step_id: "py-887-prefix-sums-v-dependency-order" },
+  { level_id: 888, step_id: "py-888-prefix-sums-v-minimum-transition" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
