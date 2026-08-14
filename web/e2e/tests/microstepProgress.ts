@@ -456,6 +456,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 448, step_id: "py-448-plus-one" },
   { level_id: 449, step_id: "py-449-roman-to-int" },
   { level_id: 450, step_id: "py-450-int-to-roman" },
+  { level_id: 451, step_id: "py-451-build-array-perm" },
+  { level_id: 452, step_id: "py-452-concat-array" },
+  { level_id: 453, step_id: "py-453-shuffle-array" },
+  { level_id: 454, step_id: "py-454-kids-candies" },
+  { level_id: 455, step_id: "py-455-good-pairs" },
+  { level_id: 456, step_id: "py-456-smaller-counts" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */

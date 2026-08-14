@@ -22,47 +22,88 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 449,
-    id: "py-449-roman-to-int",
-    title: "DSA Roman To Int",
-    solution: `def roman_to_int(s):
-    v = dict(I=1, V=5, X=10, L=50, C=100, D=500, M=1000)
-    ans = 0
-    for i, ch in enumerate(s):
-        if i + 1 < len(s) and v[ch] < v[s[i + 1]]:
-            ans -= v[ch]
-        else:
-            ans += v[ch]
-    return ans
+    micro: 451,
+    id: "py-451-build-array-perm",
+    title: "DSA Build Array",
+    solution: `def build_array(nums):
+    return [nums[x] for x in nums]
 
-print(roman_to_int("MCMXCIV"))
+print(build_array([0, 2, 1, 5, 3, 4]))
 `,
-    nextUrl: /\/learn\/py-450-int-to-roman/,
-    cursorAfter: "450",
+    nextUrl: /\/learn\/py-452-concat-array/,
+    cursorAfter: "452",
   },
   {
-    micro: 450,
-    id: "py-450-int-to-roman",
-    title: "DSA Int To Roman",
-    solution: `def int_to_roman(num):
-    vals = [(1000, "M"), (900, "CM"), (500, "D"), (400, "CD"), (100, "C"), (90, "XC"), (50, "L"), (40, "XL"), (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")]
-    out = []
-    for v, s in vals:
-        while num >= v:
-            out.append(s)
-            num -= v
-    return "".join(out)
+    micro: 452,
+    id: "py-452-concat-array",
+    title: "DSA Concat Array",
+    solution: `def get_concatenation(nums):
+    return nums + nums
 
-print(int_to_roman(1994))
+print(get_concatenation([1, 2, 1]))
 `,
-    nextUrl: /\/learn\/py-451-build-array-perm/,
-    cursorAfter: "451",
+    nextUrl: /\/learn\/py-453-shuffle-array/,
+    cursorAfter: "453",
+  },
+  {
+    micro: 453,
+    id: "py-453-shuffle-array",
+    title: "DSA Shuffle Array",
+    solution: `def shuffle(nums, n):
+    out = []
+    for i in range(n):
+        out.append(nums[i])
+        out.append(nums[i + n])
+    return out
+
+print(shuffle([2, 5, 1, 3, 4, 7], 3))
+`,
+    nextUrl: /\/learn\/py-454-kids-candies/,
+    cursorAfter: "454",
+  },
+  {
+    micro: 454,
+    id: "py-454-kids-candies",
+    title: "DSA Kids Candies",
+    solution: `def kids_with_candies(candies, extra):
+    m = max(candies)
+    return [c + extra >= m for c in candies]
+
+print(kids_with_candies([2, 3, 5, 1, 3], 3))
+`,
+    nextUrl: /\/learn\/py-455-good-pairs/,
+    cursorAfter: "455",
+  },
+  {
+    micro: 455,
+    id: "py-455-good-pairs",
+    title: "DSA Good Pairs",
+    solution: `def num_identical_pairs(nums):
+    from collections import Counter
+    return sum(c * (c - 1) // 2 for c in Counter(nums).values())
+
+print(num_identical_pairs([1, 2, 3, 1, 1, 3]))
+`,
+    nextUrl: /\/learn\/py-456-smaller-counts/,
+    cursorAfter: "456",
+  },
+  {
+    micro: 456,
+    id: "py-456-smaller-counts",
+    title: "DSA Smaller Counts",
+    solution: `def smaller_numbers_than_current(nums):
+    return [sum(1 for y in nums if y < x) for x in nums]
+
+print(smaller_numbers_than_current([8, 1, 2, 2, 3]))
+`,
+    nextUrl: /\/workspace/,
+    cursorAfter: "457",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:449|450)-/);
+    expect(step.id).toMatch(/^py-(?:451|452|453|454|455|456)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -92,7 +133,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 449–450 · cap 450", () => {
+test.describe("micro-steps 451–456 · arrays III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
