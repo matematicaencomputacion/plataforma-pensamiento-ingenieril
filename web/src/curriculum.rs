@@ -26559,8 +26559,1126 @@ ls = LazySeg([1, 2, 3, 4, 5])
 ls.range_add(1, 3, 10)
 print(ls.query(0, 4))
 ",
-    next: None, show_type_chips: false, micro_step: 708,
+    next: Some("py-709-tree-parents"), show_type_chips: false, micro_step: 708,
 };
+
+pub const PY709_TREE_PARENTS: CodingStep = CodingStep {
+    id: "py-709-tree-parents", title: "DSA Lift · Parents", objective: "Padre y profundidad de un árbol enraizado (DFS/BFS).",
+    prompt_md: "**Tree Parents & Depth**
+
+Desde root=0, colgá `parent[v]=u` y `depth[v]=depth[u]+1`.
+
+**Micro-reto:**
+1. Definí `build_parent_depth(n, edges, root=0)`
+2. n=7, edges=`[[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]]`; imprimí parent → `[-1, 0, 0, 1, 1, 2, 2]`.",
+    starter_code: "# def build_graph(n, edges):
+#     g = [[] for _ in range(n)]
+#     for u, v in edges:
+#         g[u].append(v)
+#         g[v].append(u)
+#     return g
+#
+# def build_parent_depth(n, edges, root=0):
+#     g = build_graph(n, edges)
+#     parent = [-1] * n
+#     depth = [0] * n
+#     stack = [root]
+#     seen = {root}
+#     while stack:
+#         u = stack.pop()
+#         for v in g[u]:
+#             if v in seen:
+#                 continue
+#             seen.add(v)
+#             parent[v] = u
+#             depth[v] = depth[u] + 1
+#             stack.append(v)
+#     return parent, depth
+#
+# def build_up(parent):
+#     n = len(parent)
+#     log = max(1, (n - 1).bit_length())
+#     up = [[-1] * n for _ in range(log)]
+#     up[0] = parent[:]
+#     for k in range(1, log):
+#         for v in range(n):
+#             p = up[k - 1][v]
+#             up[k][v] = -1 if p < 0 else up[k - 1][p]
+#     return up
+#
+# def kth_ancestor(up, node, k):
+#     bit = 0
+#     while k and node >= 0:
+#         if k & 1:
+#             node = up[bit][node]
+#             if node < 0:
+#                 return -1
+#         k >>= 1
+#         bit += 1
+#     return node
+#
+# parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+# print(parent)
+",
+    pytest: "def test_709_tree_parents(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    parent, depth = ns['build_parent_depth'](7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+    assert parent == [-1, 0, 0, 1, 1, 2, 2]
+    assert depth == [0, 1, 1, 2, 2, 2, 2]
+    assert capsys.readouterr().out.strip() == '[-1, 0, 0, 1, 1, 2, 2]'
+",
+    hint: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+print(parent)
+",
+    solution_example: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+print(parent)
+",
+    next: Some("py-710-binary-lift-table"), show_type_chips: false, micro_step: 709,
+};
+
+pub const PY710_BINARY_LIFT_TABLE: CodingStep = CodingStep {
+    id: "py-710-binary-lift-table", title: "DSA Lift · Jump Table", objective: "Tabla up[k][v] = ancestro 2^k de v.",
+    prompt_md: "**Binary Lifting Table**
+
+`up[0] = parent`; `up[k][v] = up[k-1][up[k-1][v]]`.
+
+**Micro-reto:**
+1. Definí `build_up(parent)`
+2. Mismo árbol; imprimí el ancestro 2^1 de 3 (`up[1][3]`) → `0`.",
+    starter_code: "# def build_graph(n, edges):
+#     g = [[] for _ in range(n)]
+#     for u, v in edges:
+#         g[u].append(v)
+#         g[v].append(u)
+#     return g
+#
+# def build_parent_depth(n, edges, root=0):
+#     g = build_graph(n, edges)
+#     parent = [-1] * n
+#     depth = [0] * n
+#     stack = [root]
+#     seen = {root}
+#     while stack:
+#         u = stack.pop()
+#         for v in g[u]:
+#             if v in seen:
+#                 continue
+#             seen.add(v)
+#             parent[v] = u
+#             depth[v] = depth[u] + 1
+#             stack.append(v)
+#     return parent, depth
+#
+# def build_up(parent):
+#     n = len(parent)
+#     log = max(1, (n - 1).bit_length())
+#     up = [[-1] * n for _ in range(log)]
+#     up[0] = parent[:]
+#     for k in range(1, log):
+#         for v in range(n):
+#             p = up[k - 1][v]
+#             up[k][v] = -1 if p < 0 else up[k - 1][p]
+#     return up
+#
+# def kth_ancestor(up, node, k):
+#     bit = 0
+#     while k and node >= 0:
+#         if k & 1:
+#             node = up[bit][node]
+#             if node < 0:
+#                 return -1
+#         k >>= 1
+#         bit += 1
+#     return node
+#
+# parent, _ = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+# up = build_up(parent)
+# print(up[1][3])
+",
+    pytest: "def test_710_binary_lift_table(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    parent, _ = ns['build_parent_depth'](7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+    up = ns['build_up'](parent)
+    assert up[0][3] == 1
+    assert up[1][3] == 0
+    assert capsys.readouterr().out.strip() == '0'
+",
+    hint: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+parent, _ = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(up[1][3])
+",
+    solution_example: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+parent, _ = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(up[1][3])
+",
+    next: Some("py-711-kth-ancestor"), show_type_chips: false, micro_step: 710,
+};
+
+pub const PY711_KTH_ANCESTOR: CodingStep = CodingStep {
+    id: "py-711-kth-ancestor", title: "DSA Lift · Kth Ancestor", objective: "Subir k aristas usando los bits de k.",
+    prompt_md: "**Kth Ancestor**
+
+Si el bit b de k está prendido, `node = up[b][node]`.
+
+**Micro-reto:**
+1. Definí `kth_ancestor(up, node, k)` (inexistente → -1)
+2. Ancestro 2 de nodo 3; imprimí `0`.",
+    starter_code: "# def build_graph(n, edges):
+#     g = [[] for _ in range(n)]
+#     for u, v in edges:
+#         g[u].append(v)
+#         g[v].append(u)
+#     return g
+#
+# def build_parent_depth(n, edges, root=0):
+#     g = build_graph(n, edges)
+#     parent = [-1] * n
+#     depth = [0] * n
+#     stack = [root]
+#     seen = {root}
+#     while stack:
+#         u = stack.pop()
+#         for v in g[u]:
+#             if v in seen:
+#                 continue
+#             seen.add(v)
+#             parent[v] = u
+#             depth[v] = depth[u] + 1
+#             stack.append(v)
+#     return parent, depth
+#
+# def build_up(parent):
+#     n = len(parent)
+#     log = max(1, (n - 1).bit_length())
+#     up = [[-1] * n for _ in range(log)]
+#     up[0] = parent[:]
+#     for k in range(1, log):
+#         for v in range(n):
+#             p = up[k - 1][v]
+#             up[k][v] = -1 if p < 0 else up[k - 1][p]
+#     return up
+#
+# def kth_ancestor(up, node, k):
+#     bit = 0
+#     while k and node >= 0:
+#         if k & 1:
+#             node = up[bit][node]
+#             if node < 0:
+#                 return -1
+#         k >>= 1
+#         bit += 1
+#     return node
+#
+# parent, _ = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+# up = build_up(parent)
+# print(kth_ancestor(up, 3, 2))
+",
+    pytest: "def test_711_kth_ancestor(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    parent, _ = ns['build_parent_depth'](7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+    up = ns['build_up'](parent)
+    assert ns['kth_ancestor'](up, 3, 2) == 0
+    assert ns['kth_ancestor'](up, 3, 1) == 1
+    assert ns['kth_ancestor'](up, 3, 10) == -1
+    assert capsys.readouterr().out.strip() == '0'
+",
+    hint: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+parent, _ = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(kth_ancestor(up, 3, 2))
+",
+    solution_example: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+parent, _ = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(kth_ancestor(up, 3, 2))
+",
+    next: Some("py-712-lca-lift"), show_type_chips: false, micro_step: 711,
+};
+
+pub const PY712_LCA_LIFT: CodingStep = CodingStep {
+    id: "py-712-lca-lift", title: "DSA Lift · LCA", objective: "LCA por binary lifting: igualá profundidades y subí juntos.",
+    prompt_md: "**LCA via Binary Lifting**
+
+Subí el más profundo; después bajá bits desde el alto mientras `up[k][u] != up[k][v]`.
+
+**Micro-reto:**
+1. Definí `lca(up, depth, u, v)`
+2. LCA(3, 5); imprimí `0`.",
+    starter_code: "# def build_graph(n, edges):
+#     g = [[] for _ in range(n)]
+#     for u, v in edges:
+#         g[u].append(v)
+#         g[v].append(u)
+#     return g
+#
+# def build_parent_depth(n, edges, root=0):
+#     g = build_graph(n, edges)
+#     parent = [-1] * n
+#     depth = [0] * n
+#     stack = [root]
+#     seen = {root}
+#     while stack:
+#         u = stack.pop()
+#         for v in g[u]:
+#             if v in seen:
+#                 continue
+#             seen.add(v)
+#             parent[v] = u
+#             depth[v] = depth[u] + 1
+#             stack.append(v)
+#     return parent, depth
+#
+# def build_up(parent):
+#     n = len(parent)
+#     log = max(1, (n - 1).bit_length())
+#     up = [[-1] * n for _ in range(log)]
+#     up[0] = parent[:]
+#     for k in range(1, log):
+#         for v in range(n):
+#             p = up[k - 1][v]
+#             up[k][v] = -1 if p < 0 else up[k - 1][p]
+#     return up
+#
+# def kth_ancestor(up, node, k):
+#     bit = 0
+#     while k and node >= 0:
+#         if k & 1:
+#             node = up[bit][node]
+#             if node < 0:
+#                 return -1
+#         k >>= 1
+#         bit += 1
+#     return node
+#
+# def lca(up, depth, u, v):
+#     if depth[u] < depth[v]:
+#         u, v = v, u
+#     u = kth_ancestor(up, u, depth[u] - depth[v])
+#     if u == v:
+#         return u
+#     for k in range(len(up) - 1, -1, -1):
+#         if up[k][u] != up[k][v]:
+#             u, v = up[k][u], up[k][v]
+#     return up[0][u]
+#
+# parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+# up = build_up(parent)
+# print(lca(up, depth, 3, 5))
+",
+    pytest: "def test_712_lca_lift(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    parent, depth = ns['build_parent_depth'](7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+    up = ns['build_up'](parent)
+    assert ns['lca'](up, depth, 3, 4) == 1
+    assert ns['lca'](up, depth, 3, 5) == 0
+    assert capsys.readouterr().out.strip() == '0'
+",
+    hint: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+def lca(up, depth, u, v):
+    if depth[u] < depth[v]:
+        u, v = v, u
+    u = kth_ancestor(up, u, depth[u] - depth[v])
+    if u == v:
+        return u
+    for k in range(len(up) - 1, -1, -1):
+        if up[k][u] != up[k][v]:
+            u, v = up[k][u], up[k][v]
+    return up[0][u]
+
+parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(lca(up, depth, 3, 5))
+",
+    solution_example: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+def lca(up, depth, u, v):
+    if depth[u] < depth[v]:
+        u, v = v, u
+    u = kth_ancestor(up, u, depth[u] - depth[v])
+    if u == v:
+        return u
+    for k in range(len(up) - 1, -1, -1):
+        if up[k][u] != up[k][v]:
+            u, v = up[k][u], up[k][v]
+    return up[0][u]
+
+parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(lca(up, depth, 3, 5))
+",
+    next: Some("py-713-tree-dist"), show_type_chips: false, micro_step: 712,
+};
+
+pub const PY713_TREE_DIST: CodingStep = CodingStep {
+    id: "py-713-tree-dist", title: "DSA Lift · Tree Dist", objective: "Distancia u–v = depth[u]+depth[v]−2·depth[lca].",
+    prompt_md: "**Distance on Tree**
+
+Un LCA y las profundidades alcanzan cualquier par.
+
+**Micro-reto:**
+1. Definí `dist(up, depth, u, v)`
+2. Distancia 3–5; imprimí `4`.",
+    starter_code: "# def build_graph(n, edges):
+#     g = [[] for _ in range(n)]
+#     for u, v in edges:
+#         g[u].append(v)
+#         g[v].append(u)
+#     return g
+#
+# def build_parent_depth(n, edges, root=0):
+#     g = build_graph(n, edges)
+#     parent = [-1] * n
+#     depth = [0] * n
+#     stack = [root]
+#     seen = {root}
+#     while stack:
+#         u = stack.pop()
+#         for v in g[u]:
+#             if v in seen:
+#                 continue
+#             seen.add(v)
+#             parent[v] = u
+#             depth[v] = depth[u] + 1
+#             stack.append(v)
+#     return parent, depth
+#
+# def build_up(parent):
+#     n = len(parent)
+#     log = max(1, (n - 1).bit_length())
+#     up = [[-1] * n for _ in range(log)]
+#     up[0] = parent[:]
+#     for k in range(1, log):
+#         for v in range(n):
+#             p = up[k - 1][v]
+#             up[k][v] = -1 if p < 0 else up[k - 1][p]
+#     return up
+#
+# def kth_ancestor(up, node, k):
+#     bit = 0
+#     while k and node >= 0:
+#         if k & 1:
+#             node = up[bit][node]
+#             if node < 0:
+#                 return -1
+#         k >>= 1
+#         bit += 1
+#     return node
+#
+# def lca(up, depth, u, v):
+#     if depth[u] < depth[v]:
+#         u, v = v, u
+#     u = kth_ancestor(up, u, depth[u] - depth[v])
+#     if u == v:
+#         return u
+#     for k in range(len(up) - 1, -1, -1):
+#         if up[k][u] != up[k][v]:
+#             u, v = up[k][u], up[k][v]
+#     return up[0][u]
+#
+# def dist(up, depth, u, v):
+#     w = lca(up, depth, u, v)
+#     return depth[u] + depth[v] - 2 * depth[w]
+#
+# parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+# up = build_up(parent)
+# print(dist(up, depth, 3, 5))
+",
+    pytest: "def test_713_tree_dist(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    parent, depth = ns['build_parent_depth'](7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+    up = ns['build_up'](parent)
+    assert ns['dist'](up, depth, 3, 5) == 4
+    assert ns['dist'](up, depth, 3, 4) == 2
+    assert capsys.readouterr().out.strip() == '4'
+",
+    hint: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+def lca(up, depth, u, v):
+    if depth[u] < depth[v]:
+        u, v = v, u
+    u = kth_ancestor(up, u, depth[u] - depth[v])
+    if u == v:
+        return u
+    for k in range(len(up) - 1, -1, -1):
+        if up[k][u] != up[k][v]:
+            u, v = up[k][u], up[k][v]
+    return up[0][u]
+
+def dist(up, depth, u, v):
+    w = lca(up, depth, u, v)
+    return depth[u] + depth[v] - 2 * depth[w]
+
+parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(dist(up, depth, 3, 5))
+",
+    solution_example: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+def lca(up, depth, u, v):
+    if depth[u] < depth[v]:
+        u, v = v, u
+    u = kth_ancestor(up, u, depth[u] - depth[v])
+    if u == v:
+        return u
+    for k in range(len(up) - 1, -1, -1):
+        if up[k][u] != up[k][v]:
+            u, v = up[k][u], up[k][v]
+    return up[0][u]
+
+def dist(up, depth, u, v):
+    w = lca(up, depth, u, v)
+    return depth[u] + depth[v] - 2 * depth[w]
+
+parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(dist(up, depth, 3, 5))
+",
+    next: Some("py-714-jump-depth"), show_type_chips: false, micro_step: 713,
+};
+
+pub const PY714_JUMP_DEPTH: CodingStep = CodingStep {
+    id: "py-714-jump-depth", title: "DSA Lift · Jump Depth", objective: "Saltar al ancestro de profundidad d (o -1).",
+    prompt_md: "**Jump to Depth**
+
+`kth_ancestor(node, depth[node] - d)` si d ≤ depth[node].
+
+**Micro-reto:**
+1. Definí `jump_to_depth(up, depth, node, d)`
+2. Nodo 3 a profundidad 1; imprimí `1`.",
+    starter_code: "# def build_graph(n, edges):
+#     g = [[] for _ in range(n)]
+#     for u, v in edges:
+#         g[u].append(v)
+#         g[v].append(u)
+#     return g
+#
+# def build_parent_depth(n, edges, root=0):
+#     g = build_graph(n, edges)
+#     parent = [-1] * n
+#     depth = [0] * n
+#     stack = [root]
+#     seen = {root}
+#     while stack:
+#         u = stack.pop()
+#         for v in g[u]:
+#             if v in seen:
+#                 continue
+#             seen.add(v)
+#             parent[v] = u
+#             depth[v] = depth[u] + 1
+#             stack.append(v)
+#     return parent, depth
+#
+# def build_up(parent):
+#     n = len(parent)
+#     log = max(1, (n - 1).bit_length())
+#     up = [[-1] * n for _ in range(log)]
+#     up[0] = parent[:]
+#     for k in range(1, log):
+#         for v in range(n):
+#             p = up[k - 1][v]
+#             up[k][v] = -1 if p < 0 else up[k - 1][p]
+#     return up
+#
+# def kth_ancestor(up, node, k):
+#     bit = 0
+#     while k and node >= 0:
+#         if k & 1:
+#             node = up[bit][node]
+#             if node < 0:
+#                 return -1
+#         k >>= 1
+#         bit += 1
+#     return node
+#
+# def jump_to_depth(up, depth, node, d):
+#     if d > depth[node]:
+#         return -1
+#     return kth_ancestor(up, node, depth[node] - d)
+#
+# parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+# up = build_up(parent)
+# print(jump_to_depth(up, depth, 3, 1))
+",
+    pytest: "def test_714_jump_depth(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    parent, depth = ns['build_parent_depth'](7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+    up = ns['build_up'](parent)
+    assert ns['jump_to_depth'](up, depth, 3, 1) == 1
+    assert ns['jump_to_depth'](up, depth, 3, 0) == 0
+    assert ns['jump_to_depth'](up, depth, 3, 5) == -1
+    assert capsys.readouterr().out.strip() == '1'
+",
+    hint: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+def jump_to_depth(up, depth, node, d):
+    if d > depth[node]:
+        return -1
+    return kth_ancestor(up, node, depth[node] - d)
+
+parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(jump_to_depth(up, depth, 3, 1))
+",
+    solution_example: "def build_graph(n, edges):
+    g = [[] for _ in range(n)]
+    for u, v in edges:
+        g[u].append(v)
+        g[v].append(u)
+    return g
+
+def build_parent_depth(n, edges, root=0):
+    g = build_graph(n, edges)
+    parent = [-1] * n
+    depth = [0] * n
+    stack = [root]
+    seen = {root}
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v in seen:
+                continue
+            seen.add(v)
+            parent[v] = u
+            depth[v] = depth[u] + 1
+            stack.append(v)
+    return parent, depth
+
+def build_up(parent):
+    n = len(parent)
+    log = max(1, (n - 1).bit_length())
+    up = [[-1] * n for _ in range(log)]
+    up[0] = parent[:]
+    for k in range(1, log):
+        for v in range(n):
+            p = up[k - 1][v]
+            up[k][v] = -1 if p < 0 else up[k - 1][p]
+    return up
+
+def kth_ancestor(up, node, k):
+    bit = 0
+    while k and node >= 0:
+        if k & 1:
+            node = up[bit][node]
+            if node < 0:
+                return -1
+        k >>= 1
+        bit += 1
+    return node
+
+def jump_to_depth(up, depth, node, d):
+    if d > depth[node]:
+        return -1
+    return kth_ancestor(up, node, depth[node] - d)
+
+parent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])
+up = build_up(parent)
+print(jump_to_depth(up, depth, 3, 1))
+",
+    next: None, show_type_chips: false, micro_step: 714,
+};
+
 
 
 
@@ -27275,7 +28393,13 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY705_SEGTREE_MAX,
     &PY706_SEGTREE_XOR,
     &PY707_SEGTREE_KTH,
-    &PY708_LAZY_SEGTREE
+    &PY708_LAZY_SEGTREE,
+    &PY709_TREE_PARENTS,
+    &PY710_BINARY_LIFT_TABLE,
+    &PY711_KTH_ANCESTOR,
+    &PY712_LCA_LIFT,
+    &PY713_TREE_DIST,
+    &PY714_JUMP_DEPTH
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -27419,7 +28543,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 708);
+            assert!(step.micro_step >= 1 && step.micro_step <= 714);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -29867,7 +30991,13 @@ mod tests {
             (705, "py-705-segtree-max", Some("py-706-segtree-xor")),
             (706, "py-706-segtree-xor", Some("py-707-segtree-kth")),
             (707, "py-707-segtree-kth", Some("py-708-lazy-segtree")),
-            (708, "py-708-lazy-segtree", None),
+            (708, "py-708-lazy-segtree", Some("py-709-tree-parents")),
+            (709, "py-709-tree-parents", Some("py-710-binary-lift-table")),
+            (710, "py-710-binary-lift-table", Some("py-711-kth-ancestor")),
+            (711, "py-711-kth-ancestor", Some("py-712-lca-lift")),
+            (712, "py-712-lca-lift", Some("py-713-tree-dist")),
+            (713, "py-713-tree-dist", Some("py-714-jump-depth")),
+            (714, "py-714-jump-depth", None),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");

@@ -714,6 +714,12 @@ export const MICRO_PROGRESS_STEPS: ReadonlyArray<{
   { level_id: 706, step_id: "py-706-segtree-xor" },
   { level_id: 707, step_id: "py-707-segtree-kth" },
   { level_id: 708, step_id: "py-708-lazy-segtree" },
+  { level_id: 709, step_id: "py-709-tree-parents" },
+  { level_id: 710, step_id: "py-710-binary-lift-table" },
+  { level_id: 711, step_id: "py-711-kth-ancestor" },
+  { level_id: 712, step_id: "py-712-lca-lift" },
+  { level_id: 713, step_id: "py-713-tree-dist" },
+  { level_id: 714, step_id: "py-714-jump-depth" },
 ];
 
 /** Complete steps 1..=throughLevelId so the next cell becomes current. */
