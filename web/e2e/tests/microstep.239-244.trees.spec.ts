@@ -289,7 +289,7 @@ test.describe("micro-steps 239–244 · trees avanzados", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 540) {
+      if (nextMicro <= 546) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

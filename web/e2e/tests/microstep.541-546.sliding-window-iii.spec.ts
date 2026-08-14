@@ -22,124 +22,146 @@ type FamilyStep = {
 
 const FAMILY: FamilyStep[] = [
   {
-    micro: 493,
-    id: "py-493-sort-colors",
-    title: "DSA Sort Colors",
-    solution: `def sort_colors(nums):
-    lo = mid = 0
-    hi = len(nums) - 1
-    while mid <= hi:
-        if nums[mid] == 0:
-            nums[lo], nums[mid] = nums[mid], nums[lo]
-            lo += 1; mid += 1
-        elif nums[mid] == 1:
-            mid += 1
-        else:
-            nums[mid], nums[hi] = nums[hi], nums[mid]
-            hi -= 1
-    return nums
+    micro: 541,
+    id: "py-541-max-vowels",
+    title: "DSA Max Vowels",
+    solution: `def max_vowels(s, k):
+    vowels = set("aeiou")
+    cur = sum(1 for c in s[:k] if c in vowels)
+    best = cur
+    for i in range(k, len(s)):
+        cur += (s[i] in vowels) - (s[i - k] in vowels)
+        best = max(best, cur)
+    return best
 
-print(sort_colors([2, 0, 2, 1, 1, 0]))
+print(max_vowels("abciiidef", 3))
 `,
-    nextUrl: /\/learn\/py-494-merge-intervals/,
-    cursorAfter: "494",
+    nextUrl: /\/learn\/py-542-longest-ones/,
+    cursorAfter: "542",
   },
   {
-    micro: 494,
-    id: "py-494-merge-intervals",
-    title: "DSA Merge Intervals",
-    solution: `def merge(intervals):
-    intervals.sort()
-    out = [intervals[0]]
-    for s, e in intervals[1:]:
-        if s <= out[-1][1]:
-            out[-1][1] = max(out[-1][1], e)
-        else:
-            out.append([s, e])
-    return out
+    micro: 542,
+    id: "py-542-longest-ones",
+    title: "DSA Longest Ones",
+    solution: `def longest_ones(nums, k):
+    i = zeros = best = 0
+    for j, x in enumerate(nums):
+        zeros += x == 0
+        while zeros > k:
+            zeros -= nums[i] == 0
+            i += 1
+        best = max(best, j - i + 1)
+    return best
 
-print(merge([[1, 3], [2, 6], [8, 10], [15, 18]]))
+print(longest_ones([1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], 2))
 `,
-    nextUrl: /\/learn\/py-495-insert-interval/,
-    cursorAfter: "495",
+    nextUrl: /\/learn\/py-543-min-window/,
+    cursorAfter: "543",
   },
   {
-    micro: 495,
-    id: "py-495-insert-interval",
-    title: "DSA Insert Interval",
-    solution: `def insert(intervals, new_interval):
-    res = []
-    s, e = new_interval
-    i = 0
-    n = len(intervals)
-    while i < n and intervals[i][1] < s:
-        res.append(intervals[i]); i += 1
-    while i < n and intervals[i][0] <= e:
-        s = min(s, intervals[i][0]); e = max(e, intervals[i][1]); i += 1
-    res.append([s, e])
-    res.extend(intervals[i:])
+    micro: 543,
+    id: "py-543-min-window",
+    title: "DSA Min Window",
+    solution: `def min_window(s, t):
+    from collections import Counter
+    need = Counter(t)
+    missing = len(t)
+    i = start = 0
+    best = (float("inf"), 0, 0)
+    for j, ch in enumerate(s, 1):
+        if need[ch] > 0:
+            missing -= 1
+        need[ch] -= 1
+        if missing == 0:
+            while i < j and need[s[i]] < 0:
+                need[s[i]] += 1
+                i += 1
+            if j - i < best[0]:
+                best = (j - i, i, j)
+            need[s[i]] += 1
+            missing += 1
+            i += 1
+    return "" if best[0] == float("inf") else s[best[1]:best[2]]
+
+print(min_window("ADOBECODEBANC", "ABC"))
+`,
+    nextUrl: /\/learn\/py-544-find-anagrams/,
+    cursorAfter: "544",
+  },
+  {
+    micro: 544,
+    id: "py-544-find-anagrams",
+    title: "DSA Find Anagrams",
+    solution: `def find_anagrams(s, p):
+    from collections import Counter
+    need, cur = Counter(p), Counter()
+    k, res = len(p), []
+    for i, ch in enumerate(s):
+        cur[ch] += 1
+        if i >= k:
+            old = s[i - k]
+            cur[old] -= 1
+            if cur[old] == 0:
+                del cur[old]
+        if i >= k - 1 and cur == need:
+            res.append(i - k + 1)
     return res
 
-print(insert([[1, 3], [6, 9]], [2, 5]))
+print(find_anagrams("cbaebabacd", "abc"))
 `,
-    nextUrl: /\/learn\/py-496-largest-number/,
-    cursorAfter: "496",
+    nextUrl: /\/learn\/py-545-max-sliding/,
+    cursorAfter: "545",
   },
   {
-    micro: 496,
-    id: "py-496-largest-number",
-    title: "DSA Largest Number",
-    solution: `def largest_number(nums):
-    from functools import cmp_to_key
-    s = [str(x) for x in nums]
-    s.sort(key=cmp_to_key(lambda a, b: (a + b < b + a) - (a + b > b + a)))
-    if s[0] == "0":
-        return "0"
-    return "".join(s)
+    micro: 545,
+    id: "py-545-max-sliding",
+    title: "DSA Max Sliding",
+    solution: `def max_sliding_window(nums, k):
+    from collections import deque
+    q, out = deque(), []
+    for i, x in enumerate(nums):
+        while q and nums[q[-1]] <= x:
+            q.pop()
+        q.append(i)
+        if q[0] <= i - k:
+            q.popleft()
+        if i >= k - 1:
+            out.append(nums[q[0]])
+    return out
 
-print(largest_number([10, 2]))
+print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
 `,
-    nextUrl: /\/learn\/py-497-sort-by-parity/,
-    cursorAfter: "497",
+    nextUrl: /\/learn\/py-546-length-k-distinct/,
+    cursorAfter: "546",
   },
   {
-    micro: 497,
-    id: "py-497-sort-by-parity",
-    title: "DSA Sort Parity",
-    solution: `def sort_array_by_parity(nums):
-    i = 0
-    for j, x in enumerate(nums):
-        if x % 2 == 0:
-            nums[i], nums[j] = nums[j], nums[i]
+    micro: 546,
+    id: "py-546-length-k-distinct",
+    title: "DSA K Distinct",
+    solution: `def length_of_longest_substring_k_distinct(s, k):
+    from collections import defaultdict
+    cnt = defaultdict(int)
+    i = best = 0
+    for j, ch in enumerate(s):
+        cnt[ch] += 1
+        while len(cnt) > k:
+            cnt[s[i]] -= 1
+            if cnt[s[i]] == 0:
+                del cnt[s[i]]
             i += 1
-    return nums
+        best = max(best, j - i + 1)
+    return best
 
-print(sort_array_by_parity([3, 1, 2, 4]))
-`,
-    nextUrl: /\/learn\/py-498-wiggle-sort/,
-    cursorAfter: "498",
-  },
-  {
-    micro: 498,
-    id: "py-498-wiggle-sort",
-    title: "DSA Wiggle Sort",
-    solution: `def wiggle_sort(nums):
-    nums.sort()
-    mid = (len(nums) + 1) // 2
-    left, right = nums[:mid][::-1], nums[mid:][::-1]
-    nums[:] = [left[i // 2] if i % 2 == 0 else right[i // 2] for i in range(len(nums))]
-    return nums
-
-print(wiggle_sort([1, 5, 1, 1, 6, 4]))
+print(length_of_longest_substring_k_distinct("eceba", 2))
 `,
     nextUrl: /\/workspace/,
-    cursorAfter: "499",
+    cursorAfter: "547",
   }
 ];
 
 test("declares the contiguous learn-route family", () => {
   for (const step of FAMILY) {
-    expect(step.id).toMatch(/^py-(?:493|494|495|496|497|498)-/);
+    expect(step.id).toMatch(/^py-(?:541|542|543|544|545|546)-/);
     expect(step.nextUrl).toBeInstanceOf(RegExp);
   }
 });
@@ -169,7 +191,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL(/\/workspace/, { timeout: e2eTimeout });
 }
 
-test.describe("micro-steps 493–498 · sorting III", () => {
+test.describe("micro-steps 541–546 · sliding window III", () => {
   test.beforeEach(async ({ page }) => {
     if (!useRealPyodide) {
       await installPyodideMock(page);
