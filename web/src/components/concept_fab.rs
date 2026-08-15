@@ -348,6 +348,19 @@ fn ConceptMicroCard(
                 }).collect_view()}
             </div>
             <h3 class="concept-card__title">{entry.title}</h3>
+            <Show when=move || lens.get().diagram_svg.is_some()>
+                {move || lens.get().diagram_svg.map(|svg| {
+                    view! {
+                        <figure
+                            id="concept-diagram"
+                            class="concept-card__diagram"
+                            aria-label=move || lens.get().tldr
+                        >
+                            <div class="concept-card__diagram-svg" inner_html=svg></div>
+                        </figure>
+                    }
+                })}
+            </Show>
             <p class="concept-card__tldr">{move || lens.get().tldr}</p>
             <p class="concept-card__headline">{move || lens.get().headline}</p>
             <pre class="concept-card__code">{move || lens.get().code_example}</pre>

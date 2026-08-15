@@ -1045,4 +1045,18 @@ mod tests {
             assert_eq!(got.1, expected.1, "tags changed for micro_step {}", got.0);
         }
     }
+
+    #[test]
+    fn wave_c3_does_not_retag_601_and_up() {
+        let current: Vec<(i32, &[u8])> = STEP_PARTITIONS
+            .iter()
+            .copied()
+            .filter(|(n, _)| *n >= 601)
+            .collect();
+        assert_eq!(
+            current.as_slice(),
+            WAVE_C1_FROZEN_601,
+            "C3 must not retag STEP_PARTITIONS ≥ 601"
+        );
+    }
 }

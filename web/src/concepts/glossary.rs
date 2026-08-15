@@ -75,7 +75,65 @@ pub struct ConceptLens {
     pub tldr: &'static str,
     pub code_example: &'static str,
     pub related_step_id: Option<&'static str>,
+    /// Static inline SVG for peek/dock (Wave C3). `None` keeps Wave B text anatomy.
+    pub diagram_svg: Option<&'static str>,
 }
+
+/// Alias: two names point at the same list (python-lists · P1).
+const DIAGRAM_PYTHON_LISTS_P1: &str = concat!(
+    r##"<svg viewBox="0 0 280 88" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">"##,
+    r##"<text x="28" y="22" font-size="12" fill="currentColor">xs</text>"##,
+    r##"<text x="28" y="70" font-size="12" fill="currentColor">ys</text>"##,
+    r##"<path d="M48 18 L96 40" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#c3arr)"/>"##,
+    r##"<path d="M48 64 L96 48" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#c3arr)"/>"##,
+    r##"<rect x="100" y="28" width="88" height="32" rx="6" fill="none" stroke="var(--lens-p1)" stroke-width="2"/>"##,
+    r##"<text x="144" y="48" text-anchor="middle" font-size="13" fill="currentColor">[1, 2]</text>"##,
+    r##"<text x="210" y="48" font-size="11" fill="currentColor">un objeto</text>"##,
+    r##"<defs><marker id="c3arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">"##,
+    r##"<path d="M0,0 L6,3 L0,6" fill="currentColor"/></marker></defs></svg>"##,
+);
+
+/// LEGB cascade (model-legb · P2).
+const DIAGRAM_LEGB: &str = concat!(
+    r##"<svg viewBox="0 0 280 88" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">"##,
+    r##"<rect x="8" y="28" width="52" height="32" rx="5" fill="none" stroke="var(--lens-p2)" stroke-width="2"/>"##,
+    r##"<text x="34" y="48" text-anchor="middle" font-size="13" fill="currentColor">L</text>"##,
+    r##"<text x="70" y="48" font-size="14" fill="currentColor">→</text>"##,
+    r##"<rect x="86" y="28" width="52" height="32" rx="5" fill="none" stroke="currentColor"/>"##,
+    r##"<text x="112" y="48" text-anchor="middle" font-size="13" fill="currentColor">E</text>"##,
+    r##"<text x="148" y="48" font-size="14" fill="currentColor">→</text>"##,
+    r##"<rect x="164" y="28" width="44" height="32" rx="5" fill="none" stroke="currentColor"/>"##,
+    r##"<text x="186" y="48" text-anchor="middle" font-size="13" fill="currentColor">G</text>"##,
+    r##"<text x="216" y="48" font-size="14" fill="currentColor">→</text>"##,
+    r##"<rect x="232" y="28" width="40" height="32" rx="5" fill="none" stroke="currentColor"/>"##,
+    r##"<text x="252" y="48" text-anchor="middle" font-size="13" fill="currentColor">B</text>"##,
+    r##"</svg>"##,
+);
+
+/// Two labels, one mutable object (model-mutability · P1).
+const DIAGRAM_MUTABILITY: &str = concat!(
+    r##"<svg viewBox="0 0 280 88" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">"##,
+    r##"<text x="24" y="24" font-size="12" fill="currentColor">a</text>"##,
+    r##"<text x="24" y="72" font-size="12" fill="currentColor">b</text>"##,
+    r##"<path d="M40 20 L100 40" fill="none" stroke="currentColor" stroke-width="1.5"/>"##,
+    r##"<path d="M40 66 L100 48" fill="none" stroke="currentColor" stroke-width="1.5"/>"##,
+    r##"<rect x="104" y="26" width="100" height="36" rx="6" fill="none" stroke="var(--lens-p1)" stroke-width="2"/>"##,
+    r##"<text x="154" y="48" text-anchor="middle" font-size="12" fill="currentColor">lista mutable</text>"##,
+    r##"<text x="220" y="48" font-size="11" fill="currentColor">alias</text>"##,
+    r##"</svg>"##,
+);
+
+/// Recursion call stack (model-recursion · P3).
+const DIAGRAM_RECURSION: &str = concat!(
+    r##"<svg viewBox="0 0 280 88" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">"##,
+    r##"<rect x="70" y="8" width="140" height="22" rx="4" fill="none" stroke="currentColor"/>"##,
+    r##"<text x="140" y="23" text-anchor="middle" font-size="11" fill="currentColor">fact(3)</text>"##,
+    r##"<rect x="70" y="33" width="140" height="22" rx="4" fill="none" stroke="currentColor"/>"##,
+    r##"<text x="140" y="48" text-anchor="middle" font-size="11" fill="currentColor">fact(2)</text>"##,
+    r##"<rect x="70" y="58" width="140" height="22" rx="4" fill="none" stroke="var(--lens-p3)" stroke-width="2"/>"##,
+    r##"<text x="140" y="73" text-anchor="middle" font-size="11" fill="currentColor">fact(1) base</text>"##,
+    r##"</svg>"##,
+);
 
 /// Search corpus entry. Intent is derived from `id` prefix, not a stored field.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -127,6 +185,7 @@ const PYTHON_LISTS_LENSES: &[ConceptLens] = &[
         tldr: "xs.append cambia el objeto; xs = xs + […] crea uno nuevo.",
         code_example: "xs = [1]\nys = xs\nxs.append(2)  # ys → [1, 2]",
         related_step_id: Some("py-20-list-change"),
+        diagram_svg: Some(DIAGRAM_PYTHON_LISTS_P1),
     },
     ConceptLens {
         partition: PartitionId::P2ScopeControl,
@@ -134,6 +193,7 @@ const PYTHON_LISTS_LENSES: &[ConceptLens] = &[
         tldr: "El parámetro apunta al mismo objeto: LEGB no copia la lista.",
         code_example: "def add(xs):\n    xs.append(1)\nadd(nums)  # nums cambia",
         related_step_id: Some("py-62-scope"),
+        diagram_svg: None,
     },
     ConceptLens {
         partition: PartitionId::P3Paradigms,
@@ -141,6 +201,7 @@ const PYTHON_LISTS_LENSES: &[ConceptLens] = &[
         tldr: "Una comprensión construye una lista nueva; el bucle puede mutar.",
         code_example: "squares = [x * x for x in xs]",
         related_step_id: Some("py-24-list-comprehension"),
+        diagram_svg: None,
     },
     ConceptLens {
         partition: PartitionId::P4Ecosystem,
@@ -148,6 +209,7 @@ const PYTHON_LISTS_LENSES: &[ConceptLens] = &[
         tldr: "list.pop(0) es O(n); collections.deque es O(1) en ambos extremos.",
         code_example: "from collections import deque\nq = deque([1, 2])\nq.appendleft(0)",
         related_step_id: Some("py-21-list-add"),
+        diagram_svg: None,
     },
     ConceptLens {
         partition: PartitionId::P5Domains,
@@ -155,6 +217,7 @@ const PYTHON_LISTS_LENSES: &[ConceptLens] = &[
         tldr: "json.dumps serializa listas a arrays; loads reconstruye list.",
         code_example: "import json\njson.dumps([1, 2])  # '[1, 2]'",
         related_step_id: Some("py-66-json"),
+        diagram_svg: None,
     },
 ];
 
@@ -178,6 +241,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "Python busca nombres en ese orden; no hay “salto” al azar.",
             code_example: "x = 1\ndef f():\n    print(x)  # lee Global",
             related_step_id: Some("py-62-scope"),
+            diagram_svg: Some(DIAGRAM_LEGB),
         }],
         common_pitfall: Some("Asignar a x dentro de f() la vuelve local en toda la función."),
     },
@@ -191,6 +255,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "Dos nombres pueden apuntar al mismo objeto mutable.",
             code_example: "a = [1]\nb = a\nb.append(2)\n# a es [1, 2]",
             related_step_id: Some("py-26-list-copy"),
+            diagram_svg: Some(DIAGRAM_MUTABILITY),
         }],
         common_pitfall: Some("b = a no copia la lista; usá list(a) o a.copy()."),
     },
@@ -204,6 +269,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "La recursión es un diseño, no un bucle disfrazado.",
             code_example: "def fact(n):\n    if n <= 1: return 1\n    return n * fact(n - 1)",
             related_step_id: Some("py-133-permutations"),
+            diagram_svg: Some(DIAGRAM_RECURSION),
         }],
         common_pitfall: Some("Sin caso base el call stack explota (RecursionError)."),
     },
@@ -217,6 +283,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "La comprensión es funcional-lite: nueva lista, sin mutar la fuente.",
             code_example: "evens = [x for x in xs if x % 2 == 0]",
             related_step_id: Some("py-24-list-comprehension"),
+        diagram_svg: None,
         }],
         common_pitfall: None,
     },
@@ -230,6 +297,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "xs.extend([2, 3]) aplana; xs.append([2, 3]) anida.",
             code_example: "xs = [1]\nxs.extend([2, 3])  # [1, 2, 3]",
             related_step_id: Some("py-21-list-add"),
+        diagram_svg: None,
         }],
         common_pitfall: Some("append(lista) mete la lista entera como un solo elemento."),
     },
@@ -244,6 +312,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
         tldr: "yield pausa; las variables locales sobreviven entre next().",
         code_example: "def count():\n    n = 0\n    yield n",
                 related_step_id: None,
+        diagram_svg: None,
             },
             ConceptLens {
                 partition: PartitionId::P3Paradigms,
@@ -251,6 +320,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
                 tldr: "Un generador no es una lista: se consume una vez.",
                 code_example: "g = (x * x for x in xs)\nlist(g)  # materializa",
                 related_step_id: None,
+        diagram_svg: None,
             },
         ],
         common_pitfall: Some("Iterar dos veces el mismo generador deja la segunda pasada vacía."),
@@ -265,6 +335,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "zip corta al más corto; no rellena.",
             code_example: "for a, b in zip(xs, ys):\n    print(a, b)",
             related_step_id: Some("py-51-for"),
+        diagram_svg: None,
         }],
         common_pitfall: None,
     },
@@ -278,6 +349,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "Útil como key=; no reemplaza un def con cuerpo.",
             code_example: "sorted(xs, key=lambda p: p[1])",
             related_step_id: Some("py-55-lambda"),
+        diagram_svg: None,
         }],
         common_pitfall: Some("Una lambda no puede tener statements (if/for/return)."),
     },
@@ -291,6 +363,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "Es una receta de índices, no un modelo de mutabilidad.",
             code_example: "i, j = 0, len(xs) - 1\nwhile i < j:\n    i += 1; j -= 1",
             related_step_id: None,
+        diagram_svg: None,
         }],
         common_pitfall: None,
     },
@@ -304,6 +377,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "Mantené un invariante en [left, right) en O(n).",
             code_example: "left = 0\nfor right, x in enumerate(xs):\n    # encoger left si hace falta\n    pass",
             related_step_id: None,
+        diagram_svg: None,
         }],
         common_pitfall: None,
     },
@@ -318,6 +392,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
                 tldr: "BFS usa cola; el primer hallazgo en grafo no ponderado es el más corto.",
                 code_example: "from collections import deque\nq = deque([start])",
                 related_step_id: Some("py-110-graph-bfs"),
+        diagram_svg: None,
             },
             ConceptLens {
                 partition: PartitionId::P4Ecosystem,
@@ -325,6 +400,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
                 tldr: "No uses list.pop(0) como cola de BFS.",
                 code_example: "q.append(n)\nq.popleft()",
                 related_step_id: Some("py-110-graph-bfs"),
+        diagram_svg: None,
             },
         ],
         common_pitfall: None,
@@ -339,6 +415,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "DFS es pila (recursiva o explícita), no cola.",
             code_example: "def dfs(u, seen):\n    seen.add(u)\n    for v in graph[u]: dfs(v, seen)",
             related_step_id: Some("py-109-graph-dfs"),
+        diagram_svg: None,
         }],
         common_pitfall: None,
     },
@@ -352,6 +429,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "Leer x y luego asignar x en el mismo def dispara UnboundLocalError.",
             code_example: "x = 1\ndef f():\n    print(x)\n    x = 2  # UnboundLocalError",
             related_step_id: Some("py-62-scope"),
+        diagram_svg: None,
         }],
         common_pitfall: Some("Usá nonlocal/global si realmente querés rebind del enclosing."),
     },
@@ -365,6 +443,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "t[0] = 1 lanza TypeError; reconstruí la tupla.",
             code_example: "t = (1, 2)\n# t[0] = 9  # TypeError\nt = (9,) + t[1:]",
             related_step_id: Some("py-30-tuple-update"),
+        diagram_svg: None,
         }],
         common_pitfall: Some("Una tupla puede contener una lista mutable: t[0].append(1) sí funciona."),
     },
@@ -378,6 +457,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "Mutar por un alias se ve por el otro.",
             code_example: "row = [0] * 3\ngrid = [row] * 3\ngrid[0][0] = 1  # las 3 filas cambian",
             related_step_id: Some("py-26-list-copy"),
+        diagram_svg: None,
         }],
         common_pitfall: Some("[row] * n no clona filas; usá [[0] * w for _ in range(h)]."),
     },
@@ -391,6 +471,7 @@ pub static GLOSSARY_ENTRIES: &[GlossaryEntry] = &[
             tldr: "def f(xs=[]) comparte la misma lista entre llamadas.",
             code_example: "def f(xs=None):\n    if xs is None:\n        xs = []",
             related_step_id: Some("py-52-functions"),
+        diagram_svg: None,
         }],
         common_pitfall: Some("Nunca uses list/dict/set vacíos como default."),
     },
@@ -590,6 +671,44 @@ mod tests {
         let hits = search_glossary("list", Some(PartitionId::P2ScopeControl));
         assert!(hits.iter().all(|e| has_lens(e, PartitionId::P2ScopeControl)));
         assert!(hits.iter().any(|e| e.id == "python-lists"));
+    }
+
+    #[test]
+    fn wave_c3_seed_diagrams_are_static_and_safe() {
+        let seeds = [
+            ("python-lists", PartitionId::P1MemoryData),
+            ("model-legb", PartitionId::P2ScopeControl),
+            ("model-mutability", PartitionId::P1MemoryData),
+            ("model-recursion", PartitionId::P3Paradigms),
+        ];
+        for (id, partition) in seeds {
+            let entry = entry_by_id(id).expect(id);
+            let lens = entry
+                .lenses
+                .iter()
+                .find(|l| l.partition == partition)
+                .expect("canonical lens");
+            let svg = lens.diagram_svg.expect("Wave C3 seed must have a diagram");
+            assert!(
+                !svg.to_ascii_lowercase().contains("<script"),
+                "{id} diagram must not contain <script>"
+            );
+            assert!(
+                !svg.to_ascii_lowercase().contains("foreignobject"),
+                "{id} diagram must not contain foreignObject"
+            );
+            assert!(
+                svg.len() <= 2048,
+                "{id} diagram is {} bytes (budget 2 KiB)",
+                svg.len()
+            );
+            assert!(svg.contains("<svg"), "{id} must be inline SVG");
+        }
+        let zip = entry_by_id("syntax-zip").expect("text-only seed");
+        assert!(
+            zip.lenses.iter().all(|l| l.diagram_svg.is_none()),
+            "syntax-zip must keep Wave B text anatomy"
+        );
     }
 
     #[test]
