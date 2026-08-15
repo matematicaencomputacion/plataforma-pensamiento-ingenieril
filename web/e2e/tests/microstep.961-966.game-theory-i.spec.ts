@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-966-game-theory-i-minimum-transition",
     title: "DSA Game Theory I · Minimum Transition",
     solution: "def minimum_transition_game_theory_i(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_game_theory_i([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-967-randomized-i-canonicalize/,
     cursorAfter: "967",
   },
 ];

@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-618-longest-cont-subarray",
     title: "DSA Mono Deque · Limit Difference",
     solution: "from collections import deque\n\ndef longest_subarray(nums, limit):\n    maxq, minq = deque(), deque()\n    left = best = 0\n    for right, value in enumerate(nums):\n        while maxq and nums[maxq[-1]] < value:\n            maxq.pop()\n        while minq and nums[minq[-1]] > value:\n            minq.pop()\n        maxq.append(right)\n        minq.append(right)\n        while nums[maxq[0]] - nums[minq[0]] > limit:\n            if maxq[0] == left:\n                maxq.popleft()\n            if minq[0] == left:\n                minq.popleft()\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n\nprint(longest_subarray([8, 2, 4, 7], 4))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-619-equations-possible/,
     cursorAfter: "619",
   },
 ];

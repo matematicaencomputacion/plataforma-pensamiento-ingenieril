@@ -107,7 +107,7 @@ print(get_sum(1, 2))
 
 print(missing_number([3, 0, 1]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-553-subsets/,
     cursorAfter: "553",
   }
 ];

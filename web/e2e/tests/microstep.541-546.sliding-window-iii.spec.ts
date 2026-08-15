@@ -154,7 +154,7 @@ print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
 
 print(length_of_longest_substring_k_distinct("eceba", 2))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-547-single-number/,
     cursorAfter: "547",
   }
 ];

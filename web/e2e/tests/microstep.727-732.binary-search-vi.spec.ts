@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-732-binary-search-vi-minimum-transition",
     title: "DSA Binary Search VI · Minimum Transition",
     solution: "def minimum_transition_binary_search_vi(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_binary_search_vi([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-733-sliding-window-vi-canonicalize/,
     cursorAfter: "733",
   },
 ];

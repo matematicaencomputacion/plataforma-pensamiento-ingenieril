@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-642-bag-of-tokens",
     title: "DSA Greedy IV · Bag of Tokens",
     solution: "def bag_of_tokens_score(tokens, power):\n    tokens.sort()\n    lo, hi = 0, len(tokens) - 1\n    score = best = 0\n    while lo <= hi:\n        if power >= tokens[lo]:\n            power -= tokens[lo]\n            lo += 1\n            score += 1\n            best = max(best, score)\n        elif score:\n            power += tokens[hi]\n            hi -= 1\n            score -= 1\n        else:\n            break\n    return best\n\nprint(bag_of_tokens_score([100, 200, 300, 400], 200))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-643-coin-change-ii/,
     cursorAfter: "643",
   },
 ];

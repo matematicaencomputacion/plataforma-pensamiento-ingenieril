@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-990-matrix-exponentiation-i-minimum-transition",
     title: "DSA Matrix Exponentiation I · Minimum Transition",
     solution: "def minimum_transition_matrix_exponentiation_i(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_matrix_exponentiation_i([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-991-computational-geometry-iii-canonicalize/,
     cursorAfter: "991",
   },
 ];

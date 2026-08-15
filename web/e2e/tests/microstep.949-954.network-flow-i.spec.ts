@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-954-network-flow-i-minimum-transition",
     title: "DSA Network Flow I · Minimum Transition",
     solution: "def minimum_transition_network_flow_i(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_network_flow_i([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-955-graph-matching-i-canonicalize/,
     cursorAfter: "955",
   },
 ];

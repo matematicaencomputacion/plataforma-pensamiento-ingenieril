@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-984-meet-in-middle-i-minimum-transition",
     title: "DSA Meet in the Middle I · Minimum Transition",
     solution: "def minimum_transition_meet_in_middle_i(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_meet_in_middle_i([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-985-matrix-exponentiation-i-canonicalize/,
     cursorAfter: "985",
   },
 ];

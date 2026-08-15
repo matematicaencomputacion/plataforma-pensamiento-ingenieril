@@ -121,7 +121,7 @@ print(valid_mountain_array([0, 3, 2, 1]))
 
 print(two_sum([2, 7, 11, 15], 9))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-601-subarray-sum-k/,
     cursorAfter: "601",
   }
 ];

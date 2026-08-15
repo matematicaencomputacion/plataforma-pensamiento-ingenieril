@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-870-number-theory-ii-minimum-transition",
     title: "DSA Number Theory II · Minimum Transition",
     solution: "def minimum_transition_number_theory_ii(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_number_theory_ii([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-871-combinatorics-iii-canonicalize/,
     cursorAfter: "871",
   },
 ];

@@ -118,7 +118,7 @@ print(title_to_number("AB"))
 
 print(my_sqrt(8))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-565-reverse-words/,
     cursorAfter: "565",
   }
 ];

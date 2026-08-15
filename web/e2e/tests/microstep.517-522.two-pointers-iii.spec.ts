@@ -141,7 +141,7 @@ print(remove_duplicates([1, 1, 2]))
 
 print(is_palindrome("A man, a plan, a canal: Panama"))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-523-daily-temps/,
     cursorAfter: "523",
   }
 ];

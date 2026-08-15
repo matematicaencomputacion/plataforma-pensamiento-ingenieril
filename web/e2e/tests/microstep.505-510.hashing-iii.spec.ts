@@ -119,7 +119,7 @@ print(find_the_difference("abcd", "abcde"))
 
 print(can_construct("aa", "aab"))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-511-jump-game/,
     cursorAfter: "511",
   }
 ];

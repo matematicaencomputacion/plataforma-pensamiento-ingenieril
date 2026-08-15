@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-972-randomized-i-minimum-transition",
     title: "DSA Randomized Algorithms I · Minimum Transition",
     solution: "def minimum_transition_randomized_i(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_randomized_i([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-973-offline-queries-i-canonicalize/,
     cursorAfter: "973",
   },
 ];

@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-690-frequency-sort",
     title: "DSA Heaps IV · Frequency Sort",
     solution: "import heapq\nfrom collections import Counter\n\ndef frequency_sort(s):\n    h = [(-c, ch) for ch, c in Counter(s).items()]\n    heapq.heapify(h)\n    out = []\n    while h:\n        c, ch = heapq.heappop(h)\n        out.append(ch * (-c))\n    return ''.join(out)\n\nprint(frequency_sort(\"tree\"))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-691-prefix-function/,
     cursorAfter: "691",
   },
 ];

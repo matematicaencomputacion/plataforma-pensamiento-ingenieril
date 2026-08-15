@@ -131,7 +131,7 @@ print(subarrays_div_by_k([4, 5, 0, -2, -3, 1], 5))
 
 print(max_subarray_len([1, -1, 5, -2, 3], 3))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-607-range-addition/,
     cursorAfter: "607",
   },
 ];

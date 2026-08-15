@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-624-graph-valid-tree",
     title: "DSA Union-Find IV · Valid Tree",
     solution: "def valid_tree(n, edges):\n    if len(edges) != n - 1:\n        return False\n    parent = list(range(n))\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n    for a, b in edges:\n        ra, rb = find(a), find(b)\n        if ra == rb:\n            return False\n        parent[rb] = ra\n    return True\n\nprint(valid_tree(5, [[0, 1], [0, 2], [0, 3], [1, 4]]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-625-implement-trie/,
     cursorAfter: "625",
   },
 ];

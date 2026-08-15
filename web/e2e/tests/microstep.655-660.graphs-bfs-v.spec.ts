@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-660-pacific-atlantic",
     title: "DSA Graphs BFS V · Pacific Atlantic",
     solution: "from collections import deque\n\ndef pacific_atlantic(heights):\n    rows, cols = len(heights), len(heights[0])\n    def reach(starts):\n        seen = set(starts)\n        q = deque(starts)\n        while q:\n            i, j = q.popleft()\n            for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                ni, nj = i + di, j + dj\n                if 0 <= ni < rows and 0 <= nj < cols and (ni, nj) not in seen and heights[ni][nj] >= heights[i][j]:\n                    seen.add((ni, nj))\n                    q.append((ni, nj))\n        return seen\n    pac = [(0, j) for j in range(cols)] + [(i, 0) for i in range(rows)]\n    atl = [(rows - 1, j) for j in range(cols)] + [(i, cols - 1) for i in range(rows)]\n    both = reach(pac) & reach(atl)\n    return [[i, j] for i, j in both]\n\nprint(sorted(pacific_atlantic([[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]])))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-661-network-delay-k/,
     cursorAfter: "661",
   },
 ];

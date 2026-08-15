@@ -178,7 +178,7 @@ print([h.contains(2)])
 h.remove(2)
 print([h.contains(2)])
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-583-invert-tree/,
     cursorAfter: "583",
   }
 ];

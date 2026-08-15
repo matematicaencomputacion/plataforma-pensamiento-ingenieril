@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-720-crt",
     title: "DSA NT · CRT",
     solution: "def binpow(a, e, mod):\n    r = 1\n    a %= mod\n    while e:\n        if e & 1:\n            r = r * a % mod\n        a = a * a % mod\n        e >>= 1\n    return r\n\ndef mod_inverse(a, mod):\n    return binpow(a, mod - 2, mod)\n\ndef crt(a1, m1, a2, m2):\n    k = (a2 - a1) * mod_inverse(m1 % m2, m2) % m2\n    return (a1 + k * m1) % (m1 * m2)\n\nprint(crt(2, 3, 3, 5))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-721-arrays-vi-canonicalize/,
     cursorAfter: "721",
   },
 ];

@@ -180,7 +180,7 @@ print(shortest_path_binary_matrix([[0, 1], [1, 0]]))
 
 print(snakes_and_ladders([[-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1], [-1, 35, -1, -1, 13, -1], [-1, -1, -1, -1, -1, -1], [-1, 15, -1, -1, -1, -1]]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-535-search-rotated/,
     cursorAfter: "535",
   }
 ];

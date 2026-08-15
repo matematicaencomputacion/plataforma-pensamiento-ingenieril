@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-714-jump-depth",
     title: "DSA Lift · Jump Depth",
     solution: "def build_graph(n, edges):\n    g = [[] for _ in range(n)]\n    for u, v in edges:\n        g[u].append(v)\n        g[v].append(u)\n    return g\n\ndef build_parent_depth(n, edges, root=0):\n    g = build_graph(n, edges)\n    parent = [-1] * n\n    depth = [0] * n\n    stack = [root]\n    seen = {root}\n    while stack:\n        u = stack.pop()\n        for v in g[u]:\n            if v in seen:\n                continue\n            seen.add(v)\n            parent[v] = u\n            depth[v] = depth[u] + 1\n            stack.append(v)\n    return parent, depth\n\ndef build_up(parent):\n    n = len(parent)\n    log = max(1, (n - 1).bit_length())\n    up = [[-1] * n for _ in range(log)]\n    up[0] = parent[:]\n    for k in range(1, log):\n        for v in range(n):\n            p = up[k - 1][v]\n            up[k][v] = -1 if p < 0 else up[k - 1][p]\n    return up\n\ndef kth_ancestor(up, node, k):\n    bit = 0\n    while k and node >= 0:\n        if k & 1:\n            node = up[bit][node]\n            if node < 0:\n                return -1\n        k >>= 1\n        bit += 1\n    return node\n\ndef jump_to_depth(up, depth, node, d):\n    if d > depth[node]:\n        return -1\n    return kth_ancestor(up, node, depth[node] - d)\n\nparent, depth = build_parent_depth(7, [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]])\nup = build_up(parent)\nprint(jump_to_depth(up, depth, 3, 1))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-715-sieve-primes/,
     cursorAfter: "715",
   },
 ];

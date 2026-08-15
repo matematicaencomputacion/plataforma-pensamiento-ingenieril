@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-612-points-that-intersect",
     title: "DSA Diff Array · Intersecting Points",
     solution: "def number_of_points(nums):\n    diff = [0] * 102\n    for start, end in nums:\n        diff[start] += 1\n        diff[end + 1] -= 1\n    cover = total = 0\n    for i in range(1, 101):\n        cover += diff[i]\n        if cover >= 2:\n            total += 1\n    return total\n\nprint(number_of_points([[1, 3], [2, 4]]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-613-sliding-max/,
     cursorAfter: "613",
   },
 ];

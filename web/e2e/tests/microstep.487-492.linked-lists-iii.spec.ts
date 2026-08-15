@@ -175,7 +175,7 @@ def is_palindrome(head):
 h = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
 print(is_palindrome(h))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-493-sort-colors/,
     cursorAfter: "493",
   }
 ];

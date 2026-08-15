@@ -171,7 +171,7 @@ print(valid_path(3, [[0, 1], [1, 2], [2, 0]], 0, 2))
 
 print(all_paths_source_target([[1, 2], [3], [3], []]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-595-majority-n2/,
     cursorAfter: "595",
   }
 ];

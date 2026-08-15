@@ -134,7 +134,7 @@ print(num_decodings("226"))
 
 print(rob([2, 3, 2]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-481-last-stone/,
     cursorAfter: "481",
   }
 ];

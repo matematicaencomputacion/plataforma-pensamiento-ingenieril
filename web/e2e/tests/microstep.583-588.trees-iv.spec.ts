@@ -176,7 +176,7 @@ root.left = TreeNode(1); root.right = TreeNode(4)
 root.left.right = TreeNode(2)
 print(kth_smallest(root, 1))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-589-clone-graph/,
     cursorAfter: "589",
   }
 ];

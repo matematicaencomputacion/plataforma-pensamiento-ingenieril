@@ -102,7 +102,7 @@ print(decompress_rl_elist([1, 2, 3, 4]))
 
 print(create_target_array([0, 1, 2, 3, 4], [0, 1, 2, 2, 1]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-577-min-stack/,
     cursorAfter: "577",
   }
 ];

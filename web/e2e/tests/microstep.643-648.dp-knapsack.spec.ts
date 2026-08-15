@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-648-can-partition",
     title: "DSA DP Knapsack · Equal Partition",
     solution: "def can_partition(nums):\n    total = sum(nums)\n    if total % 2:\n        return False\n    need = total // 2\n    dp = [False] * (need + 1)\n    dp[0] = True\n    for x in nums:\n        for s in range(need, x - 1, -1):\n            dp[s] = dp[s] or dp[s - x]\n    return dp[need]\n\nprint(can_partition([1, 5, 11, 5]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-649-num-distinct/,
     cursorAfter: "649",
   },
 ];

@@ -143,7 +143,7 @@ print(generate_parenthesis(3))
 
 print(exist([["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], "ABCCED"))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-559-add-digits/,
     cursorAfter: "559",
   }
 ];

@@ -103,7 +103,7 @@ print(first_uniq_char("leetcode"))
 
 print(add_binary("11", "1"))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-571-running-sum/,
     cursorAfter: "571",
   }
 ];

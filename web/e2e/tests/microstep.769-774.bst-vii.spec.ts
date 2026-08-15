@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-774-bst-vii-minimum-transition",
     title: "DSA BST VII · Minimum Transition",
     solution: "def minimum_transition_bst_vii(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_bst_vii([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-775-trees-vi-canonicalize/,
     cursorAfter: "775",
   },
 ];

@@ -146,7 +146,7 @@ print(asteroid_collision([5, 10, -5]))
 
 print(remove_k_digits("1432219", 3))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-529-recent-counter/,
     cursorAfter: "529",
   }
 ];

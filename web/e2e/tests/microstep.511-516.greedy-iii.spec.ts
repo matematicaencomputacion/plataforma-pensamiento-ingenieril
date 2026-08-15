@@ -126,7 +126,7 @@ print(max_profit([7, 1, 5, 3, 6, 4]))
 
 print(max_profit([7, 1, 5, 3, 6, 4]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-517-two-sum-sorted/,
     cursorAfter: "517",
   }
 ];

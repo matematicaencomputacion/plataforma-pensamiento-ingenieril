@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-816-mst-iii-minimum-transition",
     title: "DSA Minimum Spanning Tree III · Minimum Transition",
     solution: "def minimum_transition_mst_iii(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_mst_iii([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-817-trie-iv-canonicalize/,
     cursorAfter: "817",
   },
 ];

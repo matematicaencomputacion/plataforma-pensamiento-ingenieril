@@ -153,7 +153,7 @@ print(max_area_of_island([[1,0,0],[1,1,0],[0,0,1]]))
 
 print(find_circle_num([[1,1,0],[1,1,0],[0,0,1]]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-475-min-cost-stairs/,
     cursorAfter: "475",
   }
 ];

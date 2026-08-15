@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-738-sliding-window-vi-minimum-transition",
     title: "DSA Sliding Window VI · Minimum Transition",
     solution: "def minimum_transition_sliding_window_vi(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_sliding_window_vi([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-739-two-pointers-vi-canonicalize/,
     cursorAfter: "739",
   },
 ];

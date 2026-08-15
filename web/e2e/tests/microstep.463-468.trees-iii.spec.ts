@@ -210,7 +210,7 @@ root.right.left = TreeNode(15)
 root.right.right = TreeNode(7)
 print(min_depth(root))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-469-flood-fill/,
     cursorAfter: "469",
   }
 ];

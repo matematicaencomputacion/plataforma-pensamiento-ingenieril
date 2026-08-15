@@ -126,7 +126,7 @@ print(nth_ugly_number(10))
 
 print(reorganize_string("aab"))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-487-middle-node/,
     cursorAfter: "487",
   }
 ];

@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-912-fenwick-ii-minimum-transition",
     title: "DSA Fenwick Tree II · Minimum Transition",
     solution: "def minimum_transition_fenwick_ii(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_fenwick_ii([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-913-segment-tree-ii-canonicalize/,
     cursorAfter: "913",
   },
 ];

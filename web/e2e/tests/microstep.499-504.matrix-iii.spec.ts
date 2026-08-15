@@ -152,7 +152,7 @@ print(is_valid_sudoku(board))
 
 print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-505-group-anagrams/,
     cursorAfter: "505",
   }
 ];
