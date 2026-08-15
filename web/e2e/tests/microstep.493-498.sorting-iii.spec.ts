@@ -132,7 +132,7 @@ print(sort_array_by_parity([3, 1, 2, 4]))
 
 print(wiggle_sort([1, 5, 1, 1, 6, 4]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-499-spiral-order/,
     cursorAfter: "499",
   }
 ];
