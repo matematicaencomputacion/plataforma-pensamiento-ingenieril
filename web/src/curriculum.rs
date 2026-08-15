@@ -8328,7 +8328,7 @@ Reglas 3/5. Distinto de py-01.
     assert callable(ns.get('fizz_buzz'))
     assert ns['fizz_buzz'](5) == ['1', '2', 'Fizz', '4', 'Buzz']
     assert ns['fizz_buzz'](3) == ['1', '2', 'Fizz']
-    assert capsys.readouterr().out.strip() == '['1', '2', 'Fizz', '4', 'Buzz']'
+    assert capsys.readouterr().out.strip() == str(['1', '2', 'Fizz', '4', 'Buzz'])
 ",
     hint: "def fizz_buzz(n):
     out=[]
@@ -10709,7 +10709,7 @@ Nodo del medio.
     pytest: "def test_487_middle_node(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('ListNode'))
     ListNode = ns['ListNode']
     a = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
     assert ns['middle_node'](a).val == 3
@@ -10778,7 +10778,7 @@ Detectar ciclo.
     pytest: "def test_488_has_cycle(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('ListNode'))
     ListNode = ns['ListNode']
     a = ListNode(1); a.next = a
     assert ns['has_cycle'](a) is True
@@ -10855,7 +10855,7 @@ Revertir lista.
     pytest: "def test_489_reverse_list(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('ListNode'))
     ListNode = ns['ListNode']
     r = ns['reverse_list'](ListNode(1, ListNode(2)))
     assert r.val == 2 and r.next.val == 1
@@ -10939,7 +10939,7 @@ Merge de dos listas ordenadas.
     pytest: "def test_490_merge_two_lists(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('ListNode'))
     ListNode = ns['ListNode']
     h = ns['merge_two_lists'](ListNode(1), ListNode(2))
     assert h.val == 1 and h.next.val == 2
@@ -11033,7 +11033,7 @@ Sacar n-ésimo desde el final.
     pytest: "def test_491_remove_nth(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('ListNode'))
     ListNode = ns['ListNode']
     r = ns['remove_nth_from_end'](ListNode(1, ListNode(2)), 1)
     assert r.val == 1 and r.next is None
@@ -11115,7 +11115,7 @@ pub const PY492_PALINDROME_LIST: CodingStep = CodingStep {
     pytest: "def test_492_palindrome_list(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('ListNode'))
     ListNode = ns['ListNode']
     assert ns['is_palindrome'](ListNode(1, ListNode(2, ListNode(1)))) is True
     assert ns['is_palindrome'](ListNode(1, ListNode(2))) is False
