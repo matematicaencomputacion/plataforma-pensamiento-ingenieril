@@ -20,5 +20,5 @@
 
 ## 4. Entrega
 
-- [ ] 4.1 Commit convencional en rama feature
-- [ ] 4.2 PR enfocado con slides TED y gate Backend+Frontend
+- [x] 4.1 Commit convencional en rama feature
+- [x] 4.2 PR enfocado con slides TED y gate Backend+Frontend
