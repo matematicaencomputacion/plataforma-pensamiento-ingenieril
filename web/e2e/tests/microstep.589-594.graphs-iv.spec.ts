@@ -171,7 +171,7 @@ print(valid_path(3, [[0, 1], [1, 2], [2, 0]], 0, 2))
 
 print(all_paths_source_target([[1, 2], [3], [3], []]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-595-majority-n2/,
     cursorAfter: "595",
   }
 ];
@@ -245,7 +245,7 @@ test.describe("micro-steps 589–594 · graphs IV", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

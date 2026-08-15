@@ -94,7 +94,7 @@ export async function fillLeptosTextarea(
 
 /**
  * Deterministic `window.ppiPyodide` for CI (no CDN). Install before navigation.
- * Covers `print("…")` stdout and the py-02-variables validate heuristic.
+ * Covers `print("…")` stdout, py-02-variables, and `def`+`print` (Wave A).
  */
 export async function installPyodideMock(page: Page) {
   await page.addInitScript(() => {
@@ -146,8 +146,10 @@ export async function installPyodideMock(page: Page) {
         const src = String(code);
         const hasNombre = /nombre\s*=\s*["'].*["']/.test(src);
         const hasEdad = /edad\s*=\s*\d+/.test(src);
-        const hasPrint = /print\s*\(\s*nombre\s*,\s*edad\s*\)/.test(src);
-        const passed = hasNombre && hasEdad && hasPrint;
+        const hasPrintNombreEdad = /print\s*\(\s*nombre\s*,\s*edad\s*\)/.test(src);
+        const variablesOk = hasNombre && hasEdad && hasPrintNombreEdad;
+        const defPrintOk = /\bdef\b/.test(src) && /\bprint\s*\(/.test(src);
+        const passed = variablesOk || defPrintOk;
         return {
           passed,
           stdout: passed

@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-924-sparse-table-ii-minimum-transition",
     title: "DSA Sparse Table II · Minimum Transition",
     solution: "def minimum_transition_sparse_table_ii(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_sparse_table_ii([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-925-binary-lifting-ii-canonicalize/,
     cursorAfter: "925",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 919–924 · sparse table ii", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 924) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 919–924 · sparse table ii", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 924) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

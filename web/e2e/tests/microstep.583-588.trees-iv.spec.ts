@@ -176,7 +176,7 @@ root.left = TreeNode(1); root.right = TreeNode(4)
 root.left.right = TreeNode(2)
 print(kth_smallest(root, 1))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-589-clone-graph/,
     cursorAfter: "589",
   }
 ];
@@ -250,7 +250,7 @@ test.describe("micro-steps 583–588 · trees IV", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

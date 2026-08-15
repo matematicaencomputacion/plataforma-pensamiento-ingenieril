@@ -131,7 +131,7 @@ print(subarrays_div_by_k([4, 5, 0, -2, -3, 1], 5))
 
 print(max_subarray_len([1, -1, 5, -2, 3], 3))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-607-range-addition/,
     cursorAfter: "607",
   },
 ];
@@ -205,7 +205,7 @@ test.describe("micro-steps 601–606 · prefix sum IV", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 606) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -241,7 +241,7 @@ test.describe("micro-steps 601–606 · prefix sum IV", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 606) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

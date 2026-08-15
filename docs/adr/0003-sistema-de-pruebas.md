@@ -23,7 +23,7 @@ tokens de reset sin SMTP) no se atrapan solo con unit tests. Necesitamos un
 | Backend unit | `cd backend && go test ./...` | `make test` / harness |
 | Web unit | `cd web && cargo test` | `make web-test` / harness |
 | Backend integration (opt-in) | `go test -tags=integration ./internal/integration/...` | `PPI_HARNESS_INTEGRATION=1` |
-| Web E2E Chromium | Playwright bajo `web/e2e/tests/` | `make harness-e2e` / CI `e2e.yml` |
+| Web E2E Chromium | Playwright bajo `web/e2e/tests/` | `make harness-e2e` / CI `e2e.yml` (6 shards `--shard=N/6` + agregador `Playwright Chromium smoke`) |
 
 La **fuente de verdad local** es `scripts/harness/run.sh` (`make harness*`).
 CI debe permanecer alineada a esas mismas suites (no inventar smoke paralelo

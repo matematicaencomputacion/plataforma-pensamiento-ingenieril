@@ -154,7 +154,7 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (54, &[2, 3]),
     (55, &[2, 3]),
     (56, &[1]),
-    (57, &[3]),
+    (57, &[2, 3]),
     (58, &[2, 3]),
     (59, &[3]),
     (60, &[3]),
@@ -483,6 +483,11 @@ pub fn mastery_percent(partition_id: u8, completed_levels: &[i32]) -> u8 {
     ((done * 100) / total) as u8
 }
 
+/// Value for `data-mastery` on compass controls (`"0"`..=`"100"`).
+pub fn mastery_attr(partition_id: u8, completed_levels: &[i32]) -> String {
+    mastery_percent(partition_id, completed_levels).to_string()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -524,7 +529,7 @@ mod tests {
         assert!(partitions_for_micro_step(2).is_empty());
         assert_eq!(partitions_for_micro_step(20), &[1]);
         assert_eq!(partitions_for_micro_step(62), &[2]);
-        assert_eq!(partitions_for_micro_step(57), &[3]);
+        assert_eq!(partitions_for_micro_step(57), &[2, 3]);
         assert_eq!(partitions_for_micro_step(63), &[4]);
         assert_eq!(partitions_for_micro_step(69), &[1]);
         assert_eq!(partitions_for_micro_step(78), &[1, 3]);
@@ -574,5 +579,49 @@ mod tests {
         assert!(total > 0);
         assert_eq!(done, 1);
         assert_eq!(mastery_percent(1, &[]), 0);
+    }
+
+    #[test]
+    fn wave_a_foundations_dense_and_floors() {
+        for n in 4..=100 {
+            if coding_step_by_micro_step(n).is_some() {
+                assert!(
+                    !partitions_for_micro_step(n).is_empty(),
+                    "Wave A hole at micro_step {n}"
+                );
+            }
+        }
+        assert!(drills_for_partition(1).len() >= 40);
+        assert!(drills_for_partition(2).len() >= 15);
+        assert!(drills_for_partition(3).len() >= 35);
+    }
+
+    #[test]
+    fn wave_a_no_bulk_paradigm_on_applied_dsa() {
+        let tagged: Vec<i32> = (101..=160)
+            .filter(|&n| !partitions_for_micro_step(n).is_empty())
+            .collect();
+        assert!(!tagged.is_empty());
+        let p3 = tagged
+            .iter()
+            .filter(|&&n| partitions_for_micro_step(n).contains(&3))
+            .count();
+        assert!(
+            p3 < tagged.len(),
+            "101..=160 must not be 100% partition 3 (got {p3}/{})",
+            tagged.len()
+        );
+    }
+
+    #[test]
+    fn mastery_percent_reflects_synthetic_completed_levels() {
+        assert_eq!(mastery_percent(2, &[]), 0);
+        let after = mastery_percent(2, &[52]);
+        assert!(
+            after > 0,
+            "completing a P2 drill must raise data-mastery above 0"
+        );
+        assert_eq!(mastery_attr(2, &[]), "0");
+        assert_eq!(mastery_attr(2, &[52]), after.to_string());
     }
 }

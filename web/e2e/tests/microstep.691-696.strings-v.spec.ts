@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-696-shortest-palindrome",
     title: "DSA Strings V · Shortest Palindrome",
     solution: "def prefix_function(s):\n    pi = [0] * len(s)\n    j = 0\n    for i in range(1, len(s)):\n        while j and s[i] != s[j]:\n            j = pi[j - 1]\n        if s[i] == s[j]:\n            j += 1\n        pi[i] = j\n    return pi\n\ndef shortest_palindrome(s):\n    rev = s[::-1]\n    pi = prefix_function(s + \"#\" + rev)\n    return rev[: len(s) - pi[-1]] + s\n\nprint(shortest_palindrome(\"aacecaaa\"))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-697-fenwick-prefix/,
     cursorAfter: "697",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 691–696 · strings v", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 696) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 691–696 · strings v", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 696) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

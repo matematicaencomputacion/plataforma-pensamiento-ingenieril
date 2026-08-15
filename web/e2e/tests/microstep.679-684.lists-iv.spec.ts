@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-684-remove-zero-sum",
     title: "DSA Lists IV · Zero Sum",
     solution: "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef to_list(head):\n    out = []\n    while head:\n        out.append(head.val)\n        head = head.next\n    return out\n\ndef from_list(vals):\n    dummy = ListNode(0)\n    cur = dummy\n    for v in vals:\n        cur.next = ListNode(v)\n        cur = cur.next\n    return dummy.next\n\ndef remove_zero_sum_sublists(head):\n    dummy = ListNode(0, head)\n    seen = {}\n    s, cur = 0, dummy\n    while cur:\n        s += cur.val\n        seen[s] = cur\n        cur = cur.next\n    s, cur = 0, dummy\n    while cur:\n        s += cur.val\n        cur.next = seen[s].next\n        cur = cur.next\n    return dummy.next\n\nprint(to_list(remove_zero_sum_sublists(from_list([1, 2, -3, 3, 1]))))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-685-furthest-building/,
     cursorAfter: "685",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 679–684 · lists iv", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 684) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 679–684 · lists iv", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 684) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

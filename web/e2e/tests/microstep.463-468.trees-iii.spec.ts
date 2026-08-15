@@ -210,7 +210,7 @@ root.right.left = TreeNode(15)
 root.right.right = TreeNode(7)
 print(min_depth(root))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-469-flood-fill/,
     cursorAfter: "469",
   }
 ];
@@ -284,7 +284,7 @@ test.describe("micro-steps 463–468 · trees III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

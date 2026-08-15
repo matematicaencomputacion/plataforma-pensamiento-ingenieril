@@ -154,7 +154,7 @@ print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
 
 print(length_of_longest_substring_k_distinct("eceba", 2))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-547-single-number/,
     cursorAfter: "547",
   }
 ];
@@ -228,7 +228,7 @@ test.describe("micro-steps 541–546 · sliding window III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

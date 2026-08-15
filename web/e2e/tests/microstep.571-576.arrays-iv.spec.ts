@@ -102,7 +102,7 @@ print(decompress_rl_elist([1, 2, 3, 4]))
 
 print(create_target_array([0, 1, 2, 3, 4], [0, 1, 2, 2, 1]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-577-min-stack/,
     cursorAfter: "577",
   }
 ];
@@ -176,7 +176,7 @@ test.describe("micro-steps 571–576 · arrays IV", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

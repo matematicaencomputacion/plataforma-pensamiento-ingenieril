@@ -134,7 +134,7 @@ print(num_decodings("226"))
 
 print(rob([2, 3, 2]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-481-last-stone/,
     cursorAfter: "481",
   }
 ];
@@ -208,7 +208,7 @@ test.describe("micro-steps 475–480 · DP III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

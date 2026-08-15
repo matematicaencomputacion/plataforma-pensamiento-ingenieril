@@ -3,8 +3,8 @@ use leptos_router::components::A;
 use leptos_router::hooks::use_location;
 
 use crate::concepts::{
-    mastery_percent, partition_by_id, partitions_for_micro_step, primary_partition_for_micro_step,
-    PARTITIONS,
+    mastery_attr, mastery_percent, partition_by_id, partitions_for_micro_step,
+    primary_partition_for_micro_step, PARTITIONS,
 };
 use crate::curriculum::coding_step_by_id;
 use crate::session::SessionCtx;
@@ -72,10 +72,14 @@ pub fn PartitionNav() -> impl IntoView {
                                     )
                                 }
                                 attr:data-partition=id.to_string()
+                                attr:data-mastery=move || mastery_attr(id, &completed.get())
                                 attr:id=format!("partition-nav-{id}")
                             >
                                 <span class="partition-nav__num">{id}</span>
                                 <span class="partition-nav__label">{short}</span>
+                                <span class="partition-nav__pct">
+                                    {move || format!("{}%", mastery_percent(id, &completed.get()))}
+                                </span>
                             </A>
                         }
                     })

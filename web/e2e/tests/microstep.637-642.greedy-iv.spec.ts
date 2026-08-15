@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-642-bag-of-tokens",
     title: "DSA Greedy IV · Bag of Tokens",
     solution: "def bag_of_tokens_score(tokens, power):\n    tokens.sort()\n    lo, hi = 0, len(tokens) - 1\n    score = best = 0\n    while lo <= hi:\n        if power >= tokens[lo]:\n            power -= tokens[lo]\n            lo += 1\n            score += 1\n            best = max(best, score)\n        elif score:\n            power += tokens[hi]\n            hi -= 1\n            score -= 1\n        else:\n            break\n    return best\n\nprint(bag_of_tokens_score([100, 200, 300, 400], 200))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-643-coin-change-ii/,
     cursorAfter: "643",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 637–642 · greedy iv", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 642) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 637–642 · greedy iv", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 642) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

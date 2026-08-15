@@ -118,7 +118,7 @@ print(title_to_number("AB"))
 
 print(my_sqrt(8))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-565-reverse-words/,
     cursorAfter: "565",
   }
 ];
@@ -192,7 +192,7 @@ test.describe("micro-steps 559–564 · math IV", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

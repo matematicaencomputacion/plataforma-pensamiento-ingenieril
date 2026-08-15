@@ -141,7 +141,7 @@ print(remove_duplicates([1, 1, 2]))
 
 print(is_palindrome("A man, a plan, a canal: Panama"))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-523-daily-temps/,
     cursorAfter: "523",
   }
 ];
@@ -215,7 +215,7 @@ test.describe("micro-steps 517–522 · two pointers III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

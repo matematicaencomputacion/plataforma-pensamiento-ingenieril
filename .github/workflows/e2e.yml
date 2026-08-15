@@ -21,10 +21,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  playwright:
-    name: Playwright Chromium smoke
+  # ~1145 serial Chromium tests do not fit one GHA runner (GHA max is 6h, not 12h).
+  # 6 shards × 120m keeps wall-clock ~90m. Same suite as `make harness-e2e` (ADR 003).
+  playwright-shard:
+    name: Playwright Chromium shard ${{ matrix.shard }}/6
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6]
 
     env:
       JWT_SECRET: ci-e2e-only-ppi-jwt-secret
@@ -34,7 +40,7 @@ jobs:
       PPI_E2E_BASE_URL: http://127.0.0.1:3001
       PPI_E2E_MODE: register
       # Ephemeral per-run user — no GitHub Secrets required.
-      PPI_E2E_EMAIL: e2e-${{ github.run_id }}-${{ github.run_attempt }}@example.com
+      PPI_E2E_EMAIL: e2e-${{ github.run_id }}-${{ github.run_attempt }}-s${{ matrix.shard }}@example.com
       PPI_E2E_PASSWORD: secreto12ci
 
     steps:
@@ -125,15 +131,15 @@ jobs:
           cat /tmp/trunk.log >&2 || true
           exit 1
 
-      - name: Run Playwright smoke
+      - name: Run Playwright smoke (shard ${{ matrix.shard }}/6)
         working-directory: web/e2e
-        run: npm test
+        run: npx playwright test --shard=${{ matrix.shard }}/6
 
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-shard-${{ matrix.shard }}
           path: |
             web/e2e/playwright-report/
             web/e2e/test-results/
@@ -146,3 +152,16 @@ jobs:
           cat /tmp/ppi-api.log || true
           echo "==== trunk ===="
           cat /tmp/trunk.log || true
+
+  # Required check name — keep exact so branch protection stays a single story.
+  playwright:
+    name: Playwright Chromium smoke
+    needs: playwright-shard
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require all shards
+        run: |
+          echo "Shard matrix result: ${{ needs.playwright-shard.result }}"
+          test "${{ needs.playwright-shard.result }}" = "success"

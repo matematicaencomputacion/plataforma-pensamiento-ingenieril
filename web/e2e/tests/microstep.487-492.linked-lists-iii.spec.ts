@@ -175,7 +175,7 @@ def is_palindrome(head):
 h = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
 print(is_palindrome(h))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-493-sort-colors/,
     cursorAfter: "493",
   }
 ];
@@ -249,7 +249,7 @@ test.describe("micro-steps 487–492 · linked lists III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

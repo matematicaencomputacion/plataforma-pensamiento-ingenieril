@@ -91,6 +91,21 @@ a {
   letter-spacing: 0.02em;
 }
 
+.partition-nav__pct {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  opacity: 0.88;
+  min-width: 1.7em;
+}
+
+@media (max-width: 360px) {
+  .partition-nav__label {
+    display: none;
+  }
+}
+
 .partition-nav__btn:focus-visible,
 .partition-badge:focus-visible,
 .concepts__tab:focus-visible,

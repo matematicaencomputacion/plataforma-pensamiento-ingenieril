@@ -152,7 +152,7 @@ print(is_valid_sudoku(board))
 
 print(matrix_reshape([[1, 2], [3, 4]], 1, 4))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-505-group-anagrams/,
     cursorAfter: "505",
   }
 ];
@@ -226,7 +226,7 @@ test.describe("micro-steps 499–504 · matrix III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

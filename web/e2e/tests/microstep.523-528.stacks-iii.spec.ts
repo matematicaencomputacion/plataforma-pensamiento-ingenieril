@@ -146,7 +146,7 @@ print(asteroid_collision([5, 10, -5]))
 
 print(remove_k_digits("1432219", 3))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-529-recent-counter/,
     cursorAfter: "529",
   }
 ];
@@ -220,7 +220,7 @@ test.describe("micro-steps 523–528 · stacks III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
