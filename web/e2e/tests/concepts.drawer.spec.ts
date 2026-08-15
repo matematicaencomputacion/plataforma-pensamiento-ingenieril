@@ -89,6 +89,10 @@ test.describe("conceptual glossary drawer", () => {
     await expect(page.locator("#concept-peek")).toBeVisible({
       timeout: e2eTimeout,
     });
+    await expect(page.locator("#concept-peek #concept-diagram")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await expect(page.locator("#concept-peek .concept-card__tldr")).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`/learn/${STEP_ID}`));
     await expect(page.locator("#learn-editor")).toHaveValue(MARKER);
 
@@ -96,6 +100,7 @@ test.describe("conceptual glossary drawer", () => {
     await expect(page.locator("#concept-drawer")).toBeVisible({
       timeout: e2eTimeout,
     });
+    await expect(page.locator("#concept-drawer #concept-diagram")).toBeVisible();
     await expect(page.locator("#learn-editor")).toBeVisible();
     await expect(page.locator("#learn-editor")).toHaveValue(MARKER);
     await expect(page).toHaveURL(new RegExp(`/learn/${STEP_ID}`));
