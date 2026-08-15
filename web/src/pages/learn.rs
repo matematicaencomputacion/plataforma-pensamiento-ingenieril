@@ -14,7 +14,9 @@ use wasm_bindgen::JsCast;
 
 use crate::api::Level;
 use crate::auth::{complete_progress, fetch_current_level, input_value};
-use crate::components::{level_completed, ProgressCheck, PartitionBadges, VariableTypeChips};
+use crate::components::{
+    level_completed, ConceptLensWidget, FabState, PartitionBadges, ProgressCheck, VariableTypeChips,
+};
 use crate::curriculum::{
     coding_step_or_default, first_coding_step, prompt_to_html_with_flash, DEFAULT_CODING_STEP_ID,
 };
@@ -85,9 +87,14 @@ pub fn LearnPage() -> impl IntoView {
         })
     });
 
+    let has_step_param = Memo::new(move |_| {
+        params.with(|p| p.get("step").map(|s| !s.is_empty()).unwrap_or(false))
+    });
+
     let step = Memo::new(move |_| coding_step_or_default(&step_id.get()));
 
     let code = RwSignal::new(first_coding_step().starter_code.to_string());
+    let fab_state = RwSignal::new(FabState::Collapsed);
     let engine = RwSignal::new(EngineUi::Idle);
     let engine_msg = RwSignal::new(String::from("Motor Python en espera."));
     let busy = RwSignal::new(false);
@@ -122,6 +129,7 @@ pub fn LearnPage() -> impl IntoView {
     Effect::new(move |_| {
         let s = step.get();
         code.set(s.starter_code.to_string());
+        fab_state.set(FabState::Collapsed);
         busy.set(false);
         console_kind.set(ConsoleKind::Idle);
         stdout.set(String::new());
@@ -358,7 +366,28 @@ pub fn LearnPage() -> impl IntoView {
                     </p>
                 </header>
 
-                <div class="learn__grid">
+                <div
+                    class=move || {
+                        if fab_state.get() == FabState::Docked {
+                            "learn__workspace learn__workspace--with-drawer"
+                        } else {
+                            "learn__workspace"
+                        }
+                    }
+                >
+                    <ConceptLensWidget
+                        visible=Signal::derive(move || has_step_param.get())
+                        state=fab_state
+                    />
+                    <div
+                        class=move || {
+                            if fab_state.get() == FabState::Docked {
+                                "learn__grid learn__grid--with-drawer"
+                            } else {
+                                "learn__grid"
+                            }
+                        }
+                    >
                     <section class="learn__theory" aria-label="Teoría y enunciado">
                         <h2 class="learn__section-title">"Enunciado"</h2>
                         <PartitionBadges micro_step=Signal::derive(move || step.get().micro_step) />
@@ -684,6 +713,7 @@ pub fn LearnPage() -> impl IntoView {
                             </p>
                         </Show>
                     </section>
+                </div>
                 </div>
 
                 <nav class="learn__nav" aria-label="Navegación del Paso 2">

@@ -27,6 +27,9 @@ web-sys = { version = "0.3", features = [
   "CustomEventInit",
   "EventTarget",
   "SubmitEvent",
+  "KeyboardEvent",
+  "HtmlElement",
+  "Document",
 ] }
 
 [profile.release]
