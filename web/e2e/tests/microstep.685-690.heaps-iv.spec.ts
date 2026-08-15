@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-690-frequency-sort",
     title: "DSA Heaps IV · Frequency Sort",
     solution: "import heapq\nfrom collections import Counter\n\ndef frequency_sort(s):\n    h = [(-c, ch) for ch, c in Counter(s).items()]\n    heapq.heapify(h)\n    out = []\n    while h:\n        c, ch = heapq.heappop(h)\n        out.append(ch * (-c))\n    return ''.join(out)\n\nprint(frequency_sort(\"tree\"))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-691-prefix-function/,
     cursorAfter: "691",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 685–690 · heaps iv", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 690) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 685–690 · heaps iv", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 690) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

@@ -107,7 +107,7 @@ print(get_sum(1, 2))
 
 print(missing_number([3, 0, 1]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-553-subsets/,
     cursorAfter: "553",
   }
 ];
@@ -181,7 +181,7 @@ test.describe("micro-steps 547–552 · bit III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-678-bst-to-gst",
     title: "DSA BST VI · Greater Sum",
     solution: "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef bst_to_gst(root):\n    acc = [0]\n    def dfs(node):\n        if not node:\n            return\n        dfs(node.right)\n        acc[0] += node.val\n        node.val = acc[0]\n        dfs(node.left)\n    dfs(root)\n    return root\n\ndef inorder(root):\n    return inorder(root.left) + [root.val] + inorder(root.right) if root else []\n\nroot = TreeNode(4, TreeNode(1, TreeNode(0), TreeNode(2, None, TreeNode(3))), TreeNode(6, TreeNode(5), TreeNode(7, None, TreeNode(8))))\nprint(inorder(bst_to_gst(root)))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-679-reverse-between/,
     cursorAfter: "679",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 673–678 · bst vi", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 678) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 673–678 · bst vi", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 678) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

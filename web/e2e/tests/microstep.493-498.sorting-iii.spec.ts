@@ -132,7 +132,7 @@ print(sort_array_by_parity([3, 1, 2, 4]))
 
 print(wiggle_sort([1, 5, 1, 1, 6, 4]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-499-spiral-order/,
     cursorAfter: "499",
   }
 ];
@@ -206,7 +206,7 @@ test.describe("micro-steps 493–498 · sorting III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

@@ -14,7 +14,7 @@ use wasm_bindgen::JsCast;
 
 use crate::api::Level;
 use crate::auth::{complete_progress, fetch_current_level, input_value};
-use crate::components::{level_completed, ProgressCheck, VariableTypeChips};
+use crate::components::{level_completed, ProgressCheck, PartitionBadges, VariableTypeChips};
 use crate::curriculum::{
     coding_step_or_default, first_coding_step, prompt_to_html_with_flash, DEFAULT_CODING_STEP_ID,
 };
@@ -361,6 +361,7 @@ pub fn LearnPage() -> impl IntoView {
                 <div class="learn__grid">
                     <section class="learn__theory" aria-label="Teoría y enunciado">
                         <h2 class="learn__section-title">"Enunciado"</h2>
+                        <PartitionBadges micro_step=Signal::derive(move || step.get().micro_step) />
                         <Show when=move || step.get().show_type_chips>
                             <VariableTypeChips flash_ident=flash_ident />
                         </Show>

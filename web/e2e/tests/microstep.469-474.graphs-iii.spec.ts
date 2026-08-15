@@ -153,7 +153,7 @@ print(max_area_of_island([[1,0,0],[1,1,0],[0,0,1]]))
 
 print(find_circle_num([[1,1,0],[1,1,0],[0,0,1]]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-475-min-cost-stairs/,
     cursorAfter: "475",
   }
 ];
@@ -227,7 +227,7 @@ test.describe("micro-steps 469–474 · graphs III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

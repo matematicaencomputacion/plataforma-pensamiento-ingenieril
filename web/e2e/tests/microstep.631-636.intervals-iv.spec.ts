@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-636-video-stitching",
     title: "DSA Intervals IV · Video Stitching",
     solution: "def video_stitching(clips, time):\n    farthest = [0] * (time + 1)\n    for s, e in clips:\n        if s <= time:\n            farthest[s] = max(farthest[s], min(e, time))\n    used = cur = reach = 0\n    for i in range(time):\n        reach = max(reach, farthest[i])\n        if i == cur:\n            if reach == cur:\n                return -1\n            used += 1\n            cur = reach\n    return used\n\nprint(video_stitching([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 10))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-637-jump-game-ii/,
     cursorAfter: "637",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 631–636 · intervals iv", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 636) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 631–636 · intervals iv", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 636) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

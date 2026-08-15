@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-702-fenwick-kth",
     title: "DSA Fenwick · Kth Smallest",
     solution: "class Fenwick:\n    def __init__(self, n):\n        self.bit = [0] * (n + 1)\n    def add(self, i, delta):\n        i += 1\n        while i < len(self.bit):\n            self.bit[i] += delta\n            i += i & -i\n    def prefix(self, i):\n        i += 1\n        s = 0\n        while i > 0:\n            s += self.bit[i]\n            i -= i & -i\n        return s\n    def range_sum(self, l, r):\n        if l == 0:\n            return self.prefix(r)\n        return self.prefix(r) - self.prefix(l - 1)\n\ndef kth_smallest(nums, k):\n    vals = sorted(set(nums))\n    rank = {v: i for i, v in enumerate(vals)}\n    fw = Fenwick(len(vals))\n    for x in nums:\n        fw.add(rank[x], 1)\n    lo, hi = 0, len(vals) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if fw.prefix(mid) >= k:\n            hi = mid\n        else:\n            lo = mid + 1\n    return vals[lo]\n\nprint(kth_smallest([7, 10, 4, 3, 20, 15], 3))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-703-segtree-sum/,
     cursorAfter: "703",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 697–702 · fenwick", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 702) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 697–702 · fenwick", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 702) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

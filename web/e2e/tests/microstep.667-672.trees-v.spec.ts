@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-672-max-path-sum",
     title: "DSA Trees V · Max Path Sum",
     solution: "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef max_path_sum(root):\n    best = [root.val]\n    def dfs(node):\n        if not node:\n            return 0\n        left = max(0, dfs(node.left))\n        right = max(0, dfs(node.right))\n        best[0] = max(best[0], node.val + left + right)\n        return node.val + max(left, right)\n    dfs(root)\n    return best[0]\n\nprint(max_path_sum(TreeNode(-10, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-673-search-bst/,
     cursorAfter: "673",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 667–672 · trees v", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 672) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 667–672 · trees v", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 672) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

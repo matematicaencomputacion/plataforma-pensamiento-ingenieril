@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-630-max-xor-two",
     title: "DSA Trie III · Max XOR",
     solution: "def find_maximum_xor(nums):\n    trie = {}\n    for x in nums:\n        node = trie\n        for b in range(31, -1, -1):\n            bit = (x >> b) & 1\n            node = node.setdefault(bit, {})\n    best = 0\n    for x in nums:\n        node = trie\n        acc = 0\n        for b in range(31, -1, -1):\n            bit = (x >> b) & 1\n            want = 1 - bit\n            if want in node:\n                acc |= 1 << b\n                node = node[want]\n            else:\n                node = node[bit]\n        best = max(best, acc)\n    return best\n\nprint(find_maximum_xor([3, 10, 5, 25, 2, 8]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-631-insert-interval/,
     cursorAfter: "631",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 625–630 · trie iii", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 630) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 625–630 · trie iii", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 630) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-654-longest-palindrome-subseq",
     title: "DSA DP Strings IV · Palindromic Subseq",
     solution: "def longest_palindrome_subseq(s):\n    n = len(s)\n    dp = [0] * n\n    for i in range(n - 1, -1, -1):\n        dp[i] = 1\n        prev = 0\n        for j in range(i + 1, n):\n            temp = dp[j]\n            if s[i] == s[j]:\n                dp[j] = prev + 2\n            else:\n                dp[j] = max(dp[j], dp[j - 1])\n            prev = temp\n    return dp[-1]\n\nprint(longest_palindrome_subseq('bbbab'))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-655-num-islands/,
     cursorAfter: "655",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 649–654 · dp strings iv", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 654) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 649–654 · dp strings iv", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 654) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

@@ -126,7 +126,7 @@ print(max_profit([7, 1, 5, 3, 6, 4]))
 
 print(max_profit([7, 1, 5, 3, 6, 4]))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-517-two-sum-sorted/,
     cursorAfter: "517",
   }
 ];
@@ -200,7 +200,7 @@ test.describe("micro-steps 511–516 · greedy III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

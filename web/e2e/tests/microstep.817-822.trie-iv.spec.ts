@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-822-trie-iv-minimum-transition",
     title: "DSA Trie IV · Minimum Transition",
     solution: "def minimum_transition_trie_iv(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_trie_iv([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-823-heaps-v-canonicalize/,
     cursorAfter: "823",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 817–822 · trie iv", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 822) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 817–822 · trie iv", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 822) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

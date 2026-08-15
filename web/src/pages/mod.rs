@@ -1,3 +1,4 @@
+mod concepts;
 mod forgot_password;
 mod landing;
 mod learn;
@@ -7,6 +8,7 @@ mod register;
 mod reset_password;
 mod workspace;
 
+pub use concepts::ConceptsPage;
 pub use forgot_password::ForgotPasswordPage;
 pub use landing::LandingPage;
 pub use learn::LearnPage;

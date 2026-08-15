@@ -178,7 +178,7 @@ print([h.contains(2)])
 h.remove(2)
 print([h.contains(2)])
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-583-invert-tree/,
     cursorAfter: "583",
   }
 ];
@@ -252,7 +252,7 @@ test.describe("micro-steps 577–582 · design III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

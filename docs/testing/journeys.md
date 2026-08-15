@@ -71,6 +71,25 @@ flowchart TD
 | Auth errores | `auth.validation.spec.ts` | Activo |
 | Hub P3↔P1 + orphan JWT | `session.navigation.spec.ts` | Activo |
 | Auth+Hub transversal (páginas 1→3 oiladas) | `journey.auth-hub.spec.ts` | Activo |
+| Compás conceptual P2 (Wave A) | `journey.concepts.spec.ts` | Activo |
+
+## Journey C — Compás conceptual (partición 2)
+
+```mermaid
+flowchart TD
+  A[Register + login] --> B["Workspace · data-mastery 2 = 0"]
+  B --> C[Unlock rail 1..51]
+  C --> D["/learn/py-52-functions"]
+  D --> E["Clic #partition-nav-2"]
+  E --> F["/concepts/2"]
+  F --> G["Clic drill 52"]
+  G --> D
+  D --> H[Validar solution_example]
+  H --> I["#learn-progress-check"]
+  I --> J["data-mastery 2 > 0"]
+  J --> F
+  F --> K["drill 52 · Completado"]
+```
 
 ## Cómo ejecutar
 

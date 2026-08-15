@@ -146,7 +146,7 @@ print(search_range([5, 7, 7, 8, 8, 10], 8))
 
 print(min_eating_speed([3, 6, 7, 11], 8))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-541-max-vowels/,
     cursorAfter: "541",
   }
 ];
@@ -220,7 +220,7 @@ test.describe("micro-steps 535–540 · binsearch III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

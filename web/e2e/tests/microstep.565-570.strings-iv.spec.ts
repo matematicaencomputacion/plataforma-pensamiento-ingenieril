@@ -103,7 +103,7 @@ print(first_uniq_char("leetcode"))
 
 print(add_binary("11", "1"))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-571-running-sum/,
     cursorAfter: "571",
   }
 ];
@@ -177,7 +177,7 @@ test.describe("micro-steps 565–570 · strings IV", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

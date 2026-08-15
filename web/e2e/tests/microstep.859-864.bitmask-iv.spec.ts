@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-864-bitmask-iv-minimum-transition",
     title: "DSA Bitmask IV · Minimum Transition",
     solution: "def minimum_transition_bitmask_iv(cost):\n    two_back = one_back = 0\n    for value in cost:\n        two_back, one_back = one_back, value + min(two_back, one_back)\n    return min(two_back, one_back)\n\nprint(minimum_transition_bitmask_iv([10, 15, 20]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-865-number-theory-ii-canonicalize/,
     cursorAfter: "865",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 859–864 · bitmask iv", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 864) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 859–864 · bitmask iv", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 864) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

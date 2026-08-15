@@ -143,7 +143,7 @@ print(generate_parenthesis(3))
 
 print(exist([["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], "ABCCED"))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-559-add-digits/,
     cursorAfter: "559",
   }
 ];
@@ -217,7 +217,7 @@ test.describe("micro-steps 553–558 · backtrack III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

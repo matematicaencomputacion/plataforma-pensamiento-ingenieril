@@ -119,7 +119,7 @@ print(find_the_difference("abcd", "abcde"))
 
 print(can_construct("aa", "aab"))
 `,
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-511-jump-game/,
     cursorAfter: "511",
   }
 ];
@@ -193,7 +193,7 @@ test.describe("micro-steps 505–510 · hashing III", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 600) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,

@@ -66,7 +66,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-666-maze-nearest-exit",
     title: "DSA Shortest Path IV · Nearest Exit",
     solution: "from collections import deque\n\ndef nearest_exit(maze, entrance):\n    rows, cols = len(maze), len(maze[0])\n    sr, sc = entrance\n    q = deque([(sr, sc, 0)])\n    maze[sr][sc] = '+'\n    while q:\n        i, j, d = q.popleft()\n        for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n            ni, nj = i + di, j + dj\n            if 0 <= ni < rows and 0 <= nj < cols and maze[ni][nj] == '.':\n                if ni in (0, rows - 1) or nj in (0, cols - 1):\n                    return d + 1\n                maze[ni][nj] = '+'\n                q.append((ni, nj, d + 1))\n    return -1\n\nprint(nearest_exit([['+','+','.','+'],['.','.','.','+'],['+','+','+','.']], [1, 2]))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-667-level-order/,
     cursorAfter: "667",
   },
 ];
@@ -140,7 +140,7 @@ test.describe("micro-steps 661–666 · shortest path iv", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 666) {
+      if (nextMicro <= 1000) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
@@ -176,7 +176,7 @@ test.describe("micro-steps 661–666 · shortest path iv", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 666) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })
