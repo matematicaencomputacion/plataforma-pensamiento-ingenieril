@@ -176,7 +176,7 @@ test.describe("micro-steps 967–972 · randomized i", () => {
       await page.locator("#learn-continue").click();
       await expect(page).toHaveURL(step.nextUrl, { timeout: e2eTimeout });
 
-      if (step.micro < 972) {
+      if (!step.nextUrl.source.includes("workspace")) {
         await page
           .getByLabel("Navegación del Paso 2")
           .getByRole("link", { name: "Workspace" })

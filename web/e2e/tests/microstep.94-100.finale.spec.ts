@@ -223,8 +223,7 @@ test.describe("micro-steps 94–100 · Linked Lists / Recursion / Quicksort / Ha
       await expect(
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
-      if (step.micro < 100) {
-        const nextMicro = step.micro + 1;
+      const nextMicro = step.micro + 1;
       if (nextMicro <= 1000) {
         await expect(
           page.locator(
@@ -235,7 +234,6 @@ test.describe("micro-steps 94–100 · Linked Lists / Recursion / Quicksort / Ha
         await expect(
           page.locator(`#workspace-microstep-link-${nextMicro}`),
         ).toHaveCount(0);
-      }
       }
 
       await page.locator(`#workspace-microstep-link-${step.micro}`).click();
