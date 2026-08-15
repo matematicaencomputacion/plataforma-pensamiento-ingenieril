@@ -1,0 +1,46 @@
+---
+description: Criterio operativo PPI — más agentes, tests en paralelo, slices chicos, documentar y PR
+alwaysApply: true
+---
+
+# Modelo operativo de agentes (PPI)
+
+Complementa `.cursorrules`, `ted-leader-upgrade-prs.mdc` y `ci-github-automation.mdc`. No los contradigas.
+
+## 1. Más agentes
+
+Workstreams independientes → subagentes **en paralelo**, no en serie:
+
+- backend vs frontend
+- OpenSpec/spec vs implementación
+- CI watch vs código
+
+`environment: cloud` para Playwright largo, `make harness` y `gh pr checks --watch`. Detalle: `.cursor/rules/cloud-agents-when-needed.mdc`. Local: lecturas, edits chicos, `make web-test`.
+
+## 2. Más tests en paralelo
+
+CI Playwright Chromium = **6 shards** (`playwright-shard` 1/6…6/6, `timeout-minutes: 120`, `fail-fast: false`) + job agregador `playwright` (`name: Playwright Chromium smoke`) que exige `needs.playwright-shard.result == success`.
+
+- No colapsar a un job serial.
+- No subir timeout a 12h (GHA max es **6h**). Preferir sharding sobre timeouts más largos.
+- Misma suite que `make harness-e2e` (ADR 003).
+
+## 3. Slices chicos en foco
+
+Un upgrade coherente por PR (TED: cada upgrade → su PR documentado).
+
+- No apilar megas de Wave (p. ej. tags 301–600 + diagramas DUA en un solo change).
+- Preferir bandas de ~100–150 micro-steps **o** una superficie UX por change.
+- No implementar fuera del OpenSpec activo.
+
+## 4. Documentar + PR
+
+- Wave nueva: artefactos OpenSpec (`proposal.md`, `design.md`, `specs/`, `tasks.md`) **antes** de impl.
+- Commits convencionales. Nunca push a `main`. Ramas `feat/*`, `fix/*`, `docs/*`.
+- Body del PR: 5 slides TED (Hook / Insight / Move / Proof / Ask).
+- Squash-merge **solo** cuando Backend + Frontend + Playwright Chromium smoke (agregador) están verdes. No mergear salvo pedido explícito.
+
+### Ejemplos
+
+- ❌ Un PR con Wave C completa + 300 tags + timeout Playwright 12h + un solo job serial
+- ✅ OpenSpec del slice → rama `feat/…` → 6 shards + agregador → PR TED → squash cuando CI verde
