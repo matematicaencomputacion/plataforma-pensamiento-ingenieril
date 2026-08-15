@@ -21,16 +21,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ~1145 serial Chromium tests do not fit one GHA runner even at 240m.
-  # Same suite as `make harness-e2e`; shards are CI scheduling only (ADR 003).
+  # ~1145 serial Chromium tests do not fit one GHA runner (GHA max is 6h, not 12h).
+  # 6 shards × 120m keeps wall-clock ~90m. Same suite as `make harness-e2e` (ADR 003).
   playwright-shard:
-    name: Playwright Chromium shard ${{ matrix.shard }}/4
+    name: Playwright Chromium shard ${{ matrix.shard }}/6
     runs-on: ubuntu-latest
     timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5, 6]
 
     env:
       JWT_SECRET: ci-e2e-only-ppi-jwt-secret
@@ -131,9 +131,9 @@ jobs:
           cat /tmp/trunk.log >&2 || true
           exit 1
 
-      - name: Run Playwright smoke (shard ${{ matrix.shard }}/4)
+      - name: Run Playwright smoke (shard ${{ matrix.shard }}/6)
         working-directory: web/e2e
-        run: npx playwright test --shard=${{ matrix.shard }}/4
+        run: npx playwright test --shard=${{ matrix.shard }}/6
 
       - name: Upload Playwright report
         if: failure()
