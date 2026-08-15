@@ -13266,7 +13266,7 @@ Pings en 3000ms.
     pytest: "def test_529_recent_counter(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('RecentCounter'))
     c = ns['RecentCounter']()
     assert [c.ping(1), c.ping(100), c.ping(3001), c.ping(3002)] == [1, 2, 3, 3]
     assert capsys.readouterr().out.strip() == '[1, 2, 3, 3]'
@@ -15946,7 +15946,7 @@ Stack con min O(1).
     pytest: "def test_577_min_stack(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('MinStack'))
     s = ns['MinStack'](); s.push(-2); s.push(0); s.push(-3)
     assert s.get_min() == -3
     s.pop()
@@ -16028,7 +16028,7 @@ Cola con dos stacks.
     pytest: "def test_578_my_queue(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('MyQueue'))
     q = ns['MyQueue'](); q.push(1); q.push(2)
     assert q.peek() == 1 and q.pop() == 1 and q.empty() is False
     assert capsys.readouterr().out.strip() == '[1, 1, False]'
@@ -16107,7 +16107,7 @@ Stack con colas.
     pytest: "def test_579_my_stack(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('MyStack'))
     s = ns['MyStack'](); s.push(1); s.push(2)
     assert s.top() == 2 and s.pop() == 2 and s.empty() is False
     assert capsys.readouterr().out.strip() == '[2, 2, False]'
@@ -16189,7 +16189,7 @@ Cache LRU.
     pytest: "def test_580_lru_cache(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('LRUCache'))
     c = ns['LRUCache'](2); c.put(1,1); c.put(2,2)
     assert c.get(1) == 1
     c.put(3,3)
@@ -16277,7 +16277,7 @@ Mapa simple.
     pytest: "def test_581_hash_map(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('MyHashMap'))
     m = ns['MyHashMap'](); m.put(1,1); m.put(2,2)
     assert m.get(1) == 1 and m.get(3) == -1
     m.put(2,1); assert m.get(2) == 1
@@ -16355,7 +16355,7 @@ Set simple.
     pytest: "def test_582_hash_set(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('MyHashSet'))
     h = ns['MyHashSet'](); h.add(1); h.add(2)
     assert h.contains(1) is True and h.contains(3) is False
     h.remove(2); assert h.contains(2) is False
@@ -16431,7 +16431,7 @@ Invertir binario.
     pytest: "def test_583_invert_tree(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('TreeNode'))
     TreeNode = ns['TreeNode']
     r = TreeNode(2); r.left = TreeNode(1); r.right = TreeNode(3)
     ns['invert_tree'](r)
@@ -16504,7 +16504,7 @@ pub const PY584_SAME_TREE: CodingStep = CodingStep {
     pytest: "def test_584_same_tree(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('TreeNode'))
     TreeNode = ns['TreeNode']
     assert ns['is_same_tree'](TreeNode(1), TreeNode(1)) is True
     assert ns['is_same_tree'](TreeNode(1), TreeNode(2)) is False
@@ -16578,7 +16578,7 @@ Diámetro del árbol.
     pytest: "def test_585_diameter_bt(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('TreeNode'))
     TreeNode = ns['TreeNode']
     r = TreeNode(1); r.left = TreeNode(2)
     assert ns['diameter_of_binary_tree'](r) == 1
@@ -16664,7 +16664,7 @@ pub const PY586_PATH_SUM: CodingStep = CodingStep {
     pytest: "def test_586_path_sum(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('TreeNode'))
     TreeNode = ns['TreeNode']
     r = TreeNode(1); r.left = TreeNode(2)
     assert ns['has_path_sum'](r, 3) is True
@@ -16742,7 +16742,7 @@ Array ordenado a BST.
     pytest: "def test_587_sorted_array_bst(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('TreeNode'))
     TreeNode = ns['TreeNode']
     r = ns['sorted_array_to_bst']([-10, -3, 0, 5, 9])
     assert r.data == 0
@@ -16822,7 +16822,7 @@ K-ésimo menor en BST.
     pytest: "def test_588_kth_small_bst(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('TreeNode'))
     TreeNode = ns['TreeNode']
     r = TreeNode(3); r.left = TreeNode(1); r.right = TreeNode(4); r.left.right = TreeNode(2)
     assert ns['kth_smallest'](r, 1) == 1
@@ -16914,7 +16914,7 @@ Clonar grafo.
     pytest: "def test_589_clone_graph(capsys):
     ns = {}
     exec(open('solution.py', encoding='utf-8').read(), ns)
-    assert callable(ns.get('__init__'))
+    assert callable(ns.get('Node'))
     Node = ns['Node']
     a = Node(1); b = Node(2); a.neighbors=[b]; b.neighbors=[a]
     c = ns['clone_graph'](a)
