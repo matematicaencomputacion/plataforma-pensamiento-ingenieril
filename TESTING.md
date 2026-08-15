@@ -104,7 +104,7 @@ PPI_HARNESS_INTEGRATION=1 make harness-integration
 ## CI
 
 - Unit backend: `.github/workflows/ci.yml`
-- E2E Playwright: `.github/workflows/e2e.yml` (usuario efímero)
+- E2E Playwright: `.github/workflows/e2e.yml` (usuario efímero; 4 shards + agregador `Playwright Chromium smoke`)
 - El target `make harness` es la **fuente de verdad local**; CI puede ir sumando jobs por módulo alineados a este mapa.
 - Gate de agentes: ADR 003 — no cerrar auth/nav sin journeys verdes.
 
