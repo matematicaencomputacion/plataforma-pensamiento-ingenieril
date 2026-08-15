@@ -38,5 +38,5 @@
 
 - [x] 5.1 `make web-test` 100% verde
 - [ ] 5.2 Playwright: `journey.concepts.spec.ts` + smoke partitions
-- [ ] 5.3 PR `feat/coding-compass-wave-a` con TED slides; no mezclar
+- [x] 5.3 PR `feat/coding-compass-wave-a` con TED slides; no mezclar
       drawer/DUA/4–5 maps
