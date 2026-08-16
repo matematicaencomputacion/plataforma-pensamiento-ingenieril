@@ -203,6 +203,8 @@ pub async fn fetch_me(token: &str) -> Result<AuthUser, AuthError> {
 }
 
 /// Public curriculum entry (`GET /api/levels/current`) — no Bearer required.
+/// Kept for the Go contract / Qwik parity; `/learn` no longer overlays this seed.
+#[allow(dead_code)]
 pub async fn fetch_current_level() -> Result<Level, AuthError> {
     let res = Request::get(&current_level_url())
         .send()

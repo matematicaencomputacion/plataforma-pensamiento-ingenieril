@@ -147,23 +147,6 @@ pub fn WorkspacePage() -> impl IntoView {
                             completed_levels=completed_levels
                         />
                     </section>
-
-                    <section class="workspace__panel" aria-labelledby="workspace-path-heading">
-                        <h2 id="workspace-path-heading" class="workspace__panel-title">
-                            "Ruta de aprendizaje"
-                        </h2>
-                        <h3 class="workspace__level-title">
-                            "Module 1 — Declarative Foundations"
-                        </h3>
-                        <p class="workspace__statement">
-                            "Variables, tipos y foundations declarativas en Python. Cada número del rail abre su ejercicio en Coding; el editor Pyodide vive en Paso 2."
-                        </p>
-                        <ul class="workspace__list">
-                            <li>"Variables e enteros"</li>
-                            <li>"Strings y expresiones"</li>
-                            <li>"Tipos y estudio declarativo"</li>
-                        </ul>
-                    </section>
                 </div>
 
                 <nav class="workspace__nav" aria-label="Navegación del workspace">

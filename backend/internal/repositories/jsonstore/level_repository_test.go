@@ -2,6 +2,7 @@ package jsonstore
 
 import (
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
@@ -21,6 +22,22 @@ func TestLevelRepositorySeed(t *testing.T) {
 	}
 	if current.TrackType != domain.TrackMicroPaso {
 		t.Fatalf("track_type inesperado: got %q", current.TrackType)
+	}
+	if current.Title != "Variables (puente coding)" {
+		t.Fatalf("título del nivel 1 desactualizado: got %q", current.Title)
+	}
+	blob := strings.ToLower(current.Title + " " + current.Statement)
+	for _, stale := range []string{
+		"tu primer print",
+		"nivel operativo",
+		"imprima un saludo",
+		"saludo usando print",
+		"declarative foundations",
+		"foundations declarativas",
+	} {
+		if strings.Contains(blob, stale) {
+			t.Fatalf("seed de niveles aún contiene copia congelada %q en %q", stale, blob)
+		}
 	}
 
 	reto, err := repo.GetByID(2)

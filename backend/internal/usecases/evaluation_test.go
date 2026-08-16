@@ -42,8 +42,8 @@ func (r *stubLevelRepo) List() ([]domain.Level, error) {
 func seedLevel() domain.Level {
 	return domain.Level{
 		ID:               1,
-		Title:            "Tu primer print",
-		Statement:        "Imprime un saludo con print().",
+		Title:            "Variables (puente coding)",
+		Statement:        "Crea `nombre` con un texto, `edad` con un entero, e imprime ambas con print(nombre, edad).",
 		TrackType:        domain.TrackMicroPaso,
 		EvaluationPrompt: "Eres un Tutor Básico.",
 	}

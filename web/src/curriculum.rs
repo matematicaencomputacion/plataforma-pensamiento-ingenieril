@@ -43982,10 +43982,28 @@ mod tests {
     #[test]
     fn first_step_matches_seed_id() {
         assert_eq!(first_coding_step().id, "py-02-variables");
+        assert_eq!(first_coding_step().title, "Variables (puente coding)");
         assert!(first_coding_step().pytest.contains("test_variables"));
         assert!(first_coding_step().starter_code.contains("nombre"));
         assert_eq!(first_coding_step().next, Some("py-02-intro"));
         assert_eq!(first_coding_step().micro_step, 1);
+        let blob = format!(
+            "{} {} {}",
+            first_coding_step().title,
+            first_coding_step().objective,
+            first_coding_step().prompt_md
+        )
+        .to_lowercase();
+        for stale in [
+            "tu primer print",
+            "nivel operativo",
+            "imprima un saludo",
+            "saludo usando print",
+            "declarative foundations",
+            "foundations declarativas",
+        ] {
+            assert!(!blob.contains(stale), "frozen copy {stale:?} in {blob:?}");
+        }
     }
 
     #[test]
