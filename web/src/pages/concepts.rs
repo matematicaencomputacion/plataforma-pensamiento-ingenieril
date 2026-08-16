@@ -1,3 +1,5 @@
+use leptos::ev;
+use leptos::leptos_dom::helpers::window_event_listener;
 use leptos::prelude::*;
 use leptos_router::components::A;
 use leptos_router::hooks::{use_navigate, use_params_map};
@@ -5,8 +7,8 @@ use leptos_router::NavigateOptions;
 
 use crate::components::level_completed;
 use crate::concepts::{
-    drills_for_partition, heatmap_cells, heatmap_click_target, mastery_percent, partition_by_id,
-    HeatmapCellState, PARTITIONS,
+    drills_for_partition, heatmap_cells, heatmap_decade_drills, mastery_percent, partition_by_id,
+    HeatmapBand, HeatmapCellState, PARTITIONS,
 };
 use crate::curriculum::coding_step_by_micro_step;
 use crate::session::SessionCtx;
@@ -16,6 +18,7 @@ pub fn ConceptsPage() -> impl IntoView {
     let session = expect_context::<SessionCtx>();
     let navigate = use_navigate();
     let params = use_params_map();
+    let open_decade = RwSignal::new(None::<HeatmapBand>);
 
     Effect::new(move |_| {
         let ready = session.bootstrapped.get();
@@ -37,6 +40,24 @@ pub fn ConceptsPage() -> impl IntoView {
             .with(|p| p.get("id").and_then(|s| s.parse::<u8>().ok()))
             .unwrap_or(1)
             .clamp(1, 5)
+    });
+
+    Effect::new(move |_| {
+        let _ = partition_id.get();
+        open_decade.set(None);
+    });
+
+    Effect::new(move |_| {
+        if open_decade.get().is_none() {
+            return;
+        }
+        let handle = window_event_listener(ev::keydown, move |ev| {
+            if ev.key() == "Escape" {
+                ev.prevent_default();
+                open_decade.set(None);
+            }
+        });
+        on_cleanup(move || handle.remove());
     });
 
     let completed = Signal::derive(move || {
@@ -154,26 +175,18 @@ pub fn ConceptsPage() -> impl IntoView {
                                         .map(|cell| {
                                             let empty = cell.state == HeatmapCellState::Empty;
                                             let lo = cell.band.lo;
+                                            let band = cell.band;
                                             let state = cell.state.as_str();
                                             let label = cell.accessible_name();
                                             let count = format!("{}/{}", cell.done, cell.total);
-                                            let target_href = heatmap_click_target(
-                                                id,
-                                                cell.band,
-                                                &completed_now,
-                                            )
-                                            .and_then(|n| {
-                                                coding_step_by_micro_step(n)
-                                                    .map(|step| format!("/learn/{}", step.id))
-                                            });
                                             if empty {
                                                 view! {
                                                     <button
                                                         type="button"
                                                         class="concept-heatmap__cell"
                                                         id=format!("concept-heat-{lo}")
-                                                        attr:data-state=state
-                                                        attr:aria-label=label
+                                                        data-state=state
+                                                        aria-label=label
                                                         prop:disabled=true
                                                     >
                                                         {count}
@@ -181,17 +194,26 @@ pub fn ConceptsPage() -> impl IntoView {
                                                 }
                                                 .into_any()
                                             } else {
-                                                let href = target_href.unwrap_or_else(|| "#".into());
                                                 view! {
-                                                    <A
-                                                        href=href
-                                                        attr:class="concept-heatmap__cell"
-                                                        attr:id=format!("concept-heat-{lo}")
-                                                        attr:data-state=state
-                                                        attr:aria-label=label
+                                                    <button
+                                                        type="button"
+                                                        class="concept-heatmap__cell"
+                                                        id=format!("concept-heat-{lo}")
+                                                        data-state=state
+                                                        aria-label=label
+                                                        aria-haspopup="dialog"
+                                                        aria-controls="concept-decade-drawer"
+                                                        aria-expanded=move || {
+                                                            if open_decade.get() == Some(band) {
+                                                                "true"
+                                                            } else {
+                                                                "false"
+                                                            }
+                                                        }
+                                                        on:click=move |_| open_decade.set(Some(band))
                                                     >
                                                         {count}
-                                                    </A>
+                                                    </button>
                                                 }
                                                 .into_any()
                                             }
@@ -239,6 +261,83 @@ pub fn ConceptsPage() -> impl IntoView {
                                     "Ir a Coding"
                                 </A>
                             </nav>
+
+                            {move || {
+                                let Some(band) = open_decade.get() else {
+                                    return ().into_any();
+                                };
+                                let decade_drills = heatmap_decade_drills(id, band);
+                                let title = format!("Década {}–{}", band.lo, band.hi);
+                                view! {
+                                    <div class="concept-decade-overlay">
+                                        <button
+                                            type="button"
+                                            class="concept-decade-overlay__backdrop"
+                                            aria-label="Cerrar lista de década"
+                                            on:click=move |_| open_decade.set(None)
+                                        ></button>
+                                        <aside
+                                            id="concept-decade-drawer"
+                                            class="concept-decade-drawer"
+                                            role="dialog"
+                                            aria-modal="true"
+                                            aria-labelledby="concept-decade-title"
+                                        >
+                                            <header class="concept-decade-drawer__head">
+                                                <h3 id="concept-decade-title" class="concept-decade-drawer__title">
+                                                    {title}
+                                                </h3>
+                                                <button
+                                                    id="concept-decade-close"
+                                                    class="concept-decade-drawer__close"
+                                                    type="button"
+                                                    aria-label="Cerrar lista de década"
+                                                    on:click=move |_| open_decade.set(None)
+                                                >
+                                                    "Esc"
+                                                </button>
+                                            </header>
+                                            <ul
+                                                class="concepts__drills"
+                                                id="concept-decade-list"
+                                                role="list"
+                                            >
+                                                {decade_drills
+                                                    .into_iter()
+                                                    .filter_map(|n| {
+                                                        coding_step_by_micro_step(n).map(|step| (n, step))
+                                                    })
+                                                    .map(|(n, step)| {
+                                                        let href = format!("/learn/{}", step.id);
+                                                        let done = level_completed(&completed_now, n);
+                                                        let mut class = String::from("concepts__drill");
+                                                        if done {
+                                                            class.push_str(" concepts__drill--done");
+                                                        }
+                                                        view! {
+                                                            <li class=class role="listitem">
+                                                                <A
+                                                                    href=href
+                                                                    attr:class="concepts__drill-link"
+                                                                    attr:id=format!("concept-decade-drill-{n}")
+                                                                    attr:data-micro=n.to_string()
+                                                                >
+                                                                    <span class="concepts__drill-num">{format!("Ej {n:02}")}</span>
+                                                                    <span class="concepts__drill-title">{step.title}</span>
+                                                                    <span class="concepts__drill-status">
+                                                                        {if done { "Completado" } else { "Pendiente" }}
+                                                                    </span>
+                                                                </A>
+                                                            </li>
+                                                        }
+                                                    })
+                                                    .collect_view()}
+                                            </ul>
+                                        </aside>
+                                    </div>
+                                }
+                                .into_any()
+                            }}
                         </article>
                     }
                     .into_any()

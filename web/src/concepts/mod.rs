@@ -902,7 +902,8 @@ pub fn heatmap_bands() -> [HeatmapBand; HEATMAP_BAND_COUNT] {
     bands
 }
 
-fn drills_in_band(partition_id: u8, band: HeatmapBand) -> Vec<i32> {
+/// Tagged drills for `partition_id` whose micro-step falls in `band`.
+pub fn heatmap_decade_drills(partition_id: u8, band: HeatmapBand) -> Vec<i32> {
     drills_for_partition(partition_id)
         .into_iter()
         .filter(|&n| band.contains(n))
@@ -910,7 +911,7 @@ fn drills_in_band(partition_id: u8, band: HeatmapBand) -> Vec<i32> {
 }
 
 pub fn heatmap_cell(partition_id: u8, band: HeatmapBand, completed: &[i32]) -> HeatmapCell {
-    let drills = drills_in_band(partition_id, band);
+    let drills = heatmap_decade_drills(partition_id, band);
     let total = drills.len();
     let done = drills
         .iter()
@@ -943,7 +944,7 @@ pub fn heatmap_cells(partition_id: u8, completed: &[i32]) -> Vec<HeatmapCell> {
 /// First pending drill in the decade, or the first drill if all are done.
 /// `None` when the cell is `empty` (no navigation).
 pub fn heatmap_click_target(partition_id: u8, band: HeatmapBand, completed: &[i32]) -> Option<i32> {
-    let drills = drills_in_band(partition_id, band);
+    let drills = heatmap_decade_drills(partition_id, band);
     if drills.is_empty() {
         return None;
     }
@@ -1904,6 +1905,31 @@ mod tests {
         assert_eq!(empty_cell.done, 0);
         assert_eq!(empty_cell.total, 0);
         assert!(empty_cell.accessible_name().contains("0/0"));
+    }
+
+    #[test]
+    fn wave_d1_decade_drills_are_partition_filtered() {
+        let band = HeatmapBand { lo: 1, hi: 10 };
+        let drills = heatmap_decade_drills(1, band);
+        assert!(!drills.is_empty());
+        assert!(drills.len() <= 10);
+        for n in &drills {
+            assert!(band.contains(*n), "{n} outside {band:?}");
+            assert!(
+                partitions_for_micro_step(*n).contains(&1),
+                "{n} is not tagged with partition 1"
+            );
+        }
+        assert!(drills.contains(&1));
+        assert!(drills.contains(&10));
+        assert!(!drills.contains(&3), "micro 3 is partition 4");
+        assert!(!drills.contains(&4), "micro 4 is partition 3");
+
+        let empty_band = heatmap_bands()
+            .into_iter()
+            .find(|b| heatmap_cell(5, *b, &[]).state == HeatmapCellState::Empty)
+            .expect("P5 map_only has empty decades");
+        assert!(heatmap_decade_drills(5, empty_band).is_empty());
     }
 
     /// C6 baseline @ `87a5334`: Wave D must not retag `1..=1000`.
