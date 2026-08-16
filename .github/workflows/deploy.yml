@@ -125,6 +125,6 @@ jobs:
             --image="${image}" \
             --port=8080 \
             --allow-unauthenticated \
-            --set-env-vars="PORT=8080,ENV=production,DATABASE_URL=sqlite:///tmp/ppi.db" \
+            --set-env-vars="ENV=production,DATABASE_URL=sqlite:///tmp/ppi.db" \
             --set-secrets="JWT_SECRET=JWT_SECRET:latest"
           echo "deployed ${image}"
