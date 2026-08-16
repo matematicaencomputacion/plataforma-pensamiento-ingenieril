@@ -72,6 +72,7 @@ flowchart TD
 | Hub P3↔P1 + orphan JWT | `session.navigation.spec.ts` | Activo |
 | Auth+Hub transversal (páginas 1→3 oiladas) | `journey.auth-hub.spec.ts` | Activo |
 | Compás conceptual P2 (Wave A) | `journey.concepts.spec.ts` | Activo |
+| Hub conceptual + analytics D.3 | `concepts.partitions.spec.ts` | Activo |
 
 ## Journey C — Compás conceptual (partición 2)
 

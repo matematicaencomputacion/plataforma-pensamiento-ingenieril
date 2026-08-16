@@ -5,6 +5,8 @@ use leptos_router::components::A;
 use leptos_router::hooks::{use_navigate, use_params_map};
 use leptos_router::NavigateOptions;
 
+use crate::analytics::emit_and_refresh_summary;
+use crate::api::{ConceptAnalyticsSummary, EVENT_CONCEPT_DWELL, EVENT_HEATMAP_DECADE_OPEN};
 use crate::auth::input_value;
 use crate::components::level_completed;
 use crate::concepts::{
@@ -23,6 +25,7 @@ pub fn ConceptsPage() -> impl IntoView {
     let open_decade = RwSignal::new(None::<HeatmapBand>);
     let query = RwSignal::new(String::new());
     let extra_partitions = RwSignal::new(Vec::<u8>::new());
+    let analytics = RwSignal::new(None::<ConceptAnalyticsSummary>);
 
     Effect::new(move |_| {
         let ready = session.bootstrapped.get();
@@ -56,6 +59,14 @@ pub fn ConceptsPage() -> impl IntoView {
         let _ = query.get();
         let _ = extra_partitions.get();
         open_decade.set(None);
+    });
+
+    Effect::new(move |_| {
+        if session.user.get().is_none() {
+            return;
+        }
+        let id = partition_id.get();
+        emit_and_refresh_summary(EVENT_CONCEPT_DWELL, i32::from(id), 0, analytics);
     });
 
     Effect::new(move |_| {
@@ -152,6 +163,57 @@ pub fn ConceptsPage() -> impl IntoView {
                                 <p class="concepts__mastery" id=format!("concepts-mastery-{id}")>
                                     {format!("Dominio {pct}% ({done}/{total} drills)")}
                                 </p>
+                                <aside
+                                    id="concept-analytics"
+                                    class="concept-analytics"
+                                    aria-label="Fricción pedagógica"
+                                >
+                                    <p class="concept-analytics__eyebrow">"Cuello de botella"</p>
+                                    <p
+                                        id="concept-analytics-hint"
+                                        class="concept-analytics__hint"
+                                        data-hint=move || match analytics.get() {
+                                            None => "pending".to_string(),
+                                            Some(s) => s
+                                                .bottleneck
+                                                .as_ref()
+                                                .map(|b| b.kind.clone())
+                                                .unwrap_or_else(|| "none".into()),
+                                        }
+                                        data-partition=move || {
+                                            analytics
+                                                .get()
+                                                .and_then(|s| s.bottleneck)
+                                                .map(|b| b.partition_id.to_string())
+                                                .unwrap_or_default()
+                                        }
+                                        data-decade-lo=move || {
+                                            analytics
+                                                .get()
+                                                .and_then(|s| s.bottleneck)
+                                                .map(|b| b.decade_lo.to_string())
+                                                .unwrap_or_default()
+                                        }
+                                        data-friction=move || {
+                                            analytics
+                                                .get()
+                                                .and_then(|s| s.bottleneck)
+                                                .map(|b| b.friction.to_string())
+                                                .unwrap_or_else(|| "0".into())
+                                        }
+                                    >
+                                        {move || match analytics.get() {
+                                            None => "Cargando señales…".to_string(),
+                                            Some(s) => s
+                                                .bottleneck
+                                                .map(|b| b.label)
+                                                .filter(|l| !l.is_empty())
+                                                .unwrap_or_else(|| {
+                                                    "Aún no hay fricción registrada.".into()
+                                                }),
+                                        }}
+                                    </p>
+                                </aside>
                                 <Show when=move || p.map_only>
                                     <p class="concepts__map-note" role="note">
                                         "Mapa conceptual (ADR 002): drills livianos en Pyodide; "
@@ -330,7 +392,15 @@ pub fn ConceptsPage() -> impl IntoView {
                                                                         "false"
                                                                     }
                                                                 }
-                                                                on:click=move |_| open_decade.set(Some(band))
+                                                                on:click=move |_| {
+                                                                    open_decade.set(Some(band));
+                                                                    emit_and_refresh_summary(
+                                                                        EVENT_HEATMAP_DECADE_OPEN,
+                                                                        i32::from(id),
+                                                                        lo,
+                                                                        analytics,
+                                                                    );
+                                                                }
                                                             >
                                                                 {count}
                                                             </button>

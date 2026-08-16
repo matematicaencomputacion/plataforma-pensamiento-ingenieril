@@ -103,6 +103,51 @@ pub fn progress_reset_url() -> String {
     api_url("/api/progress/reset")
 }
 
+pub fn concept_events_url() -> String {
+    api_url("/api/concept-events")
+}
+
+pub fn concept_analytics_url() -> String {
+    api_url("/api/concept-analytics")
+}
+
+/// Closed D.3 event types (must match Go `domain.Event*`).
+pub const EVENT_CONCEPT_DWELL: &str = "concept_dwell";
+pub const EVENT_HEATMAP_DECADE_OPEN: &str = "heatmap_decade_open";
+pub const EVENT_DUA_FAB_OPEN: &str = "dua_fab_open";
+pub const EVENT_LEARN_STEP_ENTER: &str = "learn_step_enter";
+pub const EVENT_LEARN_VALIDATE_FAIL: &str = "learn_validate_fail";
+pub const EVENT_LEARN_VALIDATE_PASS: &str = "learn_validate_pass";
+
+/// Wire request for `POST /api/concept-events` (ADR 002: never includes student code).
+#[derive(Debug, Clone, Serialize)]
+pub struct ConceptEventRequest {
+    #[serde(rename = "type")]
+    pub event_type: String,
+    pub partition_id: i32,
+    pub decade_lo: i32,
+    pub step_id: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Default)]
+pub struct AnalyticsBottleneck {
+    #[serde(default)]
+    pub kind: String,
+    #[serde(default)]
+    pub partition_id: i32,
+    #[serde(default)]
+    pub decade_lo: i32,
+    #[serde(default)]
+    pub friction: i32,
+    #[serde(default)]
+    pub label: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Default)]
+pub struct ConceptAnalyticsSummary {
+    pub bottleneck: Option<AnalyticsBottleneck>,
+}
+
 /// Wire request for `POST /api/progress/complete` (ADR 002: never includes student code).
 #[derive(Debug, Clone, Serialize)]
 pub struct ProgressCompleteRequest {
@@ -284,6 +329,35 @@ mod tests {
         assert_eq!(user_profile_url(), "/api/user/profile");
         assert_eq!(progress_complete_url(), "/api/progress/complete");
         assert_eq!(progress_reset_url(), "/api/progress/reset");
+        assert_eq!(concept_events_url(), "/api/concept-events");
+        assert_eq!(concept_analytics_url(), "/api/concept-analytics");
+    }
+
+    #[test]
+    fn concept_event_json_omits_student_code() {
+        let req = serde_json::to_string(&ConceptEventRequest {
+            event_type: EVENT_HEATMAP_DECADE_OPEN.into(),
+            partition_id: 1,
+            decade_lo: 1,
+            step_id: String::new(),
+        })
+        .expect("serialize event");
+        assert!(req.contains("\"type\":\"heatmap_decade_open\""));
+        assert!(req.contains("\"partition_id\":1"));
+        assert!(req.contains("\"decade_lo\":1"));
+        assert!(!req.contains("code"));
+    }
+
+    #[test]
+    fn concept_analytics_summary_decodes_bottleneck() {
+        let parsed: ConceptAnalyticsSummary = serde_json::from_str(
+            r#"{"partitions":[],"decades":[],"bottleneck":{"kind":"decade","partition_id":1,"decade_lo":1,"friction":4,"label":"Década 1–10 · alta fricción"}}"#,
+        )
+        .expect("decode summary");
+        let b = parsed.bottleneck.expect("bottleneck");
+        assert_eq!(b.kind, "decade");
+        assert_eq!(b.decade_lo, 1);
+        assert_eq!(b.friction, 4);
     }
 
     #[test]

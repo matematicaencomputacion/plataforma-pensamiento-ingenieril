@@ -6,6 +6,7 @@ use leptos::leptos_dom::helpers::window_event_listener;
 use leptos::prelude::*;
 use leptos_router::components::A;
 
+use crate::analytics::emit_dua_fab_open;
 use crate::auth::input_value;
 use crate::concepts::{
     entry_by_id, group_search_hits, search_glossary, ConceptLens, GlossaryEntry, PartitionId,
@@ -77,6 +78,7 @@ pub fn ConceptLensWidget(
     let open_search = move || {
         if state.get_untracked() == FabState::Collapsed {
             state.set(FabState::Search);
+            emit_dua_fab_open("", 0, 0);
         }
         focus_nonce.update(|n| *n += 1);
     };

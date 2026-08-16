@@ -166,6 +166,16 @@ func main() {
 	mux.HandleFunc("POST /api/progress/complete", progressHandler.Complete)
 	mux.HandleFunc("POST /api/progress/reset", progressHandler.Reset)
 
+	eventRepo, err := sqliterepo.NewConceptEventRepository(userDB)
+	if err != nil {
+		log.Fatalf("concept events repo: %v", err)
+	}
+	analyticsHandler := handlers.NewConceptAnalyticsHandler(
+		usecases.NewConceptAnalyticsService(authService, eventRepo),
+	)
+	mux.HandleFunc("POST /api/concept-events", analyticsHandler.Record)
+	mux.HandleFunc("GET /api/concept-analytics", analyticsHandler.Summary)
+
 	spa, spaOK := openSPARoot()
 	handler := enableCORS(withSPA(mux, spa))
 	staticLabel := "none"

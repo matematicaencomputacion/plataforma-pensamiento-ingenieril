@@ -5,13 +5,14 @@ use wasm_bindgen::JsCast;
 use web_sys::{CustomEvent, CustomEventInit, HtmlInputElement, HtmlTextAreaElement};
 
 use crate::api::{
-    current_level_url, forgot_password_url, is_auth_rejection, parse_auth_error_body,
-    progress_complete_url, progress_reset_url, reset_password_url, sanitize_email,
-    synthesize_profile_url, user_profile_url, AuthCredentials, AuthSuccess, AuthUser,
-    ForgotPasswordRequest, ForgotPasswordResponse, Level, ProfileSynthesis,
-    ProgressCompleteRequest, ProgressCompleteResponse, ResetPasswordRequest,
-    SynthesizeProfileRequest, UserProfile, AUTH_TOKEN_KEY, MSG_INVALID_RESPONSE,
-    MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url, register_url,
+    concept_analytics_url, concept_events_url, current_level_url, forgot_password_url,
+    is_auth_rejection, parse_auth_error_body, progress_complete_url, progress_reset_url,
+    reset_password_url, sanitize_email, synthesize_profile_url, user_profile_url, AuthCredentials,
+    AuthSuccess, AuthUser, ConceptAnalyticsSummary, ConceptEventRequest, ForgotPasswordRequest,
+    ForgotPasswordResponse, Level, ProfileSynthesis, ProgressCompleteRequest,
+    ProgressCompleteResponse, ResetPasswordRequest, SynthesizeProfileRequest, UserProfile,
+    AUTH_TOKEN_KEY, MSG_INVALID_RESPONSE, MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url,
+    register_url,
 };
 
 /// Same-tab signal that `SessionCtx` should drop in-memory auth after a storage purge.
@@ -349,6 +350,44 @@ pub async fn reset_progress() -> Result<ProgressCompleteResponse, AuthError> {
 
     let res = reject_if_not_ok(res).await?;
     res.json::<ProgressCompleteResponse>()
+        .await
+        .map_err(invalid_response)
+}
+
+/// Best-effort friction event. Does not purge the session on 4xx (analytics is optional).
+pub async fn post_concept_event(payload: ConceptEventRequest) -> Result<(), AuthError> {
+    let Some(token) = get_stored_token() else {
+        return Err(AuthError::with_status("Sesión no iniciada.", 401));
+    };
+    let res = Request::post(&concept_events_url())
+        .header("Authorization", &format!("Bearer {token}"))
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json")
+        .json(&payload)
+        .map_err(request_build_error)?
+        .send()
+        .await
+        .map_err(network_unavailable)?;
+    let status = res.status();
+    if status == 204 || res.ok() {
+        return Ok(());
+    }
+    Err(AuthError::with_status(read_error(&res).await, status))
+}
+
+/// Per-user bottleneck summary for `#concept-analytics`.
+pub async fn fetch_concept_analytics() -> Result<ConceptAnalyticsSummary, AuthError> {
+    let Some(token) = get_stored_token() else {
+        return Err(AuthError::with_status("Sesión no iniciada.", 401));
+    };
+    let res = Request::get(&concept_analytics_url())
+        .header("Authorization", &format!("Bearer {token}"))
+        .header("Accept", "application/json")
+        .send()
+        .await
+        .map_err(network_unavailable)?;
+    let res = reject_if_not_ok(res).await?;
+    res.json::<ConceptAnalyticsSummary>()
         .await
         .map_err(invalid_response)
 }
