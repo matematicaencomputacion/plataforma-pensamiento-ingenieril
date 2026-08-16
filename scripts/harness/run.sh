@@ -258,6 +258,7 @@ run_web_journeys() {
   if (cd web/e2e && npx playwright test \
       tests/journey.auth-hub.spec.ts \
       tests/journey.concepts.spec.ts \
+      tests/journey.concepts-hub.spec.ts \
       tests/concepts.drawer.spec.ts \
       tests/auth.validation.spec.ts \
       tests/session.navigation.spec.ts \

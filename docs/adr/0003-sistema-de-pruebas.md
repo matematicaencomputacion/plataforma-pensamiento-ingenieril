@@ -31,15 +31,19 @@ sin documentarlo aquí).
 
 ### Journeys E2E canónicos (páginas)
 
-Se definen dos journeys productivos (ambos deben permanecer verdes):
+Se definen tres journeys productivos (todos deben permanecer verdes):
 
 1. **Auth journey** — anónimo → identidad → workspace  
    Paginas: `/` → `/register` o `/login` → (`/forgot-password` → `/reset-password`) → `/workspace`
 2. **Hub journey** — sesión viva sin expulsión  
    Paginas: `/workspace` ↔ `/` (portada autenticada) con session bar (`Portada` / `Workspace` / `Salir`)
+3. **Conceptual hub journey** — mapa Wave D en `/concepts/1`  
+   Paginas: register → `/workspace` → `/concepts/1` (heatmap 100 celdas, drawer de década, facetas AND, `#concept-prereq-alert`). Spec: `web/e2e/tests/journey.concepts-hub.spec.ts`. Sin mock de `STEP_PARTITIONS`.
 
-El spec transversal vive en `web/e2e/tests/journey.auth-hub.spec.ts` y se
-ejecuta en `make harness-journeys` y dentro de `make harness-e2e`.
+El spec transversal auth+hub vive en `web/e2e/tests/journey.auth-hub.spec.ts`.
+Ambos journeys de página (`journey.auth-hub`, `journey.concepts-hub`) se
+ejecutan en `make harness-journeys` y dentro de `make harness-e2e` / CI
+`e2e.yml` (6 shards, `trunk build` + `STATIC_DIR`).
 
 ### Reglas anti-regresión de autenticación
 
@@ -68,7 +72,7 @@ ejecuta en `make harness-journeys` y dentro de `make harness-e2e`.
 - No declarar un hito auth/navegación “terminado” sin:
   1. `go test ./...` verde,
   2. `make web-test` verde,
-  3. journey Playwright auth+hub verde (`make harness-journeys` o harness-e2e).
+  3. journey Playwright auth+hub y hub conceptual verdes (`make harness-journeys` o CI `e2e.yml`).
 - No introducir un tercer frontend de pruebas (mantener Playwright + Leptos CSR).
 - No ejecutar código de alumnos en el servidor (ADR 002).
 - No sugerir OAuth ni SMTP real en este ADR; el mailer es change futuro.

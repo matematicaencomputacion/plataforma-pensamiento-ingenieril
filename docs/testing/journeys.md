@@ -13,6 +13,7 @@ caminos felices/fallidos y qué suite Playwright los vigila.
 | P2c | `/forgot-password` | Recovery DX | `#forgot-email`; en dev navega con `resetToken` |
 | P2d | `/reset-password` | Nueva clave | `#reset-password` (+ token en query/`#reset-token`) |
 | P3 | `/workspace` | Hub operativo | `Workspace`, `Nivel actual`, nav `Portada` |
+| P4 | `/concepts/:id` | Hub conceptual | `#concept-heatmap` (100 celdas), drawer, facetas AND, `#concept-prereq-alert` |
 
 ## Journey A — Auth (identidad → hub)
 
@@ -72,6 +73,7 @@ flowchart TD
 | Hub P3↔P1 + orphan JWT | `session.navigation.spec.ts` | Activo |
 | Auth+Hub transversal (páginas 1→3 oiladas) | `journey.auth-hub.spec.ts` | Activo |
 | Compás conceptual P2 (Wave A) | `journey.concepts.spec.ts` | Activo |
+| Hub conceptual P4 (Wave D.5) | `journey.concepts-hub.spec.ts` | Activo |
 | Hub conceptual + analytics D.3 | `concepts.partitions.spec.ts` | Activo |
 
 ## Journey C — Compás conceptual (partición 2)
@@ -90,6 +92,22 @@ flowchart TD
   I --> J["data-mastery 2 > 0"]
   J --> F
   F --> K["drill 52 · Completado"]
+```
+
+## Journey D — Hub conceptual (partición 1, Wave D.5)
+
+```mermaid
+flowchart TD
+  A[Register + login] --> B[P3 Workspace]
+  B --> C["Clic #partition-nav-1"]
+  C --> D["P4 /concepts/1"]
+  D --> E["#concept-heatmap · 100 celdas"]
+  E --> F["Clic celda no-empty"]
+  F --> G["#concept-decade-drawer"]
+  G --> H[Escape cierra drawer]
+  H --> I["Chip AND #concept-facet-p3"]
+  I --> J[Lista y heatmap filtrados]
+  J --> K["#concept-prereq-alert usuario nuevo"]
 ```
 
 ## Cómo ejecutar

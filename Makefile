@@ -110,7 +110,7 @@ harness-e2e: ## Levanta stack efímero + Playwright + teardown
 	@chmod +x scripts/harness/run.sh
 	@./scripts/harness/run.sh e2e
 
-harness-journeys: ## ADR 003: journeys Auth+Hub (P1→P3) con stack efímero
+harness-journeys: ## ADR 003: journeys Auth+Hub+Concepts (P1→P4) con stack efímero
 	@chmod +x scripts/harness/run.sh
 	@./scripts/harness/run.sh journeys
 

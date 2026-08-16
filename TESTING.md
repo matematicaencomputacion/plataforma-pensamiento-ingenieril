@@ -50,7 +50,7 @@ flowchart TB
 | `web-unit` | Contratos API / URLs Wasm | `web/` (`cargo test`) |
 | `backend-integration` | Endpoints críticos contra mux real + SQLite archivo | `backend/internal/integration/` (`//go:build integration`) |
 | `web-e2e` | Pack completo Playwright | `web/e2e/tests/` |
-| `web-journeys` | Páginas 1→3 auth + hub oiladas | `journey.auth-hub` + validation + session.navigation |
+| `web-journeys` | Páginas 1→4 auth + hub + hub conceptual | `journey.auth-hub` + `journey.concepts` + `journey.concepts-hub` + validation + session.navigation |
 
 ## Ampliación de la batería (roadmap de suites)
 
@@ -59,6 +59,8 @@ flowchart TB
 | Spec | Estado | Intención |
 |---|---|---|
 | `journey.auth-hub.spec.ts` | **Activo** | Transversal P1→P3 + recovery + hub loop |
+| `journey.concepts.spec.ts` | **Activo** | Compás P2 Wave A (Pyodide mock) |
+| `journey.concepts-hub.spec.ts` | **Activo** | Hub `/concepts/1` Wave D (heatmap, drawer, AND, prereq; sin mock de tags) |
 | `auth.login.spec.ts` | **Activo** | Landing CTAs + login → `/workspace` |
 | `auth.reset.spec.ts` | **Activo** | Forgot → resetToken DX → workspace |
 | `auth.validation.spec.ts` | **Activo** | 401 login + password corta en register |
