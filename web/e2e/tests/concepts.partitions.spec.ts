@@ -240,4 +240,47 @@ test.describe("conceptual partitions hub", () => {
       timeout: e2eTimeout,
     });
   });
+
+  test("hub shows lists-requires-mutability missing-base alert", async ({
+    page,
+    request,
+  }) => {
+    const { email, password } = uniqueCreds();
+    const reg = await request.post("/api/auth/register", {
+      data: { email, password },
+      timeout: e2eTimeout,
+    });
+    expect(reg.ok(), await reg.text()).toBeTruthy();
+
+    await login(page, email, password);
+
+    await page.locator("#partition-nav-1").click();
+    await expect(page).toHaveURL(/\/concepts\/1/, { timeout: e2eTimeout });
+    await expect(page.locator("#concept-heatmap")).toBeVisible();
+    await expect(page.locator("#concept-facet-bar")).toBeVisible();
+    await expect(page.locator("#concept-analytics")).toBeVisible();
+
+    const edge = page.locator(
+      '#concept-prereq-list [data-from="python-lists"][data-to="model-mutability"]',
+    );
+    await expect(page.locator("#concept-prereq-list")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await expect(edge).toBeVisible();
+    await expect(edge).toHaveAttribute("data-kind", "requires");
+    await expect(edge).toContainText(/requiere/i);
+
+    await expect(page.locator("#concept-prereq-alert")).toBeVisible();
+    await expect(page.locator("#concept-prereq-alert")).toHaveAttribute(
+      "role",
+      "alert",
+    );
+    await expect(page.locator("#concept-prereq-alert")).toContainText(
+      /mutabilidad/i,
+    );
+    await expect(page.locator("#concept-prereq-alert")).toHaveAttribute(
+      "data-missing",
+      /model-mutability/,
+    );
+  });
 });

@@ -10,9 +10,9 @@ use crate::api::{ConceptAnalyticsSummary, EVENT_CONCEPT_DWELL, EVENT_HEATMAP_DEC
 use crate::auth::input_value;
 use crate::components::level_completed;
 use crate::concepts::{
-    filtered_drills_for_partition, heatmap_cells_for_drills, heatmap_decade_drills_in,
-    mastery_percent, partition_by_id, ConceptFacetFilter, HeatmapBand, HeatmapCellState,
-    PARTITIONS,
+    edges_for_partition, entry_by_id, filtered_drills_for_partition, heatmap_cells_for_drills,
+    heatmap_decade_drills_in, mastery_percent, missing_required_bases, partition_by_id,
+    ConceptFacetFilter, HeatmapBand, HeatmapCellState, PARTITIONS,
 };
 use crate::curriculum::coding_step_by_micro_step;
 use crate::session::SessionCtx;
@@ -89,6 +89,8 @@ pub fn ConceptsPage() -> impl IntoView {
             .map(|u| u.completed_levels)
             .unwrap_or_default()
     });
+    let current_level =
+        Signal::derive(move || session.user.get().map(|u| u.current_level).unwrap_or(1));
 
     let toggle_extra = move |chip_id: u8| {
         extra_partitions.update(|xs| {
@@ -152,8 +154,12 @@ pub fn ConceptsPage() -> impl IntoView {
                         .into_any();
                     };
                     let completed_now = completed.get();
+                    let current_now = current_level.get();
                     let pct = mastery_percent(id, &completed_now);
                     let (done, total) = crate::concepts::partition_mastery(id, &completed_now);
+                    let prereq_edges = edges_for_partition(id);
+                    let missing_bases =
+                        missing_required_bases(id, &completed_now, current_now);
                     view! {
                         <article class="concepts__panel" data-partition=id.to_string()>
                             <header class="concepts__panel-head">
@@ -214,6 +220,76 @@ pub fn ConceptsPage() -> impl IntoView {
                                         }}
                                     </p>
                                 </aside>
+                                {if missing_bases.is_empty() {
+                                    ().into_any()
+                                } else {
+                                    let missing_ids = missing_bases
+                                        .iter()
+                                        .map(|e| e.id)
+                                        .collect::<Vec<_>>()
+                                        .join(",");
+                                    let missing_label = missing_bases
+                                        .iter()
+                                        .map(|e| e.title)
+                                        .collect::<Vec<_>>()
+                                        .join(" · ");
+                                    view! {
+                                        <aside
+                                            id="concept-prereq-alert"
+                                            class="concept-prereq-alert"
+                                            role="alert"
+                                            data-missing=missing_ids
+                                        >
+                                            <p class="concept-prereq-alert__eyebrow">"Base faltante"</p>
+                                            <p class="concept-prereq-alert__body">
+                                                {format!(
+                                                    "Todavía no empezaste: {missing_label}. Conviene tocar esa base antes de seguir."
+                                                )}
+                                            </p>
+                                        </aside>
+                                    }
+                                    .into_any()
+                                }}
+                                {if prereq_edges.is_empty() {
+                                    ().into_any()
+                                } else {
+                                    view! {
+                                        <nav
+                                            id="concept-prereq-list"
+                                            class="concept-prereq-list"
+                                            aria-label="Prerrequisitos conceptuales"
+                                        >
+                                            <p class="concept-prereq-list__eyebrow">"Prerrequisitos"</p>
+                                            <ul class="concept-prereq-list__items">
+                                                {prereq_edges
+                                                    .into_iter()
+                                                    .map(|edge| {
+                                                        let from_title = entry_by_id(edge.from)
+                                                            .map(|e| e.title)
+                                                            .unwrap_or(edge.from);
+                                                        let to_title = entry_by_id(edge.to)
+                                                            .map(|e| e.title)
+                                                            .unwrap_or(edge.to);
+                                                        view! {
+                                                            <li
+                                                                class="concept-prereq-list__item"
+                                                                data-from=edge.from
+                                                                data-to=edge.to
+                                                                data-kind=edge.kind.as_str()
+                                                            >
+                                                                {format!(
+                                                                    "{from_title} {} {to_title}",
+                                                                    edge.kind.verb_es()
+                                                                )}
+                                                            </li>
+                                                        }
+                                                    })
+                                                    .collect_view()}
+                                            </ul>
+                                        </nav>
+                                    }
+                                    .into_any()
+                                }}
                                 <Show when=move || p.map_only>
                                     <p class="concepts__map-note" role="note">
                                         "Mapa conceptual (ADR 002): drills livianos en Pyodide; "
