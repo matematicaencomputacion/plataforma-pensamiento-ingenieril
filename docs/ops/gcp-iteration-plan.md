@@ -222,6 +222,12 @@ gcloud secrets add-iam-policy-binding DATABASE_URL \
   --member="serviceAccount:${DEPLOY_SA}" \
   --role="roles/secretmanager.secretAccessor"
 
+# secrets.get: el deploy SA lo necesita para --set-secrets (mismo rol que JWT_SECRET).
+gcloud secrets add-iam-policy-binding DATABASE_URL \
+  --project="${PROJECT_ID}" \
+  --member="serviceAccount:${DEPLOY_SA}" \
+  --role="roles/secretmanager.viewer"
+
 gcloud secrets add-iam-policy-binding DATABASE_URL \
   --project="${PROJECT_ID}" \
   --member="serviceAccount:${RUNTIME_SA}" \
@@ -243,7 +249,16 @@ gcloud run services describe ppi --project="${PROJECT_ID}" --region="${REGION}" 
   --format='value(spec.template.spec.serviceAccountName)'
 ```
 
-Tras crear el secreto, el **siguiente** deploy en `main` (Docker verde) monta `DATABASE_URL` y `--set-cloudsql-instances` derivado del DSN. Hasta entonces la URL pública sigue en SQLite `/tmp`.
+Tras crear el secreto, el **siguiente** deploy en `main` (Docker verde) monta `DATABASE_URL` y `--set-cloudsql-instances` derivado del DSN. El workflow detecta el secreto con `versions access` (`secretAccessor`); `secrets describe` exige Viewer y **no** debe tratar un PERMISSION_DENIED como “secreto ausente” (eso reinyectaba SQLite `/tmp`).
+
+Si el secreto ya existe y Cloud Run sigue en SQLite, falta el binding Viewer del deploy SA (como `JWT_SECRET`):
+
+```bash
+gcloud secrets add-iam-policy-binding DATABASE_URL \
+  --project=project-2dc3a0ed-9735-4291-b0b \
+  --member="serviceAccount:github-deploy-sa@project-2dc3a0ed-9735-4291-b0b.iam.gserviceaccount.com" \
+  --role="roles/secretmanager.viewer"
+```
 
 ---
 
