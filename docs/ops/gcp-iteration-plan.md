@@ -7,6 +7,8 @@
 
 Este archivo es la fuente operativa. El change OpenSpec `openspec/changes/ops-gcp-iteration-plan/` guarda el *por qué* y los checkboxes de slices futuros. Ningún slice A–E se implementa aquí.
 
+Un borrador Neo4j (4 gigantes / Aura Free / ESCO / recomendador) quedó aparcado en [`docs/ops/knowledge-graph-vision.md`](knowledge-graph-vision.md): **fuera de la cola A–E**. No es el siguiente slice; no añade Aura, Cypher ni sidecar Python.
+
 ---
 
 ## 1. Loop funcional hoy (la nube de iteración ya existe)
@@ -166,6 +168,7 @@ El fail-closed del slice A no arregla este riesgo: un JWT robusto sobre una base
 - No añadir `cloudbuild.yaml`.
 - No crear repo en Artifact Registry “por las dudas”.
 - No copiar el compose Neo4j del doc Gemini.
+- No implementar el borrador de grafo Aura/ESCO (`docs/ops/knowledge-graph-vision.md` está **fuera de la cola A–E**).
 - No instalar Cursor Cloud Agents GitHub App como requisito del loop (el loop ya es GHA).
 - No force-push a `main`.
 - No implementar A–E en el mismo PR que este plan.
