@@ -37,7 +37,11 @@ jobs:
       PPI_EXPOSE_RESET_TOKEN: "1"
       DATABASE_URL: sqlite://./data/ppi-e2e.db
       LEARNER_PROFILE_LLM: mock
-      PPI_E2E_BASE_URL: http://127.0.0.1:3001
+      # Same-origin SPA+API via Go (STATIC_DIR). Do not use `trunk serve`:
+      # Trunk 0.21 always starts notify-rs, and notify-debouncer-full 0.5.0
+      # panics on empty inotify events (index 0 of len 0) on GHA Linux.
+      PPI_E2E_BASE_URL: http://127.0.0.1:8080
+      STATIC_DIR: ${{ github.workspace }}/web/dist
       PPI_E2E_MODE: register
       # Ephemeral per-run user — no GitHub Secrets required.
       PPI_E2E_EMAIL: e2e-${{ github.run_id }}-${{ github.run_attempt }}-s${{ matrix.shard }}@example.com
@@ -87,48 +91,40 @@ jobs:
           mkdir -p data bin
           go build -trimpath -ldflags="-s -w" -o bin/ppi-api .
 
-      - name: Start Go API (:8080)
+      - name: Build Trunk (one-shot, no watcher)
+        working-directory: web
+        run: |
+          # Trunk 0.21 rejects NO_COLOR=1 as a clap flag value.
+          unset NO_COLOR || true
+          # `trunk build` does not start notify-rs. `trunk serve` always does.
+          trunk build
+
+      - name: Start Go API + SPA (:8080)
         working-directory: backend
         run: |
+          if [ ! -f "${STATIC_DIR}/index.html" ]; then
+            echo "missing Trunk dist at ${STATIC_DIR}" >&2
+            exit 1
+          fi
           nohup ./bin/ppi-api > /tmp/ppi-api.log 2>&1 &
           echo $! > /tmp/ppi-api.pid
           for i in $(seq 1 60); do
             if curl -fsS "http://127.0.0.1:8080/api/health" >/dev/null; then
               echo "API ready"
-              exit 0
+              # Confirm STATIC_DIR SPA (not API-only) before Playwright.
+              if curl -fsS "http://127.0.0.1:8080/" | grep -Eq 'import init|wasmBindings'; then
+                echo "SPA ready"
+                sleep 3
+                exit 0
+              fi
+              echo "API up but SPA index is not a Trunk dist" >&2
+              cat /tmp/ppi-api.log >&2 || true
+              exit 1
             fi
             sleep 1
           done
           echo "API failed to start" >&2
           cat /tmp/ppi-api.log >&2 || true
-          exit 1
-
-      - name: Start Trunk / Leptos (:3001)
-        working-directory: web
-        run: |
-          # Trunk 0.21 rejects NO_COLOR=1 as a clap flag value.
-          unset NO_COLOR || true
-          # Pre-create dirs Trunk may ignore / write into (watch ignore must resolve).
-          mkdir -p dist
-          nohup trunk serve --port 3001 --address 127.0.0.1 > /tmp/trunk.log 2>&1 &
-          echo $! > /tmp/trunk.pid
-          for i in $(seq 1 180); do
-            if ! kill -0 "$(cat /tmp/trunk.pid)" 2>/dev/null; then
-              echo "Trunk process exited early" >&2
-              cat /tmp/trunk.log >&2 || true
-              exit 1
-            fi
-            if curl -fsS "http://127.0.0.1:3001/" >/dev/null; then
-              echo "Trunk ready"
-              # Give Wasm distribution a beat so the first form submit is not a native GET.
-              sleep 3
-              curl -fsS "http://127.0.0.1:3001/" >/dev/null || true
-              exit 0
-            fi
-            sleep 2
-          done
-          echo "Trunk failed to start" >&2
-          cat /tmp/trunk.log >&2 || true
           exit 1
 
       - name: Run Playwright smoke (shard ${{ matrix.shard }}/6)
@@ -150,8 +146,6 @@ jobs:
         run: |
           echo "==== ppi-api ===="
           cat /tmp/ppi-api.log || true
-          echo "==== trunk ===="
-          cat /tmp/trunk.log || true
 
   # Required check name — keep exact so branch protection stays a single story.
   playwright:
