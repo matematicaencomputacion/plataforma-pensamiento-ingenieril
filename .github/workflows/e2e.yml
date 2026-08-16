@@ -7,14 +7,20 @@ on:
     paths:
       - "web/**"
       - "backend/**"
+      - "Dockerfile"
+      - ".dockerignore"
       - ".github/workflows/e2e.yml"
+      - ".github/workflows/docker.yml"
   pull_request:
     branches:
       - main
     paths:
       - "web/**"
       - "backend/**"
+      - "Dockerfile"
+      - ".dockerignore"
       - ".github/workflows/e2e.yml"
+      - ".github/workflows/docker.yml"
 
 concurrency:
   group: e2e-web-${{ github.workflow }}-${{ github.ref }}
