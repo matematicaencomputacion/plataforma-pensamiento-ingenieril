@@ -72,7 +72,10 @@ func setPassword(args []string) error {
 
 	repoRoot := config.ResolveMonorepoRoot()
 	_ = config.LoadDotEnv(filepath.Join(repoRoot, ".env"))
-	authCfg := config.LoadAuthConfig()
+	authCfg, err := config.LoadAuthConfig()
+	if err != nil {
+		return fmt.Errorf("auth config: %w", err)
+	}
 	if strings.TrimSpace(*dbURL) != "" {
 		authCfg.DatabaseURL = strings.TrimSpace(*dbURL)
 	}

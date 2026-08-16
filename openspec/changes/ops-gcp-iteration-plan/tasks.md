@@ -6,9 +6,9 @@
 
 ## A. Fail-closed JWT en producción
 
-- [ ] A.1 Si `ENV`/`APP_ENV`/`GO_ENV=production` y `JWT_SECRET` vacío o de distro/CI → el proceso no arranca
-- [ ] A.2 Tests unitarios del fail-closed; local/CI siguen usando el default de desarrollo
-- [ ] A.3 PR propio (`fix/ops-jwt-fail-closed` o similar); no mezcla GCP
+- [x] A.1 Si `ENV`/`APP_ENV`/`GO_ENV=production` y `JWT_SECRET` vacío o de distro/CI → el proceso no arranca
+- [x] A.2 Tests unitarios del fail-closed; local/CI siguen usando el default de desarrollo
+- [x] A.3 PR propio (`fix/ops-jwt-fail-closed` o similar); no mezcla GCP
 
 ## B. ADR de persistencia
 
