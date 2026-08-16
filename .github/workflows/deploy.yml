@@ -87,6 +87,32 @@ jobs:
             exit 1
           fi
 
+      - name: Resolve DATABASE_URL secret
+        id: db
+        run: |
+          set -euo pipefail
+          set +x
+          if ! gcloud secrets describe DATABASE_URL --project="${PROJECT_ID}" >/dev/null 2>&1; then
+            echo "present=false" >> "${GITHUB_OUTPUT}"
+            echo "cloudsql_instance=" >> "${GITHUB_OUTPUT}"
+            echo "Secret DATABASE_URL ausente: demo SQLite /tmp (PPI_ALLOW_EPHEMERAL_SQLITE=1). Ver docs/ops/gcp-iteration-plan.md"
+            exit 0
+          fi
+          echo "present=true" >> "${GITHUB_OUTPUT}"
+          dsn="$(gcloud secrets versions access latest --secret=DATABASE_URL --project="${PROJECT_ID}")"
+          instance=""
+          if [[ "${dsn}" == *"/cloudsql/"* ]]; then
+            instance="$(printf '%s\n' "${dsn}" | sed -n 's/.*host=\/cloudsql\/\([^&[:space:]]*\).*/\1/p' | head -1)"
+            instance="${instance%/}"
+          fi
+          unset dsn
+          echo "cloudsql_instance=${instance}" >> "${GITHUB_OUTPUT}"
+          if [[ -n "${instance}" ]]; then
+            echo "Cloud SQL unix socket instance=${instance}"
+          else
+            echo "DATABASE_URL presente; sin host=/cloudsql/… — no se añade --set-cloudsql-instances (no se inventa el nombre)."
+          fi
+
       - name: Login to Artifact Registry
         uses: docker/login-action@v3
         with:
@@ -113,18 +139,39 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Deploy Cloud Run
+        env:
+          DB_SECRET_PRESENT: ${{ steps.db.outputs.present }}
+          CLOUDSQL_INSTANCE: ${{ steps.db.outputs.cloudsql_instance }}
         run: |
           set -euo pipefail
           image="${REGION}-docker.pkg.dev/${PROJECT_ID}/${AR_REPO}/ppi:${SHA}"
-          # Demo efímera: SQLite en /tmp se pierde en scale-to-zero / nueva revisión.
-          # Cloud SQL Postgres es el siguiente corte de persistencia (slices B/C).
           # Público a propósito: el gateway no usa IAM; JWT vive en la app.
-          gcloud run deploy "${SERVICE}" \
-            --project="${PROJECT_ID}" \
-            --region="${REGION}" \
-            --image="${image}" \
-            --port=8080 \
-            --allow-unauthenticated \
-            --set-env-vars="ENV=production,DATABASE_URL=sqlite:///tmp/ppi.db" \
-            --set-secrets="JWT_SECRET=JWT_SECRET:latest"
-          echo "deployed ${image}"
+          # Si existe el secreto DATABASE_URL se monta (Postgres). No se inventa
+          # un instance name: --set-cloudsql-instances solo si el DSN trae host=/cloudsql/…
+          common=(
+            --project="${PROJECT_ID}"
+            --region="${REGION}"
+            --image="${image}"
+            --port=8080
+            --allow-unauthenticated
+          )
+          if [[ "${DB_SECRET_PRESENT}" == "true" ]]; then
+            sql_flags=(--clear-cloudsql-instances)
+            if [[ -n "${CLOUDSQL_INSTANCE}" ]]; then
+              sql_flags=(--set-cloudsql-instances="${CLOUDSQL_INSTANCE}")
+            fi
+            gcloud run deploy "${SERVICE}" \
+              "${common[@]}" \
+              --set-env-vars="ENV=production" \
+              --set-secrets="JWT_SECRET=JWT_SECRET:latest,DATABASE_URL=DATABASE_URL:latest" \
+              "${sql_flags[@]}"
+            echo "deployed ${image} with Secret Manager DATABASE_URL"
+          else
+            gcloud run deploy "${SERVICE}" \
+              "${common[@]}" \
+              --set-env-vars="ENV=production,DATABASE_URL=sqlite:///tmp/ppi.db,PPI_ALLOW_EPHEMERAL_SQLITE=1" \
+              --set-secrets="JWT_SECRET=JWT_SECRET:latest" \
+              --clear-cloudsql-instances
+            echo "::warning::Demo efímera SQLite /tmp. Crear Cloud SQL + secreto DATABASE_URL (docs/ops/gcp-iteration-plan.md). No publicar cuentas reales."
+            echo "deployed ${image} sqlite demo"
+          fi

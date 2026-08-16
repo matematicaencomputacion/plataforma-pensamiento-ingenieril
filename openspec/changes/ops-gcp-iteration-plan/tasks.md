@@ -12,15 +12,15 @@
 
 ## B. ADR de persistencia
 
-- [ ] B.1 ADR: SQLite = local / harness / GHA; Postgres (Cloud SQL) = Cloud Run durable
-- [ ] B.2 Criterio explícito demo efímera (`/tmp`) vs producto con cuentas reales
-- [ ] B.3 PR `docs/adr-persistence-postgres` (o equivalente); sin driver todavía
+- [x] B.1 ADR: SQLite = local / harness / GHA; Postgres (Cloud SQL) = Cloud Run durable
+- [x] B.2 Criterio explícito demo efímera (`/tmp`) vs producto con cuentas reales
+- [x] B.3 ADR `docs/adr/0004-persistencia-sqlite-postgres.md` (mismo PR que el driver)
 
-## C. Driver Postgres opcional (sin credenciales GCP)
+## C. Driver Postgres + fail-closed (tests en SQLite)
 
-- [ ] C.1 Implementar repositorio Postgres detrás de `DATABASE_URL` postgres/postgresql
-- [ ] C.2 Tests opt-in (service container o skip sin DSN); SQLite permanece el default
-- [ ] C.3 Cero project id, WIF, Cloud SQL proxy o JSON de SA en este slice
+- [x] C.1 Repositorio Postgres detrás de `DATABASE_URL` postgres/postgresql
+- [x] C.2 Tests opt-in (`PPI_POSTGRES_TEST_URL`); SQLite permanece el default de `go test ./...`
+- [x] C.3 `deploy.yml` monta secreto `DATABASE_URL` si existe; no inventa instance name; sin JSON de SA
 
 ## D. Deploy GHA (solo con bloqueos humanos resueltos)
 

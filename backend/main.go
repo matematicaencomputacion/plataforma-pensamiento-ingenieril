@@ -16,8 +16,8 @@ import (
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/config"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/handlers"
+	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/persistence"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/repositories/jsonstore"
-	sqliterepo "github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/repositories/sqlite"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/usecases"
 )
 
@@ -90,19 +90,15 @@ func main() {
 		log.Fatalf("auth config: %v", err)
 	}
 
-	sqlitePath := authCfg.SQLitePath()
-	if !filepath.IsAbs(sqlitePath) && sqlitePath != ":memory:" {
-		sqlitePath = filepath.Join(repoRoot, sqlitePath)
-	}
-	userDB, err := sqliterepo.OpenDB(sqlitePath)
+	store, err := persistence.Open(authCfg, repoRoot)
 	if err != nil {
-		log.Fatalf("sqlite: %v", err)
+		log.Fatalf("persistencia: %v", err)
 	}
-	defer userDB.Close()
-	userRepo, err := sqliterepo.NewUserRepository(userDB)
-	if err != nil {
-		log.Fatalf("user repo: %v", err)
+	defer store.Close()
+	if authCfg.EphemeralSQLiteAllowed {
+		log.Printf("WARN: persistencia efímera SQLite (PPI_ALLOW_EPHEMERAL_SQLITE=1); no usar cuentas reales")
 	}
+	userRepo := store.Users
 	exposeReset := usecases.ResolveExposeResetToken(authCfg.JWTSecret)
 	smtpCfg := config.LoadSMTPConfig()
 	var mailer domain.Mailer = domain.NopMailer{}
@@ -169,10 +165,7 @@ func main() {
 	mux.HandleFunc("POST /api/progress/complete", progressHandler.Complete)
 	mux.HandleFunc("POST /api/progress/reset", progressHandler.Reset)
 
-	eventRepo, err := sqliterepo.NewConceptEventRepository(userDB)
-	if err != nil {
-		log.Fatalf("concept events repo: %v", err)
-	}
+	eventRepo := store.Events
 	analyticsHandler := handlers.NewConceptAnalyticsHandler(
 		usecases.NewConceptAnalyticsService(authService, eventRepo),
 	)
@@ -188,8 +181,8 @@ func main() {
 
 	addr := listenAddr()
 	log.Printf(
-		"servidor iniciado: escuchando en http://localhost%s (data=%s static=%s build=%s root=%s sqlite=%s)",
-		addr, dataDir, staticLabel, ppiBuildID, repoRoot, sqlitePath,
+		"servidor iniciado: escuchando en http://localhost%s (data=%s static=%s build=%s root=%s driver=%s db=%s)",
+		addr, dataDir, staticLabel, ppiBuildID, repoRoot, store.Driver, store.Label,
 	)
 	if err := http.ListenAndServe(addr, handler); err != nil {
 		log.Fatalf("error al iniciar el servidor: %v", err)
