@@ -24,10 +24,10 @@
 
 ## D. Deploy GHA (solo con bloqueos humanos resueltos)
 
-- [ ] D.1 Humano entrega: project id, billing, WIF (no JSON de SA), Cloud SQL vs demo, dominio
-- [ ] D.2 Workflow: WIF → push Artifact Registry (`southamerica-east1`) → Cloud Run
-- [ ] D.3 Env/secrets en runtime (`JWT_SECRET`, `DATABASE_URL`, SMTP); imagen distroless existente
-- [ ] D.4 GHA de producto (Backend/Frontend/shards/`docker-build`) sigue siendo el gate; no Cloud Build
+- [x] D.1 Humano entrega: project id, billing, WIF (no JSON de SA), Cloud SQL vs demo, dominio
+- [x] D.2 Workflow: WIF → push Artifact Registry (`southamerica-east1`) → Cloud Run
+- [x] D.3 Env/secrets en runtime (`JWT_SECRET`, `DATABASE_URL`, SMTP); imagen distroless existente
+- [x] D.4 GHA de producto (Backend/Frontend/shards/`docker-build`) sigue siendo el gate; no Cloud Build
 
 ## E. Compose Fedora después de que la nube sea fuente de verdad
 

@@ -1,11 +1,11 @@
 # Plan de iteración GCP (PPI)
 
-**Estado:** vigente (planificación). No hay deploy a Cloud Run en este documento.
+**Estado:** vigente. Slice D (WIF → Artifact Registry → Cloud Run) vive en `.github/workflows/deploy.yml`.
 **Ancla:** `origin/main` @ `e9548d8` (`feat/ops-docker-multistage`, PR #252).
 **Producto:** Go + Leptos CSR (Trunk Wasm), no FastAPI + Neo4j.
-**Objetivo:** dejar un loop **funcional hoy** para varios ciclos de mejora en CI / nube, y una cola de PRs futuros **cuando el humano desbloquee GCP**.
+**Objetivo:** loop GHA de producto (CI + docker-build + Playwright) y deploy a Cloud Run **después** de gates verdes en `main`.
 
-Este archivo es la fuente operativa. El change OpenSpec `openspec/changes/ops-gcp-iteration-plan/` guarda el *por qué* y los checkboxes de slices futuros. Ningún slice A–E se implementa aquí.
+Este archivo es la fuente operativa. El change OpenSpec `openspec/changes/ops-gcp-iteration-plan/` guarda el *por qué* y los checkboxes. Slice D está en `deploy.yml`; A–C y E siguen en PRs aparte.
 
 Un borrador Neo4j (4 gigantes / Aura Free / ESCO / recomendador) quedó aparcado en [`docs/ops/knowledge-graph-vision.md`](knowledge-graph-vision.md): **fuera de la cola A–E**. No es el siguiente slice; no añade Aura, Cypher ni sidecar Python.
 
@@ -13,7 +13,7 @@ Un borrador Neo4j (4 gigantes / Aura Free / ESCO / recomendador) quedó aparcado
 
 ## 1. Loop funcional hoy (la nube de iteración ya existe)
 
-**GitHub Actions es el loop de iteración en la nube.** Cada PR de producto ya “despliega a CI”: corre tests, shards E2E y construye la imagen. No hace falta Cloud Build, Artifact Registry ni Cloud Run para mejorar el producto.
+**GitHub Actions es el loop de iteración y el único CI.** Cada PR de producto corre tests, shards E2E y construye la imagen. Cloud Build no es el CI. Artifact Registry + Cloud Run son el **deploy** post-merge (`deploy.yml`), no un reemplazo de esos gates.
 
 Cursor Cloud Agents **GitHub App no está instalada**. Los ciclos se empujan con `gh` desde un worktree (humano o agente local). No esperar que un Cloud Agent abra PRs por sí solo.
 
@@ -25,8 +25,9 @@ Cursor Cloud Agents **GitHub App no está instalada**. Los ciclos se empujan con
 | `.github/workflows/ci.yml` | **Frontend** | lint + Vitest + build de `frontend/` (Qwik legado) | todo PR / push a `main` |
 | `.github/workflows/e2e.yml` | **Playwright Chromium shard 1–6** | misma suite que `make harness-e2e` (ADR 003); 6 shards × 120 min | PRs que tocan `web/**`, `backend/**`, `Dockerfile`, `.dockerignore` o los workflows E2E/Docker |
 | `.github/workflows/docker.yml` | **docker-build** | `docker build` (Buildx, `push: false`) + smoke `GET /api/health` + index SPA | todo PR / push a `main` (sin path filter) |
+| `.github/workflows/deploy.yml` | **Artifact Registry + Cloud Run** | WIF → push imagen → `gcloud run deploy ppi` | `workflow_run` de **Docker** en `main` (push) **después** de CI verde; no corre en PRs |
 
-PRs **solo-docs** (como este): Backend + Frontend sí corren; Playwright **se salta** por `paths:`. `docker-build` hoy no tiene path filter: puede correr igual. No es un deploy GCP; es un gate de imagen.
+PRs **solo-docs**: Backend + Frontend sí corren; Playwright **se salta** por `paths:`. `docker-build` no tiene path filter. El deploy **no** es un check de PR.
 
 ### Cómo correr un ciclo de mejora
 
@@ -36,7 +37,7 @@ PRs **solo-docs** (como este): Backend + Frontend sí corren; Playwright **se sa
 4. Merge cuando los gates aplicables estén verdes. No force-push a `main`.
 5. El siguiente ciclo parte de `origin/main` actualizado. Repetir.
 
-No hay URL pública nueva en este loop. La “nube” es GitHub-hosted runners + la imagen distroless que ya fabrica `docker-build`.
+La verificación de producto sigue siendo GHA. La URL pública del servicio Cloud Run `ppi` aparece tras el primer deploy exitoso en `main` (gateway **sin** IAM; JWT en la app).
 
 ---
 
@@ -55,7 +56,7 @@ Fuente leída (local, no versionada): `despliegue_gcp_ci_cd_4_capas.md` (FastAPI
 | FastAPI + `uvicorn` | Un proceso Go (`ppi-api`) que sirve `/api/*` + SPA embebida | `backend/`, `Dockerfile` |
 | Neo4j Aura / Bolt | Relacional: SQLite hoy; Postgres (Cloud SQL) es decisión futura (slice B) | `DATABASE_URL` |
 | Python Dockerfile | Imagen multi-stage: Trunk Wasm → Go estático → **distroless** | `Dockerfile` @ `e9548d8` |
-| Cloud Build `cloudbuild.yaml` | GitHub Actions (`ci.yml` + `e2e.yml` + `docker.yml`) | `.github/workflows/` |
+| Cloud Build `cloudbuild.yaml` | GitHub Actions (`ci.yml` + `e2e.yml` + `docker.yml` + `deploy.yml`) | `.github/workflows/` |
 | Compose Fedora + Neo4j | Fuera de alcance hasta que la nube sea fuente de verdad (slice E) | — |
 
 ### Conservar (más adelante, no en este PR)
@@ -81,7 +82,7 @@ Fuente leída (local, no versionada): `despliegue_gcp_ci_cd_4_capas.md` (FastAPI
 
 ## 3. PRs futuros (secuencia fija)
 
-Orden **A → B → C → D → E**. No saltar D antes de tener project id + billing + WIF. Checkboxes vivos: `openspec/changes/ops-gcp-iteration-plan/tasks.md`.
+Orden **A → B → C → D → E**. D ya no espera project id: los recursos WIF están abajo. Checkboxes: `openspec/changes/ops-gcp-iteration-plan/tasks.md`.
 
 ### A — Fail-closed `JWT_SECRET` si `ENV=production`
 
@@ -108,14 +109,12 @@ Puerto de repositorio ya existe (`UserRepository`). Implementar Postgres detrás
 
 ### D — Workflow GHA de deploy (WIF → Artifact Registry → Cloud Run)
 
-**Solo después** de que el humano complete la §4 (project id + billing + WIF).
+Implementado en `.github/workflows/deploy.yml` (PR propio; no Cloud Build; no JSON de SA):
 
-Boceto (no implementar en este PR):
-
-1. Workload Identity Federation (GitHub OIDC → SA de deploy). **No** JSON de service account en secrets ni en git.
-2. `docker push` a Artifact Registry en `southamerica-east1`.
-3. `gcloud run deploy` del mismo tag SHA, `--set-env-vars` / Secret Manager para `JWT_SECRET`, SMTP, `DATABASE_URL`.
-4. CI de producto (Backend, Frontend, shards, docker-build) sigue siendo el gate; el deploy es un workflow **aparte**, no un reemplazo de GHA por Cloud Build.
+1. WIF (GitHub OIDC → `github-deploy-sa`). Trigger: Docker verde en `main` + CI verde del mismo SHA. Playwright **no** bloquea este primer deploy.
+2. Push a Artifact Registry `southamerica-east1-docker.pkg.dev/project-2dc3a0ed-9735-4291-b0b/ppi/ppi:$SHA` (y `:latest` en `main`).
+3. `gcloud run deploy ppi` con `PORT=8080`, `ENV=production`, `--set-secrets=JWT_SECRET=JWT_SECRET:latest`, `--allow-unauthenticated`.
+4. `DATABASE_URL=sqlite:///tmp/ppi.db` es **demo efímera** (datos que se evaporan). Cloud SQL es el corte durable (B/C). SMTP no se inyecta en este slice.
 
 ### E — Compose Fedora **después** de que la nube sea fuente de verdad
 
@@ -123,19 +122,31 @@ El compose local debe clonar el contrato de prod (misma imagen o mismo `Dockerfi
 
 ---
 
-## 4. Bloqueos que solo el humano puede llenar
+## 4. Recursos GCP (slice D) y lo que sigue en el humano
 
-Nada de D (ni Cloud SQL real) avanza sin estas respuestas. Dejarlas por escrito en el PR del slice D, no en código.
+Valores entregados (no son secretos; el JSON de una SA **nunca** va al repo):
 
-| Dato | Por qué bloquea | Cómo se entrega |
+| Recurso | Valor |
+|---|---|
+| **GCP project id** | `project-2dc3a0ed-9735-4291-b0b` |
+| **Número de proyecto** (WIF) | `289591172332` |
+| **Región** | `southamerica-east1` |
+| **Artifact Registry repo** | `ppi` |
+| **Imagen** | `southamerica-east1-docker.pkg.dev/project-2dc3a0ed-9735-4291-b0b/ppi/ppi:$SHA` |
+| **Servicio Cloud Run** | `ppi` |
+| **WIF provider** | `projects/289591172332/locations/global/workloadIdentityPools/github-pool/providers/github-provider` |
+| **SA de deploy** | `github-deploy-sa@project-2dc3a0ed-9735-4291-b0b.iam.gserviceaccount.com` |
+| **Secret Manager** | `JWT_SECRET` (ya existe; Cloud Run lo monta como env `JWT_SECRET`) |
+| **Persistencia de este slice** | Demo efímera: `DATABASE_URL=sqlite:///tmp/ppi.db` |
+| **Ingress** | `--allow-unauthenticated` (JWT en la app, no IAM en el gateway) |
+
+Sigue en el humano (no bloquea el merge de D):
+
+| Dato | Por qué | Cómo |
 |---|---|---|
-| **GCP project id** | Registry, Cloud Run, IAM, SQL viven en un proyecto | Pegarlo en el workflow / vars de GitHub, no hardcodear si va a rotar |
-| **Billing habilitado** | Cloud Run / Artifact Registry / Cloud SQL no arrancan en proyecto sin billing | Consola GCP; confirmar en el PR D |
-| **WIF vs JSON de SA** | Decisión: **WIF**. El JSON de una service account **nunca** se commitea ni se pega en el chat | Pool OIDC GitHub → SA con roles mínimos (`run.admin`, `artifactregistry.writer`, `secretmanager.secretAccessor` si aplica) |
-| **Cloud SQL vs demo efímera** | SQLite en `/tmp` no sobrevive scale-to-zero ni multi-instancia (véase §5) | Elegir: (1) demo descartable, o (2) Cloud SQL Postgres + `DATABASE_URL` |
-| **Dominio** | `APP_PUBLIC_URL`, cookies/reset SMTP, TLS | Ej. `ingenieria.wechgat.com.ar` ya aparece en `.env.example`; confirmar si sigue siendo el público |
-
-Hasta que esa tabla esté completa, el loop de mejora **sigue siendo GHA** (esta sección 1).
+| **Binding WIF ↔ repo GitHub** | Si el job `google-github-actions/auth` falla, el provider no admite este repo | En el pool `github-pool`, attribute condition tipo `assertion.repository == 'matematicaencomputacion/plataforma-pensamiento-ingenieril'` |
+| **Dominio / SMTP** | `APP_PUBLIC_URL` y reset por correo | Confirmar host público; no va en este workflow |
+| **Cloud SQL Postgres** | SQLite `/tmp` no es producto con cuentas reales (véase §5) | Slices B + C + instancia SQL; no en D |
 
 ---
 
@@ -157,20 +168,17 @@ Eso es correcto para **smoke CI** y para un contenedor local. Es **incorrecto co
 | Scale-out / request concurrentes | SQLite no es el motor de un servicio multi-instancia |
 | Distroless `nonroot` no escribe `/app` | Por eso el default es `/tmp` — no lo “arregles” montando el `.db` en `/app` |
 
-**Regla:** no publicar un servicio Cloud Run con cuentas reales mientras `DATABASE_URL` apunte a SQLite. Demo efímera (datos de juguete, se espera perderlos) = OK. Producto = esperar slices B + C + instancia Cloud SQL (o declarar explícitamente “demo descartable” en el PR D).
+**Regla:** este primer Cloud Run es **demo descartable**. No publicar cuentas reales mientras `DATABASE_URL` apunte a SQLite. Producto durable = slices B + C + Cloud SQL.
 
 El fail-closed del slice A no arregla este riesgo: un JWT robusto sobre una base que se evaporó sigue siendo pérdida de datos.
 
 ---
 
-## 6. Qué no hacer en los próximos ciclos (hasta D desbloqueado)
+## 6. Qué no hacer
 
-- No añadir `cloudbuild.yaml`.
-- No crear repo en Artifact Registry “por las dudas”.
-- No copiar el compose Neo4j del doc Gemini.
-- No implementar el borrador de grafo Aura/ESCO (`docs/ops/knowledge-graph-vision.md` está **fuera de la cola A–E**).
-- No instalar Cursor Cloud Agents GitHub App como requisito del loop (el loop ya es GHA).
+- No añadir `cloudbuild.yaml` ni reemplazar GHA por Cloud Build.
+- No commitear JSON de service account.
+- No copiar compose Neo4j / Aura / sidecar Python.
+- No implementar el borrador de grafo (`docs/ops/knowledge-graph-vision.md` está **fuera de la cola A–E**).
 - No force-push a `main`.
-- No implementar A–E en el mismo PR que este plan.
-
-Cuando A–E existan, cada uno es un PR propio con slides TED y CI verde.
+- No mezclar A–E en un solo PR. E (compose Fedora) espera a que la nube sea fuente de verdad.

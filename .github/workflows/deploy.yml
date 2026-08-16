@@ -1,0 +1,130 @@
+# Deploy to Artifact Registry + Cloud Run after product gates on main.
+# Does NOT replace CI: Backend/Frontend (ci.yml) and docker-build (docker.yml)
+# remain the merge gates. Playwright is not required for this first deploy.
+# Trigger is workflow_run of Docker (slower than CI); we still require CI success
+# for the same SHA. No service-account JSON. No Cloud Build. No Neo4j.
+name: Deploy Cloud Run
+
+on:
+  workflow_run:
+    workflows: ["Docker"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+  actions: write
+
+concurrency:
+  group: deploy-cloud-run
+  cancel-in-progress: false
+
+env:
+  PROJECT_ID: project-2dc3a0ed-9735-4291-b0b
+  REGION: southamerica-east1
+  AR_REPO: ppi
+  SERVICE: ppi
+  WIF_PROVIDER: projects/289591172332/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+  DEPLOY_SA: github-deploy-sa@project-2dc3a0ed-9735-4291-b0b.iam.gserviceaccount.com
+
+jobs:
+  deploy:
+    name: Artifact Registry + Cloud Run
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push'
+    env:
+      SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - name: Require CI success for the same SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          echo "waiting for workflow CI on ${SHA}"
+          for _ in $(seq 1 36); do
+            json="$(gh run list --repo "${GITHUB_REPOSITORY}" --workflow CI --commit "${SHA}" --event push --json status,conclusion --limit 5)"
+            status="$(printf '%s' "${json}" | jq -r '.[0].status // "missing"')"
+            conclusion="$(printf '%s' "${json}" | jq -r '.[0].conclusion // "missing"')"
+            echo "CI status=${status} conclusion=${conclusion}"
+            if [[ "${status}" == "completed" && "${conclusion}" == "success" ]]; then
+              exit 0
+            fi
+            if [[ "${status}" == "completed" ]]; then
+              echo "::error::CI no está verde para ${SHA} (conclusion=${conclusion}). No se despliega."
+              exit 1
+            fi
+            sleep 10
+          done
+          echo "::error::CI no completó a tiempo para ${SHA}."
+          exit 1
+
+      - name: Checkout SHA that passed Docker
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SHA }}
+
+      - name: Authenticate to Google Cloud (WIF)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.DEPLOY_SA }}
+          token_format: access_token
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Require Secret Manager JWT_SECRET
+        run: |
+          set -euo pipefail
+          if ! gcloud secrets describe JWT_SECRET --project="${PROJECT_ID}" >/dev/null 2>&1; then
+            echo "::error::Secret Manager JWT_SECRET no es visible para ${DEPLOY_SA} (id o IAM). Cloud Run no se despliega sin él."
+            exit 1
+          fi
+
+      - name: Login to Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGION }}-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          provenance: false
+          tags: |
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.AR_REPO }}/ppi:${{ env.SHA }}
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.AR_REPO }}/ppi:latest
+          build-args: |
+            PPI_BUILD_ID=${{ env.SHA }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy Cloud Run
+        run: |
+          set -euo pipefail
+          image="${REGION}-docker.pkg.dev/${PROJECT_ID}/${AR_REPO}/ppi:${SHA}"
+          # Demo efímera: SQLite en /tmp se pierde en scale-to-zero / nueva revisión.
+          # Cloud SQL Postgres es el siguiente corte de persistencia (slices B/C).
+          # Público a propósito: el gateway no usa IAM; JWT vive en la app.
+          gcloud run deploy "${SERVICE}" \
+            --project="${PROJECT_ID}" \
+            --region="${REGION}" \
+            --image="${image}" \
+            --port=8080 \
+            --allow-unauthenticated \
+            --set-env-vars="PORT=8080,ENV=production,DATABASE_URL=sqlite:///tmp/ppi.db" \
+            --set-secrets="JWT_SECRET=JWT_SECRET:latest"
+          echo "deployed ${image}"
