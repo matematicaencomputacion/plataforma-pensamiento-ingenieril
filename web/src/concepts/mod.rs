@@ -520,7 +520,17 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (596, &[1]),
     (597, &[1]),
     (600, &[1]),
+    (601, &[1]),
+    (602, &[1]),
     (603, &[1, 3]),
+    (604, &[1]),
+    (605, &[1]),
+    (606, &[1]),
+    (607, &[1]),
+    (608, &[1]),
+    (609, &[1]),
+    (611, &[1]),
+    (612, &[1]),
     (619, &[1, 2]),
     (620, &[1, 2]),
     (621, &[1, 2]),
@@ -529,8 +539,35 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (624, &[1, 2]),
     (625, &[1, 3]),
     (626, &[2]),
+    (627, &[1, 3]),
     (628, &[1, 3]),
+    (629, &[1, 3]),
+    (631, &[1, 3]),
+    (632, &[1, 3]),
+    (633, &[1, 3]),
+    (634, &[1]),
+    (635, &[3]),
+    (636, &[3]),
+    (637, &[3]),
+    (638, &[3]),
+    (640, &[3]),
+    (643, &[1, 3]),
+    (644, &[1, 3]),
+    (645, &[3]),
+    (646, &[1, 3]),
+    (647, &[3]),
+    (648, &[1, 3]),
+    (655, &[1, 3]),
+    (656, &[1, 3]),
     (657, &[1]),
+    (658, &[3]),
+    (659, &[1, 3]),
+    (660, &[3]),
+    (661, &[1, 3]),
+    (662, &[3]),
+    (663, &[3]),
+    (667, &[3]),
+    (668, &[3]),
     (669, &[1, 3]),
     (670, &[1, 2, 3]),
     (671, &[1, 2, 3]),
@@ -539,13 +576,22 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (674, &[1, 3]),
     (675, &[1, 3]),
     (676, &[2, 3]),
+    (677, &[1, 3]),
     (678, &[1, 2, 3]),
     (679, &[1]),
     (680, &[1]),
     (681, &[1]),
     (682, &[1]),
+    (683, &[1]),
     (684, &[1]),
-    (687, &[1, 3]),
+    (685, &[4]),
+    (686, &[4]),
+    (687, &[1, 4]),
+    (688, &[4]),
+    (689, &[4]),
+    (690, &[1, 4]),
+    (691, &[1]),
+    (692, &[1]),
     (697, &[1, 3]),
     (698, &[1, 3]),
     (699, &[1, 3]),
@@ -558,6 +604,21 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (706, &[1, 3]),
     (707, &[1, 3]),
     (708, &[1, 3]),
+    (709, &[1, 3]),
+    (710, &[1, 3]),
+    (711, &[1, 3]),
+    (712, &[1, 3]),
+    (713, &[1, 3]),
+    (714, &[1, 3]),
+    (715, &[1]),
+    (718, &[1]),
+    (721, &[1]),
+    (722, &[1]),
+    (727, &[3]),
+    (730, &[3]),
+    (745, &[1]),
+    (746, &[1]),
+    (748, &[1]),
 ];
 
 pub fn partition_by_id(id: u8) -> Option<&'static ConceptPartition> {
@@ -676,7 +737,8 @@ mod tests {
         assert!(partitions_for_micro_step(853).is_empty()); // DSA lab without conceptual lens
         assert!(partitions_for_micro_step(913).is_empty()); // beyond tagged advanced structures
         assert_eq!(partitions_for_micro_step(708), &[1, 3]); // segment tree ADT
-        assert!(partitions_for_micro_step(721).is_empty());
+        assert_eq!(partitions_for_micro_step(721), &[1]); // arrays VI: prefix/data load
+        assert!(partitions_for_micro_step(733).is_empty()); // window VI recipe
         assert!(partitions_for_micro_step(1001).is_empty());
     }
 
@@ -851,47 +913,105 @@ mod tests {
         (450, &[1]),
     ];
 
-    /// Frozen `(micro_step, tags)` pairs with `micro_step ≥ 601` at C1 merge `d0144ea`.
-    const WAVE_C1_FROZEN_601: &[(i32, &[u8])] = &[
-        (603, &[1, 3]),
-        (619, &[1, 2]),
-        (620, &[1, 2]),
-        (621, &[1, 2]),
-        (622, &[1, 2]),
-        (623, &[1, 2]),
-        (624, &[1, 2]),
-        (625, &[1, 3]),
-        (626, &[2]),
-        (628, &[1, 3]),
-        (657, &[1]),
-        (669, &[1, 3]),
-        (670, &[1, 2, 3]),
-        (671, &[1, 2, 3]),
-        (672, &[1, 2, 3]),
-        (673, &[3]),
-        (674, &[1, 3]),
-        (675, &[1, 3]),
-        (676, &[2, 3]),
-        (678, &[1, 2, 3]),
-        (679, &[1]),
-        (680, &[1]),
-        (681, &[1]),
-        (682, &[1]),
-        (684, &[1]),
-        (687, &[1, 3]),
-        (697, &[1, 3]),
-        (698, &[1, 3]),
-        (699, &[1, 3]),
-        (700, &[1, 3]),
-        (701, &[1, 3]),
-        (702, &[1, 3]),
-        (703, &[1, 3]),
-        (704, &[1, 3]),
-        (705, &[1, 3]),
-        (706, &[1, 3]),
-        (707, &[1, 3]),
-        (708, &[1, 3]),
+    /// C2 contract: `(micro_step, tags)` in `451..=600` at merge `7603e55`.
+    const WAVE_C2_SNAPSHOT_451_600: &[(i32, &[u8])] = &[
+        (463, &[3]),
+        (464, &[3]),
+        (465, &[3]),
+        (466, &[3]),
+        (467, &[3]),
+        (468, &[3]),
+        (469, &[1, 3]),
+        (470, &[1, 3]),
+        (471, &[3]),
+        (472, &[1]),
+        (473, &[1, 2, 3]),
+        (474, &[2, 3]),
+        (475, &[1, 3]),
+        (476, &[1, 3]),
+        (477, &[1, 3]),
+        (478, &[3]),
+        (479, &[1, 3]),
+        (480, &[3]),
+        (481, &[4]),
+        (482, &[1, 4]),
+        (483, &[4]),
+        (484, &[4]),
+        (485, &[1, 4]),
+        (486, &[1, 4]),
+        (487, &[1]),
+        (488, &[1]),
+        (489, &[1, 3]),
+        (490, &[1, 3]),
+        (491, &[1]),
+        (492, &[1]),
+        (493, &[1]),
+        (494, &[1, 3]),
+        (495, &[1, 3]),
+        (496, &[1]),
+        (498, &[1]),
+        (499, &[1]),
+        (500, &[1]),
+        (501, &[1]),
+        (502, &[1]),
+        (505, &[1]),
+        (506, &[1]),
+        (508, &[1]),
+        (510, &[1]),
+        (511, &[3]),
+        (512, &[3]),
+        (513, &[1]),
+        (515, &[3]),
+        (523, &[1, 3]),
+        (524, &[1, 3]),
+        (525, &[1]),
+        (526, &[1, 3]),
+        (527, &[1, 3]),
+        (528, &[1, 3]),
+        (529, &[1, 3]),
+        (531, &[3]),
+        (532, &[1, 3]),
+        (533, &[1, 3]),
+        (534, &[3]),
+        (538, &[3]),
+        (540, &[3]),
+        (553, &[1, 2, 3]),
+        (554, &[1, 2, 3]),
+        (555, &[1, 2, 3]),
+        (556, &[1, 2, 3]),
+        (557, &[1, 2, 3]),
+        (558, &[1, 2, 3]),
+        (561, &[1]),
+        (563, &[1]),
+        (568, &[1]),
+        (569, &[1]),
+        (571, &[1]),
+        (577, &[1, 3]),
+        (578, &[1, 3]),
+        (579, &[1, 3]),
+        (580, &[1, 3]),
+        (581, &[1, 3]),
+        (582, &[1, 3]),
+        (583, &[1, 3]),
+        (584, &[3]),
+        (585, &[2, 3]),
+        (586, &[3]),
+        (587, &[1, 3]),
+        (588, &[3]),
+        (589, &[1, 3]),
+        (590, &[3]),
+        (591, &[1, 3]),
+        (592, &[1, 2]),
+        (593, &[3]),
+        (594, &[1, 2, 3]),
+        (595, &[1]),
+        (596, &[1]),
+        (597, &[1]),
+        (600, &[1]),
     ];
+
+    /// Frozen `(micro_step, tags)` pairs with `micro_step ≥ 751` at C3 merge `7747cb1`.
+    const WAVE_C3_FROZEN_751: &[(i32, &[u8])] = &[];
 
     #[test]
     fn wave_b_applied_floor_101_to_300() {
@@ -1029,34 +1149,73 @@ mod tests {
     }
 
     #[test]
-    fn wave_c2_freeze_rows_601_and_up() {
+    fn wave_c2_range_451_to_600_unchanged() {
         let current: Vec<(i32, &[u8])> = STEP_PARTITIONS
             .iter()
             .copied()
-            .filter(|(n, _)| *n >= 601)
+            .filter(|(n, _)| (451..=600).contains(n))
             .collect();
         assert_eq!(
             current.len(),
-            WAVE_C1_FROZEN_601.len(),
-            "do not add or remove rows ≥ 601"
+            WAVE_C2_SNAPSHOT_451_600.len(),
+            "do not add or remove rows in 451..=600"
         );
-        for (got, expected) in current.iter().zip(WAVE_C1_FROZEN_601.iter()) {
-            assert_eq!(got.0, expected.0, "micro_step drift at ≥ 601");
-            assert_eq!(got.1, expected.1, "tags changed for micro_step {}", got.0);
+        for (got, expected) in current.iter().zip(WAVE_C2_SNAPSHOT_451_600.iter()) {
+            assert_eq!(got.0, expected.0, "micro_step drift in 451..=600");
+            assert_eq!(got.1, expected.1, "C2 tags changed for micro_step {}", got.0);
         }
     }
 
     #[test]
-    fn wave_c3_does_not_retag_601_and_up() {
+    fn wave_c4_applied_floor_601_to_750() {
+        let tagged: Vec<i32> = (601..=750)
+            .filter(|&n| {
+                coding_step_by_micro_step(n).is_some() && !partitions_for_micro_step(n).is_empty()
+            })
+            .collect();
+        assert!(
+            tagged.len() >= 90,
+            "601..=750 tagged floor is 90, got {}",
+            tagged.len()
+        );
+        for n in &tagged {
+            for &t in partitions_for_micro_step(*n) {
+                assert!((1..=5).contains(&t), "bad tag {t} on {n}");
+            }
+            assert!(coding_step_by_micro_step(*n).is_some());
+        }
+        let p3 = tagged
+            .iter()
+            .filter(|&&n| partitions_for_micro_step(n).contains(&3))
+            .count();
+        assert!(
+            p3 < tagged.len(),
+            "601..=750 must not be 100% partition 3 (got {p3}/{})",
+            tagged.len()
+        );
+    }
+
+    #[test]
+    fn wave_c4_recipe_families_stay_untagged() {
+        for n in [613, 630, 739] {
+            assert!(
+                partitions_for_micro_step(n).is_empty(),
+                "micro_step {n} must stay untagged (window / bits / two pointers)"
+            );
+        }
+    }
+
+    #[test]
+    fn wave_c4_freeze_rows_751_and_up() {
         let current: Vec<(i32, &[u8])> = STEP_PARTITIONS
             .iter()
             .copied()
-            .filter(|(n, _)| *n >= 601)
+            .filter(|(n, _)| *n >= 751)
             .collect();
         assert_eq!(
             current.as_slice(),
-            WAVE_C1_FROZEN_601,
-            "C3 must not retag STEP_PARTITIONS ≥ 601"
+            WAVE_C3_FROZEN_751,
+            "do not add or remove rows ≥ 751"
         );
     }
 }
