@@ -1,18 +1,17 @@
-# IngenierIA — Cloud Run image: Go API + Trunk/Leptos static SPA.
-# Build context: monorepo root.
+# PPI — one runtime image: static Go API + Trunk/Leptos SPA (go:embed).
+# Build context: monorepo root. Built in GitHub Actions (not required on the laptop).
 #
 # Order is intentional:
 #   1) web-builder runs `trunk build --release` → dist/
 #   2) go builder COPIES dist into backend/static/ THEN `go build` (go:embed)
-# Pass --build-arg PPI_BUILD_ID=<gitsha> to bust BuildKit cache on every deploy.
+#   3) distroless runtime (no shell) — PORT / DATABASE_URL from env; no secrets in the image.
+# Pass --build-arg PPI_BUILD_ID=<gitsha> to bust BuildKit cache when SPA content changes.
 
 # ---- web (Wasm / Trunk) ----
 FROM --platform=linux/amd64 rust:1-bookworm AS web-builder
 
 ARG TRUNK_VERSION=0.21.14
-# Cache bust: Cloud Build / Developer Connect should pass the git SHA.
-# Fallback stamps must bump whenever SPA UX ships and BuildKit might cache web.
-ARG PPI_BUILD_ID=stamp-v8-20260814-conceptual-partitions
+ARG PPI_BUILD_ID=dev
 # Bookworm apt binaryen is too old for wasm-bindgen externref + wasm-opt.
 # data-wasm-opt="0" in index.html — binaryen not required.
 
@@ -42,7 +41,6 @@ RUN rm -rf dist target \
     && ! grep -q 'data-trunk' dist/index.html \
     && grep -q 'import init' dist/index.html \
     && ls dist/*.wasm >/dev/null \
-    && printf '%s\n' "${PPI_BUILD_ID}" > dist/ppi-build.txt \
     && js="$(ls dist/*-web-*.js | head -1)" \
     && wasm="$(ls dist/*_bg.wasm | head -1)" \
     && printf 'id=%s\njs=%s\nwasm=%s\nwasm_opt=0\nwasm_bindgen=0.2.127\n' \
@@ -56,7 +54,7 @@ RUN rm -rf dist target \
 # ---- go API (embeds Trunk dist) ----
 FROM --platform=linux/amd64 golang:1.25-alpine AS builder
 
-ARG PPI_BUILD_ID=stamp-v8-20260814-conceptual-partitions
+ARG PPI_BUILD_ID=dev
 
 RUN apk add --no-cache ca-certificates git
 
@@ -75,36 +73,30 @@ RUN test -f static/index.html \
     && grep -q 'import init' static/index.html \
     && grep -q "id=${PPI_BUILD_ID}" static/ppi-build.txt \
     && ls static/*.wasm >/dev/null \
+    && test -f data/levels.json \
     && echo "embedding SPA build:" \
     && cat static/ppi-build.txt \
     && ls -la static
 
-# Bust Go compile cache when SPA stamp changes (embed content fingerprint).
+# Static binary (modernc.org/sqlite is pure Go). Distroless has no libc for cgo.
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -trimpath -ldflags="-s -w -X main.ppiBuildID=${PPI_BUILD_ID}" \
     -o /out/server .
 
-# ---- runtime ----
-FROM --platform=linux/amd64 alpine:latest
+# ---- runtime (no shell, no package manager, nonroot) ----
+FROM --platform=linux/amd64 gcr.io/distroless/static-debian12:nonroot
 
-ARG PPI_BUILD_ID=stamp-v8-20260814-conceptual-partitions
-
-RUN apk add --no-cache ca-certificates tzdata \
-    && adduser -D -H -u 10001 appuser
+ARG PPI_BUILD_ID=dev
 
 WORKDIR /app
 
 COPY --from=builder /src/data ./data
 COPY --from=builder /out/server ./server
-# Disk copy kept as fallback / DEBUG; primary serve path is go:embed inside server.
+# Disk copy is STATIC_DIR fallback; primary serve path is go:embed inside server.
 COPY --from=web-builder /src/web/dist/ ./static/
 
-RUN test -f /app/static/index.html \
-    && test -f /app/static/ppi-build.txt \
-    && ! grep -q 'data-trunk' /app/static/index.html \
-    && grep -q 'import init' /app/static/index.html \
-    && grep -q "id=${PPI_BUILD_ID}" /app/static/ppi-build.txt
-
+# Non-secret defaults only. JWT_SECRET / API keys / SMTP MUST come from runtime env.
+# DATABASE_URL points at /tmp so the nonroot user can create the SQLite file.
 ENV DATA_DIR=/app/data \
     STATIC_DIR=/app/static \
     DATABASE_URL=sqlite:///tmp/ppi.db \
@@ -113,6 +105,6 @@ ENV DATA_DIR=/app/data \
 
 EXPOSE 8080
 
-USER appuser
+USER nonroot
 
 ENTRYPOINT ["/app/server"]

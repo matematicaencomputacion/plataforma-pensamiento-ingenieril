@@ -36,9 +36,12 @@ export CGO_ENABLED ?= 0
 GO ?= go
 GOFLAGS ?=
 
+IMAGE ?= ppi:local
+PPI_BUILD_ID ?= $(shell git rev-parse HEAD 2>/dev/null || echo dev)
+
 .PHONY: help toolchain fmt vet test build run clean openspec-validate web-test web-build web-e2e \
 	harness harness-unit harness-integration harness-e2e harness-journeys ci dev-set-password \
-	wt-new wt-list wt-sync wt-rm wt-path
+	wt-new wt-list wt-sync wt-rm wt-path docker-build docker-smoke
 
 help: ## Muestra targets disponibles
 	@awk 'BEGIN {FS = ":.*##"; printf "\nTargets PPI:\n"} /^[a-zA-Z0-9_-]+:.*?##/ { printf "  %-18s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -117,8 +120,38 @@ harness-journeys: ## ADR 003: journeys Auth+Hub+Concepts (P1→P4) con stack ef�
 openspec-validate: ## Valida el change PPI 1.1
 	@openspec validate ppi-1-1-foundations --no-interactive
 
-ci: fmt vet test build openspec-validate ## Pipeline local rápido (Go; web/harness son opt-in)
+ci: fmt vet test build openspec-validate ## Pipeline local rápido (Go; web/harness/docker son opt-in)
 	@echo ">> CI local OK — module $(MODULE)"
+
+# Imagen multi-stage (API + SPA). Canon: GitHub Actions `docker-build`.
+# El laptop no es requisito; estos targets son opt-in (Fedora / Docker Desktop).
+docker-build: ## Construye ppi:local (linux/amd64). No forma parte de `make ci`.
+	docker build --platform linux/amd64 \
+	  --build-arg PPI_BUILD_ID="$(PPI_BUILD_ID)" \
+	  -t "$(IMAGE)" \
+	  -t "ppi:$$(git rev-parse HEAD 2>/dev/null || echo dev)" \
+	  .
+
+docker-smoke: docker-build ## docker run + curl /api/health (opt-in)
+	@cid="$$(docker run -d --name ppi-smoke \
+	  -p 18080:8080 \
+	  -e PORT=8080 \
+	  -e DATABASE_URL=sqlite:///tmp/ppi.db \
+	  -e JWT_SECRET=local-docker-smoke-only \
+	  -e LEARNER_PROFILE_LLM=mock \
+	  "$(IMAGE)")"; \
+	cleanup() { docker rm -f ppi-smoke >/dev/null 2>&1 || true; }; \
+	trap cleanup EXIT; \
+	for i in $$(seq 1 30); do \
+	  if curl -fsS "http://127.0.0.1:18080/api/health" | grep -q '"status":"ok"'; then \
+	    echo ">> docker-smoke OK ($$cid)"; \
+	    exit 0; \
+	  fi; \
+	  sleep 1; \
+	done; \
+	echo ">> docker-smoke FAIL" >&2; \
+	docker logs ppi-smoke >&2 || true; \
+	exit 1
 
 # ── Git worktrees (desarrollo asíncrono mientras CI/Playwright corre) ─────────
 # Docs: docs/dev/git-worktrees.md

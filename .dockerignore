@@ -1,4 +1,4 @@
-# Keep Cloud Run / docker build context lean.
+# Keep the docker build context lean (GHA docker-build / later Cloud Run).
 .git
 .github
 .cursor
@@ -9,7 +9,8 @@
 !.env.example
 **/*.md
 artifacts
-data
+# Root scratch only — do NOT ignore backend/data (levels.json seeds).
+/data
 docs
 openspec
 scripts
