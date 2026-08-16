@@ -85,7 +85,10 @@ func main() {
 	config.ResolveCredentialsPath(repoRoot)
 
 	dataDir := resolveDataDir()
-	authCfg := config.LoadAuthConfig()
+	authCfg, err := config.LoadAuthConfig()
+	if err != nil {
+		log.Fatalf("auth config: %v", err)
+	}
 
 	sqlitePath := authCfg.SQLitePath()
 	if !filepath.IsAbs(sqlitePath) && sqlitePath != ":memory:" {
