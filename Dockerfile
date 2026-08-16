@@ -96,7 +96,9 @@ COPY --from=builder /out/server ./server
 COPY --from=web-builder /src/web/dist/ ./static/
 
 # Non-secret defaults only. JWT_SECRET / API keys / SMTP MUST come from runtime env.
-# DATABASE_URL points at /tmp so the nonroot user can create the SQLite file.
+# SQLite /tmp is smoke/local (nonroot can write). Production Cloud Run must override
+# with postgres:// from Secret Manager (ADR 004); ENV=production refuses sqlite unless
+# PPI_ALLOW_EPHEMERAL_SQLITE=1 (explicit demo).
 ENV DATA_DIR=/app/data \
     STATIC_DIR=/app/static \
     DATABASE_URL=sqlite:///tmp/ppi.db \
