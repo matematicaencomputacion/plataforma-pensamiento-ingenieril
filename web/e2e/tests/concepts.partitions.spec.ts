@@ -48,13 +48,51 @@ test.describe("conceptual partitions hub", () => {
     );
     await expect(page.locator("#concepts-drill-list")).toBeVisible();
     await expect(page.locator("#concepts-drill-20")).toBeVisible();
+    await expect(page.locator("#concept-decade-drawer")).toHaveCount(0);
 
     const emptyCell = page.locator("#concept-heatmap [data-state='empty']").first();
     if ((await emptyCell.count()) > 0) {
       await expect(emptyCell).toBeDisabled();
+      await emptyCell.click({ force: true });
+      await expect(page).toHaveURL(/\/concepts\/1/);
+      await expect(page.locator("#concept-decade-drawer")).toHaveCount(0);
     }
 
-    await page.locator("#concept-heatmap [data-state]:not([data-state='empty'])").first().click();
+    const decadeCell = page
+      .locator("#concept-heatmap [data-state]:not([data-state='empty'])")
+      .first();
+    const cellId = await decadeCell.getAttribute("id");
+    expect(cellId).toMatch(/^concept-heat-\d+$/);
+    const lo = Number(cellId?.replace("concept-heat-", ""));
+    const hi = lo + 9;
+
+    await decadeCell.click();
+    await expect(page).toHaveURL(/\/concepts\/1/);
+    const drawer = page.locator("#concept-decade-drawer");
+    await expect(drawer).toBeVisible();
+    await expect(drawer).toHaveAttribute("role", "dialog");
+    await expect(page.locator("#concept-decade-title")).toContainText(
+      `${lo}–${hi}`,
+    );
+    await expect(page.locator("#concepts-drill-list")).toBeVisible();
+
+    const items = page.locator("#concept-decade-list [data-micro]");
+    const count = await items.count();
+    expect(count).toBeGreaterThan(0);
+    expect(count).toBeLessThanOrEqual(10);
+    for (let i = 0; i < count; i++) {
+      const micro = Number(await items.nth(i).getAttribute("data-micro"));
+      expect(micro).toBeGreaterThanOrEqual(lo);
+      expect(micro).toBeLessThanOrEqual(hi);
+    }
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator("#concept-decade-drawer")).toHaveCount(0);
+    await expect(page).toHaveURL(/\/concepts\/1/);
+
+    await decadeCell.click();
+    await expect(page.locator("#concept-decade-drawer")).toBeVisible();
+    await items.first().click();
     await expect(page).toHaveURL(/\/learn\/.+/, { timeout: e2eTimeout });
 
     await page.goto("/concepts/1");
