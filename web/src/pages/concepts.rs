@@ -185,8 +185,8 @@ pub fn ConceptsPage() -> impl IntoView {
                                                         type="button"
                                                         class="concept-heatmap__cell"
                                                         id=format!("concept-heat-{lo}")
-                                                        attr:data-state=state
-                                                        attr:aria-label=label
+                                                        data-state=state
+                                                        aria-label=label
                                                         prop:disabled=true
                                                     >
                                                         {count}
@@ -199,12 +199,16 @@ pub fn ConceptsPage() -> impl IntoView {
                                                         type="button"
                                                         class="concept-heatmap__cell"
                                                         id=format!("concept-heat-{lo}")
-                                                        attr:data-state=state
-                                                        attr:aria-label=label
-                                                        attr:aria-haspopup="dialog"
-                                                        attr:aria-controls="concept-decade-drawer"
-                                                        attr:aria-expanded=move || {
-                                                            open_decade.get() == Some(band)
+                                                        data-state=state
+                                                        aria-label=label
+                                                        aria-haspopup="dialog"
+                                                        aria-controls="concept-decade-drawer"
+                                                        aria-expanded=move || {
+                                                            if open_decade.get() == Some(band) {
+                                                                "true"
+                                                            } else {
+                                                                "false"
+                                                            }
                                                         }
                                                         on:click=move |_| open_decade.set(Some(band))
                                                     >

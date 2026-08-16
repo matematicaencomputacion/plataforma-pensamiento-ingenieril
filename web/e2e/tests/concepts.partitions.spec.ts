@@ -51,20 +51,17 @@ test.describe("conceptual partitions hub", () => {
     await expect(page.locator("#concept-decade-drawer")).toHaveCount(0);
 
     const emptyCell = page.locator("#concept-heatmap [data-state='empty']").first();
-    if ((await emptyCell.count()) > 0) {
-      await expect(emptyCell).toBeDisabled();
-      await emptyCell.click({ force: true });
-      await expect(page).toHaveURL(/\/concepts\/1/);
-      await expect(page.locator("#concept-decade-drawer")).toHaveCount(0);
-    }
+    await expect(emptyCell).toBeVisible({ timeout: e2eTimeout });
+    await expect(emptyCell).toBeDisabled();
+    await emptyCell.click({ force: true });
+    await expect(page).toHaveURL(/\/concepts\/1/);
+    await expect(page.locator("#concept-decade-drawer")).toHaveCount(0);
 
-    const decadeCell = page
-      .locator("#concept-heatmap [data-state]:not([data-state='empty'])")
-      .first();
-    const cellId = await decadeCell.getAttribute("id");
-    expect(cellId).toMatch(/^concept-heat-\d+$/);
-    const lo = Number(cellId?.replace("concept-heat-", ""));
-    const hi = lo + 9;
+    const decadeCell = page.locator("#concept-heat-1");
+    await expect(decadeCell).toBeVisible({ timeout: e2eTimeout });
+    await expect(decadeCell).toHaveAttribute("data-state", /pending|partial|done/);
+    const lo = 1;
+    const hi = 10;
 
     await decadeCell.click();
     await expect(page).toHaveURL(/\/concepts\/1/);
