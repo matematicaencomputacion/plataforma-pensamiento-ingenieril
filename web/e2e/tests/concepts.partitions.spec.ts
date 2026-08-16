@@ -188,4 +188,56 @@ test.describe("conceptual partitions hub", () => {
       timeout: e2eTimeout,
     });
   });
+
+  test("heatmap decade open surfaces analytics hint", async ({
+    page,
+    request,
+  }) => {
+    const { email, password } = uniqueCreds();
+    const reg = await request.post("/api/auth/register", {
+      data: { email, password },
+      timeout: e2eTimeout,
+    });
+    expect(reg.ok(), await reg.text()).toBeTruthy();
+
+    await login(page, email, password);
+
+    await page.locator("#partition-nav-1").click();
+    await expect(page).toHaveURL(/\/concepts\/1/, { timeout: e2eTimeout });
+    await expect(page.locator("#concept-analytics")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await expect(page.locator("#concept-analytics-hint")).toBeVisible();
+    await expect(page.locator("#concept-heatmap")).toBeVisible();
+    await expect(page.locator("#concept-facet-bar")).toBeVisible();
+
+    await page.locator("#concept-heat-1").click();
+    await expect(page.locator("#concept-decade-drawer")).toBeVisible();
+    await expect(page.locator("#concept-analytics-hint")).toHaveAttribute(
+      "data-hint",
+      /^(decade|partition)$/,
+      { timeout: e2eTimeout },
+    );
+    await expect(page.locator("#concept-analytics-hint")).toContainText(
+      /fricción|Década|Partición/i,
+    );
+
+    const token = await page.evaluate(() =>
+      window.localStorage.getItem("ppi.auth.token"),
+    );
+    expect(token).toBeTruthy();
+    const summary = await request.get("/api/concept-analytics", {
+      headers: { Authorization: `Bearer ${token}` },
+      timeout: e2eTimeout,
+    });
+    expect(summary.status(), await summary.text()).toBe(200);
+    const body = await summary.json();
+    expect(body.bottleneck).toBeTruthy();
+    expect(body.bottleneck.friction).toBeGreaterThan(0);
+
+    await page.goto("/learn/py-20-list-change");
+    await expect(page.locator("#concept-fab")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+  });
 });

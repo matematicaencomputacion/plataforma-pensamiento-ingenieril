@@ -57,6 +57,15 @@ func newTestMux(t *testing.T) http.Handler {
 	progressHandler := handlers.NewProgressHandler(authSvc)
 	mux.HandleFunc("POST /api/progress/complete", progressHandler.Complete)
 	mux.HandleFunc("POST /api/progress/reset", progressHandler.Reset)
+	eventRepo, err := sqliterepo.NewConceptEventRepository(db)
+	if err != nil {
+		t.Fatalf("events repo: %v", err)
+	}
+	analyticsHandler := handlers.NewConceptAnalyticsHandler(
+		usecases.NewConceptAnalyticsService(authSvc, eventRepo),
+	)
+	mux.HandleFunc("POST /api/concept-events", analyticsHandler.Record)
+	mux.HandleFunc("GET /api/concept-analytics", analyticsHandler.Summary)
 	mux.HandleFunc("GET /api/levels/current", levelHandler.GetCurrent)
 	mux.HandleFunc("GET /api/levels/{id}", levelHandler.GetByID)
 	return mux

@@ -325,6 +325,28 @@ a {
   cursor: pointer;
 }
 
+.concept-analytics {
+  margin: 0.85rem 0 0;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.concept-analytics__eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.concept-analytics__hint {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--fg);
+}
+
 .concept-heatmap {
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));

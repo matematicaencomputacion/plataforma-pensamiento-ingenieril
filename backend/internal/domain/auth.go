@@ -19,6 +19,12 @@ var (
 	ErrInvalidLevelID = errors.New("level_id inválido")
 	// ErrInvalidStepID step_id vacío.
 	ErrInvalidStepID = errors.New("step_id inválido")
+	// ErrInvalidEventType tipo de evento conceptual desconocido.
+	ErrInvalidEventType = errors.New("tipo de evento inválido")
+	// ErrInvalidPartitionID partition_id fuera de 1..=5 cuando es requerido.
+	ErrInvalidPartitionID = errors.New("partition_id inválido")
+	// ErrInvalidDecade decade_lo que no es inicio de década del rail.
+	ErrInvalidDecade = errors.New("decade_lo inválido")
 )
 
 // PublicUser es la proyección segura del usuario (sin hash).

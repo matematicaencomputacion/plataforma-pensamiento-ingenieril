@@ -1,6 +1,7 @@
 //! IngenierIA web shell — Leptos CSR targeting the Go API on :8080.
 
 mod api;
+mod analytics;
 mod auth;
 mod components;
 mod concepts;

@@ -12,6 +12,7 @@ use leptos_router::hooks::{use_location, use_navigate, use_params_map};
 use leptos_router::NavigateOptions;
 use wasm_bindgen::JsCast;
 
+use crate::analytics::{emit_learn_step_enter, emit_learn_validate};
 use crate::api::Level;
 use crate::auth::{complete_progress, fetch_current_level, input_value};
 use crate::components::{
@@ -143,6 +144,14 @@ pub fn LearnPage() -> impl IntoView {
         code_dirty_since_pass.set(false);
         already_passed_toast.set(None);
         flash_ident.set(None);
+    });
+
+    Effect::new(move |_| {
+        if session.user.get().is_none() {
+            return;
+        }
+        let s = step.get();
+        emit_learn_step_enter(s.id, s.micro_step);
     });
 
     Effect::new(move |_| {
@@ -281,6 +290,7 @@ pub fn LearnPage() -> impl IntoView {
                         console_kind.set(ConsoleKind::CheckPass);
                         can_continue.set(true);
                         code_dirty_since_pass.set(false);
+                        emit_learn_validate(&step_key, level_id, true);
                         match complete_progress(level_id, step_key, true).await {
                             Ok(prog) => {
                                 session.set_progress(
@@ -307,6 +317,7 @@ pub fn LearnPage() -> impl IntoView {
                         console_kind.set(ConsoleKind::CheckFail);
                         can_continue.set(false);
                         code_dirty_since_pass.set(false);
+                        emit_learn_validate(&step_key, level_id, false);
                         let _ = complete_progress(level_id, step_key, false).await;
                     }
                 }
