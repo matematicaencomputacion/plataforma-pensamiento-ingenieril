@@ -14,7 +14,7 @@ pub use glossary::{
     PartitionId, SearchIntent, GLOSSARY_ENTRIES,
 };
 
-use crate::curriculum::coding_step_by_micro_step;
+use crate::curriculum::{coding_step_by_id, coding_step_by_micro_step};
 
 /// Stable partition ids shown in the cognitive compass `[1]…[5]`.
 pub const PARTITION_COUNT: u8 = 5;
@@ -817,6 +817,63 @@ pub fn drills_for_partition(partition_id: u8) -> Vec<i32> {
     out
 }
 
+/// Hub-side faceted filter (Wave D.2). AND of extra partition tags + query tokens.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ConceptFacetFilter {
+    pub extra_partitions: Vec<u8>,
+    pub query: String,
+}
+
+impl ConceptFacetFilter {
+    pub fn is_active(&self) -> bool {
+        !self.extra_partitions.is_empty() || !self.query.trim().is_empty()
+    }
+}
+
+/// Drills tagged with `partition_id` that also match `filter` (AND).
+pub fn filtered_drills_for_partition(partition_id: u8, filter: &ConceptFacetFilter) -> Vec<i32> {
+    drills_for_partition(partition_id)
+        .into_iter()
+        .filter(|&n| drill_matches_filter(n, filter))
+        .collect()
+}
+
+fn drill_matches_filter(micro_step: i32, filter: &ConceptFacetFilter) -> bool {
+    let tags = partitions_for_micro_step(micro_step);
+    if !filter
+        .extra_partitions
+        .iter()
+        .all(|p| tags.iter().any(|t| t == p))
+    {
+        return false;
+    }
+    filter
+        .query
+        .split_whitespace()
+        .all(|tok| drill_matches_token(micro_step, tok))
+}
+
+fn drill_matches_token(micro_step: i32, token: &str) -> bool {
+    let tok = token.trim().to_ascii_lowercase();
+    if tok.is_empty() {
+        return true;
+    }
+    if let Some(step) = coding_step_by_micro_step(micro_step) {
+        if step.title.to_ascii_lowercase().contains(&tok)
+            || step.id.to_ascii_lowercase().contains(&tok)
+        {
+            return true;
+        }
+    }
+    search_glossary(&tok, None).iter().any(|entry| {
+        entry.lenses.iter().any(|lens| {
+            lens.related_step_id
+                .and_then(coding_step_by_id)
+                .is_some_and(|s| s.micro_step == micro_step)
+        })
+    })
+}
+
 /// Domain mastery: earned drills / tagged drills for a partition.
 pub fn partition_mastery(partition_id: u8, completed_levels: &[i32]) -> (usize, usize) {
     let drills = drills_for_partition(partition_id);
@@ -904,16 +961,30 @@ pub fn heatmap_bands() -> [HeatmapBand; HEATMAP_BAND_COUNT] {
 
 /// Tagged drills for `partition_id` whose micro-step falls in `band`.
 pub fn heatmap_decade_drills(partition_id: u8, band: HeatmapBand) -> Vec<i32> {
-    drills_for_partition(partition_id)
-        .into_iter()
+    heatmap_decade_drills_in(&drills_for_partition(partition_id), band)
+}
+
+/// Subset of `drills` whose micro-step falls in `band`.
+pub fn heatmap_decade_drills_in(drills: &[i32], band: HeatmapBand) -> Vec<i32> {
+    drills
+        .iter()
+        .copied()
         .filter(|&n| band.contains(n))
         .collect()
 }
 
 pub fn heatmap_cell(partition_id: u8, band: HeatmapBand, completed: &[i32]) -> HeatmapCell {
-    let drills = heatmap_decade_drills(partition_id, band);
-    let total = drills.len();
-    let done = drills
+    heatmap_cell_for_drills(&drills_for_partition(partition_id), band, completed)
+}
+
+pub fn heatmap_cell_for_drills(
+    drills: &[i32],
+    band: HeatmapBand,
+    completed: &[i32],
+) -> HeatmapCell {
+    let decade = heatmap_decade_drills_in(drills, band);
+    let total = decade.len();
+    let done = decade
         .iter()
         .filter(|n| completed.iter().any(|c| c == *n))
         .count();
@@ -935,9 +1006,13 @@ pub fn heatmap_cell(partition_id: u8, band: HeatmapBand, completed: &[i32]) -> H
 }
 
 pub fn heatmap_cells(partition_id: u8, completed: &[i32]) -> Vec<HeatmapCell> {
+    heatmap_cells_for_drills(&drills_for_partition(partition_id), completed)
+}
+
+pub fn heatmap_cells_for_drills(drills: &[i32], completed: &[i32]) -> Vec<HeatmapCell> {
     heatmap_bands()
         .into_iter()
-        .map(|band| heatmap_cell(partition_id, band, completed))
+        .map(|band| heatmap_cell_for_drills(drills, band, completed))
         .collect()
 }
 
@@ -1930,6 +2005,62 @@ mod tests {
             .find(|b| heatmap_cell(5, *b, &[]).state == HeatmapCellState::Empty)
             .expect("P5 map_only has empty decades");
         assert!(heatmap_decade_drills(5, empty_band).is_empty());
+    }
+
+    #[test]
+    fn facet_append_on_p1_keeps_related_list_drill() {
+        let filter = ConceptFacetFilter {
+            extra_partitions: vec![],
+            query: "append".into(),
+        };
+        let drills = filtered_drills_for_partition(1, &filter);
+        assert!(drills.contains(&20), "py-20-list-change is python-lists P1");
+        assert!(!drills.contains(&1), "micro 1 is not an append hit");
+        assert!(!drills.is_empty());
+        let unfiltered = drills_for_partition(1);
+        assert!(drills.len() < unfiltered.len());
+        let cells = heatmap_cells_for_drills(&drills, &[]);
+        let hits = cells.iter().filter(|c| c.total > 0).count();
+        let unfiltered_hits = heatmap_cells(1, &[])
+            .iter()
+            .filter(|c| c.total > 0)
+            .count();
+        assert!(hits > 0 && hits < unfiltered_hits);
+        let decade_11 = heatmap_bands()[1];
+        assert!(heatmap_decade_drills_in(&drills, decade_11).contains(&20));
+    }
+
+    #[test]
+    fn facet_recursion_and_dfs_on_p3_keeps_graph_dfs() {
+        let filter = ConceptFacetFilter {
+            extra_partitions: vec![],
+            query: "recursion dfs".into(),
+        };
+        let drills = filtered_drills_for_partition(3, &filter);
+        assert!(drills.contains(&109), "pattern-dfs related_step is 109");
+        assert!(
+            !drills.contains(&133),
+            "permutations matches recursion but not dfs"
+        );
+    }
+
+    #[test]
+    fn facet_extra_partition_is_and_with_active_tab() {
+        let filter = ConceptFacetFilter {
+            extra_partitions: vec![3],
+            query: String::new(),
+        };
+        let drills = filtered_drills_for_partition(1, &filter);
+        assert!(!drills.is_empty());
+        assert!(!drills.contains(&20), "micro 20 is only partition 1");
+        assert!(drills.contains(&133), "micro 133 is tagged 1,2,3");
+        for n in &drills {
+            let tags = partitions_for_micro_step(*n);
+            assert!(
+                tags.contains(&1) && tags.contains(&3),
+                "{n} tags {tags:?} must include 1 and 3"
+            );
+        }
     }
 
     /// C6 baseline @ `87a5334`: Wave D must not retag `1..=1000`.

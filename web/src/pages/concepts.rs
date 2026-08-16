@@ -5,10 +5,12 @@ use leptos_router::components::A;
 use leptos_router::hooks::{use_navigate, use_params_map};
 use leptos_router::NavigateOptions;
 
+use crate::auth::input_value;
 use crate::components::level_completed;
 use crate::concepts::{
-    drills_for_partition, heatmap_cells, heatmap_decade_drills, mastery_percent, partition_by_id,
-    HeatmapBand, HeatmapCellState, PARTITIONS,
+    filtered_drills_for_partition, heatmap_cells_for_drills, heatmap_decade_drills_in,
+    mastery_percent, partition_by_id, ConceptFacetFilter, HeatmapBand, HeatmapCellState,
+    PARTITIONS,
 };
 use crate::curriculum::coding_step_by_micro_step;
 use crate::session::SessionCtx;
@@ -19,6 +21,8 @@ pub fn ConceptsPage() -> impl IntoView {
     let navigate = use_navigate();
     let params = use_params_map();
     let open_decade = RwSignal::new(None::<HeatmapBand>);
+    let query = RwSignal::new(String::new());
+    let extra_partitions = RwSignal::new(Vec::<u8>::new());
 
     Effect::new(move |_| {
         let ready = session.bootstrapped.get();
@@ -43,7 +47,14 @@ pub fn ConceptsPage() -> impl IntoView {
     });
 
     Effect::new(move |_| {
-        let _ = partition_id.get();
+        let id = partition_id.get();
+        extra_partitions.update(|xs| xs.retain(|&p| p != id));
+        open_decade.set(None);
+    });
+
+    Effect::new(move |_| {
+        let _ = query.get();
+        let _ = extra_partitions.get();
         open_decade.set(None);
     });
 
@@ -67,6 +78,17 @@ pub fn ConceptsPage() -> impl IntoView {
             .map(|u| u.completed_levels)
             .unwrap_or_default()
     });
+
+    let toggle_extra = move |chip_id: u8| {
+        extra_partitions.update(|xs| {
+            if let Some(i) = xs.iter().position(|&p| p == chip_id) {
+                xs.remove(i);
+            } else {
+                xs.push(chip_id);
+                xs.sort_unstable();
+            }
+        });
+    };
 
     view! {
         <section class="concepts">
@@ -119,8 +141,6 @@ pub fn ConceptsPage() -> impl IntoView {
                         .into_any();
                     };
                     let completed_now = completed.get();
-                    let drills = drills_for_partition(id);
-                    let cells = heatmap_cells(id, &completed_now);
                     let pct = mastery_percent(id, &completed_now);
                     let (done, total) = crate::concepts::partition_mastery(id, &completed_now);
                     view! {
@@ -166,91 +186,286 @@ pub fn ConceptsPage() -> impl IntoView {
                                     "3. Práctica (drills)"
                                 </h3>
                                 <div
-                                    id="concept-heatmap"
-                                    class="concept-heatmap"
-                                    aria-label="Cobertura por décadas del rail"
+                                    id="concept-facet-bar"
+                                    class="concept-facet-bar"
+                                    role="search"
+                                    aria-label="Filtro conceptual"
                                 >
-                                    {cells
-                                        .into_iter()
-                                        .map(|cell| {
-                                            let empty = cell.state == HeatmapCellState::Empty;
-                                            let lo = cell.band.lo;
-                                            let band = cell.band;
-                                            let state = cell.state.as_str();
-                                            let label = cell.accessible_name();
-                                            let count = format!("{}/{}", cell.done, cell.total);
-                                            if empty {
+                                    <label class="concept-facet-bar__sr" for="concept-facet-query">
+                                        "Buscar concepto"
+                                    </label>
+                                    <input
+                                        id="concept-facet-query"
+                                        class="concept-facet-bar__query"
+                                        type="search"
+                                        placeholder="Buscar (append, recursion, dfs…)"
+                                        autocomplete="off"
+                                        prop:value=move || query.get()
+                                        on:input=move |ev| query.set(input_value(&ev))
+                                    />
+                                    <div
+                                        class="concept-facet-bar__lenses"
+                                        role="group"
+                                        aria-label="Lentes adicionales (AND)"
+                                    >
+                                        {PARTITIONS
+                                            .iter()
+                                            .filter(|chip| chip.id != id)
+                                            .map(|chip| {
+                                                let chip_id = chip.id;
                                                 view! {
                                                     <button
                                                         type="button"
-                                                        class="concept-heatmap__cell"
-                                                        id=format!("concept-heat-{lo}")
-                                                        data-state=state
-                                                        aria-label=label
-                                                        prop:disabled=true
-                                                    >
-                                                        {count}
-                                                    </button>
-                                                }
-                                                .into_any()
-                                            } else {
-                                                view! {
-                                                    <button
-                                                        type="button"
-                                                        class="concept-heatmap__cell"
-                                                        id=format!("concept-heat-{lo}")
-                                                        data-state=state
-                                                        aria-label=label
-                                                        aria-haspopup="dialog"
-                                                        aria-controls="concept-decade-drawer"
-                                                        aria-expanded=move || {
-                                                            if open_decade.get() == Some(band) {
+                                                        class=move || {
+                                                            if extra_partitions.get().contains(&chip_id) {
+                                                                "concept-facet-bar__chip concept-facet-bar__chip--on"
+                                                            } else {
+                                                                "concept-facet-bar__chip"
+                                                            }
+                                                        }
+                                                        id=format!("concept-facet-p{chip_id}")
+                                                        aria-pressed=move || {
+                                                            if extra_partitions.get().contains(&chip_id) {
                                                                 "true"
                                                             } else {
                                                                 "false"
                                                             }
                                                         }
-                                                        on:click=move |_| open_decade.set(Some(band))
+                                                        on:click=move |_| toggle_extra(chip_id)
                                                     >
-                                                        {count}
+                                                        {format!("+{}", chip.short_label)}
                                                     </button>
                                                 }
-                                                .into_any()
+                                            })
+                                            .collect_view()}
+                                    </div>
+                                    <p class="concept-facet-bar__count" id="concept-facet-count">
+                                        {move || {
+                                            let filter = ConceptFacetFilter {
+                                                extra_partitions: extra_partitions.get(),
+                                                query: query.get(),
+                                            };
+                                            let n = filtered_drills_for_partition(id, &filter).len();
+                                            if filter.is_active() {
+                                                format!("{n} drills en esta ruta")
+                                            } else {
+                                                format!("{n} drills")
                                             }
-                                        })
-                                        .collect_view()}
+                                        }}
+                                    </p>
+                                    <Show when=move || {
+                                        ConceptFacetFilter {
+                                            extra_partitions: extra_partitions.get(),
+                                            query: query.get(),
+                                        }
+                                        .is_active()
+                                    }>
+                                        <button
+                                            id="concept-facet-clear"
+                                            class="concept-facet-bar__clear"
+                                            type="button"
+                                            on:click=move |_| {
+                                                query.set(String::new());
+                                                extra_partitions.set(Vec::new());
+                                            }
+                                        >
+                                            "Limpiar filtros"
+                                        </button>
+                                    </Show>
                                 </div>
-                                <ul class="concepts__drills" id="concepts-drill-list">
-                                    {drills
-                                        .into_iter()
-                                        .filter_map(|n| {
-                                            coding_step_by_micro_step(n).map(|step| (n, step))
-                                        })
-                                        .map(|(n, step)| {
-                                            let href = format!("/learn/{}", step.id);
-                                            let done = level_completed(&completed_now, n);
-                                            let mut class = String::from("concepts__drill");
-                                            if done {
-                                                class.push_str(" concepts__drill--done");
+                                {move || {
+                                    let filter = ConceptFacetFilter {
+                                        extra_partitions: extra_partitions.get(),
+                                        query: query.get(),
+                                    };
+                                    let drills = filtered_drills_for_partition(id, &filter);
+                                    let completed_now = completed.get();
+                                    let cells = heatmap_cells_for_drills(&drills, &completed_now);
+                                    view! {
+                                        <div
+                                            id="concept-heatmap"
+                                            class="concept-heatmap"
+                                            aria-label="Cobertura por décadas del rail"
+                                        >
+                                            {cells
+                                                .into_iter()
+                                                .map(|cell| {
+                                                    let empty = cell.state == HeatmapCellState::Empty;
+                                                    let lo = cell.band.lo;
+                                                    let band = cell.band;
+                                                    let state = cell.state.as_str();
+                                                    let label = cell.accessible_name();
+                                                    let count = format!("{}/{}", cell.done, cell.total);
+                                                    let facet = if cell.total > 0 { "hit" } else { "" };
+                                                    if empty {
+                                                        view! {
+                                                            <button
+                                                                type="button"
+                                                                class="concept-heatmap__cell"
+                                                                id=format!("concept-heat-{lo}")
+                                                                data-state=state
+                                                                data-facet=facet
+                                                                aria-label=label
+                                                                prop:disabled=true
+                                                            >
+                                                                {count}
+                                                            </button>
+                                                        }
+                                                        .into_any()
+                                                    } else {
+                                                        view! {
+                                                            <button
+                                                                type="button"
+                                                                class="concept-heatmap__cell"
+                                                                id=format!("concept-heat-{lo}")
+                                                                data-state=state
+                                                                data-facet=facet
+                                                                aria-label=label
+                                                                aria-haspopup="dialog"
+                                                                aria-controls="concept-decade-drawer"
+                                                                aria-expanded=move || {
+                                                                    if open_decade.get() == Some(band) {
+                                                                        "true"
+                                                                    } else {
+                                                                        "false"
+                                                                    }
+                                                                }
+                                                                on:click=move |_| open_decade.set(Some(band))
+                                                            >
+                                                                {count}
+                                                            </button>
+                                                        }
+                                                        .into_any()
+                                                    }
+                                                })
+                                                .collect_view()}
+                                        </div>
+                                        <ul class="concepts__drills" id="concepts-drill-list">
+                                            {drills
+                                                .into_iter()
+                                                .filter_map(|n| {
+                                                    coding_step_by_micro_step(n).map(|step| (n, step))
+                                                })
+                                                .map(|(n, step)| {
+                                                    let href = format!("/learn/{}", step.id);
+                                                    let done = level_completed(&completed_now, n);
+                                                    let mut class = String::from("concepts__drill");
+                                                    if done {
+                                                        class.push_str(" concepts__drill--done");
+                                                    }
+                                                    let tags = crate::concepts::partitions_for_micro_step(n)
+                                                        .iter()
+                                                        .map(ToString::to_string)
+                                                        .collect::<Vec<_>>()
+                                                        .join(",");
+                                                    view! {
+                                                        <li class=class>
+                                                            <A
+                                                                href=href
+                                                                attr:class="concepts__drill-link"
+                                                                attr:id=format!("concepts-drill-{n}")
+                                                                attr:data-partitions=tags
+                                                            >
+                                                                <span class="concepts__drill-num">{format!("Ej {n:02}")}</span>
+                                                                <span class="concepts__drill-title">{step.title}</span>
+                                                                <span class="concepts__drill-status">
+                                                                    {if done { "Completado" } else { "Pendiente" }}
+                                                                </span>
+                                                            </A>
+                                                        </li>
+                                                    }
+                                                })
+                                                .collect_view()}
+                                        </ul>
+                                        {move || {
+                                            let Some(band) = open_decade.get() else {
+                                                return ().into_any();
+                                            };
+                                            let filter = ConceptFacetFilter {
+                                                extra_partitions: extra_partitions.get(),
+                                                query: query.get(),
+                                            };
+                                            let drills = filtered_drills_for_partition(id, &filter);
+                                            let decade_drills =
+                                                heatmap_decade_drills_in(&drills, band);
+                                            if decade_drills.is_empty() {
+                                                return ().into_any();
                                             }
+                                            let completed_now = completed.get();
+                                            let title = format!("Década {}–{}", band.lo, band.hi);
                                             view! {
-                                                <li class=class>
-                                                    <A
-                                                        href=href
-                                                        attr:class="concepts__drill-link"
-                                                        attr:id=format!("concepts-drill-{n}")
+                                                <div class="concept-decade-overlay">
+                                                    <button
+                                                        type="button"
+                                                        class="concept-decade-overlay__backdrop"
+                                                        aria-label="Cerrar lista de década"
+                                                        on:click=move |_| open_decade.set(None)
+                                                    ></button>
+                                                    <aside
+                                                        id="concept-decade-drawer"
+                                                        class="concept-decade-drawer"
+                                                        role="dialog"
+                                                        aria-modal="true"
+                                                        aria-labelledby="concept-decade-title"
                                                     >
-                                                        <span class="concepts__drill-num">{format!("Ej {n:02}")}</span>
-                                                        <span class="concepts__drill-title">{step.title}</span>
-                                                        <span class="concepts__drill-status">
-                                                            {if done { "Completado" } else { "Pendiente" }}
-                                                        </span>
-                                                    </A>
-                                                </li>
+                                                        <header class="concept-decade-drawer__head">
+                                                            <h3 id="concept-decade-title" class="concept-decade-drawer__title">
+                                                                {title}
+                                                            </h3>
+                                                            <button
+                                                                id="concept-decade-close"
+                                                                class="concept-decade-drawer__close"
+                                                                type="button"
+                                                                aria-label="Cerrar lista de década"
+                                                                on:click=move |_| open_decade.set(None)
+                                                            >
+                                                                "Esc"
+                                                            </button>
+                                                        </header>
+                                                        <ul
+                                                            class="concepts__drills"
+                                                            id="concept-decade-list"
+                                                            role="list"
+                                                        >
+                                                            {decade_drills
+                                                                .into_iter()
+                                                                .filter_map(|n| {
+                                                                    coding_step_by_micro_step(n).map(|step| (n, step))
+                                                                })
+                                                                .map(|(n, step)| {
+                                                                    let href = format!("/learn/{}", step.id);
+                                                                    let done = level_completed(&completed_now, n);
+                                                                    let mut class = String::from("concepts__drill");
+                                                                    if done {
+                                                                        class.push_str(" concepts__drill--done");
+                                                                    }
+                                                                    view! {
+                                                                        <li class=class role="listitem">
+                                                                            <A
+                                                                                href=href
+                                                                                attr:class="concepts__drill-link"
+                                                                                attr:id=format!("concept-decade-drill-{n}")
+                                                                                attr:data-micro=n.to_string()
+                                                                            >
+                                                                                <span class="concepts__drill-num">{format!("Ej {n:02}")}</span>
+                                                                                <span class="concepts__drill-title">{step.title}</span>
+                                                                                <span class="concepts__drill-status">
+                                                                                    {if done { "Completado" } else { "Pendiente" }}
+                                                                                </span>
+                                                                            </A>
+                                                                        </li>
+                                                                    }
+                                                                })
+                                                                .collect_view()}
+                                                        </ul>
+                                                    </aside>
+                                                </div>
                                             }
-                                        })
-                                        .collect_view()}
-                                </ul>
+                                            .into_any()
+                                        }}
+                                    }
+                                    .into_any()
+                                }}
                             </section>
 
                             <nav class="concepts__footer-nav">
@@ -261,83 +476,6 @@ pub fn ConceptsPage() -> impl IntoView {
                                     "Ir a Coding"
                                 </A>
                             </nav>
-
-                            {move || {
-                                let Some(band) = open_decade.get() else {
-                                    return ().into_any();
-                                };
-                                let decade_drills = heatmap_decade_drills(id, band);
-                                let title = format!("Década {}–{}", band.lo, band.hi);
-                                view! {
-                                    <div class="concept-decade-overlay">
-                                        <button
-                                            type="button"
-                                            class="concept-decade-overlay__backdrop"
-                                            aria-label="Cerrar lista de década"
-                                            on:click=move |_| open_decade.set(None)
-                                        ></button>
-                                        <aside
-                                            id="concept-decade-drawer"
-                                            class="concept-decade-drawer"
-                                            role="dialog"
-                                            aria-modal="true"
-                                            aria-labelledby="concept-decade-title"
-                                        >
-                                            <header class="concept-decade-drawer__head">
-                                                <h3 id="concept-decade-title" class="concept-decade-drawer__title">
-                                                    {title}
-                                                </h3>
-                                                <button
-                                                    id="concept-decade-close"
-                                                    class="concept-decade-drawer__close"
-                                                    type="button"
-                                                    aria-label="Cerrar lista de década"
-                                                    on:click=move |_| open_decade.set(None)
-                                                >
-                                                    "Esc"
-                                                </button>
-                                            </header>
-                                            <ul
-                                                class="concepts__drills"
-                                                id="concept-decade-list"
-                                                role="list"
-                                            >
-                                                {decade_drills
-                                                    .into_iter()
-                                                    .filter_map(|n| {
-                                                        coding_step_by_micro_step(n).map(|step| (n, step))
-                                                    })
-                                                    .map(|(n, step)| {
-                                                        let href = format!("/learn/{}", step.id);
-                                                        let done = level_completed(&completed_now, n);
-                                                        let mut class = String::from("concepts__drill");
-                                                        if done {
-                                                            class.push_str(" concepts__drill--done");
-                                                        }
-                                                        view! {
-                                                            <li class=class role="listitem">
-                                                                <A
-                                                                    href=href
-                                                                    attr:class="concepts__drill-link"
-                                                                    attr:id=format!("concept-decade-drill-{n}")
-                                                                    attr:data-micro=n.to_string()
-                                                                >
-                                                                    <span class="concepts__drill-num">{format!("Ej {n:02}")}</span>
-                                                                    <span class="concepts__drill-title">{step.title}</span>
-                                                                    <span class="concepts__drill-status">
-                                                                        {if done { "Completado" } else { "Pendiente" }}
-                                                                    </span>
-                                                                </A>
-                                                            </li>
-                                                        }
-                                                    })
-                                                    .collect_view()}
-                                            </ul>
-                                        </aside>
-                                    </div>
-                                }
-                                .into_any()
-                            }}
                         </article>
                     }
                     .into_any()
