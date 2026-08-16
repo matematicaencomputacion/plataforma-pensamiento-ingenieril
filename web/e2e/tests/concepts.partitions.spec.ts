@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { fillLeptosInput } from "./helpers";
 
 const e2eTimeout = 45_000;
 
@@ -107,5 +108,84 @@ test.describe("conceptual partitions hub", () => {
     await expect(page.locator("#partition-nav-1")).toHaveClass(
       /partition-nav__btn--active/,
     );
+  });
+
+  test("facet search filters list and heatmap then opens learn", async ({
+    page,
+    request,
+  }) => {
+    const { email, password } = uniqueCreds();
+    const reg = await request.post("/api/auth/register", {
+      data: { email, password },
+      timeout: e2eTimeout,
+    });
+    expect(reg.ok(), await reg.text()).toBeTruthy();
+
+    await login(page, email, password);
+
+    await page.locator("#partition-nav-1").click();
+    await expect(page).toHaveURL(/\/concepts\/1/, { timeout: e2eTimeout });
+    await expect(page.locator("#concept-facet-bar")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await expect(page.locator("#concept-facet-query")).toBeVisible();
+    await expect(page.locator("#concept-heatmap")).toBeVisible();
+    await expect(page.locator("#concepts-drill-list")).toBeVisible();
+    await expect(page.locator("#concepts-drill-20")).toBeVisible();
+    await expect(page.locator("#concepts-drill-1")).toBeVisible();
+
+    const unfilteredHits = await page
+      .locator("#concept-heatmap [data-facet='hit']")
+      .count();
+    expect(unfilteredHits).toBeGreaterThan(1);
+
+    await fillLeptosInput(page, "#concept-facet-query", "append");
+
+    await expect(page.locator("#concepts-drill-20")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await expect(page.locator("#concepts-drill-1")).toHaveCount(0);
+    await expect(page.locator("#concept-heat-11")).toHaveAttribute(
+      "data-facet",
+      "hit",
+    );
+
+    const filteredHits = await page
+      .locator("#concept-heatmap [data-facet='hit']")
+      .count();
+    expect(filteredHits).toBeGreaterThan(0);
+    expect(filteredHits).toBeLessThan(unfilteredHits);
+
+    await page.locator("#concept-facet-clear").click();
+    await expect(page.locator("#concepts-drill-1")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+
+    await page.locator("#concept-facet-p3").click();
+    await expect(page.locator("#concept-facet-p3")).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(page.locator("#concepts-drill-20")).toHaveCount(0);
+    const andItems = page.locator("#concepts-drill-list [data-partitions]");
+    const andCount = await andItems.count();
+    expect(andCount).toBeGreaterThan(0);
+    for (let i = 0; i < andCount; i++) {
+      const tags = (await andItems.nth(i).getAttribute("data-partitions")) ?? "";
+      expect(tags.split(",")).toEqual(expect.arrayContaining(["1", "3"]));
+    }
+
+    await page.locator("#concept-facet-clear").click();
+    await fillLeptosInput(page, "#concept-facet-query", "append");
+    await expect(page.locator("#concepts-drill-20")).toBeVisible({
+      timeout: e2eTimeout,
+    });
+    await page.locator("#concepts-drill-20").click();
+    await expect(page).toHaveURL(/\/learn\/py-20-list-change/, {
+      timeout: e2eTimeout,
+    });
+    await expect(page.locator("#concept-fab")).toBeVisible({
+      timeout: e2eTimeout,
+    });
   });
 });
