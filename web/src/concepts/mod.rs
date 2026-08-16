@@ -4,10 +4,16 @@
 //! may carry multiple tags (multi-label index). Does not alter progress storage.
 //!
 //! Wave B splits this crate path into a directory: drill tags stay here;
-//! the search corpus lives in [`glossary`].
+//! the search corpus lives in [`glossary`]. Wave D.4 adds a static DAG in [`dag`].
 
+pub mod dag;
 pub mod glossary;
 
+#[allow(unused_imports)]
+pub use dag::{
+    concept_drill_micros, concept_started, edges_for_partition, missing_required_bases,
+    ConceptEdge, EdgeKind, CONCEPT_EDGES,
+};
 #[allow(unused_imports)]
 pub use glossary::{
     entry_by_id, group_search_hits, search_glossary, search_intent, ConceptLens, GlossaryEntry,
@@ -2021,10 +2027,7 @@ mod tests {
         assert!(drills.len() < unfiltered.len());
         let cells = heatmap_cells_for_drills(&drills, &[]);
         let hits = cells.iter().filter(|c| c.total > 0).count();
-        let unfiltered_hits = heatmap_cells(1, &[])
-            .iter()
-            .filter(|c| c.total > 0)
-            .count();
+        let unfiltered_hits = heatmap_cells(1, &[]).iter().filter(|c| c.total > 0).count();
         assert!(hits > 0 && hits < unfiltered_hits);
         let decade_11 = heatmap_bands()[1];
         assert!(heatmap_decade_drills_in(&drills, decade_11).contains(&20));
