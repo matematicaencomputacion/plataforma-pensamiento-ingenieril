@@ -92,14 +92,28 @@ jobs:
         run: |
           set -euo pipefail
           set +x
-          if ! gcloud secrets describe DATABASE_URL --project="${PROJECT_ID}" >/dev/null 2>&1; then
-            echo "present=false" >> "${GITHUB_OUTPUT}"
-            echo "cloudsql_instance=" >> "${GITHUB_OUTPUT}"
-            echo "Secret DATABASE_URL ausente: demo SQLite /tmp (PPI_ALLOW_EPHEMERAL_SQLITE=1). Ver docs/ops/gcp-iteration-plan.md"
-            exit 0
+          # Presence = versions.access (roles/secretmanager.secretAccessor, docs §6).
+          # `secrets describe` exige secrets.get (Viewer); JWT_SECRET lo tiene,
+          # DATABASE_URL no. Tragar describe → SQLite aunque el secreto exista.
+          err="$(mktemp)"
+          trap 'rm -f "${err}"' EXIT
+          if ! dsn="$(gcloud secrets versions access latest --secret=DATABASE_URL --project="${PROJECT_ID}" 2>"${err}")"; then
+            echo "gcloud secrets versions access DATABASE_URL failed:"
+            cat "${err}"
+            if grep -qi 'PERMISSION_DENIED' "${err}"; then
+              echo "::error::DATABASE_URL no accesible para ${DEPLOY_SA} (secretAccessor; viewer/secrets.get como JWT_SECRET si --set-secrets lo exige). No se fuerza SQLite por error de IAM."
+              exit 1
+            fi
+            if grep -qi 'NOT_FOUND' "${err}"; then
+              echo "present=false" >> "${GITHUB_OUTPUT}"
+              echo "cloudsql_instance=" >> "${GITHUB_OUTPUT}"
+              echo "Secret DATABASE_URL ausente: demo SQLite /tmp (PPI_ALLOW_EPHEMERAL_SQLITE=1). Ver docs/ops/gcp-iteration-plan.md"
+              exit 0
+            fi
+            echo "::error::DATABASE_URL: error inesperado de gcloud (arriba). No se fuerza SQLite."
+            exit 1
           fi
           echo "present=true" >> "${GITHUB_OUTPUT}"
-          dsn="$(gcloud secrets versions access latest --secret=DATABASE_URL --project="${PROJECT_ID}")"
           instance=""
           if [[ "${dsn}" == *"/cloudsql/"* ]]; then
             instance="$(printf '%s\n' "${dsn}" | sed -n 's/.*host=\/cloudsql\/\([^&[:space:]]*\).*/\1/p' | head -1)"
