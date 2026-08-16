@@ -841,6 +841,119 @@ pub fn mastery_attr(partition_id: u8, completed_levels: &[i32]) -> String {
     mastery_percent(partition_id, completed_levels).to_string()
 }
 
+/// Inclusive decade of the coding rail (`1..=10`, `11..=20`, … `991..=1000`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct HeatmapBand {
+    pub lo: i32,
+    pub hi: i32,
+}
+
+impl HeatmapBand {
+    pub fn contains(self, micro_step: i32) -> bool {
+        (self.lo..=self.hi).contains(&micro_step)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HeatmapCellState {
+    Empty,
+    Pending,
+    Partial,
+    Done,
+}
+
+impl HeatmapCellState {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Empty => "empty",
+            Self::Pending => "pending",
+            Self::Partial => "partial",
+            Self::Done => "done",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct HeatmapCell {
+    pub band: HeatmapBand,
+    pub state: HeatmapCellState,
+    pub done: usize,
+    pub total: usize,
+}
+
+impl HeatmapCell {
+    pub fn accessible_name(&self) -> String {
+        format!(
+            "Década {}–{}: {}/{}",
+            self.band.lo, self.band.hi, self.done, self.total
+        )
+    }
+}
+
+pub const HEATMAP_BAND_COUNT: usize = 100;
+
+/// 100 fixed decades covering micro-steps `1..=1000`.
+pub fn heatmap_bands() -> [HeatmapBand; HEATMAP_BAND_COUNT] {
+    let mut bands = [HeatmapBand { lo: 1, hi: 10 }; HEATMAP_BAND_COUNT];
+    for (i, band) in bands.iter_mut().enumerate() {
+        let lo = (i as i32) * 10 + 1;
+        *band = HeatmapBand { lo, hi: lo + 9 };
+    }
+    bands
+}
+
+fn drills_in_band(partition_id: u8, band: HeatmapBand) -> Vec<i32> {
+    drills_for_partition(partition_id)
+        .into_iter()
+        .filter(|&n| band.contains(n))
+        .collect()
+}
+
+pub fn heatmap_cell(partition_id: u8, band: HeatmapBand, completed: &[i32]) -> HeatmapCell {
+    let drills = drills_in_band(partition_id, band);
+    let total = drills.len();
+    let done = drills
+        .iter()
+        .filter(|n| completed.iter().any(|c| c == *n))
+        .count();
+    let state = if total == 0 {
+        HeatmapCellState::Empty
+    } else if done == 0 {
+        HeatmapCellState::Pending
+    } else if done < total {
+        HeatmapCellState::Partial
+    } else {
+        HeatmapCellState::Done
+    };
+    HeatmapCell {
+        band,
+        state,
+        done,
+        total,
+    }
+}
+
+pub fn heatmap_cells(partition_id: u8, completed: &[i32]) -> Vec<HeatmapCell> {
+    heatmap_bands()
+        .into_iter()
+        .map(|band| heatmap_cell(partition_id, band, completed))
+        .collect()
+}
+
+/// First pending drill in the decade, or the first drill if all are done.
+/// `None` when the cell is `empty` (no navigation).
+pub fn heatmap_click_target(partition_id: u8, band: HeatmapBand, completed: &[i32]) -> Option<i32> {
+    let drills = drills_in_band(partition_id, band);
+    if drills.is_empty() {
+        return None;
+    }
+    drills
+        .iter()
+        .copied()
+        .find(|n| !completed.iter().any(|c| c == n))
+        .or(Some(drills[0]))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1479,7 +1592,11 @@ mod tests {
         );
         for (got, expected) in current.iter().zip(WAVE_C1_SNAPSHOT_301_450.iter()) {
             assert_eq!(got.0, expected.0, "micro_step drift in 301..=450");
-            assert_eq!(got.1, expected.1, "C1 tags changed for micro_step {}", got.0);
+            assert_eq!(
+                got.1, expected.1,
+                "C1 tags changed for micro_step {}",
+                got.0
+            );
         }
     }
 
@@ -1536,7 +1653,11 @@ mod tests {
         );
         for (got, expected) in current.iter().zip(WAVE_C2_SNAPSHOT_451_600.iter()) {
             assert_eq!(got.0, expected.0, "micro_step drift in 451..=600");
-            assert_eq!(got.1, expected.1, "C2 tags changed for micro_step {}", got.0);
+            assert_eq!(
+                got.1, expected.1,
+                "C2 tags changed for micro_step {}",
+                got.0
+            );
         }
     }
 
@@ -1593,7 +1714,11 @@ mod tests {
         );
         for (got, expected) in current.iter().zip(WAVE_C4_SNAPSHOT_601_750.iter()) {
             assert_eq!(got.0, expected.0, "micro_step drift in 601..=750");
-            assert_eq!(got.1, expected.1, "C4 tags changed for micro_step {}", got.0);
+            assert_eq!(
+                got.1, expected.1,
+                "C4 tags changed for micro_step {}",
+                got.0
+            );
         }
     }
 
@@ -1650,7 +1775,11 @@ mod tests {
         );
         for (got, expected) in current.iter().zip(WAVE_C5_SNAPSHOT_751_900.iter()) {
             assert_eq!(got.0, expected.0, "micro_step drift in 751..=900");
-            assert_eq!(got.1, expected.1, "C5 tags changed for micro_step {}", got.0);
+            assert_eq!(
+                got.1, expected.1,
+                "C5 tags changed for micro_step {}",
+                got.0
+            );
         }
     }
 
@@ -1705,5 +1834,96 @@ mod tests {
             WAVE_C6_FROZEN_BEYOND_1000,
             "do not add or remove rows > 1000"
         );
+    }
+
+    #[test]
+    fn wave_d_heatmap_has_100_decade_cells() {
+        let bands = heatmap_bands();
+        assert_eq!(bands.len(), HEATMAP_BAND_COUNT);
+        assert_eq!(bands[0], HeatmapBand { lo: 1, hi: 10 });
+        assert_eq!(bands[5], HeatmapBand { lo: 51, hi: 60 });
+        assert_eq!(bands[99], HeatmapBand { lo: 991, hi: 1000 });
+        for (i, band) in bands.iter().enumerate() {
+            assert_eq!(band.hi - band.lo, 9);
+            if i > 0 {
+                assert_eq!(band.lo, bands[i - 1].hi + 1);
+            }
+        }
+        for id in 1..=5 {
+            let cells = heatmap_cells(id, &[]);
+            assert_eq!(cells.len(), 100, "partition {id} must render 100 cells");
+        }
+    }
+
+    #[test]
+    fn wave_d_p2_decade_of_52_is_pending_when_empty_progress() {
+        let band = heatmap_bands()
+            .into_iter()
+            .find(|b| b.contains(52))
+            .expect("decade containing micro-step 52");
+        assert_eq!(band, HeatmapBand { lo: 51, hi: 60 });
+        let cell = heatmap_cell(2, band, &[]);
+        assert_eq!(cell.state, HeatmapCellState::Pending);
+        assert_eq!(cell.state.as_str(), "pending");
+        assert!(cell.total > 0);
+        assert_eq!(cell.done, 0);
+        let name = cell.accessible_name();
+        assert!(name.contains("51"), "{name}");
+        assert!(name.contains("60"), "{name}");
+        assert!(name.contains(&format!("0/{}", cell.total)), "{name}");
+        assert_eq!(heatmap_click_target(2, band, &[]), Some(52));
+    }
+
+    #[test]
+    fn wave_d_synthetic_completed_moves_cell_state() {
+        let band = heatmap_bands()[0];
+        let pending = heatmap_cell(1, band, &[]);
+        assert_eq!(pending.state, HeatmapCellState::Pending);
+        assert!(pending.total >= 2, "need multiple P1 drills in 1..=10");
+        let first = heatmap_click_target(1, band, &[]).expect("non-empty decade");
+        let partial = heatmap_cell(1, band, &[first]);
+        assert_eq!(partial.state, HeatmapCellState::Partial);
+        assert_eq!(partial.done, 1);
+        let next = heatmap_click_target(1, band, &[first]).expect("still pending drills");
+        assert_ne!(next, first);
+
+        let all: Vec<i32> = drills_for_partition(1)
+            .into_iter()
+            .filter(|&n| band.contains(n))
+            .collect();
+        let done_cell = heatmap_cell(1, band, &all);
+        assert_eq!(done_cell.state, HeatmapCellState::Done);
+        assert_eq!(heatmap_click_target(1, band, &all), Some(all[0]));
+
+        let empty_band = heatmap_bands()
+            .into_iter()
+            .find(|b| heatmap_cell(5, *b, &[]).state == HeatmapCellState::Empty)
+            .expect("P5 map_only has empty decades");
+        assert_eq!(heatmap_click_target(5, empty_band, &[]), None);
+        let empty_cell = heatmap_cell(5, empty_band, &[]);
+        assert_eq!(empty_cell.done, 0);
+        assert_eq!(empty_cell.total, 0);
+        assert!(empty_cell.accessible_name().contains("0/0"));
+    }
+
+    /// C6 baseline @ `87a5334`: Wave D must not retag `1..=1000`.
+    #[test]
+    fn wave_d_freeze_1_to_1000_matches_c6_baseline() {
+        let current = STEP_PARTITIONS
+            .iter()
+            .filter(|(n, _)| (1..=1000).contains(n))
+            .map(|(n, tags)| {
+                format!(
+                    "{n}:{}",
+                    tags.iter()
+                        .map(ToString::to_string)
+                        .collect::<Vec<_>>()
+                        .join(",")
+                )
+            })
+            .collect::<Vec<_>>()
+            .join("\n");
+        let expected = include_str!("wave_d_freeze_1_1000.txt").trim_end();
+        assert_eq!(current, expected);
     }
 }

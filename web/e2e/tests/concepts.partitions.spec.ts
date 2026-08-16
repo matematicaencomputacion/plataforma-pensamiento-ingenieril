@@ -42,6 +42,23 @@ test.describe("conceptual partitions hub", () => {
     await expect(
       page.getByRole("heading", { name: /Modelo de Datos/i }),
     ).toBeVisible();
+    await expect(page.locator("#concept-heatmap")).toBeVisible();
+    await expect(page.locator("#concept-heatmap [id^='concept-heat-']")).toHaveCount(
+      100,
+    );
+    await expect(page.locator("#concepts-drill-list")).toBeVisible();
+    await expect(page.locator("#concepts-drill-20")).toBeVisible();
+
+    const emptyCell = page.locator("#concept-heatmap [data-state='empty']").first();
+    if ((await emptyCell.count()) > 0) {
+      await expect(emptyCell).toBeDisabled();
+    }
+
+    await page.locator("#concept-heatmap [data-state]:not([data-state='empty'])").first().click();
+    await expect(page).toHaveURL(/\/learn\/.+/, { timeout: e2eTimeout });
+
+    await page.goto("/concepts/1");
+    await expect(page).toHaveURL(/\/concepts\/1/, { timeout: e2eTimeout });
     await expect(page.locator("#concepts-drill-list")).toBeVisible();
     await expect(page.locator("#concepts-drill-20")).toBeVisible();
 

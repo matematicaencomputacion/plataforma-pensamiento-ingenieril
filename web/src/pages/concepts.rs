@@ -5,7 +5,8 @@ use leptos_router::NavigateOptions;
 
 use crate::components::level_completed;
 use crate::concepts::{
-    drills_for_partition, mastery_percent, partition_by_id, PARTITIONS,
+    drills_for_partition, heatmap_cells, heatmap_click_target, mastery_percent, partition_by_id,
+    HeatmapCellState, PARTITIONS,
 };
 use crate::curriculum::coding_step_by_micro_step;
 use crate::session::SessionCtx;
@@ -96,9 +97,11 @@ pub fn ConceptsPage() -> impl IntoView {
                         }
                         .into_any();
                     };
+                    let completed_now = completed.get();
                     let drills = drills_for_partition(id);
-                    let pct = mastery_percent(id, &completed.get());
-                    let (done, total) = crate::concepts::partition_mastery(id, &completed.get());
+                    let cells = heatmap_cells(id, &completed_now);
+                    let pct = mastery_percent(id, &completed_now);
+                    let (done, total) = crate::concepts::partition_mastery(id, &completed_now);
                     view! {
                         <article class="concepts__panel" data-partition=id.to_string()>
                             <header class="concepts__panel-head">
@@ -141,6 +144,60 @@ pub fn ConceptsPage() -> impl IntoView {
                                 <h3 id="concepts-drills" class="concepts__block-title">
                                     "3. Práctica (drills)"
                                 </h3>
+                                <div
+                                    id="concept-heatmap"
+                                    class="concept-heatmap"
+                                    aria-label="Cobertura por décadas del rail"
+                                >
+                                    {cells
+                                        .into_iter()
+                                        .map(|cell| {
+                                            let empty = cell.state == HeatmapCellState::Empty;
+                                            let lo = cell.band.lo;
+                                            let state = cell.state.as_str();
+                                            let label = cell.accessible_name();
+                                            let count = format!("{}/{}", cell.done, cell.total);
+                                            let target_href = heatmap_click_target(
+                                                id,
+                                                cell.band,
+                                                &completed_now,
+                                            )
+                                            .and_then(|n| {
+                                                coding_step_by_micro_step(n)
+                                                    .map(|step| format!("/learn/{}", step.id))
+                                            });
+                                            if empty {
+                                                view! {
+                                                    <button
+                                                        type="button"
+                                                        class="concept-heatmap__cell"
+                                                        id=format!("concept-heat-{lo}")
+                                                        attr:data-state=state
+                                                        attr:aria-label=label
+                                                        prop:disabled=true
+                                                    >
+                                                        {count}
+                                                    </button>
+                                                }
+                                                .into_any()
+                                            } else {
+                                                let href = target_href.unwrap_or_else(|| "#".into());
+                                                view! {
+                                                    <A
+                                                        href=href
+                                                        attr:class="concept-heatmap__cell"
+                                                        attr:id=format!("concept-heat-{lo}")
+                                                        attr:data-state=state
+                                                        attr:aria-label=label
+                                                    >
+                                                        {count}
+                                                    </A>
+                                                }
+                                                .into_any()
+                                            }
+                                        })
+                                        .collect_view()}
+                                </div>
                                 <ul class="concepts__drills" id="concepts-drill-list">
                                     {drills
                                         .into_iter()
@@ -149,7 +206,7 @@ pub fn ConceptsPage() -> impl IntoView {
                                         })
                                         .map(|(n, step)| {
                                             let href = format!("/learn/{}", step.id);
-                                            let done = level_completed(&completed.get(), n);
+                                            let done = level_completed(&completed_now, n);
                                             let mut class = String::from("concepts__drill");
                                             if done {
                                                 class.push_str(" concepts__drill--done");
