@@ -1,8 +1,9 @@
 //! Paso 2 — coding micro-exercise with browser Pyodide (ADR 002).
 //!
-//! Learner Python runs only in the browser. Go supplies level metadata via
-//! `GET /api/levels/current` (statement/title) — never executes student code.
-//! Progress is reported with `POST /api/progress/complete` (pass/fail only).
+//! Title, objective and prompt come from the embedded curriculum step
+//! (`web/src/curriculum.rs`), never from a frozen `GET /api/levels/current`
+//! overlay. Learner Python runs only in the browser. Progress is reported
+//! with `POST /api/progress/complete` (pass/fail only).
 //!
 //! Routes: `/learn` (first step) and `/learn/:step` (seed step id).
 
@@ -13,8 +14,7 @@ use leptos_router::NavigateOptions;
 use wasm_bindgen::JsCast;
 
 use crate::analytics::{emit_learn_step_enter, emit_learn_validate};
-use crate::api::Level;
-use crate::auth::{complete_progress, fetch_current_level, input_value};
+use crate::auth::{complete_progress, input_value};
 use crate::components::{
     level_completed, ConceptLensWidget, FabState, PartitionBadges, ProgressCheck, VariableTypeChips,
 };
@@ -110,8 +110,6 @@ pub fn LearnPage() -> impl IntoView {
     let can_continue = RwSignal::new(false);
     let code_dirty_since_pass = RwSignal::new(false);
     let already_passed_toast = RwSignal::new(Option::<String>::None);
-    let level = RwSignal::new(Option::<Level>::None);
-    let level_error = RwSignal::new(Option::<String>::None);
     // Flash `nombre`/`edad` in the enunciado when exploring type chips (str/int).
     let flash_ident = RwSignal::new(Option::<&'static str>::None);
 
@@ -196,26 +194,6 @@ pub fn LearnPage() -> impl IntoView {
                 Err(err) => {
                     engine.set(EngineUi::Error);
                     engine_msg.set(err.message);
-                }
-            }
-        });
-    });
-
-    Effect::new(move |_| {
-        if session.user.get().is_none() {
-            return;
-        }
-        if level.get_untracked().is_some() || level_error.get_untracked().is_some() {
-            return;
-        }
-        leptos::task::spawn_local(async move {
-            match fetch_current_level().await {
-                Ok(current) => {
-                    level.set(Some(current));
-                    level_error.set(None);
-                }
-                Err(err) => {
-                    level_error.set(Some(err.message));
                 }
             }
         });
@@ -414,30 +392,6 @@ pub fn LearnPage() -> impl IntoView {
                                 )
                             }
                         ></div>
-
-                        <Show when=move || level.get().is_some()>
-                            {move || {
-                                level.get().map(|lvl| {
-                                    view! {
-                                        <aside class="learn__level" aria-label="Nivel operativo">
-                                            <h3 class="learn__level-title">
-                                                {format!("Nivel operativo · {}", lvl.title)}
-                                            </h3>
-                                            <p class="learn__level-statement">{lvl.statement}</p>
-                                        </aside>
-                                    }
-                                })
-                            }}
-                        </Show>
-                        <Show when=move || level_error.get().is_some()>
-                            <p class="learn__muted" role="status">
-                                {move || {
-                                    level_error
-                                        .get()
-                                        .unwrap_or_else(|| "No se pudo cargar el nivel operativo.".into())
-                                }}
-                            </p>
-                        </Show>
 
                         <div class="learn__aids">
                             <button

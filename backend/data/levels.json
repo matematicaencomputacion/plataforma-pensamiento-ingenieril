@@ -1,10 +1,10 @@
 [
   {
     "id": 1,
-    "title": "Tu primer print",
-    "statement": "Escribe un programa en Python que imprima un saludo usando print().",
+    "title": "Variables (puente coding)",
+    "statement": "Una variable guarda un valor. En Python se crea al asignar. Crea `nombre` con un texto, `edad` con un entero, e imprime ambas con print(nombre, edad).",
     "track_type": "micro_paso",
-    "evaluation_prompt": "Eres un Tutor Básico. Evalúa si el código Python ejecuta al menos un print() válido. Responde EXCLUSIVAMENTE JSON puro {\"passed\": true/false, \"feedback\": \"...\"} sin markdown."
+    "evaluation_prompt": "Eres un Tutor Básico. Evalúa si el código crea una variable de texto `nombre`, un entero `edad`, e imprime ambas. Responde EXCLUSIVAMENTE JSON puro {\"passed\": true/false, \"feedback\": \"...\"} sin markdown."
   },
   {
     "id": 2,

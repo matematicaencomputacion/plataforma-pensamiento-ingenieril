@@ -421,15 +421,16 @@ mod tests {
     fn level_json_matches_backend_contract() {
         let raw = r#"{
             "id": 1,
-            "title": "Hola mundo",
-            "statement": "Imprimí un saludo",
+            "title": "Variables (puente coding)",
+            "statement": "Crea nombre y edad e imprímelas.",
             "track_type": "micro_paso",
             "evaluation_prompt": "eval"
         }"#;
         let level: Level = serde_json::from_str(raw).expect("decode level");
         assert_eq!(level.id, 1);
-        assert_eq!(level.title, "Hola mundo");
+        assert_eq!(level.title, "Variables (puente coding)");
         assert_eq!(level.track_type, "micro_paso");
+        assert!(!level.statement.to_lowercase().contains("saludo"));
     }
 
     #[test]

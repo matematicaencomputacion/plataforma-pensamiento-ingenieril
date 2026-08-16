@@ -74,9 +74,14 @@ test.describe("exercise evaluation (rebanada 3)", () => {
   }) => {
     const { engineTimeout } = await goToLearnReady(page, request);
 
-    await expect(page.locator(".learn__level-statement")).toBeVisible({
-      timeout: e2eTimeout,
-    });
+    await expect(page.locator(".learn__title")).toHaveText(
+      "Variables (puente coding)",
+      { timeout: e2eTimeout },
+    );
+    await expect(page.locator(".learn__prompt")).toContainText(
+      "Una variable guarda un valor",
+    );
+    await expect(page.locator(".learn__level")).toHaveCount(0);
 
     await fillLeptosTextarea(
       page,

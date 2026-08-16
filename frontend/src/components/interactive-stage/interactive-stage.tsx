@@ -146,9 +146,7 @@ export const InteractiveStage = component$<InteractiveStageProps>((props) => {
     >
       <header class="interactive-stage__header">
         <div class="interactive-stage__header-row">
-          <p class="interactive-stage__eyebrow">
-            Module 1 · Declarative Foundations
-          </p>
+          <p class="interactive-stage__eyebrow">{concept.title}</p>
           <div
             class="lang-toggle"
             role="group"
