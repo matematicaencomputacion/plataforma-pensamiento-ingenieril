@@ -43445,7 +43445,607 @@ pub const PY1060_PIPELINE_REPORT: CodingStep = CodingStep {
     pytest: "def test_pipeline_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert ns['resumen']([1, 2, 3, 4]) == {'total': 10, 'pares_dobles': [4, 8]}\n    assert ns['resumen']([]) == {'total': 0, 'pares_dobles': []}\n    assert capsys.readouterr().out.strip() == \"{'total': 10, 'pares_dobles': [4, 8]}\"\n",
     hint: "def resumen(nums):\n    return {'total': sum(nums), 'pares_dobles': [x * 2 for x in nums if x % 2 == 0]}\nprint(resumen([1, 2, 3, 4]))\n",
     solution_example: "def resumen(nums):\n    return {'total': sum(nums), 'pares_dobles': [x * 2 for x in nums if x % 2 == 0]}\nprint(resumen([1, 2, 3, 4]))\n",
-    next: None, show_type_chips: false, micro_step: 1060,
+    next: Some("py-1061-unit-test-intro"), show_type_chips: false, micro_step: 1060,
+};
+
+pub const PY1061_UNIT_TEST_INTRO: CodingStep = CodingStep {
+    id: "py-1061-unit-test-intro", title: "Calidad · Testing unitario", objective: "Escribir un primer test con assert sobre la función objetivo provista.",
+    prompt_md: "**Testing unitario**\n\nUn test es una función `test_*` que usa `assert`. Acá no escribís la función a validar: la plataforma te provee `es_primo(n)`. Vos escribís la suite que la valida.\n\n**Micro-reto:**\n1. Escribí `test_es_primo_dos` que afirme `es_primo(2) is True`",
+    starter_code: "# def test_es_primo_dos():\n#     assert es_primo(2) is True\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n < 2:\n            return False\n        for i in range(2, int(n ** 0.5) + 1):\n            if n % i == 0:\n                return False\n        return True\n    def buggy(n):\n        return False\n    buenos = _run_suite(ns, 'es_primo', correcta)\n    malos = _run_suite(ns, 'es_primo', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_es_primo_dos():\n    assert es_primo(2) is True\n",
+    solution_example: "def test_es_primo_dos():\n    assert es_primo(2) is True\n",
+    next: Some("py-1062-unit-test-composite"), show_type_chips: false, micro_step: 1061,
+};
+
+pub const PY1062_UNIT_TEST_COMPOSITE: CodingStep = CodingStep {
+    id: "py-1062-unit-test-composite", title: "Calidad · Test de compuestos", objective: "Cubrir los casos falsos (números compuestos) en la suite.",
+    prompt_md: "**Detectar compuestos**\n\nUn buen test también cubre los casos falsos. `es_primo` debe devolver `False` para números compuestos, incluidos los impares.\n\n**Micro-reto:**\n1. Escribí `test_compuesto_par` con `es_primo(4) is False`\n2. Escribí `test_compuesto_impar` con `es_primo(9) is False`",
+    starter_code: "# def test_compuesto_par():\n#     assert es_primo(4) is False\n# def test_compuesto_impar():\n#     assert es_primo(9) is False\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n < 2:\n            return False\n        for i in range(2, int(n ** 0.5) + 1):\n            if n % i == 0:\n                return False\n        return True\n    def buggy(n):\n        if n < 2:\n            return False\n        return n == 2 or n % 2 != 0\n    buenos = _run_suite(ns, 'es_primo', correcta)\n    malos = _run_suite(ns, 'es_primo', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_compuesto_par():\n    assert es_primo(4) is False\ndef test_compuesto_impar():\n    assert es_primo(9) is False\n",
+    solution_example: "def test_compuesto_par():\n    assert es_primo(4) is False\n\ndef test_compuesto_impar():\n    assert es_primo(9) is False\n",
+    next: Some("py-1063-unit-test-edge"), show_type_chips: false, micro_step: 1062,
+};
+
+pub const PY1063_UNIT_TEST_EDGE: CodingStep = CodingStep {
+    id: "py-1063-unit-test-edge", title: "Calidad · Test de bordes", objective: "Fijar los casos borde (0, 1, negativos) en la suite.",
+    prompt_md: "**Casos borde**\n\nLos bordes (`0`, `1`, negativos) son donde más se esconden los bugs. Un test debe fijarlos explícitamente.\n\n**Micro-reto:**\n1. Escribí `test_uno_no_es_primo` con `es_primo(1) is False`\n2. Escribí `test_cero_no_es_primo` con `es_primo(0) is False`",
+    starter_code: "# def test_uno_no_es_primo():\n#     assert es_primo(1) is False\n# def test_cero_no_es_primo():\n#     assert es_primo(0) is False\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n < 2:\n            return False\n        for i in range(2, int(n ** 0.5) + 1):\n            if n % i == 0:\n                return False\n        return True\n    def buggy(n):\n        return all(n % i for i in range(2, n))\n    buenos = _run_suite(ns, 'es_primo', correcta)\n    malos = _run_suite(ns, 'es_primo', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_uno_no_es_primo():\n    assert es_primo(1) is False\ndef test_cero_no_es_primo():\n    assert es_primo(0) is False\n",
+    solution_example: "def test_uno_no_es_primo():\n    assert es_primo(1) is False\n\ndef test_cero_no_es_primo():\n    assert es_primo(0) is False\n",
+    next: Some("py-1064-unit-test-range"), show_type_chips: false, micro_step: 1063,
+};
+
+pub const PY1064_UNIT_TEST_RANGE: CodingStep = CodingStep {
+    id: "py-1064-unit-test-range", title: "Calidad · Cobertura en rango", objective: "Cubrir muchos primos y compuestos con un bucle.",
+    prompt_md: "**Cobertura en rango**\n\nUn bucle cubre muchos primos y compuestos con poco código.\n\n**Micro-reto:**\n1. `test_rango_de_primos`: recorré `[2, 3, 5, 7, 11, 13]` afirmando `True`\n2. `test_rango_de_compuestos`: recorré `[4, 6, 8, 9, 10]` afirmando `False`",
+    starter_code: "# def test_rango_de_primos():\n#     for p in [2, 3, 5, 7, 11, 13]:\n#         assert es_primo(p) is True\n# def test_rango_de_compuestos():\n#     for n in [4, 6, 8, 9, 10]:\n#         assert es_primo(n) is False\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n < 2:\n            return False\n        for i in range(2, int(n ** 0.5) + 1):\n            if n % i == 0:\n                return False\n        return True\n    def buggy(n):\n        if n < 2:\n            return False\n        if n == 13:\n            return False\n        for i in range(2, int(n ** 0.5) + 1):\n            if n % i == 0:\n                return False\n        return True\n    buenos = _run_suite(ns, 'es_primo', correcta)\n    malos = _run_suite(ns, 'es_primo', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_rango_de_primos():\n    for p in [2, 3, 5, 7, 11, 13]:\n        assert es_primo(p) is True\ndef test_rango_de_compuestos():\n    for n in [4, 6, 8, 9, 10]:\n        assert es_primo(n) is False\n",
+    solution_example: "def test_rango_de_primos():\n    for p in [2, 3, 5, 7, 11, 13]:\n        assert es_primo(p) is True\n\ndef test_rango_de_compuestos():\n    for n in [4, 6, 8, 9, 10]:\n        assert es_primo(n) is False\n",
+    next: Some("py-1065-unit-test-challenge"), show_type_chips: false, micro_step: 1064,
+};
+
+pub const PY1065_UNIT_TEST_CHALLENGE: CodingStep = CodingStep {
+    id: "py-1065-unit-test-challenge", title: "Calidad · Desafío de detección", objective: "Escribir una suite que detecte una implementación con doble bug.",
+    prompt_md: "**Desafío: detectar el bug**\n\nTu suite debe pasar con la implementación correcta y fallar con una que acepta `1` como primo y los impares compuestos.\n\n**Micro-reto:**\n1. Escribí tests que cubran primo, compuesto impar y el borde `1`",
+    starter_code: "# def test_primo():\n#     assert es_primo(7) is True\n# def test_compuesto_impar():\n#     assert es_primo(9) is False\n# def test_uno_no_es_primo():\n#     assert es_primo(1) is False\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n < 2:\n            return False\n        for i in range(2, int(n ** 0.5) + 1):\n            if n % i == 0:\n                return False\n        return True\n    def buggy(n):\n        if n == 1:\n            return True\n        if n < 2:\n            return False\n        return n == 2 or n % 2 != 0\n    buenos = _run_suite(ns, 'es_primo', correcta)\n    malos = _run_suite(ns, 'es_primo', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_primo():\n    assert es_primo(7) is True\ndef test_compuesto_impar():\n    assert es_primo(9) is False\ndef test_uno_no_es_primo():\n    assert es_primo(1) is False\n",
+    solution_example: "def test_primo():\n    assert es_primo(7) is True\n\ndef test_compuesto_impar():\n    assert es_primo(9) is False\n\ndef test_uno_no_es_primo():\n    assert es_primo(1) is False\n",
+    next: Some("py-1066-unit-test-report"), show_type_chips: false, micro_step: 1065,
+};
+
+pub const PY1066_UNIT_TEST_REPORT: CodingStep = CodingStep {
+    id: "py-1066-unit-test-report", title: "Calidad · Suite completa", objective: "Consolidar una suite que cubra primos, compuestos y bordes.",
+    prompt_md: "**Suite completa**\n\nConsolidá una suite que cubra primos, compuestos y bordes en tres tests con bucles.\n\n**Micro-reto:**\n1. `test_primos_conocidos` con `[2, 3, 5, 7, 11, 13, 17]`\n2. `test_compuestos_conocidos` con `[4, 6, 8, 9, 10, 12, 15]`\n3. `test_bordes` con `[0, 1, -3]`",
+    starter_code: "# def test_primos_conocidos():\n#     for p in [2, 3, 5, 7, 11, 13, 17]:\n#         assert es_primo(p) is True\n# def test_compuestos_conocidos():\n#     for n in [4, 6, 8, 9, 10, 12, 15]:\n#         assert es_primo(n) is False\n# def test_bordes():\n#     for n in [0, 1, -3]:\n#         assert es_primo(n) is False\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n < 2:\n            return False\n        for i in range(2, int(n ** 0.5) + 1):\n            if n % i == 0:\n                return False\n        return True\n    def buggy(n):\n        if n < 2 or n == 2:\n            return False\n        for i in range(2, int(n ** 0.5) + 1):\n            if n % i == 0:\n                return False\n        return True\n    buenos = _run_suite(ns, 'es_primo', correcta)\n    malos = _run_suite(ns, 'es_primo', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_primos_conocidos():\n    for p in [2, 3, 5, 7, 11, 13, 17]:\n        assert es_primo(p) is True\ndef test_compuestos_conocidos():\n    for n in [4, 6, 8, 9, 10, 12, 15]:\n        assert es_primo(n) is False\ndef test_bordes():\n    for n in [0, 1, -3]:\n        assert es_primo(n) is False\n",
+    solution_example: "def test_primos_conocidos():\n    for p in [2, 3, 5, 7, 11, 13, 17]:\n        assert es_primo(p) is True\n\ndef test_compuestos_conocidos():\n    for n in [4, 6, 8, 9, 10, 12, 15]:\n        assert es_primo(n) is False\n\ndef test_bordes():\n    for n in [0, 1, -3]:\n        assert es_primo(n) is False\n",
+    next: Some("py-1067-parametrize-loop"), show_type_chips: false, micro_step: 1066,
+};
+
+pub const PY1067_PARAMETRIZE_LOOP: CodingStep = CodingStep {
+    id: "py-1067-parametrize-loop", title: "Calidad · Parametrizar con bucle", objective: "Cubrir varios inputs con un solo test que recorre pares.",
+    prompt_md: "**Parametrizar con bucle**\n\nEn vez de un test por caso, recorré pares `(entrada, esperado)`. La plataforma provee `clasificar_numero(n)` que devuelve `positivo`, `negativo` o `cero`.\n\n**Micro-reto:**\n1. Escribí `test_varios_casos` que recorra `[(5, 'positivo'), (-3, 'negativo'), (0, 'cero')]`",
+    starter_code: "# def test_varios_casos():\n#     for n, esperado in [(5, 'positivo'), (-3, 'negativo'), (0, 'cero')]:\n#         assert clasificar_numero(n) == esperado\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n > 0:\n            return 'positivo'\n        if n < 0:\n            return 'negativo'\n        return 'cero'\n    def buggy(n):\n        return 'positivo'\n    buenos = _run_suite(ns, 'clasificar_numero', correcta)\n    malos = _run_suite(ns, 'clasificar_numero', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_varios_casos():\n    for n, esperado in [(5, 'positivo'), (-3, 'negativo'), (0, 'cero')]:\n        assert clasificar_numero(n) == esperado\n",
+    solution_example: "def test_varios_casos():\n    for n, esperado in [(5, 'positivo'), (-3, 'negativo'), (0, 'cero')]:\n        assert clasificar_numero(n) == esperado\n",
+    next: Some("py-1068-parametrize-pairs"), show_type_chips: false, micro_step: 1067,
+};
+
+pub const PY1068_PARAMETRIZE_PAIRS: CodingStep = CodingStep {
+    id: "py-1068-parametrize-pairs", title: "Calidad · Pares de casos", objective: "Guardar los casos en una lista reutilizable y recorrerla.",
+    prompt_md: "**Pares de casos**\n\nGuardá los casos en una variable y recorrela. Así agregás inputs sin tocar el test.\n\n**Micro-reto:**\n1. Definí `casos = [(5, 'positivo'), (-3, 'negativo'), (0, 'cero')]`\n2. Escribí `test_casos` que recorra `casos` afirmando igualdad",
+    starter_code: "# casos = [(5, 'positivo'), (-3, 'negativo'), (0, 'cero')]\n# def test_casos():\n#     for n, esperado in casos:\n#         assert clasificar_numero(n) == esperado\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n > 0:\n            return 'positivo'\n        if n < 0:\n            return 'negativo'\n        return 'cero'\n    def buggy(n):\n        if n >= 0:\n            return 'positivo'\n        return 'cero'\n    buenos = _run_suite(ns, 'clasificar_numero', correcta)\n    malos = _run_suite(ns, 'clasificar_numero', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "casos = [(5, 'positivo'), (-3, 'negativo'), (0, 'cero')]\ndef test_casos():\n    for n, esperado in casos:\n        assert clasificar_numero(n) == esperado\n",
+    solution_example: "casos = [(5, 'positivo'), (-3, 'negativo'), (0, 'cero')]\n\ndef test_casos():\n    for n, esperado in casos:\n        assert clasificar_numero(n) == esperado\n",
+    next: Some("py-1069-parametrize-edge"), show_type_chips: false, micro_step: 1068,
+};
+
+pub const PY1069_PARAMETRIZE_EDGE: CodingStep = CodingStep {
+    id: "py-1069-parametrize-edge", title: "Calidad · Casos borde parametrizados", objective: "Incluir el borde cero y valores grandes en la parametrización.",
+    prompt_md: "**Casos borde**\n\nParametrizá también los bordes: `0` y números grandes. Un bug típico trata `0` como positivo.\n\n**Micro-reto:**\n1. Escribí `test_cero` con `clasificar_numero(0) == 'cero'`\n2. Escribí `test_grande` con `clasificar_numero(1000) == 'positivo'`",
+    starter_code: "# def test_cero():\n#     assert clasificar_numero(0) == 'cero'\n# def test_grande():\n#     assert clasificar_numero(1000) == 'positivo'\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n > 0:\n            return 'positivo'\n        if n < 0:\n            return 'negativo'\n        return 'cero'\n    def buggy(n):\n        if n > 0:\n            return 'positivo'\n        if n < 0:\n            return 'negativo'\n        return 'positivo'\n    buenos = _run_suite(ns, 'clasificar_numero', correcta)\n    malos = _run_suite(ns, 'clasificar_numero', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_cero():\n    assert clasificar_numero(0) == 'cero'\ndef test_grande():\n    assert clasificar_numero(1000) == 'positivo'\n",
+    solution_example: "def test_cero():\n    assert clasificar_numero(0) == 'cero'\n\ndef test_grande():\n    assert clasificar_numero(1000) == 'positivo'\n",
+    next: Some("py-1070-parametrize-integration"), show_type_chips: false, micro_step: 1069,
+};
+
+pub const PY1070_PARAMETRIZE_INTEGRATION: CodingStep = CodingStep {
+    id: "py-1070-parametrize-integration", title: "Calidad · Parametrización integral", objective: "Cubrir todo el dominio (positivo, negativo, cero) en un solo test.",
+    prompt_md: "**Parametrización integral**\n\nUn solo test recorre todo el dominio: positivo, negativo y cero, incluido el borde `-1`.\n\n**Micro-reto:**\n1. Escribí tests para `clasificar_numero(-1)`, `clasificar_numero(0)` y `clasificar_numero(5)`",
+    starter_code: "# def test_negativo():\n#     assert clasificar_numero(-1) == 'negativo'\n# def test_cero():\n#     assert clasificar_numero(0) == 'cero'\n# def test_positivo():\n#     assert clasificar_numero(5) == 'positivo'\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n > 0:\n            return 'positivo'\n        if n < 0:\n            return 'negativo'\n        return 'cero'\n    def buggy(n):\n        if n > 0:\n            return 'positivo'\n        if n == -1:\n            return 'cero'\n        if n < 0:\n            return 'negativo'\n        return 'cero'\n    buenos = _run_suite(ns, 'clasificar_numero', correcta)\n    malos = _run_suite(ns, 'clasificar_numero', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_negativo():\n    assert clasificar_numero(-1) == 'negativo'\ndef test_cero():\n    assert clasificar_numero(0) == 'cero'\ndef test_positivo():\n    assert clasificar_numero(5) == 'positivo'\n",
+    solution_example: "def test_negativo():\n    assert clasificar_numero(-1) == 'negativo'\n\ndef test_cero():\n    assert clasificar_numero(0) == 'cero'\n\ndef test_positivo():\n    assert clasificar_numero(5) == 'positivo'\n",
+    next: Some("py-1071-parametrize-challenge"), show_type_chips: false, micro_step: 1070,
+};
+
+pub const PY1071_PARAMETRIZE_CHALLENGE: CodingStep = CodingStep {
+    id: "py-1071-parametrize-challenge", title: "Calidad · Desafío parametrizado", objective: "Detectar una implementación con dos bugs usando datos tabulares.",
+    prompt_md: "**Desafío parametrizado**\n\nUsá un helper que reciba casos y detectá una implementación que confunde `0` con positivo y `100` con cero.\n\n**Micro-reto:**\n1. Definí `verificar(casos)` que recorra y afirme igualdad\n2. `test_todos` llama a `verificar` con los cuatro casos",
+    starter_code: "# def verificar(casos):\n#     for n, esperado in casos:\n#         assert clasificar_numero(n) == esperado\n# def test_todos():\n#     verificar([(5, 'positivo'), (0, 'cero'), (100, 'positivo'), (-7, 'negativo')])\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n > 0:\n            return 'positivo'\n        if n < 0:\n            return 'negativo'\n        return 'cero'\n    def buggy(n):\n        if n == 100:\n            return 'cero'\n        if n > 0:\n            return 'positivo'\n        if n < 0:\n            return 'negativo'\n        return 'positivo'\n    buenos = _run_suite(ns, 'clasificar_numero', correcta)\n    malos = _run_suite(ns, 'clasificar_numero', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def verificar(casos):\n    for n, esperado in casos:\n        assert clasificar_numero(n) == esperado\ndef test_todos():\n    verificar([(5, 'positivo'), (0, 'cero'), (100, 'positivo'), (-7, 'negativo')])\n",
+    solution_example: "def verificar(casos):\n    for n, esperado in casos:\n        assert clasificar_numero(n) == esperado\n\ndef test_todos():\n    verificar([(5, 'positivo'), (0, 'cero'), (100, 'positivo'), (-7, 'negativo')])\n",
+    next: Some("py-1072-parametrize-report"), show_type_chips: false, micro_step: 1071,
+};
+
+pub const PY1072_PARAMETRIZE_REPORT: CodingStep = CodingStep {
+    id: "py-1072-parametrize-report", title: "Calidad · Suite parametrizada", objective: "Consolidar una suite parametrizada que cubra todo el dominio.",
+    prompt_md: "**Suite parametrizada**\n\nConsolidá una suite que recorra todo el dominio en un solo test.\n\n**Micro-reto:**\n1. Escribí `test_dominio_completo` con los cuatro casos en un bucle",
+    starter_code: "# def test_dominio_completo():\n#     for n, esperado in [(10, 'positivo'), (-1, 'negativo'), (0, 'cero'), (1, 'positivo')]:\n#         assert clasificar_numero(n) == esperado\n",
+    pytest: "def _run_suite(ns, target, impl):\n    ns[target] = impl\n    out = []\n    for name, obj in list(ns.items()):\n        if name.startswith('test_') and callable(obj):\n            try:\n                obj()\n                out.append((name, True))\n            except AssertionError:\n                out.append((name, False))\n    return out\n\ndef test_suite_detects_correct_and_buggy():\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    def correcta(n):\n        if n > 0:\n            return 'positivo'\n        if n < 0:\n            return 'negativo'\n        return 'cero'\n    def buggy(n):\n        if n > 0:\n            return 'positivo'\n        if n < 0:\n            return 'negativo'\n        return 'positivo'\n    buenos = _run_suite(ns, 'clasificar_numero', correcta)\n    malos = _run_suite(ns, 'clasificar_numero', buggy)\n    assert len(buenos) > 0\n    assert all(p for _, p in buenos)\n    assert not all(p for _, p in malos)\n",
+    hint: "def test_dominio_completo():\n    for n, esperado in [(10, 'positivo'), (-1, 'negativo'), (0, 'cero'), (1, 'positivo')]:\n        assert clasificar_numero(n) == esperado\n",
+    solution_example: "def test_dominio_completo():\n    for n, esperado in [(10, 'positivo'), (-1, 'negativo'), (0, 'cero'), (1, 'positivo')]:\n        assert clasificar_numero(n) == esperado\n",
+    next: Some("py-1073-exceptions-raise"), show_type_chips: false, micro_step: 1072,
+};
+
+pub const PY1073_EXCEPTIONS_RAISE: CodingStep = CodingStep {
+    id: "py-1073-exceptions-raise", title: "Calidad · Lanzar excepción", objective: "Usar raise ValueError para fallar ante una división por cero.",
+    prompt_md: "**Lanzar excepción**\n\n`raise` detiene la ejecución con un error explícito. Sirve para fallar temprano ante una precondición rota.\n\n**Micro-reto:**\n1. Definí `dividir(a, b)` que lance `ValueError` si `b == 0`\n2. Si no, devolvé `a / b`\n3. Imprimí `dividir(10, 2)`",
+    starter_code: "# def dividir(a, b):\n#     if b == 0:\n#         raise ValueError('no se puede dividir por cero')\n#     return a / b\n# print(dividir(10, 2))\n",
+    pytest: "def test_raise(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('dividir'))\n    assert ns['dividir'](10, 2) == 5.0\n    assert ns['dividir'](0, 5) == 0.0\n    try:\n        ns['dividir'](10, 0)\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '5.0'\n",
+    hint: "def dividir(a, b):\n    if b == 0:\n        raise ValueError('no se puede dividir por cero')\n    return a / b\nprint(dividir(10, 2))\n",
+    solution_example: "def dividir(a, b):\n    if b == 0:\n        raise ValueError('no se puede dividir por cero')\n    return a / b\n\nprint(dividir(10, 2))\n",
+    next: Some("py-1074-exceptions-try-except"), show_type_chips: false, micro_step: 1073,
+};
+
+pub const PY1074_EXCEPTIONS_TRY_EXCEPT: CodingStep = CodingStep {
+    id: "py-1074-exceptions-try-except", title: "Calidad · try/except", objective: "Capturar ZeroDivisionError y devolver un valor seguro.",
+    prompt_md: "**try/except**\n\n`try/except` captura el error y permite continuar con un valor alternativo en lugar de romper.\n\n**Micro-reto:**\n1. Definí `dividir_seguro(a, b)` que devuelva `a / b`\n2. Capturá `ZeroDivisionError` y devolvé `None`\n3. Imprimí `dividir_seguro(10, 2)`",
+    starter_code: "# def dividir_seguro(a, b):\n#     try:\n#         return a / b\n#     except ZeroDivisionError:\n#         return None\n# print(dividir_seguro(10, 2))\n",
+    pytest: "def test_try_except(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('dividir_seguro'))\n    assert ns['dividir_seguro'](10, 2) == 5.0\n    assert ns['dividir_seguro'](10, 0) is None\n    assert capsys.readouterr().out.strip() == '5.0'\n",
+    hint: "def dividir_seguro(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return None\nprint(dividir_seguro(10, 2))\n",
+    solution_example: "def dividir_seguro(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return None\n\nprint(dividir_seguro(10, 2))\n",
+    next: Some("py-1075-exceptions-custom"), show_type_chips: false, micro_step: 1074,
+};
+
+pub const PY1075_EXCEPTIONS_CUSTOM: CodingStep = CodingStep {
+    id: "py-1075-exceptions-custom", title: "Calidad · Excepción propia", objective: "Definir una excepción de dominio y lanzarla.",
+    prompt_md: "**Excepción propia**\n\nUna excepción propia expresa un error de dominio con un nombre claro. Hereda de `Exception`.\n\n**Micro-reto:**\n1. Definí `class SaldoInsuficiente(Exception)`\n2. Definí `retirar(saldo, monto)` que lance esa excepción si `monto > saldo`\n3. Imprimí `retirar(100, 40)`",
+    starter_code: "# class SaldoInsuficiente(Exception):\n#     pass\n# def retirar(saldo, monto):\n#     if monto > saldo:\n#         raise SaldoInsuficiente('saldo insuficiente')\n#     return saldo - monto\n# print(retirar(100, 40))\n",
+    pytest: "def test_custom(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert issubclass(ns['SaldoInsuficiente'], Exception)\n    assert callable(ns.get('retirar'))\n    assert ns['retirar'](100, 40) == 60\n    try:\n        ns['retirar'](50, 100)\n        raised = False\n    except ns['SaldoInsuficiente']:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '60'\n",
+    hint: "class SaldoInsuficiente(Exception):\n    pass\ndef retirar(saldo, monto):\n    if monto > saldo:\n        raise SaldoInsuficiente('saldo insuficiente')\n    return saldo - monto\nprint(retirar(100, 40))\n",
+    solution_example: "class SaldoInsuficiente(Exception):\n    pass\n\ndef retirar(saldo, monto):\n    if monto > saldo:\n        raise SaldoInsuficiente('saldo insuficiente')\n    return saldo - monto\n\nprint(retirar(100, 40))\n",
+    next: Some("py-1076-exceptions-finally"), show_type_chips: false, micro_step: 1075,
+};
+
+pub const PY1076_EXCEPTIONS_FINALLY: CodingStep = CodingStep {
+    id: "py-1076-exceptions-finally", title: "Calidad · finally", objective: "Garantizar una acción de limpieza con finally.",
+    prompt_md: "**finally**\n\nEl bloque `finally` se ejecuta siempre, haya o no excepción. Ideal para limpieza o registro.\n\n**Micro-reto:**\n1. Definí `dividir_con_log(a, b, log)` que devuelva `a / b` o `None`\n2. En un `finally`, agregá `'intento'` a `log`\n3. Imprimí `dividir_con_log(10, 2, [])`",
+    starter_code: "# def dividir_con_log(a, b, log):\n#     try:\n#         return a / b\n#     except ZeroDivisionError:\n#         return None\n#     finally:\n#         log.append('intento')\n# print(dividir_con_log(10, 2, []))\n",
+    pytest: "def test_finally(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('dividir_con_log'))\n    log = []\n    assert ns['dividir_con_log'](10, 2, log) == 5.0\n    assert ns['dividir_con_log'](10, 0, log) is None\n    assert log == ['intento', 'intento']\n    assert capsys.readouterr().out.strip() == '5.0'\n",
+    hint: "def dividir_con_log(a, b, log):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return None\n    finally:\n        log.append('intento')\nprint(dividir_con_log(10, 2, []))\n",
+    solution_example: "def dividir_con_log(a, b, log):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return None\n    finally:\n        log.append('intento')\n\nprint(dividir_con_log(10, 2, []))\n",
+    next: Some("py-1077-exceptions-recover"), show_type_chips: false, micro_step: 1076,
+};
+
+pub const PY1077_EXCEPTIONS_RECOVER: CodingStep = CodingStep {
+    id: "py-1077-exceptions-recover", title: "Calidad · Recuperarse del error", objective: "Procesar una colección recuperándose de cada error individual.",
+    prompt_md: "**Recuperarse del error**\n\nDentro de un bucle, capturá el error por elemento y seguí con los demás sin detener todo.\n\n**Micro-reto:**\n1. Definí `convertir_numeros(textos)` que convierta cada texto a `int`\n2. Ante `ValueError`, agregá `None` en su lugar\n3. Imprimí `convertir_numeros(['1', '2', 'x', '3'])`",
+    starter_code: "# def convertir_numeros(textos):\n#     resultados = []\n#     for t in textos:\n#         try:\n#             resultados.append(int(t))\n#         except ValueError:\n#             resultados.append(None)\n#     return resultados\n# print(convertir_numeros(['1', '2', 'x', '3']))\n",
+    pytest: "def test_recover(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('convertir_numeros'))\n    assert ns['convertir_numeros'](['1', '2', 'x', '3']) == [1, 2, None, 3]\n    assert ns['convertir_numeros']([]) == []\n    assert capsys.readouterr().out.strip() == '[1, 2, None, 3]'\n",
+    hint: "def convertir_numeros(textos):\n    resultados = []\n    for t in textos:\n        try:\n            resultados.append(int(t))\n        except ValueError:\n            resultados.append(None)\n    return resultados\nprint(convertir_numeros(['1', '2', 'x', '3']))\n",
+    solution_example: "def convertir_numeros(textos):\n    resultados = []\n    for t in textos:\n        try:\n            resultados.append(int(t))\n        except ValueError:\n            resultados.append(None)\n    return resultados\n\nprint(convertir_numeros(['1', '2', 'x', '3']))\n",
+    next: Some("py-1078-exceptions-report"), show_type_chips: false, micro_step: 1077,
+};
+
+pub const PY1078_EXCEPTIONS_REPORT: CodingStep = CodingStep {
+    id: "py-1078-exceptions-report", title: "Calidad · Reporte validado", objective: "Validar con excepción propia y totalizar los válidos.",
+    prompt_md: "**Reporte validado**\n\nCombiná una excepción propia con try/except para descartar inválidos y totalizar los válidos.\n\n**Micro-reto:**\n1. Definí `class NotaInvalida(Exception)`\n2. Definí `validar_notas(notas)` que sume solo las notas en `0..=100`\n3. Imprimí `validar_notas([80, 150, 90])`",
+    starter_code: "# class NotaInvalida(Exception):\n#     pass\n# def validar_notas(notas):\n#     total = 0\n#     for n in notas:\n#         try:\n#             if not 0 <= n <= 100:\n#                 raise NotaInvalida(n)\n#             total += n\n#         except NotaInvalida:\n#             continue\n#     return total\n# print(validar_notas([80, 150, 90]))\n",
+    pytest: "def test_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('validar_notas'))\n    assert ns['validar_notas']([80, 150, 90]) == 170\n    assert ns['validar_notas']([70, -5, 80]) == 150\n    assert capsys.readouterr().out.strip() == '170'\n",
+    hint: "class NotaInvalida(Exception):\n    pass\ndef validar_notas(notas):\n    total = 0\n    for n in notas:\n        try:\n            if not 0 <= n <= 100:\n                raise NotaInvalida(n)\n            total += n\n        except NotaInvalida:\n            continue\n    return total\nprint(validar_notas([80, 150, 90]))\n",
+    solution_example: "class NotaInvalida(Exception):\n    pass\n\ndef validar_notas(notas):\n    total = 0\n    for n in notas:\n        try:\n            if not 0 <= n <= 100:\n                raise NotaInvalida(n)\n            total += n\n        except NotaInvalida:\n            continue\n    return total\n\nprint(validar_notas([80, 150, 90]))\n",
+    next: Some("py-1079-context-suppress"), show_type_chips: false, micro_step: 1078,
+};
+
+pub const PY1079_CONTEXT_SUPPRESS: CodingStep = CodingStep {
+    id: "py-1079-context-suppress", title: "Calidad · Context manager", objective: "Usar with y contextlib.suppress para ignorar un error.",
+    prompt_md: "**Context manager**\n\n`with` entra y sale de un contexto. `contextlib.suppress` ignora un error específico dentro del bloque.\n\n**Micro-reto:**\n1. Importá `contextlib`\n2. Definí `dividir(a, b)` que use `with contextlib.suppress(ZeroDivisionError)`\n3. Imprimí `dividir(10, 2)`",
+    starter_code: "# import contextlib\n# def dividir(a, b):\n#     with contextlib.suppress(ZeroDivisionError):\n#         return a / b\n#     return None\n# print(dividir(10, 2))\n",
+    pytest: "def test_suppress(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('dividir'))\n    assert ns['dividir'](10, 2) == 5.0\n    assert ns['dividir'](10, 0) is None\n    assert capsys.readouterr().out.strip() == '5.0'\n",
+    hint: "import contextlib\ndef dividir(a, b):\n    with contextlib.suppress(ZeroDivisionError):\n        return a / b\n    return None\nprint(dividir(10, 2))\n",
+    solution_example: "import contextlib\n\ndef dividir(a, b):\n    with contextlib.suppress(ZeroDivisionError):\n        return a / b\n    return None\n\nprint(dividir(10, 2))\n",
+    next: Some("py-1080-context-redirect"), show_type_chips: false, micro_step: 1079,
+};
+
+pub const PY1080_CONTEXT_REDIRECT: CodingStep = CodingStep {
+    id: "py-1080-context-redirect", title: "Calidad · Capturar salida", objective: "Capturar print con contextlib.redirect_stdout.",
+    prompt_md: "**Capturar salida**\n\n`redirect_stdout` dirige el `print` a un buffer en memoria para leerlo después.\n\n**Micro-reto:**\n1. Importá `contextlib` e `io`\n2. Definí `capturar()` que imprima `hola` dentro de `redirect_stdout` y devuelva el contenido\n3. Imprimí `capturar()`",
+    starter_code: "# import contextlib\n# import io\n# def capturar():\n#     buf = io.StringIO()\n#     with contextlib.redirect_stdout(buf):\n#         print('hola')\n#     return buf.getvalue().strip()\n# print(capturar())\n",
+    pytest: "def test_redirect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('capturar'))\n    assert ns['capturar']() == 'hola'\n    assert capsys.readouterr().out.strip() == 'hola'\n",
+    hint: "import contextlib\nimport io\ndef capturar():\n    buf = io.StringIO()\n    with contextlib.redirect_stdout(buf):\n        print('hola')\n    return buf.getvalue().strip()\nprint(capturar())\n",
+    solution_example: "import contextlib\nimport io\n\ndef capturar():\n    buf = io.StringIO()\n    with contextlib.redirect_stdout(buf):\n        print('hola')\n    return buf.getvalue().strip()\n\nprint(capturar())\n",
+    next: Some("py-1081-context-class"), show_type_chips: false, micro_step: 1080,
+};
+
+pub const PY1081_CONTEXT_CLASS: CodingStep = CodingStep {
+    id: "py-1081-context-class", title: "Calidad · Context manager propio", objective: "Implementar __enter__ y __exit__ en una clase.",
+    prompt_md: "**Context manager propio**\n\nUna clase con `__enter__` y `__exit__` define su propia lógica de entrada y salida.\n\n**Micro-reto:**\n1. Definí `Contador` con `__enter__` (suma 1) y `__exit__` (suma 1)\n2. Definí `usar()` que sume 10 dentro del `with` y devuelva el valor final\n3. Imprimí `usar()`",
+    starter_code: "# class Contador:\n#     def __init__(self):\n#         self.valor = 0\n#     def __enter__(self):\n#         self.valor += 1\n#         return self\n#     def __exit__(self, tipo, valor, tb):\n#         self.valor += 1\n#         return False\n# def usar():\n#     with Contador() as c:\n#         c.valor += 10\n#     return c.valor\n# print(usar())\n",
+    pytest: "def test_class(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('usar'))\n    assert ns['usar']() == 12\n    assert capsys.readouterr().out.strip() == '12'\n",
+    hint: "class Contador:\n    def __init__(self):\n        self.valor = 0\n    def __enter__(self):\n        self.valor += 1\n        return self\n    def __exit__(self, tipo, valor, tb):\n        self.valor += 1\n        return False\ndef usar():\n    with Contador() as c:\n        c.valor += 10\n    return c.valor\nprint(usar())\n",
+    solution_example: "class Contador:\n    def __init__(self):\n        self.valor = 0\n    def __enter__(self):\n        self.valor += 1\n        return self\n    def __exit__(self, tipo, valor, tb):\n        self.valor += 1\n        return False\n\ndef usar():\n    with Contador() as c:\n        c.valor += 10\n    return c.valor\n\nprint(usar())\n",
+    next: Some("py-1082-context-contextmanager"), show_type_chips: false, micro_step: 1081,
+};
+
+pub const PY1082_CONTEXT_CONTEXTMANAGER: CodingStep = CodingStep {
+    id: "py-1082-context-contextmanager", title: "Calidad · contextmanager", objective: "Crear un context manager con contextlib.contextmanager y yield.",
+    prompt_md: "**@contextmanager**\n\n`@contextmanager` convierte un generador con `yield` en un context manager, separando entrada y salida.\n\n**Micro-reto:**\n1. Definí `anotar(log)` con `yield 'recurso'` entre dos `log.append`\n2. Definí `usar(log)` que use `with anotar(log) as r`\n3. Imprimí `usar([])`",
+    starter_code: "# import contextlib\n# @contextlib.contextmanager\n# def anotar(log):\n#     log.append('inicio')\n#     yield 'recurso'\n#     log.append('fin')\n# def usar(log):\n#     with anotar(log) as r:\n#         log.append(r)\n#     return log\n# print(usar([]))\n",
+    pytest: "def test_contextmanager(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('usar'))\n    assert ns['usar']([]) == ['inicio', 'recurso', 'fin']\n    assert capsys.readouterr().out.strip() == str(['inicio', 'recurso', 'fin'])\n",
+    hint: "import contextlib\n@contextlib.contextmanager\ndef anotar(log):\n    log.append('inicio')\n    yield 'recurso'\n    log.append('fin')\ndef usar(log):\n    with anotar(log) as r:\n        log.append(r)\n    return log\nprint(usar([]))\n",
+    solution_example: "import contextlib\n\n@contextlib.contextmanager\ndef anotar(log):\n    log.append('inicio')\n    yield 'recurso'\n    log.append('fin')\n\ndef usar(log):\n    with anotar(log) as r:\n        log.append(r)\n    return log\n\nprint(usar([]))\n",
+    next: Some("py-1083-context-challenge"), show_type_chips: false, micro_step: 1082,
+};
+
+pub const PY1083_CONTEXT_CHALLENGE: CodingStep = CodingStep {
+    id: "py-1083-context-challenge", title: "Calidad · Limpieza garantizada", objective: "Asegurar que la limpieza corre aunque haya excepción.",
+    prompt_md: "**Limpieza garantizada**\n\nUn context manager con `finally` garantiza la limpieza aunque el bloque lance una excepción.\n\n**Micro-reto:**\n1. Definí `liberar(log)` que en `finally` agregue `'liberado'`\n2. Definí `ejecutar(log)` que capture `RuntimeError` y devuelva `log`\n3. Imprimí `ejecutar([])`",
+    starter_code: "# import contextlib\n# @contextlib.contextmanager\n# def liberar(log):\n#     try:\n#         yield\n#     finally:\n#         log.append('liberado')\n# def ejecutar(log):\n#     try:\n#         with liberar(log):\n#             log.append('trabajo')\n#             raise RuntimeError('boom')\n#     except RuntimeError:\n#         pass\n#     return log\n# print(ejecutar([]))\n",
+    pytest: "def test_challenge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('ejecutar'))\n    assert ns['ejecutar']([]) == ['trabajo', 'liberado']\n    assert capsys.readouterr().out.strip() == str(['trabajo', 'liberado'])\n",
+    hint: "import contextlib\n@contextlib.contextmanager\ndef liberar(log):\n    try:\n        yield\n    finally:\n        log.append('liberado')\ndef ejecutar(log):\n    try:\n        with liberar(log):\n            log.append('trabajo')\n            raise RuntimeError('boom')\n    except RuntimeError:\n        pass\n    return log\nprint(ejecutar([]))\n",
+    solution_example: "import contextlib\n\n@contextlib.contextmanager\ndef liberar(log):\n    try:\n        yield\n    finally:\n        log.append('liberado')\n\ndef ejecutar(log):\n    try:\n        with liberar(log):\n            log.append('trabajo')\n            raise RuntimeError('boom')\n    except RuntimeError:\n        pass\n    return log\n\nprint(ejecutar([]))\n",
+    next: Some("py-1084-context-report"), show_type_chips: false, micro_step: 1083,
+};
+
+pub const PY1084_CONTEXT_REPORT: CodingStep = CodingStep {
+    id: "py-1084-context-report", title: "Calidad · Contextos combinados", objective: "Anidar redirect_stdout y suppress en un reporte.",
+    prompt_md: "**Contextos combinados**\n\nAnidá dos context managers: capturá la salida y suprimí el error de división por cero.\n\n**Micro-reto:**\n1. Definí `resumen(divisor)` que imprima `10 // divisor` dentro de `redirect_stdout` y `suppress`\n2. Devolvé el contenido capturado\n3. Imprimí `resumen(2)`",
+    starter_code: "# import contextlib\n# import io\n# def resumen(divisor):\n#     buf = io.StringIO()\n#     with contextlib.redirect_stdout(buf):\n#         with contextlib.suppress(ZeroDivisionError):\n#             print(10 // divisor)\n#     return buf.getvalue().strip()\n# print(resumen(2))\n",
+    pytest: "def test_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert ns['resumen'](2) == '5'\n    assert ns['resumen'](0) == ''\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "import contextlib\nimport io\ndef resumen(divisor):\n    buf = io.StringIO()\n    with contextlib.redirect_stdout(buf):\n        with contextlib.suppress(ZeroDivisionError):\n            print(10 // divisor)\n    return buf.getvalue().strip()\nprint(resumen(2))\n",
+    solution_example: "import contextlib\nimport io\n\ndef resumen(divisor):\n    buf = io.StringIO()\n    with contextlib.redirect_stdout(buf):\n        with contextlib.suppress(ZeroDivisionError):\n            print(10 // divisor)\n    return buf.getvalue().strip()\n\nprint(resumen(2))\n",
+    next: Some("py-1085-decorator-double"), show_type_chips: false, micro_step: 1084,
+};
+
+pub const PY1085_DECORATOR_DOUBLE: CodingStep = CodingStep {
+    id: "py-1085-decorator-double", title: "Calidad · Decorador simple", objective: "Envolver una función para duplicar su resultado.",
+    prompt_md: "**Decorador simple**\n\nUn decorador es una función que recibe una función y devuelve otra que la envuelve.\n\n**Micro-reto:**\n1. Definí `duplicar(fn)` que devuelva `envoltura` que hace `fn(a, b) * 2`\n2. Aplicá `@duplicar` a `sumar(a, b)`\n3. Imprimí `sumar(2, 3)`",
+    starter_code: "# def duplicar(fn):\n#     def envoltura(a, b):\n#         return fn(a, b) * 2\n#     return envoltura\n# @duplicar\n# def sumar(a, b):\n#     return a + b\n# print(sumar(2, 3))\n",
+    pytest: "def test_decorator(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('sumar'))\n    assert ns['sumar'](2, 3) == 10\n    assert ns['sumar'](0, 5) == 10\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "def duplicar(fn):\n    def envoltura(a, b):\n        return fn(a, b) * 2\n    return envoltura\n@duplicar\ndef sumar(a, b):\n    return a + b\nprint(sumar(2, 3))\n",
+    solution_example: "def duplicar(fn):\n    def envoltura(a, b):\n        return fn(a, b) * 2\n    return envoltura\n\n@duplicar\ndef sumar(a, b):\n    return a + b\n\nprint(sumar(2, 3))\n",
+    next: Some("py-1086-decorator-uppercase"), show_type_chips: false, micro_step: 1085,
+};
+
+pub const PY1086_DECORATOR_UPPERCASE: CodingStep = CodingStep {
+    id: "py-1086-decorator-uppercase", title: "Calidad · Transformar resultado", objective: "Decorar para transformar la salida de una función.",
+    prompt_md: "**Transformar resultado**\n\nUn decorador puede modificar lo que devuelve la función envuelta, por ejemplo a mayúsculas.\n\n**Micro-reto:**\n1. Definí `en_mayusculas(fn)` que devuelva `fn(texto).upper()`\n2. Aplicá `@en_mayusculas` a `saludo(nombre)`\n3. Imprimí `saludo('ana')`",
+    starter_code: "# def en_mayusculas(fn):\n#     def envoltura(texto):\n#         return fn(texto).upper()\n#     return envoltura\n# @en_mayusculas\n# def saludo(nombre):\n#     return 'hola ' + nombre\n# print(saludo('ana'))\n",
+    pytest: "def test_uppercase(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('saludo'))\n    assert ns['saludo']('ana') == 'HOLA ANA'\n    assert ns['saludo']('beto') == 'HOLA BETO'\n    assert capsys.readouterr().out.strip() == 'HOLA ANA'\n",
+    hint: "def en_mayusculas(fn):\n    def envoltura(texto):\n        return fn(texto).upper()\n    return envoltura\n@en_mayusculas\ndef saludo(nombre):\n    return 'hola ' + nombre\nprint(saludo('ana'))\n",
+    solution_example: "def en_mayusculas(fn):\n    def envoltura(texto):\n        return fn(texto).upper()\n    return envoltura\n\n@en_mayusculas\ndef saludo(nombre):\n    return 'hola ' + nombre\n\nprint(saludo('ana'))\n",
+    next: Some("py-1087-decorator-wraps"), show_type_chips: false, micro_step: 1086,
+};
+
+pub const PY1087_DECORATOR_WRAPS: CodingStep = CodingStep {
+    id: "py-1087-decorator-wraps", title: "Calidad · functools.wraps", objective: "Preservar el nombre de la función con functools.wraps.",
+    prompt_md: "**functools.wraps**\n\n`functools.wraps` copia metadatos (como `__name__`) de la función original a la envoltura.\n\n**Micro-reto:**\n1. Definí `registro(fn)` que use `@functools.wraps(fn)`\n2. Aplicá `@registro` a `doble(n)` que devuelva `n * 2`\n3. Imprimí `doble(5)`",
+    starter_code: "# import functools\n# def registro(fn):\n#     @functools.wraps(fn)\n#     def envoltura(*args, **kwargs):\n#         return fn(*args, **kwargs)\n#     return envoltura\n# @registro\n# def doble(n):\n#     return n * 2\n# print(doble(5))\n",
+    pytest: "def test_wraps(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('doble'))\n    assert ns['doble'](5) == 10\n    assert ns['doble'].__name__ == 'doble'\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "import functools\ndef registro(fn):\n    @functools.wraps(fn)\n    def envoltura(*args, **kwargs):\n        return fn(*args, **kwargs)\n    return envoltura\n@registro\ndef doble(n):\n    return n * 2\nprint(doble(5))\n",
+    solution_example: "import functools\n\ndef registro(fn):\n    @functools.wraps(fn)\n    def envoltura(*args, **kwargs):\n        return fn(*args, **kwargs)\n    return envoltura\n\n@registro\ndef doble(n):\n    return n * 2\n\nprint(doble(5))\n",
+    next: Some("py-1088-decorator-args"), show_type_chips: false, micro_step: 1087,
+};
+
+pub const PY1088_DECORATOR_ARGS: CodingStep = CodingStep {
+    id: "py-1088-decorator-args", title: "Calidad · Decorador con args", objective: "Crear un decorador parametrizable (fábrica).",
+    prompt_md: "**Decorador con args**\n\nUna fábrica devuelve el decorador. Así podés parametrizar la envoltura con un valor.\n\n**Micro-reto:**\n1. Definí `multiplicar_por(k)` que devuelva el decorador\n2. Aplicá `@multiplicar_por(3)` a `base(n)` que devuelva `n`\n3. Imprimí `base(4)`",
+    starter_code: "# def multiplicar_por(k):\n#     def decorador(fn):\n#         def envoltura(n):\n#             return fn(n) * k\n#         return envoltura\n#     return decorador\n# @multiplicar_por(3)\n# def base(n):\n#     return n\n# print(base(4))\n",
+    pytest: "def test_args(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('base'))\n    assert ns['base'](4) == 12\n    assert ns['base'](0) == 0\n    assert capsys.readouterr().out.strip() == '12'\n",
+    hint: "def multiplicar_por(k):\n    def decorador(fn):\n        def envoltura(n):\n            return fn(n) * k\n        return envoltura\n    return decorador\n@multiplicar_por(3)\ndef base(n):\n    return n\nprint(base(4))\n",
+    solution_example: "def multiplicar_por(k):\n    def decorador(fn):\n        def envoltura(n):\n            return fn(n) * k\n        return envoltura\n    return decorador\n\n@multiplicar_por(3)\ndef base(n):\n    return n\n\nprint(base(4))\n",
+    next: Some("py-1089-decorator-challenge"), show_type_chips: false, micro_step: 1088,
+};
+
+pub const PY1089_DECORATOR_CHALLENGE: CodingStep = CodingStep {
+    id: "py-1089-decorator-challenge", title: "Calidad · Decorador con estado", objective: "Contar llamadas con un atributo en la envoltura.",
+    prompt_md: "**Decorador con estado**\n\nLa envoltura puede guardar un contador en un atributo propio para registrar cuántas veces se llamó.\n\n**Micro-reto:**\n1. Definí `contar_llamadas(fn)` con `envoltura.contador`\n2. Aplicá `@contar_llamadas` a `suma(a, b)`\n3. Imprimí `suma(2, 3)`",
+    starter_code: "# def contar_llamadas(fn):\n#     def envoltura(*args, **kwargs):\n#         envoltura.contador += 1\n#         return fn(*args, **kwargs)\n#     envoltura.contador = 0\n#     return envoltura\n# @contar_llamadas\n# def suma(a, b):\n#     return a + b\n# print(suma(2, 3))\n",
+    pytest: "def test_challenge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('suma'))\n    assert ns['suma'].contador == 1\n    assert ns['suma'](1, 2) == 3\n    assert ns['suma'].contador == 2\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "def contar_llamadas(fn):\n    def envoltura(*args, **kwargs):\n        envoltura.contador += 1\n        return fn(*args, **kwargs)\n    envoltura.contador = 0\n    return envoltura\n@contar_llamadas\ndef suma(a, b):\n    return a + b\nprint(suma(2, 3))\n",
+    solution_example: "def contar_llamadas(fn):\n    def envoltura(*args, **kwargs):\n        envoltura.contador += 1\n        return fn(*args, **kwargs)\n    envoltura.contador = 0\n    return envoltura\n\n@contar_llamadas\ndef suma(a, b):\n    return a + b\n\nprint(suma(2, 3))\n",
+    next: Some("py-1090-decorator-report"), show_type_chips: false, micro_step: 1089,
+};
+
+pub const PY1090_DECORATOR_REPORT: CodingStep = CodingStep {
+    id: "py-1090-decorator-report", title: "Calidad · Decoradores compuestos", objective: "Apilar dos decoradores en una sola función.",
+    prompt_md: "**Decoradores compuestos**\n\nAl apilar decoradores, el más cercano a la función se aplica primero.\n\n**Micro-reto:**\n1. Definí `duplicar(fn)` y `mas_uno(fn)`\n2. Aplicá `@duplicar` sobre `@mas_uno` en `base(n)`\n3. Imprimí `base(5)`",
+    starter_code: "# def duplicar(fn):\n#     def envoltura(n):\n#         return fn(n) * 2\n#     return envoltura\n# def mas_uno(fn):\n#     def envoltura(n):\n#         return fn(n) + 1\n#     return envoltura\n# @duplicar\n# @mas_uno\n# def base(n):\n#     return n\n# print(base(5))\n",
+    pytest: "def test_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('base'))\n    assert ns['base'](5) == 12\n    assert ns['base'](0) == 2\n    assert capsys.readouterr().out.strip() == '12'\n",
+    hint: "def duplicar(fn):\n    def envoltura(n):\n        return fn(n) * 2\n    return envoltura\ndef mas_uno(fn):\n    def envoltura(n):\n        return fn(n) + 1\n    return envoltura\n@duplicar\n@mas_uno\ndef base(n):\n    return n\nprint(base(5))\n",
+    solution_example: "def duplicar(fn):\n    def envoltura(n):\n        return fn(n) * 2\n    return envoltura\n\ndef mas_uno(fn):\n    def envoltura(n):\n        return fn(n) + 1\n    return envoltura\n\n@duplicar\n@mas_uno\ndef base(n):\n    return n\n\nprint(base(5))\n",
+    next: Some("py-1091-generator-yield"), show_type_chips: false, micro_step: 1090,
+};
+
+pub const PY1091_GENERATOR_YIELD: CodingStep = CodingStep {
+    id: "py-1091-generator-yield", title: "Calidad · Generador con yield", objective: "Crear un generador síncrono con yield.",
+    prompt_md: "**Generador con yield**\n\nUna función con `yield` es un generador: produce valores de a uno, de forma perezosa.\n\n**Micro-reto:**\n1. Definí `contar_hasta(n)` que haga `yield` de `1` a `n`\n2. Imprimí `list(contar_hasta(3))`",
+    starter_code: "# def contar_hasta(n):\n#     i = 1\n#     while i <= n:\n#         yield i\n#         i += 1\n# print(list(contar_hasta(3)))\n",
+    pytest: "def test_yield(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('contar_hasta'))\n    assert list(ns['contar_hasta'](3)) == [1, 2, 3]\n    assert list(ns['contar_hasta'](0)) == []\n    assert capsys.readouterr().out.strip() == '[1, 2, 3]'\n",
+    hint: "def contar_hasta(n):\n    i = 1\n    while i <= n:\n        yield i\n        i += 1\nprint(list(contar_hasta(3)))\n",
+    solution_example: "def contar_hasta(n):\n    i = 1\n    while i <= n:\n        yield i\n        i += 1\n\nprint(list(contar_hasta(3)))\n",
+    next: Some("py-1092-generator-next"), show_type_chips: false, micro_step: 1091,
+};
+
+pub const PY1092_GENERATOR_NEXT: CodingStep = CodingStep {
+    id: "py-1092-generator-next", title: "Calidad · next y StopIteration", objective: "Consumir un generador con next y detectar su agotamiento.",
+    prompt_md: "**next y StopIteration**\n\n`next` pide el siguiente valor. Al agotarse, el generador lanza `StopIteration`.\n\n**Micro-reto:**\n1. Definí `pares(n)` que haga `yield` de `0, 2, 4, ...` menores que `n`\n2. Imprimí `list(pares(6))`",
+    starter_code: "# def pares(n):\n#     i = 0\n#     while i < n:\n#         yield i\n#         i += 2\n# print(list(pares(6)))\n",
+    pytest: "def test_next(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('pares'))\n    g = ns['pares'](6)\n    assert next(g) == 0\n    assert next(g) == 2\n    assert list(g) == [4]\n    g2 = ns['pares'](0)\n    try:\n        next(g2)\n        raised = False\n    except StopIteration:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '[0, 2, 4]'\n",
+    hint: "def pares(n):\n    i = 0\n    while i < n:\n        yield i\n        i += 2\nprint(list(pares(6)))\n",
+    solution_example: "def pares(n):\n    i = 0\n    while i < n:\n        yield i\n        i += 2\n\nprint(list(pares(6)))\n",
+    next: Some("py-1093-generator-lazy"), show_type_chips: false, micro_step: 1092,
+};
+
+pub const PY1093_GENERATOR_LAZY: CodingStep = CodingStep {
+    id: "py-1093-generator-lazy", title: "Calidad · Evaluación perezosa", objective: "Consumir un generador infinito solo lo necesario.",
+    prompt_md: "**Evaluación perezosa**\n\nUn generador infinito solo computa lo que le pedís: la pereza evita calcular de más.\n\n**Micro-reto:**\n1. Definí `naturales()` que haga `yield` de `0, 1, 2, ...` sin fin\n2. Imprimí los primeros tres con `next`",
+    starter_code: "# def naturales():\n#     n = 0\n#     while True:\n#         yield n\n#         n += 1\n# g = naturales()\n# print((next(g), next(g), next(g)))\n",
+    pytest: "def test_lazy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('naturales'))\n    g = ns['naturales']()\n    assert next(g) == 0\n    assert next(g) == 1\n    assert next(g) == 2\n    assert capsys.readouterr().out.strip() == '(0, 1, 2)'\n",
+    hint: "def naturales():\n    n = 0\n    while True:\n        yield n\n        n += 1\ng = naturales()\nprint((next(g), next(g), next(g)))\n",
+    solution_example: "def naturales():\n    n = 0\n    while True:\n        yield n\n        n += 1\n\ng = naturales()\nprint((next(g), next(g), next(g)))\n",
+    next: Some("py-1094-generator-pipeline"), show_type_chips: false, micro_step: 1093,
+};
+
+pub const PY1094_GENERATOR_PIPELINE: CodingStep = CodingStep {
+    id: "py-1094-generator-pipeline", title: "Calidad · Pipeline de datos", objective: "Filtrar y transformar datos en un generador.",
+    prompt_md: "**Pipeline de datos**\n\nUn generador puede filtrar y transformar datos en una sola pasada perezosa.\n\n**Micro-reto:**\n1. Definí `filtrar_pares(nums)` que haga `yield n * 2` solo si `n` es par\n2. Imprimí `list(filtrar_pares([1, 2, 3, 4]))`",
+    starter_code: "# def filtrar_pares(nums):\n#     for n in nums:\n#         if n % 2 == 0:\n#             yield n * 2\n# print(list(filtrar_pares([1, 2, 3, 4])))\n",
+    pytest: "def test_pipeline(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('filtrar_pares'))\n    assert list(ns['filtrar_pares']([1, 2, 3, 4])) == [4, 8]\n    assert list(ns['filtrar_pares']([])) == []\n    assert capsys.readouterr().out.strip() == '[4, 8]'\n",
+    hint: "def filtrar_pares(nums):\n    for n in nums:\n        if n % 2 == 0:\n            yield n * 2\nprint(list(filtrar_pares([1, 2, 3, 4])))\n",
+    solution_example: "def filtrar_pares(nums):\n    for n in nums:\n        if n % 2 == 0:\n            yield n * 2\n\nprint(list(filtrar_pares([1, 2, 3, 4])))\n",
+    next: Some("py-1095-generator-challenge"), show_type_chips: false, micro_step: 1094,
+};
+
+pub const PY1095_GENERATOR_CHALLENGE: CodingStep = CodingStep {
+    id: "py-1095-generator-challenge", title: "Calidad · Serie infinita acotada", objective: "Generar la serie de Fibonacci acotada por un límite.",
+    prompt_md: "**Serie acotada**\n\nUn generador con estado interno produce una serie numérica y se detiene en un límite.\n\n**Micro-reto:**\n1. Definí `serie_fib(limite)` que haga `yield` de Fibonacci mientras `a <= limite`\n2. Imprimí `list(serie_fib(10))`",
+    starter_code: "# def serie_fib(limite):\n#     a, b = 0, 1\n#     while a <= limite:\n#         yield a\n#         a, b = b, a + b\n# print(list(serie_fib(10)))\n",
+    pytest: "def test_challenge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('serie_fib'))\n    assert list(ns['serie_fib'](10)) == [0, 1, 1, 2, 3, 5, 8]\n    assert sum(ns['serie_fib'](10)) == 20\n    assert capsys.readouterr().out.strip() == '[0, 1, 1, 2, 3, 5, 8]'\n",
+    hint: "def serie_fib(limite):\n    a, b = 0, 1\n    while a <= limite:\n        yield a\n        a, b = b, a + b\nprint(list(serie_fib(10)))\n",
+    solution_example: "def serie_fib(limite):\n    a, b = 0, 1\n    while a <= limite:\n        yield a\n        a, b = b, a + b\n\nprint(list(serie_fib(10)))\n",
+    next: Some("py-1096-generator-report"), show_type_chips: false, micro_step: 1095,
+};
+
+pub const PY1096_GENERATOR_REPORT: CodingStep = CodingStep {
+    id: "py-1096-generator-report", title: "Calidad · Reporte con generador", objective: "Agregar los resultados de un generador en un reporte.",
+    prompt_md: "**Reporte con generador**\n\nComponé un generador de transformación con una reducción final para producir un reporte.\n\n**Micro-reto:**\n1. Definí `procesar(nums)` que haga `yield n * n` solo si `n > 0`\n2. Definí `resumen(nums)` que devuelva `sum(procesar(nums))`\n3. Imprimí `resumen([1, -2, 3])`",
+    starter_code: "# def procesar(nums):\n#     for n in nums:\n#         if n > 0:\n#             yield n * n\n# def resumen(nums):\n#     return sum(procesar(nums))\n# print(resumen([1, -2, 3]))\n",
+    pytest: "def test_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert callable(ns.get('procesar'))\n    assert ns['resumen']([1, -2, 3]) == 10\n    assert list(ns['procesar']([1, -2, 3])) == [1, 9]\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "def procesar(nums):\n    for n in nums:\n        if n > 0:\n            yield n * n\ndef resumen(nums):\n    return sum(procesar(nums))\nprint(resumen([1, -2, 3]))\n",
+    solution_example: "def procesar(nums):\n    for n in nums:\n        if n > 0:\n            yield n * n\n\ndef resumen(nums):\n    return sum(procesar(nums))\n\nprint(resumen([1, -2, 3]))\n",
+    next: Some("py-1097-types-annotate"), show_type_chips: false, micro_step: 1096,
+};
+
+pub const PY1097_TYPES_ANNOTATE: CodingStep = CodingStep {
+    id: "py-1097-types-annotate", title: "Calidad · Type hints básicos", objective: "Anotar parámetros y retorno con tipos básicos.",
+    prompt_md: "**Type hints**\n\nLas anotaciones documentan el contrato de una función: qué recibe y qué devuelve. No cambian el runtime, pero aclaran la intención.\n\n**Micro-reto:**\n1. Definí `sumar(a: int, b: int) -> int` que devuelva `a + b`\n2. Imprimí `sumar(2, 3)`",
+    starter_code: "# def sumar(a: int, b: int) -> int:\n#     return a + b\n# print(sumar(2, 3))\n",
+    pytest: "def test_annotate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('sumar'))\n    assert ns['sumar'](2, 3) == 5\n    assert ns['sumar'].__annotations__.get('return') is int\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "def sumar(a: int, b: int) -> int:\n    return a + b\nprint(sumar(2, 3))\n",
+    solution_example: "def sumar(a: int, b: int) -> int:\n    return a + b\n\nprint(sumar(2, 3))\n",
+    next: Some("py-1098-types-list"), show_type_chips: false, micro_step: 1097,
+};
+
+pub const PY1098_TYPES_LIST: CodingStep = CodingStep {
+    id: "py-1098-types-list", title: "Calidad · Anotar colecciones", objective: "Anotar una lista de entrada y un retorno float.",
+    prompt_md: "**Anotar colecciones**\n\nUn parámetro `list` y un retorno `float` documentan el tipo esperado y el resultado.\n\n**Micro-reto:**\n1. Definí `promedio(numeros: list) -> float` que devuelva `sum / len`\n2. Imprimí `promedio([2, 4, 6])`",
+    starter_code: "# def promedio(numeros: list) -> float:\n#     return sum(numeros) / len(numeros)\n# print(promedio([2, 4, 6]))\n",
+    pytest: "def test_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('promedio'))\n    assert ns['promedio']([2, 4, 6]) == 4.0\n    assert ns['promedio'].__annotations__.get('return') is float\n    assert capsys.readouterr().out.strip() == '4.0'\n",
+    hint: "def promedio(numeros: list) -> float:\n    return sum(numeros) / len(numeros)\nprint(promedio([2, 4, 6]))\n",
+    solution_example: "def promedio(numeros: list) -> float:\n    return sum(numeros) / len(numeros)\n\nprint(promedio([2, 4, 6]))\n",
+    next: Some("py-1099-types-optional"), show_type_chips: false, micro_step: 1098,
+};
+
+pub const PY1099_TYPES_OPTIONAL: CodingStep = CodingStep {
+    id: "py-1099-types-optional", title: "Calidad · Tipos opcionales", objective: "Anotar un parámetro que admite None con Optional.",
+    prompt_md: "**Tipos opcionales**\n\n`Optional[str]` documenta que el parámetro puede ser `str` o `None`, y la función debe manejar ambos.\n\n**Micro-reto:**\n1. Definí `normalizar(texto: Optional[str]) -> str`\n2. Si `texto` es `None`, devolvé `''`; si no, `strip().lower()`\n3. Imprimí `normalizar('  Ana  ')`",
+    starter_code: "# from typing import Optional\n# def normalizar(texto):\n#     if texto is None:\n#         return ''\n#     return texto.strip().lower()\n# print(normalizar('  Ana  '))\n",
+    pytest: "def test_optional(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('normalizar'))\n    assert ns['normalizar']('  Ana  ') == 'ana'\n    assert ns['normalizar'](None) == ''\n    assert capsys.readouterr().out.strip() == 'ana'\n",
+    hint: "from typing import Optional\ndef normalizar(texto: Optional[str]) -> str:\n    if texto is None:\n        return ''\n    return texto.strip().lower()\nprint(normalizar('  Ana  '))\n",
+    solution_example: "from typing import Optional\n\ndef normalizar(texto: Optional[str]) -> str:\n    if texto is None:\n        return ''\n    return texto.strip().lower()\n\nprint(normalizar('  Ana  '))\n",
+    next: Some("py-1100-types-dataclass"), show_type_chips: false, micro_step: 1099,
+};
+
+pub const PY1100_TYPES_DATACLASS: CodingStep = CodingStep {
+    id: "py-1100-types-dataclass", title: "Calidad · Dataclass tipada", objective: "Tipar los campos de una dataclass.",
+    prompt_md: "**Dataclass tipada**\n\nUna dataclass con campos tipados auto-documenta el modelo de datos.\n\n**Micro-reto:**\n1. Definí `Producto` con `nombre: str` y `precio: float`\n2. Creá `p = Producto('pan', 2.5)`\n3. Imprimí `p.precio`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Producto:\n#     nombre: str\n#     precio: float\n# p = Producto('pan', 2.5)\n# print(p.precio)\n",
+    pytest: "def test_dataclass(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    p = ns['Producto']('pan', 2.5)\n    assert p.nombre == 'pan'\n    assert p.precio == 2.5\n    assert capsys.readouterr().out.strip() == '2.5'\n",
+    hint: "from dataclasses import dataclass\n@dataclass\nclass Producto:\n    nombre: str\n    precio: float\np = Producto('pan', 2.5)\nprint(p.precio)\n",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Producto:\n    nombre: str\n    precio: float\n\np = Producto('pan', 2.5)\nprint(p.precio)\n",
+    next: Some("py-1101-types-tuple"), show_type_chips: false, micro_step: 1100,
+};
+
+pub const PY1101_TYPES_TUPLE: CodingStep = CodingStep {
+    id: "py-1101-types-tuple", title: "Calidad · Contrato de tupla", objective: "Anotar el retorno como una tupla de dos strings.",
+    prompt_md: "**Contrato de tupla**\n\n`Tuple[str, str]` documenta que la función devuelve una tupla de dos strings.\n\n**Micro-reto:**\n1. Definí `partir(texto: str) -> Tuple[str, str]` que devuelva las dos mitades\n2. Imprimí `partir('abcd')`",
+    starter_code: "# from typing import Tuple\n# def partir(texto):\n#     mitad = len(texto) // 2\n#     return (texto[:mitad], texto[mitad:])\n# print(partir('abcd'))\n",
+    pytest: "def test_tuple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('partir'))\n    assert ns['partir']('abcd') == ('ab', 'cd')\n    assert capsys.readouterr().out.strip() == str(('ab', 'cd'))\n",
+    hint: "from typing import Tuple\ndef partir(texto: str) -> Tuple[str, str]:\n    mitad = len(texto) // 2\n    return (texto[:mitad], texto[mitad:])\nprint(partir('abcd'))\n",
+    solution_example: "from typing import Tuple\n\ndef partir(texto: str) -> Tuple[str, str]:\n    mitad = len(texto) // 2\n    return (texto[:mitad], texto[mitad:])\n\nprint(partir('abcd'))\n",
+    next: Some("py-1102-types-report"), show_type_chips: false, micro_step: 1101,
+};
+
+pub const PY1102_TYPES_REPORT: CodingStep = CodingStep {
+    id: "py-1102-types-report", title: "Calidad · Contrato de reporte", objective: "Anotar un reporte que devuelve un dict.",
+    prompt_md: "**Contrato de reporte**\n\nAnotá una función que resume datos y devuelve un dict tipado.\n\n**Micro-reto:**\n1. Definí `resumen(datos: list) -> dict` con `total` y `cantidad`\n2. Imprimí `resumen([1, 2, 3])`",
+    starter_code: "# def resumen(datos: list) -> dict:\n#     return {'total': sum(datos), 'cantidad': len(datos)}\n# print(resumen([1, 2, 3]))\n",
+    pytest: "def test_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert ns['resumen']([1, 2, 3]) == {'total': 6, 'cantidad': 3}\n    assert capsys.readouterr().out.strip() == str({'total': 6, 'cantidad': 3})\n",
+    hint: "def resumen(datos: list) -> dict:\n    return {'total': sum(datos), 'cantidad': len(datos)}\nprint(resumen([1, 2, 3]))\n",
+    solution_example: "def resumen(datos: list) -> dict:\n    return {'total': sum(datos), 'cantidad': len(datos)}\n\nprint(resumen([1, 2, 3]))\n",
+    next: Some("py-1103-refactor-helper"), show_type_chips: false, micro_step: 1102,
+};
+
+pub const PY1103_REFACTOR_HELPER: CodingStep = CodingStep {
+    id: "py-1103-refactor-helper", title: "Calidad · Extraer helper", objective: "Extraer una regla en un helper reutilizable.",
+    prompt_md: "**Extraer helper**\n\nMover una regla repetida a una función pequeña la hace reutilizable y testeable por separado.\n\n**Micro-reto:**\n1. Definí `con_iva(precio)` que devuelva `precio * 1.21`\n2. Definí `total(productos)` que sume `con_iva` de cada uno\n3. Imprimí `total([100, 200])`",
+    starter_code: "# def con_iva(precio):\n#     return precio * 1.21\n# def total(productos):\n#     return sum(con_iva(p) for p in productos)\n# print(total([100, 200]))\n",
+    pytest: "def test_helper(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('total'))\n    assert ns['total']([100, 200]) == 363.0\n    assert ns['total']([]) == 0\n    assert capsys.readouterr().out.strip() == '363.0'\n",
+    hint: "def con_iva(precio):\n    return precio * 1.21\ndef total(productos):\n    return sum(con_iva(p) for p in productos)\nprint(total([100, 200]))\n",
+    solution_example: "def con_iva(precio):\n    return precio * 1.21\n\ndef total(productos):\n    return sum(con_iva(p) for p in productos)\n\nprint(total([100, 200]))\n",
+    next: Some("py-1104-refactor-naming"), show_type_chips: false, micro_step: 1103,
+};
+
+pub const PY1104_REFACTOR_NAMING: CodingStep = CodingStep {
+    id: "py-1104-refactor-naming", title: "Calidad · Nombrado claro", objective: "Usar nombres descriptivos que revelen la intención.",
+    prompt_md: "**Nombrado claro**\n\nUn nombre descriptivo elimina la necesidad de comentar qué hace la función.\n\n**Micro-reto:**\n1. Definí `calcular_area_rectangulo(ancho, alto)` que devuelva `ancho * alto`\n2. Imprimí `calcular_area_rectangulo(4, 5)`",
+    starter_code: "# def calcular_area_rectangulo(ancho, alto):\n#     return ancho * alto\n# print(calcular_area_rectangulo(4, 5))\n",
+    pytest: "def test_naming(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('calcular_area_rectangulo'))\n    assert ns['calcular_area_rectangulo'](4, 5) == 20\n    assert capsys.readouterr().out.strip() == '20'\n",
+    hint: "def calcular_area_rectangulo(ancho, alto):\n    return ancho * alto\nprint(calcular_area_rectangulo(4, 5))\n",
+    solution_example: "def calcular_area_rectangulo(ancho, alto):\n    return ancho * alto\n\nprint(calcular_area_rectangulo(4, 5))\n",
+    next: Some("py-1105-refactor-dry"), show_type_chips: false, micro_step: 1104,
+};
+
+pub const PY1105_REFACTOR_DRY: CodingStep = CodingStep {
+    id: "py-1105-refactor-dry", title: "Calidad · DRY", objective: "Eliminar duplicación con un helper parametrizado.",
+    prompt_md: "**DRY (no te repitas)**\n\nDos funciones casi idénticas se unifican en una sola con un parámetro.\n\n**Micro-reto:**\n1. Definí `aplicar_descuento(precio, descuento)`\n2. Definí `precio_final` y `precio_final_vip` reutilizándola\n3. Imprimí `precio_final(100)`",
+    starter_code: "# def aplicar_descuento(precio, descuento):\n#     return precio * (1 - descuento)\n# def precio_final(precio):\n#     return aplicar_descuento(precio, 0.1)\n# def precio_final_vip(precio):\n#     return aplicar_descuento(precio, 0.2)\n# print(precio_final(100))\n",
+    pytest: "def test_dry(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['precio_final'](100) == 90.0\n    assert ns['precio_final_vip'](100) == 80.0\n    assert capsys.readouterr().out.strip() == '90.0'\n",
+    hint: "def aplicar_descuento(precio, descuento):\n    return precio * (1 - descuento)\ndef precio_final(precio):\n    return aplicar_descuento(precio, 0.1)\ndef precio_final_vip(precio):\n    return aplicar_descuento(precio, 0.2)\nprint(precio_final(100))\n",
+    solution_example: "def aplicar_descuento(precio, descuento):\n    return precio * (1 - descuento)\n\ndef precio_final(precio):\n    return aplicar_descuento(precio, 0.1)\n\ndef precio_final_vip(precio):\n    return aplicar_descuento(precio, 0.2)\n\nprint(precio_final(100))\n",
+    next: Some("py-1106-refactor-const"), show_type_chips: false, micro_step: 1105,
+};
+
+pub const PY1106_REFACTOR_CONST: CodingStep = CodingStep {
+    id: "py-1106-refactor-const", title: "Calidad · Constantes", objective: "Extraer números mágicos a constantes con nombre.",
+    prompt_md: "**Constantes**\n\nLos números mágicos se vuelven constantes con nombre para que el código sea legible y fácil de ajustar.\n\n**Micro-reto:**\n1. Definí `IVA = 0.21` y `DESCUENTO = 0.1`\n2. Definí `precio_final(precio)` usándolas\n3. Imprimí `precio_final(100)`",
+    starter_code: "# IVA = 0.21\n# DESCUENTO = 0.1\n# def precio_con_iva(precio):\n#     return precio * (1 + IVA)\n# def precio_final(precio):\n#     return precio_con_iva(precio) * (1 - DESCUENTO)\n# print(precio_final(100))\n",
+    pytest: "def test_const(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['IVA'] == 0.21\n    assert ns['precio_final'](100) == 108.9\n    assert capsys.readouterr().out.strip() == '108.9'\n",
+    hint: "IVA = 0.21\nDESCUENTO = 0.1\ndef precio_con_iva(precio):\n    return precio * (1 + IVA)\ndef precio_final(precio):\n    return precio_con_iva(precio) * (1 - DESCUENTO)\nprint(precio_final(100))\n",
+    solution_example: "IVA = 0.21\nDESCUENTO = 0.1\n\ndef precio_con_iva(precio):\n    return precio * (1 + IVA)\n\ndef precio_final(precio):\n    return precio_con_iva(precio) * (1 - DESCUENTO)\n\nprint(precio_final(100))\n",
+    next: Some("py-1107-refactor-challenge"), show_type_chips: false, micro_step: 1106,
+};
+
+pub const PY1107_REFACTOR_CHALLENGE: CodingStep = CodingStep {
+    id: "py-1107-refactor-challenge", title: "Calidad · Desafío de refactor", objective: "Separar una regla en un predicado reutilizable.",
+    prompt_md: "**Desafío de refactor**\n\nSepará la condición en un predicado (`es_par`) y reutilizalo en el conteo.\n\n**Micro-reto:**\n1. Definí `es_par(n)` que devuelva `n % 2 == 0`\n2. Definí `contar_pares(nums)` usándolo\n3. Imprimí `contar_pares([1, 2, 3, 4, 5])`",
+    starter_code: "# def es_par(n):\n#     return n % 2 == 0\n# def contar_pares(nums):\n#     return sum(1 for n in nums if es_par(n))\n# print(contar_pares([1, 2, 3, 4, 5]))\n",
+    pytest: "def test_challenge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['contar_pares']([1, 2, 3, 4, 5]) == 2\n    assert ns['contar_pares']([]) == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def es_par(n):\n    return n % 2 == 0\ndef contar_pares(nums):\n    return sum(1 for n in nums if es_par(n))\nprint(contar_pares([1, 2, 3, 4, 5]))\n",
+    solution_example: "def es_par(n):\n    return n % 2 == 0\n\ndef contar_pares(nums):\n    return sum(1 for n in nums if es_par(n))\n\nprint(contar_pares([1, 2, 3, 4, 5]))\n",
+    next: Some("py-1108-refactor-report"), show_type_chips: false, micro_step: 1107,
+};
+
+pub const PY1108_REFACTOR_REPORT: CodingStep = CodingStep {
+    id: "py-1108-refactor-report", title: "Calidad · Módulo cohesivo", objective: "Componer helpers en un reporte agregado.",
+    prompt_md: "**Módulo cohesivo**\n\nHelpers pequeños y cohesivos se componen en un reporte claro.\n\n**Micro-reto:**\n1. Definí `es_positivo(n)`\n2. Definí `clasificar(nums)` que cuente positivos y totales\n3. Imprimí `clasificar([1, -2, 3])`",
+    starter_code: "# def es_positivo(n):\n#     return n > 0\n# def clasificar(nums):\n#     return {'positivos': sum(1 for n in nums if es_positivo(n)), 'total': len(nums)}\n# print(clasificar([1, -2, 3]))\n",
+    pytest: "def test_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['clasificar']([1, -2, 3]) == {'positivos': 2, 'total': 3}\n    assert capsys.readouterr().out.strip() == str({'positivos': 2, 'total': 3})\n",
+    hint: "def es_positivo(n):\n    return n > 0\ndef clasificar(nums):\n    return {'positivos': sum(1 for n in nums if es_positivo(n)), 'total': len(nums)}\nprint(clasificar([1, -2, 3]))\n",
+    solution_example: "def es_positivo(n):\n    return n > 0\n\ndef clasificar(nums):\n    return {'positivos': sum(1 for n in nums if es_positivo(n)), 'total': len(nums)}\n\nprint(clasificar([1, -2, 3]))\n",
+    next: Some("py-1109-property-getter"), show_type_chips: false, micro_step: 1108,
+};
+
+pub const PY1109_PROPERTY_GETTER: CodingStep = CodingStep {
+    id: "py-1109-property-getter", title: "Calidad · Propiedad calculada", objective: "Exponer un valor calculado con @property.",
+    prompt_md: "**Propiedad calculada**\n\n`@property` expone un método como si fuera un atributo, sin paréntesis al llamarlo.\n\n**Micro-reto:**\n1. Definí `Rectangulo` con `ancho` y `alto`\n2. Agregá `@property area` que devuelva `ancho * alto`\n3. Imprimí `Rectangulo(4, 5).area`",
+    starter_code: "# class Rectangulo:\n#     def __init__(self, ancho, alto):\n#         self.ancho = ancho\n#         self.alto = alto\n#     @property\n#     def area(self):\n#         return self.ancho * self.alto\n# print(Rectangulo(4, 5).area)\n",
+    pytest: "def test_getter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    r = ns['Rectangulo'](4, 5)\n    assert r.area == 20\n    assert capsys.readouterr().out.strip() == '20'\n",
+    hint: "class Rectangulo:\n    def __init__(self, ancho, alto):\n        self.ancho = ancho\n        self.alto = alto\n    @property\n    def area(self):\n        return self.ancho * self.alto\nprint(Rectangulo(4, 5).area)\n",
+    solution_example: "class Rectangulo:\n    def __init__(self, ancho, alto):\n        self.ancho = ancho\n        self.alto = alto\n\n    @property\n    def area(self):\n        return self.ancho * self.alto\n\nprint(Rectangulo(4, 5).area)\n",
+    next: Some("py-1110-property-setter"), show_type_chips: false, micro_step: 1109,
+};
+
+pub const PY1110_PROPERTY_SETTER: CodingStep = CodingStep {
+    id: "py-1110-property-setter", title: "Calidad · Propiedad con setter", objective: "Permitir asignar una propiedad con @setter.",
+    prompt_md: "**Propiedad con setter**\n\nEl setter intercepta la asignación, permitiendo guardar el valor en un campo privado.\n\n**Micro-reto:**\n1. Definí `Termometro` con `_celsius` y la propiedad `celsius` (getter y setter)\n2. Asigná `t.celsius = 25` e imprimí `t.celsius`",
+    starter_code: "# class Termometro:\n#     def __init__(self, celsius=0):\n#         self._celsius = celsius\n#     @property\n#     def celsius(self):\n#         return self._celsius\n#     @celsius.setter\n#     def celsius(self, valor):\n#         self._celsius = valor\n# t = Termometro()\n# t.celsius = 25\n# print(t.celsius)\n",
+    pytest: "def test_setter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    t = ns['Termometro']()\n    t.celsius = 25\n    assert t.celsius == 25\n    assert capsys.readouterr().out.strip() == '25'\n",
+    hint: "class Termometro:\n    def __init__(self, celsius=0):\n        self._celsius = celsius\n    @property\n    def celsius(self):\n        return self._celsius\n    @celsius.setter\n    def celsius(self, valor):\n        self._celsius = valor\nt = Termometro()\nt.celsius = 25\nprint(t.celsius)\n",
+    solution_example: "class Termometro:\n    def __init__(self, celsius=0):\n        self._celsius = celsius\n\n    @property\n    def celsius(self):\n        return self._celsius\n\n    @celsius.setter\n    def celsius(self, valor):\n        self._celsius = valor\n\nt = Termometro()\nt.celsius = 25\nprint(t.celsius)\n",
+    next: Some("py-1111-property-invariant"), show_type_chips: false, micro_step: 1110,
+};
+
+pub const PY1111_PROPERTY_INVARIANT: CodingStep = CodingStep {
+    id: "py-1111-property-invariant", title: "Calidad · Invariante en setter", objective: "Validar el estado interno antes de aceptarlo.",
+    prompt_md: "**Invariante en setter**\n\nEl setter valida el nuevo valor y rechaza los que rompen el invariante (por ejemplo, saldo negativo).\n\n**Micro-reto:**\n1. Definí `Cuenta` con la propiedad `saldo`\n2. En el setter, lanzá `ValueError` si el valor es negativo\n3. Imprimí `c.saldo` tras asignar `100`",
+    starter_code: "# class Cuenta:\n#     def __init__(self, saldo=0):\n#         self._saldo = saldo\n#     @property\n#     def saldo(self):\n#         return self._saldo\n#     @saldo.setter\n#     def saldo(self, valor):\n#         if valor < 0:\n#             raise ValueError('saldo negativo')\n#         self._saldo = valor\n# c = Cuenta()\n# c.saldo = 100\n# print(c.saldo)\n",
+    pytest: "def test_invariant(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    c = ns['Cuenta']()\n    c.saldo = 100\n    assert c.saldo == 100\n    try:\n        c.saldo = -5\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '100'\n",
+    hint: "class Cuenta:\n    def __init__(self, saldo=0):\n        self._saldo = saldo\n    @property\n    def saldo(self):\n        return self._saldo\n    @saldo.setter\n    def saldo(self, valor):\n        if valor < 0:\n            raise ValueError('saldo negativo')\n        self._saldo = valor\nc = Cuenta()\nc.saldo = 100\nprint(c.saldo)\n",
+    solution_example: "class Cuenta:\n    def __init__(self, saldo=0):\n        self._saldo = saldo\n\n    @property\n    def saldo(self):\n        return self._saldo\n\n    @saldo.setter\n    def saldo(self, valor):\n        if valor < 0:\n            raise ValueError('saldo negativo')\n        self._saldo = valor\n\nc = Cuenta()\nc.saldo = 100\nprint(c.saldo)\n",
+    next: Some("py-1112-property-computed"), show_type_chips: false, micro_step: 1111,
+};
+
+pub const PY1112_PROPERTY_COMPUTED: CodingStep = CodingStep {
+    id: "py-1112-property-computed", title: "Calidad · Propiedad derivada", objective: "Derivar una unidad desde el estado interno.",
+    prompt_md: "**Propiedad derivada**\n\nUna propiedad puede derivar un valor en otra unidad a partir del estado interno.\n\n**Micro-reto:**\n1. Definí `Temperatura` con `_celsius`\n2. Agregá `@property fahrenheit` que convierta\n3. Imprimí `Temperatura(100).fahrenheit`",
+    starter_code: "# class Temperatura:\n#     def __init__(self, celsius):\n#         self._celsius = celsius\n#     @property\n#     def fahrenheit(self):\n#         return self._celsius * 9 / 5 + 32\n# print(Temperatura(100).fahrenheit)\n",
+    pytest: "def test_computed(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Temperatura'](0).fahrenheit == 32.0\n    assert ns['Temperatura'](100).fahrenheit == 212.0\n    assert capsys.readouterr().out.strip() == '212.0'\n",
+    hint: "class Temperatura:\n    def __init__(self, celsius):\n        self._celsius = celsius\n    @property\n    def fahrenheit(self):\n        return self._celsius * 9 / 5 + 32\nprint(Temperatura(100).fahrenheit)\n",
+    solution_example: "class Temperatura:\n    def __init__(self, celsius):\n        self._celsius = celsius\n\n    @property\n    def fahrenheit(self):\n        return self._celsius * 9 / 5 + 32\n\nprint(Temperatura(100).fahrenheit)\n",
+    next: Some("py-1113-property-challenge"), show_type_chips: false, micro_step: 1112,
+};
+
+pub const PY1113_PROPERTY_CHALLENGE: CodingStep = CodingStep {
+    id: "py-1113-property-challenge", title: "Calidad · Estado agregado", objective: "Calcular un promedio sobre estado interno mutable.",
+    prompt_md: "**Estado agregado**\n\nUna propiedad puede agregar el estado interno (una lista) y manejar el caso vacío.\n\n**Micro-reto:**\n1. Definí `Registro` con `_notas` y el método `agregar`\n2. Agregá `@property promedio` que devuelva `0` si está vacío\n3. Imprimí el promedio tras agregar `10` y `20`",
+    starter_code: "# class Registro:\n#     def __init__(self):\n#         self._notas = []\n#     @property\n#     def promedio(self):\n#         if not self._notas:\n#             return 0\n#         return sum(self._notas) / len(self._notas)\n#     def agregar(self, nota):\n#         self._notas.append(nota)\n# r = Registro()\n# r.agregar(10)\n# r.agregar(20)\n# print(r.promedio)\n",
+    pytest: "def test_challenge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    r = ns['Registro']()\n    assert r.promedio == 0\n    r.agregar(10)\n    r.agregar(20)\n    assert r.promedio == 15.0\n    assert capsys.readouterr().out.strip() == '15.0'\n",
+    hint: "class Registro:\n    def __init__(self):\n        self._notas = []\n    @property\n    def promedio(self):\n        if not self._notas:\n            return 0\n        return sum(self._notas) / len(self._notas)\n    def agregar(self, nota):\n        self._notas.append(nota)\nr = Registro()\nr.agregar(10)\nr.agregar(20)\nprint(r.promedio)\n",
+    solution_example: "class Registro:\n    def __init__(self):\n        self._notas = []\n\n    @property\n    def promedio(self):\n        if not self._notas:\n            return 0\n        return sum(self._notas) / len(self._notas)\n\n    def agregar(self, nota):\n        self._notas.append(nota)\n\nr = Registro()\nr.agregar(10)\nr.agregar(20)\nprint(r.promedio)\n",
+    next: Some("py-1114-property-report"), show_type_chips: false, micro_step: 1113,
+};
+
+pub const PY1114_PROPERTY_REPORT: CodingStep = CodingStep {
+    id: "py-1114-property-report", title: "Calidad · Reporte de estado", objective: "Combinar varias propiedades para reportar estado.",
+    prompt_md: "**Reporte de estado**\n\nVarias propiedades derivadas resumen el estado interno del objeto.\n\n**Micro-reto:**\n1. Definí `Caja` con `agregar`, `total_items` y `esta_vacia`\n2. Imprimí `Caja().esta_vacia`",
+    starter_code: "# class Caja:\n#     def __init__(self):\n#         self._items = []\n#     def agregar(self, item):\n#         self._items.append(item)\n#     @property\n#     def total_items(self):\n#         return len(self._items)\n#     @property\n#     def esta_vacia(self):\n#         return len(self._items) == 0\n# c = Caja()\n# print(c.esta_vacia)\n",
+    pytest: "def test_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    c = ns['Caja']()\n    assert c.esta_vacia is True\n    c.agregar('x')\n    assert c.total_items == 1\n    assert c.esta_vacia is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "class Caja:\n    def __init__(self):\n        self._items = []\n    def agregar(self, item):\n        self._items.append(item)\n    @property\n    def total_items(self):\n        return len(self._items)\n    @property\n    def esta_vacia(self):\n        return len(self._items) == 0\nc = Caja()\nprint(c.esta_vacia)\n",
+    solution_example: "class Caja:\n    def __init__(self):\n        self._items = []\n\n    def agregar(self, item):\n        self._items.append(item)\n\n    @property\n    def total_items(self):\n        return len(self._items)\n\n    @property\n    def esta_vacia(self):\n        return len(self._items) == 0\n\nc = Caja()\nprint(c.esta_vacia)\n",
+    next: Some("py-1115-pipeline-source"), show_type_chips: false, micro_step: 1114,
+};
+
+pub const PY1115_PIPELINE_SOURCE: CodingStep = CodingStep {
+    id: "py-1115-pipeline-source", title: "Calidad · Fuente del pipeline", objective: "Generar tokens desde un texto separado por comas.",
+    prompt_md: "**Fuente del pipeline**\n\nEl primer paso de un pipeline produce datos crudos con un generador.\n\n**Micro-reto:**\n1. Definí `tokens(texto)` que haga `yield` de cada parte separada por coma\n2. Imprimí `list(tokens('a, b, c'))`",
+    starter_code: "# def tokens(texto):\n#     for parte in texto.split(','):\n#         yield parte.strip()\n# print(list(tokens('a, b, c')))\n",
+    pytest: "def test_source(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('tokens'))\n    assert list(ns['tokens']('a, b, c')) == ['a', 'b', 'c']\n    assert capsys.readouterr().out.strip() == str(['a', 'b', 'c'])\n",
+    hint: "def tokens(texto):\n    for parte in texto.split(','):\n        yield parte.strip()\nprint(list(tokens('a, b, c')))\n",
+    solution_example: "def tokens(texto):\n    for parte in texto.split(','):\n        yield parte.strip()\n\nprint(list(tokens('a, b, c')))\n",
+    next: Some("py-1116-pipeline-parse"), show_type_chips: false, micro_step: 1115,
+};
+
+pub const PY1116_PIPELINE_PARSE: CodingStep = CodingStep {
+    id: "py-1116-pipeline-parse", title: "Calidad · Parseo del pipeline", objective: "Convertir tokens a enteros con un generador.",
+    prompt_md: "**Parseo del pipeline**\n\nEl segundo paso convierte cada token a su tipo de dominio, por ejemplo `int`.\n\n**Micro-reto:**\n1. Definí `parsear_enteros(partes)` que haga `yield int(p)`\n2. Imprimí `list(parsear_enteros(['1', '2', '3']))`",
+    starter_code: "# def parsear_enteros(partes):\n#     for p in partes:\n#         yield int(p)\n# print(list(parsear_enteros(['1', '2', '3'])))\n",
+    pytest: "def test_parse(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('parsear_enteros'))\n    assert list(ns['parsear_enteros'](['1', '2', '3'])) == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == '[1, 2, 3]'\n",
+    hint: "def parsear_enteros(partes):\n    for p in partes:\n        yield int(p)\nprint(list(parsear_enteros(['1', '2', '3'])))\n",
+    solution_example: "def parsear_enteros(partes):\n    for p in partes:\n        yield int(p)\n\nprint(list(parsear_enteros(['1', '2', '3'])))\n",
+    next: Some("py-1117-pipeline-filter"), show_type_chips: false, micro_step: 1116,
+};
+
+pub const PY1117_PIPELINE_FILTER: CodingStep = CodingStep {
+    id: "py-1117-pipeline-filter", title: "Calidad · Filtro con errores", objective: "Descartar tokens inválidos capturando ValueError.",
+    prompt_md: "**Filtro con errores**\n\nEl pipeline debe ignorar los tokens que no se pueden convertir, sin detenerse.\n\n**Micro-reto:**\n1. Definí `solo_validos(textos)` que haga `yield int(t)`\n2. Ante `ValueError`, continuá con el siguiente\n3. Imprimí `list(solo_validos(['1', 'x', '2']))`",
+    starter_code: "# def solo_validos(textos):\n#     for t in textos:\n#         try:\n#             yield int(t)\n#         except ValueError:\n#             continue\n# print(list(solo_validos(['1', 'x', '2'])))\n",
+    pytest: "def test_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('solo_validos'))\n    assert list(ns['solo_validos'](['1', 'x', '2'])) == [1, 2]\n    assert capsys.readouterr().out.strip() == '[1, 2]'\n",
+    hint: "def solo_validos(textos):\n    for t in textos:\n        try:\n            yield int(t)\n        except ValueError:\n            continue\nprint(list(solo_validos(['1', 'x', '2'])))\n",
+    solution_example: "def solo_validos(textos):\n    for t in textos:\n        try:\n            yield int(t)\n        except ValueError:\n            continue\n\nprint(list(solo_validos(['1', 'x', '2'])))\n",
+    next: Some("py-1118-pipeline-aggregate"), show_type_chips: false, micro_step: 1117,
+};
+
+pub const PY1118_PIPELINE_AGGREGATE: CodingStep = CodingStep {
+    id: "py-1118-pipeline-aggregate", title: "Calidad · Agregar el pipeline", objective: "Reducir el flujo filtrado a un total.",
+    prompt_md: "**Agregar el pipeline**\n\nEl último paso reduce el flujo filtrado a un único valor con `sum`.\n\n**Micro-reto:**\n1. Reutilizá `solo_validos` y definí `resumen(textos)` que devuelva `sum`\n2. Imprimí `resumen(['1', 'x', '2', '3'])`",
+    starter_code: "# def solo_validos(textos):\n#     for t in textos:\n#         try:\n#             yield int(t)\n#         except ValueError:\n#             continue\n# def resumen(textos):\n#     return sum(solo_validos(textos))\n# print(resumen(['1', 'x', '2', '3']))\n",
+    pytest: "def test_aggregate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert ns['resumen'](['1', 'x', '2', '3']) == 6\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "def solo_validos(textos):\n    for t in textos:\n        try:\n            yield int(t)\n        except ValueError:\n            continue\ndef resumen(textos):\n    return sum(solo_validos(textos))\nprint(resumen(['1', 'x', '2', '3']))\n",
+    solution_example: "def solo_validos(textos):\n    for t in textos:\n        try:\n            yield int(t)\n        except ValueError:\n            continue\n\ndef resumen(textos):\n    return sum(solo_validos(textos))\n\nprint(resumen(['1', 'x', '2', '3']))\n",
+    next: Some("py-1119-pipeline-validate"), show_type_chips: false, micro_step: 1118,
+};
+
+pub const PY1119_PIPELINE_VALIDATE: CodingStep = CodingStep {
+    id: "py-1119-pipeline-validate", title: "Calidad · Validar antes de sumar", objective: "Validar precios antes de totalizar y fallar ante negativos.",
+    prompt_md: "**Validar antes de sumar**\n\nAntes de totalizar, validá que no haya valores negativos y fallá con una excepción clara.\n\n**Micro-reto:**\n1. Definí `validar_precios(precios)` que lance `ValueError` si hay negativos\n2. Definí `total(precios)` que sume los validados\n3. Imprimí `total([10, 20])`",
+    starter_code: "# def validar_precios(precios):\n#     for p in precios:\n#         if p < 0:\n#             raise ValueError('precio negativo')\n#     return precios\n# def total(precios):\n#     return sum(validar_precios(precios))\n# print(total([10, 20]))\n",
+    pytest: "def test_validate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('total'))\n    assert ns['total']([10, 20]) == 30\n    try:\n        ns['total']([10, -5])\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '30'\n",
+    hint: "def validar_precios(precios):\n    for p in precios:\n        if p < 0:\n            raise ValueError('precio negativo')\n    return precios\ndef total(precios):\n    return sum(validar_precios(precios))\nprint(total([10, 20]))\n",
+    solution_example: "def validar_precios(precios):\n    for p in precios:\n        if p < 0:\n            raise ValueError('precio negativo')\n    return precios\n\ndef total(precios):\n    return sum(validar_precios(precios))\n\nprint(total([10, 20]))\n",
+    next: Some("py-1120-pipeline-end-to-end"), show_type_chips: false, micro_step: 1119,
+};
+
+pub const PY1120_PIPELINE_END_TO_END: CodingStep = CodingStep {
+    id: "py-1120-pipeline-end-to-end", title: "Calidad · Pipeline end-to-end", objective: "Integrar generador, errores y validación en un pipeline completo.",
+    prompt_md: "**Pipeline end-to-end**\n\nIntegrá todo: un generador que extrae y parsea, manejo de errores por token y validación que falla ante negativos.\n\n**Micro-reto:**\n1. Definí `procesar(lineas)` que sume los valores positivos de cada línea\n2. Lanzá `ValueError` si aparece un valor negativo\n3. Imprimí `procesar(['1,2,3', '4,5'])`",
+    starter_code: "# def procesar(lineas):\n#     def extraer(linea):\n#         for t in linea.split(','):\n#             try:\n#                 yield int(t.strip())\n#             except ValueError:\n#                 continue\n#     total = 0\n#     conteo = 0\n#     for linea in lineas:\n#         for valor in extraer(linea):\n#             if valor < 0:\n#                 raise ValueError('valor negativo')\n#             total += valor\n#             conteo += 1\n#     return {'total': total, 'elementos': conteo}\n# print(procesar(['1,2,3', '4,5']))\n",
+    pytest: "def test_end_to_end(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('procesar'))\n    assert ns['procesar'](['1,2,3', '4,5']) == {'total': 15, 'elementos': 5}\n    try:\n        ns['procesar'](['1,-2'])\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == str({'total': 15, 'elementos': 5})\n",
+    hint: "def procesar(lineas):\n    def extraer(linea):\n        for t in linea.split(','):\n            try:\n                yield int(t.strip())\n            except ValueError:\n                continue\n    total = 0\n    conteo = 0\n    for linea in lineas:\n        for valor in extraer(linea):\n            if valor < 0:\n                raise ValueError('valor negativo')\n            total += valor\n            conteo += 1\n    return {'total': total, 'elementos': conteo}\nprint(procesar(['1,2,3', '4,5']))\n",
+    solution_example: "def procesar(lineas):\n    def extraer(linea):\n        for t in linea.split(','):\n            try:\n                yield int(t.strip())\n            except ValueError:\n                continue\n    total = 0\n    conteo = 0\n    for linea in lineas:\n        for valor in extraer(linea):\n            if valor < 0:\n                raise ValueError('valor negativo')\n            total += valor\n            conteo += 1\n    return {'total': total, 'elementos': conteo}\n\nprint(procesar(['1,2,3', '4,5']))\n",
+    next: None, show_type_chips: false, micro_step: 1120,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -44509,6 +45109,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1058_PIPE_COMPOSE,
     &PY1059_PIPE_GENERATOR,
     &PY1060_PIPELINE_REPORT,
+    &PY1061_UNIT_TEST_INTRO,
+    &PY1062_UNIT_TEST_COMPOSITE,
+    &PY1063_UNIT_TEST_EDGE,
+    &PY1064_UNIT_TEST_RANGE,
+    &PY1065_UNIT_TEST_CHALLENGE,
+    &PY1066_UNIT_TEST_REPORT,
+    &PY1067_PARAMETRIZE_LOOP,
+    &PY1068_PARAMETRIZE_PAIRS,
+    &PY1069_PARAMETRIZE_EDGE,
+    &PY1070_PARAMETRIZE_INTEGRATION,
+    &PY1071_PARAMETRIZE_CHALLENGE,
+    &PY1072_PARAMETRIZE_REPORT,
+    &PY1073_EXCEPTIONS_RAISE,
+    &PY1074_EXCEPTIONS_TRY_EXCEPT,
+    &PY1075_EXCEPTIONS_CUSTOM,
+    &PY1076_EXCEPTIONS_FINALLY,
+    &PY1077_EXCEPTIONS_RECOVER,
+    &PY1078_EXCEPTIONS_REPORT,
+    &PY1079_CONTEXT_SUPPRESS,
+    &PY1080_CONTEXT_REDIRECT,
+    &PY1081_CONTEXT_CLASS,
+    &PY1082_CONTEXT_CONTEXTMANAGER,
+    &PY1083_CONTEXT_CHALLENGE,
+    &PY1084_CONTEXT_REPORT,
+    &PY1085_DECORATOR_DOUBLE,
+    &PY1086_DECORATOR_UPPERCASE,
+    &PY1087_DECORATOR_WRAPS,
+    &PY1088_DECORATOR_ARGS,
+    &PY1089_DECORATOR_CHALLENGE,
+    &PY1090_DECORATOR_REPORT,
+    &PY1091_GENERATOR_YIELD,
+    &PY1092_GENERATOR_NEXT,
+    &PY1093_GENERATOR_LAZY,
+    &PY1094_GENERATOR_PIPELINE,
+    &PY1095_GENERATOR_CHALLENGE,
+    &PY1096_GENERATOR_REPORT,
+    &PY1097_TYPES_ANNOTATE,
+    &PY1098_TYPES_LIST,
+    &PY1099_TYPES_OPTIONAL,
+    &PY1100_TYPES_DATACLASS,
+    &PY1101_TYPES_TUPLE,
+    &PY1102_TYPES_REPORT,
+    &PY1103_REFACTOR_HELPER,
+    &PY1104_REFACTOR_NAMING,
+    &PY1105_REFACTOR_DRY,
+    &PY1106_REFACTOR_CONST,
+    &PY1107_REFACTOR_CHALLENGE,
+    &PY1108_REFACTOR_REPORT,
+    &PY1109_PROPERTY_GETTER,
+    &PY1110_PROPERTY_SETTER,
+    &PY1111_PROPERTY_INVARIANT,
+    &PY1112_PROPERTY_COMPUTED,
+    &PY1113_PROPERTY_CHALLENGE,
+    &PY1114_PROPERTY_REPORT,
+    &PY1115_PIPELINE_SOURCE,
+    &PY1116_PIPELINE_PARSE,
+    &PY1117_PIPELINE_FILTER,
+    &PY1118_PIPELINE_AGGREGATE,
+    &PY1119_PIPELINE_VALIDATE,
+    &PY1120_PIPELINE_END_TO_END,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -44676,7 +45336,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1060);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1120);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -47574,12 +48234,43 @@ mod tests {
                 "py-1059-pipe-generator",
                 Some("py-1060-pipeline-report"),
             ),
-            (1060, "py-1060-pipeline-report", None),
+            (
+                1060,
+                "py-1060-pipeline-report",
+                Some("py-1061-unit-test-intro"),
+            ),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py1061_to_py1120_engineering_chain() {
+        let bridge = coding_step_by_micro_step(1060).expect("py-1060");
+        assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
+
+        for n in 1061..=1120 {
+            let step = coding_step_by_micro_step(n).expect("engineering chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 1120 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 1120 is the end of the rail");
+            }
         }
     }
 
