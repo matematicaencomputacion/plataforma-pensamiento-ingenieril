@@ -48,7 +48,7 @@ test.describe("session navigation", () => {
     await expect(
       page.getByRole("heading", { name: "Current level micro-step" }),
     ).toBeVisible();
-    await expect(page.locator("#workspace-microsteps li")).toHaveCount(1120);
+    await expect(page.locator("#workspace-microsteps li")).toHaveCount(1180);
 
     await page.getByRole("link", { name: "Portada" }).first().click();
     await expect(page).toHaveURL((url) => new URL(url).pathname === "/");

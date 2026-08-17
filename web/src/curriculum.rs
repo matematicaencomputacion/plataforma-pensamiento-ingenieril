@@ -44045,7 +44045,607 @@ pub const PY1120_PIPELINE_END_TO_END: CodingStep = CodingStep {
     pytest: "def test_end_to_end(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('procesar'))\n    assert ns['procesar'](['1,2,3', '4,5']) == {'total': 15, 'elementos': 5}\n    try:\n        ns['procesar'](['1,-2'])\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == str({'total': 15, 'elementos': 5})\n",
     hint: "def procesar(lineas):\n    def extraer(linea):\n        for t in linea.split(','):\n            try:\n                yield int(t.strip())\n            except ValueError:\n                continue\n    total = 0\n    conteo = 0\n    for linea in lineas:\n        for valor in extraer(linea):\n            if valor < 0:\n                raise ValueError('valor negativo')\n            total += valor\n            conteo += 1\n    return {'total': total, 'elementos': conteo}\nprint(procesar(['1,2,3', '4,5']))\n",
     solution_example: "def procesar(lineas):\n    def extraer(linea):\n        for t in linea.split(','):\n            try:\n                yield int(t.strip())\n            except ValueError:\n                continue\n    total = 0\n    conteo = 0\n    for linea in lineas:\n        for valor in extraer(linea):\n            if valor < 0:\n                raise ValueError('valor negativo')\n            total += valor\n            conteo += 1\n    return {'total': total, 'elementos': conteo}\n\nprint(procesar(['1,2,3', '4,5']))\n",
-    next: None, show_type_chips: false, micro_step: 1120,
+    next: Some("py-1121-oop-class"), show_type_chips: false, micro_step: 1120,
+};
+
+pub const PY1121_OOP_CLASS: CodingStep = CodingStep {
+    id: "py-1121-oop-class", title: "OOP · Clase y constructor", objective: "Definir una clase con __init__ que guarda dos atributos.",
+    prompt_md: "**Clase y constructor**\n\nUna clase agrupa datos y comportamiento. El método `__init__` inicializa los atributos de cada instancia con `self`.\n\n**Micro-reto:**\n1. Definí `class Persona` con `__init__(self, nombre, edad)`\n2. Guardá `self.nombre` y `self.edad`\n3. Imprimí `p.nombre, p.edad` para `Persona('Ana', 25)`",
+    starter_code: "# class Persona:\n#     def __init__(self, nombre, edad):\n#         self.nombre = nombre\n#         self.edad = edad\n# p = Persona('Ana', 25)\n# print(p.nombre, p.edad)\n",
+    pytest: "def test_clase(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'Persona' in ns\n    p = ns['Persona']('Ana', 25)\n    assert p.nombre == 'Ana'\n    assert p.edad == 25\n    assert capsys.readouterr().out.strip() == 'Ana 25'\n",
+    hint: "Usá self.nombre = nombre y self.edad = edad dentro de __init__.",
+    solution_example: "class Persona:\n    def __init__(self, nombre, edad):\n        self.nombre = nombre\n        self.edad = edad\n\np = Persona('Ana', 25)\nprint(p.nombre, p.edad)\n",
+    next: Some("py-1122-oop-methods"), show_type_chips: false, micro_step: 1121,
+};
+
+pub const PY1122_OOP_METHODS: CodingStep = CodingStep {
+    id: "py-1122-oop-methods", title: "OOP · Métodos de instancia", objective: "Agregar un método que opera sobre los atributos de la instancia.",
+    prompt_md: "**Métodos de instancia**\n\nUn método recibe `self` y accede a los atributos del objeto para calcular resultados.\n\n**Micro-reto:**\n1. Definí `class Rectangulo` con `__init__(self, ancho, alto)`\n2. Agregá `area(self)` que devuelva `self.ancho * self.alto`\n3. Imprimí `Rectangulo(4, 5).area()`",
+    starter_code: "# class Rectangulo:\n#     def __init__(self, ancho, alto):\n#         self.ancho = ancho\n#         self.alto = alto\n#     def area(self):\n#         return self.ancho * self.alto\n# print(Rectangulo(4, 5).area())\n",
+    pytest: "def test_metodos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Rectangulo'](4, 5).area() == 20\n    assert ns['Rectangulo'](2, 3).area() == 6\n    assert capsys.readouterr().out.strip() == '20'\n",
+    hint: "El método usa self.ancho y self.alto para devolver el producto.",
+    solution_example: "class Rectangulo:\n    def __init__(self, ancho, alto):\n        self.ancho = ancho\n        self.alto = alto\n\n    def area(self):\n        return self.ancho * self.alto\n\nprint(Rectangulo(4, 5).area())\n",
+    next: Some("py-1123-oop-constructor-validation"), show_type_chips: false, micro_step: 1122,
+};
+
+pub const PY1123_OOP_CONSTRUCTOR_VALIDATION: CodingStep = CodingStep {
+    id: "py-1123-oop-constructor-validation", title: "OOP · Validación en constructor", objective: "Rechazar estados inválidos desde el __init__ con una excepción.",
+    prompt_md: "**Validación en constructor**\n\nValidar en `__init__` garantiza que un objeto nunca nazca en un estado inválido. Si el dato es malo, lanzá `ValueError`.\n\n**Micro-reto:**\n1. Definí `class Cuenta` con `__init__(self, saldo)`\n2. Si `saldo < 0`, lanzá `ValueError`\n3. Imprimí `Cuenta(100).saldo`",
+    starter_code: "# class Cuenta:\n#     def __init__(self, saldo):\n#         if saldo < 0:\n#             raise ValueError('saldo negativo')\n#         self.saldo = saldo\n# print(Cuenta(100).saldo)\n",
+    pytest: "def test_validacion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Cuenta'](100).saldo == 100\n    try:\n        ns['Cuenta'](-5)\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '100'\n",
+    hint: "Poné el raise ValueError antes de asignar self.saldo.",
+    solution_example: "class Cuenta:\n    def __init__(self, saldo):\n        if saldo < 0:\n            raise ValueError('saldo negativo')\n        self.saldo = saldo\n\nprint(Cuenta(100).saldo)\n",
+    next: Some("py-1124-oop-private-attr"), show_type_chips: false, micro_step: 1123,
+};
+
+pub const PY1124_OOP_PRIVATE_ATTR: CodingStep = CodingStep {
+    id: "py-1124-oop-private-attr", title: "OOP · Atributos privados", objective: "Usar la convención _attr y exponer acceso a través de métodos.",
+    prompt_md: "**Atributos privados**\n\nPython no impone privacidad real; la convención `_valor` señala \"no tocar desde afuera\". Se accede mediante métodos públicos.\n\n**Micro-reto:**\n1. Definí `class Contador` con `self._valor = 0`\n2. Agregá `incrementar(self)` y `obtener(self)`\n3. Incrementá dos veces e imprimí `obtener()`",
+    starter_code: "# class Contador:\n#     def __init__(self):\n#         self._valor = 0\n#     def incrementar(self):\n#         self._valor += 1\n#     def obtener(self):\n#         return self._valor\n# c = Contador()\n# c.incrementar()\n# c.incrementar()\n# print(c.obtener())\n",
+    pytest: "def test_privado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    c = ns['Contador']()\n    assert c._valor == 0\n    c.incrementar()\n    c.incrementar()\n    assert c.obtener() == 2\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Guardá el estado en self._valor y devolvelo desde obtener().",
+    solution_example: "class Contador:\n    def __init__(self):\n        self._valor = 0\n\n    def incrementar(self):\n        self._valor += 1\n\n    def obtener(self):\n        return self._valor\n\nc = Contador()\nc.incrementar()\nc.incrementar()\nprint(c.obtener())\n",
+    next: Some("py-1125-oop-coordination"), show_type_chips: false, micro_step: 1124,
+};
+
+pub const PY1125_OOP_COORDINATION: CodingStep = CodingStep {
+    id: "py-1125-oop-coordination", title: "OOP · Coordinación de clases", objective: "Hacer que dos clases colaboren con una relación has-a simple.",
+    prompt_md: "**Coordinación de clases**\n\nUn objeto puede contener a otro y delegarle trabajo. Es la relación \"tiene un\" (has-a) más simple.\n\n**Micro-reto:**\n1. Definí `class Motor` con `arrancar(self)` que devuelva `'brum'`\n2. Definí `class Auto` cuyo `__init__` crea `self.motor = Motor()`\n3. `Auto.arrancar(self)` delega en `self.motor.arrancar()`",
+    starter_code: "# class Motor:\n#     def arrancar(self):\n#         return 'brum'\n# class Auto:\n#     def __init__(self):\n#         self.motor = Motor()\n#     def arrancar(self):\n#         return self.motor.arrancar()\n# print(Auto().arrancar())\n",
+    pytest: "def test_coordinacion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Motor']().arrancar() == 'brum'\n    assert ns['Auto']().arrancar() == 'brum'\n    assert capsys.readouterr().out.strip() == 'brum'\n",
+    hint: "Auto guarda un Motor en self.motor y delega el método arrancar.",
+    solution_example: "class Motor:\n    def arrancar(self):\n        return 'brum'\n\nclass Auto:\n    def __init__(self):\n        self.motor = Motor()\n\n    def arrancar(self):\n        return self.motor.arrancar()\n\nprint(Auto().arrancar())\n",
+    next: Some("py-1126-oop-frozen-dataclass"), show_type_chips: false, micro_step: 1125,
+};
+
+pub const PY1126_OOP_FROZEN_DATACLASS: CodingStep = CodingStep {
+    id: "py-1126-oop-frozen-dataclass", title: "OOP · Dataclass inmutable", objective: "Crear un tipo de valor inmutable con frozen dataclass.",
+    prompt_md: "**Dataclass inmutable**\n\n`@dataclass(frozen=True)` genera `__init__` y `__repr__`, y bloquea la reasignación de atributos tras la creación.\n\n**Micro-reto:**\n1. Importá `dataclass` y definí `@dataclass(frozen=True) class Punto` con `x: int` y `y: int`\n2. Imprimí `Punto(3, 4).x, Punto(3, 4).y`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class Punto:\n#     x: int\n#     y: int\n# p = Punto(3, 4)\n# print(p.x, p.y)\n",
+    pytest: "def test_frozen(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    p = ns['Punto'](3, 4)\n    assert p.x == 3 and p.y == 4\n    try:\n        p.x = 5\n        raised = False\n    except Exception:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '3 4'\n",
+    hint: "Agregá frozen=True al decorador y anotá los campos con tipo.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Punto:\n    x: int\n    y: int\n\np = Punto(3, 4)\nprint(p.x, p.y)\n",
+    next: Some("py-1127-inheritance-subclass"), show_type_chips: false, micro_step: 1126,
+};
+
+pub const PY1127_INHERITANCE_SUBCLASS: CodingStep = CodingStep {
+    id: "py-1127-inheritance-subclass", title: "Herencia · Subclase heredada", objective: "Heredar atributos y métodos de una clase base.",
+    prompt_md: "**Subclase heredada**\n\nUna subclase reutiliza lo que define su clase base sin repetir código. `class Perro(Animal)` hereda `__init__` y `hablar`.\n\n**Micro-reto:**\n1. Definí `class Animal` con `__init__(self, nombre)` y `hablar(self)` que devuelva `'...'`\n2. Definí `class Perro(Animal)` con `pass`\n3. Imprimí `Perro('Firulais').nombre` y `.hablar()`",
+    starter_code: "# class Animal:\n#     def __init__(self, nombre):\n#         self.nombre = nombre\n#     def hablar(self):\n#         return '...'\n# class Perro(Animal):\n#     pass\n# p = Perro('Firulais')\n# print(p.nombre, p.hablar())\n",
+    pytest: "def test_subclase(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert issubclass(ns['Perro'], ns['Animal'])\n    p = ns['Perro']('Firulais')\n    assert p.nombre == 'Firulais'\n    assert p.hablar() == '...'\n    assert capsys.readouterr().out.strip() == 'Firulais ...'\n",
+    hint: "Perro hereda de Animal; con pass ya dispone de __init__ y hablar.",
+    solution_example: "class Animal:\n    def __init__(self, nombre):\n        self.nombre = nombre\n\n    def hablar(self):\n        return '...'\n\nclass Perro(Animal):\n    pass\n\np = Perro('Firulais')\nprint(p.nombre, p.hablar())\n",
+    next: Some("py-1128-inheritance-override"), show_type_chips: false, micro_step: 1127,
+};
+
+pub const PY1128_INHERITANCE_OVERRIDE: CodingStep = CodingStep {
+    id: "py-1128-inheritance-override", title: "Herencia · Override de método", objective: "Sobrescribir un método de la clase base con comportamiento propio.",
+    prompt_md: "**Override de método**\n\nRedefinir un método en la subclase reemplaza la versión heredada. La base conserva la suya.\n\n**Micro-reto:**\n1. `class Animal` con `hablar(self)` que devuelva `'...'`\n2. `class Perro(Animal)` que sobrescriba `hablar` devolviendo `'guau'`\n3. Imprimí `Perro().hablar()`",
+    starter_code: "# class Animal:\n#     def hablar(self):\n#         return '...'\n# class Perro(Animal):\n#     def hablar(self):\n#         return 'guau'\n# print(Perro().hablar())\n",
+    pytest: "def test_override(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Animal']().hablar() == '...'\n    assert ns['Perro']().hablar() == 'guau'\n    assert capsys.readouterr().out.strip() == 'guau'\n",
+    hint: "Definí hablar en Perro con el mismo nombre y una firma compatible.",
+    solution_example: "class Animal:\n    def hablar(self):\n        return '...'\n\nclass Perro(Animal):\n    def hablar(self):\n        return 'guau'\n\nprint(Perro().hablar())\n",
+    next: Some("py-1129-inheritance-super"), show_type_chips: false, micro_step: 1128,
+};
+
+pub const PY1129_INHERITANCE_SUPER: CodingStep = CodingStep {
+    id: "py-1129-inheritance-super", title: "Herencia · super() encadenado", objective: "Extender el constructor base con super() sin duplicar lógica.",
+    prompt_md: "**super() encadenado**\n\n`super().__init__(...)` llama al constructor de la clase base para reutilizar su inicialización y luego agregar atributos propios.\n\n**Micro-reto:**\n1. `class Animal` con `__init__(self, nombre)`\n2. `class Perro(Animal)` con `__init__(self, nombre, raza)` que llame a `super().__init__(nombre)` y guarde `self.raza`\n3. Imprimí `Perro('Firulais', 'labrador').nombre, .raza`",
+    starter_code: "# class Animal:\n#     def __init__(self, nombre):\n#         self.nombre = nombre\n# class Perro(Animal):\n#     def __init__(self, nombre, raza):\n#         super().__init__(nombre)\n#         self.raza = raza\n# p = Perro('Firulais', 'labrador')\n# print(p.nombre, p.raza)\n",
+    pytest: "def test_super(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    p = ns['Perro']('Firulais', 'labrador')\n    assert p.nombre == 'Firulais'\n    assert p.raza == 'labrador'\n    assert capsys.readouterr().out.strip() == 'Firulais labrador'\n",
+    hint: "Llamá super().__init__(nombre) al inicio del __init__ de Perro.",
+    solution_example: "class Animal:\n    def __init__(self, nombre):\n        self.nombre = nombre\n\nclass Perro(Animal):\n    def __init__(self, nombre, raza):\n        super().__init__(nombre)\n        self.raza = raza\n\np = Perro('Firulais', 'labrador')\nprint(p.nombre, p.raza)\n",
+    next: Some("py-1130-polymorphism-interface"), show_type_chips: false, micro_step: 1129,
+};
+
+pub const PY1130_POLYMORPHISM_INTERFACE: CodingStep = CodingStep {
+    id: "py-1130-polymorphism-interface", title: "Polimorfismo · Interfaz común", objective: "Tratar objetos distintos por una misma interfaz de métodos.",
+    prompt_md: "**Interfaz común**\n\nEl polimorfismo permite recorrer objetos de clases distintas si responden al mismo método.\n\n**Micro-reto:**\n1. `class Perro` y `class Gato`, ambas con `sonido(self)`\n2. Definí `coro(animales)` que devuelva `[a.sonido() for a in animales]`\n3. Imprimí `coro([Perro(), Gato()])`",
+    starter_code: "# class Perro:\n#     def sonido(self):\n#         return 'guau'\n# class Gato:\n#     def sonido(self):\n#         return 'miau'\n# def coro(animales):\n#     return [a.sonido() for a in animales]\n# print(coro([Perro(), Gato()]))\n",
+    pytest: "def test_polimorfismo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['coro']([ns['Perro'](), ns['Gato']()]) == ['guau', 'miau']\n    assert capsys.readouterr().out.strip() == str(['guau', 'miau'])\n",
+    hint: "Ambas clases definen sonido(); coro solo llama a a.sonido().",
+    solution_example: "class Perro:\n    def sonido(self):\n        return 'guau'\n\nclass Gato:\n    def sonido(self):\n        return 'miau'\n\ndef coro(animales):\n    return [a.sonido() for a in animales]\n\nprint(coro([Perro(), Gato()]))\n",
+    next: Some("py-1131-inheritance-hierarchy"), show_type_chips: false, micro_step: 1130,
+};
+
+pub const PY1131_INHERITANCE_HIERARCHY: CodingStep = CodingStep {
+    id: "py-1131-inheritance-hierarchy", title: "Herencia · Jerarquía de 3 niveles", objective: "Encadenar tres niveles de herencia acumulando métodos.",
+    prompt_md: "**Jerarquía de 3 niveles**\n\nCada nivel añade métodos; el más concreto hereda de todos sus ancestros.\n\n**Micro-reto:**\n1. `SerVivo` con `respirar` → `'respira'`\n2. `Animal(SerVivo)` con `moverse` → `'camina'`\n3. `Perro(Animal)` con `sonido` → `'guau'`\n4. Imprimí los tres métodos de `Perro()`",
+    starter_code: "# class SerVivo:\n#     def respirar(self):\n#         return 'respira'\n# class Animal(SerVivo):\n#     def moverse(self):\n#         return 'camina'\n# class Perro(Animal):\n#     def sonido(self):\n#         return 'guau'\n# p = Perro()\n# print(p.respirar(), p.moverse(), p.sonido())\n",
+    pytest: "def test_jerarquia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    p = ns['Perro']()\n    assert p.respirar() == 'respira'\n    assert p.moverse() == 'camina'\n    assert p.sonido() == 'guau'\n    assert capsys.readouterr().out.strip() == 'respira camina guau'\n",
+    hint: "Perro hereda de Animal, que hereda de SerVivo; acumulás los tres métodos.",
+    solution_example: "class SerVivo:\n    def respirar(self):\n        return 'respira'\n\nclass Animal(SerVivo):\n    def moverse(self):\n        return 'camina'\n\nclass Perro(Animal):\n    def sonido(self):\n        return 'guau'\n\np = Perro()\nprint(p.respirar(), p.moverse(), p.sonido())\n",
+    next: Some("py-1132-duck-typing"), show_type_chips: false, micro_step: 1131,
+};
+
+pub const PY1132_DUCK_TYPING: CodingStep = CodingStep {
+    id: "py-1132-duck-typing", title: "Duck typing · Sin herencia", objective: "Aprovechar interfaces implícitas sin relación de herencia.",
+    prompt_md: "**Duck typing**\n\n\"Si camina como pato y grazna como pato, es un pato.\" Basta con que un objeto defina el método; no importa su tipo.\n\n**Micro-reto:**\n1. `class Perro` y `class Bocina`, ambas con `sonido(self)`\n2. Definí `emitir(obj)` que devuelva `obj.sonido()`\n3. Imprimí `emitir(Perro()), emitir(Bocina())`",
+    starter_code: "# class Perro:\n#     def sonido(self):\n#         return 'guau'\n# class Bocina:\n#     def sonido(self):\n#         return 'beep'\n# def emitir(obj):\n#     return obj.sonido()\n# print(emitir(Perro()), emitir(Bocina()))\n",
+    pytest: "def test_duck(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['emitir'](ns['Perro']()) == 'guau'\n    assert ns['emitir'](ns['Bocina']()) == 'beep'\n    assert capsys.readouterr().out.strip() == 'guau beep'\n",
+    hint: "emitir no revisa el tipo; solo llama obj.sonido().",
+    solution_example: "class Perro:\n    def sonido(self):\n        return 'guau'\n\nclass Bocina:\n    def sonido(self):\n        return 'beep'\n\ndef emitir(obj):\n    return obj.sonido()\n\nprint(emitir(Perro()), emitir(Bocina()))\n",
+    next: Some("py-1133-composition-nested"), show_type_chips: false, micro_step: 1132,
+};
+
+pub const PY1133_COMPOSITION_NESTED: CodingStep = CodingStep {
+    id: "py-1133-composition-nested", title: "Composición · Objeto anidado", objective: "Componer un objeto dentro de otro para reutilizar comportamiento.",
+    prompt_md: "**Objeto anidado**\n\nLa composición construye objetos complejos a partir de objetos más simples.\n\n**Micro-reto:**\n1. `class Rueda` con `girar(self)` → `'gira'`\n2. `class Bicicleta` cuyo `__init__` crea `self.rueda = Rueda()`\n3. `mover(self)` devuelve `self.rueda.girar()`",
+    starter_code: "# class Rueda:\n#     def girar(self):\n#         return 'gira'\n# class Bicicleta:\n#     def __init__(self):\n#         self.rueda = Rueda()\n#     def mover(self):\n#         return self.rueda.girar()\n# print(Bicicleta().mover())\n",
+    pytest: "def test_anidado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Bicicleta']().mover() == 'gira'\n    assert capsys.readouterr().out.strip() == 'gira'\n",
+    hint: "Bicicleta contiene una Rueda y delega en su método girar.",
+    solution_example: "class Rueda:\n    def girar(self):\n        return 'gira'\n\nclass Bicicleta:\n    def __init__(self):\n        self.rueda = Rueda()\n\n    def mover(self):\n        return self.rueda.girar()\n\nprint(Bicicleta().mover())\n",
+    next: Some("py-1134-composition-delegation"), show_type_chips: false, micro_step: 1133,
+};
+
+pub const PY1134_COMPOSITION_DELEGATION: CodingStep = CodingStep {
+    id: "py-1134-composition-delegation", title: "Composición · Delegación", objective: "Delegar tareas a un objeto colaborador.",
+    prompt_md: "**Delegación**\n\nUn objeto delega parte de su trabajo a un colaborador en lugar de hacerlo todo solo.\n\n**Micro-reto:**\n1. `class Logger` con `registrar(self, msg)` → `'LOG: ' + msg`\n2. `class Servicio` con `self.logger = Logger()`\n3. `ejecutar(self, tarea)` devuelve `self.logger.registrar(tarea)`",
+    starter_code: "# class Logger:\n#     def registrar(self, msg):\n#         return 'LOG: ' + msg\n# class Servicio:\n#     def __init__(self):\n#         self.logger = Logger()\n#     def ejecutar(self, tarea):\n#         return self.logger.registrar(tarea)\n# print(Servicio().ejecutar('backup'))\n",
+    pytest: "def test_delegacion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Servicio']().ejecutar('backup') == 'LOG: backup'\n    assert capsys.readouterr().out.strip() == 'LOG: backup'\n",
+    hint: "Servicio reenvía la tarea al logger que compone.",
+    solution_example: "class Logger:\n    def registrar(self, msg):\n        return 'LOG: ' + msg\n\nclass Servicio:\n    def __init__(self):\n        self.logger = Logger()\n\n    def ejecutar(self, tarea):\n        return self.logger.registrar(tarea)\n\nprint(Servicio().ejecutar('backup'))\n",
+    next: Some("py-1135-composition-vs-inheritance"), show_type_chips: false, micro_step: 1134,
+};
+
+pub const PY1135_COMPOSITION_VS_INHERITANCE: CodingStep = CodingStep {
+    id: "py-1135-composition-vs-inheritance", title: "Composición vs herencia", objective: "Elegir composición para reutilizar sin heredar.",
+    prompt_md: "**Composición vs herencia**\n\nCuando no hay relación \"es un\", la composición (\"tiene un\") es más flexible y evita acoplar jerarquías.\n\n**Micro-reto:**\n1. `class Motor` con `potencia(self)` → `100`\n2. `class Coche` con `self.motor = Motor()` (no heredes de Motor)\n3. `Coche.potencia(self)` delega en `self.motor.potencia()`",
+    starter_code: "# class Motor:\n#     def potencia(self):\n#         return 100\n# class Coche:\n#     def __init__(self):\n#         self.motor = Motor()\n#     def potencia(self):\n#         return self.motor.potencia()\n# print(Coche().potencia())\n",
+    pytest: "def test_composicion_vs_herencia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Coche']().potencia() == 100\n    assert not issubclass(ns['Coche'], ns['Motor'])\n    assert capsys.readouterr().out.strip() == '100'\n",
+    hint: "Coche no hereda de Motor; lo compone y delega potencia.",
+    solution_example: "class Motor:\n    def potencia(self):\n        return 100\n\nclass Coche:\n    def __init__(self):\n        self.motor = Motor()\n\n    def potencia(self):\n        return self.motor.potencia()\n\nprint(Coche().potencia())\n",
+    next: Some("py-1136-aggregation-collection"), show_type_chips: false, micro_step: 1135,
+};
+
+pub const PY1136_AGGREGATION_COLLECTION: CodingStep = CodingStep {
+    id: "py-1136-aggregation-collection", title: "Agregación · Colección de objetos", objective: "Mantener una colección de objetos agregados.",
+    prompt_md: "**Colección de objetos**\n\nLa agregación mantiene una colección de objetos que pueden existir por fuera del contenedor.\n\n**Micro-reto:**\n1. `class Estudiante` con `self.nombre`\n2. `class Curso` con `self.estudiantes = []`\n3. `agregar(self, e)` y `contar(self)` → `len(...)`\n4. Agregá dos e imprimí `contar()`",
+    starter_code: "# class Estudiante:\n#     def __init__(self, nombre):\n#         self.nombre = nombre\n# class Curso:\n#     def __init__(self):\n#         self.estudiantes = []\n#     def agregar(self, estudiante):\n#         self.estudiantes.append(estudiante)\n#     def contar(self):\n#         return len(self.estudiantes)\n# c = Curso()\n# c.agregar(Estudiante('Ana'))\n# c.agregar(Estudiante('Luis'))\n# print(c.contar())\n",
+    pytest: "def test_agregacion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    c = ns['Curso']()\n    c.agregar(ns['Estudiante']('Ana'))\n    c.agregar(ns['Estudiante']('Luis'))\n    assert c.contar() == 2\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Curso guarda estudiantes en una lista y cuenta su longitud.",
+    solution_example: "class Estudiante:\n    def __init__(self, nombre):\n        self.nombre = nombre\n\nclass Curso:\n    def __init__(self):\n        self.estudiantes = []\n\n    def agregar(self, estudiante):\n        self.estudiantes.append(estudiante)\n\n    def contar(self):\n        return len(self.estudiantes)\n\nc = Curso()\nc.agregar(Estudiante('Ana'))\nc.agregar(Estudiante('Luis'))\nprint(c.contar())\n",
+    next: Some("py-1137-composition-multi"), show_type_chips: false, micro_step: 1136,
+};
+
+pub const PY1137_COMPOSITION_MULTI: CodingStep = CodingStep {
+    id: "py-1137-composition-multi", title: "Composición · Múltiples objetos", objective: "Componer tres o más colaboradores coordinados.",
+    prompt_md: "**Múltiples objetos**\n\nUn objeto puede componer varios colaboradores y coordinar sus responsabilidades.\n\n**Micro-reto:**\n1. `Procesador.ejecutar(x)` → `x * 2`\n2. `Validador.es_valido(x)` → `x >= 0`\n3. `Servicio` compone ambos; `procesar(x)` lanza `ValueError` si inválido y si no devuelve `self.procesador.ejecutar(x)`",
+    starter_code: "# class Procesador:\n#     def ejecutar(self, x):\n#         return x * 2\n# class Validador:\n#     def es_valido(self, x):\n#         return x >= 0\n# class Servicio:\n#     def __init__(self):\n#         self.procesador = Procesador()\n#         self.validador = Validador()\n#     def procesar(self, x):\n#         if not self.validador.es_valido(x):\n#             raise ValueError('invalido')\n#         return self.procesador.ejecutar(x)\n# print(Servicio().procesar(5))\n",
+    pytest: "def test_multi(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Servicio']().procesar(5) == 10\n    try:\n        ns['Servicio']().procesar(-1)\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "Servicio valida con un colaborador y procesa con el otro.",
+    solution_example: "class Procesador:\n    def ejecutar(self, x):\n        return x * 2\n\nclass Validador:\n    def es_valido(self, x):\n        return x >= 0\n\nclass Servicio:\n    def __init__(self):\n        self.procesador = Procesador()\n        self.validador = Validador()\n\n    def procesar(self, x):\n        if not self.validador.es_valido(x):\n            raise ValueError('invalido')\n        return self.procesador.ejecutar(x)\n\nprint(Servicio().procesar(5))\n",
+    next: Some("py-1138-refactor-inheritance-composition"), show_type_chips: false, micro_step: 1137,
+};
+
+pub const PY1138_REFACTOR_INHERITANCE_COMPOSITION: CodingStep = CodingStep {
+    id: "py-1138-refactor-inheritance-composition", title: "Refactor · Herencia a composición", objective: "Reemplazar herencia por composición inyectando un colaborador.",
+    prompt_md: "**Herencia a composición**\n\nRefactorizar de herencia a composición inyecta el colaborador por constructor, ganando flexibilidad.\n\n**Micro-reto:**\n1. `class Motor` con `encender(self)` → `'on'`\n2. `class Vehiculo` con `__init__(self, motor)` que guarde `self.motor`\n3. `Vehiculo.encender(self)` delega en `self.motor.encender()`",
+    starter_code: "# class Motor:\n#     def encender(self):\n#         return 'on'\n# class Vehiculo:\n#     def __init__(self, motor):\n#         self.motor = motor\n#     def encender(self):\n#         return self.motor.encender()\n# print(Vehiculo(Motor()).encender())\n",
+    pytest: "def test_refactor(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Vehiculo'](ns['Motor']()).encender() == 'on'\n    assert capsys.readouterr().out.strip() == 'on'\n",
+    hint: "El motor entra por el constructor y Vehiculo delega en él.",
+    solution_example: "class Motor:\n    def encender(self):\n        return 'on'\n\nclass Vehiculo:\n    def __init__(self, motor):\n        self.motor = motor\n\n    def encender(self):\n        return self.motor.encender()\n\nprint(Vehiculo(Motor()).encender())\n",
+    next: Some("py-1139-mixin-basic"), show_type_chips: false, micro_step: 1138,
+};
+
+pub const PY1139_MIXIN_BASIC: CodingStep = CodingStep {
+    id: "py-1139-mixin-basic", title: "Mixins · Mixin simple", objective: "Reutilizar comportamiento opcional mediante un mixin.",
+    prompt_md: "**Mixin simple**\n\nUn mixin es una clase pensada para aportar un comportamiento reutilizable, no para instanciarse sola.\n\n**Micro-reto:**\n1. `class SaludadorMixin` con `saludar(self)` → `'hola'`\n2. `class Persona(SaludadorMixin)` con `__init__(self, nombre)`\n3. Imprimí `Persona('Ana').saludar()`",
+    starter_code: "# class SaludadorMixin:\n#     def saludar(self):\n#         return 'hola'\n# class Persona(SaludadorMixin):\n#     def __init__(self, nombre):\n#         self.nombre = nombre\n# print(Persona('Ana').saludar())\n",
+    pytest: "def test_mixin_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Persona']('Ana').saludar() == 'hola'\n    assert capsys.readouterr().out.strip() == 'hola'\n",
+    hint: "Persona hereda el método saludar del mixin.",
+    solution_example: "class SaludadorMixin:\n    def saludar(self):\n        return 'hola'\n\nclass Persona(SaludadorMixin):\n    def __init__(self, nombre):\n        self.nombre = nombre\n\nprint(Persona('Ana').saludar())\n",
+    next: Some("py-1140-mixin-multiple"), show_type_chips: false, micro_step: 1139,
+};
+
+pub const PY1140_MIXIN_MULTIPLE: CodingStep = CodingStep {
+    id: "py-1140-mixin-multiple", title: "Mixins · Múltiples mixins", objective: "Combinar varios mixins para sumar capacidades.",
+    prompt_md: "**Múltiples mixins**\n\nUna clase puede heredar de varios mixins y combinar sus métodos.\n\n**Micro-reto:**\n1. `JsonMixin.a_json(self)` que devuelva `json.dumps(self.__dict__)`\n2. `ReprMixin.describir(self)` que devuelva `str(self.__dict__)`\n3. `class Producto(JsonMixin, ReprMixin)` con `nombre` y `precio`\n4. Imprimí `Producto('pan', 10).a_json()`",
+    starter_code: "# import json\n# class JsonMixin:\n#     def a_json(self):\n#         return json.dumps(self.__dict__)\n# class ReprMixin:\n#     def describir(self):\n#         return str(self.__dict__)\n# class Producto(JsonMixin, ReprMixin):\n#     def __init__(self, nombre, precio):\n#         self.nombre = nombre\n#         self.precio = precio\n# print(Producto('pan', 10).a_json())\n",
+    pytest: "def test_mixin_multiple(capsys):\n    import json\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    p = ns['Producto']('pan', 10)\n    assert json.loads(p.a_json()) == {'nombre': 'pan', 'precio': 10}\n    assert p.describir() == str({'nombre': 'pan', 'precio': 10})\n    assert capsys.readouterr().out.strip() == p.a_json()\n",
+    hint: "Producto hereda de ambos mixins y expone a_json y describir.",
+    solution_example: "import json\n\nclass JsonMixin:\n    def a_json(self):\n        return json.dumps(self.__dict__)\n\nclass ReprMixin:\n    def describir(self):\n        return str(self.__dict__)\n\nclass Producto(JsonMixin, ReprMixin):\n    def __init__(self, nombre, precio):\n        self.nombre = nombre\n        self.precio = precio\n\nprint(Producto('pan', 10).a_json())\n",
+    next: Some("py-1141-mixin-mro"), show_type_chips: false, micro_step: 1140,
+};
+
+pub const PY1141_MIXIN_MRO: CodingStep = CodingStep {
+    id: "py-1141-mixin-mro", title: "Mixins · Orden MRO", objective: "Resolver qué método gana con el orden de resolución (MRO).",
+    prompt_md: "**Orden MRO**\n\nCon herencia múltiple, Python resuelve métodos siguiendo el MRO: gana la primera clase base listada que defina el método.\n\n**Micro-reto:**\n1. `Izquierda.quien` → `'izquierda'` y `Derecha.quien` → `'derecha'`\n2. `class Combinada(Izquierda, Derecha)` con `pass`\n3. Imprimí `Combinada().quien()`",
+    starter_code: "# class Izquierda:\n#     def quien(self):\n#         return 'izquierda'\n# class Derecha:\n#     def quien(self):\n#         return 'derecha'\n# class Combinada(Izquierda, Derecha):\n#     pass\n# print(Combinada().quien())\n",
+    pytest: "def test_mro(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Combinada']().quien() == 'izquierda'\n    assert ns['Combinada'].__mro__[1].__name__ == 'Izquierda'\n    assert capsys.readouterr().out.strip() == 'izquierda'\n",
+    hint: "La primera base (Izquierda) define quien y gana en el MRO.",
+    solution_example: "class Izquierda:\n    def quien(self):\n        return 'izquierda'\n\nclass Derecha:\n    def quien(self):\n        return 'derecha'\n\nclass Combinada(Izquierda, Derecha):\n    pass\n\nprint(Combinada().quien())\n",
+    next: Some("py-1142-protocol-contract"), show_type_chips: false, micro_step: 1141,
+};
+
+pub const PY1142_PROTOCOL_CONTRACT: CodingStep = CodingStep {
+    id: "py-1142-protocol-contract", title: "Protocol · Contrato de interfaz", objective: "Declarar una interfaz estructural con typing.Protocol.",
+    prompt_md: "**Contrato de interfaz**\n\n`Protocol` define un contrato por métodos esperados; cualquier objeto que los cumpla es aceptado (tipado estructural).\n\n**Micro-reto:**\n1. `from typing import Protocol`\n2. `class Sonoro(Protocol)` con `sonido(self) -> str: ...`\n3. `class Perro` con `sonido` → `'guau'`\n4. `emitir(s: Sonoro)` devuelve `s.sonido()`",
+    starter_code: "# from typing import Protocol\n# class Sonoro(Protocol):\n#     def sonido(self) -> str: ...\n# class Perro:\n#     def sonido(self):\n#         return 'guau'\n# def emitir(s: Sonoro):\n#     return s.sonido()\n# print(emitir(Perro()))\n",
+    pytest: "def test_protocol(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['emitir'](ns['Perro']()) == 'guau'\n    assert capsys.readouterr().out.strip() == 'guau'\n",
+    hint: "Protocol declara sonido; emitir acepta cualquier objeto con sonido.",
+    solution_example: "from typing import Protocol\n\nclass Sonoro(Protocol):\n    def sonido(self) -> str: ...\n\nclass Perro:\n    def sonido(self):\n        return 'guau'\n\ndef emitir(s: Sonoro):\n    return s.sonido()\n\nprint(emitir(Perro()))\n",
+    next: Some("py-1143-abc-abstract"), show_type_chips: false, micro_step: 1142,
+};
+
+pub const PY1143_ABC_ABSTRACT: CodingStep = CodingStep {
+    id: "py-1143-abc-abstract", title: "ABC · Clase abstracta", objective: "Definir una base abstracta que obliga a implementar métodos.",
+    prompt_md: "**Clase abstracta**\n\n`ABC` con `@abstractmethod` fuerza a las subclases a implementar el método; la base no se puede instanciar.\n\n**Micro-reto:**\n1. `from abc import ABC, abstractmethod`\n2. `class Figura(ABC)` con `@abstractmethod area(self)`\n3. `class Cuadrado(Figura)` con `area` → `self.lado ** 2`\n4. Imprimí `Cuadrado(4).area()`",
+    starter_code: "# from abc import ABC, abstractmethod\n# class Figura(ABC):\n#     @abstractmethod\n#     def area(self):\n#         pass\n# class Cuadrado(Figura):\n#     def __init__(self, lado):\n#         self.lado = lado\n#     def area(self):\n#         return self.lado ** 2\n# print(Cuadrado(4).area())\n",
+    pytest: "def test_abc(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Cuadrado'](4).area() == 16\n    try:\n        ns['Figura']()\n        raised = False\n    except TypeError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '16'\n",
+    hint: "Cuadrado implementa el método abstracto area para poder instanciarse.",
+    solution_example: "from abc import ABC, abstractmethod\n\nclass Figura(ABC):\n    @abstractmethod\n    def area(self):\n        pass\n\nclass Cuadrado(Figura):\n    def __init__(self, lado):\n        self.lado = lado\n\n    def area(self):\n        return self.lado ** 2\n\nprint(Cuadrado(4).area())\n",
+    next: Some("py-1144-mixin-protocol"), show_type_chips: false, micro_step: 1143,
+};
+
+pub const PY1144_MIXIN_PROTOCOL: CodingStep = CodingStep {
+    id: "py-1144-mixin-protocol", title: "Mixins · Mixin + Protocol", objective: "Combinar un mixin con un protocolo comparable.",
+    prompt_md: "**Mixin + Protocol**\n\nUn mixin puede apoyarse en un contrato (`__lt__`) declarado por un `Protocol` para aportar métodos derivados.\n\n**Micro-reto:**\n1. `class Comparable(Protocol)` con `__lt__(self, other)`\n2. `OrdenableMixin.mayor_que(self, other)` → `self > other`\n3. `class Edad(OrdenableMixin)` con `__lt__` comparando `self.valor`\n4. Imprimí `Edad(30).mayor_que(Edad(20))`",
+    starter_code: "# from typing import Protocol\n# class Comparable(Protocol):\n#     def __lt__(self, other): ...\n# class OrdenableMixin:\n#     def mayor_que(self, other):\n#         return self > other\n# class Edad(OrdenableMixin):\n#     def __init__(self, valor):\n#         self.valor = valor\n#     def __lt__(self, other):\n#         return self.valor < other.valor\n# print(Edad(30).mayor_que(Edad(20)))\n",
+    pytest: "def test_mixin_protocol(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Edad'](30).mayor_que(ns['Edad'](20)) is True\n    assert ns['Edad'](10).mayor_que(ns['Edad'](20)) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Edad implementa __lt__; el mixin usa > que Python deriva de __lt__.",
+    solution_example: "from typing import Protocol\n\nclass Comparable(Protocol):\n    def __lt__(self, other): ...\n\nclass OrdenableMixin:\n    def mayor_que(self, other):\n        return self > other\n\nclass Edad(OrdenableMixin):\n    def __init__(self, valor):\n        self.valor = valor\n\n    def __lt__(self, other):\n        return self.valor < other.valor\n\nprint(Edad(30).mayor_que(Edad(20)))\n",
+    next: Some("py-1145-functional-map-filter"), show_type_chips: false, micro_step: 1144,
+};
+
+pub const PY1145_FUNCTIONAL_MAP_FILTER: CodingStep = CodingStep {
+    id: "py-1145-functional-map-filter", title: "Funcional · map y filter", objective: "Componer map y filter para transformar y seleccionar.",
+    prompt_md: "**map y filter**\n\n`filter` selecciona elementos y `map` los transforma. Combinados, procesan una colección sin bucles explícitos.\n\n**Micro-reto:**\n1. `transformar(numeros)` que filtre pares y duplique cada uno\n2. Usá `map` y `filter` con lambdas\n3. Imprimí `transformar([1, 2, 3, 4, 5])`",
+    starter_code: "# def transformar(numeros):\n#     return list(map(lambda x: x * 2, filter(lambda x: x % 2 == 0, numeros)))\n# print(transformar([1, 2, 3, 4, 5]))\n",
+    pytest: "def test_map_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['transformar']([1, 2, 3, 4, 5]) == [4, 8]\n    assert ns['transformar']([2, 4, 6]) == [4, 8, 12]\n    assert capsys.readouterr().out.strip() == str([4, 8])\n",
+    hint: "Aplicá filter (pares) y luego map (multiplicar por 2) dentro de list().",
+    solution_example: "def transformar(numeros):\n    return list(map(lambda x: x * 2, filter(lambda x: x % 2 == 0, numeros)))\n\nprint(transformar([1, 2, 3, 4, 5]))\n",
+    next: Some("py-1146-functional-reduce"), show_type_chips: false, micro_step: 1145,
+};
+
+pub const PY1146_FUNCTIONAL_REDUCE: CodingStep = CodingStep {
+    id: "py-1146-functional-reduce", title: "Funcional · reduce", objective: "Reducir una colección a un valor con reduce y operator.",
+    prompt_md: "**reduce**\n\n`reduce` pliega una colección aplicando una función binaria acumulando el resultado. `operator.mul` es la multiplicación como función.\n\n**Micro-reto:**\n1. `from functools import reduce` y `from operator import mul`\n2. `producto(numeros)` que devuelva `reduce(mul, numeros, 1)`\n3. Imprimí `producto([2, 3, 4])`",
+    starter_code: "# from functools import reduce\n# from operator import mul\n# def producto(numeros):\n#     return reduce(mul, numeros, 1)\n# print(producto([2, 3, 4]))\n",
+    pytest: "def test_reduce(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['producto']([2, 3, 4]) == 24\n    assert ns['producto']([]) == 1\n    assert capsys.readouterr().out.strip() == '24'\n",
+    hint: "El tercer argumento 1 es el valor inicial para listas vacías.",
+    solution_example: "from functools import reduce\nfrom operator import mul\n\ndef producto(numeros):\n    return reduce(mul, numeros, 1)\n\nprint(producto([2, 3, 4]))\n",
+    next: Some("py-1147-functional-partial"), show_type_chips: false, micro_step: 1146,
+};
+
+pub const PY1147_FUNCTIONAL_PARTIAL: CodingStep = CodingStep {
+    id: "py-1147-functional-partial", title: "Funcional · partial", objective: "Fijar argumentos de una función con functools.partial.",
+    prompt_md: "**partial**\n\n`functools.partial` congela algunos argumentos de una función y devuelve una nueva con menos parámetros.\n\n**Micro-reto:**\n1. `potencia(base, exp)` que devuelva `base ** exp`\n2. `cuadrado = partial(potencia, exp=2)`\n3. Imprimí `cuadrado(7)`",
+    starter_code: "# from functools import partial\n# def potencia(base, exp):\n#     return base ** exp\n# cuadrado = partial(potencia, exp=2)\n# print(cuadrado(7))\n",
+    pytest: "def test_partial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['cuadrado'](7) == 49\n    assert ns['cuadrado'](3) == 9\n    assert capsys.readouterr().out.strip() == '49'\n",
+    hint: "partial(potencia, exp=2) fija el exponente y deja libre la base.",
+    solution_example: "from functools import partial\n\ndef potencia(base, exp):\n    return base ** exp\n\ncuadrado = partial(potencia, exp=2)\nprint(cuadrado(7))\n",
+    next: Some("py-1148-functional-lru-cache"), show_type_chips: false, micro_step: 1147,
+};
+
+pub const PY1148_FUNCTIONAL_LRU_CACHE: CodingStep = CodingStep {
+    id: "py-1148-functional-lru-cache", title: "Funcional · lru_cache", objective: "Memoizar resultados con functools.lru_cache.",
+    prompt_md: "**lru_cache**\n\n`@lru_cache` guarda resultados ya calculados y evita recomputar llamadas repetidas, acelerando funciones recursivas.\n\n**Micro-reto:**\n1. `from functools import lru_cache`\n2. Decorá `fib(n)` recursiva con `@lru_cache(maxsize=None)`\n3. Imprimí `fib(10)`",
+    starter_code: "# from functools import lru_cache\n# @lru_cache(maxsize=None)\n# def fib(n):\n#     if n < 2:\n#         return n\n#     return fib(n - 1) + fib(n - 2)\n# print(fib(10))\n",
+    pytest: "def test_lru(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['fib'](10) == 55\n    assert ns['fib'](0) == 0\n    assert ns['fib'](1) == 1\n    assert capsys.readouterr().out.strip() == '55'\n",
+    hint: "El decorador cachea cada fib(n) calculado para no repetirlo.",
+    solution_example: "from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib(n):\n    if n < 2:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\nprint(fib(10))\n",
+    next: Some("py-1149-functional-itertools"), show_type_chips: false, micro_step: 1148,
+};
+
+pub const PY1149_FUNCTIONAL_ITERTOOLS: CodingStep = CodingStep {
+    id: "py-1149-functional-itertools", title: "Funcional · itertools", objective: "Usar groupby y combinations para agrupar y combinar.",
+    prompt_md: "**itertools**\n\n`groupby` agrupa elementos consecutivos iguales y `combinations` genera combinaciones de un largo dado.\n\n**Micro-reto:**\n1. `agrupar_conteo(valores)` → `[(k, len(list(g))) for k, g in groupby(sorted(valores))]`\n2. `pares(valores)` → `list(combinations(valores, 2))`\n3. Imprimí `agrupar_conteo([1, 1, 2, 2, 2, 3])` y `pares([1, 2, 3])`",
+    starter_code: "# from itertools import groupby, combinations\n# def agrupar_conteo(valores):\n#     return [(k, len(list(g))) for k, g in groupby(sorted(valores))]\n# def pares(valores):\n#     return list(combinations(valores, 2))\n# print(agrupar_conteo([1, 1, 2, 2, 2, 3]))\n# print(pares([1, 2, 3]))\n",
+    pytest: "def test_itertools(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['agrupar_conteo']([1, 1, 2, 2, 2, 3]) == [(1, 2), (2, 3), (3, 1)]\n    assert ns['pares']([1, 2, 3]) == [(1, 2), (1, 3), (2, 3)]\n    lines = capsys.readouterr().out.strip().splitlines()\n    assert lines == [str([(1, 2), (2, 3), (3, 1)]), str([(1, 2), (1, 3), (2, 3)])]\n",
+    hint: "Ordená antes de groupby para agrupar todos los iguales juntos.",
+    solution_example: "from itertools import groupby, combinations\n\ndef agrupar_conteo(valores):\n    return [(k, len(list(g))) for k, g in groupby(sorted(valores))]\n\ndef pares(valores):\n    return list(combinations(valores, 2))\n\nprint(agrupar_conteo([1, 1, 2, 2, 2, 3]))\nprint(pares([1, 2, 3]))\n",
+    next: Some("py-1150-functional-pipeline"), show_type_chips: false, micro_step: 1149,
+};
+
+pub const PY1150_FUNCTIONAL_PIPELINE: CodingStep = CodingStep {
+    id: "py-1150-functional-pipeline", title: "Funcional · Pipeline combinado", objective: "Encadenar filter, map y reduce en un solo pipeline.",
+    prompt_md: "**Pipeline combinado**\n\nUn pipeline funcional encadena transformaciones: filtrar, mapear y reducir, sin variables intermedias.\n\n**Micro-reto:**\n1. `pipeline(numeros)` que filtre pares, los eleve al cuadrado y los sume\n2. Usá `filter`, `map` y `reduce`\n3. Imprimí `pipeline([1, 2, 3, 4])`",
+    starter_code: "# from functools import reduce\n# def pipeline(numeros):\n#     pares = filter(lambda x: x % 2 == 0, numeros)\n#     cuadrados = map(lambda x: x ** 2, pares)\n#     return reduce(lambda a, b: a + b, cuadrados, 0)\n# print(pipeline([1, 2, 3, 4]))\n",
+    pytest: "def test_pipeline_funcional(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['pipeline']([1, 2, 3, 4]) == 20\n    assert ns['pipeline']([]) == 0\n    assert capsys.readouterr().out.strip() == '20'\n",
+    hint: "filter → map → reduce con 0 como valor inicial de la suma.",
+    solution_example: "from functools import reduce\n\ndef pipeline(numeros):\n    pares = filter(lambda x: x % 2 == 0, numeros)\n    cuadrados = map(lambda x: x ** 2, pares)\n    return reduce(lambda a, b: a + b, cuadrados, 0)\n\nprint(pipeline([1, 2, 3, 4]))\n",
+    next: Some("py-1151-closure-basic"), show_type_chips: false, micro_step: 1150,
+};
+
+pub const PY1151_CLOSURE_BASIC: CodingStep = CodingStep {
+    id: "py-1151-closure-basic", title: "Closures · Closure básica", objective: "Capturar una variable de la función envolvente.",
+    prompt_md: "**Closure básica**\n\nUna closure es una función interna que recuerda las variables de la función que la creó, incluso después de que esta termina.\n\n**Micro-reto:**\n1. `saludar(idioma)` que devuelva una función interna `saludo(nombre)` → `idioma + ', ' + nombre`\n2. `en = saludar('hola')`\n3. Imprimí `en('Ana')`",
+    starter_code: "# def saludar(idioma):\n#     def saludo(nombre):\n#         return idioma + ', ' + nombre\n#     return saludo\n# en = saludar('hola')\n# print(en('Ana'))\n",
+    pytest: "def test_closure_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['saludar']('hola')('Ana') == 'hola, Ana'\n    assert ns['saludar']('hi')('Bob') == 'hi, Bob'\n    assert capsys.readouterr().out.strip() == 'hola, Ana'\n",
+    hint: "La función interna captura idioma del entorno de saludar.",
+    solution_example: "def saludar(idioma):\n    def saludo(nombre):\n        return idioma + ', ' + nombre\n    return saludo\n\nen = saludar('hola')\nprint(en('Ana'))\n",
+    next: Some("py-1152-closure-nonlocal"), show_type_chips: false, micro_step: 1151,
+};
+
+pub const PY1152_CLOSURE_NONLOCAL: CodingStep = CodingStep {
+    id: "py-1152-closure-nonlocal", title: "Closures · Estado con nonlocal", objective: "Mutear una variable capturada usando nonlocal.",
+    prompt_md: "**Estado con nonlocal**\n\n`nonlocal` permite que la función interna modifique una variable de la función envolvente, conservando estado entre llamadas.\n\n**Micro-reto:**\n1. `contador()` con `n = 0` y una interna `incrementar()` que use `nonlocal n` y devuelva `n` tras sumar 1\n2. Llamá dos veces y luego imprimí el tercer resultado",
+    starter_code: "# def contador():\n#     n = 0\n#     def incrementar():\n#         nonlocal n\n#         n += 1\n#         return n\n#     return incrementar\n# c = contador()\n# c()\n# c()\n# print(c())\n",
+    pytest: "def test_nonlocal(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    c = ns['contador']()\n    c()\n    c()\n    assert c() == 3\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "Declará nonlocal n antes de n += 1 dentro de incrementar.",
+    solution_example: "def contador():\n    n = 0\n    def incrementar():\n        nonlocal n\n        n += 1\n        return n\n    return incrementar\n\nc = contador()\nc()\nc()\nprint(c())\n",
+    next: Some("py-1153-factory-function"), show_type_chips: false, micro_step: 1152,
+};
+
+pub const PY1153_FACTORY_FUNCTION: CodingStep = CodingStep {
+    id: "py-1153-factory-function", title: "Closures · Función fábrica", objective: "Crear funciones configuradas con una factory function.",
+    prompt_md: "**Función fábrica**\n\nUna función fábrica devuelve funciones especializadas según sus parámetros, encapsulando la configuración.\n\n**Micro-reto:**\n1. `fabrica_multiplicador(factor)` que devuelva `multiplicar(x)` → `x * factor`\n2. `doble = fabrica_multiplicador(2)`\n3. Imprimí `doble(6)`",
+    starter_code: "# def fabrica_multiplicador(factor):\n#     def multiplicar(x):\n#         return x * factor\n#     return multiplicar\n# doble = fabrica_multiplicador(2)\n# print(doble(6))\n",
+    pytest: "def test_factory(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['fabrica_multiplicador'](2)(6) == 12\n    assert ns['fabrica_multiplicador'](3)(4) == 12\n    assert capsys.readouterr().out.strip() == '12'\n",
+    hint: "La fábrica devuelve multiplicar, que captura factor.",
+    solution_example: "def fabrica_multiplicador(factor):\n    def multiplicar(x):\n        return x * factor\n    return multiplicar\n\ndoble = fabrica_multiplicador(2)\nprint(doble(6))\n",
+    next: Some("py-1154-partial-vs-closure"), show_type_chips: false, micro_step: 1153,
+};
+
+pub const PY1154_PARTIAL_VS_CLOSURE: CodingStep = CodingStep {
+    id: "py-1154-partial-vs-closure", title: "Closures · partial vs closure", objective: "Contrastar functools.partial con una closure manual.",
+    prompt_md: "**partial vs closure**\n\n`partial` y una closure logran lo mismo, pero `partial` es más directo y no crea una función interna manual.\n\n**Micro-reto:**\n1. `multiplicar(a, b)` → `a * b`\n2. `doble_partial = partial(multiplicar, b=2)`\n3. Una `fabrica_doble()` que devuelva `doblar(x)` → `x * 2`\n4. Imprimí `doble_partial(5), doble_closure(5)`",
+    starter_code: "# from functools import partial\n# def multiplicar(a, b):\n#     return a * b\n# doble_partial = partial(multiplicar, b=2)\n# def fabrica_doble():\n#     def doblar(x):\n#         return x * 2\n#     return doblar\n# doble_closure = fabrica_doble()\n# print(doble_partial(5), doble_closure(5))\n",
+    pytest: "def test_partial_vs_closure(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['doble_partial'](5) == 10\n    assert ns['doble_closure'](5) == 10\n    assert capsys.readouterr().out.strip() == '10 10'\n",
+    hint: "Ambas rutas deben devolver el doble del argumento.",
+    solution_example: "from functools import partial\n\ndef multiplicar(a, b):\n    return a * b\n\ndoble_partial = partial(multiplicar, b=2)\n\ndef fabrica_doble():\n    def doblar(x):\n        return x * 2\n    return doblar\n\ndoble_closure = fabrica_doble()\nprint(doble_partial(5), doble_closure(5))\n",
+    next: Some("py-1155-closure-accumulator"), show_type_chips: false, micro_step: 1154,
+};
+
+pub const PY1155_CLOSURE_ACCUMULATOR: CodingStep = CodingStep {
+    id: "py-1155-closure-accumulator", title: "Closures · Acumulador", objective: "Acumular un total mutable entre llamadas con nonlocal.",
+    prompt_md: "**Acumulador**\n\nUna closure con `nonlocal` puede acumular un total que persiste entre invocaciones.\n\n**Micro-reto:**\n1. `acumulador(inicial)` con `total = inicial` y `sumar(x)` que use `nonlocal total` y devuelva `total` actualizado\n2. `a = acumulador(10)`, llamá `a(5)` y luego imprimí `a(3)`",
+    starter_code: "# def acumulador(inicial):\n#     total = inicial\n#     def sumar(x):\n#         nonlocal total\n#         total += x\n#         return total\n#     return sumar\n# a = acumulador(10)\n# a(5)\n# print(a(3))\n",
+    pytest: "def test_acumulador(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    a = ns['acumulador'](10)\n    a(5)\n    assert a(3) == 18\n    assert capsys.readouterr().out.strip() == '18'\n",
+    hint: "total empieza en inicial y crece con cada llamada a sumar.",
+    solution_example: "def acumulador(inicial):\n    total = inicial\n    def sumar(x):\n        nonlocal total\n        total += x\n        return total\n    return sumar\n\na = acumulador(10)\na(5)\nprint(a(3))\n",
+    next: Some("py-1156-closure-validator"), show_type_chips: false, micro_step: 1155,
+};
+
+pub const PY1156_CLOSURE_VALIDATOR: CodingStep = CodingStep {
+    id: "py-1156-closure-validator", title: "Closures · Validador configurable", objective: "Crear un validador de rango configurado por closure.",
+    prompt_md: "**Validador configurable**\n\nUna closure captura los límites y devuelve un predicado reutilizable que valida si un valor está en rango.\n\n**Micro-reto:**\n1. `crear_validador(minimo, maximo)` que devuelva `validar(x)` → `minimo <= x <= maximo`\n2. `validador = crear_validador(0, 100)`\n3. Imprimí `validador(50), validador(150)`",
+    starter_code: "# def crear_validador(minimo, maximo):\n#     def validar(x):\n#         return minimo <= x <= maximo\n#     return validar\n# validador = crear_validador(0, 100)\n# print(validador(50), validador(150))\n",
+    pytest: "def test_validador(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    v = ns['crear_validador'](0, 100)\n    assert v(50) is True\n    assert v(150) is False\n    assert capsys.readouterr().out.strip() == 'True False'\n",
+    hint: "validar captura minimo y maximo del entorno envolvente.",
+    solution_example: "def crear_validador(minimo, maximo):\n    def validar(x):\n        return minimo <= x <= maximo\n    return validar\n\nvalidador = crear_validador(0, 100)\nprint(validador(50), validador(150))\n",
+    next: Some("py-1157-serialize-json"), show_type_chips: false, micro_step: 1156,
+};
+
+pub const PY1157_SERIALIZE_JSON: CodingStep = CodingStep {
+    id: "py-1157-serialize-json", title: "Serialización · json", objective: "Serializar y deserializar datos con json.dumps/loads.",
+    prompt_md: "**json**\n\n`json.dumps` convierte estructuras de Python a texto JSON y `json.loads` hace el camino inverso.\n\n**Micro-reto:**\n1. `serializar(dato)` → `json.dumps(dato)`\n2. `deserializar(texto)` → `json.loads(texto)`\n3. Imprimí `serializar({'a': 1})`",
+    starter_code: "# import json\n# def serializar(dato):\n#     return json.dumps(dato)\n# def deserializar(texto):\n#     return json.loads(texto)\n# print(serializar({'a': 1}))\n",
+    pytest: "def test_json(capsys):\n    import json\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['serializar']({'a': 1}) == json.dumps({'a': 1})\n    assert ns['deserializar'](json.dumps({'a': 1})) == {'a': 1}\n    assert capsys.readouterr().out.strip() == json.dumps({'a': 1})\n",
+    hint: "dumps para serializar y loads para recuperar el dict original.",
+    solution_example: "import json\n\ndef serializar(dato):\n    return json.dumps(dato)\n\ndef deserializar(texto):\n    return json.loads(texto)\n\nprint(serializar({'a': 1}))\n",
+    next: Some("py-1158-serialize-dataclass"), show_type_chips: false, micro_step: 1157,
+};
+
+pub const PY1158_SERIALIZE_DATACLASS: CodingStep = CodingStep {
+    id: "py-1158-serialize-dataclass", title: "Serialización · Dataclass", objective: "Convertir una dataclass a JSON con dataclasses.asdict.",
+    prompt_md: "**Dataclass a JSON**\n\n`dataclasses.asdict` convierte una dataclass en un dict plano listo para `json.dumps`.\n\n**Micro-reto:**\n1. `@dataclass class Usuario` con `nombre: str` y `edad: int`\n2. `a_json(usuario)` → `json.dumps(asdict(usuario))`\n3. Imprimí `a_json(Usuario('Ana', 25))`",
+    starter_code: "# from dataclasses import dataclass, asdict\n# import json\n# @dataclass\n# class Usuario:\n#     nombre: str\n#     edad: int\n# def a_json(usuario):\n#     return json.dumps(asdict(usuario))\n# print(a_json(Usuario('Ana', 25)))\n",
+    pytest: "def test_dataclass_ser(capsys):\n    import json\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    esperado = json.dumps({'nombre': 'Ana', 'edad': 25})\n    assert ns['a_json'](ns['Usuario']('Ana', 25)) == esperado\n    assert capsys.readouterr().out.strip() == esperado\n",
+    hint: "asdict transforma la instancia en dict antes de dumps.",
+    solution_example: "from dataclasses import dataclass, asdict\nimport json\n\n@dataclass\nclass Usuario:\n    nombre: str\n    edad: int\n\ndef a_json(usuario):\n    return json.dumps(asdict(usuario))\n\nprint(a_json(Usuario('Ana', 25)))\n",
+    next: Some("py-1159-serialize-roundtrip"), show_type_chips: false, micro_step: 1158,
+};
+
+pub const PY1159_SERIALIZE_ROUNDTRIP: CodingStep = CodingStep {
+    id: "py-1159-serialize-roundtrip", title: "Serialización · Round-trip", objective: "Serializar y rehidratar tipos anidados sin pérdida.",
+    prompt_md: "**Round-trip anidado**\n\nUn round-trip serializa un objeto con anidación y lo reconstruye idéntico a partir del JSON.\n\n**Micro-reto:**\n1. `@dataclass Direccion` y `@dataclass Usuario` con un campo `direccion`\n2. `serializar(usuario)` → `json.dumps(asdict(usuario))`\n3. `deserializar(texto)` que reconstruya el `Usuario` anidado\n4. Imprimí `u.nombre, u.direccion.ciudad`",
+    starter_code: "# import json\n# from dataclasses import dataclass, asdict\n# @dataclass\n# class Direccion:\n#     ciudad: str\n# @dataclass\n# class Usuario:\n#     nombre: str\n#     direccion: Direccion\n# def serializar(usuario):\n#     return json.dumps(asdict(usuario))\n# def deserializar(texto):\n#     datos = json.loads(texto)\n#     return Usuario(datos['nombre'], Direccion(datos['direccion']['ciudad']))\n# texto = serializar(Usuario('Ana', Direccion('Madrid')))\n# u = deserializar(texto)\n# print(u.nombre, u.direccion.ciudad)\n",
+    pytest: "def test_roundtrip(capsys):\n    import json\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    u = ns['Usuario']('Ana', ns['Direccion']('Madrid'))\n    texto = ns['serializar'](u)\n    assert json.loads(texto) == {'nombre': 'Ana', 'direccion': {'ciudad': 'Madrid'}}\n    r = ns['deserializar'](texto)\n    assert r.nombre == 'Ana' and r.direccion.ciudad == 'Madrid'\n    assert capsys.readouterr().out.strip() == 'Ana Madrid'\n",
+    hint: "Reconstruí el objeto anidado leyendo los campos del dict deserializado.",
+    solution_example: "import json\nfrom dataclasses import dataclass, asdict\n\n@dataclass\nclass Direccion:\n    ciudad: str\n\n@dataclass\nclass Usuario:\n    nombre: str\n    direccion: Direccion\n\ndef serializar(usuario):\n    return json.dumps(asdict(usuario))\n\ndef deserializar(texto):\n    datos = json.loads(texto)\n    return Usuario(datos['nombre'], Direccion(datos['direccion']['ciudad']))\n\ntexto = serializar(Usuario('Ana', Direccion('Madrid')))\nu = deserializar(texto)\nprint(u.nombre, u.direccion.ciudad)\n",
+    next: Some("py-1160-serialize-csv"), show_type_chips: false, micro_step: 1159,
+};
+
+pub const PY1160_SERIALIZE_CSV: CodingStep = CodingStep {
+    id: "py-1160-serialize-csv", title: "Serialización · csv", objective: "Escribir y leer datos tabulares con el módulo csv.",
+    prompt_md: "**csv**\n\nEl módulo `csv` escribe y lee filas separadas por comas usando `io.StringIO` para trabajar en memoria.\n\n**Micro-reto:**\n1. `escribir_csv(filas)` que escriba con `csv.writer` a un `StringIO` y devuelva el texto\n2. `leer_csv(texto)` que devuelva `list(csv.reader(...))`\n3. Imprimí `leer_csv(escribir_csv([['a', 'b'], ['1', '2']]))`",
+    starter_code: "# import csv, io\n# def escribir_csv(filas):\n#     salida = io.StringIO()\n#     csv.writer(salida).writerows(filas)\n#     return salida.getvalue()\n# def leer_csv(texto):\n#     return list(csv.reader(io.StringIO(texto)))\n# texto = escribir_csv([['a', 'b'], ['1', '2']])\n# print(leer_csv(texto))\n",
+    pytest: "def test_csv(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    filas = [['a', 'b'], ['1', '2']]\n    texto = ns['escribir_csv'](filas)\n    assert ns['leer_csv'](texto) == filas\n    assert capsys.readouterr().out.strip() == str(filas)\n",
+    hint: "writerows escribe todas las filas; reader las devuelve como listas.",
+    solution_example: "import csv, io\n\ndef escribir_csv(filas):\n    salida = io.StringIO()\n    csv.writer(salida).writerows(filas)\n    return salida.getvalue()\n\ndef leer_csv(texto):\n    return list(csv.reader(io.StringIO(texto)))\n\ntexto = escribir_csv([['a', 'b'], ['1', '2']])\nprint(leer_csv(texto))\n",
+    next: Some("py-1161-serialize-rehydrate"), show_type_chips: false, micro_step: 1160,
+};
+
+pub const PY1161_SERIALIZE_REHYDRATE: CodingStep = CodingStep {
+    id: "py-1161-serialize-rehydrate", title: "Serialización · Re-hidratar", objective: "Reconstruir objetos tipados desde una lista JSON.",
+    prompt_md: "**Re-hidratar**\n\nRe-hidratar convierte datos planos (JSON) de vuelta en instancias de una dataclass, recuperando el tipo.\n\n**Micro-reto:**\n1. `@dataclass class Producto` con `nombre: str` y `precio: float`\n2. `hidratar(texto)` que devuelva `[Producto(d['nombre'], d['precio']) for d in json.loads(texto)]`\n3. Imprimí el resultado con dos productos",
+    starter_code: "# import json\n# from dataclasses import dataclass\n# @dataclass\n# class Producto:\n#     nombre: str\n#     precio: float\n# def hidratar(texto):\n#     datos = json.loads(texto)\n#     return [Producto(d['nombre'], d['precio']) for d in datos]\n# entrada = json.dumps([{'nombre': 'pan', 'precio': 1.5}, {'nombre': 'leche', 'precio': 2.0}])\n# print(hidratar(entrada))\n",
+    pytest: "def test_rehidratar(capsys):\n    import json\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    texto = json.dumps([{'nombre': 'pan', 'precio': 1.5}, {'nombre': 'leche', 'precio': 2.0}])\n    productos = ns['hidratar'](texto)\n    assert len(productos) == 2\n    assert productos[0].nombre == 'pan' and productos[0].precio == 1.5\n    assert productos[1].nombre == 'leche' and productos[1].precio == 2.0\n    assert capsys.readouterr().out.strip() == str(productos)\n",
+    hint: "Recorré json.loads(texto) y construí un Producto por cada dict.",
+    solution_example: "import json\nfrom dataclasses import dataclass\n\n@dataclass\nclass Producto:\n    nombre: str\n    precio: float\n\ndef hidratar(texto):\n    datos = json.loads(texto)\n    return [Producto(d['nombre'], d['precio']) for d in datos]\n\nentrada = json.dumps([{'nombre': 'pan', 'precio': 1.5}, {'nombre': 'leche', 'precio': 2.0}])\nprint(hidratar(entrada))\n",
+    next: Some("py-1162-serialize-validate"), show_type_chips: false, micro_step: 1161,
+};
+
+pub const PY1162_SERIALIZE_VALIDATE: CodingStep = CodingStep {
+    id: "py-1162-serialize-validate", title: "Serialización · Validación robusta", objective: "Validar tipos antes de serializar y fallar con claridad.",
+    prompt_md: "**Validación robusta**\n\nAntes de serializar, validá que el dato sea serializable y lanzá un error claro ante tipos no soportados.\n\n**Micro-reto:**\n1. `serializar_seguro(dato)` que lance `ValueError` si no es `dict` o `list`\n2. Si lo es, devolvé `json.dumps(dato)` capturando `TypeError`/`ValueError`\n3. Imprimí `serializar_seguro({'a': [1, 2, 3]})`",
+    starter_code: "# import json\n# def serializar_seguro(dato):\n#     if not isinstance(dato, (dict, list)):\n#         raise ValueError('tipo no serializable')\n#     try:\n#         return json.dumps(dato)\n#     except (TypeError, ValueError):\n#         raise ValueError('no serializable')\n# print(serializar_seguro({'a': [1, 2, 3]}))\n",
+    pytest: "def test_validate(capsys):\n    import json\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['serializar_seguro']({'a': [1, 2, 3]}) == json.dumps({'a': [1, 2, 3]})\n    try:\n        ns['serializar_seguro'](5)\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == json.dumps({'a': [1, 2, 3]})\n",
+    hint: "isinstance con la tupla (dict, list) cubre ambos contenedores válidos.",
+    solution_example: "import json\n\ndef serializar_seguro(dato):\n    if not isinstance(dato, (dict, list)):\n        raise ValueError('tipo no serializable')\n    try:\n        return json.dumps(dato)\n    except (TypeError, ValueError):\n        raise ValueError('no serializable')\n\nprint(serializar_seguro({'a': [1, 2, 3]}))\n",
+    next: Some("py-1163-config-dict-defaults"), show_type_chips: false, micro_step: 1162,
+};
+
+pub const PY1163_CONFIG_DICT_DEFAULTS: CodingStep = CodingStep {
+    id: "py-1163-config-dict-defaults", title: "Config · Defaults desde dict", objective: "Cargar configuración con valores por defecto sobreescribibles.",
+    prompt_md: "**Defaults desde dict**\n\nPartir de un dict de defaults y actualizarlo con overrides permite configurar sin repetición.\n\n**Micro-reto:**\n1. `DEFAULTS = {'debug': False, 'reintentos': 3}`\n2. `cargar_config(sobrescribir=None)` que copie defaults y aplique `update` si hay override\n3. Imprimí `cargar_config({'debug': True})`",
+    starter_code: "# DEFAULTS = {'debug': False, 'reintentos': 3}\n# def cargar_config(sobrescribir=None):\n#     config = dict(DEFAULTS)\n#     if sobrescribir:\n#         config.update(sobrescribir)\n#     return config\n# print(cargar_config({'debug': True}))\n",
+    pytest: "def test_dict_defaults(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['cargar_config']() == {'debug': False, 'reintentos': 3}\n    assert ns['cargar_config']({'debug': True}) == {'debug': True, 'reintentos': 3}\n    assert capsys.readouterr().out.strip() == str({'debug': True, 'reintentos': 3})\n",
+    hint: "dict(DEFAULTS) copia; update aplica los overrides encima.",
+    solution_example: "DEFAULTS = {'debug': False, 'reintentos': 3}\n\ndef cargar_config(sobrescribir=None):\n    config = dict(DEFAULTS)\n    if sobrescribir:\n        config.update(sobrescribir)\n    return config\n\nprint(cargar_config({'debug': True}))\n",
+    next: Some("py-1164-config-dataclass"), show_type_chips: false, micro_step: 1163,
+};
+
+pub const PY1164_CONFIG_DATACLASS: CodingStep = CodingStep {
+    id: "py-1164-config-dataclass", title: "Config · Dataclass", objective: "Modelar la configuración con una dataclass tipada.",
+    prompt_md: "**Config dataclass**\n\nUna `@dataclass` tipa los campos de configuración y puede dar valores por defecto a algunos.\n\n**Micro-reto:**\n1. `@dataclass class Config` con `host: str` y `puerto: int = 8080`\n2. `crear_config(host, puerto=8080)` → `Config(host, puerto)`\n3. Imprimí `crear_config('localhost')`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Config:\n#     host: str\n#     puerto: int = 8080\n# def crear_config(host, puerto=8080):\n#     return Config(host, puerto)\n# print(crear_config('localhost'))\n",
+    pytest: "def test_dataclass(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    c = ns['crear_config']('localhost')\n    assert c.host == 'localhost' and c.puerto == 8080\n    assert ns['crear_config']('api', 9000).puerto == 9000\n    assert capsys.readouterr().out.strip() == str(ns['crear_config']('localhost'))\n",
+    hint: "El campo puerto con default 8080 se omite si no se pasa.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Config:\n    host: str\n    puerto: int = 8080\n\ndef crear_config(host, puerto=8080):\n    return Config(host, puerto)\n\nprint(crear_config('localhost'))\n",
+    next: Some("py-1165-config-override"), show_type_chips: false, micro_step: 1164,
+};
+
+pub const PY1165_CONFIG_OVERRIDE: CodingStep = CodingStep {
+    id: "py-1165-config-override", title: "Config · Override", objective: "Sobrescribir valores por defecto sin tocar los defaults.",
+    prompt_md: "**Override**\n\nSobrescribir un default no muta los valores originales; el merge produce una copia nueva.\n\n**Micro-reto:**\n1. `DEFAULTS = {'modo': 'prod', 'nivel_log': 'info'}`\n2. `config_final(sobrescribir=None)` que mergee defaults con override\n3. Imprimí `config_final({'nivel_log': 'debug'})`",
+    starter_code: "# DEFAULTS = {'modo': 'prod', 'nivel_log': 'info'}\n# def config_final(sobrescribir=None):\n#     config = dict(DEFAULTS)\n#     if sobrescribir:\n#         config.update(sobrescribir)\n#     return config\n# print(config_final({'nivel_log': 'debug'}))\n",
+    pytest: "def test_override(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['config_final']() == {'modo': 'prod', 'nivel_log': 'info'}\n    assert ns['config_final']({'nivel_log': 'debug'}) == {'modo': 'prod', 'nivel_log': 'debug'}\n    assert capsys.readouterr().out.strip() == str({'modo': 'prod', 'nivel_log': 'debug'})\n",
+    hint: "El override solo reemplaza nivel_log; modo conserva su default.",
+    solution_example: "DEFAULTS = {'modo': 'prod', 'nivel_log': 'info'}\n\ndef config_final(sobrescribir=None):\n    config = dict(DEFAULTS)\n    if sobrescribir:\n        config.update(sobrescribir)\n    return config\n\nprint(config_final({'nivel_log': 'debug'}))\n",
+    next: Some("py-1166-config-env"), show_type_chips: false, micro_step: 1165,
+};
+
+pub const PY1166_CONFIG_ENV: CodingStep = CodingStep {
+    id: "py-1166-config-env", title: "Config · os.environ", objective: "Leer variables de entorno con un default de respaldo.",
+    prompt_md: "**os.environ**\n\n`os.environ.get(clave, defecto)` lee una variable de entorno y devuelve un valor por defecto si no existe.\n\n**Micro-reto:**\n1. `import os`\n2. `leer_env(clave, defecto=None)` → `os.environ.get(clave, defecto)`\n3. Imprimí `leer_env('NO_EXISTE_123', 'defecto')`",
+    starter_code: "# import os\n# def leer_env(clave, defecto=None):\n#     return os.environ.get(clave, defecto)\n# print(leer_env('NO_EXISTE_123', 'defecto'))\n",
+    pytest: "def test_env(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['leer_env']('NO_EXISTE_123', 'defecto') == 'defecto'\n    assert ns['leer_env']('NO_EXISTE_123') is None\n    assert capsys.readouterr().out.strip() == 'defecto'\n",
+    hint: "os.environ.get ya devuelve el default si la clave no existe.",
+    solution_example: "import os\n\ndef leer_env(clave, defecto=None):\n    return os.environ.get(clave, defecto)\n\nprint(leer_env('NO_EXISTE_123', 'defecto'))\n",
+    next: Some("py-1167-config-merge"), show_type_chips: false, micro_step: 1166,
+};
+
+pub const PY1167_CONFIG_MERGE: CodingStep = CodingStep {
+    id: "py-1167-config-merge", title: "Config · Merge de fuentes", objective: "Fusionar varias fuentes de configuración en orden.",
+    prompt_md: "**Merge de fuentes**\n\nFusionar fuentes en orden permite que las últimas tengan prioridad sobre las anteriores.\n\n**Micro-reto:**\n1. `merge(*fuentes)` que itere y aplique `update` sobre un dict resultado\n2. Las fuentes posteriores pisan a las anteriores\n3. Imprimí `merge({'a': 1}, {'b': 2}, {'a': 99})`",
+    starter_code: "# def merge(*fuentes):\n#     resultado = {}\n#     for fuente in fuentes:\n#         if fuente:\n#             resultado.update(fuente)\n#     return resultado\n# print(merge({'a': 1}, {'b': 2}, {'a': 99}))\n",
+    pytest: "def test_merge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['merge']({'a': 1}, {'b': 2}, {'a': 99}) == {'a': 99, 'b': 2}\n    assert ns['merge']() == {}\n    assert capsys.readouterr().out.strip() == str({'a': 99, 'b': 2})\n",
+    hint: "Al aplicar update en orden, la última fuente con 'a' gana.",
+    solution_example: "def merge(*fuentes):\n    resultado = {}\n    for fuente in fuentes:\n        if fuente:\n            resultado.update(fuente)\n    return resultado\n\nprint(merge({'a': 1}, {'b': 2}, {'a': 99}))\n",
+    next: Some("py-1168-config-typed"), show_type_chips: false, micro_step: 1167,
+};
+
+pub const PY1168_CONFIG_TYPED: CodingStep = CodingStep {
+    id: "py-1168-config-typed", title: "Config · Tipada y validada", objective: "Validar una configuración tipada antes de usarla.",
+    prompt_md: "**Config tipada y validada**\n\nUna dataclass más validación explícita rechaza configuraciones inválidas antes de propagarse al sistema.\n\n**Micro-reto:**\n1. `@dataclass class Config` con `host`, `puerto` y `debug=False`\n2. `config_tipada(datos)` que construya la config y lance `ValueError` si `puerto < 0`\n3. Imprimí `config_tipada({'host': 'api', 'puerto': 443})`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Config:\n#     host: str\n#     puerto: int\n#     debug: bool = False\n# def config_tipada(datos):\n#     config = Config(**datos)\n#     if config.puerto < 0:\n#         raise ValueError('puerto negativo')\n#     return config\n# print(config_tipada({'host': 'api', 'puerto': 443}))\n",
+    pytest: "def test_typed(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    c = ns['config_tipada']({'host': 'api', 'puerto': 443})\n    assert c.host == 'api' and c.puerto == 443 and c.debug is False\n    try:\n        ns['config_tipada']({'host': 'x', 'puerto': -1})\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == str(c)\n",
+    hint: "Construí con Config(**datos) y validá puerto antes de devolver.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Config:\n    host: str\n    puerto: int\n    debug: bool = False\n\ndef config_tipada(datos):\n    config = Config(**datos)\n    if config.puerto < 0:\n        raise ValueError('puerto negativo')\n    return config\n\nprint(config_tipada({'host': 'api', 'puerto': 443}))\n",
+    next: Some("py-1169-layers-separate"), show_type_chips: false, micro_step: 1168,
+};
+
+pub const PY1169_LAYERS_SEPARATE: CodingStep = CodingStep {
+    id: "py-1169-layers-separate", title: "Capas · Datos vs lógica", objective: "Separar el modelo de datos de la lógica de negocio.",
+    prompt_md: "**Datos vs lógica**\n\nSeparar el modelo de datos (dataclass) de las funciones de negocio reduce acoplamiento y facilita el testeo.\n\n**Micro-reto:**\n1. `@dataclass class Pedido` con `total: float`\n2. `calcular_impuesto(pedido, tasa=0.21)` → `round(pedido.total * tasa, 2)`\n3. Imprimí `calcular_impuesto(Pedido(100.0))`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Pedido:\n#     total: float\n# def calcular_impuesto(pedido, tasa=0.21):\n#     return round(pedido.total * tasa, 2)\n# print(calcular_impuesto(Pedido(100.0)))\n",
+    pytest: "def test_separate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['calcular_impuesto'](ns['Pedido'](100.0)) == 21.0\n    assert ns['calcular_impuesto'](ns['Pedido'](50.0), 0.1) == 5.0\n    assert capsys.readouterr().out.strip() == '21.0'\n",
+    hint: "Pedido solo guarda datos; la función aplica la regla de impuesto.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Pedido:\n    total: float\n\ndef calcular_impuesto(pedido, tasa=0.21):\n    return round(pedido.total * tasa, 2)\n\nprint(calcular_impuesto(Pedido(100.0)))\n",
+    next: Some("py-1170-layers-repository"), show_type_chips: false, micro_step: 1169,
+};
+
+pub const PY1170_LAYERS_REPOSITORY: CodingStep = CodingStep {
+    id: "py-1170-layers-repository", title: "Capas · Repositorio", objective: "Aislar el acceso a datos en una capa de repositorio.",
+    prompt_md: "**Repositorio**\n\nUn repositorio centraliza el guardado y la lectura de datos, aislando el almacenamiento del resto del sistema.\n\n**Micro-reto:**\n1. `class Repositorio` con `self._datos = {}`\n2. `guardar(self, clave, valor)` y `obtener(self, clave)` → `get`\n3. Guardá `('x', 42)` e imprimí `obtener('x')`",
+    starter_code: "# class Repositorio:\n#     def __init__(self):\n#         self._datos = {}\n#     def guardar(self, clave, valor):\n#         self._datos[clave] = valor\n#     def obtener(self, clave):\n#         return self._datos.get(clave)\n# repo = Repositorio()\n# repo.guardar('x', 42)\n# print(repo.obtener('x'))\n",
+    pytest: "def test_repository(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    repo = ns['Repositorio']()\n    repo.guardar('x', 42)\n    assert repo.obtener('x') == 42\n    assert repo.obtener('missing') is None\n    assert capsys.readouterr().out.strip() == '42'\n",
+    hint: "Usá un dict interno y get para devolver None si no existe.",
+    solution_example: "class Repositorio:\n    def __init__(self):\n        self._datos = {}\n\n    def guardar(self, clave, valor):\n        self._datos[clave] = valor\n\n    def obtener(self, clave):\n        return self._datos.get(clave)\n\nrepo = Repositorio()\nrepo.guardar('x', 42)\nprint(repo.obtener('x'))\n",
+    next: Some("py-1171-layers-di"), show_type_chips: false, micro_step: 1170,
+};
+
+pub const PY1171_LAYERS_DI: CodingStep = CodingStep {
+    id: "py-1171-layers-di", title: "Capas · Inyección de dependencias", objective: "Inyectar dependencias por constructor para desacoplar.",
+    prompt_md: "**Inyección de dependencias**\n\nInyectar el repositorio por constructor permite cambiar la implementación sin tocar la clase que lo usa.\n\n**Micro-reto:**\n1. `class RepositorioMemoria` con `guardar`/`obtener`\n2. `class Servicio` con `__init__(self, repositorio)`\n3. `registrar(self, clave, valor)` guarde y devuelva `obtener(clave)`\n4. Imprimí `Servicio(RepositorioMemoria()).registrar('a', 1)`",
+    starter_code: "# class RepositorioMemoria:\n#     def __init__(self):\n#         self._datos = {}\n#     def guardar(self, clave, valor):\n#         self._datos[clave] = valor\n#     def obtener(self, clave):\n#         return self._datos.get(clave)\n# class Servicio:\n#     def __init__(self, repositorio):\n#         self.repositorio = repositorio\n#     def registrar(self, clave, valor):\n#         self.repositorio.guardar(clave, valor)\n#         return self.repositorio.obtener(clave)\n# print(Servicio(RepositorioMemoria()).registrar('a', 1))\n",
+    pytest: "def test_di(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    s = ns['Servicio'](ns['RepositorioMemoria']())\n    assert s.registrar('a', 1) == 1\n    assert capsys.readouterr().out.strip() == '1'\n",
+    hint: "Servicio recibe el repositorio ya construido por el constructor.",
+    solution_example: "class RepositorioMemoria:\n    def __init__(self):\n        self._datos = {}\n\n    def guardar(self, clave, valor):\n        self._datos[clave] = valor\n\n    def obtener(self, clave):\n        return self._datos.get(clave)\n\nclass Servicio:\n    def __init__(self, repositorio):\n        self.repositorio = repositorio\n\n    def registrar(self, clave, valor):\n        self.repositorio.guardar(clave, valor)\n        return self.repositorio.obtener(clave)\n\nprint(Servicio(RepositorioMemoria()).registrar('a', 1))\n",
+    next: Some("py-1172-layers-protocol"), show_type_chips: false, micro_step: 1171,
+};
+
+pub const PY1172_LAYERS_PROTOCOL: CodingStep = CodingStep {
+    id: "py-1172-layers-protocol", title: "Capas · Protocol + dos implementaciones", objective: "Definir una interfaz y dos implementaciones intercambiables.",
+    prompt_md: "**Protocol + dos implementaciones**\n\nUn `Protocol` fija la interfaz; dos clases la cumplen y son intercambiables para el mismo código.\n\n**Micro-reto:**\n1. `class Almacen(Protocol)` con `leer(self, clave)`\n2. `class Memoria` con `leer` que devuelva `self._datos.get(clave)`\n3. `class Constante` con `leer` que devuelva `99`\n4. `obtener(almacen, clave)` → `almacen.leer(clave)`",
+    starter_code: "# from typing import Protocol\n# class Almacen(Protocol):\n#     def leer(self, clave): ...\n# class Memoria:\n#     def __init__(self):\n#         self._datos = {'x': 10}\n#     def leer(self, clave):\n#         return self._datos.get(clave)\n# class Constante:\n#     def leer(self, clave):\n#         return 99\n# def obtener(almacen, clave):\n#     return almacen.leer(clave)\n# print(obtener(Memoria(), 'x'), obtener(Constante(), 'x'))\n",
+    pytest: "def test_protocol_layers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['obtener'](ns['Memoria'](), 'x') == 10\n    assert ns['obtener'](ns['Constante'](), 'x') == 99\n    assert capsys.readouterr().out.strip() == '10 99'\n",
+    hint: "obtener depende solo del contrato leer, no de la clase concreta.",
+    solution_example: "from typing import Protocol\n\nclass Almacen(Protocol):\n    def leer(self, clave): ...\n\nclass Memoria:\n    def __init__(self):\n        self._datos = {'x': 10}\n\n    def leer(self, clave):\n        return self._datos.get(clave)\n\nclass Constante:\n    def leer(self, clave):\n        return 99\n\ndef obtener(almacen, clave):\n    return almacen.leer(clave)\n\nprint(obtener(Memoria(), 'x'), obtener(Constante(), 'x'))\n",
+    next: Some("py-1173-layers-refactor"), show_type_chips: false, micro_step: 1172,
+};
+
+pub const PY1173_LAYERS_REFACTOR: CodingStep = CodingStep {
+    id: "py-1173-layers-refactor", title: "Capas · Refactor monolito", objective: "Dividir un proceso monolítico en funciones por capa.",
+    prompt_md: "**Refactor monolito**\n\nExtraer validación y cálculo en funciones separadas hace el flujo legible y testeable por partes.\n\n**Micro-reto:**\n1. `validar(total)` que lance `ValueError` si `total < 0`\n2. `calcular(total)` → `total * 1.21`\n3. `procesar_pedido(total)` → `calcular(validar(total))`\n4. Imprimí `procesar_pedido(100)`",
+    starter_code: "# def validar(total):\n#     if total < 0:\n#         raise ValueError('negativo')\n#     return total\n# def calcular(total):\n#     return total * 1.21\n# def procesar_pedido(total):\n#     return calcular(validar(total))\n# print(procesar_pedido(100))\n",
+    pytest: "def test_refactor_layers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['procesar_pedido'](100) == 121.0\n    try:\n        ns['procesar_pedido'](-5)\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '121.0'\n",
+    hint: "procesar_pedido compone validar y calcular en orden.",
+    solution_example: "def validar(total):\n    if total < 0:\n        raise ValueError('negativo')\n    return total\n\ndef calcular(total):\n    return total * 1.21\n\ndef procesar_pedido(total):\n    return calcular(validar(total))\n\nprint(procesar_pedido(100))\n",
+    next: Some("py-1174-layers-testable"), show_type_chips: false, micro_step: 1173,
+};
+
+pub const PY1174_LAYERS_TESTABLE: CodingStep = CodingStep {
+    id: "py-1174-layers-testable", title: "Capas · Diseño testeable", objective: "Escribir funciones puras fáciles de probar de forma aislada.",
+    prompt_md: "**Diseño testeable**\n\nFunciones puras con entradas y salidas explícitas son fáciles de probar sin estado oculto.\n\n**Micro-reto:**\n1. `@dataclass class Descuento` con `porcentaje: float`\n2. `aplicar(precio, descuento)` → `round(precio * (1 - descuento.porcentaje / 100), 2)`\n3. Imprimí `aplicar(200.0, Descuento(10))`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Descuento:\n#     porcentaje: float\n# def aplicar(precio, descuento):\n#     return round(precio * (1 - descuento.porcentaje / 100), 2)\n# print(aplicar(200.0, Descuento(10)))\n",
+    pytest: "def test_testable(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['aplicar'](200.0, ns['Descuento'](10)) == 180.0\n    assert ns['aplicar'](100.0, ns['Descuento'](0)) == 100.0\n    assert capsys.readouterr().out.strip() == '180.0'\n",
+    hint: "aplicar es pura: mismos argumentos, mismo resultado.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Descuento:\n    porcentaje: float\n\ndef aplicar(precio, descuento):\n    return round(precio * (1 - descuento.porcentaje / 100), 2)\n\nprint(aplicar(200.0, Descuento(10)))\n",
+    next: Some("py-1175-project-model"), show_type_chips: false, micro_step: 1174,
+};
+
+pub const PY1175_PROJECT_MODEL: CodingStep = CodingStep {
+    id: "py-1175-project-model", title: "Proyecto · Modelar dominio", objective: "Modelar el dominio del mini-proyecto con una dataclass.",
+    prompt_md: "**Modelar dominio**\n\nEl mini-proyecto arranca modelando el dominio: una `Venta` con producto, cantidad y precio.\n\n**Micro-reto:**\n1. `@dataclass class Venta` con `producto: str`, `cantidad: int`, `precio: float`\n2. `crear_venta(producto, cantidad, precio)` → `Venta(...)`\n3. Imprimí `crear_venta('manzana', 3, 1.5)`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Venta:\n#     producto: str\n#     cantidad: int\n#     precio: float\n# def crear_venta(producto, cantidad, precio):\n#     return Venta(producto, cantidad, precio)\n# print(crear_venta('manzana', 3, 1.5))\n",
+    pytest: "def test_model(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    v = ns['crear_venta']('manzana', 3, 1.5)\n    assert v.producto == 'manzana' and v.cantidad == 3 and v.precio == 1.5\n    assert capsys.readouterr().out.strip() == str(v)\n",
+    hint: "La dataclass Venta define los tres campos del dominio.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Venta:\n    producto: str\n    cantidad: int\n    precio: float\n\ndef crear_venta(producto, cantidad, precio):\n    return Venta(producto, cantidad, precio)\n\nprint(crear_venta('manzana', 3, 1.5))\n",
+    next: Some("py-1176-project-parse"), show_type_chips: false, micro_step: 1175,
+};
+
+pub const PY1176_PROJECT_PARSE: CodingStep = CodingStep {
+    id: "py-1176-project-parse", title: "Proyecto · Parsear entrada", objective: "Convertir una línea CSV en un dict tipado.",
+    prompt_md: "**Parsear entrada**\n\nParsear convierte texto crudo en datos estructurados: separar por coma y castear cada campo.\n\n**Micro-reto:**\n1. `parsear_linea(linea)` que haga `split(',')` y devuelva un dict con producto, cantidad (int) y precio (float)\n2. Imprimí `parsear_linea('manzana,3,1.5')`",
+    starter_code: "# def parsear_linea(linea):\n#     partes = linea.strip().split(',')\n#     return {'producto': partes[0], 'cantidad': int(partes[1]), 'precio': float(partes[2])}\n# print(parsear_linea('manzana,3,1.5'))\n",
+    pytest: "def test_parse(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['parsear_linea']('manzana,3,1.5') == {'producto': 'manzana', 'cantidad': 3, 'precio': 1.5}\n    assert capsys.readouterr().out.strip() == str({'producto': 'manzana', 'cantidad': 3, 'precio': 1.5})\n",
+    hint: "split(',') da tres partes; casteá cantidad a int y precio a float.",
+    solution_example: "def parsear_linea(linea):\n    partes = linea.strip().split(',')\n    return {'producto': partes[0], 'cantidad': int(partes[1]), 'precio': float(partes[2])}\n\nprint(parsear_linea('manzana,3,1.5'))\n",
+    next: Some("py-1177-project-transform"), show_type_chips: false, micro_step: 1176,
+};
+
+pub const PY1177_PROJECT_TRANSFORM: CodingStep = CodingStep {
+    id: "py-1177-project-transform", title: "Proyecto · Transformar y filtrar", objective: "Filtrar ventas inválidas y transformar a importes.",
+    prompt_md: "**Transformar y filtrar**\n\nFiltrá las ventas con cantidad positiva y transformá cada una en su importe total.\n\n**Micro-reto:**\n1. `filtrar_validas(ventas)` que conserve `cantidad > 0`\n2. `precios(ventas)` → `[v['cantidad'] * v['precio'] for v in ventas]`\n3. Imprimí el resultado combinado",
+    starter_code: "# def filtrar_validas(ventas):\n#     return [v for v in ventas if v['cantidad'] > 0]\n# def precios(ventas):\n#     return [v['cantidad'] * v['precio'] for v in ventas]\n# ventas = [\n#     {'producto': 'a', 'cantidad': 2, 'precio': 1.5},\n#     {'producto': 'b', 'cantidad': 0, 'precio': 10.0},\n# ]\n# print(precios(filtrar_validas(ventas)))\n",
+    pytest: "def test_transform(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    ventas = [\n        {'producto': 'a', 'cantidad': 2, 'precio': 1.5},\n        {'producto': 'b', 'cantidad': 0, 'precio': 10.0},\n    ]\n    validas = ns['filtrar_validas'](ventas)\n    assert len(validas) == 1 and validas[0]['producto'] == 'a'\n    assert ns['precios'](validas) == [3.0]\n    assert capsys.readouterr().out.strip() == str([3.0])\n",
+    hint: "filtrar_validas deja solo cantidad > 0; precios calcula el importe.",
+    solution_example: "def filtrar_validas(ventas):\n    return [v for v in ventas if v['cantidad'] > 0]\n\ndef precios(ventas):\n    return [v['cantidad'] * v['precio'] for v in ventas]\n\nventas = [\n    {'producto': 'a', 'cantidad': 2, 'precio': 1.5},\n    {'producto': 'b', 'cantidad': 0, 'precio': 10.0},\n]\nprint(precios(filtrar_validas(ventas)))\n",
+    next: Some("py-1178-project-aggregate"), show_type_chips: false, micro_step: 1177,
+};
+
+pub const PY1178_PROJECT_AGGREGATE: CodingStep = CodingStep {
+    id: "py-1178-project-aggregate", title: "Proyecto · Agregar resultados", objective: "Totalizar el importe de todas las ventas.",
+    prompt_md: "**Agregar resultados**\n\nLa agregación reduce el conjunto de ventas a un único total sumando los importes.\n\n**Micro-reto:**\n1. `total(ventas)` → `sum(v['cantidad'] * v['precio'] for v in ventas)`\n2. Imprimí el total de dos ventas",
+    starter_code: "# def total(ventas):\n#     return sum(v['cantidad'] * v['precio'] for v in ventas)\n# ventas = [\n#     {'producto': 'a', 'cantidad': 2, 'precio': 1.5},\n#     {'producto': 'b', 'cantidad': 1, 'precio': 4.0},\n# ]\n# print(total(ventas))\n",
+    pytest: "def test_aggregate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    ventas = [\n        {'producto': 'a', 'cantidad': 2, 'precio': 1.5},\n        {'producto': 'b', 'cantidad': 1, 'precio': 4.0},\n    ]\n    assert ns['total'](ventas) == 7.0\n    assert ns['total']([]) == 0\n    assert capsys.readouterr().out.strip() == '7.0'\n",
+    hint: "sum con una expresión generadora calcula el total en una línea.",
+    solution_example: "def total(ventas):\n    return sum(v['cantidad'] * v['precio'] for v in ventas)\n\nventas = [\n    {'producto': 'a', 'cantidad': 2, 'precio': 1.5},\n    {'producto': 'b', 'cantidad': 1, 'precio': 4.0},\n]\nprint(total(ventas))\n",
+    next: Some("py-1179-project-validate"), show_type_chips: false, micro_step: 1178,
+};
+
+pub const PY1179_PROJECT_VALIDATE: CodingStep = CodingStep {
+    id: "py-1179-project-validate", title: "Proyecto · Validar invariantes", objective: "Validar invariantes del dominio antes de procesar.",
+    prompt_md: "**Validar invariantes**\n\nValidar invariantes (cantidad y precio no negativos) protege el sistema de datos corruptos.\n\n**Micro-reto:**\n1. `validar_venta(venta)` que lance `ValueError` si `cantidad < 0` o `precio < 0`\n2. `validar_todas(ventas)` → `[validar_venta(v) for v in ventas]`\n3. Imprimí `validar_todas` de una venta válida",
+    starter_code: "# def validar_venta(venta):\n#     if venta['cantidad'] < 0:\n#         raise ValueError('cantidad negativa')\n#     if venta['precio'] < 0:\n#         raise ValueError('precio negativo')\n#     return venta\n# def validar_todas(ventas):\n#     return [validar_venta(v) for v in ventas]\n# print(validar_todas([{'producto': 'a', 'cantidad': 2, 'precio': 1.5}]))\n",
+    pytest: "def test_validate_project(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    venta = {'producto': 'a', 'cantidad': 2, 'precio': 1.5}\n    assert ns['validar_todas']([venta]) == [venta]\n    try:\n        ns['validar_venta']({'producto': 'a', 'cantidad': -1, 'precio': 1.5})\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == str([venta])\n",
+    hint: "Chequeá cantidad y precio por separado y devolvé la venta si es válida.",
+    solution_example: "def validar_venta(venta):\n    if venta['cantidad'] < 0:\n        raise ValueError('cantidad negativa')\n    if venta['precio'] < 0:\n        raise ValueError('precio negativo')\n    return venta\n\ndef validar_todas(ventas):\n    return [validar_venta(v) for v in ventas]\n\nprint(validar_todas([{'producto': 'a', 'cantidad': 2, 'precio': 1.5}]))\n",
+    next: Some("py-1180-project-assemble"), show_type_chips: false, micro_step: 1179,
+};
+
+pub const PY1180_PROJECT_ASSEMBLE: CodingStep = CodingStep {
+    id: "py-1180-project-assemble", title: "Proyecto · Ensamblar con config", objective: "Integrar dominio, agregación y configuración con persistencia JSON.",
+    prompt_md: "**Ensamblar con config**\n\nEl paso final integra todo: totaliza ventas, aplica un impuesto configurable y serializa el resumen a JSON.\n\n**Micro-reto:**\n1. `DEFAULTS = {'impuesto': 0.21}`\n2. `ensamblar(ventas, config=None)` que fusione config, sume subtotal y calcule total con impuesto\n3. Devuelva `json.dumps({'subtotal': subtotal, 'total': round(total, 2)})`\n4. Imprimí el resultado",
+    starter_code: "# import json\n# DEFAULTS = {'impuesto': 0.21}\n# def ensamblar(ventas, config=None):\n#     config = {**DEFAULTS, **(config or {})}\n#     subtotal = sum(v['cantidad'] * v['precio'] for v in ventas)\n#     total = subtotal * (1 + config['impuesto'])\n#     return json.dumps({'subtotal': subtotal, 'total': round(total, 2)})\n# print(ensamblar([{'producto': 'a', 'cantidad': 2, 'precio': 1.5}]))\n",
+    pytest: "def test_assemble(capsys):\n    import json\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    ventas = [{'producto': 'a', 'cantidad': 2, 'precio': 1.5}]\n    esperado = json.dumps({'subtotal': 3.0, 'total': 3.63})\n    assert ns['ensamblar'](ventas) == esperado\n    assert ns['ensamblar'](ventas, {'impuesto': 0.0}) == json.dumps({'subtotal': 3.0, 'total': 3.0})\n    assert capsys.readouterr().out.strip() == esperado\n",
+    hint: "Fusioná config sobre DEFAULTS y aplicá el impuesto al subtotal.",
+    solution_example: "import json\n\nDEFAULTS = {'impuesto': 0.21}\n\ndef ensamblar(ventas, config=None):\n    config = {**DEFAULTS, **(config or {})}\n    subtotal = sum(v['cantidad'] * v['precio'] for v in ventas)\n    total = subtotal * (1 + config['impuesto'])\n    return json.dumps({'subtotal': subtotal, 'total': round(total, 2)})\n\nprint(ensamblar([{'producto': 'a', 'cantidad': 2, 'precio': 1.5}]))\n",
+    next: None, show_type_chips: false, micro_step: 1180,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -45169,6 +45769,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1118_PIPELINE_AGGREGATE,
     &PY1119_PIPELINE_VALIDATE,
     &PY1120_PIPELINE_END_TO_END,
+    &PY1121_OOP_CLASS,
+    &PY1122_OOP_METHODS,
+    &PY1123_OOP_CONSTRUCTOR_VALIDATION,
+    &PY1124_OOP_PRIVATE_ATTR,
+    &PY1125_OOP_COORDINATION,
+    &PY1126_OOP_FROZEN_DATACLASS,
+    &PY1127_INHERITANCE_SUBCLASS,
+    &PY1128_INHERITANCE_OVERRIDE,
+    &PY1129_INHERITANCE_SUPER,
+    &PY1130_POLYMORPHISM_INTERFACE,
+    &PY1131_INHERITANCE_HIERARCHY,
+    &PY1132_DUCK_TYPING,
+    &PY1133_COMPOSITION_NESTED,
+    &PY1134_COMPOSITION_DELEGATION,
+    &PY1135_COMPOSITION_VS_INHERITANCE,
+    &PY1136_AGGREGATION_COLLECTION,
+    &PY1137_COMPOSITION_MULTI,
+    &PY1138_REFACTOR_INHERITANCE_COMPOSITION,
+    &PY1139_MIXIN_BASIC,
+    &PY1140_MIXIN_MULTIPLE,
+    &PY1141_MIXIN_MRO,
+    &PY1142_PROTOCOL_CONTRACT,
+    &PY1143_ABC_ABSTRACT,
+    &PY1144_MIXIN_PROTOCOL,
+    &PY1145_FUNCTIONAL_MAP_FILTER,
+    &PY1146_FUNCTIONAL_REDUCE,
+    &PY1147_FUNCTIONAL_PARTIAL,
+    &PY1148_FUNCTIONAL_LRU_CACHE,
+    &PY1149_FUNCTIONAL_ITERTOOLS,
+    &PY1150_FUNCTIONAL_PIPELINE,
+    &PY1151_CLOSURE_BASIC,
+    &PY1152_CLOSURE_NONLOCAL,
+    &PY1153_FACTORY_FUNCTION,
+    &PY1154_PARTIAL_VS_CLOSURE,
+    &PY1155_CLOSURE_ACCUMULATOR,
+    &PY1156_CLOSURE_VALIDATOR,
+    &PY1157_SERIALIZE_JSON,
+    &PY1158_SERIALIZE_DATACLASS,
+    &PY1159_SERIALIZE_ROUNDTRIP,
+    &PY1160_SERIALIZE_CSV,
+    &PY1161_SERIALIZE_REHYDRATE,
+    &PY1162_SERIALIZE_VALIDATE,
+    &PY1163_CONFIG_DICT_DEFAULTS,
+    &PY1164_CONFIG_DATACLASS,
+    &PY1165_CONFIG_OVERRIDE,
+    &PY1166_CONFIG_ENV,
+    &PY1167_CONFIG_MERGE,
+    &PY1168_CONFIG_TYPED,
+    &PY1169_LAYERS_SEPARATE,
+    &PY1170_LAYERS_REPOSITORY,
+    &PY1171_LAYERS_DI,
+    &PY1172_LAYERS_PROTOCOL,
+    &PY1173_LAYERS_REFACTOR,
+    &PY1174_LAYERS_TESTABLE,
+    &PY1175_PROJECT_MODEL,
+    &PY1176_PROJECT_PARSE,
+    &PY1177_PROJECT_TRANSFORM,
+    &PY1178_PROJECT_AGGREGATE,
+    &PY1179_PROJECT_VALIDATE,
+    &PY1180_PROJECT_ASSEMBLE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -45336,7 +45996,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1120);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1180);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -48248,11 +48908,11 @@ mod tests {
     }
 
     #[test]
-    fn py1061_to_py1120_engineering_chain() {
+    fn py1061_to_py1180_engineering_chain() {
         let bridge = coding_step_by_micro_step(1060).expect("py-1060");
         assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
 
-        for n in 1061..=1120 {
+        for n in 1061..=1180 {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.micro_step, n);
             assert!(
@@ -48260,7 +48920,7 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1120 {
+            if n < 1180 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -48269,7 +48929,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1120 is the end of the rail");
+                assert_eq!(step.next, None, "step 1180 is the end of the rail");
             }
         }
     }
