@@ -42845,7 +42845,607 @@ print(lower_boundary_advanced_review_i([1, 3, 3, 7], 3))
 
 print(lower_boundary_advanced_review_i([1, 3, 3, 7], 3))
 ",
-    next: None, show_type_chips: false, micro_step: 1000,
+    next: Some("py-1001-assert-contract"), show_type_chips: false, micro_step: 1000,
+};
+
+pub const PY1001_ASSERT_CONTRACT: CodingStep = CodingStep {
+    id: "py-1001-assert-contract", title: "Ingeniería del Código · Contrato con assert", objective: "Expresar una precondición numérica con assert antes de operar.",
+    prompt_md: "**Contratos con assert**\n\nUn `assert` es una promesa ejecutable: si la condición es falsa, el programa se detiene con `AssertionError`. Sirve para fijar qué debe cumplirse antes de seguir.\n\n**Micro-reto:**\n1. Definí `duplicar(n)` que devuelva `n * 2`\n2. Afirmá con `assert` que `n` es mayor o igual a `0`\n3. Imprimí `duplicar(5)`",
+    starter_code: "# def duplicar(n):\n#     assert ...\n#     return n * 2\n# print(duplicar(5))\n",
+    pytest: "def test_assert_contract(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('duplicar'))\n    assert ns['duplicar'](5) == 10\n    assert ns['duplicar'](0) == 0\n    try:\n        ns['duplicar'](-3)\n        raised = False\n    except AssertionError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "def duplicar(n):\n    assert n >= 0\n    return n * 2\nprint(duplicar(5))\n",
+    solution_example: "def duplicar(n):\n    assert n >= 0\n    return n * 2\nprint(duplicar(5))\n",
+    next: Some("py-1002-assert-type"), show_type_chips: false, micro_step: 1001,
+};
+
+pub const PY1002_ASSERT_TYPE: CodingStep = CodingStep {
+    id: "py-1002-assert-type", title: "Ingeniería del Código · Assert de tipo", objective: "Proteger el tipo de un parámetro con assert para fallar temprano.",
+    prompt_md: "**Assert de tipo**\n\nUn `assert` también protege tipos. Si una función espera un `str`, conviene afirmarlo para fallar temprano y no arrastrar el error.\n\n**Micro-reto:**\n1. Definí `saludo(nombre)` que devuelva `'Hola, ' + nombre`\n2. Afirmá con `assert` que `nombre` es `str`\n3. Imprimí `saludo('Ana')`",
+    starter_code: "# def saludo(nombre):\n#     assert isinstance(...)\n#     return 'Hola, ' + nombre\n# print(saludo('Ana'))\n",
+    pytest: "def test_assert_type(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('saludo'))\n    assert ns['saludo']('Ana') == 'Hola, Ana'\n    assert ns['saludo']('') == 'Hola, '\n    try:\n        ns['saludo'](42)\n        raised = False\n    except AssertionError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == 'Hola, Ana'\n",
+    hint: "def saludo(nombre):\n    assert isinstance(nombre, str)\n    return 'Hola, ' + nombre\nprint(saludo('Ana'))\n",
+    solution_example: "def saludo(nombre):\n    assert isinstance(nombre, str)\n    return 'Hola, ' + nombre\nprint(saludo('Ana'))\n",
+    next: Some("py-1003-assert-empty"), show_type_chips: false, micro_step: 1002,
+};
+
+pub const PY1003_ASSERT_EMPTY: CodingStep = CodingStep {
+    id: "py-1003-assert-empty", title: "Ingeniería del Código · Assert de vacío", objective: "Documentar el borde de entrada vacía con assert antes de dividir.",
+    prompt_md: "**Assert de vacío**\n\nLas listas vacías rompen funciones que asumen al menos un elemento. Un `assert` explícito documenta ese borde.\n\n**Micro-reto:**\n1. Definí `promedio(nums)` que devuelva `sum(nums) / len(nums)`\n2. Afirmá con `assert` que `nums` no está vacío\n3. Imprimí `promedio([2, 4, 6])`",
+    starter_code: "# def promedio(nums):\n#     assert ...\n#     return sum(nums) / len(nums)\n# print(promedio([2, 4, 6]))\n",
+    pytest: "def test_assert_empty(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('promedio'))\n    assert ns['promedio']([2, 4, 6]) == 4.0\n    assert ns['promedio']([5]) == 5.0\n    try:\n        ns['promedio']([])\n        raised = False\n    except AssertionError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '4.0'\n",
+    hint: "def promedio(nums):\n    assert len(nums) > 0\n    return sum(nums) / len(nums)\nprint(promedio([2, 4, 6]))\n",
+    solution_example: "def promedio(nums):\n    assert len(nums) > 0\n    return sum(nums) / len(nums)\nprint(promedio([2, 4, 6]))\n",
+    next: Some("py-1004-assert-range"), show_type_chips: false, micro_step: 1003,
+};
+
+pub const PY1004_ASSERT_RANGE: CodingStep = CodingStep {
+    id: "py-1004-assert-range", title: "Ingeniería del Código · Assert de rango", objective: "Combinar validación de rango con una decisión posterior.",
+    prompt_md: "**Assert de rango**\n\nUna nota válida está entre `0` y `100`. Validar el rango con `assert` y luego decidir integra contrato y lógica.\n\n**Micro-reto:**\n1. Definí `estado_nota(nota)` que devuelva `'aprobado'` si `nota >= 60`, si no `'reprobado'`\n2. Afirmá con `assert` que `0 <= nota <= 100`\n3. Imprimí `estado_nota(85)`",
+    starter_code: "# def estado_nota(nota):\n#     assert ...\n#     if nota >= 60:\n#         return 'aprobado'\n#     return 'reprobado'\n# print(estado_nota(85))\n",
+    pytest: "def test_assert_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('estado_nota'))\n    assert ns['estado_nota'](85) == 'aprobado'\n    assert ns['estado_nota'](59) == 'reprobado'\n    for mal in (101, -1):\n        try:\n            ns['estado_nota'](mal)\n            raised = False\n        except AssertionError:\n            raised = True\n        assert raised\n    assert capsys.readouterr().out.strip() == 'aprobado'\n",
+    hint: "def estado_nota(nota):\n    assert 0 <= nota <= 100\n    if nota >= 60:\n        return 'aprobado'\n    return 'reprobado'\nprint(estado_nota(85))\n",
+    solution_example: "def estado_nota(nota):\n    assert 0 <= nota <= 100\n    if nota >= 60:\n        return 'aprobado'\n    return 'reprobado'\nprint(estado_nota(85))\n",
+    next: Some("py-1005-assert-invariant"), show_type_chips: false, micro_step: 1004,
+};
+
+pub const PY1005_ASSERT_INVARIANT: CodingStep = CodingStep {
+    id: "py-1005-assert-invariant", title: "Ingeniería del Código · Invariante compuesto", objective: "Mantener un invariante entre dos variables con asserts encadenados.",
+    prompt_md: "**Invariante compuesto**\n\nUn rectángulo válido tiene ancho y alto positivos. Dos `assert` encadenados forman un invariante que se respeta en toda la función.\n\n**Micro-reto:**\n1. Definí `area_rectangulo(ancho, alto)`\n2. Afirmá `ancho > 0` y `alto > 0`\n3. Devolvé e imprimí `area_rectangulo(4, 5)`",
+    starter_code: "# def area_rectangulo(ancho, alto):\n#     assert ...\n#     assert ...\n#     return ancho * alto\n# print(area_rectangulo(4, 5))\n",
+    pytest: "def test_assert_invariant(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('area_rectangulo'))\n    assert ns['area_rectangulo'](4, 5) == 20\n    for mal in ((0, 5), (4, 0), (-1, 5), (4, -1)):\n        try:\n            ns['area_rectangulo'](*mal)\n            raised = False\n        except AssertionError:\n            raised = True\n        assert raised\n    assert capsys.readouterr().out.strip() == '20'\n",
+    hint: "def area_rectangulo(ancho, alto):\n    assert ancho > 0\n    assert alto > 0\n    return ancho * alto\nprint(area_rectangulo(4, 5))\n",
+    solution_example: "def area_rectangulo(ancho, alto):\n    assert ancho > 0\n    assert alto > 0\n    return ancho * alto\nprint(area_rectangulo(4, 5))\n",
+    next: Some("py-1006-assert-report"), show_type_chips: false, micro_step: 1005,
+};
+
+pub const PY1006_ASSERT_REPORT: CodingStep = CodingStep {
+    id: "py-1006-assert-report", title: "Ingeniería del Código · Reporte validado", objective: "Validar una colección entera con assert y reportar un agregado.",
+    prompt_md: "**Reporte validado**\n\nUn `assert` puede revisar una colección entera antes de seguir. Validar todos los elementos y luego reportar.\n\n**Micro-reto:**\n1. Definí `validar_notas(notas)` que afirme que todas están entre `0` y `100`\n2. Devolvé `sum(notas)`\n3. Imprimí `validar_notas([70, 80, 90])`",
+    starter_code: "# def validar_notas(notas):\n#     assert all(...)\n#     return sum(notas)\n# print(validar_notas([70, 80, 90]))\n",
+    pytest: "def test_assert_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('validar_notas'))\n    assert ns['validar_notas']([70, 80, 90]) == 240\n    assert ns['validar_notas']([]) == 0\n    try:\n        ns['validar_notas']([50, 150])\n        raised = False\n    except AssertionError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == '240'\n",
+    hint: "def validar_notas(notas):\n    assert all(0 <= n <= 100 for n in notas)\n    return sum(notas)\nprint(validar_notas([70, 80, 90]))\n",
+    solution_example: "def validar_notas(notas):\n    assert all(0 <= n <= 100 for n in notas)\n    return sum(notas)\nprint(validar_notas([70, 80, 90]))\n",
+    next: Some("py-1007-guard-clause"), show_type_chips: false, micro_step: 1006,
+};
+
+pub const PY1007_GUARD_CLAUSE: CodingStep = CodingStep {
+    id: "py-1007-guard-clause", title: "Ingeniería del Código · Guard clause", objective: "Validar al inicio y devolver temprano antes de operar.",
+    prompt_md: "**Guard clause**\n\nUn guard clause valida al inicio y corta antes de operar si algo no cierra. Evita anidar toda la lógica en un `if` gigante.\n\n**Micro-reto:**\n1. Definí `dividir_seguro(a, b)` que devuelva `a / b`\n2. Si `b == 0`, devolvé `None` sin dividir\n3. Imprimí `dividir_seguro(10, 2)`",
+    starter_code: "# def dividir_seguro(a, b):\n#     if b == 0:\n#         return None\n#     return a / b\n# print(dividir_seguro(10, 2))\n",
+    pytest: "def test_guard_clause(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('dividir_seguro'))\n    assert ns['dividir_seguro'](10, 2) == 5.0\n    assert ns['dividir_seguro'](10, 0) is None\n    assert ns['dividir_seguro'](0, 5) == 0.0\n    assert capsys.readouterr().out.strip() == '5.0'\n",
+    hint: "def dividir_seguro(a, b):\n    if b == 0:\n        return None\n    return a / b\nprint(dividir_seguro(10, 2))\n",
+    solution_example: "def dividir_seguro(a, b):\n    if b == 0:\n        return None\n    return a / b\nprint(dividir_seguro(10, 2))\n",
+    next: Some("py-1008-type-dispatch"), show_type_chips: false, micro_step: 1007,
+};
+
+pub const PY1008_TYPE_DISPATCH: CodingStep = CodingStep {
+    id: "py-1008-type-dispatch", title: "Ingeniería del Código · Despacho por tipo", objective: "Decidir el camino correcto según el tipo con isinstance.",
+    prompt_md: "**Despacho por tipo**\n\nCuando un parámetro admite varios tipos, `isinstance` decide el camino correcto sin romper.\n\n**Micro-reto:**\n1. Definí `longitud(x)` que devuelva `len(x)` si es `str` o `list`, y `-1` si es otro tipo\n2. Imprimí `longitud('hola')`",
+    starter_code: "# def longitud(x):\n#     if isinstance(x, (str, list)):\n#         return len(x)\n#     return -1\n# print(longitud('hola'))\n",
+    pytest: "def test_type_dispatch(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('longitud'))\n    assert ns['longitud']('hola') == 4\n    assert ns['longitud']([1, 2, 3]) == 3\n    assert ns['longitud'](42) == -1\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "def longitud(x):\n    if isinstance(x, (str, list)):\n        return len(x)\n    return -1\nprint(longitud('hola'))\n",
+    solution_example: "def longitud(x):\n    if isinstance(x, (str, list)):\n        return len(x)\n    return -1\nprint(longitud('hola'))\n",
+    next: Some("py-1009-none-default"), show_type_chips: false, micro_step: 1008,
+};
+
+pub const PY1009_NONE_DEFAULT: CodingStep = CodingStep {
+    id: "py-1009-none-default", title: "Ingeniería del Código · None y default", objective: "Tratar None como entrada con un valor por defecto seguro.",
+    prompt_md: "**None y default**\n\nUn parámetro puede llegar como `None`. Tratarlo como lista vacía mantiene la función segura ante datos ausentes.\n\n**Micro-reto:**\n1. Definí `buscar(valores, objetivo)` que devuelva el índice de `objetivo` o `-1` si no está\n2. Si `valores` es `None`, tratá la búsqueda como lista vacía\n3. Imprimí `buscar([10, 20, 30], 20)`",
+    starter_code: "# def buscar(valores, objetivo):\n#     if valores is None:\n#         valores = []\n#     if objetivo in valores:\n#         return valores.index(objetivo)\n#     return -1\n# print(buscar([10, 20, 30], 20))\n",
+    pytest: "def test_none_default(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('buscar'))\n    assert ns['buscar']([10, 20, 30], 20) == 1\n    assert ns['buscar']([10, 20, 30], 99) == -1\n    assert ns['buscar'](None, 20) == -1\n    assert capsys.readouterr().out.strip() == '1'\n",
+    hint: "def buscar(valores, objetivo):\n    if valores is None:\n        valores = []\n    if objetivo in valores:\n        return valores.index(objetivo)\n    return -1\nprint(buscar([10, 20, 30], 20))\n",
+    solution_example: "def buscar(valores, objetivo):\n    if valores is None:\n        valores = []\n    if objetivo in valores:\n        return valores.index(objetivo)\n    return -1\nprint(buscar([10, 20, 30], 20))\n",
+    next: Some("py-1010-normalize-input"), show_type_chips: false, micro_step: 1009,
+};
+
+pub const PY1010_NORMALIZE_INPUT: CodingStep = CodingStep {
+    id: "py-1010-normalize-input", title: "Ingeniería del Código · Normalizar entrada", objective: "Normalizar una entrada con formato variable antes de procesarla.",
+    prompt_md: "**Normalizar entrada**\n\nLos datos llegan en formatos inconsistentes. Normalizar primero (espacios y mayúsculas) hace el resto trivial.\n\n**Micro-reto:**\n1. Definí `normalizar(nombre)` que quite espacios de los bordes y ponga en minúsculas\n2. Si `nombre` es `None`, devolvé `''`\n3. Imprimí `normalizar('  Ana  ')`",
+    starter_code: "# def normalizar(nombre):\n#     if nombre is None:\n#         return ''\n#     return nombre.strip().lower()\n# print(normalizar('  Ana  '))\n",
+    pytest: "def test_normalize_input(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('normalizar'))\n    assert ns['normalizar']('  Ana  ') == 'ana'\n    assert ns['normalizar']('PEPE') == 'pepe'\n    assert ns['normalizar'](None) == ''\n    assert capsys.readouterr().out.strip() == 'ana'\n",
+    hint: "def normalizar(nombre):\n    if nombre is None:\n        return ''\n    return nombre.strip().lower()\nprint(normalizar('  Ana  '))\n",
+    solution_example: "def normalizar(nombre):\n    if nombre is None:\n        return ''\n    return nombre.strip().lower()\nprint(normalizar('  Ana  '))\n",
+    next: Some("py-1011-filter-collection"), show_type_chips: false, micro_step: 1010,
+};
+
+pub const PY1011_FILTER_COLLECTION: CodingStep = CodingStep {
+    id: "py-1011-filter-collection", title: "Ingeniería del Código · Filtrar colección", objective: "Quedarse solo con los elementos que cumplen una regla.",
+    prompt_md: "**Filtrar colección**\n\nDe una lista mixta, quedarse solo con los elementos que cumplen una regla es validar + filtrar.\n\n**Micro-reto:**\n1. Definí `solo_positivos(nums)` que devuelva los enteros mayores que `0`\n2. Imprimí `solo_positivos([-2, 0, 3, 7, -1])`",
+    starter_code: "# def solo_positivos(nums):\n#     return [n for n in nums if n > 0]\n# print(solo_positivos([-2, 0, 3, 7, -1]))\n",
+    pytest: "def test_filter_collection(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('solo_positivos'))\n    assert ns['solo_positivos']([-2, 0, 3, 7, -1]) == [3, 7]\n    assert ns['solo_positivos']([]) == []\n    assert ns['solo_positivos']([-1, -2]) == []\n    assert capsys.readouterr().out.strip() == '[3, 7]'\n",
+    hint: "def solo_positivos(nums):\n    return [n for n in nums if n > 0]\nprint(solo_positivos([-2, 0, 3, 7, -1]))\n",
+    solution_example: "def solo_positivos(nums):\n    return [n for n in nums if n > 0]\nprint(solo_positivos([-2, 0, 3, 7, -1]))\n",
+    next: Some("py-1012-validated-summary"), show_type_chips: false, micro_step: 1011,
+};
+
+pub const PY1012_VALIDATED_SUMMARY: CodingStep = CodingStep {
+    id: "py-1012-validated-summary", title: "Ingeniería del Código · Resumen validado", objective: "Validar cada elemento, contar válidos e inválidos y totalizar.",
+    prompt_md: "**Resumen validado**\n\nReuní todo: validar cada elemento, contar válidos e inválidos y devolver el total.\n\n**Micro-reto:**\n1. Definí `resumen_notas(notas)` que cuente cuántas están en `0..=100`\n2. Devolvé `(validas, invalidas, suma)`\n3. Imprimí `resumen_notas([80, -5, 95, 120, 70])`",
+    starter_code: "# def resumen_notas(notas):\n#     validas = ...\n#     invalidas = ...\n#     suma = ...\n#     return validas, invalidas, suma\n# print(resumen_notas([80, -5, 95, 120, 70]))\n",
+    pytest: "def test_validated_summary(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen_notas'))\n    assert ns['resumen_notas']([80, -5, 95, 120, 70]) == (3, 2, 245)\n    assert ns['resumen_notas']([]) == (0, 0, 0)\n    assert capsys.readouterr().out.strip() == '(3, 2, 245)'\n",
+    hint: "def resumen_notas(notas):\n    validas = sum(1 for n in notas if 0 <= n <= 100)\n    invalidas = len(notas) - validas\n    suma = sum(n for n in notas if 0 <= n <= 100)\n    return validas, invalidas, suma\nprint(resumen_notas([80, -5, 95, 120, 70]))\n",
+    solution_example: "def resumen_notas(notas):\n    validas = sum(1 for n in notas if 0 <= n <= 100)\n    invalidas = len(notas) - validas\n    suma = sum(n for n in notas if 0 <= n <= 100)\n    return validas, invalidas, suma\nprint(resumen_notas([80, -5, 95, 120, 70]))\n",
+    next: Some("py-1013-legb-local"), show_type_chips: false, micro_step: 1012,
+};
+
+pub const PY1013_LEGB_LOCAL: CodingStep = CodingStep {
+    id: "py-1013-legb-local", title: "Ingeniería del Código · Ámbito local (LEGB)", objective: "Distinguir una variable local de una global con el mismo nombre.",
+    prompt_md: "**LEGB: Local primero**\n\nPython resuelve nombres en el orden LEGB: Local, Enclosing, Global, Builtin. Una variable asignada dentro de una función es local y oculta a la global del mismo nombre.\n\n**Micro-reto:**\n1. Definí la global `valor = 10`\n2. Definí `obtener()` que asigne `valor = 7` y lo devuelva\n3. Imprimí `obtener()`",
+    starter_code: "# valor = 10\n# def obtener():\n#     valor = 7\n#     return valor\n# print(obtener())\n",
+    pytest: "def test_legb_local(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('obtener'))\n    assert ns['obtener']() == 7\n    assert ns['valor'] == 10\n    assert capsys.readouterr().out.strip() == '7'\n",
+    hint: "valor = 10\ndef obtener():\n    valor = 7\n    return valor\nprint(obtener())\n",
+    solution_example: "valor = 10\ndef obtener():\n    valor = 7\n    return valor\nprint(obtener())\n",
+    next: Some("py-1014-legb-enclosing"), show_type_chips: false, micro_step: 1013,
+};
+
+pub const PY1014_LEGB_ENCLOSING: CodingStep = CodingStep {
+    id: "py-1014-legb-enclosing", title: "Ingeniería del Código · Closure (LEGB)", objective: "Leer una variable de la función envolvente dentro de una función anidada.",
+    prompt_md: "**LEGB: Enclosing (closure)**\n\nUna función anidada puede leer variables de la función que la envuelve. Ese alcance intermedio es `Enclosing`, la base de los closures.\n\n**Micro-reto:**\n1. Definí `externa()` con `base = 3`\n2. Dentro, definí `interna(n)` que devuelva `n + base`\n3. Devolvé `interna` e imprimí `externa()(5)`",
+    starter_code: "# def externa():\n#     base = 3\n#     def interna(n):\n#         return n + base\n#     return interna\n# print(externa()(5))\n",
+    pytest: "def test_legb_enclosing(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('externa'))\n    assert ns['externa']()(5) == 8\n    assert ns['externa']()(0) == 3\n    assert capsys.readouterr().out.strip() == '8'\n",
+    hint: "def externa():\n    base = 3\n    def interna(n):\n        return n + base\n    return interna\nprint(externa()(5))\n",
+    solution_example: "def externa():\n    base = 3\n    def interna(n):\n        return n + base\n    return interna\nprint(externa()(5))\n",
+    next: Some("py-1015-legb-global"), show_type_chips: false, micro_step: 1014,
+};
+
+pub const PY1015_LEGB_GLOBAL: CodingStep = CodingStep {
+    id: "py-1015-legb-global", title: "Ingeniería del Código · Lectura global (LEGB)", objective: "Leer una variable global dentro de una función sin reasignarla.",
+    prompt_md: "**LEGB: Global (solo lectura)**\n\nUna función puede leer una variable global sin declararla. Solo necesitás la palabra `global` cuando querés reasignarla.\n\n**Micro-reto:**\n1. Definí la global `total = 100`\n2. Definí `incrementa(n)` que devuelva `total + n`\n3. Imprimí `incrementa(5)`",
+    starter_code: "# total = 100\n# def incrementa(n):\n#     return total + n\n# print(incrementa(5))\n",
+    pytest: "def test_legb_global(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('incrementa'))\n    assert ns['incrementa'](5) == 105\n    assert ns['incrementa'](0) == 100\n    assert ns['total'] == 100\n    assert capsys.readouterr().out.strip() == '105'\n",
+    hint: "total = 100\ndef incrementa(n):\n    return total + n\nprint(incrementa(5))\n",
+    solution_example: "total = 100\ndef incrementa(n):\n    return total + n\nprint(incrementa(5))\n",
+    next: Some("py-1016-legb-builtins"), show_type_chips: false, micro_step: 1015,
+};
+
+pub const PY1016_LEGB_BUILTINS: CodingStep = CodingStep {
+    id: "py-1016-legb-builtins", title: "Ingeniería del Código · Builtins (LEGB)", objective: "Resolver `len` desde el ámbito builtin sin sombrearlo.",
+    prompt_md: "**LEGB: Builtins al final**\n\nSi un nombre no está en Local, Enclosing ni Global, Python lo busca en Builtins (`len`, `sum`, `max`). Evitá redefinir estos nombres.\n\n**Micro-reto:**\n1. Definí `conteo(palabras)` que devuelva `len(palabras)`\n2. Imprimí `conteo(['a', 'b', 'c'])`",
+    starter_code: "# def conteo(palabras):\n#     return len(palabras)\n# print(conteo(['a', 'b', 'c']))\n",
+    pytest: "def test_legb_builtins(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('conteo'))\n    assert ns['conteo'](['a', 'b', 'c']) == 3\n    assert ns['conteo']([]) == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "def conteo(palabras):\n    return len(palabras)\nprint(conteo(['a', 'b', 'c']))\n",
+    solution_example: "def conteo(palabras):\n    return len(palabras)\nprint(conteo(['a', 'b', 'c']))\n",
+    next: Some("py-1017-legb-nested"), show_type_chips: false, micro_step: 1016,
+};
+
+pub const PY1017_LEGB_NESTED: CodingStep = CodingStep {
+    id: "py-1017-legb-nested", title: "Ingeniería del Código · Anidamiento LEGB", objective: "Rastrear qué `x` resuelve cada función en un anidamiento de tres niveles.",
+    prompt_md: "**LEGB: Anidamiento**\n\nCada función busca el nombre en su propio ámbito y luego en los envolventes. El más cercano gana.\n\n**Micro-reto:**\n1. Definí `externa()` con `x = 1`\n2. Dentro, `media()` asigna `x = 2` y define `interna()` que devuelve `x`\n3. Devolvé `media()` e imprimí `externa()`",
+    starter_code: "# def externa():\n#     x = 1\n#     def media():\n#         x = 2\n#         def interna():\n#             return x\n#         return interna()\n#     return media()\n# print(externa())\n",
+    pytest: "def test_legb_nested(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('externa'))\n    assert ns['externa']() == 2\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "def externa():\n    x = 1\n    def media():\n        x = 2\n        def interna():\n            return x\n        return interna()\n    return media()\nprint(externa())\n",
+    solution_example: "def externa():\n    x = 1\n    def media():\n        x = 2\n        def interna():\n            return x\n        return interna()\n    return media()\nprint(externa())\n",
+    next: Some("py-1018-legb-report"), show_type_chips: false, micro_step: 1017,
+};
+
+pub const PY1018_LEGB_REPORT: CodingStep = CodingStep {
+    id: "py-1018-legb-report", title: "Ingeniería del Código · Reporte de ámbitos", objective: "Combinar una variable local y una global en un solo reporte.",
+    prompt_md: "**Reporte local + global**\n\nUna función puede mezclar resultados locales con constantes globales y devolverlos juntos.\n\n**Micro-reto:**\n1. Definí la global `GLOBAL = 5`\n2. Definí `resumen(n)` con `local = n * 2`\n3. Devolvé e imprimí `(local, GLOBAL)`",
+    starter_code: "# GLOBAL = 5\n# def resumen(n):\n#     local = n * 2\n#     return (local, GLOBAL)\n# print(resumen(3))\n",
+    pytest: "def test_legb_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert ns['resumen'](3) == (6, 5)\n    assert ns['resumen'](0) == (0, 5)\n    assert ns['GLOBAL'] == 5\n    assert capsys.readouterr().out.strip() == '(6, 5)'\n",
+    hint: "GLOBAL = 5\ndef resumen(n):\n    local = n * 2\n    return (local, GLOBAL)\nprint(resumen(3))\n",
+    solution_example: "GLOBAL = 5\ndef resumen(n):\n    local = n * 2\n    return (local, GLOBAL)\nprint(resumen(3))\n",
+    next: Some("py-1019-alias-list"), show_type_chips: false, micro_step: 1018,
+};
+
+pub const PY1019_ALIAS_LIST: CodingStep = CodingStep {
+    id: "py-1019-alias-list", title: "Ingeniería del Código · Aliasing de listas", objective: "Ver que asignar una lista crea una referencia, no una copia.",
+    prompt_md: "**Aliasing**\n\nAsignar una lista a otra variable no copia datos: ambas apuntan al mismo objeto. Mutar una afecta a la otra.\n\n**Micro-reto:**\n1. Definí `alias(a)` que haga `b = a` y `b.append(4)`\n2. Devolvé `(a, b)`\n3. Imprimí `alias([1, 2, 3])`",
+    starter_code: "# def alias(a):\n#     b = a\n#     b.append(4)\n#     return (a, b)\n# print(alias([1, 2, 3]))\n",
+    pytest: "def test_alias_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('alias'))\n    a, b = ns['alias']([1, 2, 3])\n    assert a == b == [1, 2, 3, 4]\n    assert len(a) == 4 and len(b) == 4\n    assert capsys.readouterr().out.strip() == '([1, 2, 3, 4], [1, 2, 3, 4])'\n",
+    hint: "def alias(a):\n    b = a\n    b.append(4)\n    return (a, b)\nprint(alias([1, 2, 3]))\n",
+    solution_example: "def alias(a):\n    b = a\n    b.append(4)\n    return (a, b)\nprint(alias([1, 2, 3]))\n",
+    next: Some("py-1020-copy-list"), show_type_chips: false, micro_step: 1019,
+};
+
+pub const PY1020_COPY_LIST: CodingStep = CodingStep {
+    id: "py-1020-copy-list", title: "Ingeniería del Código · Copia superficial", objective: "Usar `.copy()` para desacoplar una lista de su original.",
+    prompt_md: "**Copia superficial**\n\n`.copy()` crea una lista nueva con los mismos elementos. Mutar la copia ya no afecta al original.\n\n**Micro-reto:**\n1. Definí `copiar(a)` que haga `b = a.copy()` y `b.append(9)`\n2. Devolvé `(a, b)`\n3. Imprimí `copiar([1, 2])`",
+    starter_code: "# def copiar(a):\n#     b = a.copy()\n#     b.append(9)\n#     return (a, b)\n# print(copiar([1, 2]))\n",
+    pytest: "def test_copy_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('copiar'))\n    a, b = ns['copiar']([1, 2])\n    assert a == [1, 2]\n    assert b == [1, 2, 9]\n    assert capsys.readouterr().out.strip() == '([1, 2], [1, 2, 9])'\n",
+    hint: "def copiar(a):\n    b = a.copy()\n    b.append(9)\n    return (a, b)\nprint(copiar([1, 2]))\n",
+    solution_example: "def copiar(a):\n    b = a.copy()\n    b.append(9)\n    return (a, b)\nprint(copiar([1, 2]))\n",
+    next: Some("py-1021-mutate-inplace"), show_type_chips: false, micro_step: 1020,
+};
+
+pub const PY1021_MUTATE_INPLACE: CodingStep = CodingStep {
+    id: "py-1021-mutate-inplace", title: "Ingeniería del Código · Mutación in-place", objective: "Transformar una lista modificando sus elementos en el lugar.",
+    prompt_md: "**Mutación in-place**\n\nModificar elementos por índice cambia la lista original sin crear una nueva. Es un efecto secundario deliberado.\n\n**Micro-reto:**\n1. Definí `duplicar_inplace(nums)` que multiplique cada elemento por `2`\n2. Devolvé `nums`\n3. Imprimí `duplicar_inplace([1, 2, 3])`",
+    starter_code: "# def duplicar_inplace(nums):\n#     for i in range(len(nums)):\n#         nums[i] *= 2\n#     return nums\n# print(duplicar_inplace([1, 2, 3]))\n",
+    pytest: "def test_mutate_inplace(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('duplicar_inplace'))\n    assert ns['duplicar_inplace']([1, 2, 3]) == [2, 4, 6]\n    assert ns['duplicar_inplace']([]) == []\n    assert capsys.readouterr().out.strip() == '[2, 4, 6]'\n",
+    hint: "def duplicar_inplace(nums):\n    for i in range(len(nums)):\n        nums[i] *= 2\n    return nums\nprint(duplicar_inplace([1, 2, 3]))\n",
+    solution_example: "def duplicar_inplace(nums):\n    for i in range(len(nums)):\n        nums[i] *= 2\n    return nums\nprint(duplicar_inplace([1, 2, 3]))\n",
+    next: Some("py-1022-immutable-int"), show_type_chips: false, micro_step: 1021,
+};
+
+pub const PY1022_IMMUTABLE_INT: CodingStep = CodingStep {
+    id: "py-1022-immutable-int", title: "Ingeniería del Código · Inmutabilidad", objective: "Confirmar que pasar un entero no modifica el original.",
+    prompt_md: "**Enteros inmutables**\n\nLos `int` son inmutables: dentro de la función `n += 1` crea un valor nuevo y no toca el `x` original.\n\n**Micro-reto:**\n1. Definí `incrementar(n)` que haga `n += 1` y lo devuelva\n2. Asigná `x = 5` y `y = incrementar(x)`\n3. Imprimí `(x, y)`",
+    starter_code: "# def incrementar(n):\n#     n += 1\n#     return n\n# x = 5\n# y = incrementar(x)\n# print((x, y))\n",
+    pytest: "def test_immutable_int(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('incrementar'))\n    assert ns['incrementar'](5) == 6\n    assert ns['x'] == 5\n    assert ns['y'] == 6\n    assert capsys.readouterr().out.strip() == '(5, 6)'\n",
+    hint: "def incrementar(n):\n    n += 1\n    return n\nx = 5\ny = incrementar(x)\nprint((x, y))\n",
+    solution_example: "def incrementar(n):\n    n += 1\n    return n\nx = 5\ny = incrementar(x)\nprint((x, y))\n",
+    next: Some("py-1023-nested-copy"), show_type_chips: false, micro_step: 1022,
+};
+
+pub const PY1023_NESTED_COPY: CodingStep = CodingStep {
+    id: "py-1023-nested-copy", title: "Ingeniería del Código · Copia profunda", objective: "Usar `copy.deepcopy` para aislar estructuras anidadas.",
+    prompt_md: "**Copia profunda**\n\nUna copia superficial deja las listas internas compartidas. `copy.deepcopy` clona todo el árbol.\n\n**Micro-reto:**\n1. Importá `copy` y definí `clonar_profundo(original)`\n2. Creá `a = [[1, 2], [3, 4]]` y `b = clonar_profundo(a)`\n3. Hacé `b[0][0] = 99` e imprimí `(a[0][0], b[0][0])`",
+    starter_code: "# import copy\n# def clonar_profundo(original):\n#     return copy.deepcopy(original)\n# a = [[1, 2], [3, 4]]\n# b = clonar_profundo(a)\n# b[0][0] = 99\n# print((a[0][0], b[0][0]))\n",
+    pytest: "def test_nested_copy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('clonar_profundo'))\n    a = [[1, 2], [3, 4]]\n    b = ns['clonar_profundo'](a)\n    assert b == [[1, 2], [3, 4]]\n    assert b is not a and b[0] is not a[0]\n    assert capsys.readouterr().out.strip() == '(1, 99)'\n",
+    hint: "import copy\ndef clonar_profundo(original):\n    return copy.deepcopy(original)\na = [[1, 2], [3, 4]]\nb = clonar_profundo(a)\nb[0][0] = 99\nprint((a[0][0], b[0][0]))\n",
+    solution_example: "import copy\ndef clonar_profundo(original):\n    return copy.deepcopy(original)\na = [[1, 2], [3, 4]]\nb = clonar_profundo(a)\nb[0][0] = 99\nprint((a[0][0], b[0][0]))\n",
+    next: Some("py-1024-alias-report"), show_type_chips: false, micro_step: 1023,
+};
+
+pub const PY1024_ALIAS_REPORT: CodingStep = CodingStep {
+    id: "py-1024-alias-report", title: "Ingeniería del Código · Identidad vs igualdad", objective: "Diferenciar `is` (identidad) de `==` (igualdad de valor).",
+    prompt_md: "**`is` vs `==`**\n\n`is` compara identidad (mismo objeto) y `==` compara valor. Dos listas iguales pueden ser objetos distintos.\n\n**Micro-reto:**\n1. Definí `comparar(a, b)` que devuelva `(a is b, a == b)`\n2. Asigná `x = [1]` y `y = x`\n3. Imprimí `comparar(x, y)`",
+    starter_code: "# def comparar(a, b):\n#     return (a is b, a == b)\n# x = [1]\n# y = x\n# print(comparar(x, y))\n",
+    pytest: "def test_alias_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('comparar'))\n    assert ns['comparar'](ns['x'], ns['y']) == (True, True)\n    assert ns['comparar'](ns['x'], [1]) == (False, True)\n    assert capsys.readouterr().out.strip() == '(True, True)'\n",
+    hint: "def comparar(a, b):\n    return (a is b, a == b)\nx = [1]\ny = x\nprint(comparar(x, y))\n",
+    solution_example: "def comparar(a, b):\n    return (a is b, a == b)\nx = [1]\ny = x\nprint(comparar(x, y))\n",
+    next: Some("py-1025-pure-add"), show_type_chips: false, micro_step: 1024,
+};
+
+pub const PY1025_PURE_ADD: CodingStep = CodingStep {
+    id: "py-1025-pure-add", title: "Ingeniería del Código · Función pura", objective: "Escribir una función sin efectos secundarios que solo devuelve un valor.",
+    prompt_md: "**Función pura**\n\nUna función pura depende solo de sus argumentos y devuelve un valor sin tocar estado externo. Mismo input, mismo output.\n\n**Micro-reto:**\n1. Definí `sumar(a, b)` que devuelva `a + b`\n2. Imprimí `sumar(2, 3)`",
+    starter_code: "# def sumar(a, b):\n#     return a + b\n# print(sumar(2, 3))\n",
+    pytest: "def test_pure_add(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('sumar'))\n    assert ns['sumar'](2, 3) == 5\n    assert ns['sumar'](-1, 1) == 0\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "def sumar(a, b):\n    return a + b\nprint(sumar(2, 3))\n",
+    solution_example: "def sumar(a, b):\n    return a + b\nprint(sumar(2, 3))\n",
+    next: Some("py-1026-side-effect-print"), show_type_chips: false, micro_step: 1025,
+};
+
+pub const PY1026_SIDE_EFFECT_PRINT: CodingStep = CodingStep {
+    id: "py-1026-side-effect-print", title: "Ingeniería del Código · Efecto secundario", objective: "Distinguir el `return` del efecto secundario de imprimir.",
+    prompt_md: "**Efecto secundario**\n\nUn `print` es un efecto secundario: cambia la salida, no el valor devuelto. El `return` sigue siendo el resultado.\n\n**Micro-reto:**\n1. Definí `convertir(texto)` que imprima `'convertido'` y devuelva `texto.upper()`\n2. Imprimí `convertir('hola')`",
+    starter_code: "# def convertir(texto):\n#     print('convertido')\n#     return texto.upper()\n# print(convertir('hola'))\n",
+    pytest: "def test_side_effect_print(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('convertir'))\n    assert ns['convertir']('hola') == 'HOLA'\n    assert ns['convertir']('a') == 'A'\n    assert capsys.readouterr().out.strip() == 'convertido\\nHOLA'\n",
+    hint: "def convertir(texto):\n    print('convertido')\n    return texto.upper()\nprint(convertir('hola'))\n",
+    solution_example: "def convertir(texto):\n    print('convertido')\n    return texto.upper()\nprint(convertir('hola'))\n",
+    next: Some("py-1027-no-global-mutation"), show_type_chips: false, micro_step: 1026,
+};
+
+pub const PY1027_NO_GLOBAL_MUTATION: CodingStep = CodingStep {
+    id: "py-1027-no-global-mutation", title: "Ingeniería del Código · Estado por parámetro", objective: "Pasar el estado como parámetro en lugar de mutar una global.",
+    prompt_md: "**Estado explícito**\n\nEn vez de una global mutable, pasá el estado como parámetro y devolvé el nuevo valor. La función queda pura y predecible.\n\n**Micro-reto:**\n1. Definí `incrementar_contador(contador, paso=1)` que devuelva `contador + paso`\n2. Imprimí `incrementar_contador(10)`",
+    starter_code: "# def incrementar_contador(contador, paso=1):\n#     return contador + paso\n# print(incrementar_contador(10))\n",
+    pytest: "def test_no_global_mutation(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('incrementar_contador'))\n    assert ns['incrementar_contador'](10) == 11\n    assert ns['incrementar_contador'](10, 5) == 15\n    assert capsys.readouterr().out.strip() == '11'\n",
+    hint: "def incrementar_contador(contador, paso=1):\n    return contador + paso\nprint(incrementar_contador(10))\n",
+    solution_example: "def incrementar_contador(contador, paso=1):\n    return contador + paso\nprint(incrementar_contador(10))\n",
+    next: Some("py-1028-return-vs-mutate"), show_type_chips: false, micro_step: 1027,
+};
+
+pub const PY1028_RETURN_VS_MUTATE: CodingStep = CodingStep {
+    id: "py-1028-return-vs-mutate", title: "Ingeniería del Código · Devolver en vez de mutar", objective: "Producir una lista nueva sin modificar la entrada.",
+    prompt_md: "**Devolver, no mutar**\n\nUna función pura crea una lista nueva con una comprensión y deja intacta la entrada.\n\n**Micro-reto:**\n1. Definí `doblar_nueva(nums)` que devuelva `[n * 2 for n in nums]`\n2. Asigná `original = [1, 2, 3]` y `resultado = doblar_nueva(original)`\n3. Imprimí `(original, resultado)`",
+    starter_code: "# def doblar_nueva(nums):\n#     return [n * 2 for n in nums]\n# original = [1, 2, 3]\n# resultado = doblar_nueva(original)\n# print((original, resultado))\n",
+    pytest: "def test_return_vs_mutate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('doblar_nueva'))\n    assert ns['doblar_nueva']([1, 2, 3]) == [2, 4, 6]\n    assert ns['original'] == [1, 2, 3]\n    assert ns['resultado'] == [2, 4, 6]\n    assert capsys.readouterr().out.strip() == '([1, 2, 3], [2, 4, 6])'\n",
+    hint: "def doblar_nueva(nums):\n    return [n * 2 for n in nums]\noriginal = [1, 2, 3]\nresultado = doblar_nueva(original)\nprint((original, resultado))\n",
+    solution_example: "def doblar_nueva(nums):\n    return [n * 2 for n in nums]\noriginal = [1, 2, 3]\nresultado = doblar_nueva(original)\nprint((original, resultado))\n",
+    next: Some("py-1029-compose-pure"), show_type_chips: false, micro_step: 1028,
+};
+
+pub const PY1029_COMPOSE_PURE: CodingStep = CodingStep {
+    id: "py-1029-compose-pure", title: "Ingeniería del Código · Composición pura", objective: "Componer dos funciones puras en una sola.",
+    prompt_md: "**Composición**\n\nComponer funciones puras es aplicar una dentro de otra. El resultado sigue siendo puro y fácil de razonar.\n\n**Micro-reto:**\n1. Definí `doble(n)` y `mas_uno(n)`\n2. Definí `componer(n)` que devuelva `mas_uno(doble(n))`\n3. Imprimí `componer(5)`",
+    starter_code: "# def doble(n):\n#     return n * 2\n# def mas_uno(n):\n#     return n + 1\n# def componer(n):\n#     return mas_uno(doble(n))\n# print(componer(5))\n",
+    pytest: "def test_compose_pure(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('componer'))\n    assert ns['componer'](5) == 11\n    assert ns['componer'](0) == 1\n    assert capsys.readouterr().out.strip() == '11'\n",
+    hint: "def doble(n):\n    return n * 2\ndef mas_uno(n):\n    return n + 1\ndef componer(n):\n    return mas_uno(doble(n))\nprint(componer(5))\n",
+    solution_example: "def doble(n):\n    return n * 2\ndef mas_uno(n):\n    return n + 1\ndef componer(n):\n    return mas_uno(doble(n))\nprint(componer(5))\n",
+    next: Some("py-1030-purity-report"), show_type_chips: false, micro_step: 1029,
+};
+
+pub const PY1030_PURITY_REPORT: CodingStep = CodingStep {
+    id: "py-1030-purity-report", title: "Ingeniería del Código · Reporte de pureza", objective: "Comparar varias composiciones puras en un solo reporte.",
+    prompt_md: "**Reporte de composiciones**\n\nAgrupá varias llamadas puras en una tupla para comparar caminos distintos.\n\n**Micro-reto:**\n1. Definí `doble(n)` y `mas_uno(n)`\n2. Definí `pipeline(n)` que devuelva `(doble(n), mas_uno(n), mas_uno(doble(n)))`\n3. Imprimí `pipeline(5)`",
+    starter_code: "# def doble(n):\n#     return n * 2\n# def mas_uno(n):\n#     return n + 1\n# def pipeline(n):\n#     return (doble(n), mas_uno(n), mas_uno(doble(n)))\n# print(pipeline(5))\n",
+    pytest: "def test_purity_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('pipeline'))\n    assert ns['pipeline'](5) == (10, 6, 11)\n    assert ns['pipeline'](0) == (0, 1, 1)\n    assert capsys.readouterr().out.strip() == '(10, 6, 11)'\n",
+    hint: "def doble(n):\n    return n * 2\ndef mas_uno(n):\n    return n + 1\ndef pipeline(n):\n    return (doble(n), mas_uno(n), mas_uno(doble(n)))\nprint(pipeline(5))\n",
+    solution_example: "def doble(n):\n    return n * 2\ndef mas_uno(n):\n    return n + 1\ndef pipeline(n):\n    return (doble(n), mas_uno(n), mas_uno(doble(n)))\nprint(pipeline(5))\n",
+    next: Some("py-1031-dict-group"), show_type_chips: false, micro_step: 1030,
+};
+
+pub const PY1031_DICT_GROUP: CodingStep = CodingStep {
+    id: "py-1031-dict-group", title: "Ingeniería del Código · Agrupar en dict", objective: "Agrupar elementos por una clave calculada con `setdefault`.",
+    prompt_md: "**Agrupar con `setdefault`**\n\n`setdefault` devuelve el valor existente o lo crea. Es la forma idiomática de agrupar por una clave calculada.\n\n**Micro-reto:**\n1. Definí `agrupar_por_longitud(palabras)`\n2. Para cada palabra, usá `d.setdefault(len(p), []).append(p)`\n3. Devolvé `d` e imprimí `agrupar_por_longitud(['a', 'bc', 'de', 'fgh'])`",
+    starter_code: "# def agrupar_por_longitud(palabras):\n#     d = {}\n#     for p in palabras:\n#         d.setdefault(len(p), []).append(p)\n#     return d\n# print(agrupar_por_longitud(['a', 'bc', 'de', 'fgh']))\n",
+    pytest: "def test_dict_group(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('agrupar_por_longitud'))\n    assert ns['agrupar_por_longitud'](['a', 'bc', 'de', 'fgh']) == {1: ['a'], 2: ['bc', 'de'], 3: ['fgh']}\n    assert ns['agrupar_por_longitud']([]) == {}\n    assert capsys.readouterr().out.strip() == \"{1: ['a'], 2: ['bc', 'de'], 3: ['fgh']}\"\n",
+    hint: "def agrupar_por_longitud(palabras):\n    d = {}\n    for p in palabras:\n        d.setdefault(len(p), []).append(p)\n    return d\nprint(agrupar_por_longitud(['a', 'bc', 'de', 'fgh']))\n",
+    solution_example: "def agrupar_por_longitud(palabras):\n    d = {}\n    for p in palabras:\n        d.setdefault(len(p), []).append(p)\n    return d\nprint(agrupar_por_longitud(['a', 'bc', 'de', 'fgh']))\n",
+    next: Some("py-1032-set-membership"), show_type_chips: false, micro_step: 1031,
+};
+
+pub const PY1032_SET_MEMBERSHIP: CodingStep = CodingStep {
+    id: "py-1032-set-membership", title: "Ingeniería del Código · Intersección con set", objective: "Devolver los elementos compartidos de dos listas, ordenados.",
+    prompt_md: "**Intersección con `set`**\n\nLos conjuntos (`set`) resuelven pertenencia y operaciones como intersección de forma eficiente.\n\n**Micro-reto:**\n1. Definí `comunes(a, b)` que devuelva los elementos compartidos ordenados\n2. Usá `set(a) & set(b)`\n3. Imprimí `comunes([1, 2, 3], [2, 3, 4])`",
+    starter_code: "# def comunes(a, b):\n#     return sorted(set(a) & set(b))\n# print(comunes([1, 2, 3], [2, 3, 4]))\n",
+    pytest: "def test_set_membership(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('comunes'))\n    assert ns['comunes']([1, 2, 3], [2, 3, 4]) == [2, 3]\n    assert ns['comunes']([], [1]) == []\n    assert capsys.readouterr().out.strip() == '[2, 3]'\n",
+    hint: "def comunes(a, b):\n    return sorted(set(a) & set(b))\nprint(comunes([1, 2, 3], [2, 3, 4]))\n",
+    solution_example: "def comunes(a, b):\n    return sorted(set(a) & set(b))\nprint(comunes([1, 2, 3], [2, 3, 4]))\n",
+    next: Some("py-1033-tuple-key"), show_type_chips: false, micro_step: 1032,
+};
+
+pub const PY1033_TUPLE_KEY: CodingStep = CodingStep {
+    id: "py-1033-tuple-key", title: "Ingeniería del Código · Tuplas como clave", objective: "Contar tuplas usándolas como claves de un dict.",
+    prompt_md: "**Tuplas como clave**\n\nLas tuplas son hashables, así que pueden ser claves de un dict. Ideal para contar puntos o coordenadas.\n\n**Micro-reto:**\n1. Definí `contar_puntos(puntos)` que cuente cada tupla con `d.get(p, 0) + 1`\n2. Devolvé `d`\n3. Imprimí `contar_puntos([(1, 2), (1, 2), (3, 4)])`",
+    starter_code: "# def contar_puntos(puntos):\n#     d = {}\n#     for p in puntos:\n#         d[p] = d.get(p, 0) + 1\n#     return d\n# print(contar_puntos([(1, 2), (1, 2), (3, 4)]))\n",
+    pytest: "def test_tuple_key(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('contar_puntos'))\n    assert ns['contar_puntos']([(1, 2), (1, 2), (3, 4)]) == {(1, 2): 2, (3, 4): 1}\n    assert ns['contar_puntos']([]) == {}\n    assert capsys.readouterr().out.strip() == '{(1, 2): 2, (3, 4): 1}'\n",
+    hint: "def contar_puntos(puntos):\n    d = {}\n    for p in puntos:\n        d[p] = d.get(p, 0) + 1\n    return d\nprint(contar_puntos([(1, 2), (1, 2), (3, 4)]))\n",
+    solution_example: "def contar_puntos(puntos):\n    d = {}\n    for p in puntos:\n        d[p] = d.get(p, 0) + 1\n    return d\nprint(contar_puntos([(1, 2), (1, 2), (3, 4)]))\n",
+    next: Some("py-1034-nested-dict"), show_type_chips: false, micro_step: 1033,
+};
+
+pub const PY1034_NESTED_DICT: CodingStep = CodingStep {
+    id: "py-1034-nested-dict", title: "Ingeniería del Código · Dict anidado", objective: "Modelar una estructura con un dict dentro de otro dict.",
+    prompt_md: "**Dict anidado**\n\nUn dict puede contener otro dict, modelando estructuras con niveles de detalle.\n\n**Micro-reto:**\n1. Definí `construir(notas)` que devuelva `{'datos': {'valores': notas, 'max': max(notas)}}`\n2. Imprimí `construir([1, 5, 3])`",
+    starter_code: "# def construir(notas):\n#     return {'datos': {'valores': notas, 'max': max(notas)}}\n# print(construir([1, 5, 3]))\n",
+    pytest: "def test_nested_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('construir'))\n    assert ns['construir']([1, 5, 3]) == {'datos': {'valores': [1, 5, 3], 'max': 5}}\n    assert ns['construir']([7]) == {'datos': {'valores': [7], 'max': 7}}\n    assert capsys.readouterr().out.strip() == \"{'datos': {'valores': [1, 5, 3], 'max': 5}}\"\n",
+    hint: "def construir(notas):\n    return {'datos': {'valores': notas, 'max': max(notas)}}\nprint(construir([1, 5, 3]))\n",
+    solution_example: "def construir(notas):\n    return {'datos': {'valores': notas, 'max': max(notas)}}\nprint(construir([1, 5, 3]))\n",
+    next: Some("py-1035-dict-comprehension"), show_type_chips: false, micro_step: 1034,
+};
+
+pub const PY1035_DICT_COMPREHENSION: CodingStep = CodingStep {
+    id: "py-1035-dict-comprehension", title: "Ingeniería del Código · Dict comprehension", objective: "Construir un dict en una línea con una comprensión.",
+    prompt_md: "**Dict comprehension**\n\nUna comprensión de diccionario construye un dict en una sola línea a partir de un iterable.\n\n**Micro-reto:**\n1. Definí `cuadrados(n)` que devuelva `{i: i * i for i in range(1, n + 1)}`\n2. Imprimí `cuadrados(3)`",
+    starter_code: "# def cuadrados(n):\n#     return {i: i * i for i in range(1, n + 1)}\n# print(cuadrados(3))\n",
+    pytest: "def test_dict_comprehension(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('cuadrados'))\n    assert ns['cuadrados'](3) == {1: 1, 2: 4, 3: 9}\n    assert ns['cuadrados'](0) == {}\n    assert capsys.readouterr().out.strip() == '{1: 1, 2: 4, 3: 9}'\n",
+    hint: "def cuadrados(n):\n    return {i: i * i for i in range(1, n + 1)}\nprint(cuadrados(3))\n",
+    solution_example: "def cuadrados(n):\n    return {i: i * i for i in range(1, n + 1)}\nprint(cuadrados(3))\n",
+    next: Some("py-1036-ds-report"), show_type_chips: false, micro_step: 1035,
+};
+
+pub const PY1036_DS_REPORT: CodingStep = CodingStep {
+    id: "py-1036-ds-report", title: "Ingeniería del Código · Reporte de datos", objective: "Resumir una colección con totales y únicos.",
+    prompt_md: "**Reporte de datos**\n\nCombiná `set` y `len` para resumir una colección: totales y únicos.\n\n**Micro-reto:**\n1. Definí `resumen(palabras)` que devuelva `{'unicas': len(set(palabras)), 'total': len(palabras)}`\n2. Imprimí `resumen(['a', 'b', 'a'])`",
+    starter_code: "# def resumen(palabras):\n#     return {'unicas': len(set(palabras)), 'total': len(palabras)}\n# print(resumen(['a', 'b', 'a']))\n",
+    pytest: "def test_ds_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert ns['resumen'](['a', 'b', 'a']) == {'unicas': 2, 'total': 3}\n    assert ns['resumen']([]) == {'unicas': 0, 'total': 0}\n    assert capsys.readouterr().out.strip() == \"{'unicas': 2, 'total': 3}\"\n",
+    hint: "def resumen(palabras):\n    return {'unicas': len(set(palabras)), 'total': len(palabras)}\nprint(resumen(['a', 'b', 'a']))\n",
+    solution_example: "def resumen(palabras):\n    return {'unicas': len(set(palabras)), 'total': len(palabras)}\nprint(resumen(['a', 'b', 'a']))\n",
+    next: Some("py-1037-counter-count"), show_type_chips: false, micro_step: 1036,
+};
+
+pub const PY1037_COUNTER_COUNT: CodingStep = CodingStep {
+    id: "py-1037-counter-count", title: "Ingeniería del Código · Counter", objective: "Contar elementos de un iterable con `Counter`.",
+    prompt_md: "**Counter**\n\n`Counter` de `collections` cuenta elementos de un iterable en un diccionario listo para usar.\n\n**Micro-reto:**\n1. Importá `Counter` y definí `contar(palabras)` que devuelva `dict(Counter(palabras))`\n2. Imprimí `contar(['a', 'b', 'a'])`",
+    starter_code: "# from collections import Counter\n# def contar(palabras):\n#     return dict(Counter(palabras))\n# print(contar(['a', 'b', 'a']))\n",
+    pytest: "def test_counter_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('contar'))\n    assert ns['contar'](['a', 'b', 'a']) == {'a': 2, 'b': 1}\n    assert ns['contar']([]) == {}\n    assert capsys.readouterr().out.strip() == \"{'a': 2, 'b': 1}\"\n",
+    hint: "from collections import Counter\ndef contar(palabras):\n    return dict(Counter(palabras))\nprint(contar(['a', 'b', 'a']))\n",
+    solution_example: "from collections import Counter\ndef contar(palabras):\n    return dict(Counter(palabras))\nprint(contar(['a', 'b', 'a']))\n",
+    next: Some("py-1038-counter-most-common"), show_type_chips: false, micro_step: 1037,
+};
+
+pub const PY1038_COUNTER_MOST_COMMON: CodingStep = CodingStep {
+    id: "py-1038-counter-most-common", title: "Ingeniería del Código · most_common", objective: "Extraer los k elementos más frecuentes con `most_common`.",
+    prompt_md: "**`most_common`**\n\n`most_common(k)` devuelve los `k` elementos más frecuentes como lista de pares.\n\n**Micro-reto:**\n1. Definí `top(palabras, k)` que devuelva `Counter(palabras).most_common(k)`\n2. Imprimí `top(['a', 'b', 'a', 'c', 'a', 'b'], 2)`",
+    starter_code: "# from collections import Counter\n# def top(palabras, k):\n#     return Counter(palabras).most_common(k)\n# print(top(['a', 'b', 'a', 'c', 'a', 'b'], 2))\n",
+    pytest: "def test_counter_most_common(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('top'))\n    assert ns['top'](['a', 'b', 'a', 'c', 'a', 'b'], 2) == [('a', 3), ('b', 2)]\n    assert ns['top'](['x'], 1) == [('x', 1)]\n    assert capsys.readouterr().out.strip() == \"[('a', 3), ('b', 2)]\"\n",
+    hint: "from collections import Counter\ndef top(palabras, k):\n    return Counter(palabras).most_common(k)\nprint(top(['a', 'b', 'a', 'c', 'a', 'b'], 2))\n",
+    solution_example: "from collections import Counter\ndef top(palabras, k):\n    return Counter(palabras).most_common(k)\nprint(top(['a', 'b', 'a', 'c', 'a', 'b'], 2))\n",
+    next: Some("py-1039-defaultdict-int"), show_type_chips: false, micro_step: 1038,
+};
+
+pub const PY1039_DEFAULTDICT_INT: CodingStep = CodingStep {
+    id: "py-1039-defaultdict-int", title: "Ingeniería del Código · defaultdict(int)", objective: "Contar sin chequear existencia con `defaultdict(int)`.",
+    prompt_md: "**`defaultdict(int)`**\n\n`defaultdict(int)` inicializa claves ausentes en `0`, ideal para contar sin chequear existencia.\n\n**Micro-reto:**\n1. Importá `defaultdict` y definí `contar(datos)` con `d[x] += 1`\n2. Devolvé `dict(d)`\n3. Imprimí `contar(['x', 'y', 'x'])`",
+    starter_code: "# from collections import defaultdict\n# def contar(datos):\n#     d = defaultdict(int)\n#     for x in datos:\n#         d[x] += 1\n#     return dict(d)\n# print(contar(['x', 'y', 'x']))\n",
+    pytest: "def test_defaultdict_int(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('contar'))\n    assert ns['contar'](['x', 'y', 'x']) == {'x': 2, 'y': 1}\n    assert ns['contar']([]) == {}\n    assert capsys.readouterr().out.strip() == \"{'x': 2, 'y': 1}\"\n",
+    hint: "from collections import defaultdict\ndef contar(datos):\n    d = defaultdict(int)\n    for x in datos:\n        d[x] += 1\n    return dict(d)\nprint(contar(['x', 'y', 'x']))\n",
+    solution_example: "from collections import defaultdict\ndef contar(datos):\n    d = defaultdict(int)\n    for x in datos:\n        d[x] += 1\n    return dict(d)\nprint(contar(['x', 'y', 'x']))\n",
+    next: Some("py-1040-defaultdict-list"), show_type_chips: false, micro_step: 1039,
+};
+
+pub const PY1040_DEFAULTDICT_LIST: CodingStep = CodingStep {
+    id: "py-1040-defaultdict-list", title: "Ingeniería del Código · defaultdict(list)", objective: "Agrupar valores con `defaultdict(list)`.",
+    prompt_md: "**`defaultdict(list)`**\n\n`defaultdict(list)` inicializa claves ausentes con una lista, ideal para agrupar valores.\n\n**Micro-reto:**\n1. Definí `agrupar(pares)` con `d[k].append(v)`\n2. Devolvé `dict(d)`\n3. Imprimí `agrupar([('a', 1), ('b', 2), ('a', 3)])`",
+    starter_code: "# from collections import defaultdict\n# def agrupar(pares):\n#     d = defaultdict(list)\n#     for k, v in pares:\n#         d[k].append(v)\n#     return dict(d)\n# print(agrupar([('a', 1), ('b', 2), ('a', 3)]))\n",
+    pytest: "def test_defaultdict_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('agrupar'))\n    assert ns['agrupar']([('a', 1), ('b', 2), ('a', 3)]) == {'a': [1, 3], 'b': [2]}\n    assert ns['agrupar']([]) == {}\n    assert capsys.readouterr().out.strip() == \"{'a': [1, 3], 'b': [2]}\"\n",
+    hint: "from collections import defaultdict\ndef agrupar(pares):\n    d = defaultdict(list)\n    for k, v in pares:\n        d[k].append(v)\n    return dict(d)\nprint(agrupar([('a', 1), ('b', 2), ('a', 3)]))\n",
+    solution_example: "from collections import defaultdict\ndef agrupar(pares):\n    d = defaultdict(list)\n    for k, v in pares:\n        d[k].append(v)\n    return dict(d)\nprint(agrupar([('a', 1), ('b', 2), ('a', 3)]))\n",
+    next: Some("py-1041-counter-math"), show_type_chips: false, micro_step: 1040,
+};
+
+pub const PY1041_COUNTER_MATH: CodingStep = CodingStep {
+    id: "py-1041-counter-math", title: "Ingeniería del Código · Aritmética de Counter", objective: "Restar contadores para descartar elementos.",
+    prompt_md: "**Aritmética de `Counter`**\n\nLos `Counter` se restan: `Counter(c1) - Counter(c2)` descarta los que quedan en cero o negativo.\n\n**Micro-reto:**\n1. Definí `diferencias(c1, c2)` que devuelva `dict(Counter(c1) - Counter(c2))`\n2. Imprimí `diferencias(['a', 'a', 'b'], ['a'])`",
+    starter_code: "# from collections import Counter\n# def diferencias(c1, c2):\n#     return dict(Counter(c1) - Counter(c2))\n# print(diferencias(['a', 'a', 'b'], ['a']))\n",
+    pytest: "def test_counter_math(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('diferencias'))\n    assert ns['diferencias'](['a', 'a', 'b'], ['a']) == {'a': 1, 'b': 1}\n    assert ns['diferencias'](['a'], ['a', 'a']) == {}\n    assert capsys.readouterr().out.strip() == \"{'a': 1, 'b': 1}\"\n",
+    hint: "from collections import Counter\ndef diferencias(c1, c2):\n    return dict(Counter(c1) - Counter(c2))\nprint(diferencias(['a', 'a', 'b'], ['a']))\n",
+    solution_example: "from collections import Counter\ndef diferencias(c1, c2):\n    return dict(Counter(c1) - Counter(c2))\nprint(diferencias(['a', 'a', 'b'], ['a']))\n",
+    next: Some("py-1042-collections-report"), show_type_chips: false, micro_step: 1041,
+};
+
+pub const PY1042_COLLECTIONS_REPORT: CodingStep = CodingStep {
+    id: "py-1042-collections-report", title: "Ingeniería del Código · Reporte con Counter", objective: "Resumir frecuencia con `Counter`, `len` y `most_common`.",
+    prompt_md: "**Reporte con `Counter`**\n\nCombiná `Counter` con `len` y `most_common` para resumir frecuencia.\n\n**Micro-reto:**\n1. Definí `resumen(palabras)` con `c = Counter(palabras)`\n2. Devolvé `{'total': len(palabras), 'unicas': len(c), 'mas_comun': c.most_common(1)[0][0]}`\n3. Imprimí `resumen(['a', 'b', 'a', 'c'])`",
+    starter_code: "# from collections import Counter\n# def resumen(palabras):\n#     c = Counter(palabras)\n#     return {'total': len(palabras), 'unicas': len(c), 'mas_comun': c.most_common(1)[0][0]}\n# print(resumen(['a', 'b', 'a', 'c']))\n",
+    pytest: "def test_collections_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert ns['resumen'](['a', 'b', 'a', 'c']) == {'total': 4, 'unicas': 3, 'mas_comun': 'a'}\n    assert ns['resumen'](['z']) == {'total': 1, 'unicas': 1, 'mas_comun': 'z'}\n    assert capsys.readouterr().out.strip() == \"{'total': 4, 'unicas': 3, 'mas_comun': 'a'}\"\n",
+    hint: "from collections import Counter\ndef resumen(palabras):\n    c = Counter(palabras)\n    return {'total': len(palabras), 'unicas': len(c), 'mas_comun': c.most_common(1)[0][0]}\nprint(resumen(['a', 'b', 'a', 'c']))\n",
+    solution_example: "from collections import Counter\ndef resumen(palabras):\n    c = Counter(palabras)\n    return {'total': len(palabras), 'unicas': len(c), 'mas_comun': c.most_common(1)[0][0]}\nprint(resumen(['a', 'b', 'a', 'c']))\n",
+    next: Some("py-1043-json-dumps"), show_type_chips: false, micro_step: 1042,
+};
+
+pub const PY1043_JSON_DUMPS: CodingStep = CodingStep {
+    id: "py-1043-json-dumps", title: "Ingeniería del Código · json.dumps", objective: "Serializar un objeto Python a un string JSON.",
+    prompt_md: "**`json.dumps`**\n\n`json.dumps` serializa un objeto Python a un string JSON, listo para transmitir o guardar.\n\n**Micro-reto:**\n1. Importá `json` y definí `a_json(dato)` que devuelva `json.dumps(dato)`\n2. Imprimí `a_json({'nombre': 'Ana', 'edad': 30})`",
+    starter_code: "# import json\n# def a_json(dato):\n#     return json.dumps(dato)\n# print(a_json({'nombre': 'Ana', 'edad': 30}))\n",
+    pytest: "def test_json_dumps(capsys):\n    import json\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('a_json'))\n    dato = {'nombre': 'Ana', 'edad': 30}\n    assert json.loads(ns['a_json'](dato)) == dato\n    assert json.loads(ns['a_json']({'x': [1, 2]})) == {'x': [1, 2]}\n    assert json.loads(capsys.readouterr().out.strip()) == dato\n",
+    hint: "import json\ndef a_json(dato):\n    return json.dumps(dato)\nprint(a_json({'nombre': 'Ana', 'edad': 30}))\n",
+    solution_example: "import json\ndef a_json(dato):\n    return json.dumps(dato)\nprint(a_json({'nombre': 'Ana', 'edad': 30}))\n",
+    next: Some("py-1044-json-loads"), show_type_chips: false, micro_step: 1043,
+};
+
+pub const PY1044_JSON_LOADS: CodingStep = CodingStep {
+    id: "py-1044-json-loads", title: "Ingeniería del Código · json.loads", objective: "Convertir un string JSON en un objeto Python.",
+    prompt_md: "**`json.loads`**\n\n`json.loads` convierte un string JSON en un objeto Python, el paso inverso a `dumps`.\n\n**Micro-reto:**\n1. Definí `desde_json(texto)` que devuelva `json.loads(texto)`\n2. Imprimí `desde_json` de un string JSON con una clave y su valor",
+    starter_code: "# import json\n# def desde_json(texto):\n#     return json.loads(texto)\n# print(desde_json('...'))\n",
+    pytest: "def test_json_loads(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('desde_json'))\n    assert ns['desde_json']('{\"a\": 1}') == {'a': 1}\n    assert ns['desde_json']('[1, 2]') == [1, 2]\n    assert capsys.readouterr().out.strip() == \"{'a': 1}\"\n",
+    hint: "import json\ndef desde_json(texto):\n    return json.loads(texto)\nprint(desde_json('{\"a\": 1}'))\n",
+    solution_example: "import json\ndef desde_json(texto):\n    return json.loads(texto)\nprint(desde_json('{\"a\": 1}'))\n",
+    next: Some("py-1045-csv-parse"), show_type_chips: false, micro_step: 1044,
+};
+
+pub const PY1045_CSV_PARSE: CodingStep = CodingStep {
+    id: "py-1045-csv-parse", title: "Ingeniería del Código · Parseo CSV", objective: "Convertir texto CSV en filas de listas con `csv.reader`.",
+    prompt_md: "**Parseo CSV**\n\n`csv.reader` con `io.StringIO` convierte texto CSV en filas de listas, sin tocar el disco.\n\n**Micro-reto:**\n1. Importá `csv` e `io` y definí `leer_csv(texto)`\n2. Devolvé `[fila for fila in csv.reader(io.StringIO(texto))]`\n3. Imprimí `leer_csv` de un CSV de dos líneas",
+    starter_code: "# import csv, io\n# def leer_csv(texto):\n#     return [fila for fila in csv.reader(io.StringIO(texto))]\n# print(leer_csv('...'))\n",
+    pytest: "def test_csv_parse(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('leer_csv'))\n    assert ns['leer_csv']('a,b\\n1,2') == [['a', 'b'], ['1', '2']]\n    assert ns['leer_csv']('x\\ny') == [['x'], ['y']]\n    assert capsys.readouterr().out.strip() == \"[['a', 'b'], ['1', '2']]\"\n",
+    hint: "import csv, io\ndef leer_csv(texto):\n    return [fila for fila in csv.reader(io.StringIO(texto))]\nprint(leer_csv('a,b\\n1,2'))\n",
+    solution_example: "import csv, io\ndef leer_csv(texto):\n    return [fila for fila in csv.reader(io.StringIO(texto))]\nprint(leer_csv('a,b\\n1,2'))\n",
+    next: Some("py-1046-json-nested"), show_type_chips: false, micro_step: 1045,
+};
+
+pub const PY1046_JSON_NESTED: CodingStep = CodingStep {
+    id: "py-1046-json-nested", title: "Ingeniería del Código · JSON anidado", objective: "Extraer un valor profundo de un JSON con claves encadenadas.",
+    prompt_md: "**JSON anidado**\n\n`json.loads` devuelve dicts anidados; accedé por claves encadenadas para extraer un valor profundo.\n\n**Micro-reto:**\n1. Definí `extraer(texto)` que devuelva `json.loads(texto)['persona']['nombre']`\n2. Imprimí `extraer` de un JSON con `persona` y `nombre`",
+    starter_code: "# import json\n# def extraer(texto):\n#     return json.loads(texto)['persona']['nombre']\n# print(extraer('...'))\n",
+    pytest: "def test_json_nested(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('extraer'))\n    assert ns['extraer']('{\"persona\": {\"nombre\": \"Ana\"}}') == 'Ana'\n    assert ns['extraer']('{\"persona\": {\"nombre\": \"Beto\"}}') == 'Beto'\n    assert capsys.readouterr().out.strip() == 'Ana'\n",
+    hint: "import json\ndef extraer(texto):\n    return json.loads(texto)['persona']['nombre']\nprint(extraer('{\"persona\": {\"nombre\": \"Ana\"}}'))\n",
+    solution_example: "import json\ndef extraer(texto):\n    return json.loads(texto)['persona']['nombre']\nprint(extraer('{\"persona\": {\"nombre\": \"Ana\"}}'))\n",
+    next: Some("py-1047-csv-sum"), show_type_chips: false, micro_step: 1046,
+};
+
+pub const PY1047_CSV_SUM: CodingStep = CodingStep {
+    id: "py-1047-csv-sum", title: "Ingeniería del Código · Suma CSV", objective: "Sumar una columna numérica de un CSV ignorando la cabecera.",
+    prompt_md: "**Suma sobre CSV**\n\nLeé filas CSV, descartá la cabecera y sumá una columna numérica.\n\n**Micro-reto:**\n1. Definí `sumar_col(texto)` que tome las filas desde la segunda y sume la segunda columna\n2. Imprimí `sumar_col` de un CSV con cabecera y dos datos",
+    starter_code: "# import csv, io\n# def sumar_col(texto):\n#     filas = list(csv.reader(io.StringIO(texto)))[1:]\n#     return sum(int(f[1]) for f in filas)\n# print(sumar_col('...'))\n",
+    pytest: "def test_csv_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('sumar_col'))\n    assert ns['sumar_col']('nombre,valor\\na,10\\nb,20') == 30\n    assert ns['sumar_col']('nombre,valor\\nx,5') == 5\n    assert capsys.readouterr().out.strip() == '30'\n",
+    hint: "import csv, io\ndef sumar_col(texto):\n    filas = list(csv.reader(io.StringIO(texto)))[1:]\n    return sum(int(f[1]) for f in filas)\nprint(sumar_col('nombre,valor\\na,10\\nb,20'))\n",
+    solution_example: "import csv, io\ndef sumar_col(texto):\n    filas = list(csv.reader(io.StringIO(texto)))[1:]\n    return sum(int(f[1]) for f in filas)\nprint(sumar_col('nombre,valor\\na,10\\nb,20'))\n",
+    next: Some("py-1048-serialization-report"), show_type_chips: false, micro_step: 1047,
+};
+
+pub const PY1048_SERIALIZATION_REPORT: CodingStep = CodingStep {
+    id: "py-1048-serialization-report", title: "Ingeniería del Código · Round-trip JSON", objective: "Verificar que `dumps` + `loads` reconstruye el valor original.",
+    prompt_md: "**Round-trip JSON**\n\nSerializar y deserializar (`dumps` + `loads`) debe reconstruir el valor original: es un invariante útil.\n\n**Micro-reto:**\n1. Definí `redondo(dato)` que devuelva `json.loads(json.dumps(dato)) == dato`\n2. Imprimí `redondo({'x': [1, 2]})`",
+    starter_code: "# import json\n# def redondo(dato):\n#     return json.loads(json.dumps(dato)) == dato\n# print(redondo({'x': [1, 2]}))\n",
+    pytest: "def test_serialization_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('redondo'))\n    assert ns['redondo']({'x': [1, 2]}) is True\n    assert ns['redondo']([1, 2, 3]) is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "import json\ndef redondo(dato):\n    return json.loads(json.dumps(dato)) == dato\nprint(redondo({'x': [1, 2]}))\n",
+    solution_example: "import json\ndef redondo(dato):\n    return json.loads(json.dumps(dato)) == dato\nprint(redondo({'x': [1, 2]}))\n",
+    next: Some("py-1049-dataclass-model"), show_type_chips: false, micro_step: 1048,
+};
+
+pub const PY1049_DATACLASS_MODEL: CodingStep = CodingStep {
+    id: "py-1049-dataclass-model", title: "Ingeniería del Código · Dataclass", objective: "Modelar datos con una dataclass simple de dos campos.",
+    prompt_md: "**Dataclass**\n\n`@dataclass` genera el `__init__` y la representación automáticamente, quitando código repetitivo al modelar datos.\n\n**Micro-reto:**\n1. Importá `dataclass` y definí la clase `Punto` con `x` e `y`\n2. Definí `crear(x, y)` que devuelva `Punto(x, y)`\n3. Imprimí `(p.x, p.y)` para `p = crear(3, 4)`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Punto:\n#     x: int\n#     y: int\n# \n# def crear(x, y):\n#     return Punto(x, y)\n# \n# p = crear(3, 4)\n# print((p.x, p.y))\n",
+    pytest: "def test_dataclass_model(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('crear'))\n    p = ns['crear'](3, 4)\n    assert (p.x, p.y) == (3, 4)\n    assert capsys.readouterr().out.strip() == '(3, 4)'\n",
+    hint: "from dataclasses import dataclass\n\n@dataclass\nclass Punto:\n    x: int\n    y: int\n\ndef crear(x, y):\n    return Punto(x, y)\n\np = crear(3, 4)\nprint((p.x, p.y))\n",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Punto:\n    x: int\n    y: int\n\ndef crear(x, y):\n    return Punto(x, y)\n\np = crear(3, 4)\nprint((p.x, p.y))\n",
+    next: Some("py-1050-model-method"), show_type_chips: false, micro_step: 1049,
+};
+
+pub const PY1050_MODEL_METHOD: CodingStep = CodingStep {
+    id: "py-1050-model-method", title: "Ingeniería del Código · Método de modelo", objective: "Agregar un método que opera sobre los campos del modelo.",
+    prompt_md: "**Método de modelo**\n\nUna dataclass puede tener métodos que calculen sobre sus propios campos, encapsulando la lógica del modelo.\n\n**Micro-reto:**\n1. Definí `Rectangulo` con `ancho` y `alto`\n2. Agregá el método `area(self)` que devuelva `self.ancho * self.alto`\n3. Imprimí `Rectangulo(4, 5).area()`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Rectangulo:\n#     ancho: int\n#     alto: int\n#     def area(self):\n#         return self.ancho * self.alto\n# print(Rectangulo(4, 5).area())\n",
+    pytest: "def test_model_method(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Rectangulo'](4, 5).area() == 20\n    assert ns['Rectangulo'](2, 3).area() == 6\n    assert capsys.readouterr().out.strip() == '20'\n",
+    hint: "from dataclasses import dataclass\n\n@dataclass\nclass Rectangulo:\n    ancho: int\n    alto: int\n\n    def area(self):\n        return self.ancho * self.alto\n\nprint(Rectangulo(4, 5).area())\n",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Rectangulo:\n    ancho: int\n    alto: int\n\n    def area(self):\n        return self.ancho * self.alto\n\nprint(Rectangulo(4, 5).area())\n",
+    next: Some("py-1051-default-field"), show_type_chips: false, micro_step: 1050,
+};
+
+pub const PY1051_DEFAULT_FIELD: CodingStep = CodingStep {
+    id: "py-1051-default-field", title: "Ingeniería del Código · Campo por defecto", objective: "Usar un valor por defecto en un campo de dataclass.",
+    prompt_md: "**Campo por defecto**\n\nUn campo con valor por defecto puede omitirse al construir. Los campos sin default deben ir antes.\n\n**Micro-reto:**\n1. Definí `Usuario` con `nombre` y `edad = 18`\n2. Imprimí `Usuario('Ana').edad`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Usuario:\n#     nombre: str\n#     edad: int = 18\n# print(Usuario('Ana').edad)\n",
+    pytest: "def test_default_field(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['Usuario']('Ana').edad == 18\n    assert ns['Usuario']('Ana', 30).edad == 30\n    assert capsys.readouterr().out.strip() == '18'\n",
+    hint: "from dataclasses import dataclass\n\n@dataclass\nclass Usuario:\n    nombre: str\n    edad: int = 18\n\nprint(Usuario('Ana').edad)\n",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Usuario:\n    nombre: str\n    edad: int = 18\n\nprint(Usuario('Ana').edad)\n",
+    next: Some("py-1052-model-compose"), show_type_chips: false, micro_step: 1051,
+};
+
+pub const PY1052_MODEL_COMPOSE: CodingStep = CodingStep {
+    id: "py-1052-model-compose", title: "Ingeniería del Código · Composición de modelos", objective: "Componer una dataclass dentro de otra.",
+    prompt_md: "**Composición de modelos**\n\nUna dataclass puede contener otra, modelando relaciones anidadas como una persona y su dirección.\n\n**Micro-reto:**\n1. Definí `Direccion` con `ciudad` y `Persona` con `nombre` y `direccion`\n2. Creá `p = Persona('Ana', Direccion('CABA'))`\n3. Imprimí `p.direccion.ciudad`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Direccion:\n#     ciudad: str\n# @dataclass\n# class Persona:\n#     nombre: str\n#     direccion: Direccion\n# p = Persona('Ana', Direccion('CABA'))\n# print(p.direccion.ciudad)\n",
+    pytest: "def test_model_compose(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    p = ns['Persona']('Ana', ns['Direccion']('CABA'))\n    assert p.direccion.ciudad == 'CABA'\n    assert capsys.readouterr().out.strip() == 'CABA'\n",
+    hint: "from dataclasses import dataclass\n\n@dataclass\nclass Direccion:\n    ciudad: str\n\n@dataclass\nclass Persona:\n    nombre: str\n    direccion: Direccion\n\np = Persona('Ana', Direccion('CABA'))\nprint(p.direccion.ciudad)\n",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Direccion:\n    ciudad: str\n\n@dataclass\nclass Persona:\n    nombre: str\n    direccion: Direccion\n\np = Persona('Ana', Direccion('CABA'))\nprint(p.direccion.ciudad)\n",
+    next: Some("py-1053-dataclass-sort"), show_type_chips: false, micro_step: 1052,
+};
+
+pub const PY1053_DATACLASS_SORT: CodingStep = CodingStep {
+    id: "py-1053-dataclass-sort", title: "Ingeniería del Código · Ordenar dataclass", objective: "Ordenar objetos por un campo con `sorted` y `key`.",
+    prompt_md: "**Ordenar dataclass**\n\n`sorted` con `key` ordena objetos por un campo específico sin mutar la lista original.\n\n**Micro-reto:**\n1. Definí `Item` con `nombre` y `precio`\n2. Definí `ordenar(items)` que devuelva los nombres ordenados por precio\n3. Imprimí `ordenar([Item('b', 20), Item('a', 10)])`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Item:\n#     nombre: str\n#     precio: int\n# def ordenar(items):\n#     return [i.nombre for i in sorted(items, key=lambda i: i.precio)]\n# print(ordenar([Item('b', 20), Item('a', 10)]))\n",
+    pytest: "def test_dataclass_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('ordenar'))\n    items = [ns['Item']('b', 20), ns['Item']('a', 10)]\n    assert ns['ordenar'](items) == ['a', 'b']\n    assert capsys.readouterr().out.strip() == \"['a', 'b']\"\n",
+    hint: "from dataclasses import dataclass\n\n@dataclass\nclass Item:\n    nombre: str\n    precio: int\n\ndef ordenar(items):\n    return [i.nombre for i in sorted(items, key=lambda i: i.precio)]\n\nprint(ordenar([Item('b', 20), Item('a', 10)]))\n",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Item:\n    nombre: str\n    precio: int\n\ndef ordenar(items):\n    return [i.nombre for i in sorted(items, key=lambda i: i.precio)]\n\nprint(ordenar([Item('b', 20), Item('a', 10)]))\n",
+    next: Some("py-1054-modeling-report"), show_type_chips: false, micro_step: 1053,
+};
+
+pub const PY1054_MODELING_REPORT: CodingStep = CodingStep {
+    id: "py-1054-modeling-report", title: "Ingeniería del Código · Reporte de modelo", objective: "Derivar un reporte a partir de los campos de un modelo.",
+    prompt_md: "**Reporte de modelo**\n\nCombiná los campos de un modelo para producir un reporte agregado.\n\n**Micro-reto:**\n1. Definí `Punto` con `x` e `y`\n2. Definí `resumen(p)` que devuelva `(p.x, p.y, p.x + p.y)`\n3. Imprimí `resumen(Punto(2, 3))`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Punto:\n#     x: int\n#     y: int\n# def resumen(p):\n#     return (p.x, p.y, p.x + p.y)\n# print(resumen(Punto(2, 3)))\n",
+    pytest: "def test_modeling_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert ns['resumen'](ns['Punto'](2, 3)) == (2, 3, 5)\n    assert capsys.readouterr().out.strip() == '(2, 3, 5)'\n",
+    hint: "from dataclasses import dataclass\n\n@dataclass\nclass Punto:\n    x: int\n    y: int\n\ndef resumen(p):\n    return (p.x, p.y, p.x + p.y)\n\nprint(resumen(Punto(2, 3)))\n",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Punto:\n    x: int\n    y: int\n\ndef resumen(p):\n    return (p.x, p.y, p.x + p.y)\n\nprint(resumen(Punto(2, 3)))\n",
+    next: Some("py-1055-pipe-map"), show_type_chips: false, micro_step: 1054,
+};
+
+pub const PY1055_PIPE_MAP: CodingStep = CodingStep {
+    id: "py-1055-pipe-map", title: "Ingeniería del Código · Pipeline con map", objective: "Transformar cada elemento de una lista con `map`.",
+    prompt_md: "**Pipeline con `map`**\n\n`map` aplica una función a cada elemento y devuelve un iterador; `list` lo materializa.\n\n**Micro-reto:**\n1. Definí `procesar(nums)` que devuelva `list(map(lambda x: x * 2, nums))`\n2. Imprimí `procesar([1, 2, 3])`",
+    starter_code: "# def procesar(nums):\n#     return list(map(lambda x: x * 2, nums))\n# print(procesar([1, 2, 3]))\n",
+    pytest: "def test_pipe_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('procesar'))\n    assert ns['procesar']([1, 2, 3]) == [2, 4, 6]\n    assert ns['procesar']([]) == []\n    assert capsys.readouterr().out.strip() == '[2, 4, 6]'\n",
+    hint: "def procesar(nums):\n    return list(map(lambda x: x * 2, nums))\nprint(procesar([1, 2, 3]))\n",
+    solution_example: "def procesar(nums):\n    return list(map(lambda x: x * 2, nums))\nprint(procesar([1, 2, 3]))\n",
+    next: Some("py-1056-pipe-filter"), show_type_chips: false, micro_step: 1055,
+};
+
+pub const PY1056_PIPE_FILTER: CodingStep = CodingStep {
+    id: "py-1056-pipe-filter", title: "Ingeniería del Código · Pipeline con filter", objective: "Quedarse con los elementos que cumplen una condición con `filter`.",
+    prompt_md: "**Pipeline con `filter`**\n\n`filter` conserva solo los elementos que hacen verdadera la función dada.\n\n**Micro-reto:**\n1. Definí `filtrar(nums)` que devuelva `list(filter(lambda x: x % 2 == 0, nums))`\n2. Imprimí `filtrar([1, 2, 3, 4])`",
+    starter_code: "# def filtrar(nums):\n#     return list(filter(lambda x: x % 2 == 0, nums))\n# print(filtrar([1, 2, 3, 4]))\n",
+    pytest: "def test_pipe_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('filtrar'))\n    assert ns['filtrar']([1, 2, 3, 4]) == [2, 4]\n    assert ns['filtrar']([]) == []\n    assert capsys.readouterr().out.strip() == '[2, 4]'\n",
+    hint: "def filtrar(nums):\n    return list(filter(lambda x: x % 2 == 0, nums))\nprint(filtrar([1, 2, 3, 4]))\n",
+    solution_example: "def filtrar(nums):\n    return list(filter(lambda x: x % 2 == 0, nums))\nprint(filtrar([1, 2, 3, 4]))\n",
+    next: Some("py-1057-pipe-reduce"), show_type_chips: false, micro_step: 1056,
+};
+
+pub const PY1057_PIPE_REDUCE: CodingStep = CodingStep {
+    id: "py-1057-pipe-reduce", title: "Ingeniería del Código · Pipeline con reduce", objective: "Reducir una lista a un solo valor con `reduce`.",
+    prompt_md: "**Pipeline con `reduce`**\n\n`reduce` combina los elementos de a pares hasta dejar un único valor acumulado.\n\n**Micro-reto:**\n1. Importá `reduce` de `functools`\n2. Definí `total(nums)` que devuelva `reduce(lambda a, b: a + b, nums, 0)`\n3. Imprimí `total([1, 2, 3, 4])`",
+    starter_code: "# from functools import reduce\n# def total(nums):\n#     return reduce(lambda a, b: a + b, nums, 0)\n# print(total([1, 2, 3, 4]))\n",
+    pytest: "def test_pipe_reduce(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('total'))\n    assert ns['total']([1, 2, 3, 4]) == 10\n    assert ns['total']([]) == 0\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "from functools import reduce\ndef total(nums):\n    return reduce(lambda a, b: a + b, nums, 0)\nprint(total([1, 2, 3, 4]))\n",
+    solution_example: "from functools import reduce\ndef total(nums):\n    return reduce(lambda a, b: a + b, nums, 0)\nprint(total([1, 2, 3, 4]))\n",
+    next: Some("py-1058-pipe-compose"), show_type_chips: false, micro_step: 1057,
+};
+
+pub const PY1058_PIPE_COMPOSE: CodingStep = CodingStep {
+    id: "py-1058-pipe-compose", title: "Ingeniería del Código · Componer map y filter", objective: "Encadenar `filter` y `map` en un solo pipeline.",
+    prompt_md: "**Componer `map` y `filter`**\n\nEncadená `filter` dentro de `map` para filtrar y transformar en una sola pasada.\n\n**Micro-reto:**\n1. Definí `pipeline(nums)` que devuelva `list(map(lambda x: x * 2, filter(lambda x: x % 2 == 0, nums)))`\n2. Imprimí `pipeline([1, 2, 3, 4])`",
+    starter_code: "# def pipeline(nums):\n#     return list(map(lambda x: x * 2, filter(lambda x: x % 2 == 0, nums)))\n# print(pipeline([1, 2, 3, 4]))\n",
+    pytest: "def test_pipe_compose(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('pipeline'))\n    assert ns['pipeline']([1, 2, 3, 4]) == [4, 8]\n    assert ns['pipeline']([]) == []\n    assert capsys.readouterr().out.strip() == '[4, 8]'\n",
+    hint: "def pipeline(nums):\n    return list(map(lambda x: x * 2, filter(lambda x: x % 2 == 0, nums)))\nprint(pipeline([1, 2, 3, 4]))\n",
+    solution_example: "def pipeline(nums):\n    return list(map(lambda x: x * 2, filter(lambda x: x % 2 == 0, nums)))\nprint(pipeline([1, 2, 3, 4]))\n",
+    next: Some("py-1059-pipe-generator"), show_type_chips: false, micro_step: 1058,
+};
+
+pub const PY1059_PIPE_GENERATOR: CodingStep = CodingStep {
+    id: "py-1059-pipe-generator", title: "Ingeniería del Código · Generador en pipeline", objective: "Expresar un pipeline con una expresión generadora.",
+    prompt_md: "**Generador en pipeline**\n\nUna expresión generadora filtra y transforma de forma perezosa; `list` la materializa.\n\n**Micro-reto:**\n1. Definí `pipeline(nums)` que devuelva `(x * 2 for x in nums if x % 2 == 0)`\n2. Imprimí `list(pipeline([1, 2, 3, 4]))`",
+    starter_code: "# def pipeline(nums):\n#     return (x * 2 for x in nums if x % 2 == 0)\n# print(list(pipeline([1, 2, 3, 4])))\n",
+    pytest: "def test_pipe_generator(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('pipeline'))\n    assert list(ns['pipeline']([1, 2, 3, 4])) == [4, 8]\n    assert list(ns['pipeline']([])) == []\n    assert capsys.readouterr().out.strip() == '[4, 8]'\n",
+    hint: "def pipeline(nums):\n    return (x * 2 for x in nums if x % 2 == 0)\nprint(list(pipeline([1, 2, 3, 4])))\n",
+    solution_example: "def pipeline(nums):\n    return (x * 2 for x in nums if x % 2 == 0)\nprint(list(pipeline([1, 2, 3, 4])))\n",
+    next: Some("py-1060-pipeline-report"), show_type_chips: false, micro_step: 1059,
+};
+
+pub const PY1060_PIPELINE_REPORT: CodingStep = CodingStep {
+    id: "py-1060-pipeline-report", title: "Ingeniería del Código · Reporte de pipeline", objective: "Combinar total y pares doblados en un solo reporte.",
+    prompt_md: "**Reporte de pipeline**\n\nUn pipeline puede producir varios resultados y agruparlos en un dict para reportarlos juntos.\n\n**Micro-reto:**\n1. Definí `resumen(nums)` que devuelva `{'total': sum(nums), 'pares_dobles': [x * 2 for x in nums if x % 2 == 0]}`\n2. Imprimí `resumen([1, 2, 3, 4])`",
+    starter_code: "# def resumen(nums):\n#     return {'total': sum(nums), 'pares_dobles': [x * 2 for x in nums if x % 2 == 0]}\n# print(resumen([1, 2, 3, 4]))\n",
+    pytest: "def test_pipeline_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert callable(ns.get('resumen'))\n    assert ns['resumen']([1, 2, 3, 4]) == {'total': 10, 'pares_dobles': [4, 8]}\n    assert ns['resumen']([]) == {'total': 0, 'pares_dobles': []}\n    assert capsys.readouterr().out.strip() == \"{'total': 10, 'pares_dobles': [4, 8]}\"\n",
+    hint: "def resumen(nums):\n    return {'total': sum(nums), 'pares_dobles': [x * 2 for x in nums if x % 2 == 0]}\nprint(resumen([1, 2, 3, 4]))\n",
+    solution_example: "def resumen(nums):\n    return {'total': sum(nums), 'pares_dobles': [x * 2 for x in nums if x % 2 == 0]}\nprint(resumen([1, 2, 3, 4]))\n",
+    next: None, show_type_chips: false, micro_step: 1060,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -43848,7 +44448,67 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY997_ADVANCED_REVIEW_I_CANONICALIZE,
     &PY998_ADVANCED_REVIEW_I_PREFIX_STATE,
     &PY999_ADVANCED_REVIEW_I_BOUNDED_WINDOW,
-    &PY1000_ADVANCED_REVIEW_I_LOWER_BOUNDARY
+    &PY1000_ADVANCED_REVIEW_I_LOWER_BOUNDARY,
+    &PY1001_ASSERT_CONTRACT,
+    &PY1002_ASSERT_TYPE,
+    &PY1003_ASSERT_EMPTY,
+    &PY1004_ASSERT_RANGE,
+    &PY1005_ASSERT_INVARIANT,
+    &PY1006_ASSERT_REPORT,
+    &PY1007_GUARD_CLAUSE,
+    &PY1008_TYPE_DISPATCH,
+    &PY1009_NONE_DEFAULT,
+    &PY1010_NORMALIZE_INPUT,
+    &PY1011_FILTER_COLLECTION,
+    &PY1012_VALIDATED_SUMMARY,
+    &PY1013_LEGB_LOCAL,
+    &PY1014_LEGB_ENCLOSING,
+    &PY1015_LEGB_GLOBAL,
+    &PY1016_LEGB_BUILTINS,
+    &PY1017_LEGB_NESTED,
+    &PY1018_LEGB_REPORT,
+    &PY1019_ALIAS_LIST,
+    &PY1020_COPY_LIST,
+    &PY1021_MUTATE_INPLACE,
+    &PY1022_IMMUTABLE_INT,
+    &PY1023_NESTED_COPY,
+    &PY1024_ALIAS_REPORT,
+    &PY1025_PURE_ADD,
+    &PY1026_SIDE_EFFECT_PRINT,
+    &PY1027_NO_GLOBAL_MUTATION,
+    &PY1028_RETURN_VS_MUTATE,
+    &PY1029_COMPOSE_PURE,
+    &PY1030_PURITY_REPORT,
+    &PY1031_DICT_GROUP,
+    &PY1032_SET_MEMBERSHIP,
+    &PY1033_TUPLE_KEY,
+    &PY1034_NESTED_DICT,
+    &PY1035_DICT_COMPREHENSION,
+    &PY1036_DS_REPORT,
+    &PY1037_COUNTER_COUNT,
+    &PY1038_COUNTER_MOST_COMMON,
+    &PY1039_DEFAULTDICT_INT,
+    &PY1040_DEFAULTDICT_LIST,
+    &PY1041_COUNTER_MATH,
+    &PY1042_COLLECTIONS_REPORT,
+    &PY1043_JSON_DUMPS,
+    &PY1044_JSON_LOADS,
+    &PY1045_CSV_PARSE,
+    &PY1046_JSON_NESTED,
+    &PY1047_CSV_SUM,
+    &PY1048_SERIALIZATION_REPORT,
+    &PY1049_DATACLASS_MODEL,
+    &PY1050_MODEL_METHOD,
+    &PY1051_DEFAULT_FIELD,
+    &PY1052_MODEL_COMPOSE,
+    &PY1053_DATACLASS_SORT,
+    &PY1054_MODELING_REPORT,
+    &PY1055_PIPE_MAP,
+    &PY1056_PIPE_FILTER,
+    &PY1057_PIPE_REDUCE,
+    &PY1058_PIPE_COMPOSE,
+    &PY1059_PIPE_GENERATOR,
+    &PY1060_PIPELINE_REPORT,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -44010,7 +44670,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1000);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1060);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -46750,10 +47410,168 @@ mod tests {
             (997, "py-997-advanced-review-i-canonicalize", Some("py-998-advanced-review-i-prefix-state")),
             (998, "py-998-advanced-review-i-prefix-state", Some("py-999-advanced-review-i-bounded-window")),
             (999, "py-999-advanced-review-i-bounded-window", Some("py-1000-advanced-review-i-lower-boundary")),
-            (1000, "py-1000-advanced-review-i-lower-boundary", None),
+            (1000, "py-1000-advanced-review-i-lower-boundary", Some("py-1001-assert-contract")),
         ];
         for (n, id, next) in ids {
             let step = coding_step_by_micro_step(n).expect("curriculum family step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py1001_to_py1012_engineering_chain() {
+        let ids = [
+            (1001, "py-1001-assert-contract", Some("py-1002-assert-type")),
+            (1002, "py-1002-assert-type", Some("py-1003-assert-empty")),
+            (1003, "py-1003-assert-empty", Some("py-1004-assert-range")),
+            (1004, "py-1004-assert-range", Some("py-1005-assert-invariant")),
+            (1005, "py-1005-assert-invariant", Some("py-1006-assert-report")),
+            (1006, "py-1006-assert-report", Some("py-1007-guard-clause")),
+            (1007, "py-1007-guard-clause", Some("py-1008-type-dispatch")),
+            (1008, "py-1008-type-dispatch", Some("py-1009-none-default")),
+            (1009, "py-1009-none-default", Some("py-1010-normalize-input")),
+            (1010, "py-1010-normalize-input", Some("py-1011-filter-collection")),
+            (1011, "py-1011-filter-collection", Some("py-1012-validated-summary")),
+            (
+                1012,
+                "py-1012-validated-summary",
+                Some("py-1013-legb-local"),
+            ),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("engineering chain step");
+            assert_eq!(step.id, id);
+            assert_eq!(step.next, next);
+        }
+    }
+
+    #[test]
+    fn py1013_to_py1060_engineering_chain() {
+        let ids = [
+            (1013, "py-1013-legb-local", Some("py-1014-legb-enclosing")),
+            (1014, "py-1014-legb-enclosing", Some("py-1015-legb-global")),
+            (1015, "py-1015-legb-global", Some("py-1016-legb-builtins")),
+            (1016, "py-1016-legb-builtins", Some("py-1017-legb-nested")),
+            (1017, "py-1017-legb-nested", Some("py-1018-legb-report")),
+            (1018, "py-1018-legb-report", Some("py-1019-alias-list")),
+            (1019, "py-1019-alias-list", Some("py-1020-copy-list")),
+            (1020, "py-1020-copy-list", Some("py-1021-mutate-inplace")),
+            (
+                1021,
+                "py-1021-mutate-inplace",
+                Some("py-1022-immutable-int"),
+            ),
+            (1022, "py-1022-immutable-int", Some("py-1023-nested-copy")),
+            (1023, "py-1023-nested-copy", Some("py-1024-alias-report")),
+            (1024, "py-1024-alias-report", Some("py-1025-pure-add")),
+            (1025, "py-1025-pure-add", Some("py-1026-side-effect-print")),
+            (
+                1026,
+                "py-1026-side-effect-print",
+                Some("py-1027-no-global-mutation"),
+            ),
+            (
+                1027,
+                "py-1027-no-global-mutation",
+                Some("py-1028-return-vs-mutate"),
+            ),
+            (
+                1028,
+                "py-1028-return-vs-mutate",
+                Some("py-1029-compose-pure"),
+            ),
+            (1029, "py-1029-compose-pure", Some("py-1030-purity-report")),
+            (1030, "py-1030-purity-report", Some("py-1031-dict-group")),
+            (1031, "py-1031-dict-group", Some("py-1032-set-membership")),
+            (1032, "py-1032-set-membership", Some("py-1033-tuple-key")),
+            (1033, "py-1033-tuple-key", Some("py-1034-nested-dict")),
+            (
+                1034,
+                "py-1034-nested-dict",
+                Some("py-1035-dict-comprehension"),
+            ),
+            (
+                1035,
+                "py-1035-dict-comprehension",
+                Some("py-1036-ds-report"),
+            ),
+            (1036, "py-1036-ds-report", Some("py-1037-counter-count")),
+            (
+                1037,
+                "py-1037-counter-count",
+                Some("py-1038-counter-most-common"),
+            ),
+            (
+                1038,
+                "py-1038-counter-most-common",
+                Some("py-1039-defaultdict-int"),
+            ),
+            (
+                1039,
+                "py-1039-defaultdict-int",
+                Some("py-1040-defaultdict-list"),
+            ),
+            (
+                1040,
+                "py-1040-defaultdict-list",
+                Some("py-1041-counter-math"),
+            ),
+            (
+                1041,
+                "py-1041-counter-math",
+                Some("py-1042-collections-report"),
+            ),
+            (
+                1042,
+                "py-1042-collections-report",
+                Some("py-1043-json-dumps"),
+            ),
+            (1043, "py-1043-json-dumps", Some("py-1044-json-loads")),
+            (1044, "py-1044-json-loads", Some("py-1045-csv-parse")),
+            (1045, "py-1045-csv-parse", Some("py-1046-json-nested")),
+            (1046, "py-1046-json-nested", Some("py-1047-csv-sum")),
+            (
+                1047,
+                "py-1047-csv-sum",
+                Some("py-1048-serialization-report"),
+            ),
+            (
+                1048,
+                "py-1048-serialization-report",
+                Some("py-1049-dataclass-model"),
+            ),
+            (
+                1049,
+                "py-1049-dataclass-model",
+                Some("py-1050-model-method"),
+            ),
+            (1050, "py-1050-model-method", Some("py-1051-default-field")),
+            (1051, "py-1051-default-field", Some("py-1052-model-compose")),
+            (
+                1052,
+                "py-1052-model-compose",
+                Some("py-1053-dataclass-sort"),
+            ),
+            (
+                1053,
+                "py-1053-dataclass-sort",
+                Some("py-1054-modeling-report"),
+            ),
+            (1054, "py-1054-modeling-report", Some("py-1055-pipe-map")),
+            (1055, "py-1055-pipe-map", Some("py-1056-pipe-filter")),
+            (1056, "py-1056-pipe-filter", Some("py-1057-pipe-reduce")),
+            (1057, "py-1057-pipe-reduce", Some("py-1058-pipe-compose")),
+            (1058, "py-1058-pipe-compose", Some("py-1059-pipe-generator")),
+            (
+                1059,
+                "py-1059-pipe-generator",
+                Some("py-1060-pipeline-report"),
+            ),
+            (1060, "py-1060-pipeline-report", None),
+        ];
+        for (n, id, next) in ids {
+            let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.id, id);
             assert_eq!(step.next, next);
         }
