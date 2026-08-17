@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time" // <-- AGREGAR
+	"github.com/getsentry/sentry-go"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
@@ -84,11 +86,31 @@ func main() {
 	}
 	config.ResolveCredentialsPath(repoRoot)
 
+	// ====== BLOQUE NUEVO DE SENTRY ======
+	sentryDsn := os.Getenv("SENTRY_DSN")
+	if sentryDsn == "" {
+		sentryDsn = "https://10a6b24b0940b6a6457a04a74aa8584c@o4511899740209152.ingest.us.sentry.io/4511927315791872"
+	}
+
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn:              sentryDsn,
+		Environment:      os.Getenv("ENVIRONMENT"),
+		TracesSampleRate: 0.2,
+	}); err != nil {
+		log.Printf("WARN: no se pudo inicializar Sentry: %v", err)
+	} else {
+		log.Println("Sentry activo en PPIO Backend")
+		defer sentry.Flush(2 * time.Second)
+	}
+	// =====================================
+
 	dataDir := resolveDataDir()
 	authCfg, err := config.LoadAuthConfig()
 	if err != nil {
 		log.Fatalf("auth config: %v", err)
 	}
+
+	// ... continúa todo el resto de tu código hacia abajo ...
 
 	store, err := persistence.Open(authCfg, repoRoot)
 	if err != nil {
