@@ -5,13 +5,12 @@ use leptos_router::NavigateOptions;
 
 use crate::auth::reset_progress;
 use crate::components::{level_completed, ProgressCheck};
-use crate::curriculum::{coding_step_by_micro_step, micro_step_unlocked};
+use crate::curriculum::{coding_step_by_micro_step, max_micro_step, micro_step_unlocked};
 use crate::session::SessionCtx;
 
-/// Placeholder rail for the upcoming Python micro-challenges (scaffold only).
-/// Rail capacity toward the 1060-micro-step roadmap (cells beyond filled curriculum stay locked).
-const MICRO_STEP_COUNT: i32 = 1060;
-
+/// Placeholder rail for the Python micro-challenges (scaffold only).
+/// Rail capacity is data-driven: it follows the highest `micro_step` in the
+/// curriculum (`max_micro_step`), so cells beyond the filled curriculum stay locked.
 #[component]
 pub fn WorkspacePage() -> impl IntoView {
     let session = expect_context::<SessionCtx>();
@@ -166,18 +165,15 @@ pub fn WorkspacePage() -> impl IntoView {
 }
 
 #[component]
-fn MicroStepRail(
-    current_level: Signal<i32>,
-    completed_levels: Signal<Vec<i32>>,
-) -> impl IntoView {
+fn MicroStepRail(current_level: Signal<i32>, completed_levels: Signal<Vec<i32>>) -> impl IntoView {
     view! {
         <ol
             class="workspace__microsteps"
             id="workspace-microsteps"
-            aria-label="Python micro-step challenges 1 to 1060"
+            attr:aria-label=move || format!("Python micro-step challenges 1 to {}", max_micro_step())
             data-current-level=move || current_level.get().to_string()
         >
-            {(1..=MICRO_STEP_COUNT)
+            {(1..=max_micro_step())
                 .map(|n| {
                     let badge_label = format!("Micro-paso {n} superado");
                     let step_href = coding_step_by_micro_step(n)

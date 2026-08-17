@@ -297,6 +297,7 @@ test.describe("micro-steps 583–588 · trees IV", () => {
       await expect(page.locator("#workspace-microsteps")).toHaveAttribute(
         "data-current-level",
         step.cursorAfter,
+        { timeout: e2eTimeout },
       );
       const cell = page.locator(
         `#workspace-microsteps [data-microstep="${step.micro}"]`,

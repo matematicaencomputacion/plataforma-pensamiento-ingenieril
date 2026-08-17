@@ -44535,6 +44535,12 @@ pub fn first_coding_step() -> &'static CodingStep {
     &PY02_VARIABLES
 }
 
+/// Highest `micro_step` present in [`CODING_STEPS`]; drives the rail capacity
+/// so new waves don't require touching a hardcoded ceiling.
+pub fn max_micro_step() -> i32 {
+    CODING_STEPS.iter().map(|s| s.micro_step).max().unwrap_or(0)
+}
+
 /// Extremely light markdown → HTML for the enunciado panel (bold + newlines).
 pub fn prompt_to_html(md: &str) -> String {
     prompt_to_html_with_flash(md, None)
