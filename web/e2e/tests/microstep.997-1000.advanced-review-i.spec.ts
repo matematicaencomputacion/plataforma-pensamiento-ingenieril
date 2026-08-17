@@ -50,7 +50,7 @@ const FAMILY: FamilyStep[] = [
     id: "py-1000-advanced-review-i-lower-boundary",
     title: "DSA Advanced DSA Review I · Lower Boundary",
     solution: "def lower_boundary_advanced_review_i(values, target):\n    lo, hi = 0, len(values)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if values[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo\n\nprint(lower_boundary_advanced_review_i([1, 3, 3, 7], 3))\n",
-    nextUrl: /\/workspace/,
+    nextUrl: /\/learn\/py-1001-assert-contract/,
     cursorAfter: "1001",
   },
 ];
@@ -124,7 +124,7 @@ test.describe("micro-steps 997–1000 · advanced review i", () => {
         page.locator(`#workspace-microstep-link-${step.micro}`),
       ).toBeVisible();
       const nextMicro = step.micro + 1;
-      if (nextMicro <= 1000) {
+      if (nextMicro <= 1060) {
         await expect(
           page.locator(
             `#workspace-microsteps [data-microstep="${nextMicro}"]`,
