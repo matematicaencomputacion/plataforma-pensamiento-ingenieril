@@ -13,8 +13,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
-	"strings"
+        "path/filepath"
+        "strings"
+        "time"
+        "github.com/getsentry/sentry-go"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/config"
