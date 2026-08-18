@@ -46386,7 +46386,548 @@ pub const PY1360_PROJECT_ASSEMBLE: CodingStep = CodingStep {
     pytest: "def test_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Tipo = ns['Tipo']\n    p = ns['crear'](Tipo.PRODUCTO, 'libro')\n    assert p.nombre == 'libro'\n    assert p.tipo is Tipo.PRODUCTO\n    s = ns['crear'](Tipo.SERVICIO, 'consultoria')\n    assert s.nombre == 'consultoria'\n    assert sorted(ns['REGISTRO']) == ['producto', 'servicio']\n    assert capsys.readouterr().out.strip().splitlines() == ['libro', 'consultoria']\n",
     hint: "`crear` busca la clase en `REGISTRO[tipo.value]`, la instancia y asigna `nombre`.",
     solution_example: "from enum import Enum\n\nclass Tipo(Enum):\n    PRODUCTO = 'producto'\n    SERVICIO = 'servicio'\n\nclass Validado:\n    def __set_name__(self, owner, name):\n        self.nombre = '_' + name\n    def __get__(self, instance, owner):\n        return instance.__dict__[self.nombre]\n    def __set__(self, instance, value):\n        if not isinstance(value, str) or not value:\n            raise ValueError('texto no vacio requerido')\n        instance.__dict__[self.nombre] = value\n\nREGISTRO = {}\n\ndef registrar(tipo):\n    def decorador(cls):\n        cls.tipo = tipo\n        REGISTRO[tipo.value] = cls\n        return cls\n    return decorador\n\n@registrar(Tipo.PRODUCTO)\nclass Producto:\n    nombre = Validado()\n\n@registrar(Tipo.SERVICIO)\nclass Servicio:\n    nombre = Validado()\n\ndef crear(tipo, nombre):\n    obj = REGISTRO[tipo.value]()\n    obj.nombre = nombre\n    return obj\n\nprint(crear(Tipo.PRODUCTO, 'libro').nombre)\nprint(crear(Tipo.SERVICIO, 'consultoria').nombre)\n",
-    next: None, show_type_chips: false, micro_step: 1360,
+    next: Some("py-1361-decimal-create"), show_type_chips: false, micro_step: 1360,
+};
+
+pub const PY1361_DECIMAL_CREATE: CodingStep = CodingStep {
+    id: "py-1361-decimal-create", title: "Decimal · Crear desde str", objective: "Crear un Decimal exacto desde una cadena para evitar el error de float.",
+    prompt_md: "**Decimal: crear desde str**\n\n`Decimal('0.1')` guarda el valor exacto, a diferencia de `0.1` (float) que es una aproximación binaria. Para dinero y precisión usá siempre `Decimal` desde string.\n\n**Micro-reto:**\n1. Importá `Decimal` de `decimal`\n2. Creá `precio = Decimal('19.99')`\n3. Imprimí `precio`",
+    starter_code: "# from decimal import Decimal\n# precio = Decimal('19.99')\n# print(precio)\n",
+    pytest: "def test_decimal_create(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from decimal import Decimal\n    assert isinstance(ns['precio'], Decimal)\n    assert ns['precio'] == Decimal('19.99')\n    assert capsys.readouterr().out.strip() == '19.99'\n",
+    hint: "Decimal('19.99') crea el valor exacto; no uses 19.99 (float).",
+    solution_example: "from decimal import Decimal\n\nprecio = Decimal('19.99')\nprint(precio)\n",
+    next: Some("py-1362-decimal-exact"), show_type_chips: false, micro_step: 1361,
+};
+pub const PY1362_DECIMAL_EXACT: CodingStep = CodingStep {
+    id: "py-1362-decimal-exact", title: "Decimal · Operaciones exactas", objective: "Sumar decimales exactos evitando el error de punto flotante.",
+    prompt_md: "**Decimal: operaciones exactas**\n\nEn float, `0.1 + 0.2` da `0.30000000000000004`. Con `Decimal` la suma es exacta: `Decimal('0.1') + Decimal('0.2')` es `0.3`.\n\n**Micro-reto:**\n1. Creá `a = Decimal('0.1')` y `b = Decimal('0.2')`\n2. Definí `total = a + b`\n3. Imprimí `total`",
+    starter_code: "# from decimal import Decimal\n# a = Decimal('0.1')\n# b = Decimal('0.2')\n# total = a + b\n# print(total)\n",
+    pytest: "def test_decimal_exact(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from decimal import Decimal\n    assert ns['total'] == Decimal('0.3')\n    assert capsys.readouterr().out.strip() == '0.3'\n",
+    hint: "Sumá los Decimal entre sí; el resultado es exacto.",
+    solution_example: "from decimal import Decimal\n\na = Decimal('0.1')\nb = Decimal('0.2')\ntotal = a + b\nprint(total)\n",
+    next: Some("py-1363-decimal-rounding"), show_type_chips: false, micro_step: 1362,
+};
+pub const PY1363_DECIMAL_ROUNDING: CodingStep = CodingStep {
+    id: "py-1363-decimal-rounding", title: "Decimal · Redondeo ROUND_HALF_UP", objective: "Redondear un Decimal con la estrategia de redondeo escolar.",
+    prompt_md: "**Decimal: redondeo**\n\n`quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)` redondea a 2 decimales usando la regla de la escuela (mitad hacia arriba), no el redondeo bancario por defecto.\n\n**Micro-reto:**\n1. Importá `Decimal` y `ROUND_HALF_UP`\n2. Definí `valor = Decimal('2.675')`\n3. Definí `redondeado = valor.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)` e imprimilo",
+    starter_code: "# from decimal import Decimal, ROUND_HALF_UP\n# valor = Decimal('2.675')\n# redondeado = valor.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)\n# print(redondeado)\n",
+    pytest: "def test_decimal_rounding(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from decimal import Decimal\n    assert ns['redondeado'] == Decimal('2.68')\n    assert capsys.readouterr().out.strip() == '2.68'\n",
+    hint: "ROUND_HALF_UP redondea .675 hacia .68.",
+    solution_example: "from decimal import Decimal, ROUND_HALF_UP\n\nvalor = Decimal('2.675')\nredondeado = valor.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)\nprint(redondeado)\n",
+    next: Some("py-1364-decimal-context"), show_type_chips: false, micro_step: 1363,
+};
+pub const PY1364_DECIMAL_CONTEXT: CodingStep = CodingStep {
+    id: "py-1364-decimal-context", title: "Decimal · Contexto de precisión", objective: "Controlar la precisión de una división con localcontext.",
+    prompt_md: "**Decimal: localcontext**\n\n`localcontext()` crea un contexto temporal; asignando `ctx.prec` fijás cuántos dígitos significativos usan las operaciones dentro del `with`.\n\n**Micro-reto:**\n1. Importá `Decimal` y `localcontext`\n2. Dentro de `with localcontext() as ctx:` poné `ctx.prec = 3`\n3. Definí `resultado = Decimal(1) / Decimal(7)` e imprimilo fuera del bloque",
+    starter_code: "# from decimal import Decimal, localcontext\n# with localcontext() as ctx:\n#     ctx.prec = 3\n#     resultado = Decimal(1) / Decimal(7)\n# print(resultado)\n",
+    pytest: "def test_decimal_context(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from decimal import Decimal\n    assert ns['resultado'] == Decimal('0.143')\n    assert capsys.readouterr().out.strip() == '0.143'\n",
+    hint: "Con prec=3, 1/7 se redondea a 3 dígitos significativos: 0.143.",
+    solution_example: "from decimal import Decimal, localcontext\n\nwith localcontext() as ctx:\n    ctx.prec = 3\n    resultado = Decimal(1) / Decimal(7)\n\nprint(resultado)\n",
+    next: Some("py-1365-decimal-vs-float"), show_type_chips: false, micro_step: 1364,
+};
+pub const PY1365_DECIMAL_VS_FLOAT: CodingStep = CodingStep {
+    id: "py-1365-decimal-vs-float", title: "Decimal · Float vs Decimal", objective: "Comparar la imprecisión del float con la exactitud de Decimal.",
+    prompt_md: "**Decimal: float vs Decimal**\n\n`0.1 + 0.2` en float no es `0.3`. Convertí el resultado Decimal a float y compará para ver la diferencia real.\n\n**Micro-reto:**\n1. Definí `flotante = 0.1 + 0.2`\n2. Definí `exacto = Decimal('0.1') + Decimal('0.2')`\n3. Definí `son_iguales = (float(exacto) == flotante)` e imprimilo",
+    starter_code: "# from decimal import Decimal\n# flotante = 0.1 + 0.2\n# exacto = Decimal('0.1') + Decimal('0.2')\n# son_iguales = (float(exacto) == flotante)\n# print(son_iguales)\n",
+    pytest: "def test_decimal_vs_float(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from decimal import Decimal\n    assert ns['son_iguales'] is False\n    assert ns['exacto'] == Decimal('0.3')\n    assert capsys.readouterr().out.strip() == 'False'\n",
+    hint: "float(Decimal('0.3')) es 0.3, pero 0.1+0.2 no lo es exactamente.",
+    solution_example: "from decimal import Decimal\n\nflotante = 0.1 + 0.2\nexacto = Decimal('0.1') + Decimal('0.2')\nson_iguales = (float(exacto) == flotante)\nprint(son_iguales)\n",
+    next: Some("py-1366-decimal-money"), show_type_chips: false, micro_step: 1365,
+};
+pub const PY1366_DECIMAL_MONEY: CodingStep = CodingStep {
+    id: "py-1366-decimal-money", title: "Decimal · Suma monetaria exacta", objective: "Sumar una lista de precios sin error de redondeo.",
+    prompt_md: "**Decimal: suma monetaria**\n\nPara totalizar precios, convertí cada valor con `Decimal(p)` y sumá con base `Decimal('0')`; así no acumulás error de float.\n\n**Micro-reto:**\n1. Definí `sumar_precios(precios)` que devuelva la suma exacta de `Decimal(p)`\n2. Calculá `total = sumar_precios(['19.99', '5.50', '0.51'])`\n3. Imprimí `total`",
+    starter_code: "# from decimal import Decimal\n# def sumar_precios(precios):\n#     return sum((Decimal(p) for p in precios), Decimal('0'))\n# total = sumar_precios(['19.99', '5.50', '0.51'])\n# print(total)\n",
+    pytest: "def test_decimal_money(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from decimal import Decimal\n    assert ns['total'] == Decimal('26.00')\n    assert ns['sumar_precios'](['0.1', '0.2']) == Decimal('0.3')\n    assert capsys.readouterr().out.strip() == '26.00'\n",
+    hint: "sum(generador, Decimal('0')) arranca en Decimal cero.",
+    solution_example: "from decimal import Decimal\n\ndef sumar_precios(precios):\n    return sum((Decimal(p) for p in precios), Decimal('0'))\n\ntotal = sumar_precios(['19.99', '5.50', '0.51'])\nprint(total)\n",
+    next: Some("py-1367-fraction-create"), show_type_chips: false, micro_step: 1366,
+};
+pub const PY1367_FRACTION_CREATE: CodingStep = CodingStep {
+    id: "py-1367-fraction-create", title: "Fraction · Crear racional", objective: "Crear un número racional exacto con Fraction.",
+    prompt_md: "**Fraction: crear**\n\n`Fraction(numerador, denominador)` guarda una fracción exacta, sin pérdida de precisión. Leés `numerator` y `denominator` por separado.\n\n**Micro-reto:**\n1. Importá `Fraction` de `fractions`\n2. Definí `medio = Fraction(1, 2)`\n3. Imprimí `medio`",
+    starter_code: "# from fractions import Fraction\n# medio = Fraction(1, 2)\n# print(medio)\n",
+    pytest: "def test_fraction_create(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from fractions import Fraction\n    assert ns['medio'] == Fraction(1, 2)\n    assert ns['medio'].numerator == 1\n    assert ns['medio'].denominator == 2\n    assert capsys.readouterr().out.strip() == '1/2'\n",
+    hint: "Fraction(1, 2) se imprime como 1/2.",
+    solution_example: "from fractions import Fraction\n\nmedio = Fraction(1, 2)\nprint(medio)\n",
+    next: Some("py-1368-fraction-simplify"), show_type_chips: false, micro_step: 1367,
+};
+pub const PY1368_FRACTION_SIMPLIFY: CodingStep = CodingStep {
+    id: "py-1368-fraction-simplify", title: "Fraction · Simplificación automática", objective: "Comprobar que Fraction simplifica automáticamente.",
+    prompt_md: "**Fraction: simplificar**\n\n`Fraction(6, 8)` se reduce sola a `3/4`. La fracción siempre queda en su forma irreducible.\n\n**Micro-reto:**\n1. Importá `Fraction`\n2. Definí `fr = Fraction(6, 8)`\n3. Imprimí `fr`",
+    starter_code: "# from fractions import Fraction\n# fr = Fraction(6, 8)\n# print(fr)\n",
+    pytest: "def test_fraction_simplify(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from fractions import Fraction\n    assert ns['fr'] == Fraction(3, 4)\n    assert capsys.readouterr().out.strip() == '3/4'\n",
+    hint: "6/8 se reduce a 3/4 al crear la Fraction.",
+    solution_example: "from fractions import Fraction\n\nfr = Fraction(6, 8)\nprint(fr)\n",
+    next: Some("py-1369-fraction-ops"), show_type_chips: false, micro_step: 1368,
+};
+pub const PY1369_FRACTION_OPS: CodingStep = CodingStep {
+    id: "py-1369-fraction-ops", title: "Fraction · Operaciones exactas", objective: "Sumar fracciones con resultado exacto.",
+    prompt_md: "**Fraction: operaciones**\n\nSumar `Fraction` produce otra fracción exacta con denominador común, sin aproximar a decimal.\n\n**Micro-reto:**\n1. Definí `a = Fraction(1, 3)` y `b = Fraction(1, 6)`\n2. Definí `resultado = a + b`\n3. Imprimí `resultado`",
+    starter_code: "# from fractions import Fraction\n# a = Fraction(1, 3)\n# b = Fraction(1, 6)\n# resultado = a + b\n# print(resultado)\n",
+    pytest: "def test_fraction_ops(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from fractions import Fraction\n    assert ns['resultado'] == Fraction(1, 2)\n    assert capsys.readouterr().out.strip() == '1/2'\n",
+    hint: "1/3 + 1/6 = 1/2 exacto.",
+    solution_example: "from fractions import Fraction\n\na = Fraction(1, 3)\nb = Fraction(1, 6)\nresultado = a + b\nprint(resultado)\n",
+    next: Some("py-1370-fraction-from-float"), show_type_chips: false, micro_step: 1369,
+};
+pub const PY1370_FRACTION_FROM_FLOAT: CodingStep = CodingStep {
+    id: "py-1370-fraction-from-float", title: "Fraction · Desde float (limit_denominator)", objective: "Aproximar un float con una fracción de denominador acotado.",
+    prompt_md: "**Fraction: desde float**\n\n`Fraction(0.333333)` da una fracción enorme; `limit_denominator(1000)` la reduce a la mejor aproximación con denominador ≤ 1000.\n\n**Micro-reto:**\n1. Definí `aprox = Fraction(0.333333).limit_denominator(1000)`\n2. Imprimí `aprox`",
+    starter_code: "# from fractions import Fraction\n# aprox = Fraction(0.333333).limit_denominator(1000)\n# print(aprox)\n",
+    pytest: "def test_fraction_from_float(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from fractions import Fraction\n    assert ns['aprox'] == Fraction(1, 3)\n    assert capsys.readouterr().out.strip() == '1/3'\n",
+    hint: "La mejor aproximación de 0.333333 es 1/3.",
+    solution_example: "from fractions import Fraction\n\naprox = Fraction(0.333333).limit_denominator(1000)\nprint(aprox)\n",
+    next: Some("py-1371-fraction-compare"), show_type_chips: false, micro_step: 1370,
+};
+pub const PY1371_FRACTION_COMPARE: CodingStep = CodingStep {
+    id: "py-1371-fraction-compare", title: "Fraction · Comparación exacta", objective: "Verificar una identidad racional sin error de float.",
+    prompt_md: "**Fraction: comparar**\n\nSumar tres tercios con `Fraction` da exactamente `1`, algo que con float puede fallar por redondeo.\n\n**Micro-reto:**\n1. Definí `tercio = Fraction(1, 3)`\n2. Definí `son_iguales = (tercio + tercio + tercio == 1)`\n3. Imprimí `son_iguales`",
+    starter_code: "# from fractions import Fraction\n# tercio = Fraction(1, 3)\n# son_iguales = (tercio + tercio + tercio == 1)\n# print(son_iguales)\n",
+    pytest: "def test_fraction_compare(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['son_iguales'] is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "1/3 + 1/3 + 1/3 = 1 exacto.",
+    solution_example: "from fractions import Fraction\n\ntercio = Fraction(1, 3)\nson_iguales = (tercio + tercio + tercio == 1)\nprint(son_iguales)\n",
+    next: Some("py-1372-fraction-mean"), show_type_chips: false, micro_step: 1371,
+};
+pub const PY1372_FRACTION_MEAN: CodingStep = CodingStep {
+    id: "py-1372-fraction-mean", title: "Fraction · Media racional", objective: "Calcular la media de fracciones con resultado exacto.",
+    prompt_md: "**Fraction: media racional**\n\n`sum(valores, Fraction(0))` suma fracciones con base racional; dividí por `len` para la media exacta.\n\n**Micro-reto:**\n1. Definí `media_racional(valores)` que devuelva la media exacta\n2. Calculá el resultado para `[Fraction(1, 2), Fraction(1, 3), Fraction(1, 6)]`\n3. Imprimilo",
+    starter_code: "# from fractions import Fraction\n# def media_racional(valores):\n#     return sum(valores, Fraction(0)) / len(valores)\n# resultado = media_racional([Fraction(1, 2), Fraction(1, 3), Fraction(1, 6)])\n# print(resultado)\n",
+    pytest: "def test_fraction_mean(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from fractions import Fraction\n    assert ns['resultado'] == Fraction(1, 3)\n    assert capsys.readouterr().out.strip() == '1/3'\n",
+    hint: "(1/2 + 1/3 + 1/6) / 3 = 1/3.",
+    solution_example: "from fractions import Fraction\n\ndef media_racional(valores):\n    return sum(valores, Fraction(0)) / len(valores)\n\nresultado = media_racional([Fraction(1, 2), Fraction(1, 3), Fraction(1, 6)])\nprint(resultado)\n",
+    next: Some("py-1373-complex-create"), show_type_chips: false, micro_step: 1372,
+};
+pub const PY1373_COMPLEX_CREATE: CodingStep = CodingStep {
+    id: "py-1373-complex-create", title: "Complex · Crear número complejo", objective: "Construir un número complejo y acceder a sus partes.",
+    prompt_md: "**Complex: crear**\n\n`complex(real, imag)` crea un número complejo; accedés a `.real` y `.imag` por separado.\n\n**Micro-reto:**\n1. Definí `z = complex(3, 4)`\n2. Imprimí `z`",
+    starter_code: "# z = complex(3, 4)\n# print(z)\n",
+    pytest: "def test_complex_create(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['z'] == 3 + 4j\n    assert ns['z'].real == 3.0\n    assert ns['z'].imag == 4.0\n    assert capsys.readouterr().out.strip() == '(3+4j)'\n",
+    hint: "complex(3, 4) se imprime como (3+4j).",
+    solution_example: "z = complex(3, 4)\nprint(z)\n",
+    next: Some("py-1374-complex-ops"), show_type_chips: false, micro_step: 1373,
+};
+pub const PY1374_COMPLEX_OPS: CodingStep = CodingStep {
+    id: "py-1374-complex-ops", title: "Complex · Operaciones", objective: "Multiplicar números complejos.",
+    prompt_md: "**Complex: operaciones**\n\nLa multiplicación compleja aplica la regla `(a+bi)(c+di) = (ac-bd) + (ad+bc)i`.\n\n**Micro-reto:**\n1. Definí `a = complex(1, 2)` y `b = complex(3, 4)`\n2. Definí `resultado = a * b`\n3. Imprimí `resultado`",
+    starter_code: "# a = complex(1, 2)\n# b = complex(3, 4)\n# resultado = a * b\n# print(resultado)\n",
+    pytest: "def test_complex_ops(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == -5 + 10j\n    assert capsys.readouterr().out.strip() == '(-5+10j)'\n",
+    hint: "(1+2j)(3+4j) = -5 + 10j.",
+    solution_example: "a = complex(1, 2)\nb = complex(3, 4)\nresultado = a * b\nprint(resultado)\n",
+    next: Some("py-1375-complex-polar"), show_type_chips: false, micro_step: 1374,
+};
+pub const PY1375_COMPLEX_POLAR: CodingStep = CodingStep {
+    id: "py-1375-complex-polar", title: "Complex · Módulo y fase", objective: "Calcular el módulo y la fase de un complejo.",
+    prompt_md: "**Complex: polar**\n\n`abs(z)` da el módulo (distancia al origen) y `cmath.phase(z)` el ángulo en radianes.\n\n**Micro-reto:**\n1. Importá `cmath`\n2. Definí `z = complex(3, 4)`, `modulo = abs(z)` y `fase = cmath.phase(z)`\n3. Imprimí `modulo` y `round(fase, 4)`",
+    starter_code: "# import cmath\n# z = complex(3, 4)\n# modulo = abs(z)\n# fase = cmath.phase(z)\n# print(modulo)\n# print(round(fase, 4))\n",
+    pytest: "def test_complex_polar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['modulo'] == 5.0\n    assert round(ns['fase'], 4) == 0.9273\n    assert capsys.readouterr().out.strip().splitlines() == ['5.0', '0.9273']\n",
+    hint: "abs(3+4j) es 5; phase es atan2(4, 3).",
+    solution_example: "import cmath\n\nz = complex(3, 4)\nmodulo = abs(z)\nfase = cmath.phase(z)\nprint(modulo)\nprint(round(fase, 4))\n",
+    next: Some("py-1376-complex-conjugate"), show_type_chips: false, micro_step: 1375,
+};
+pub const PY1376_COMPLEX_CONJUGATE: CodingStep = CodingStep {
+    id: "py-1376-complex-conjugate", title: "Complex · Conjugado", objective: "Calcular el conjugado y su producto con el original.",
+    prompt_md: "**Complex: conjugado**\n\nEl conjugado de `a+bi` es `a-bi`. `z * z.conjugate()` da un real positivo igual al módulo al cuadrado.\n\n**Micro-reto:**\n1. Definí `z = complex(3, 4)` y `conjugado = z.conjugate()`\n2. Definí `producto = z * conjugado`\n3. Imprimí ambos",
+    starter_code: "# z = complex(3, 4)\n# conjugado = z.conjugate()\n# producto = z * conjugado\n# print(conjugado)\n# print(producto)\n",
+    pytest: "def test_complex_conjugate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['conjugado'] == 3 - 4j\n    assert ns['producto'] == 25 + 0j\n    assert capsys.readouterr().out.strip().splitlines() == ['(3-4j)', '(25+0j)']\n",
+    hint: "(3+4j)(3-4j) = 25 + 0j.",
+    solution_example: "z = complex(3, 4)\nconjugado = z.conjugate()\nproducto = z * conjugado\nprint(conjugado)\nprint(producto)\n",
+    next: Some("py-1377-complex-roots"), show_type_chips: false, micro_step: 1376,
+};
+pub const PY1377_COMPLEX_ROOTS: CodingStep = CodingStep {
+    id: "py-1377-complex-roots", title: "Complex · Raíces cuadradas", objective: "Calcular las dos raíces cuadradas de un complejo.",
+    prompt_md: "**Complex: raíces cuadradas**\n\n`cmath.sqrt(z)` devuelve una raíz; la otra es su negado. Cada raíz `r` cumple `r*r == z`.\n\n**Micro-reto:**\n1. Importá `cmath`\n2. Definí `raices_cuadradas(z)` que devuelva `[cmath.sqrt(z), -cmath.sqrt(z)]`\n3. Imprimí los pares `(real, imag)` redondeados y ordenados",
+    starter_code: "# import cmath\n# def raices_cuadradas(z):\n#     r = cmath.sqrt(z)\n#     return [r, -r]\n# raices = raices_cuadradas(complex(-4, 0))\n# pares = sorted((round(x.real, 4) + 0.0, round(x.imag, 4) + 0.0) for x in raices)\n# print(pares)\n",
+    pytest: "def test_complex_roots(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    raices = ns['raices_cuadradas'](complex(-4, 0))\n    assert len(raices) == 2\n    for r in raices:\n        assert abs(r * r - complex(-4, 0)) < 1e-9\n    assert abs(sum(raices)) < 1e-9\n    assert capsys.readouterr().out.strip() == '[(0.0, -2.0), (0.0, 2.0)]'\n",
+    hint: "cmath.sqrt(-4+0j) es 2j; la otra raíz es -2j.",
+    solution_example: "import cmath\n\ndef raices_cuadradas(z):\n    r = cmath.sqrt(z)\n    return [r, -r]\n\nraices = raices_cuadradas(complex(-4, 0))\npares = sorted((round(x.real, 4) + 0.0, round(x.imag, 4) + 0.0) for x in raices)\nprint(pares)\n",
+    next: Some("py-1378-complex-vector-sum"), show_type_chips: false, micro_step: 1377,
+};
+pub const PY1378_COMPLEX_VECTOR_SUM: CodingStep = CodingStep {
+    id: "py-1378-complex-vector-sum", title: "Complex · Suma vectorial", objective: "Sumar una lista de números complejos.",
+    prompt_md: "**Complex: suma vectorial**\n\nUn número complejo puede representar un vector 2D; sumar una lista es sumar componente a componente.\n\n**Micro-reto:**\n1. Definí `suma_compleja(vector)` que devuelva `sum(vector, 0j)`\n2. Calculá el resultado para `[complex(1,2), complex(3,-1), complex(-2,5)]`\n3. Imprimilo",
+    starter_code: "# def suma_compleja(vector):\n#     return sum(vector, 0j)\n# resultado = suma_compleja([complex(1, 2), complex(3, -1), complex(-2, 5)])\n# print(resultado)\n",
+    pytest: "def test_complex_vector_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2 + 6j\n    assert capsys.readouterr().out.strip() == '(2+6j)'\n",
+    hint: "(1+2j)+(3-1j)+(-2+5j) = 2+6j.",
+    solution_example: "def suma_compleja(vector):\n    return sum(vector, 0j)\n\nresultado = suma_compleja([complex(1, 2), complex(3, -1), complex(-2, 5)])\nprint(resultado)\n",
+    next: Some("py-1379-math-log-exp"), show_type_chips: false, micro_step: 1378,
+};
+pub const PY1379_MATH_LOG_EXP: CodingStep = CodingStep {
+    id: "py-1379-math-log-exp", title: "Math · Logaritmo y exponencial", objective: "Verificar que log y exp son funciones inversas.",
+    prompt_md: "**Math: log/exp**\n\n`math.exp(x)` calcula `e^x` y `math.log(x)` su inverso en base `e`. Son operaciones inversas.\n\n**Micro-reto:**\n1. Importá `math`\n2. Definí `x = math.exp(1)` y `y = math.log(x)`\n3. Imprimí `round(x, 4)` y `round(y, 4)`",
+    starter_code: "# import math\n# x = math.exp(1)\n# y = math.log(x)\n# print(round(x, 4))\n# print(round(y, 4))\n",
+    pytest: "def test_math_log_exp(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert round(ns['x'], 4) == 2.7183\n    assert round(ns['y'], 4) == 1.0\n    assert capsys.readouterr().out.strip().splitlines() == ['2.7183', '1.0']\n",
+    hint: "exp(1) es e ≈ 2.7183; log(e) es 1.",
+    solution_example: "import math\n\nx = math.exp(1)\ny = math.log(x)\nprint(round(x, 4))\nprint(round(y, 4))\n",
+    next: Some("py-1380-math-trig"), show_type_chips: false, micro_step: 1379,
+};
+pub const PY1380_MATH_TRIG: CodingStep = CodingStep {
+    id: "py-1380-math-trig", title: "Math · Trigonometría", objective: "Calcular seno y coseno de un ángulo.",
+    prompt_md: "**Math: trigonometría**\n\n`math.sin` y `math.cos` trabajan en radianes. En π/4, seno y coseno valen √2/2.\n\n**Micro-reto:**\n1. Definí `angulo = math.pi / 4`\n2. Definí `seno = math.sin(angulo)` y `coseno = math.cos(angulo)`\n3. Imprimí ambos redondeados a 4 decimales",
+    starter_code: "# import math\n# angulo = math.pi / 4\n# seno = math.sin(angulo)\n# coseno = math.cos(angulo)\n# print(round(seno, 4))\n# print(round(coseno, 4))\n",
+    pytest: "def test_math_trig(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert round(ns['seno'], 4) == 0.7071\n    assert round(ns['coseno'], 4) == 0.7071\n    assert capsys.readouterr().out.strip().splitlines() == ['0.7071', '0.7071']\n",
+    hint: "sin(pi/4) = cos(pi/4) = 0.7071.",
+    solution_example: "import math\n\nangulo = math.pi / 4\nseno = math.sin(angulo)\ncoseno = math.cos(angulo)\nprint(round(seno, 4))\nprint(round(coseno, 4))\n",
+    next: Some("py-1381-math-combinatorics"), show_type_chips: false, micro_step: 1380,
+};
+pub const PY1381_MATH_COMBINATORICS: CodingStep = CodingStep {
+    id: "py-1381-math-combinatorics", title: "Math · Combinatoria", objective: "Calcular combinaciones y permutaciones.",
+    prompt_md: "**Math: combinatoria**\n\n`math.comb(n, k)` da combinaciones (sin orden) y `math.perm(n, k)` permutaciones (con orden).\n\n**Micro-reto:**\n1. Definí `combinaciones = math.comb(5, 2)` y `permutaciones = math.perm(5, 2)`\n2. Imprimí ambos",
+    starter_code: "# import math\n# combinaciones = math.comb(5, 2)\n# permutaciones = math.perm(5, 2)\n# print(combinaciones)\n# print(permutaciones)\n",
+    pytest: "def test_math_combinatorics(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['combinaciones'] == 10\n    assert ns['permutaciones'] == 20\n    assert capsys.readouterr().out.strip().splitlines() == ['10', '20']\n",
+    hint: "C(5,2)=10; P(5,2)=20.",
+    solution_example: "import math\n\ncombinaciones = math.comb(5, 2)\npermutaciones = math.perm(5, 2)\nprint(combinaciones)\nprint(permutaciones)\n",
+    next: Some("py-1382-math-factorial"), show_type_chips: false, micro_step: 1381,
+};
+pub const PY1382_MATH_FACTORIAL: CodingStep = CodingStep {
+    id: "py-1382-math-factorial", title: "Math · Factorial", objective: "Calcular el factorial de un entero.",
+    prompt_md: "**Math: factorial**\n\n`math.factorial(n)` devuelve `n!` = 1·2·…·n para enteros no negativos.\n\n**Micro-reto:**\n1. Definí `fact = math.factorial(6)`\n2. Imprimí `fact`",
+    starter_code: "# import math\n# fact = math.factorial(6)\n# print(fact)\n",
+    pytest: "def test_math_factorial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['fact'] == 720\n    assert capsys.readouterr().out.strip() == '720'\n",
+    hint: "6! = 720.",
+    solution_example: "import math\n\nfact = math.factorial(6)\nprint(fact)\n",
+    next: Some("py-1383-math-gcd-lcm"), show_type_chips: false, micro_step: 1382,
+};
+pub const PY1383_MATH_GCD_LCM: CodingStep = CodingStep {
+    id: "py-1383-math-gcd-lcm", title: "Math · MCD y MCM", objective: "Calcular máximo común divisor y mínimo común múltiplo.",
+    prompt_md: "**Math: gcd/lcm**\n\n`math.gcd` da el máximo común divisor y `math.lcm` el mínimo común múltiplo.\n\n**Micro-reto:**\n1. Definí `mcd = math.gcd(48, 18)` y `mcm = math.lcm(4, 6)`\n2. Imprimí ambos",
+    starter_code: "# import math\n# mcd = math.gcd(48, 18)\n# mcm = math.lcm(4, 6)\n# print(mcd)\n# print(mcm)\n",
+    pytest: "def test_math_gcd_lcm(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['mcd'] == 6\n    assert ns['mcm'] == 12\n    assert capsys.readouterr().out.strip().splitlines() == ['6', '12']\n",
+    hint: "gcd(48,18)=6; lcm(4,6)=12.",
+    solution_example: "import math\n\nmcd = math.gcd(48, 18)\nmcm = math.lcm(4, 6)\nprint(mcd)\nprint(mcm)\n",
+    next: Some("py-1384-math-hypot"), show_type_chips: false, micro_step: 1383,
+};
+pub const PY1384_MATH_HYPOT: CodingStep = CodingStep {
+    id: "py-1384-math-hypot", title: "Math · Hypot (norma)", objective: "Calcular la hipotenusa con math.hypot.",
+    prompt_md: "**Math: hypot**\n\n`math.hypot(x, y)` calcula `√(x² + y²)` con mayor precisión numérica que hacerlo a mano.\n\n**Micro-reto:**\n1. Definí `norma = math.hypot(3, 4)`\n2. Imprimí `norma`",
+    starter_code: "# import math\n# norma = math.hypot(3, 4)\n# print(norma)\n",
+    pytest: "def test_math_hypot(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['norma'] == 5.0\n    assert capsys.readouterr().out.strip() == '5.0'\n",
+    hint: "hypot(3, 4) = 5.0.",
+    solution_example: "import math\n\nnorma = math.hypot(3, 4)\nprint(norma)\n",
+    next: Some("py-1385-stat-quantiles"), show_type_chips: false, micro_step: 1384,
+};
+pub const PY1385_STAT_QUANTILES: CodingStep = CodingStep {
+    id: "py-1385-stat-quantiles", title: "Statistics · Mediana (quantil 0.5)", objective: "Calcular la mediana de un conjunto de datos.",
+    prompt_md: "**Statistics: mediana**\n\n`statistics.median(datos)` devuelve el quantil 0.5: el valor central (o la media de los dos centrales si la cantidad es par).\n\n**Micro-reto:**\n1. Importá `statistics`\n2. Definí `datos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]`\n3. Definí `mediana = statistics.median(datos)` e imprimila",
+    starter_code: "# import statistics\n# datos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n# mediana = statistics.median(datos)\n# print(mediana)\n",
+    pytest: "def test_stat_quantiles(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['mediana'] == 5.5\n    assert capsys.readouterr().out.strip() == '5.5'\n",
+    hint: "Con 10 valores, la mediana es (5+6)/2 = 5.5.",
+    solution_example: "import statistics\n\ndatos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nmediana = statistics.median(datos)\nprint(mediana)\n",
+    next: Some("py-1386-stat-variance"), show_type_chips: false, micro_step: 1385,
+};
+pub const PY1386_STAT_VARIANCE: CodingStep = CodingStep {
+    id: "py-1386-stat-variance", title: "Statistics · Varianza y desvío", objective: "Calcular varianza y desviación estándar muestrales.",
+    prompt_md: "**Statistics: varianza**\n\n`statistics.variance` (muestral, divide por n-1) y `statistics.stdev` (su raíz) miden dispersión.\n\n**Micro-reto:**\n1. Definí `datos = [2, 4, 4, 4, 5, 5, 7, 9]`\n2. Definí `varianza` y `desvio` con `statistics`\n3. Imprimí ambos redondeados a 4 decimales",
+    starter_code: "# import statistics\n# datos = [2, 4, 4, 4, 5, 5, 7, 9]\n# varianza = statistics.variance(datos)\n# desvio = statistics.stdev(datos)\n# print(round(varianza, 4))\n# print(round(desvio, 4))\n",
+    pytest: "def test_stat_variance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert round(ns['varianza'], 4) == 4.5714\n    assert round(ns['desvio'], 4) == 2.1381\n    assert capsys.readouterr().out.strip().splitlines() == ['4.5714', '2.1381']\n",
+    hint: "Varianza muestral divide por n-1.",
+    solution_example: "import statistics\n\ndatos = [2, 4, 4, 4, 5, 5, 7, 9]\nvarianza = statistics.variance(datos)\ndesvio = statistics.stdev(datos)\nprint(round(varianza, 4))\nprint(round(desvio, 4))\n",
+    next: Some("py-1387-stat-covariance"), show_type_chips: false, micro_step: 1386,
+};
+pub const PY1387_STAT_COVARIANCE: CodingStep = CodingStep {
+    id: "py-1387-stat-covariance", title: "Statistics · Covarianza", objective: "Medir la relación lineal entre dos series.",
+    prompt_md: "**Statistics: covarianza**\n\n`statistics.covariance(x, y)` mide cómo varían juntas dos series: positiva si suben juntas, negativa si una sube y otra baja.\n\n**Micro-reto:**\n1. Definí `x = [1, 2, 3, 4, 5]` y `y = [2, 4, 5, 4, 5]`\n2. Definí `cov = statistics.covariance(x, y)`\n3. Imprimí `round(cov, 4)`",
+    starter_code: "# import statistics\n# x = [1, 2, 3, 4, 5]\n# y = [2, 4, 5, 4, 5]\n# cov = statistics.covariance(x, y)\n# print(round(cov, 4))\n",
+    pytest: "def test_stat_covariance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert round(ns['cov'], 4) == 1.5\n    assert capsys.readouterr().out.strip() == '1.5'\n",
+    hint: "covarianza muestral divide por n-1.",
+    solution_example: "import statistics\n\nx = [1, 2, 3, 4, 5]\ny = [2, 4, 5, 4, 5]\ncov = statistics.covariance(x, y)\nprint(round(cov, 4))\n",
+    next: Some("py-1388-stat-medians"), show_type_chips: false, micro_step: 1387,
+};
+pub const PY1388_STAT_MEDIANS: CodingStep = CodingStep {
+    id: "py-1388-stat-medians", title: "Statistics · Medianas low/high", objective: "Distinguir median_low y median_high en datos pares.",
+    prompt_md: "**Statistics: medianas**\n\nCon cantidad par de datos, `median_low` devuelve el valor inferior del par central y `median_high` el superior.\n\n**Micro-reto:**\n1. Definí `datos = [1, 2, 3, 4]`\n2. Definí `baja = statistics.median_low(datos)` y `alta = statistics.median_high(datos)`\n3. Imprimí ambos",
+    starter_code: "# import statistics\n# datos = [1, 2, 3, 4]\n# baja = statistics.median_low(datos)\n# alta = statistics.median_high(datos)\n# print(baja)\n# print(alta)\n",
+    pytest: "def test_stat_medians(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['baja'] == 2\n    assert ns['alta'] == 3\n    assert capsys.readouterr().out.strip().splitlines() == ['2', '3']\n",
+    hint: "El par central de [1,2,3,4] es (2, 3).",
+    solution_example: "import statistics\n\ndatos = [1, 2, 3, 4]\nbaja = statistics.median_low(datos)\nalta = statistics.median_high(datos)\nprint(baja)\nprint(alta)\n",
+    next: Some("py-1389-stat-harmonic"), show_type_chips: false, micro_step: 1388,
+};
+pub const PY1389_STAT_HARMONIC: CodingStep = CodingStep {
+    id: "py-1389-stat-harmonic", title: "Statistics · Media armónica", objective: "Calcular la media armónica de una lista.",
+    prompt_md: "**Statistics: media armónica**\n\n`statistics.harmonic_mean` es `n / Σ(1/x)`; útil para tasas y velocidades, donde la media aritmética distorsiona.\n\n**Micro-reto:**\n1. Definí `datos = [1, 2, 4]`\n2. Definí `media_armonica = statistics.harmonic_mean(datos)`\n3. Imprimí `round(media_armonica, 4)`",
+    starter_code: "# import statistics\n# datos = [1, 2, 4]\n# media_armonica = statistics.harmonic_mean(datos)\n# print(round(media_armonica, 4))\n",
+    pytest: "def test_stat_harmonic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert round(ns['media_armonica'], 4) == 1.7143\n    assert capsys.readouterr().out.strip() == '1.7143'\n",
+    hint: "3 / (1 + 1/2 + 1/4) = 1.7143.",
+    solution_example: "import statistics\n\ndatos = [1, 2, 4]\nmedia_armonica = statistics.harmonic_mean(datos)\nprint(round(media_armonica, 4))\n",
+    next: Some("py-1390-stat-robust"), show_type_chips: false, micro_step: 1389,
+};
+pub const PY1390_STAT_ROBUST: CodingStep = CodingStep {
+    id: "py-1390-stat-robust", title: "Statistics · Media robusta", objective: "Calcular una media descartando valores extremos.",
+    prompt_md: "**Statistics: media robusta**\n\nUn outlier distorsiona la media. Descartá el mínimo y el máximo antes de promediar para una estimación robusta.\n\n**Micro-reto:**\n1. Definí `media_robusta(valores)` que ordene, recorte extremos y promedie\n2. Aplicala a `[1, 2, 3, 4, 5, 100]`\n3. Imprimí `round(resultado, 4)`",
+    starter_code: "# import statistics\n# def media_robusta(valores):\n#     ordenados = sorted(valores)\n#     n = len(ordenados)\n#     recorte = ordenados[1:-1] if n > 2 else ordenados\n#     return statistics.mean(recorte)\n# resultado = media_robusta([1, 2, 3, 4, 5, 100])\n# print(round(resultado, 4))\n",
+    pytest: "def test_stat_robust(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert round(ns['resultado'], 4) == 3.5\n    assert ns['media_robusta']([10, 10, 10]) == 10.0\n    assert capsys.readouterr().out.strip() == '3.5'\n",
+    hint: "Sin el 1 y el 100, la media de [2,3,4,5] es 3.5.",
+    solution_example: "import statistics\n\ndef media_robusta(valores):\n    ordenados = sorted(valores)\n    n = len(ordenados)\n    recorte = ordenados[1:-1] if n > 2 else ordenados\n    return statistics.mean(recorte)\n\nresultado = media_robusta([1, 2, 3, 4, 5, 100])\nprint(round(resultado, 4))\n",
+    next: Some("py-1391-random-seed"), show_type_chips: false, micro_step: 1390,
+};
+pub const PY1391_RANDOM_SEED: CodingStep = CodingStep {
+    id: "py-1391-random-seed", title: "Random · Semilla reproducible", objective: "Generar valores aleatorios reproducibles con Random(seed).",
+    prompt_md: "**Random: semilla**\n\n`random.Random(42)` crea un generador determinista: la misma semilla produce siempre la misma secuencia.\n\n**Micro-reto:**\n1. Definí `rng = random.Random(42)` y `primero = rng.random()`\n2. Definí `segundo = random.Random(42).random()` y `reproducible = (primero == segundo)`\n3. Imprimí `round(primero, 6)` y `reproducible`",
+    starter_code: "# import random\n# rng = random.Random(42)\n# primero = rng.random()\n# segundo = random.Random(42).random()\n# reproducible = (primero == segundo)\n# print(round(primero, 6))\n# print(reproducible)\n",
+    pytest: "def test_random_seed(capsys):\n    import random\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['reproducible'] is True\n    assert ns['primero'] == random.Random(42).random()\n    lineas = capsys.readouterr().out.strip().splitlines()\n    assert lineas[0] == str(round(random.Random(42).random(), 6))\n    assert lineas[1] == 'True'\n",
+    hint: "Misma semilla, misma secuencia: Random(42) siempre igual.",
+    solution_example: "import random\n\nrng = random.Random(42)\nprimero = rng.random()\nsegundo = random.Random(42).random()\nreproducible = (primero == segundo)\nprint(round(primero, 6))\nprint(reproducible)\n",
+    next: Some("py-1392-random-int-choice"), show_type_chips: false, micro_step: 1391,
+};
+pub const PY1392_RANDOM_INT_CHOICE: CodingStep = CodingStep {
+    id: "py-1392-random-int-choice", title: "Random · randint y choice", objective: "Generar enteros y elegir elementos con semilla fija.",
+    prompt_md: "**Random: randint/choice**\n\nCon un `Random(seed)`, `randint(a, b)` y `choice(secuencia)` dan resultados deterministas.\n\n**Micro-reto:**\n1. Definí `rng = random.Random(7)`\n2. Definí `entero = rng.randint(1, 100)` y `opcion = rng.choice(['rojo', 'verde', 'azul'])`\n3. Imprimí ambos",
+    starter_code: "# import random\n# rng = random.Random(7)\n# entero = rng.randint(1, 100)\n# opcion = rng.choice(['rojo', 'verde', 'azul'])\n# print(entero)\n# print(opcion)\n",
+    pytest: "def test_random_int_choice(capsys):\n    import random\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    rng = random.Random(7)\n    assert ns['entero'] == rng.randint(1, 100)\n    assert ns['opcion'] == rng.choice(['rojo', 'verde', 'azul'])\n    assert 1 <= ns['entero'] <= 100\n    assert ns['opcion'] in ['rojo', 'verde', 'azul']\n    lineas = capsys.readouterr().out.strip().splitlines()\n    assert lineas[0] == str(ns['entero'])\n    assert lineas[1] == ns['opcion']\n",
+    hint: "El orden de llamadas al RNG define la secuencia determinista.",
+    solution_example: "import random\n\nrng = random.Random(7)\nentero = rng.randint(1, 100)\nopcion = rng.choice(['rojo', 'verde', 'azul'])\nprint(entero)\nprint(opcion)\n",
+    next: Some("py-1393-random-shuffle"), show_type_chips: false, micro_step: 1392,
+};
+pub const PY1393_RANDOM_SHUFFLE: CodingStep = CodingStep {
+    id: "py-1393-random-shuffle", title: "Random · Shuffle determinístico", objective: "Barajar una lista de forma reproducible.",
+    prompt_md: "**Random: shuffle**\n\n`rng.shuffle(lista)` reordena en el lugar. Con semilla fija, el barajado es siempre el mismo.\n\n**Micro-reto:**\n1. Definí `rng = random.Random(3)` y `cartas = [1, 2, 3, 4, 5]`\n2. Llamá `rng.shuffle(cartas)`\n3. Imprimí `cartas`",
+    starter_code: "# import random\n# rng = random.Random(3)\n# cartas = [1, 2, 3, 4, 5]\n# rng.shuffle(cartas)\n# print(cartas)\n",
+    pytest: "def test_random_shuffle(capsys):\n    import random\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    esperado = [1, 2, 3, 4, 5]\n    random.Random(3).shuffle(esperado)\n    assert ns['cartas'] == esperado\n    assert sorted(ns['cartas']) == [1, 2, 3, 4, 5]\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
+    hint: "shuffle modifica la lista in place; con seed 3 es determinista.",
+    solution_example: "import random\n\nrng = random.Random(3)\ncartas = [1, 2, 3, 4, 5]\nrng.shuffle(cartas)\nprint(cartas)\n",
+    next: Some("py-1394-random-sample"), show_type_chips: false, micro_step: 1393,
+};
+pub const PY1394_RANDOM_SAMPLE: CodingStep = CodingStep {
+    id: "py-1394-random-sample", title: "Random · Sample sin reposición", objective: "Extraer una muestra única con semilla fija.",
+    prompt_md: "**Random: sample**\n\n`rng.sample(poblacion, k)` toma k elementos sin reposición. Con semilla fija, la selección es reproducible.\n\n**Micro-reto:**\n1. Definí `rng = random.Random(11)`\n2. Definí `seleccion = rng.sample(range(1, 50), 6)`\n3. Imprimí `sorted(seleccion)`",
+    starter_code: "# import random\n# rng = random.Random(11)\n# seleccion = rng.sample(range(1, 50), 6)\n# print(sorted(seleccion))\n",
+    pytest: "def test_random_sample(capsys):\n    import random\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    seleccion = ns['seleccion']\n    esperado = random.Random(11).sample(range(1, 50), 6)\n    assert len(seleccion) == 6\n    assert len(set(seleccion)) == 6\n    assert all(1 <= v <= 49 for v in seleccion)\n    assert sorted(seleccion) == sorted(esperado)\n    assert capsys.readouterr().out.strip() == str(sorted(seleccion))\n",
+    hint: "sample no repite elementos; con seed 11 es reproducible.",
+    solution_example: "import random\n\nrng = random.Random(11)\nseleccion = rng.sample(range(1, 50), 6)\nprint(sorted(seleccion))\n",
+    next: Some("py-1395-random-gauss"), show_type_chips: false, micro_step: 1394,
+};
+pub const PY1395_RANDOM_GAUSS: CodingStep = CodingStep {
+    id: "py-1395-random-gauss", title: "Random · Distribución normal", objective: "Muestrear una distribución normal con semilla fija.",
+    prompt_md: "**Random: gauss**\n\n`rng.gauss(mu, sigma)` muestrea una normal con media `mu` y desvío `sigma`. Con semilla fija, la secuencia es reproducible.\n\n**Micro-reto:**\n1. Definí `rng = random.Random(5)`\n2. Definí `valores = [round(rng.gauss(0, 1), 4) for _ in range(5)]`\n3. Imprimí `valores`",
+    starter_code: "# import random\n# rng = random.Random(5)\n# valores = [round(rng.gauss(0, 1), 4) for _ in range(5)]\n# print(valores)\n",
+    pytest: "def test_random_gauss(capsys):\n    import random\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    valores = ns['valores']\n    rng = random.Random(5)\n    esperado = [round(rng.gauss(0, 1), 4) for _ in range(5)]\n    assert len(valores) == 5\n    assert valores == esperado\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
+    hint: "Cinco muestras de N(0,1) con seed 5, redondeadas a 4.",
+    solution_example: "import random\n\nrng = random.Random(5)\nvalores = [round(rng.gauss(0, 1), 4) for _ in range(5)]\nprint(valores)\n",
+    next: Some("py-1396-random-synthetic"), show_type_chips: false, micro_step: 1395,
+};
+pub const PY1396_RANDOM_SYNTHETIC: CodingStep = CodingStep {
+    id: "py-1396-random-synthetic", title: "Random · Datos sintéticos", objective: "Generar un dataset sintético reproducible.",
+    prompt_md: "**Random: datos sintéticos**\n\nCombiná `Random(seed)` con `uniform` para generar datos de prueba reproducibles, útiles para testear algoritmos.\n\n**Micro-reto:**\n1. Definí `generar_datos(n, seed)` que devuelva `[round(rng.uniform(0, 100), 2) for _ in range(n)]`\n2. Definí `datos = generar_datos(8, 123)`\n3. Imprimí `datos`",
+    starter_code: "# import random\n# def generar_datos(n, seed):\n#     rng = random.Random(seed)\n#     return [round(rng.uniform(0, 100), 2) for _ in range(n)]\n# datos = generar_datos(8, 123)\n# print(datos)\n",
+    pytest: "def test_random_synthetic(capsys):\n    import random\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    datos = ns['generar_datos'](8, 123)\n    rng = random.Random(123)\n    esperado = [round(rng.uniform(0, 100), 2) for _ in range(8)]\n    assert datos == esperado\n    assert len(datos) == 8\n    assert all(0 <= v <= 100 for v in datos)\n    assert ns['generar_datos'](8, 123) == ns['generar_datos'](8, 123)\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
+    hint: "Mismo seed → mismos datos; así podés re-testear siempre.",
+    solution_example: "import random\n\ndef generar_datos(n, seed):\n    rng = random.Random(seed)\n    return [round(rng.uniform(0, 100), 2) for _ in range(n)]\n\ndatos = generar_datos(8, 123)\nprint(datos)\n",
+    next: Some("py-1397-matrix-build"), show_type_chips: false, micro_step: 1396,
+};
+pub const PY1397_MATRIX_BUILD: CodingStep = CodingStep {
+    id: "py-1397-matrix-build", title: "Matriz · Construir (listas de listas)", objective: "Representar una matriz como lista de listas.",
+    prompt_md: "**Matriz: construir**\n\nUna matriz es una lista de listas: cada sublista es una fila. `matriz[i][j]` es el elemento en fila i, columna j.\n\n**Micro-reto:**\n1. Definí `matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]`\n2. Imprimí `matriz`",
+    starter_code: "# matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\n# print(matriz)\n",
+    pytest: "def test_matrix_build(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['matriz'] == [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\n    assert len(ns['matriz']) == 3\n    assert len(ns['matriz'][0]) == 3\n    assert capsys.readouterr().out.strip() == '[[1, 2, 3], [4, 5, 6], [7, 8, 9]]'\n",
+    hint: "Tres filas, tres columnas, cada fila una lista.",
+    solution_example: "matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\nprint(matriz)\n",
+    next: Some("py-1398-matrix-access"), show_type_chips: false, micro_step: 1397,
+};
+pub const PY1398_MATRIX_ACCESS: CodingStep = CodingStep {
+    id: "py-1398-matrix-access", title: "Matriz · Acceder a un elemento", objective: "Leer un elemento por fila y columna.",
+    prompt_md: "**Matriz: acceder**\n\n`matriz[fila][columna]` accede al elemento. Definí una función para desacoplar el acceso.\n\n**Micro-reto:**\n1. Definí `matriz` de 3×3\n2. Definí `obtener(matriz, fila, columna)` que devuelva `matriz[fila][columna]`\n3. Definí `elemento = obtener(matriz, 1, 2)` e imprimilo",
+    starter_code: "# matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\n# def obtener(matriz, fila, columna):\n#     return matriz[fila][columna]\n# elemento = obtener(matriz, 1, 2)\n# print(elemento)\n",
+    pytest: "def test_matrix_access(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    matriz = ns['matriz']\n    assert ns['elemento'] == 6\n    assert ns['obtener'](matriz, 0, 0) == 1\n    assert ns['obtener'](matriz, 2, 2) == 9\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "fila 1, columna 2 es el 6.",
+    solution_example: "matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\n\ndef obtener(matriz, fila, columna):\n    return matriz[fila][columna]\n\nelemento = obtener(matriz, 1, 2)\nprint(elemento)\n",
+    next: Some("py-1399-matrix-add"), show_type_chips: false, micro_step: 1398,
+};
+pub const PY1399_MATRIX_ADD: CodingStep = CodingStep {
+    id: "py-1399-matrix-add", title: "Matriz · Suma", objective: "Sumar dos matrices componente a componente.",
+    prompt_md: "**Matriz: suma**\n\nLa suma de matrices es componente a componente: `c[i][j] = a[i][j] + b[i][j]`.\n\n**Micro-reto:**\n1. Definí `sumar_matrices(a, b)` que devuelva la matriz suma\n2. Aplicala a `[[1,2],[3,4]]` y `[[5,6],[7,8]]`\n3. Imprimí el resultado",
+    starter_code: "# def sumar_matrices(a, b):\n#     return [[a[i][j] + b[i][j] for j in range(len(a[0]))] for i in range(len(a))]\n# resultado = sumar_matrices([[1, 2], [3, 4]], [[5, 6], [7, 8]])\n# print(resultado)\n",
+    pytest: "def test_matrix_add(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[6, 8], [10, 12]]\n    assert capsys.readouterr().out.strip() == '[[6, 8], [10, 12]]'\n",
+    hint: "Sumá elemento a elemento con doble comprensión.",
+    solution_example: "def sumar_matrices(a, b):\n    return [[a[i][j] + b[i][j] for j in range(len(a[0]))] for i in range(len(a))]\n\nresultado = sumar_matrices([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(resultado)\n",
+    next: Some("py-1400-matrix-multiply"), show_type_chips: false, micro_step: 1399,
+};
+pub const PY1400_MATRIX_MULTIPLY: CodingStep = CodingStep {
+    id: "py-1400-matrix-multiply", title: "Matriz · Multiplicación", objective: "Multiplicar matrices con el producto fila-columna.",
+    prompt_md: "**Matriz: multiplicar**\n\n`c[i][j] = Σ a[i][k] · b[k][j]`: cada celda es el producto punto de la fila i de A por la columna j de B.\n\n**Micro-reto:**\n1. Definí `multiplicar_matrices(a, b)`\n2. Aplicala a `[[1,2],[3,4]]` y `[[5,6],[7,8]]`\n3. Imprimí el resultado",
+    starter_code: "# def multiplicar_matrices(a, b):\n#     return [[sum(a[i][k] * b[k][j] for k in range(len(b))) for j in range(len(b[0]))] for i in range(len(a))]\n# resultado = multiplicar_matrices([[1, 2], [3, 4]], [[5, 6], [7, 8]])\n# print(resultado)\n",
+    pytest: "def test_matrix_multiply(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[19, 22], [43, 50]]\n    assert capsys.readouterr().out.strip() == '[[19, 22], [43, 50]]'\n",
+    hint: "c[0][0] = 1·5 + 2·7 = 19.",
+    solution_example: "def multiplicar_matrices(a, b):\n    return [[sum(a[i][k] * b[k][j] for k in range(len(b))) for j in range(len(b[0]))] for i in range(len(a))]\n\nresultado = multiplicar_matrices([[1, 2], [3, 4]], [[5, 6], [7, 8]])\nprint(resultado)\n",
+    next: Some("py-1401-matrix-transpose"), show_type_chips: false, micro_step: 1400,
+};
+pub const PY1401_MATRIX_TRANSPOSE: CodingStep = CodingStep {
+    id: "py-1401-matrix-transpose", title: "Matriz · Transposición", objective: "Intercambiar filas por columnas.",
+    prompt_md: "**Matriz: transponer**\n\nLa transpuesta convierte filas en columnas. `zip(*matriz)` agrupa por columnas; convertí cada grupo en lista.\n\n**Micro-reto:**\n1. Definí `transponer(matriz)` con `[list(fila) for fila in zip(*matriz)]`\n2. Aplicala a `[[1,2,3],[4,5,6]]`\n3. Imprimí el resultado",
+    starter_code: "# def transponer(matriz):\n#     return [list(fila) for fila in zip(*matriz)]\n# resultado = transponer([[1, 2, 3], [4, 5, 6]])\n# print(resultado)\n",
+    pytest: "def test_matrix_transpose(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 4], [2, 5], [3, 6]]\n    assert capsys.readouterr().out.strip() == '[[1, 4], [2, 5], [3, 6]]'\n",
+    hint: "zip(*matriz) junta las columnas en tuplas.",
+    solution_example: "def transponer(matriz):\n    return [list(fila) for fila in zip(*matriz)]\n\nresultado = transponer([[1, 2, 3], [4, 5, 6]])\nprint(resultado)\n",
+    next: Some("py-1402-matrix-elementwise"), show_type_chips: false, micro_step: 1401,
+};
+pub const PY1402_MATRIX_ELEMENTWISE: CodingStep = CodingStep {
+    id: "py-1402-matrix-elementwise", title: "Matriz · Operación elemento a elemento", objective: "Escalar una matriz multiplicando cada celda.",
+    prompt_md: "**Matriz: elemento a elemento**\n\nEscalar una matriz multiplica cada celda por un factor, sin cambiar su forma.\n\n**Micro-reto:**\n1. Definí `escalar_matriz(matriz, factor)`\n2. Aplicala a `[[1,2],[3,4]]` con factor 3\n3. Imprimí el resultado",
+    starter_code: "# def escalar_matriz(matriz, factor):\n#     return [[matriz[i][j] * factor for j in range(len(matriz[i]))] for i in range(len(matriz))]\n# resultado = escalar_matriz([[1, 2], [3, 4]], 3)\n# print(resultado)\n",
+    pytest: "def test_matrix_elementwise(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[3, 6], [9, 12]]\n    assert capsys.readouterr().out.strip() == '[[3, 6], [9, 12]]'\n",
+    hint: "Cada celda × 3.",
+    solution_example: "def escalar_matriz(matriz, factor):\n    return [[matriz[i][j] * factor for j in range(len(matriz[i]))] for i in range(len(matriz))]\n\nresultado = escalar_matriz([[1, 2], [3, 4]], 3)\nprint(resultado)\n",
+    next: Some("py-1403-linalg-dot"), show_type_chips: false, micro_step: 1402,
+};
+pub const PY1403_LINALG_DOT: CodingStep = CodingStep {
+    id: "py-1403-linalg-dot", title: "Linalg · Producto punto", objective: "Calcular el producto punto de dos vectores.",
+    prompt_md: "**Linalg: producto punto**\n\nEl producto punto de dos vectores es `Σ x[i]·y[i]`; mide cuánto apuntan en la misma dirección.\n\n**Micro-reto:**\n1. Definí `producto_punto(a, b)` con `sum(x*y for x, y in zip(a, b))`\n2. Aplicala a `[1, 2, 3]` y `[4, 5, 6]`\n3. Imprimí el resultado",
+    starter_code: "# def producto_punto(a, b):\n#     return sum(x * y for x, y in zip(a, b))\n# resultado = producto_punto([1, 2, 3], [4, 5, 6])\n# print(resultado)\n",
+    pytest: "def test_linalg_dot(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 32\n    assert ns['producto_punto']([1, 0], [0, 1]) == 0\n    assert capsys.readouterr().out.strip() == '32'\n",
+    hint: "1·4 + 2·5 + 3·6 = 32.",
+    solution_example: "def producto_punto(a, b):\n    return sum(x * y for x, y in zip(a, b))\n\nresultado = producto_punto([1, 2, 3], [4, 5, 6])\nprint(resultado)\n",
+    next: Some("py-1404-linalg-norm"), show_type_chips: false, micro_step: 1403,
+};
+pub const PY1404_LINALG_NORM: CodingStep = CodingStep {
+    id: "py-1404-linalg-norm", title: "Linalg · Norma vectorial", objective: "Calcular la norma (longitud) de un vector.",
+    prompt_md: "**Linalg: norma**\n\nLa norma euclidiana es `√(Σ x²)`. Es la distancia del vector al origen.\n\n**Micro-reto:**\n1. Importá `math`\n2. Definí `norma(vector)` con `math.sqrt(sum(x*x for x in vector))`\n3. Aplicala a `[3, 4]` e imprimila",
+    starter_code: "# import math\n# def norma(vector):\n#     return math.sqrt(sum(x * x for x in vector))\n# resultado = norma([3, 4])\n# print(resultado)\n",
+    pytest: "def test_linalg_norm(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5.0\n    assert ns['norma']([1, 2, 2]) == 3.0\n    assert capsys.readouterr().out.strip() == '5.0'\n",
+    hint: "√(3² + 4²) = 5.",
+    solution_example: "import math\n\ndef norma(vector):\n    return math.sqrt(sum(x * x for x in vector))\n\nresultado = norma([3, 4])\nprint(resultado)\n",
+    next: Some("py-1405-linalg-identity"), show_type_chips: false, micro_step: 1404,
+};
+pub const PY1405_LINALG_IDENTITY: CodingStep = CodingStep {
+    id: "py-1405-linalg-identity", title: "Linalg · Matriz identidad", objective: "Construir la matriz identidad n×n.",
+    prompt_md: "**Linalg: identidad**\n\nLa matriz identidad tiene 1 en la diagonal y 0 en el resto; es el neutro de la multiplicación de matrices.\n\n**Micro-reto:**\n1. Definí `identidad(n)` con `1 if i == j else 0`\n2. Aplicala a `n = 3`\n3. Imprimí el resultado",
+    starter_code: "# def identidad(n):\n#     return [[1 if i == j else 0 for j in range(n)] for i in range(n)]\n# resultado = identidad(3)\n# print(resultado)\n",
+    pytest: "def test_linalg_identity(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 0, 0], [0, 1, 0], [0, 0, 1]]\n    assert ns['identidad'](2) == [[1, 0], [0, 1]]\n    assert capsys.readouterr().out.strip() == '[[1, 0, 0], [0, 1, 0], [0, 0, 1]]'\n",
+    hint: "1 solo cuando i == j (diagonal).",
+    solution_example: "def identidad(n):\n    return [[1 if i == j else 0 for j in range(n)] for i in range(n)]\n\nresultado = identidad(3)\nprint(resultado)\n",
+    next: Some("py-1406-linalg-determinant"), show_type_chips: false, micro_step: 1405,
+};
+pub const PY1406_LINALG_DETERMINANT: CodingStep = CodingStep {
+    id: "py-1406-linalg-determinant", title: "Linalg · Determinante 2×2", objective: "Calcular el determinante de una matriz 2×2.",
+    prompt_md: "**Linalg: determinante**\n\nPara `[[a,b],[c,d]]`, el determinante es `a·d − b·c`; si es 0 la matriz no es invertible.\n\n**Micro-reto:**\n1. Definí `determinante(matriz)` con la fórmula 2×2\n2. Aplicala a `[[3,4],[2,5]]`\n3. Imprimí el resultado",
+    starter_code: "# def determinante(matriz):\n#     a, b = matriz[0]\n#     c, d = matriz[1]\n#     return a * d - b * c\n# resultado = determinante([[3, 4], [2, 5]])\n# print(resultado)\n",
+    pytest: "def test_linalg_determinant(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert ns['determinante']([[1, 2], [3, 4]]) == -2\n    assert capsys.readouterr().out.strip() == '7'\n",
+    hint: "3·5 − 4·2 = 7.",
+    solution_example: "def determinante(matriz):\n    a, b = matriz[0]\n    c, d = matriz[1]\n    return a * d - b * c\n\nresultado = determinante([[3, 4], [2, 5]])\nprint(resultado)\n",
+    next: Some("py-1407-linalg-solve2"), show_type_chips: false, micro_step: 1406,
+};
+pub const PY1407_LINALG_SOLVE2: CodingStep = CodingStep {
+    id: "py-1407-linalg-solve2", title: "Linalg · Resolver sistema 2×2", objective: "Resolver un sistema lineal 2×2 por eliminación.",
+    prompt_md: "**Linalg: resolver 2×2**\n\nUsá la regla de Cramer para `a·x + b·y = e`, `c·x + d·y = f`: `det = a·d − b·c`, luego `x` e `y`.\n\n**Micro-reto:**\n1. Definí `resolver_sistema(a, b, c, d, e, f)` que devuelva `(x, y)`\n2. Aplicala a `2x + y = 4`, `x − y = 1`\n3. Imprimí el resultado",
+    starter_code: "# def resolver_sistema(a, b, c, d, e, f):\n#     det = a * d - b * c\n#     x = (e * d - b * f) / det\n#     y = (a * f - e * c) / det\n#     return (x, y)\n# resultado = resolver_sistema(2, 1, 1, -1, 4, 1)\n# print(resultado)\n",
+    pytest: "def test_linalg_solve2(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (5 / 3, 2 / 3)\n    assert capsys.readouterr().out.strip() == '(1.6666666666666667, 0.6666666666666666)'\n",
+    hint: "x = 5/3, y = 2/3.",
+    solution_example: "def resolver_sistema(a, b, c, d, e, f):\n    det = a * d - b * c\n    x = (e * d - b * f) / det\n    y = (a * f - e * c) / det\n    return (x, y)\n\nresultado = resolver_sistema(2, 1, 1, -1, 4, 1)\nprint(resultado)\n",
+    next: Some("py-1408-linalg-projection"), show_type_chips: false, micro_step: 1407,
+};
+pub const PY1408_LINALG_PROJECTION: CodingStep = CodingStep {
+    id: "py-1408-linalg-projection", title: "Linalg · Proyección de vector", objective: "Proyectar un vector sobre otro.",
+    prompt_md: "**Linalg: proyección**\n\nLa proyección de `b` sobre `a` es `(a·b / a·a) · a`; da el vector sobre la recta de `a`.\n\n**Micro-reto:**\n1. Definí `proyeccion(a, b)`\n2. Aplicala a `[1, 0]` y `[3, 4]`\n3. Imprimí el resultado",
+    starter_code: "# def proyeccion(a, b):\n#     factor = sum(x * y for x, y in zip(a, b)) / sum(x * x for x in a)\n#     return [factor * x for x in a]\n# resultado = proyeccion([1, 0], [3, 4])\n# print(resultado)\n",
+    pytest: "def test_linalg_projection(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3.0, 0.0]\n    assert capsys.readouterr().out.strip() == '[3.0, 0.0]'\n",
+    hint: "Sobre [1,0], la proyección de [3,4] es [3,0].",
+    solution_example: "def proyeccion(a, b):\n    factor = sum(x * y for x, y in zip(a, b)) / sum(x * x for x in a)\n    return [factor * x for x in a]\n\nresultado = proyeccion([1, 0], [3, 4])\nprint(resultado)\n",
+    next: Some("py-1409-optimize-bisection"), show_type_chips: false, micro_step: 1408,
+};
+pub const PY1409_OPTIMIZE_BISECTION: CodingStep = CodingStep {
+    id: "py-1409-optimize-bisection", title: "Optimizar · Bisección", objective: "Hallar una raíz por bisección.",
+    prompt_md: "**Optimizar: bisección**\n\nPara `f` continua con signo distinto en `[a,b]`, partís el intervalo al medio y te quedás con el subintervalo que cambia de signo.\n\n**Micro-reto:**\n1. Definí `biseccion(f, a, b, tol=1e-6)`\n2. Aplicala a `lambda x: x*x - 2` en `[1, 2]`\n3. Imprimí `round(raiz, 6)`",
+    starter_code: "# def biseccion(f, a, b, tol=1e-6):\n#     while (b - a) / 2 > tol:\n#         c = (a + b) / 2\n#         if f(a) * f(c) < 0:\n#             b = c\n#         else:\n#             a = c\n#     return (a + b) / 2\n# raiz = biseccion(lambda x: x * x - 2, 1, 2)\n# print(round(raiz, 6))\n",
+    pytest: "def test_optimize_bisection(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    raiz = ns['raiz']\n    assert abs(raiz - 2 ** 0.5) < 1e-5\n    assert round(raiz, 6) == 1.414214\n    assert capsys.readouterr().out.strip() == '1.414214'\n",
+    hint: "√2 ≈ 1.414214.",
+    solution_example: "def biseccion(f, a, b, tol=1e-6):\n    while (b - a) / 2 > tol:\n        c = (a + b) / 2\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    return (a + b) / 2\n\nraiz = biseccion(lambda x: x * x - 2, 1, 2)\nprint(round(raiz, 6))\n",
+    next: Some("py-1410-optimize-newton"), show_type_chips: false, micro_step: 1409,
+};
+pub const PY1410_OPTIMIZE_NEWTON: CodingStep = CodingStep {
+    id: "py-1410-optimize-newton", title: "Optimizar · Método de Newton", objective: "Hallar una raíz con el método de Newton.",
+    prompt_md: "**Optimizar: Newton**\n\nNewton itera `x ← x − f(x)/f'(x)`. Converge muy rápido cerca de la raíz.\n\n**Micro-reto:**\n1. Definí `newton(f, df, x0, tol=1e-6)` que itere hasta converger\n2. Aplicala a `f(x)=x²−2` con `df=2x` desde `1.0`\n3. Imprimí `round(raiz, 6)`",
+    starter_code: "# def newton(f, df, x0, tol=1e-6):\n#     x = x0\n#     while True:\n#         x1 = x - f(x) / df(x)\n#         if abs(x1 - x) < tol:\n#             return x1\n#         x = x1\n# raiz = newton(lambda x: x * x - 2, lambda x: 2 * x, 1.0)\n# print(round(raiz, 6))\n",
+    pytest: "def test_optimize_newton(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    raiz = ns['raiz']\n    assert abs(raiz * raiz - 2) < 1e-6\n    assert round(raiz, 6) == 1.414214\n    assert capsys.readouterr().out.strip() == '1.414214'\n",
+    hint: "x - (x²-2)/(2x) converge a √2.",
+    solution_example: "def newton(f, df, x0, tol=1e-6):\n    x = x0\n    while True:\n        x1 = x - f(x) / df(x)\n        if abs(x1 - x) < tol:\n            return x1\n        x = x1\n\nraiz = newton(lambda x: x * x - 2, lambda x: 2 * x, 1.0)\nprint(round(raiz, 6))\n",
+    next: Some("py-1411-optimize-gradient"), show_type_chips: false, micro_step: 1410,
+};
+pub const PY1411_OPTIMIZE_GRADIENT: CodingStep = CodingStep {
+    id: "py-1411-optimize-gradient", title: "Optimizar · Gradiente descendente 1D", objective: "Minimizar una función con gradiente descendente.",
+    prompt_md: "**Optimizar: gradiente**\n\nGradiente descendente actualiza `x ← x − lr·f'(x)`. Con `lr` chico, baja hacia el mínimo.\n\n**Micro-reto:**\n1. Definí `gradiente_descendente(df, x0, lr=0.1, pasos=100)`\n2. Aplicala a `lambda x: 2*(x-3)` desde `0.0`\n3. Imprimí `round(minimo, 6)`",
+    starter_code: "# def gradiente_descendente(df, x0, lr=0.1, pasos=100):\n#     x = x0\n#     for _ in range(pasos):\n#         x = x - lr * df(x)\n#     return x\n# minimo = gradiente_descendente(lambda x: 2 * (x - 3), 0.0)\n# print(round(minimo, 6))\n",
+    pytest: "def test_optimize_gradient(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    minimo = ns['minimo']\n    assert abs(minimo - 3.0) < 1e-3\n    assert round(minimo, 3) == 3.0\n    assert capsys.readouterr().out.strip() == '3.0'\n",
+    hint: "El mínimo de (x-3)² está en x=3.",
+    solution_example: "def gradiente_descendente(df, x0, lr=0.1, pasos=100):\n    x = x0\n    for _ in range(pasos):\n        x = x - lr * df(x)\n    return x\n\nminimo = gradiente_descendente(lambda x: 2 * (x - 3), 0.0)\nprint(round(minimo, 6))\n",
+    next: Some("py-1412-optimize-minmax"), show_type_chips: false, micro_step: 1411,
+};
+pub const PY1412_OPTIMIZE_MINMAX: CodingStep = CodingStep {
+    id: "py-1412-optimize-minmax", title: "Optimizar · Mínimo y máximo en rejilla", objective: "Buscar el mínimo y máximo de una función en un intervalo.",
+    prompt_md: "**Optimizar: min/max**\n\nRecorré el intervalo con una rejilla fina y guardá el mejor valor; suficiente para funciones 1D suaves.\n\n**Micro-reto:**\n1. Definí `minimo_maximo(f, a, b, pasos=1000)` que devuelva `(x_min, y_min, y_max)`\n2. Aplicala a `lambda x: (x-2)**2 + 1` en `[0, 4]`\n3. Imprimí los tres valores redondeados",
+    starter_code: "# def minimo_maximo(f, a, b, pasos=1000):\n#     x_min = a\n#     y_min = float('inf')\n#     y_max = float('-inf')\n#     for i in range(pasos + 1):\n#         x = a + (b - a) * i / pasos\n#         y = f(x)\n#         if y < y_min:\n#             y_min = y\n#             x_min = x\n#         if y > y_max:\n#             y_max = y\n#     return x_min, y_min, y_max\n# x_min, y_min, y_max = minimo_maximo(lambda x: (x - 2) ** 2 + 1, 0, 4)\n# print(round(x_min, 4))\n# print(round(y_min, 4))\n# print(round(y_max, 4))\n",
+    pytest: "def test_optimize_minmax(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    x_min, y_min, y_max = ns['x_min'], ns['y_min'], ns['y_max']\n    assert abs(x_min - 2.0) < 0.01\n    assert abs(y_min - 1.0) < 0.01\n    assert abs(y_max - 5.0) < 0.01\n    assert capsys.readouterr().out.strip().splitlines() == ['2.0', '1.0', '5.0']\n",
+    hint: "Mínimo en x=2 (y=1); máximo en x=0 y x=4 (y=5).",
+    solution_example: "def minimo_maximo(f, a, b, pasos=1000):\n    x_min = a\n    y_min = float('inf')\n    y_max = float('-inf')\n    for i in range(pasos + 1):\n        x = a + (b - a) * i / pasos\n        y = f(x)\n        if y < y_min:\n            y_min = y\n            x_min = x\n        if y > y_max:\n            y_max = y\n    return x_min, y_min, y_max\n\nx_min, y_min, y_max = minimo_maximo(lambda x: (x - 2) ** 2 + 1, 0, 4)\nprint(round(x_min, 4))\nprint(round(y_min, 4))\nprint(round(y_max, 4))\n",
+    next: Some("py-1413-optimize-converge"), show_type_chips: false, micro_step: 1412,
+};
+pub const PY1413_OPTIMIZE_CONVERGE: CodingStep = CodingStep {
+    id: "py-1413-optimize-converge", title: "Optimizar · Convergencia con tolerancia", objective: "Iterar hasta alcanzar una tolerancia y contar pasos.",
+    prompt_md: "**Optimizar: convergencia**\n\nIterá hasta que `|x1 − x| < tol` y contá las iteraciones; así medís la velocidad de convergencia.\n\n**Micro-reto:**\n1. Definí `converger(f, df, x0, tol=1e-6, max_iter=1000)` que devuelva `(x, iteraciones)`\n2. Aplicala a `f(x)=x²−2` desde `1.0`\n3. Imprimí `round(raiz, 6)` y `iteraciones`",
+    starter_code: "# def converger(f, df, x0, tol=1e-6, max_iter=1000):\n#     x = x0\n#     iteraciones = 0\n#     while iteraciones < max_iter:\n#         x1 = x - f(x) / df(x)\n#         iteraciones += 1\n#         if abs(x1 - x) < tol:\n#             return x1, iteraciones\n#         x = x1\n#     return x, iteraciones\n# raiz, iteraciones = converger(lambda x: x * x - 2, lambda x: 2 * x, 1.0)\n# print(round(raiz, 6))\n# print(iteraciones)\n",
+    pytest: "def test_optimize_converge(capsys):\n    import math\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    raiz, iteraciones = ns['raiz'], ns['iteraciones']\n    assert abs(raiz - math.sqrt(2)) < 1e-6\n    assert 1 <= iteraciones < 1000\n    lineas = capsys.readouterr().out.strip().splitlines()\n    assert lineas[0] == str(round(raiz, 6))\n    assert lineas[1] == str(iteraciones)\n",
+    hint: "Newton converge a √2 en pocas iteraciones.",
+    solution_example: "def converger(f, df, x0, tol=1e-6, max_iter=1000):\n    x = x0\n    iteraciones = 0\n    while iteraciones < max_iter:\n        x1 = x - f(x) / df(x)\n        iteraciones += 1\n        if abs(x1 - x) < tol:\n            return x1, iteraciones\n        x = x1\n    return x, iteraciones\n\nraiz, iteraciones = converger(lambda x: x * x - 2, lambda x: 2 * x, 1.0)\nprint(round(raiz, 6))\nprint(iteraciones)\n",
+    next: Some("py-1414-optimize-fit"), show_type_chips: false, micro_step: 1413,
+};
+pub const PY1414_OPTIMIZE_FIT: CodingStep = CodingStep {
+    id: "py-1414-optimize-fit", title: "Optimizar · Ajuste por mínimos cuadrados", objective: "Ajustar una recta por mínimos cuadrados.",
+    prompt_md: "**Optimizar: ajuste**\n\nMínimos cuadrados halla la recta `y = m·x + b` que minimiza el error cuadrático. Usá las ecuaciones normales.\n\n**Micro-reto:**\n1. Definí `ajustar_lineal(xs, ys)` que devuelva `(pendiente, ordenada)`\n2. Aplicala a `xs=[1..5]`, `ys=[2,4,6,8,10]`\n3. Imprimí ambos redondeados a 4",
+    starter_code: "# def ajustar_lineal(xs, ys):\n#     n = len(xs)\n#     sx = sum(xs)\n#     sy = sum(ys)\n#     sxx = sum(x * x for x in xs)\n#     sxy = sum(x * y for x, y in zip(xs, ys))\n#     pendiente = (n * sxy - sx * sy) / (n * sxx - sx * sx)\n#     ordenada = (sy - pendiente * sx) / n\n#     return pendiente, ordenada\n# xs = [1, 2, 3, 4, 5]\n# ys = [2, 4, 6, 8, 10]\n# pendiente, ordenada = ajustar_lineal(xs, ys)\n# print(round(pendiente, 4))\n# print(round(ordenada, 4))\n",
+    pytest: "def test_optimize_fit(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    pendiente, ordenada = ns['pendiente'], ns['ordenada']\n    assert abs(pendiente - 2.0) < 1e-9\n    assert abs(ordenada - 0.0) < 1e-9\n    assert capsys.readouterr().out.strip().splitlines() == ['2.0', '0.0']\n",
+    hint: "Los puntos están sobre y = 2x.",
+    solution_example: "def ajustar_lineal(xs, ys):\n    n = len(xs)\n    sx = sum(xs)\n    sy = sum(ys)\n    sxx = sum(x * x for x in xs)\n    sxy = sum(x * y for x, y in zip(xs, ys))\n    pendiente = (n * sxy - sx * sy) / (n * sxx - sx * sx)\n    ordenada = (sy - pendiente * sx) / n\n    return pendiente, ordenada\n\nxs = [1, 2, 3, 4, 5]\nys = [2, 4, 6, 8, 10]\npendiente, ordenada = ajustar_lineal(xs, ys)\nprint(round(pendiente, 4))\nprint(round(ordenada, 4))\n",
+    next: Some("py-1415-project-synthetic"), show_type_chips: false, micro_step: 1414,
+};
+pub const PY1415_PROJECT_SYNTHETIC: CodingStep = CodingStep {
+    id: "py-1415-project-synthetic", title: "Proyecto · Datos sintéticos", objective: "Generar el dataset base del mini-proyecto con semilla.",
+    prompt_md: "**Proyecto: sintéticos**\n\nGenerá datos de partida con `random.Random(seed)` y `gauss(50, 10)`; la semilla garantiza reproducibilidad.\n\n**Micro-reto:**\n1. Definí `generar_datos(n, seed)`\n2. Definí `datos = generar_datos(20, 2024)`\n3. Imprimí `[round(v, 4) for v in datos]`",
+    starter_code: "# import random\n# def generar_datos(n, seed):\n#     rng = random.Random(seed)\n#     return [rng.gauss(50, 10) for _ in range(n)]\n# datos = generar_datos(20, 2024)\n# print([round(v, 4) for v in datos])\n",
+    pytest: "def test_project_synthetic(capsys):\n    import random\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    datos = ns['generar_datos'](20, 2024)\n    assert len(datos) == 20\n    assert datos == ns['generar_datos'](20, 2024)\n    assert all(0 < v < 100 for v in datos)\n    assert capsys.readouterr().out.strip() == str([round(v, 4) for v in datos])\n",
+    hint: "gauss(50, 10) da valores centrados en 50.",
+    solution_example: "import random\n\ndef generar_datos(n, seed):\n    rng = random.Random(seed)\n    return [rng.gauss(50, 10) for _ in range(n)]\n\ndatos = generar_datos(20, 2024)\nprint([round(v, 4) for v in datos])\n",
+    next: Some("py-1416-project-normalize"), show_type_chips: false, micro_step: 1415,
+};
+pub const PY1416_PROJECT_NORMALIZE: CodingStep = CodingStep {
+    id: "py-1416-project-normalize", title: "Proyecto · Normalizar datos", objective: "Escalar datos al rango [0, 1].",
+    prompt_md: "**Proyecto: normalizar**\n\nMin-max normaliza cada valor a `[0, 1]`: `(v − min) / (max − min)`. Útil para comparar escalas.\n\n**Micro-reto:**\n1. Definí `normalizar(valores)`\n2. Aplicala a `[10, 20, 30, 40, 50]`\n3. Imprimí `[round(v, 4) for v in normalizados]`",
+    starter_code: "# def normalizar(valores):\n#     minimo = min(valores)\n#     maximo = max(valores)\n#     return [(v - minimo) / (maximo - minimo) for v in valores]\n# normalizados = normalizar([10, 20, 30, 40, 50])\n# print([round(v, 4) for v in normalizados])\n",
+    pytest: "def test_project_normalize(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    normalizados = ns['normalizados']\n    assert normalizados == [0.0, 0.25, 0.5, 0.75, 1.0]\n    assert min(normalizados) >= 0.0\n    assert max(normalizados) <= 1.0\n    assert capsys.readouterr().out.strip() == '[0.0, 0.25, 0.5, 0.75, 1.0]'\n",
+    hint: "El mínimo pasa a 0 y el máximo a 1.",
+    solution_example: "def normalizar(valores):\n    minimo = min(valores)\n    maximo = max(valores)\n    return [(v - minimo) / (maximo - minimo) for v in valores]\n\nnormalizados = normalizar([10, 20, 30, 40, 50])\nprint([round(v, 4) for v in normalizados])\n",
+    next: Some("py-1417-project-fit"), show_type_chips: false, micro_step: 1416,
+};
+pub const PY1417_PROJECT_FIT: CodingStep = CodingStep {
+    id: "py-1417-project-fit", title: "Proyecto · Ajustar modelo", objective: "Ajustar un modelo lineal a los datos del proyecto.",
+    prompt_md: "**Proyecto: ajustar**\n\nAjustá una recta por mínimos cuadrados a `(xs, ys)`, reutilizando las ecuaciones normales del bloque de optimización.\n\n**Micro-reto:**\n1. Definí `ajustar_lineal(xs, ys)`\n2. Aplicala a `xs=[0,1,2,3,4]`, `ys=[1,3,5,7,9]`\n3. Imprimí `pendiente` y `ordenada` redondeados a 4",
+    starter_code: "# def ajustar_lineal(xs, ys):\n#     n = len(xs)\n#     sx = sum(xs)\n#     sy = sum(ys)\n#     sxy = sum(x * y for x, y in zip(xs, ys))\n#     sxx = sum(x * x for x in xs)\n#     pendiente = (n * sxy - sx * sy) / (n * sxx - sx * sx)\n#     ordenada = (sy - pendiente * sx) / n\n#     return pendiente, ordenada\n# xs = [0, 1, 2, 3, 4]\n# ys = [1, 3, 5, 7, 9]\n# pendiente, ordenada = ajustar_lineal(xs, ys)\n# print(round(pendiente, 4))\n# print(round(ordenada, 4))\n",
+    pytest: "def test_project_fit(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    pendiente, ordenada = ns['pendiente'], ns['ordenada']\n    assert abs(pendiente - 2.0) < 1e-9\n    assert abs(ordenada - 1.0) < 1e-9\n    assert capsys.readouterr().out.strip().splitlines() == ['2.0', '1.0']\n",
+    hint: "Los puntos caen sobre y = 2x + 1.",
+    solution_example: "def ajustar_lineal(xs, ys):\n    n = len(xs)\n    sx = sum(xs)\n    sy = sum(ys)\n    sxy = sum(x * y for x, y in zip(xs, ys))\n    sxx = sum(x * x for x in xs)\n    pendiente = (n * sxy - sx * sy) / (n * sxx - sx * sx)\n    ordenada = (sy - pendiente * sx) / n\n    return pendiente, ordenada\n\nxs = [0, 1, 2, 3, 4]\nys = [1, 3, 5, 7, 9]\npendiente, ordenada = ajustar_lineal(xs, ys)\nprint(round(pendiente, 4))\nprint(round(ordenada, 4))\n",
+    next: Some("py-1418-project-error"), show_type_chips: false, micro_step: 1417,
+};
+pub const PY1418_PROJECT_ERROR: CodingStep = CodingStep {
+    id: "py-1418-project-error", title: "Proyecto · Medir error (MSE)", objective: "Calcular el error cuadrático medio de un modelo.",
+    prompt_md: "**Proyecto: error**\n\nEl MSE promedia `(y − ŷ)²` entre valores reales y predichos; cuanto menor, mejor el ajuste.\n\n**Micro-reto:**\n1. Definí `error_cuadratico_medio(ys, predicciones)`\n2. Aplicala a `ys=[1,2,3,4,5]` y `predicciones=[1.1,1.9,3.0,4.2,4.8]`\n3. Imprimí `round(mse, 4)`",
+    starter_code: "# def error_cuadratico_medio(ys, predicciones):\n#     return sum((y - p) ** 2 for y, p in zip(ys, predicciones)) / len(ys)\n# ys = [1, 2, 3, 4, 5]\n# predicciones = [1.1, 1.9, 3.0, 4.2, 4.8]\n# mse = error_cuadratico_medio(ys, predicciones)\n# print(round(mse, 4))\n",
+    pytest: "def test_project_error(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert abs(ns['mse'] - 0.02) < 1e-9\n    assert ns['error_cuadratico_medio']([0, 0], [0, 0]) == 0.0\n    assert capsys.readouterr().out.strip() == '0.02'\n",
+    hint: "La suma de errores al cuadrado es 0.10; dividí por 5.",
+    solution_example: "def error_cuadratico_medio(ys, predicciones):\n    return sum((y - p) ** 2 for y, p in zip(ys, predicciones)) / len(ys)\n\nys = [1, 2, 3, 4, 5]\npredicciones = [1.1, 1.9, 3.0, 4.2, 4.8]\nmse = error_cuadratico_medio(ys, predicciones)\nprint(round(mse, 4))\n",
+    next: Some("py-1419-project-report"), show_type_chips: false, micro_step: 1418,
+};
+pub const PY1419_PROJECT_REPORT: CodingStep = CodingStep {
+    id: "py-1419-project-report", title: "Proyecto · Reportar estadísticas", objective: "Emitir un reporte con media, mediana y desvío.",
+    prompt_md: "**Proyecto: reportar**\n\nUn reporte resume un dataset con media, mediana y desviación estándar para comunicar resultados.\n\n**Micro-reto:**\n1. Definí `reportar(valores)` que devuelva un dict con `media`, `mediana`, `desvio` y `n`\n2. Aplicala a `[4,8,6,5,3,9,7]`\n3. Imprimí los campos redondeados",
+    starter_code: "# import statistics\n# def reportar(valores):\n#     return {\n#         'media': statistics.mean(valores),\n#         'mediana': statistics.median(valores),\n#         'desvio': statistics.stdev(valores),\n#         'n': len(valores),\n#     }\n# reporte = reportar([4, 8, 6, 5, 3, 9, 7])\n# print(round(float(reporte['media']), 4))\n# print(round(float(reporte['mediana']), 4))\n# print(round(reporte['desvio'], 4))\n# print(reporte['n'])\n",
+    pytest: "def test_project_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    reporte = ns['reporte']\n    assert reporte['media'] == 6.0\n    assert reporte['mediana'] == 6.0\n    assert round(reporte['desvio'], 4) == 2.1602\n    assert reporte['n'] == 7\n    assert capsys.readouterr().out.strip().splitlines() == ['6.0', '6.0', '2.1602', '7']\n",
+    hint: "stdev muestral divide por n-1.",
+    solution_example: "import statistics\n\ndef reportar(valores):\n    return {\n        'media': statistics.mean(valores),\n        'mediana': statistics.median(valores),\n        'desvio': statistics.stdev(valores),\n        'n': len(valores),\n    }\n\nreporte = reportar([4, 8, 6, 5, 3, 9, 7])\nprint(round(float(reporte['media']), 4))\nprint(round(float(reporte['mediana']), 4))\nprint(round(reporte['desvio'], 4))\nprint(reporte['n'])\n",
+    next: Some("py-1420-project-assemble"), show_type_chips: false, micro_step: 1419,
+};
+pub const PY1420_PROJECT_ASSEMBLE: CodingStep = CodingStep {
+    id: "py-1420-project-assemble", title: "Proyecto · Ensamblar pipeline end-to-end", objective: "Integrar generación, normalización, ajuste y error en un pipeline.",
+    prompt_md: "**Proyecto: ensamblar**\n\nIntegrá todo en `pipeline(seed)`: generá datos, normalizá, ajustá una recta, calculá el MSE y devolvé un dict con pendiente, ordenada, mse y media.\n\n**Micro-reto:**\n1. Definí las funciones auxiliares y `pipeline(seed, n=10)`\n2. Generá `ys = x*2 + 1` sobre los datos normalizados\n3. Devolvé el dict y de `pipeline(99)` imprimí los campos redondeados",
+    starter_code: "# import random\n# import statistics\n# def generar_datos(n, seed):\n#     rng = random.Random(seed)\n#     return [rng.uniform(0, 100) for _ in range(n)]\n# def normalizar(valores):\n#     minimo = min(valores)\n#     maximo = max(valores)\n#     return [(v - minimo) / (maximo - minimo) for v in valores]\n# def ajustar_lineal(xs, ys):\n#     n = len(xs)\n#     sx = sum(xs)\n#     sy = sum(ys)\n#     sxy = sum(x * y for x, y in zip(xs, ys))\n#     sxx = sum(x * x for x in xs)\n#     pendiente = (n * sxy - sx * sy) / (n * sxx - sx * sx)\n#     ordenada = (sy - pendiente * sx) / n\n#     return pendiente, ordenada\n# def error_cuadratico_medio(ys, predicciones):\n#     return sum((y - p) ** 2 for y, p in zip(ys, predicciones)) / len(ys)\n# def pipeline(seed, n=10):\n#     xs = generar_datos(n, seed)\n#     xs_normalizados = normalizar(xs)\n#     ys = [x * 2 + 1 for x in xs_normalizados]\n#     pendiente, ordenada = ajustar_lineal(xs_normalizados, ys)\n#     predicciones = [pendiente * x + ordenada for x in xs_normalizados]\n#     mse = error_cuadratico_medio(ys, predicciones)\n#     return {'pendiente': pendiente, 'ordenada': ordenada, 'mse': mse, 'media': statistics.mean(xs)}\n# resultado = pipeline(99)\n# print(round(resultado['pendiente'], 4))\n# print(round(resultado['ordenada'], 4))\n# print(round(resultado['mse'], 6))\n# print(round(resultado['media'], 4))\n",
+    pytest: "def test_project_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    r = ns['pipeline'](99)\n    assert abs(r['pendiente'] - 2.0) < 1e-9\n    assert abs(r['ordenada'] - 1.0) < 1e-9\n    assert abs(r['mse']) < 1e-9\n    assert 0 < r['media'] < 100\n    assert r == ns['pipeline'](99)\n    lineas = capsys.readouterr().out.strip().splitlines()\n    assert lineas[0] == str(round(r['pendiente'], 4))\n    assert lineas[1] == str(round(r['ordenada'], 4))\n    assert lineas[2] == str(round(r['mse'], 6))\n    assert lineas[3] == str(round(r['media'], 4))\n",
+    hint: "ys es exactamente 2x+1, así el ajuste recupera m=2 y b=1 con mse≈0.",
+    solution_example: "import random\nimport statistics\n\ndef generar_datos(n, seed):\n    rng = random.Random(seed)\n    return [rng.uniform(0, 100) for _ in range(n)]\n\ndef normalizar(valores):\n    minimo = min(valores)\n    maximo = max(valores)\n    return [(v - minimo) / (maximo - minimo) for v in valores]\n\ndef ajustar_lineal(xs, ys):\n    n = len(xs)\n    sx = sum(xs)\n    sy = sum(ys)\n    sxy = sum(x * y for x, y in zip(xs, ys))\n    sxx = sum(x * x for x in xs)\n    pendiente = (n * sxy - sx * sy) / (n * sxx - sx * sx)\n    ordenada = (sy - pendiente * sx) / n\n    return pendiente, ordenada\n\ndef error_cuadratico_medio(ys, predicciones):\n    return sum((y - p) ** 2 for y, p in zip(ys, predicciones)) / len(ys)\n\ndef pipeline(seed, n=10):\n    xs = generar_datos(n, seed)\n    xs_normalizados = normalizar(xs)\n    ys = [x * 2 + 1 for x in xs_normalizados]\n    pendiente, ordenada = ajustar_lineal(xs_normalizados, ys)\n    predicciones = [pendiente * x + ordenada for x in xs_normalizados]\n    mse = error_cuadratico_medio(ys, predicciones)\n    return {'pendiente': pendiente, 'ordenada': ordenada, 'mse': mse, 'media': statistics.mean(xs)}\n\nresultado = pipeline(99)\nprint(round(resultado['pendiente'], 4))\nprint(round(resultado['ordenada'], 4))\nprint(round(resultado['mse'], 6))\nprint(round(resultado['media'], 4))\n",
+    next: None, show_type_chips: false, micro_step: 1420,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -47750,6 +48291,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1358_PROJECT_ENUM_TYPES,
     &PY1359_PROJECT_INTEGRATE,
     &PY1360_PROJECT_ASSEMBLE,
+    &PY1361_DECIMAL_CREATE,
+    &PY1362_DECIMAL_EXACT,
+    &PY1363_DECIMAL_ROUNDING,
+    &PY1364_DECIMAL_CONTEXT,
+    &PY1365_DECIMAL_VS_FLOAT,
+    &PY1366_DECIMAL_MONEY,
+    &PY1367_FRACTION_CREATE,
+    &PY1368_FRACTION_SIMPLIFY,
+    &PY1369_FRACTION_OPS,
+    &PY1370_FRACTION_FROM_FLOAT,
+    &PY1371_FRACTION_COMPARE,
+    &PY1372_FRACTION_MEAN,
+    &PY1373_COMPLEX_CREATE,
+    &PY1374_COMPLEX_OPS,
+    &PY1375_COMPLEX_POLAR,
+    &PY1376_COMPLEX_CONJUGATE,
+    &PY1377_COMPLEX_ROOTS,
+    &PY1378_COMPLEX_VECTOR_SUM,
+    &PY1379_MATH_LOG_EXP,
+    &PY1380_MATH_TRIG,
+    &PY1381_MATH_COMBINATORICS,
+    &PY1382_MATH_FACTORIAL,
+    &PY1383_MATH_GCD_LCM,
+    &PY1384_MATH_HYPOT,
+    &PY1385_STAT_QUANTILES,
+    &PY1386_STAT_VARIANCE,
+    &PY1387_STAT_COVARIANCE,
+    &PY1388_STAT_MEDIANS,
+    &PY1389_STAT_HARMONIC,
+    &PY1390_STAT_ROBUST,
+    &PY1391_RANDOM_SEED,
+    &PY1392_RANDOM_INT_CHOICE,
+    &PY1393_RANDOM_SHUFFLE,
+    &PY1394_RANDOM_SAMPLE,
+    &PY1395_RANDOM_GAUSS,
+    &PY1396_RANDOM_SYNTHETIC,
+    &PY1397_MATRIX_BUILD,
+    &PY1398_MATRIX_ACCESS,
+    &PY1399_MATRIX_ADD,
+    &PY1400_MATRIX_MULTIPLY,
+    &PY1401_MATRIX_TRANSPOSE,
+    &PY1402_MATRIX_ELEMENTWISE,
+    &PY1403_LINALG_DOT,
+    &PY1404_LINALG_NORM,
+    &PY1405_LINALG_IDENTITY,
+    &PY1406_LINALG_DETERMINANT,
+    &PY1407_LINALG_SOLVE2,
+    &PY1408_LINALG_PROJECTION,
+    &PY1409_OPTIMIZE_BISECTION,
+    &PY1410_OPTIMIZE_NEWTON,
+    &PY1411_OPTIMIZE_GRADIENT,
+    &PY1412_OPTIMIZE_MINMAX,
+    &PY1413_OPTIMIZE_CONVERGE,
+    &PY1414_OPTIMIZE_FIT,
+    &PY1415_PROJECT_SYNTHETIC,
+    &PY1416_PROJECT_NORMALIZE,
+    &PY1417_PROJECT_FIT,
+    &PY1418_PROJECT_ERROR,
+    &PY1419_PROJECT_REPORT,
+    &PY1420_PROJECT_ASSEMBLE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -47917,7 +48518,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1360);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1420);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -50829,11 +51430,11 @@ mod tests {
     }
 
     #[test]
-    fn py1061_to_py1360_engineering_chain() {
+    fn py1061_to_py1420_engineering_chain() {
         let bridge = coding_step_by_micro_step(1060).expect("py-1060");
         assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
 
-        for n in 1061..=1360 {
+        for n in 1061..=1420 {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.micro_step, n);
             assert!(
@@ -50841,7 +51442,7 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1360 {
+            if n < 1420 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -50850,7 +51451,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1360 is the end of the rail");
+                assert_eq!(step.next, None, "step 1420 is the end of the rail");
             }
         }
     }
