@@ -44645,7 +44645,607 @@ pub const PY1180_PROJECT_ASSEMBLE: CodingStep = CodingStep {
     pytest: "def test_assemble(capsys):\n    import json\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    ventas = [{'producto': 'a', 'cantidad': 2, 'precio': 1.5}]\n    esperado = json.dumps({'subtotal': 3.0, 'total': 3.63})\n    assert ns['ensamblar'](ventas) == esperado\n    assert ns['ensamblar'](ventas, {'impuesto': 0.0}) == json.dumps({'subtotal': 3.0, 'total': 3.0})\n    assert capsys.readouterr().out.strip() == esperado\n",
     hint: "Fusioná config sobre DEFAULTS y aplicá el impuesto al subtotal.",
     solution_example: "import json\n\nDEFAULTS = {'impuesto': 0.21}\n\ndef ensamblar(ventas, config=None):\n    config = {**DEFAULTS, **(config or {})}\n    subtotal = sum(v['cantidad'] * v['precio'] for v in ventas)\n    total = subtotal * (1 + config['impuesto'])\n    return json.dumps({'subtotal': subtotal, 'total': round(total, 2)})\n\nprint(ensamblar([{'producto': 'a', 'cantidad': 2, 'precio': 1.5}]))\n",
-    next: None, show_type_chips: false, micro_step: 1180,
+    next: Some("py-1181-heap-push-pop"), show_type_chips: false, micro_step: 1180,
+};
+
+pub const PY1181_HEAP_PUSH_POP: CodingStep = CodingStep {
+    id: "py-1181-heap-push-pop", title: "Heap · push y pop", objective: "Usar heapq.heappush y heappop para mantener el mínimo siempre accesible.",
+    prompt_md: "**Heap: push y pop**\n\nUn min-heap mantiene el mínimo siempre accesible. `heappush` inserta y `heappop` extrae el menor preservando la propiedad de heap.\n\n**Micro-reto:**\n1. Importá `heapq`\n2. Definí `ordenar_ascendente(valores)` que inserte todo en un heap y extraiga en orden\n3. Imprimí `ordenar_ascendente([5, 1, 3, 2, 4])`",
+    starter_code: "# import heapq\n# def ordenar_ascendente(valores):\n#     heap = []\n#     for v in valores:\n#         heapq.heappush(heap, v)\n#     return [heapq.heappop(heap) for _ in range(len(heap))]\n# print(ordenar_ascendente([5, 1, 3, 2, 4]))\n",
+    pytest: "def test_heap_push_pop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['ordenar_ascendente']([5, 1, 3, 2, 4]) == [1, 2, 3, 4, 5]\n    assert ns['ordenar_ascendente']([]) == []\n    assert capsys.readouterr().out.strip() == str([1, 2, 3, 4, 5])\n",
+    hint: "heappush inserta y heappop siempre devuelve el mínimo actual.",
+    solution_example: "import heapq\n\ndef ordenar_ascendente(valores):\n    heap = []\n    for v in valores:\n        heapq.heappush(heap, v)\n    return [heapq.heappop(heap) for _ in range(len(heap))]\n\nprint(ordenar_ascendente([5, 1, 3, 2, 4]))\n",
+    next: Some("py-1182-heap-top-k"), show_type_chips: false, micro_step: 1181,
+};
+
+pub const PY1182_HEAP_TOP_K: CodingStep = CodingStep {
+    id: "py-1182-heap-top-k", title: "Heap · top-k con nlargest", objective: "Obtener los k mayores sin ordenar toda la colección.",
+    prompt_md: "**Heap: top-k**\n\nPara obtener los k mayores sin ordenar todo, usá `heapq.nlargest(k, iterable)`.\n\n**Micro-reto:**\n1. Importá `heapq`\n2. Definí `top_k(valores, k)` que devuelva los k mayores en orden descendente\n3. Imprimí `top_k([3, 1, 4, 1, 5, 9, 2], 3)`",
+    starter_code: "# import heapq\n# def top_k(valores, k):\n#     return heapq.nlargest(k, valores)\n# print(top_k([3, 1, 4, 1, 5, 9, 2], 3))\n",
+    pytest: "def test_top_k(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['top_k']([3, 1, 4, 1, 5, 9, 2], 3) == [9, 5, 4]\n    assert ns['top_k']([3, 1, 4, 1, 5, 9, 2], 1) == [9]\n    assert capsys.readouterr().out.strip() == str([9, 5, 4])\n",
+    hint: "heapq.nlargest(k, valores) ya devuelve orden descendente.",
+    solution_example: "import heapq\n\ndef top_k(valores, k):\n    return heapq.nlargest(k, valores)\n\nprint(top_k([3, 1, 4, 1, 5, 9, 2], 3))\n",
+    next: Some("py-1183-heap-scheduling"), show_type_chips: false, micro_step: 1182,
+};
+
+pub const PY1183_HEAP_SCHEDULING: CodingStep = CodingStep {
+    id: "py-1183-heap-scheduling", title: "Heap · Scheduling por prioridad", objective: "Despachar tareas ordenando por prioridad con un heap de tuplas.",
+    prompt_md: "**Heap: scheduling por prioridad**\n\nUn heap de tuplas `(prioridad, nombre)` ordena por prioridad primero; así despachás tareas en orden correcto.\n\n**Micro-reto:**\n1. Importá `heapq`\n2. Definí `proximas_tareas(tareas)` que reciba `(prioridad, nombre)` y las devuelva ordenadas\n3. Imprimí `proximas_tareas([(2, 'b'), (1, 'a'), (3, 'c')])`",
+    starter_code: "# import heapq\n# def proximas_tareas(tareas):\n#     heap = list(tareas)\n#     heapq.heapify(heap)\n#     return [heapq.heappop(heap) for _ in range(len(heap))]\n# print(proximas_tareas([(2, 'b'), (1, 'a'), (3, 'c')]))\n",
+    pytest: "def test_scheduling(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['proximas_tareas']([(2, 'b'), (1, 'a'), (3, 'c')]) == [(1, 'a'), (2, 'b'), (3, 'c')]\n    assert capsys.readouterr().out.strip() == str([(1, 'a'), (2, 'b'), (3, 'c')])\n",
+    hint: "heapify convierte la lista en heap; las tuplas comparan por su primer elemento.",
+    solution_example: "import heapq\n\ndef proximas_tareas(tareas):\n    heap = list(tareas)\n    heapq.heapify(heap)\n    return [heapq.heappop(heap) for _ in range(len(heap))]\n\nprint(proximas_tareas([(2, 'b'), (1, 'a'), (3, 'c')]))\n",
+    next: Some("py-1184-heap-merge-k"), show_type_chips: false, micro_step: 1183,
+};
+
+pub const PY1184_HEAP_MERGE_K: CodingStep = CodingStep {
+    id: "py-1184-heap-merge-k", title: "Heap · Merge de k listas", objective: "Fusionar k listas ordenadas con heapq.merge.",
+    prompt_md: "**Heap: merge de k listas**\n\n`heapq.merge(*listas)` fusiona varias secuencias ya ordenadas en una sola, en orden.\n\n**Micro-reto:**\n1. Importá `heapq`\n2. Definí `fusionar(listas)` que combine k listas ordenadas\n3. Imprimí `fusionar([[1, 3, 5], [2, 4, 6]])`",
+    starter_code: "# import heapq\n# def fusionar(listas):\n#     return list(heapq.merge(*listas))\n# print(fusionar([[1, 3, 5], [2, 4, 6]]))\n",
+    pytest: "def test_merge_k(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['fusionar']([[1, 3, 5], [2, 4, 6]]) == [1, 2, 3, 4, 5, 6]\n    assert ns['fusionar']([[1], [2], [3]]) == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str([1, 2, 3, 4, 5, 6])\n",
+    hint: "heapq.merge es perezoso: convertí el resultado con list().",
+    solution_example: "import heapq\n\ndef fusionar(listas):\n    return list(heapq.merge(*listas))\n\nprint(fusionar([[1, 3, 5], [2, 4, 6]]))\n",
+    next: Some("py-1185-heap-tuple-priority"), show_type_chips: false, micro_step: 1184,
+};
+
+pub const PY1185_HEAP_TUPLE_PRIORITY: CodingStep = CodingStep {
+    id: "py-1185-heap-tuple-priority", title: "Heap · Tuplas (prioridad, id)", objective: "Desempatar prioridades iguales con un id determinista.",
+    prompt_md: "**Heap: tuplas (prioridad, id)**\n\nCuando hay empate de prioridad, agregá un id para desempatar de forma determinista.\n\n**Micro-reto:**\n1. Importá `heapq`\n2. Definí `ordenar_con_desempate(tareas)` con tuplas `(prioridad, id, nombre)`\n3. Imprimí `ordenar_con_desempate([(1, 2, 'b'), (1, 1, 'a'), (2, 1, 'c')])`",
+    starter_code: "# import heapq\n# def ordenar_con_desempate(tareas):\n#     heap = list(tareas)\n#     heapq.heapify(heap)\n#     return [heapq.heappop(heap) for _ in range(len(heap))]\n# print(ordenar_con_desempate([(1, 2, 'b'), (1, 1, 'a'), (2, 1, 'c')]))\n",
+    pytest: "def test_tuple_priority(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    tareas = [(1, 2, 'b'), (1, 1, 'a'), (2, 1, 'c')]\n    assert ns['ordenar_con_desempate'](tareas) == [(1, 1, 'a'), (1, 2, 'b'), (2, 1, 'c')]\n    assert capsys.readouterr().out.strip() == str([(1, 1, 'a'), (1, 2, 'b'), (2, 1, 'c')])\n",
+    hint: "Al comparar tuplas, el segundo elemento desempata cuando el primero es igual.",
+    solution_example: "import heapq\n\ndef ordenar_con_desempate(tareas):\n    heap = list(tareas)\n    heapq.heapify(heap)\n    return [heapq.heappop(heap) for _ in range(len(heap))]\n\nprint(ordenar_con_desempate([(1, 2, 'b'), (1, 1, 'a'), (2, 1, 'c')]))\n",
+    next: Some("py-1186-heap-custom-pq"), show_type_chips: false, micro_step: 1185,
+};
+
+pub const PY1186_HEAP_CUSTOM_PQ: CodingStep = CodingStep {
+    id: "py-1186-heap-custom-pq", title: "Heap · Cola de prioridad propia", objective: "Encapsular un heap en una clase con API push/pop.",
+    prompt_md: "**Heap: cola de prioridad propia**\n\nEncapsulá un heap en una clase con `push` y `pop` para una API limpia.\n\n**Micro-reto:**\n1. Importá `heapq`\n2. Definí `class ColaPrioridad` con `push(item, prioridad)`, `pop()` y `__len__`\n3. Creá una cola, insertá tres tareas e imprimí su extracción ordenada",
+    starter_code: "# import heapq\n# class ColaPrioridad:\n#     def __init__(self):\n#         self._heap = []\n#     def push(self, item, prioridad):\n#         heapq.heappush(self._heap, (prioridad, item))\n#     def pop(self):\n#         return heapq.heappop(self._heap)[1]\n#     def __len__(self):\n#         return len(self._heap)\n# cola = ColaPrioridad()\n# cola.push('a', 3)\n# cola.push('b', 1)\n# cola.push('c', 2)\n# print([cola.pop() for _ in range(len(cola))])\n",
+    pytest: "def test_custom_pq(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    cola = ns['ColaPrioridad']()\n    cola.push('a', 3)\n    cola.push('b', 1)\n    cola.push('c', 2)\n    assert len(cola) == 3\n    assert [cola.pop() for _ in range(3)] == ['b', 'c', 'a']\n    assert capsys.readouterr().out.strip() == str(['b', 'c', 'a'])\n",
+    hint: "Guardá (prioridad, item) en el heap y devolvé solo el item en pop().",
+    solution_example: "import heapq\n\nclass ColaPrioridad:\n    def __init__(self):\n        self._heap = []\n    def push(self, item, prioridad):\n        heapq.heappush(self._heap, (prioridad, item))\n    def pop(self):\n        return heapq.heappop(self._heap)[1]\n    def __len__(self):\n        return len(self._heap)\n\ncola = ColaPrioridad()\ncola.push('a', 3)\ncola.push('b', 1)\ncola.push('c', 2)\nprint([cola.pop() for _ in range(len(cola))])\n",
+    next: Some("py-1187-graph-adjacency"), show_type_chips: false, micro_step: 1186,
+};
+
+pub const PY1187_GRAPH_ADJACENCY: CodingStep = CodingStep {
+    id: "py-1187-graph-adjacency", title: "Grafo · Lista de adyacencia", objective: "Representar un grafo no dirigido con un dict de listas.",
+    prompt_md: "**Grafo: lista de adyacencia**\n\nRepresentá un grafo con un dict donde cada clave apunta a la lista de sus vecinos.\n\n**Micro-reto:**\n1. Definí `construir_grafo(aristas)` que arme la lista de adyacencia (no dirigido)\n2. Construí el grafo de `[('A','B'), ('A','C'), ('B','C')]`\n3. Imprimí `grafo['A']`",
+    starter_code: "# def construir_grafo(aristas):\n#     grafo = {}\n#     for a, b in aristas:\n#         grafo.setdefault(a, []).append(b)\n#         grafo.setdefault(b, []).append(a)\n#     return grafo\n# grafo = construir_grafo([('A', 'B'), ('A', 'C'), ('B', 'C')])\n# print(grafo['A'])\n",
+    pytest: "def test_adjacency(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = ns['construir_grafo']([('A', 'B'), ('A', 'C'), ('B', 'C')])\n    assert set(grafo['A']) == {'B', 'C'}\n    assert len(grafo) == 3\n    assert capsys.readouterr().out.strip() == str(['B', 'C'])\n",
+    hint: "setdefault(a, []).append(b) agrega la arista en ambas direcciones.",
+    solution_example: "def construir_grafo(aristas):\n    grafo = {}\n    for a, b in aristas:\n        grafo.setdefault(a, []).append(b)\n        grafo.setdefault(b, []).append(a)\n    return grafo\n\ngrafo = construir_grafo([('A', 'B'), ('A', 'C'), ('B', 'C')])\nprint(grafo['A'])\n",
+    next: Some("py-1188-graph-bfs"), show_type_chips: false, micro_step: 1187,
+};
+
+pub const PY1188_GRAPH_BFS: CodingStep = CodingStep {
+    id: "py-1188-graph-bfs", title: "Grafo · BFS", objective: "Recorrer un grafo en anchura usando una cola.",
+    prompt_md: "**Grafo: BFS**\n\nBFS recorre en anchura usando una cola: primero el nodo inicial, luego sus vecinos, etc.\n\n**Micro-reto:**\n1. Importá `deque`\n2. Definí `bfs(grafo, inicio)` que devuelva el orden de visita\n3. Imprimí el recorrido desde `'A'`",
+    starter_code: "# from collections import deque\n# def bfs(grafo, inicio):\n#     visitados = []\n#     cola = deque([inicio])\n#     visto = {inicio}\n#     while cola:\n#         nodo = cola.popleft()\n#         visitados.append(nodo)\n#         for vecino in grafo.get(nodo, []):\n#             if vecino not in visto:\n#                 visto.add(vecino)\n#                 cola.append(vecino)\n#     return visitados\n# grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n# print(bfs(grafo, 'A'))\n",
+    pytest: "def test_bfs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n    assert ns['bfs'](grafo, 'A') == ['A', 'B', 'C', 'D']\n    assert capsys.readouterr().out.strip() == str(['A', 'B', 'C', 'D'])\n",
+    hint: "popleft saca del frente; append encola los vecinos no vistos.",
+    solution_example: "from collections import deque\n\ndef bfs(grafo, inicio):\n    visitados = []\n    cola = deque([inicio])\n    visto = {inicio}\n    while cola:\n        nodo = cola.popleft()\n        visitados.append(nodo)\n        for vecino in grafo.get(nodo, []):\n            if vecino not in visto:\n                visto.add(vecino)\n                cola.append(vecino)\n    return visitados\n\ngrafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\nprint(bfs(grafo, 'A'))\n",
+    next: Some("py-1189-graph-distances"), show_type_chips: false, micro_step: 1188,
+};
+
+pub const PY1189_GRAPH_DISTANCES: CodingStep = CodingStep {
+    id: "py-1189-graph-distances", title: "Grafo · Distancias mínimas", objective: "Calcular la distancia BFS desde un origen a cada nodo.",
+    prompt_md: "**Grafo: distancias mínimas**\n\nBFS calcula la distancia mínima a cada nodo porque explora por niveles.\n\n**Micro-reto:**\n1. Importá `deque`\n2. Definí `distancias(grafo, inicio)` → dict nodo→distancia\n3. Imprimí las distancias desde `'A'`",
+    starter_code: "# from collections import deque\n# def distancias(grafo, inicio):\n#     dist = {inicio: 0}\n#     cola = deque([inicio])\n#     while cola:\n#         nodo = cola.popleft()\n#         for vecino in grafo.get(nodo, []):\n#             if vecino not in dist:\n#                 dist[vecino] = dist[nodo] + 1\n#                 cola.append(vecino)\n#     return dist\n# grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n# print(distancias(grafo, 'A'))\n",
+    pytest: "def test_distances(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n    assert ns['distancias'](grafo, 'A') == {'A': 0, 'B': 1, 'C': 1, 'D': 2}\n    assert capsys.readouterr().out.strip() == str({'A': 0, 'B': 1, 'C': 1, 'D': 2})\n",
+    hint: "La distancia de un vecino es dist[nodo] + 1.",
+    solution_example: "from collections import deque\n\ndef distancias(grafo, inicio):\n    dist = {inicio: 0}\n    cola = deque([inicio])\n    while cola:\n        nodo = cola.popleft()\n        for vecino in grafo.get(nodo, []):\n            if vecino not in dist:\n                dist[vecino] = dist[nodo] + 1\n                cola.append(vecino)\n    return dist\n\ngrafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\nprint(distancias(grafo, 'A'))\n",
+    next: Some("py-1190-graph-levels"), show_type_chips: false, micro_step: 1189,
+};
+
+pub const PY1190_GRAPH_LEVELS: CodingStep = CodingStep {
+    id: "py-1190-graph-levels", title: "Grafo · Niveles", objective: "Agrupar nodos por nivel BFS.",
+    prompt_md: "**Grafo: niveles**\n\nAgrupá los nodos por nivel BFS: cada oleada es un nivel.\n\n**Micro-reto:**\n1. Importá `deque`\n2. Definí `niveles(grafo, inicio)` → lista de listas por nivel (ordenadas)\n3. Imprimí los niveles desde `'A'`",
+    starter_code: "# from collections import deque\n# def niveles(grafo, inicio):\n#     resultado = []\n#     nivel_actual = [inicio]\n#     visto = {inicio}\n#     while nivel_actual:\n#         resultado.append(sorted(nivel_actual))\n#         siguiente = []\n#         for nodo in nivel_actual:\n#             for vecino in grafo.get(nodo, []):\n#                 if vecino not in visto:\n#                     visto.add(vecino)\n#                     siguiente.append(vecino)\n#         nivel_actual = siguiente\n#     return resultado\n# grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n# print(niveles(grafo, 'A'))\n",
+    pytest: "def test_levels(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n    assert ns['niveles'](grafo, 'A') == [['A'], ['B', 'C'], ['D']]\n    assert capsys.readouterr().out.strip() == str([['A'], ['B', 'C'], ['D']])\n",
+    hint: "Procesá una oleada entera antes de pasar a la siguiente.",
+    solution_example: "from collections import deque\n\ndef niveles(grafo, inicio):\n    resultado = []\n    nivel_actual = [inicio]\n    visto = {inicio}\n    while nivel_actual:\n        resultado.append(sorted(nivel_actual))\n        siguiente = []\n        for nodo in nivel_actual:\n            for vecino in grafo.get(nodo, []):\n                if vecino not in visto:\n                    visto.add(vecino)\n                    siguiente.append(vecino)\n        nivel_actual = siguiente\n    return resultado\n\ngrafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\nprint(niveles(grafo, 'A'))\n",
+    next: Some("py-1191-graph-shortest-path"), show_type_chips: false, micro_step: 1190,
+};
+
+pub const PY1191_GRAPH_SHORTEST_PATH: CodingStep = CodingStep {
+    id: "py-1191-graph-shortest-path", title: "Grafo · Camino mínimo", objective: "Usar BFS para la menor cantidad de aristas entre dos nodos.",
+    prompt_md: "**Grafo: camino mínimo**\n\nEn grafo no ponderado, BFS devuelve la menor cantidad de aristas entre dos nodos.\n\n**Micro-reto:**\n1. Importá `deque`\n2. Definí `distancia_minima(grafo, a, b)` (o `-1` si no conectados)\n3. Imprimí `distancia_minima(grafo, 'A', 'D')`",
+    starter_code: "# from collections import deque\n# def distancia_minima(grafo, a, b):\n#     dist = {a: 0}\n#     cola = deque([a])\n#     while cola:\n#         nodo = cola.popleft()\n#         if nodo == b:\n#             return dist[nodo]\n#         for vecino in grafo.get(nodo, []):\n#             if vecino not in dist:\n#                 dist[vecino] = dist[nodo] + 1\n#                 cola.append(vecino)\n#     return -1\n# grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n# print(distancia_minima(grafo, 'A', 'D'))\n",
+    pytest: "def test_shortest_path(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n    assert ns['distancia_minima'](grafo, 'A', 'D') == 2\n    assert ns['distancia_minima'](grafo, 'A', 'C') == 1\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Cortá apenas llegues a `b` y devolvé su distancia acumulada.",
+    solution_example: "from collections import deque\n\ndef distancia_minima(grafo, a, b):\n    dist = {a: 0}\n    cola = deque([a])\n    while cola:\n        nodo = cola.popleft()\n        if nodo == b:\n            return dist[nodo]\n        for vecino in grafo.get(nodo, []):\n            if vecino not in dist:\n                dist[vecino] = dist[nodo] + 1\n                cola.append(vecino)\n    return -1\n\ngrafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\nprint(distancia_minima(grafo, 'A', 'D'))\n",
+    next: Some("py-1192-graph-bfs-path"), show_type_chips: false, micro_step: 1191,
+};
+
+pub const PY1192_GRAPH_BFS_PATH: CodingStep = CodingStep {
+    id: "py-1192-graph-bfs-path", title: "Grafo · Reconstruir camino", objective: "Reconstruir la ruta completa guardando el padre de cada nodo.",
+    prompt_md: "**Grafo: reconstruir camino**\n\nGuardando el padre de cada nodo, reconstruís la ruta completa con BFS.\n\n**Micro-reto:**\n1. Importá `deque`\n2. Definí `camino(grafo, a, b)` que devuelva la lista de nodos\n3. Imprimí `camino(grafo, 'A', 'D')`",
+    starter_code: "# from collections import deque\n# def camino(grafo, a, b):\n#     padre = {a: None}\n#     cola = deque([a])\n#     while cola:\n#         nodo = cola.popleft()\n#         if nodo == b:\n#             break\n#         for vecino in grafo.get(nodo, []):\n#             if vecino not in padre:\n#                 padre[vecino] = nodo\n#                 cola.append(vecino)\n#     if b not in padre:\n#         return []\n#     ruta = []\n#     actual = b\n#     while actual is not None:\n#         ruta.append(actual)\n#         actual = padre[actual]\n#     return ruta[::-1]\n# grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n# print(camino(grafo, 'A', 'D'))\n",
+    pytest: "def test_bfs_path(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n    assert ns['camino'](grafo, 'A', 'D') == ['A', 'B', 'D']\n    assert capsys.readouterr().out.strip() == str(['A', 'B', 'D'])\n",
+    hint: "Remontá desde `b` siguiendo `padre` hasta el origen e invertí.",
+    solution_example: "from collections import deque\n\ndef camino(grafo, a, b):\n    padre = {a: None}\n    cola = deque([a])\n    while cola:\n        nodo = cola.popleft()\n        if nodo == b:\n            break\n        for vecino in grafo.get(nodo, []):\n            if vecino not in padre:\n                padre[vecino] = nodo\n                cola.append(vecino)\n    if b not in padre:\n        return []\n    ruta = []\n    actual = b\n    while actual is not None:\n        ruta.append(actual)\n        actual = padre[actual]\n    return ruta[::-1]\n\ngrafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\nprint(camino(grafo, 'A', 'D'))\n",
+    next: Some("py-1193-graph-dfs"), show_type_chips: false, micro_step: 1192,
+};
+
+pub const PY1193_GRAPH_DFS: CodingStep = CodingStep {
+    id: "py-1193-graph-dfs", title: "Grafo · DFS iterativo", objective: "Recorrer en profundidad con una pila explícita.",
+    prompt_md: "**Grafo: DFS iterativo**\n\nDFS recorre en profundidad usando una pila (LIFO).\n\n**Micro-reto:**\n1. Definí `dfs(grafo, inicio)` con pila explícita\n2. Recorré desde `'A'`\n3. Imprimí el orden de visita",
+    starter_code: "# def dfs(grafo, inicio):\n#     visitados = []\n#     pila = [inicio]\n#     visto = set()\n#     while pila:\n#         nodo = pila.pop()\n#         if nodo in visto:\n#             continue\n#         visto.add(nodo)\n#         visitados.append(nodo)\n#         for vecino in reversed(grafo.get(nodo, [])):\n#             if vecino not in visto:\n#                 pila.append(vecino)\n#     return visitados\n# grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n# print(dfs(grafo, 'A'))\n",
+    pytest: "def test_dfs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n    assert ns['dfs'](grafo, 'A') == ['A', 'B', 'D', 'C']\n    assert capsys.readouterr().out.strip() == str(['A', 'B', 'D', 'C'])\n",
+    hint: "pop() saca del tope; usá reversed para respetar el orden de adyacencia.",
+    solution_example: "def dfs(grafo, inicio):\n    visitados = []\n    pila = [inicio]\n    visto = set()\n    while pila:\n        nodo = pila.pop()\n        if nodo in visto:\n            continue\n        visto.add(nodo)\n        visitados.append(nodo)\n        for vecino in reversed(grafo.get(nodo, [])):\n            if vecino not in visto:\n                pila.append(vecino)\n    return visitados\n\ngrafo = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\nprint(dfs(grafo, 'A'))\n",
+    next: Some("py-1194-graph-components"), show_type_chips: false, micro_step: 1193,
+};
+
+pub const PY1194_GRAPH_COMPONENTS: CodingStep = CodingStep {
+    id: "py-1194-graph-components", title: "Grafo · Componentes conexas", objective: "Contar y listar los grupos de nodos conectados.",
+    prompt_md: "**Grafo: componentes conexas**\n\nUna componente es un grupo de nodos conectados entre sí.\n\n**Micro-reto:**\n1. Definí `componentes(grafo)` → lista de componentes ordenadas\n2. Usá el grafo de ejemplo\n3. Imprimí las componentes",
+    starter_code: "# def componentes(grafo):\n#     visto = set()\n#     resultado = []\n#     for nodo in grafo:\n#         if nodo not in visto:\n#             pila = [nodo]\n#             componente = []\n#             while pila:\n#                 actual = pila.pop()\n#                 if actual in visto:\n#                     continue\n#                 visto.add(actual)\n#                 componente.append(actual)\n#                 for vecino in grafo.get(actual, []):\n#                     if vecino not in visto:\n#                         pila.append(vecino)\n#             resultado.append(sorted(componente))\n#     return resultado\n# grafo = {'A': ['B'], 'B': ['A'], 'C': ['D'], 'D': ['C'], 'E': []}\n# print(componentes(grafo))\n",
+    pytest: "def test_components(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = {'A': ['B'], 'B': ['A'], 'C': ['D'], 'D': ['C'], 'E': []}\n    assert ns['componentes'](grafo) == [['A', 'B'], ['C', 'D'], ['E']]\n    assert capsys.readouterr().out.strip() == str([['A', 'B'], ['C', 'D'], ['E']])\n",
+    hint: "Lanzá un DFS por cada nodo no visitado; cada uno descubre una componente.",
+    solution_example: "def componentes(grafo):\n    visto = set()\n    resultado = []\n    for nodo in grafo:\n        if nodo not in visto:\n            pila = [nodo]\n            componente = []\n            while pila:\n                actual = pila.pop()\n                if actual in visto:\n                    continue\n                visto.add(actual)\n                componente.append(actual)\n                for vecino in grafo.get(actual, []):\n                    if vecino not in visto:\n                        pila.append(vecino)\n            resultado.append(sorted(componente))\n    return resultado\n\ngrafo = {'A': ['B'], 'B': ['A'], 'C': ['D'], 'D': ['C'], 'E': []}\nprint(componentes(grafo))\n",
+    next: Some("py-1195-graph-cycles"), show_type_chips: false, micro_step: 1194,
+};
+
+pub const PY1195_GRAPH_CYCLES: CodingStep = CodingStep {
+    id: "py-1195-graph-cycles", title: "Grafo · Detección de ciclos", objective: "Detectar un ciclo en grafo no dirigido con DFS y padre.",
+    prompt_md: "**Grafo: detección de ciclos**\n\nUn grafo no dirigido tiene ciclo si hay una arista que no vuelve por el padre.\n\n**Micro-reto:**\n1. Definí `tiene_ciclo(grafo)` con DFS y padre\n2. Probá un grafo cíclico y un árbol\n3. Imprimí `tiene_ciclo(grafo_ciclico)`",
+    starter_code: "# def tiene_ciclo(grafo):\n#     visto = set()\n#     for inicio in grafo:\n#         if inicio in visto:\n#             continue\n#         pila = [(inicio, None)]\n#         while pila:\n#             nodo, padre = pila.pop()\n#             if nodo in visto:\n#                 continue\n#             visto.add(nodo)\n#             for vecino in grafo.get(nodo, []):\n#                 if vecino not in visto:\n#                     pila.append((vecino, nodo))\n#                 elif vecino != padre:\n#                     return True\n#     return False\n# grafo = {'A': ['B', 'C'], 'B': ['A', 'C'], 'C': ['A', 'B']}\n# print(tiene_ciclo(grafo))\n",
+    pytest: "def test_cycles(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    ciclo = {'A': ['B', 'C'], 'B': ['A', 'C'], 'C': ['A', 'B']}\n    arbol = {'A': ['B', 'C'], 'B': ['A'], 'C': ['A']}\n    assert ns['tiene_ciclo'](ciclo) is True\n    assert ns['tiene_ciclo'](arbol) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Una arista a un vecino ya visto que no es el padre revela un ciclo.",
+    solution_example: "def tiene_ciclo(grafo):\n    visto = set()\n    for inicio in grafo:\n        if inicio in visto:\n            continue\n        pila = [(inicio, None)]\n        while pila:\n            nodo, padre = pila.pop()\n            if nodo in visto:\n                continue\n            visto.add(nodo)\n            for vecino in grafo.get(nodo, []):\n                if vecino not in visto:\n                    pila.append((vecino, nodo))\n                elif vecino != padre:\n                    return True\n    return False\n\ngrafo = {'A': ['B', 'C'], 'B': ['A', 'C'], 'C': ['A', 'B']}\nprint(tiene_ciclo(grafo))\n",
+    next: Some("py-1196-graph-topo-sort"), show_type_chips: false, micro_step: 1195,
+};
+
+pub const PY1196_GRAPH_TOPO_SORT: CodingStep = CodingStep {
+    id: "py-1196-graph-topo-sort", title: "Grafo · Orden topológico", objective: "Ordenar un DAG con DFS post-orden.",
+    prompt_md: "**Grafo: orden topológico**\n\nEn un DAG, un orden topológico deja cada arista `u→v` con `u` antes que `v`.\n\n**Micro-reto:**\n1. Definí `orden_topologico(grafo)` con DFS post-orden\n2. Usá el DAG de ejemplo\n3. Imprimí el orden",
+    starter_code: "# def orden_topologico(grafo):\n#     visitados = set()\n#     orden = []\n#     def visitar(nodo):\n#         if nodo in visitados:\n#             return\n#         visitados.add(nodo)\n#         for vecino in grafo.get(nodo, []):\n#             visitar(vecino)\n#         orden.append(nodo)\n#     for nodo in grafo:\n#         visitar(nodo)\n#     return orden[::-1]\n# grafo = {'A': ['C'], 'B': ['C', 'D'], 'C': ['E'], 'D': ['E'], 'E': []}\n# print(orden_topologico(grafo))\n",
+    pytest: "def test_topo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = {'A': ['C'], 'B': ['C', 'D'], 'C': ['E'], 'D': ['E'], 'E': []}\n    orden = ns['orden_topologico'](grafo)\n    pos = {nodo: i for i, nodo in enumerate(orden)}\n    for a in grafo:\n        for b in grafo[a]:\n            assert pos[a] < pos[b]\n    assert capsys.readouterr().out.strip() == str(['B', 'D', 'A', 'C', 'E'])\n",
+    hint: "Post-orden inverso: agregá al final de la visita y revertí.",
+    solution_example: "def orden_topologico(grafo):\n    visitados = set()\n    orden = []\n    def visitar(nodo):\n        if nodo in visitados:\n            return\n        visitados.add(nodo)\n        for vecino in grafo.get(nodo, []):\n            visitar(vecino)\n        orden.append(nodo)\n    for nodo in grafo:\n        visitar(nodo)\n    return orden[::-1]\n\ngrafo = {'A': ['C'], 'B': ['C', 'D'], 'C': ['E'], 'D': ['E'], 'E': []}\nprint(orden_topologico(grafo))\n",
+    next: Some("py-1197-graph-backtracking"), show_type_chips: false, micro_step: 1196,
+};
+
+pub const PY1197_GRAPH_BACKTRACKING: CodingStep = CodingStep {
+    id: "py-1197-graph-backtracking", title: "Grafo · Backtracking", objective: "Encontrar todos los caminos entre dos nodos probando y deshaciendo.",
+    prompt_md: "**Grafo: backtracking**\n\nExplorá todos los caminos entre dos nodos probando y deshaciendo (backtrack).\n\n**Micro-reto:**\n1. Definí `todos_caminos(grafo, a, b)`\n2. Usá el grafo de ejemplo\n3. Imprimí todos los caminos de `'A'` a `'D'`",
+    starter_code: "# def todos_caminos(grafo, a, b):\n#     caminos = []\n#     def buscar(nodo, ruta):\n#         if nodo == b:\n#             caminos.append(list(ruta))\n#             return\n#         for vecino in grafo.get(nodo, []):\n#             if vecino not in ruta:\n#                 ruta.append(vecino)\n#                 buscar(vecino, ruta)\n#                 ruta.pop()\n#     buscar(a, [a])\n#     return caminos\n# grafo = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}\n# print(todos_caminos(grafo, 'A', 'D'))\n",
+    pytest: "def test_backtracking(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    grafo = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}\n    assert ns['todos_caminos'](grafo, 'A', 'D') == [['A', 'B', 'D'], ['A', 'C', 'D']]\n    assert capsys.readouterr().out.strip() == str([['A', 'B', 'D'], ['A', 'C', 'D']])\n",
+    hint: "Agregá el vecino a la ruta, recursá, y hacé pop para deshacer.",
+    solution_example: "def todos_caminos(grafo, a, b):\n    caminos = []\n    def buscar(nodo, ruta):\n        if nodo == b:\n            caminos.append(list(ruta))\n            return\n        for vecino in grafo.get(nodo, []):\n            if vecino not in ruta:\n                ruta.append(vecino)\n                buscar(vecino, ruta)\n                ruta.pop()\n    buscar(a, [a])\n    return caminos\n\ngrafo = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}\nprint(todos_caminos(grafo, 'A', 'D'))\n",
+    next: Some("py-1198-graph-colored-visit"), show_type_chips: false, micro_step: 1197,
+};
+
+pub const PY1198_GRAPH_COLORED_VISIT: CodingStep = CodingStep {
+    id: "py-1198-graph-colored-visit", title: "Grafo · Estados de visita", objective: "Detectar ciclos en grafos dirigidos con colores (blanco/gris/negro).",
+    prompt_md: "**Grafo: estados de visita**\n\nTres colores: blanco (sin visitar), gris (en progreso), negro (terminado). Detectan ciclos en grafos dirigidos.\n\n**Micro-reto:**\n1. Definí `tiene_ciclo_dirigido(grafo)` con colores\n2. Probá un grafo cíclico y uno acíclico\n3. Imprimí `tiene_ciclo_dirigido(grafo_ciclico)`",
+    starter_code: "# def tiene_ciclo_dirigido(grafo):\n#     color = {nodo: 0 for nodo in grafo}\n#     def visitar(nodo):\n#         color[nodo] = 1\n#         for vecino in grafo.get(nodo, []):\n#             if color[vecino] == 0:\n#                 if visitar(vecino):\n#                     return True\n#             elif color[vecino] == 1:\n#                 return True\n#         color[nodo] = 2\n#         return False\n#     for nodo in grafo:\n#         if color[nodo] == 0:\n#             if visitar(nodo):\n#                 return True\n#     return False\n# grafo = {'A': ['B'], 'B': ['C'], 'C': ['A']}\n# print(tiene_ciclo_dirigido(grafo))\n",
+    pytest: "def test_colored(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    ciclo = {'A': ['B'], 'B': ['C'], 'C': ['A']}\n    aciclico = {'A': ['B'], 'B': ['C'], 'C': []}\n    assert ns['tiene_ciclo_dirigido'](ciclo) is True\n    assert ns['tiene_ciclo_dirigido'](aciclico) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Encontrar un vecino gris mientras se explora indica un ciclo.",
+    solution_example: "def tiene_ciclo_dirigido(grafo):\n    color = {nodo: 0 for nodo in grafo}\n    def visitar(nodo):\n        color[nodo] = 1\n        for vecino in grafo.get(nodo, []):\n            if color[vecino] == 0:\n                if visitar(vecino):\n                    return True\n            elif color[vecino] == 1:\n                return True\n        color[nodo] = 2\n        return False\n    for nodo in grafo:\n        if color[nodo] == 0:\n            if visitar(nodo):\n                return True\n    return False\n\ngrafo = {'A': ['B'], 'B': ['C'], 'C': ['A']}\nprint(tiene_ciclo_dirigido(grafo))\n",
+    next: Some("py-1199-search-lru-cache"), show_type_chips: false, micro_step: 1198,
+};
+
+pub const PY1199_SEARCH_LRU_CACHE: CodingStep = CodingStep {
+    id: "py-1199-search-lru-cache", title: "Búsqueda · lru_cache", objective: "Memoizar resultados de funciones puras con functools.lru_cache.",
+    prompt_md: "**Búsqueda: lru_cache**\n\n`@lru_cache` memoiza resultados de funciones puras automáticamente.\n\n**Micro-reto:**\n1. Importá `lru_cache`\n2. Decorá `fibonacci(n)` recursivo\n3. Imprimí `fibonacci(10)`",
+    starter_code: "# from functools import lru_cache\n# @lru_cache(maxsize=None)\n# def fibonacci(n):\n#     if n < 2:\n#         return n\n#     return fibonacci(n - 1) + fibonacci(n - 2)\n# print(fibonacci(10))\n",
+    pytest: "def test_lru_cache(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    fib = ns['fibonacci']\n    assert fib(10) == 55\n    assert fib(20) == 6765\n    assert capsys.readouterr().out.strip() == '55'\n",
+    hint: "El decorador guarda cada (n, resultado) en una caché interna.",
+    solution_example: "from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fibonacci(n):\n    if n < 2:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)\n\nprint(fibonacci(10))\n",
+    next: Some("py-1200-search-memoize"), show_type_chips: false, micro_step: 1199,
+};
+
+pub const PY1200_SEARCH_MEMOIZE: CodingStep = CodingStep {
+    id: "py-1200-search-memoize", title: "Búsqueda · Memoización manual", objective: "Implementar una caché con dict para no recalcular.",
+    prompt_md: "**Búsqueda: memoización manual**\n\nGuardá resultados ya calculados en un dict para no recalcular.\n\n**Micro-reto:**\n1. Definí `fibonacci(n)` con caché manual\n2. Usá recursión con caché\n3. Imprimí `fibonacci(10)`",
+    starter_code: "# def fibonacci(n):\n#     cache = {}\n#     def f(x):\n#         if x in cache:\n#             return cache[x]\n#         if x < 2:\n#             cache[x] = x\n#         else:\n#             cache[x] = f(x - 1) + f(x - 2)\n#         return cache[x]\n#     return f(n)\n# print(fibonacci(10))\n",
+    pytest: "def test_memoize(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['fibonacci'](10) == 55\n    assert ns['fibonacci'](20) == 6765\n    assert capsys.readouterr().out.strip() == '55'\n",
+    hint: "Consultá la caché antes de calcular y guardá el resultado.",
+    solution_example: "def fibonacci(n):\n    cache = {}\n    def f(x):\n        if x in cache:\n            return cache[x]\n        if x < 2:\n            cache[x] = x\n        else:\n            cache[x] = f(x - 1) + f(x - 2)\n        return cache[x]\n    return f(n)\n\nprint(fibonacci(10))\n",
+    next: Some("py-1201-search-binary"), show_type_chips: false, micro_step: 1200,
+};
+
+pub const PY1201_SEARCH_BINARY: CodingStep = CodingStep {
+    id: "py-1201-search-binary", title: "Búsqueda binaria", objective: "Encontrar un valor en lista ordenada dividiendo a la mitad.",
+    prompt_md: "**Búsqueda binaria**\n\nEn una lista ordenada, dividí el espacio a la mitad en cada paso.\n\n**Micro-reto:**\n1. Definí `busqueda_binaria(arr, objetivo)` → índice o `-1`\n2. Buscá en `[1, 3, 5, 7, 9]`\n3. Imprimí `busqueda_binaria([1, 3, 5, 7, 9], 7)`",
+    starter_code: "# def busqueda_binaria(arr, objetivo):\n#     izq, der = 0, len(arr) - 1\n#     while izq <= der:\n#         medio = (izq + der) // 2\n#         if arr[medio] == objetivo:\n#             return medio\n#         if arr[medio] < objetivo:\n#             izq = medio + 1\n#         else:\n#             der = medio - 1\n#     return -1\n# print(busqueda_binaria([1, 3, 5, 7, 9], 7))\n",
+    pytest: "def test_binary(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    arr = [1, 3, 5, 7, 9]\n    assert ns['busqueda_binaria'](arr, 7) == 3\n    assert ns['busqueda_binaria'](arr, 10) == -1\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "Ajustá izq o der según si el medio es menor o mayor al objetivo.",
+    solution_example: "def busqueda_binaria(arr, objetivo):\n    izq, der = 0, len(arr) - 1\n    while izq <= der:\n        medio = (izq + der) // 2\n        if arr[medio] == objetivo:\n            return medio\n        if arr[medio] < objetivo:\n            izq = medio + 1\n        else:\n            der = medio - 1\n    return -1\n\nprint(busqueda_binaria([1, 3, 5, 7, 9], 7))\n",
+    next: Some("py-1202-search-range"), show_type_chips: false, micro_step: 1201,
+};
+
+pub const PY1202_SEARCH_RANGE: CodingStep = CodingStep {
+    id: "py-1202-search-range", title: "Búsqueda · Rangos con bisect", objective: "Contar elementos en un rango con bisect_left y bisect_right.",
+    prompt_md: "**Búsqueda en rangos**\n\n`bisect_left` y `bisect_right` ubican inserciones; su diferencia cuenta elementos en un rango.\n\n**Micro-reto:**\n1. Importá `bisect_left` y `bisect_right`\n2. Definí `contar_en_rango(arr, minimo, maximo)`\n3. Imprimí `contar_en_rango([1, 2, 3, 4, 5, 6], 2, 5)`",
+    starter_code: "# from bisect import bisect_left, bisect_right\n# def contar_en_rango(arr, minimo, maximo):\n#     return bisect_right(arr, maximo) - bisect_left(arr, minimo)\n# print(contar_en_rango([1, 2, 3, 4, 5, 6], 2, 5))\n",
+    pytest: "def test_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    arr = [1, 2, 3, 4, 5, 6]\n    assert ns['contar_en_rango'](arr, 2, 5) == 4\n    assert ns['contar_en_rango'](arr, 10, 20) == 0\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "right - left da la cantidad de elementos dentro del rango inclusivo.",
+    solution_example: "from bisect import bisect_left, bisect_right\n\ndef contar_en_rango(arr, minimo, maximo):\n    return bisect_right(arr, maximo) - bisect_left(arr, minimo)\n\nprint(contar_en_rango([1, 2, 3, 4, 5, 6], 2, 5))\n",
+    next: Some("py-1203-search-cache-ttl"), show_type_chips: false, micro_step: 1202,
+};
+
+pub const PY1203_SEARCH_CACHE_TTL: CodingStep = CodingStep {
+    id: "py-1203-search-cache-ttl", title: "Búsqueda · Caché con TTL", objective: "Invalidar entradas viejas con un time-to-live.",
+    prompt_md: "**Caché con TTL**\n\nUn TTL (time-to-live) invalida entradas viejas. Guardá `(valor, expira)`.\n\n**Micro-reto:**\n1. Definí `class CacheTTL` con `__init__(ttl)`, `guardar` y `obtener`\n2. Creá una caché, guardá y leé una clave\n3. Imprimí `cache.obtener('a')`",
+    starter_code: "# import time\n# class CacheTTL:\n#     def __init__(self, ttl):\n#         self._ttl = ttl\n#         self._datos = {}\n#     def obtener(self, clave):\n#         item = self._datos.get(clave)\n#         if item is None:\n#             return None\n#         valor, expira = item\n#         return valor if time.time() < expira else None\n#     def guardar(self, clave, valor):\n#         self._datos[clave] = (valor, time.time() + self._ttl)\n# cache = CacheTTL(60)\n# cache.guardar('a', 42)\n# print(cache.obtener('a'))\n",
+    pytest: "def test_cache_ttl(capsys):\n    import time\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    cache = ns['CacheTTL'](60)\n    cache.guardar('a', 42)\n    assert cache.obtener('a') == 42\n    assert cache.obtener('no-existe') is None\n    cache._datos['b'] = (99, time.time() - 1)\n    assert cache.obtener('b') is None\n    assert capsys.readouterr().out.strip() == '42'\n",
+    hint: "Devolvé el valor solo si time.time() es menor al instante de expiración.",
+    solution_example: "import time\n\nclass CacheTTL:\n    def __init__(self, ttl):\n        self._ttl = ttl\n        self._datos = {}\n    def obtener(self, clave):\n        item = self._datos.get(clave)\n        if item is None:\n            return None\n        valor, expira = item\n        return valor if time.time() < expira else None\n    def guardar(self, clave, valor):\n        self._datos[clave] = (valor, time.time() + self._ttl)\n\ncache = CacheTTL(60)\ncache.guardar('a', 42)\nprint(cache.obtener('a'))\n",
+    next: Some("py-1204-search-ordered"), show_type_chips: false, micro_step: 1203,
+};
+
+pub const PY1204_SEARCH_ORDERED: CodingStep = CodingStep {
+    id: "py-1204-search-ordered", title: "Búsqueda · Espacio ordenado", objective: "Buscar el primer True de una condición monótona con búsqueda binaria.",
+    prompt_md: "**Búsqueda en espacio ordenado**\n\nSi una condición es monótona (falsa...verdadera), buscá el primer `True` con búsqueda binaria.\n\n**Micro-reto:**\n1. Definí `primera_verdadera(lo, hi, es_valida)`\n2. Buscá el primer número cuyo cuadrado ≥ 50\n3. Imprimí `primera_verdadera(1, 10, lambda x: x * x >= 50)`",
+    starter_code: "# def primera_verdadera(lo, hi, es_valida):\n#     while lo < hi:\n#         medio = (lo + hi) // 2\n#         if es_valida(medio):\n#             hi = medio\n#         else:\n#             lo = medio + 1\n#     return lo\n# print(primera_verdadera(1, 10, lambda x: x * x >= 50))\n",
+    pytest: "def test_ordered(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['primera_verdadera'](1, 10, lambda x: x * x >= 50) == 8\n    assert ns['primera_verdadera'](1, 10, lambda x: x >= 1) == 1\n    assert capsys.readouterr().out.strip() == '8'\n",
+    hint: "Si es_valida(medio) es True, seguí buscando a la izquierda.",
+    solution_example: "def primera_verdadera(lo, hi, es_valida):\n    while lo < hi:\n        medio = (lo + hi) // 2\n        if es_valida(medio):\n            hi = medio\n        else:\n            lo = medio + 1\n    return lo\n\nprint(primera_verdadera(1, 10, lambda x: x * x >= 50))\n",
+    next: Some("py-1205-dp-optimal-substructure"), show_type_chips: false, micro_step: 1204,
+};
+
+pub const PY1205_DP_OPTIMAL_SUBSTRUCTURE: CodingStep = CodingStep {
+    id: "py-1205-dp-optimal-substructure", title: "DP · Subestructura óptima", objective: "Reconocer que la solución óptima se compone de subproblemas óptimos.",
+    prompt_md: "**DP: subestructura óptima**\n\nUn problema tiene subestructura óptima si la solución óptima se compone de subproblemas óptimos.\n\n**Micro-reto:**\n1. Definí `max_ganancia(casas)` (no robar adyacentes) con memoización\n2. Usá el ejemplo\n3. Imprimí `max_ganancia([2, 7, 9, 3, 1])`",
+    starter_code: "# def max_ganancia(casas):\n#     n = len(casas)\n#     if n == 0:\n#         return 0\n#     if n == 1:\n#         return casas[0]\n#     memo = {}\n#     def resolver(i):\n#         if i >= n:\n#             return 0\n#         if i in memo:\n#             return memo[i]\n#         memo[i] = max(casas[i] + resolver(i + 2), resolver(i + 1))\n#         return memo[i]\n#     return resolver(0)\n# print(max_ganancia([2, 7, 9, 3, 1]))\n",
+    pytest: "def test_substructure(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['max_ganancia']([2, 7, 9, 3, 1]) == 12\n    assert ns['max_ganancia']([1, 2, 3, 1]) == 4\n    assert capsys.readouterr().out.strip() == '12'\n",
+    hint: "En cada casa elegís robar (saltar 1) o no (saltar a la siguiente).",
+    solution_example: "def max_ganancia(casas):\n    n = len(casas)\n    if n == 0:\n        return 0\n    if n == 1:\n        return casas[0]\n    memo = {}\n    def resolver(i):\n        if i >= n:\n            return 0\n        if i in memo:\n            return memo[i]\n        memo[i] = max(casas[i] + resolver(i + 2), resolver(i + 1))\n        return memo[i]\n    return resolver(0)\n\nprint(max_ganancia([2, 7, 9, 3, 1]))\n",
+    next: Some("py-1206-dp-fibonacci"), show_type_chips: false, micro_step: 1205,
+};
+
+pub const PY1206_DP_FIBONACCI: CodingStep = CodingStep {
+    id: "py-1206-dp-fibonacci", title: "DP · Fibonacci bottom-up", objective: "Construir la tabla de abajo hacia arriba en vez de recursión.",
+    prompt_md: "**DP: fibonacci bottom-up**\n\nConstruí la tabla de abajo hacia arriba en vez de recursión.\n\n**Micro-reto:**\n1. Definí `fibonacci(n)` con lista `tabla`\n2. Llená de `2` a `n`\n3. Imprimí `fibonacci(10)`",
+    starter_code: "# def fibonacci(n):\n#     if n < 2:\n#         return n\n#     tabla = [0] * (n + 1)\n#     tabla[1] = 1\n#     for i in range(2, n + 1):\n#         tabla[i] = tabla[i - 1] + tabla[i - 2]\n#     return tabla[n]\n# print(fibonacci(10))\n",
+    pytest: "def test_fib_bottom_up(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['fibonacci'](10) == 55\n    assert ns['fibonacci'](20) == 6765\n    assert capsys.readouterr().out.strip() == '55'\n",
+    hint: "Cada posición depende solo de las dos anteriores.",
+    solution_example: "def fibonacci(n):\n    if n < 2:\n        return n\n    tabla = [0] * (n + 1)\n    tabla[1] = 1\n    for i in range(2, n + 1):\n        tabla[i] = tabla[i - 1] + tabla[i - 2]\n    return tabla[n]\n\nprint(fibonacci(10))\n",
+    next: Some("py-1207-dp-coin-change"), show_type_chips: false, micro_step: 1206,
+};
+
+pub const PY1207_DP_COIN_CHANGE: CodingStep = CodingStep {
+    id: "py-1207-dp-coin-change", title: "DP · Coin change", objective: "Calcular la mínima cantidad de monedas para una suma.",
+    prompt_md: "**DP: coin change**\n\nMínima cantidad de monedas para una suma, probando cada denominación.\n\n**Micro-reto:**\n1. Definí `min_monedas(monedas, cantidad)`\n2. Usá `[1, 5, 10]` y cantidad `27`\n3. Imprimí el mínimo (o `-1` si imposible)",
+    starter_code: "# def min_monedas(monedas, cantidad):\n#     inf = float('inf')\n#     tabla = [inf] * (cantidad + 1)\n#     tabla[0] = 0\n#     for monto in range(1, cantidad + 1):\n#         for moneda in monedas:\n#             if moneda <= monto:\n#                 tabla[monto] = min(tabla[monto], tabla[monto - moneda] + 1)\n#     return tabla[cantidad] if tabla[cantidad] != inf else -1\n# print(min_monedas([1, 5, 10], 27))\n",
+    pytest: "def test_coin_change(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['min_monedas']([1, 5, 10], 27) == 5\n    assert ns['min_monedas']([2, 5], 3) == -1\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "Probá restar cada moneda y quedarte con el mínimo + 1.",
+    solution_example: "def min_monedas(monedas, cantidad):\n    inf = float('inf')\n    tabla = [inf] * (cantidad + 1)\n    tabla[0] = 0\n    for monto in range(1, cantidad + 1):\n        for moneda in monedas:\n            if moneda <= monto:\n                tabla[monto] = min(tabla[monto], tabla[monto - moneda] + 1)\n    return tabla[cantidad] if tabla[cantidad] != inf else -1\n\nprint(min_monedas([1, 5, 10], 27))\n",
+    next: Some("py-1208-dp-knapsack"), show_type_chips: false, micro_step: 1207,
+};
+
+pub const PY1208_DP_KNAPSACK: CodingStep = CodingStep {
+    id: "py-1208-dp-knapsack", title: "DP · Knapsack 0/1", objective: "Maximizar valor sin exceder la capacidad con una tabla 2D.",
+    prompt_md: "**DP: knapsack 0/1**\n\nElegí ítems para maximizar valor sin exceder capacidad.\n\n**Micro-reto:**\n1. Definí `mochila(pesos, valores, capacidad)` con tabla 2D\n2. Usá `[2, 3, 4]`, `[4, 5, 6]`, capacidad `5`\n3. Imprimí el valor máximo",
+    starter_code: "# def mochila(pesos, valores, capacidad):\n#     n = len(pesos)\n#     tabla = [[0] * (capacidad + 1) for _ in range(n + 1)]\n#     for i in range(1, n + 1):\n#         for c in range(capacidad + 1):\n#             if pesos[i - 1] <= c:\n#                 tabla[i][c] = max(tabla[i - 1][c], valores[i - 1] + tabla[i - 1][c - pesos[i - 1]])\n#             else:\n#                 tabla[i][c] = tabla[i - 1][c]\n#     return tabla[n][capacidad]\n# print(mochila([2, 3, 4], [4, 5, 6], 5))\n",
+    pytest: "def test_knapsack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['mochila']([2, 3, 4], [4, 5, 6], 5) == 9\n    assert ns['mochila']([1], [10], 0) == 0\n    assert capsys.readouterr().out.strip() == '9'\n",
+    hint: "Decidí incluir o no el ítem i: max(sin él, valor + tabla con capacidad restante).",
+    solution_example: "def mochila(pesos, valores, capacidad):\n    n = len(pesos)\n    tabla = [[0] * (capacidad + 1) for _ in range(n + 1)]\n    for i in range(1, n + 1):\n        for c in range(capacidad + 1):\n            if pesos[i - 1] <= c:\n                tabla[i][c] = max(tabla[i - 1][c], valores[i - 1] + tabla[i - 1][c - pesos[i - 1]])\n            else:\n                tabla[i][c] = tabla[i - 1][c]\n    return tabla[n][capacidad]\n\nprint(mochila([2, 3, 4], [4, 5, 6], 5))\n",
+    next: Some("py-1209-dp-lcs"), show_type_chips: false, micro_step: 1208,
+};
+
+pub const PY1209_DP_LCS: CodingStep = CodingStep {
+    id: "py-1209-dp-lcs", title: "DP · LCS", objective: "Calcular la longitud de la subsecuencia común más larga.",
+    prompt_md: "**DP: LCS**\n\nLongitud de la subsecuencia común más larga entre dos cadenas.\n\n**Micro-reto:**\n1. Definí `lcs(a, b)` con tabla 2D\n2. Compará `'abcde'` y `'ace'`\n3. Imprimí la longitud",
+    starter_code: "# def lcs(a, b):\n#     m, n = len(a), len(b)\n#     tabla = [[0] * (n + 1) for _ in range(m + 1)]\n#     for i in range(1, m + 1):\n#         for j in range(1, n + 1):\n#             if a[i - 1] == b[j - 1]:\n#                 tabla[i][j] = tabla[i - 1][j - 1] + 1\n#             else:\n#                 tabla[i][j] = max(tabla[i - 1][j], tabla[i][j - 1])\n#     return tabla[m][n]\n# print(lcs('abcde', 'ace'))\n",
+    pytest: "def test_lcs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['lcs']('abcde', 'ace') == 3\n    assert ns['lcs']('abc', 'def') == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "Si coinciden, sumá 1 a la diagonal; si no, tomá el máximo de los vecinos.",
+    solution_example: "def lcs(a, b):\n    m, n = len(a), len(b)\n    tabla = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                tabla[i][j] = tabla[i - 1][j - 1] + 1\n            else:\n                tabla[i][j] = max(tabla[i - 1][j], tabla[i][j - 1])\n    return tabla[m][n]\n\nprint(lcs('abcde', 'ace'))\n",
+    next: Some("py-1210-dp-reconstruct"), show_type_chips: false, micro_step: 1209,
+};
+
+pub const PY1210_DP_RECONSTRUCT: CodingStep = CodingStep {
+    id: "py-1210-dp-reconstruct", title: "DP · Reconstruir solución", objective: "Reconstruir la subsecuencia LCS caminando la tabla hacia atrás.",
+    prompt_md: "**DP: reconstruir solución**\n\nAdemás del valor óptimo, reconstruí la secuencia caminando la tabla hacia atrás.\n\n**Micro-reto:**\n1. Definí `lcs_camino(a, b)` que devuelva la subsecuencia\n2. Usá `'abcde'` y `'ace'`\n3. Imprimí `lcs_camino('abcde', 'ace')`",
+    starter_code: "# def lcs_camino(a, b):\n#     m, n = len(a), len(b)\n#     tabla = [[0] * (n + 1) for _ in range(m + 1)]\n#     for i in range(1, m + 1):\n#         for j in range(1, n + 1):\n#             if a[i - 1] == b[j - 1]:\n#                 tabla[i][j] = tabla[i - 1][j - 1] + 1\n#             else:\n#                 tabla[i][j] = max(tabla[i - 1][j], tabla[i][j - 1])\n#     i, j = m, n\n#     resultado = []\n#     while i > 0 and j > 0:\n#         if a[i - 1] == b[j - 1]:\n#             resultado.append(a[i - 1])\n#             i -= 1\n#             j -= 1\n#         elif tabla[i - 1][j] >= tabla[i][j - 1]:\n#             i -= 1\n#         else:\n#             j -= 1\n#     return ''.join(reversed(resultado))\n# print(lcs_camino('abcde', 'ace'))\n",
+    pytest: "def test_reconstruct(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['lcs_camino']('abcde', 'ace') == 'ace'\n    assert ns['lcs_camino']('abc', 'def') == ''\n    assert capsys.readouterr().out.strip() == 'ace'\n",
+    hint: "Remontá la tabla: coincidencia → diagonal, si no, hacia el mayor.",
+    solution_example: "def lcs_camino(a, b):\n    m, n = len(a), len(b)\n    tabla = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                tabla[i][j] = tabla[i - 1][j - 1] + 1\n            else:\n                tabla[i][j] = max(tabla[i - 1][j], tabla[i][j - 1])\n    i, j = m, n\n    resultado = []\n    while i > 0 and j > 0:\n        if a[i - 1] == b[j - 1]:\n            resultado.append(a[i - 1])\n            i -= 1\n            j -= 1\n        elif tabla[i - 1][j] >= tabla[i][j - 1]:\n            i -= 1\n        else:\n            j -= 1\n    return ''.join(reversed(resultado))\n\nprint(lcs_camino('abcde', 'ace'))\n",
+    next: Some("py-1211-window-sliding"), show_type_chips: false, micro_step: 1210,
+};
+
+pub const PY1211_WINDOW_SLIDING: CodingStep = CodingStep {
+    id: "py-1211-window-sliding", title: "Ventana · Suma deslizante", objective: "Reusar la suma de una ventana fija en cada desplazamiento.",
+    prompt_md: "**Ventana deslizante**\n\nMantené la suma de una ventana fija reusando el cálculo previo.\n\n**Micro-reto:**\n1. Definí `suma_ventana(arr, k)` → lista de sumas de ventanas de tamaño k\n2. Usá `[1, 2, 3, 4, 5]` y `k=3`\n3. Imprimí el resultado",
+    starter_code: "# def suma_ventana(arr, k):\n#     if k > len(arr):\n#         return []\n#     suma = sum(arr[:k])\n#     resultado = [suma]\n#     for i in range(k, len(arr)):\n#         suma += arr[i] - arr[i - k]\n#         resultado.append(suma)\n#     return resultado\n# print(suma_ventana([1, 2, 3, 4, 5], 3))\n",
+    pytest: "def test_sliding(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['suma_ventana']([1, 2, 3, 4, 5], 3) == [6, 9, 12]\n    assert ns['suma_ventana']([1, 2], 3) == []\n    assert capsys.readouterr().out.strip() == str([6, 9, 12])\n",
+    hint: "Restá el que sale y sumá el que entra: suma += arr[i] - arr[i-k].",
+    solution_example: "def suma_ventana(arr, k):\n    if k > len(arr):\n        return []\n    suma = sum(arr[:k])\n    resultado = [suma]\n    for i in range(k, len(arr)):\n        suma += arr[i] - arr[i - k]\n        resultado.append(suma)\n    return resultado\n\nprint(suma_ventana([1, 2, 3, 4, 5], 3))\n",
+    next: Some("py-1212-window-prefix-sum"), show_type_chips: false, micro_step: 1211,
+};
+
+pub const PY1212_WINDOW_PREFIX_SUM: CodingStep = CodingStep {
+    id: "py-1212-window-prefix-sum", title: "Ventana · Sumas de prefijo", objective: "Responder sumas de rango en O(1) con un arreglo de prefijos.",
+    prompt_md: "**Sumas de prefijo**\n\n`prefijos[i]` acumula hasta `i`; respondé rangos en O(1).\n\n**Micro-reto:**\n1. Definí `prefijos(arr)` y `suma_rango(prefijos, izq, der)`\n2. Usá `[1, 2, 3, 4, 5]`\n3. Imprimí `suma_rango(p, 1, 3)`",
+    starter_code: "# def prefijos(arr):\n#     resultado = [0]\n#     for v in arr:\n#         resultado.append(resultado[-1] + v)\n#     return resultado\n# def suma_rango(prefijos, izq, der):\n#     return prefijos[der + 1] - prefijos[izq]\n# arr = [1, 2, 3, 4, 5]\n# p = prefijos(arr)\n# print(suma_rango(p, 1, 3))\n",
+    pytest: "def test_prefix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    arr = [1, 2, 3, 4, 5]\n    p = ns['prefijos'](arr)\n    assert p == [0, 1, 3, 6, 10, 15]\n    assert ns['suma_rango'](p, 1, 3) == 9\n    assert capsys.readouterr().out.strip() == '9'\n",
+    hint: "suma(l..r) = prefijos[r+1] - prefijos[l].",
+    solution_example: "def prefijos(arr):\n    resultado = [0]\n    for v in arr:\n        resultado.append(resultado[-1] + v)\n    return resultado\n\ndef suma_rango(prefijos, izq, der):\n    return prefijos[der + 1] - prefijos[izq]\n\narr = [1, 2, 3, 4, 5]\np = prefijos(arr)\nprint(suma_rango(p, 1, 3))\n",
+    next: Some("py-1213-window-kadane"), show_type_chips: false, micro_step: 1212,
+};
+
+pub const PY1213_WINDOW_KADANE: CodingStep = CodingStep {
+    id: "py-1213-window-kadane", title: "Ventana · Máximo subarray (Kadane)", objective: "Encontrar la máxima suma de un subarray contiguo en una pasada.",
+    prompt_md: "**Kadane**\n\nMáxima suma de subarray contiguo con una pasada.\n\n**Micro-reto:**\n1. Definí `max_subarray(arr)`\n2. Usá `[-2, 1, -3, 4, -1, 2, 1, -5, 4]`\n3. Imprimí la suma máxima",
+    starter_code: "# def max_subarray(arr):\n#     mejor = actual = arr[0]\n#     for v in arr[1:]:\n#         actual = max(v, actual + v)\n#         mejor = max(mejor, actual)\n#     return mejor\n# print(max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))\n",
+    pytest: "def test_kadane(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['max_subarray']([-2, 1, -3, 4, -1, 2, 1, -5, 4]) == 6\n    assert ns['max_subarray']([-1, -2, -3]) == -1\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "actual = max(v, actual + v) decide si empezar de nuevo o extender.",
+    solution_example: "def max_subarray(arr):\n    mejor = actual = arr[0]\n    for v in arr[1:]:\n        actual = max(v, actual + v)\n        mejor = max(mejor, actual)\n    return mejor\n\nprint(max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))\n",
+    next: Some("py-1214-twopointers-sorted"), show_type_chips: false, micro_step: 1213,
+};
+
+pub const PY1214_TWOPOINTERS_SORTED: CodingStep = CodingStep {
+    id: "py-1214-twopointers-sorted", title: "Dos punteros · Par con suma", objective: "Encontrar un par que sume el objetivo en lista ordenada.",
+    prompt_md: "**Dos punteros**\n\nCon lista ordenada, mové dos punteros desde los extremos.\n\n**Micro-reto:**\n1. Definí `par_suma(arr, objetivo)` → par que suma objetivo o `None`\n2. Usá `[1, 2, 3, 4, 6]` y objetivo `8`\n3. Imprimí el par",
+    starter_code: "# def par_suma(arr, objetivo):\n#     izq, der = 0, len(arr) - 1\n#     while izq < der:\n#         suma = arr[izq] + arr[der]\n#         if suma == objetivo:\n#             return [arr[izq], arr[der]]\n#         if suma < objetivo:\n#             izq += 1\n#         else:\n#             der -= 1\n#     return None\n# print(par_suma([1, 2, 3, 4, 6], 8))\n",
+    pytest: "def test_twopointers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['par_suma']([1, 2, 3, 4, 6], 8) == [2, 6]\n    assert ns['par_suma']([1, 2, 3], 10) is None\n    assert capsys.readouterr().out.strip() == str([2, 6])\n",
+    hint: "Si la suma es baja avanzá el izquierdo; si es alta, retrocedé el derecho.",
+    solution_example: "def par_suma(arr, objetivo):\n    izq, der = 0, len(arr) - 1\n    while izq < der:\n        suma = arr[izq] + arr[der]\n        if suma == objetivo:\n            return [arr[izq], arr[der]]\n        if suma < objetivo:\n            izq += 1\n        else:\n            der -= 1\n    return None\n\nprint(par_suma([1, 2, 3, 4, 6], 8))\n",
+    next: Some("py-1215-window-variable"), show_type_chips: false, micro_step: 1214,
+};
+
+pub const PY1215_WINDOW_VARIABLE: CodingStep = CodingStep {
+    id: "py-1215-window-variable", title: "Ventana · Tamaño variable", objective: "Contraer la ventana hasta cumplir una condición de suma.",
+    prompt_md: "**Ventana variable**\n\nExpandí y contraé la ventana hasta cumplir una condición.\n\n**Micro-reto:**\n1. Definí `ventana_minima(arr, objetivo)` → longitud mínima con suma ≥ objetivo\n2. Usá `[2, 3, 1, 2, 4, 3]` y objetivo `7`\n3. Imprimí la longitud",
+    starter_code: "# def ventana_minima(arr, objetivo):\n#     izq = 0\n#     suma = 0\n#     mejor = float('inf')\n#     for der in range(len(arr)):\n#         suma += arr[der]\n#         while suma >= objetivo:\n#             mejor = min(mejor, der - izq + 1)\n#             suma -= arr[izq]\n#             izq += 1\n#     return mejor if mejor != float('inf') else 0\n# print(ventana_minima([2, 3, 1, 2, 4, 3], 7))\n",
+    pytest: "def test_window_variable(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['ventana_minima']([2, 3, 1, 2, 4, 3], 7) == 2\n    assert ns['ventana_minima']([1, 1, 1], 10) == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Mientras la suma cumpla, contraé desde la izquierda y actualizá el mínimo.",
+    solution_example: "def ventana_minima(arr, objetivo):\n    izq = 0\n    suma = 0\n    mejor = float('inf')\n    for der in range(len(arr)):\n        suma += arr[der]\n        while suma >= objetivo:\n            mejor = min(mejor, der - izq + 1)\n            suma -= arr[izq]\n            izq += 1\n    return mejor if mejor != float('inf') else 0\n\nprint(ventana_minima([2, 3, 1, 2, 4, 3], 7))\n",
+    next: Some("py-1216-window-constrained"), show_type_chips: false, micro_step: 1215,
+};
+
+pub const PY1216_WINDOW_CONSTRAINED: CodingStep = CodingStep {
+    id: "py-1216-window-constrained", title: "Ventana · Con restricción", objective: "Hallar la mayor longitud con suma acotada por un límite.",
+    prompt_md: "**Ventana con restricción**\n\nLa ventana crece mientras cumpla una restricción y se contrae al violarla.\n\n**Micro-reto:**\n1. Definí `subarray_mas_largo(arr, limite)` → mayor longitud con suma ≤ limite\n2. Usá `[3, 1, 2, 1]` y límite `5`\n3. Imprimí la longitud",
+    starter_code: "# def subarray_mas_largo(arr, limite):\n#     izq = 0\n#     suma = 0\n#     mejor = 0\n#     for der in range(len(arr)):\n#         suma += arr[der]\n#         while suma > limite:\n#             suma -= arr[izq]\n#             izq += 1\n#         mejor = max(mejor, der - izq + 1)\n#     return mejor\n# print(subarray_mas_largo([3, 1, 2, 1], 5))\n",
+    pytest: "def test_constrained(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['subarray_mas_largo']([3, 1, 2, 1], 5) == 3\n    assert ns['subarray_mas_largo']([1, 1, 1], 10) == 3\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "Cuando la suma excede el límite, contraé la ventana desde la izquierda.",
+    solution_example: "def subarray_mas_largo(arr, limite):\n    izq = 0\n    suma = 0\n    mejor = 0\n    for der in range(len(arr)):\n        suma += arr[der]\n        while suma > limite:\n            suma -= arr[izq]\n            izq += 1\n        mejor = max(mejor, der - izq + 1)\n    return mejor\n\nprint(subarray_mas_largo([3, 1, 2, 1], 5))\n",
+    next: Some("py-1217-concurrency-map-sync"), show_type_chips: false, micro_step: 1216,
+};
+
+pub const PY1217_CONCURRENCY_MAP_SYNC: CodingStep = CodingStep {
+    id: "py-1217-concurrency-map-sync", title: "Concurrencia · map síncrono", objective: "Aplicar una función pura a cada elemento con map declarativo.",
+    prompt_md: "**Concurrencia: map síncrono**\n\n`map` aplica una función pura a cada elemento de forma declarativa y determinista.\n\n**Micro-reto:**\n1. Definí `cuadrado(x)` y `elevar_al_cuadrado(valores)`\n2. Usá `map`\n3. Imprimí `elevar_al_cuadrado([1, 2, 3, 4])`",
+    starter_code: "# def cuadrado(x):\n#     return x * x\n# def elevar_al_cuadrado(valores):\n#     return list(map(cuadrado, valores))\n# print(elevar_al_cuadrado([1, 2, 3, 4]))\n",
+    pytest: "def test_map_sync(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['elevar_al_cuadrado']([1, 2, 3, 4]) == [1, 4, 9, 16]\n    assert ns['elevar_al_cuadrado']([]) == []\n    assert capsys.readouterr().out.strip() == str([1, 4, 9, 16])\n",
+    hint: "list(map(cuadrado, valores)) aplica cuadrado a cada elemento.",
+    solution_example: "def cuadrado(x):\n    return x * x\n\ndef elevar_al_cuadrado(valores):\n    return list(map(cuadrado, valores))\n\nprint(elevar_al_cuadrado([1, 2, 3, 4]))\n",
+    next: Some("py-1218-concurrency-futures-map"), show_type_chips: false, micro_step: 1217,
+};
+
+pub const PY1218_CONCURRENCY_FUTURES_MAP: CodingStep = CodingStep {
+    id: "py-1218-concurrency-futures-map", title: "Concurrencia · futures.map", objective: "Mapear funciones puras en paralelo con ThreadPoolExecutor.",
+    prompt_md: "**Concurrencia: futures.map**\n\n`ThreadPoolExecutor.map` ejecuta funciones puras en paralelo y devuelve en el orden de entrada.\n\n**Micro-reto:**\n1. Importá `ThreadPoolExecutor`\n2. Definí `elevar_paralelo(valores)` con `executor.map`\n3. Imprimí `elevar_paralelo([1, 2, 3, 4])`",
+    starter_code: "# from concurrent.futures import ThreadPoolExecutor\n# def cuadrado(x):\n#     return x * x\n# def elevar_paralelo(valores):\n#     with ThreadPoolExecutor(max_workers=4) as executor:\n#         return list(executor.map(cuadrado, valores))\n# print(elevar_paralelo([1, 2, 3, 4]))\n",
+    pytest: "def test_futures_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    valores = [1, 2, 3, 4, 5]\n    paralelo = ns['elevar_paralelo'](valores)\n    secuencial = [x * x for x in valores]\n    assert paralelo == secuencial == [1, 4, 9, 16, 25]\n    assert capsys.readouterr().out.strip() == str([1, 4, 9, 16])\n",
+    hint: "executor.map mantiene el orden de entrada; el resultado debe igualar al secuencial.",
+    solution_example: "from concurrent.futures import ThreadPoolExecutor\n\ndef cuadrado(x):\n    return x * x\n\ndef elevar_paralelo(valores):\n    with ThreadPoolExecutor(max_workers=4) as executor:\n        return list(executor.map(cuadrado, valores))\n\nprint(elevar_paralelo([1, 2, 3, 4]))\n",
+    next: Some("py-1219-concurrency-as-completed"), show_type_chips: false, micro_step: 1218,
+};
+
+pub const PY1219_CONCURRENCY_AS_COMPLETED: CodingStep = CodingStep {
+    id: "py-1219-concurrency-as-completed", title: "Concurrencia · as_completed", objective: "Recolectar resultados con as_completed y ordenarlos.",
+    prompt_md: "**Concurrencia: as_completed**\n\n`as_completed` devuelve resultados a medida que terminan (orden no garantizado).\n\n**Micro-reto:**\n1. Importá `ThreadPoolExecutor` y `as_completed`\n2. Definí `doblar_todos(valores)` que ordene los resultados\n3. Imprimí `doblar_todos([1, 2, 3, 4])`",
+    starter_code: "# from concurrent.futures import ThreadPoolExecutor, as_completed\n# def doblar(x):\n#     return x * 2\n# def doblar_todos(valores):\n#     with ThreadPoolExecutor(max_workers=4) as executor:\n#         futuros = [executor.submit(doblar, v) for v in valores]\n#         return sorted(f.result() for f in as_completed(futuros))\n# print(doblar_todos([1, 2, 3, 4]))\n",
+    pytest: "def test_as_completed(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    valores = [1, 2, 3, 4, 5]\n    assert ns['doblar_todos'](valores) == [2, 4, 6, 8, 10]\n    assert capsys.readouterr().out.strip() == str([2, 4, 6, 8])\n",
+    hint: "as_completed no garantiza orden; usá sorted para un resultado determinista.",
+    solution_example: "from concurrent.futures import ThreadPoolExecutor, as_completed\n\ndef doblar(x):\n    return x * 2\n\ndef doblar_todos(valores):\n    with ThreadPoolExecutor(max_workers=4) as executor:\n        futuros = [executor.submit(doblar, v) for v in valores]\n        return sorted(f.result() for f in as_completed(futuros))\n\nprint(doblar_todos([1, 2, 3, 4]))\n",
+    next: Some("py-1220-concurrency-timeout"), show_type_chips: false, micro_step: 1219,
+};
+
+pub const PY1220_CONCURRENCY_TIMEOUT: CodingStep = CodingStep {
+    id: "py-1220-concurrency-timeout", title: "Concurrencia · Timeout", objective: "Limitar la espera con future.result(timeout=...).",
+    prompt_md: "**Concurrencia: timeout**\n\n`future.result(timeout=...)` limita el tiempo de espera.\n\n**Micro-reto:**\n1. Importá `ThreadPoolExecutor`\n2. Definí `ejecutar_con_timeout(valor, timeout=5)`\n3. Imprimí `ejecutar_con_timeout(6)`",
+    starter_code: "# from concurrent.futures import ThreadPoolExecutor\n# def cuadrado(x):\n#     return x * x\n# def ejecutar_con_timeout(valor, timeout=5):\n#     with ThreadPoolExecutor(max_workers=1) as executor:\n#         futuro = executor.submit(cuadrado, valor)\n#         return futuro.result(timeout=timeout)\n# print(ejecutar_con_timeout(6))\n",
+    pytest: "def test_timeout(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['ejecutar_con_timeout'](6) == 36\n    assert ns['ejecutar_con_timeout'](7, timeout=10) == 49\n    assert capsys.readouterr().out.strip() == '36'\n",
+    hint: "futuro.result(timeout=timeout) espera como máximo ese tiempo.",
+    solution_example: "from concurrent.futures import ThreadPoolExecutor\n\ndef cuadrado(x):\n    return x * x\n\ndef ejecutar_con_timeout(valor, timeout=5):\n    with ThreadPoolExecutor(max_workers=1) as executor:\n        futuro = executor.submit(cuadrado, valor)\n        return futuro.result(timeout=timeout)\n\nprint(ejecutar_con_timeout(6))\n",
+    next: Some("py-1221-concurrency-fallback"), show_type_chips: false, micro_step: 1220,
+};
+
+pub const PY1221_CONCURRENCY_FALLBACK: CodingStep = CodingStep {
+    id: "py-1221-concurrency-fallback", title: "Concurrencia · Fallback secuencial", objective: "Caer a iteración secuencial si el camino paralelo falla.",
+    prompt_md: "**Concurrencia: fallback secuencial**\n\nSi el camino paralelo falla, caé a iteración secuencial.\n\n**Micro-reto:**\n1. Importá `ThreadPoolExecutor`\n2. Definí `procesar(valores)` con `try/except` y fallback a `map` secuencial\n3. Imprimí `procesar([1, 2, 3])`",
+    starter_code: "# from concurrent.futures import ThreadPoolExecutor\n# def cuadrado(x):\n#     return x * x\n# def procesar(valores):\n#     try:\n#         with ThreadPoolExecutor(max_workers=4) as executor:\n#             return list(executor.map(cuadrado, valores))\n#     except Exception:\n#         return [cuadrado(v) for v in valores]\n# print(procesar([1, 2, 3]))\n",
+    pytest: "def test_fallback(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['procesar']([1, 2, 3]) == [1, 4, 9]\n    assert ns['procesar']([]) == []\n    assert capsys.readouterr().out.strip() == str([1, 4, 9])\n",
+    hint: "El except captura cualquier fallo y hace lo mismo de forma secuencial.",
+    solution_example: "from concurrent.futures import ThreadPoolExecutor\n\ndef cuadrado(x):\n    return x * x\n\ndef procesar(valores):\n    try:\n        with ThreadPoolExecutor(max_workers=4) as executor:\n            return list(executor.map(cuadrado, valores))\n    except Exception:\n        return [cuadrado(v) for v in valores]\n\nprint(procesar([1, 2, 3]))\n",
+    next: Some("py-1222-concurrency-map-reduce"), show_type_chips: false, micro_step: 1221,
+};
+
+pub const PY1222_CONCURRENCY_MAP_REDUCE: CodingStep = CodingStep {
+    id: "py-1222-concurrency-map-reduce", title: "Concurrencia · Map-reduce", objective: "Mapear en paralelo y reducir los resultados.",
+    prompt_md: "**Concurrencia: map-reduce**\n\n`map` paralelo + `reduce` para agregar resultados.\n\n**Micro-reto:**\n1. Importá `ThreadPoolExecutor` y `reduce`\n2. Definí `suma_cuadrados(valores)`\n3. Imprimí `suma_cuadrados([1, 2, 3, 4])`",
+    starter_code: "# from concurrent.futures import ThreadPoolExecutor\n# from functools import reduce\n# def cuadrado(x):\n#     return x * x\n# def suma_cuadrados(valores):\n#     with ThreadPoolExecutor(max_workers=4) as executor:\n#         cuadrados = list(executor.map(cuadrado, valores))\n#     return reduce(lambda a, b: a + b, cuadrados, 0)\n# print(suma_cuadrados([1, 2, 3, 4]))\n",
+    pytest: "def test_map_reduce(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    valores = [1, 2, 3, 4]\n    assert ns['suma_cuadrados'](valores) == 30\n    assert ns['suma_cuadrados'](valores) == sum(x * x for x in valores)\n    assert capsys.readouterr().out.strip() == '30'\n",
+    hint: "map produce los cuadrados; reduce los suma empezando en 0.",
+    solution_example: "from concurrent.futures import ThreadPoolExecutor\nfrom functools import reduce\n\ndef cuadrado(x):\n    return x * x\n\ndef suma_cuadrados(valores):\n    with ThreadPoolExecutor(max_workers=4) as executor:\n        cuadrados = list(executor.map(cuadrado, valores))\n    return reduce(lambda a, b: a + b, cuadrados, 0)\n\nprint(suma_cuadrados([1, 2, 3, 4]))\n",
+    next: Some("py-1223-text-regex"), show_type_chips: false, micro_step: 1222,
+};
+
+pub const PY1223_TEXT_REGEX: CodingStep = CodingStep {
+    id: "py-1223-text-regex", title: "Texto · re.search", objective: "Buscar un patrón en el texto con re.search.",
+    prompt_md: "**Texto: re.search**\n\n`re.search` encuentra un patrón en el texto.\n\n**Micro-reto:**\n1. Importá `re`\n2. Definí `contiene_numero(texto)` con `\\d+`\n3. Imprimí `contiene_numero('hay 42 patos')`",
+    starter_code: "# import re\n# def contiene_numero(texto):\n#     return re.search(r'\\d+', texto) is not None\n# print(contiene_numero('hay 42 patos'))\n",
+    pytest: "def test_regex(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['contiene_numero']('hay 42 patos') is True\n    assert ns['contiene_numero']('sin numeros') is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "\\d+ casa uno o más dígitos; re.search devuelve Match o None.",
+    solution_example: "import re\n\ndef contiene_numero(texto):\n    return re.search(r'\\d+', texto) is not None\n\nprint(contiene_numero('hay 42 patos'))\n",
+    next: Some("py-1224-text-groups"), show_type_chips: false, micro_step: 1223,
+};
+
+pub const PY1224_TEXT_GROUPS: CodingStep = CodingStep {
+    id: "py-1224-text-groups", title: "Texto · Grupos de captura", objective: "Extraer porciones con paréntesis y .group(n).",
+    prompt_md: "**Texto: grupos de captura**\n\nLos paréntesis capturan porciones para extraerlas con `.group(n)`.\n\n**Micro-reto:**\n1. Importá `re`\n2. Definí `extraer_fecha(texto)` → `(anio, mes, dia)`\n3. Imprimí `extraer_fecha('evento el 2026-08-17')`",
+    starter_code: "# import re\n# def extraer_fecha(texto):\n#     m = re.search(r'(\\d{4})-(\\d{2})-(\\d{2})', texto)\n#     if m:\n#         return (int(m.group(1)), int(m.group(2)), int(m.group(3)))\n#     return None\n# print(extraer_fecha('evento el 2026-08-17'))\n",
+    pytest: "def test_groups(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['extraer_fecha']('evento el 2026-08-17') == (2026, 8, 17)\n    assert ns['extraer_fecha']('sin fecha') is None\n    assert capsys.readouterr().out.strip() == str((2026, 8, 17))\n",
+    hint: "Cada paréntesis es un grupo; group(1) es el primero.",
+    solution_example: "import re\n\ndef extraer_fecha(texto):\n    m = re.search(r'(\\d{4})-(\\d{2})-(\\d{2})', texto)\n    if m:\n        return (int(m.group(1)), int(m.group(2)), int(m.group(3)))\n    return None\n\nprint(extraer_fecha('evento el 2026-08-17'))\n",
+    next: Some("py-1225-text-normalize"), show_type_chips: false, micro_step: 1224,
+};
+
+pub const PY1225_TEXT_NORMALIZE: CodingStep = CodingStep {
+    id: "py-1225-text-normalize", title: "Texto · Normalización", objective: "Estandarizar texto con strip y lower.",
+    prompt_md: "**Texto: normalización**\n\n`strip` y `lower` estandarizan el texto antes de comparar.\n\n**Micro-reto:**\n1. Definí `normalizar(texto)`\n2. Aplicá `strip` y `lower`\n3. Imprimí `normalizar('  Hola MUNDO  ')`",
+    starter_code: "# def normalizar(texto):\n#     return texto.strip().lower()\n# print(normalizar('  Hola MUNDO  '))\n",
+    pytest: "def test_normalize(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['normalizar']('  Hola MUNDO  ') == 'hola mundo'\n    assert ns['normalizar']('OK') == 'ok'\n    assert capsys.readouterr().out.strip() == 'hola mundo'\n",
+    hint: "strip quita espacios de los extremos; lower pasa a minúsculas.",
+    solution_example: "def normalizar(texto):\n    return texto.strip().lower()\n\nprint(normalizar('  Hola MUNDO  '))\n",
+    next: Some("py-1226-text-tokenize"), show_type_chips: false, micro_step: 1225,
+};
+
+pub const PY1226_TEXT_TOKENIZE: CodingStep = CodingStep {
+    id: "py-1226-text-tokenize", title: "Texto · Tokenización", objective: "Dividir el texto en tokens con split.",
+    prompt_md: "**Texto: tokenización**\n\n`split` divide el texto en tokens por espacios.\n\n**Micro-reto:**\n1. Definí `tokenizar(texto)`\n2. Usá `split()`\n3. Imprimí `tokenizar('hola mundo de la programacion')`",
+    starter_code: "# def tokenizar(texto):\n#     return texto.split()\n# print(tokenizar('hola mundo de la programacion'))\n",
+    pytest: "def test_tokenize(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['tokenizar']('hola mundo de la programacion') == ['hola', 'mundo', 'de', 'la', 'programacion']\n    assert ns['tokenizar']('  una   dos ') == ['una', 'dos']\n    assert capsys.readouterr().out.strip() == str(['hola', 'mundo', 'de', 'la', 'programacion'])\n",
+    hint: "split() sin argumentos separa por cualquier secuencia de espacios.",
+    solution_example: "def tokenizar(texto):\n    return texto.split()\n\nprint(tokenizar('hola mundo de la programacion'))\n",
+    next: Some("py-1227-text-word-frequency"), show_type_chips: false, micro_step: 1226,
+};
+
+pub const PY1227_TEXT_WORD_FREQUENCY: CodingStep = CodingStep {
+    id: "py-1227-text-word-frequency", title: "Texto · Frecuencia de palabras", objective: "Contar apariciones de tokens con Counter.",
+    prompt_md: "**Texto: frecuencia de palabras**\n\n`Counter` cuenta apariciones de tokens.\n\n**Micro-reto:**\n1. Importá `Counter`\n2. Definí `frecuencia(texto)` → dict palabra→cantidad\n3. Imprimí `frecuencia('hola mundo hola')`",
+    starter_code: "# from collections import Counter\n# def frecuencia(texto):\n#     return dict(Counter(texto.split()))\n# print(frecuencia('hola mundo hola'))\n",
+    pytest: "def test_word_frequency(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['frecuencia']('hola mundo hola') == {'hola': 2, 'mundo': 1}\n    assert ns['frecuencia']('a a a') == {'a': 3}\n    assert capsys.readouterr().out.strip() == str({'hola': 2, 'mundo': 1})\n",
+    hint: "dict(Counter(...)) convierte el contador en un dict normal.",
+    solution_example: "from collections import Counter\n\ndef frecuencia(texto):\n    return dict(Counter(texto.split()))\n\nprint(frecuencia('hola mundo hola'))\n",
+    next: Some("py-1228-text-clean"), show_type_chips: false, micro_step: 1227,
+};
+
+pub const PY1228_TEXT_CLEAN: CodingStep = CodingStep {
+    id: "py-1228-text-clean", title: "Texto · Limpieza robusta", objective: "Combinar lower, re.sub y strip para normalizar texto sucio.",
+    prompt_md: "**Texto: limpieza robusta**\n\nCombiná `lower`, `re.sub` y `strip` para normalizar texto sucio.\n\n**Micro-reto:**\n1. Importá `re`\n2. Definí `limpiar(texto)` que quite puntuación y colapse espacios\n3. Imprimí `limpiar('  Hola, MUNDO!!!  Como estas? ')`",
+    starter_code: "# import re\n# def limpiar(texto):\n#     texto = texto.lower()\n#     texto = re.sub(r'[^\\w\\s]', '', texto)\n#     texto = re.sub(r'\\s+', ' ', texto).strip()\n#     return texto\n# print(limpiar('  Hola, MUNDO!!!  Como estas? '))\n",
+    pytest: "def test_clean(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['limpiar']('  Hola, MUNDO!!!  Como estas? ') == 'hola mundo como estas'\n    assert ns['limpiar']('   ') == ''\n    assert capsys.readouterr().out.strip() == 'hola mundo como estas'\n",
+    hint: "Quitá lo que no sea letra o espacio, y colapsá los espacios sobrantes.",
+    solution_example: "import re\n\ndef limpiar(texto):\n    texto = texto.lower()\n    texto = re.sub(r'[^\\w\\s]', '', texto)\n    texto = re.sub(r'\\s+', ' ', texto).strip()\n    return texto\n\nprint(limpiar('  Hola, MUNDO!!!  Como estas? '))\n",
+    next: Some("py-1229-immutable-frozenset"), show_type_chips: false, micro_step: 1228,
+};
+
+pub const PY1229_IMMUTABLE_FROZENSET: CodingStep = CodingStep {
+    id: "py-1229-immutable-frozenset", title: "Inmutable · frozenset", objective: "Crear un conjunto inmutable y hashable.",
+    prompt_md: "**Inmutable: frozenset**\n\nUn `frozenset` es un conjunto que no puede modificarse y es hashable.\n\n**Micro-reto:**\n1. Definí `crear_conjunto_inmutable(valores)`\n2. Devolvé un `frozenset`\n3. Imprimí `len(conjunto)` de `[3, 1, 2, 2]`",
+    starter_code: "# def crear_conjunto_inmutable(valores):\n#     return frozenset(valores)\n# conjunto = crear_conjunto_inmutable([3, 1, 2, 2])\n# print(len(conjunto))\n",
+    pytest: "def test_frozenset(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    f = ns['crear_conjunto_inmutable']([3, 1, 2, 2])\n    assert f == frozenset({1, 2, 3})\n    assert isinstance(f, frozenset)\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "frozenset elimina duplicados y no permite add/remove.",
+    solution_example: "def crear_conjunto_inmutable(valores):\n    return frozenset(valores)\n\nconjunto = crear_conjunto_inmutable([3, 1, 2, 2])\nprint(len(conjunto))\n",
+    next: Some("py-1230-immutable-namedtuple"), show_type_chips: false, micro_step: 1229,
+};
+
+pub const PY1230_IMMUTABLE_NAMEDTUPLE: CodingStep = CodingStep {
+    id: "py-1230-immutable-namedtuple", title: "Inmutable · namedtuple", objective: "Crear tuplas ligeras con campos nombrados.",
+    prompt_md: "**Inmutable: namedtuple**\n\nUna tupla con campos nombrados: ligera e inmutable.\n\n**Micro-reto:**\n1. Importá `namedtuple`\n2. Definí `Punto` con `x` e `y`, y `crear_punto(x, y)`\n3. Imprimí `crear_punto(3, 4)`",
+    starter_code: "# from collections import namedtuple\n# Punto = namedtuple('Punto', ['x', 'y'])\n# def crear_punto(x, y):\n#     return Punto(x, y)\n# print(crear_punto(3, 4))\n",
+    pytest: "def test_namedtuple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    p = ns['crear_punto'](3, 4)\n    assert p.x == 3 and p.y == 4\n    assert p == (3, 4)\n    assert capsys.readouterr().out.strip() == 'Punto(x=3, y=4)'\n",
+    hint: "Accedés por nombre (p.x) o por posición (p[0]).",
+    solution_example: "from collections import namedtuple\n\nPunto = namedtuple('Punto', ['x', 'y'])\n\ndef crear_punto(x, y):\n    return Punto(x, y)\n\nprint(crear_punto(3, 4))\n",
+    next: Some("py-1231-immutable-defense"), show_type_chips: false, micro_step: 1230,
+};
+
+pub const PY1231_IMMUTABLE_DEFENSE: CodingStep = CodingStep {
+    id: "py-1231-immutable-defense", title: "Inmutable · Como defensa", objective: "Devolver tuplas para evitar que el llamador mute el estado interno.",
+    prompt_md: "**Inmutable: como defensa**\n\nDevolver una tupla evita que el llamador mute tu estado interno.\n\n**Micro-reto:**\n1. Definí `class Inventario` con `self._items = [1, 2, 3]`\n2. `items(self)` devuelva `tuple(self._items)`\n3. Creá un inventario e imprimí `inv.items()`",
+    starter_code: "# class Inventario:\n#     def __init__(self):\n#         self._items = [1, 2, 3]\n#     def items(self):\n#         return tuple(self._items)\n# inv = Inventario()\n# print(inv.items())\n",
+    pytest: "def test_defense(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    inv = ns['Inventario']()\n    items = inv.items()\n    assert items == (1, 2, 3)\n    assert isinstance(items, tuple)\n    assert inv._items == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str((1, 2, 3))\n",
+    hint: "tuple(lista) crea una copia que el llamador no puede modificar.",
+    solution_example: "class Inventario:\n    def __init__(self):\n        self._items = [1, 2, 3]\n    def items(self):\n        return tuple(self._items)\n\ninv = Inventario()\nprint(inv.items())\n",
+    next: Some("py-1232-immutable-tuple-key"), show_type_chips: false, micro_step: 1231,
+};
+
+pub const PY1232_IMMUTABLE_TUPLE_KEY: CodingStep = CodingStep {
+    id: "py-1232-immutable-tuple-key", title: "Inmutable · Tuple como clave", objective: "Usar tuplas hashables como claves de dict.",
+    prompt_md: "**Inmutable: tuple como clave**\n\nLas tuplas son hashables: sirven como claves de dict.\n\n**Micro-reto:**\n1. Definí `contar_visitas(visitas)` que cuente pares\n2. Usá tuplas como clave\n3. Imprimí `contar_visitas([(1, 2), (1, 2), (3, 4)])`",
+    starter_code: "# def contar_visitas(visitas):\n#     conteo = {}\n#     for v in visitas:\n#         clave = (v[0], v[1])\n#         conteo[clave] = conteo.get(clave, 0) + 1\n#     return conteo\n# print(contar_visitas([(1, 2), (1, 2), (3, 4)]))\n",
+    pytest: "def test_tuple_key(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['contar_visitas']([(1, 2), (1, 2), (3, 4)]) == {(1, 2): 2, (3, 4): 1}\n    assert ns['contar_visitas']([]) == {}\n    assert capsys.readouterr().out.strip() == str({(1, 2): 2, (3, 4): 1})\n",
+    hint: "Una lista no es hashable, pero una tupla sí; por eso se usa como clave.",
+    solution_example: "def contar_visitas(visitas):\n    conteo = {}\n    for v in visitas:\n        clave = (v[0], v[1])\n        conteo[clave] = conteo.get(clave, 0) + 1\n    return conteo\n\nprint(contar_visitas([(1, 2), (1, 2), (3, 4)]))\n",
+    next: Some("py-1233-immutable-hashable"), show_type_chips: false, micro_step: 1232,
+};
+
+pub const PY1233_IMMUTABLE_HASHABLE: CodingStep = CodingStep {
+    id: "py-1233-immutable-hashable", title: "Inmutable · __hash__", objective: "Hacer objetos hashables con __hash__ y __eq__ consistentes.",
+    prompt_md: "**Inmutable: __hash__**\n\nDefiní `__hash__` y `__eq__` consistentes para que tus objetos sean hashables.\n\n**Micro-reto:**\n1. Definí `class Moneda` con `codigo` y `pais`\n2. Implementá `__hash__` y `__eq__`\n3. Imprimí `Moneda('ARS','Argentina') == Moneda('ARS','Argentina')`",
+    starter_code: "# class Moneda:\n#     def __init__(self, codigo, pais):\n#         self.codigo = codigo\n#         self.pais = pais\n#     def __hash__(self):\n#         return hash((self.codigo, self.pais))\n#     def __eq__(self, otro):\n#         return (self.codigo, self.pais) == (otro.codigo, otro.pais)\n# print(Moneda('ARS', 'Argentina') == Moneda('ARS', 'Argentina'))\n",
+    pytest: "def test_hashable(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    m1 = ns['Moneda']('ARS', 'Argentina')\n    m2 = ns['Moneda']('ARS', 'Argentina')\n    assert m1 == m2\n    assert hash(m1) == hash(m2)\n    assert len({m1, m2}) == 1\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "hash((codigo, pais)) deriva el hash de una tupla inmutable.",
+    solution_example: "class Moneda:\n    def __init__(self, codigo, pais):\n        self.codigo = codigo\n        self.pais = pais\n    def __hash__(self):\n        return hash((self.codigo, self.pais))\n    def __eq__(self, otro):\n        return (self.codigo, self.pais) == (otro.codigo, otro.pais)\n\nprint(Moneda('ARS', 'Argentina') == Moneda('ARS', 'Argentina'))\n",
+    next: Some("py-1234-immutable-design"), show_type_chips: false, micro_step: 1233,
+};
+
+pub const PY1234_IMMUTABLE_DESIGN: CodingStep = CodingStep {
+    id: "py-1234-immutable-design", title: "Inmutable · Diseño", objective: "Crear clases inmutables con dataclass(frozen=True).",
+    prompt_md: "**Inmutable: diseño**\n\n`@dataclass(frozen=True)` crea clases inmutables sin boilerplate.\n\n**Micro-reto:**\n1. Importá `dataclass`\n2. Definí `@dataclass(frozen=True) class Configuracion` con `host` y `puerto`\n3. Imprimí `crear_config('localhost', 8080)`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class Configuracion:\n#     host: str\n#     puerto: int\n# def crear_config(host, puerto):\n#     return Configuracion(host, puerto)\n# print(crear_config('localhost', 8080))\n",
+    pytest: "def test_immutable_design(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    c = ns['crear_config']('localhost', 8080)\n    assert c.host == 'localhost' and c.puerto == 8080\n    try:\n        c.host = 'otro'\n        frozen = False\n    except Exception:\n        frozen = True\n    assert frozen\n    assert capsys.readouterr().out.strip() == \"Configuracion(host='localhost', puerto=8080)\"\n",
+    hint: "frozen=True bloquea la asignación de atributos tras la creación.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Configuracion:\n    host: str\n    puerto: int\n\ndef crear_config(host, puerto):\n    return Configuracion(host, puerto)\n\nprint(crear_config('localhost', 8080))\n",
+    next: Some("py-1235-recommend-graph"), show_type_chips: false, micro_step: 1234,
+};
+
+pub const PY1235_RECOMMEND_GRAPH: CodingStep = CodingStep {
+    id: "py-1235-recommend-graph", title: "Recomendador · Grafo de items", objective: "Modelar afinidad entre items con una lista de adyacencia.",
+    prompt_md: "**Recomendador: grafo de items**\n\nConectá items que comparten tags para modelar afinidad.\n\n**Micro-reto:**\n1. Definí `construir_grafo(items)` (dict id→tags) con vecinos que compartan tag\n2. Usá el ejemplo\n3. Imprimí el grafo",
+    starter_code: "# def construir_grafo(items):\n#     grafo = {id_: [] for id_ in items}\n#     ids = list(items.keys())\n#     for i in range(len(ids)):\n#         for j in range(i + 1, len(ids)):\n#             a, b = ids[i], ids[j]\n#             if items[a] & items[b]:\n#                 grafo[a].append(b)\n#                 grafo[b].append(a)\n#     return grafo\n# items = {'p1': {'python', 'web'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\n# print(construir_grafo(items))\n",
+    pytest: "def test_graph(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    items = {'p1': {'python', 'web'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\n    grafo = ns['construir_grafo'](items)\n    assert grafo['p1'] == ['p2', 'p3']\n    assert grafo['p4'] == []\n    assert capsys.readouterr().out.strip() == str({'p1': ['p2', 'p3'], 'p2': ['p1'], 'p3': ['p1'], 'p4': []})\n",
+    hint: "Dos items son vecinos si la intersección de sus tags no es vacía.",
+    solution_example: "def construir_grafo(items):\n    grafo = {id_: [] for id_ in items}\n    ids = list(items.keys())\n    for i in range(len(ids)):\n        for j in range(i + 1, len(ids)):\n            a, b = ids[i], ids[j]\n            if items[a] & items[b]:\n                grafo[a].append(b)\n                grafo[b].append(a)\n    return grafo\n\nitems = {'p1': {'python', 'web'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\nprint(construir_grafo(items))\n",
+    next: Some("py-1236-recommend-heap"), show_type_chips: false, micro_step: 1235,
+};
+
+pub const PY1236_RECOMMEND_HEAP: CodingStep = CodingStep {
+    id: "py-1236-recommend-heap", title: "Recomendador · Priorizar con heap", objective: "Elegir los k candidatos con mayor puntaje con nlargest.",
+    prompt_md: "**Recomendador: priorizar con heap**\n\nElegí los k candidatos con mayor puntaje usando `nlargest`.\n\n**Micro-reto:**\n1. Importá `heapq`\n2. Definí `top_k(puntajes, k)` → lista `(id, puntaje)` descendente\n3. Imprimí `top_k({'p2': 3, 'p3': 2, 'p5': 5, 'p6': 1}, 3)`",
+    starter_code: "# import heapq\n# def top_k(puntajes, k):\n#     return heapq.nlargest(k, puntajes.items(), key=lambda p: p[1])\n# print(top_k({'p2': 3, 'p3': 2, 'p5': 5, 'p6': 1}, 3))\n",
+    pytest: "def test_heap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['top_k']({'p2': 3, 'p3': 2, 'p5': 5, 'p6': 1}, 3) == [('p5', 5), ('p2', 3), ('p3', 2)]\n    assert ns['top_k']({'a': 1}, 5) == [('a', 1)]\n    assert capsys.readouterr().out.strip() == str([('p5', 5), ('p2', 3), ('p3', 2)])\n",
+    hint: "nlargest con key=lambda p: p[1] ordena por el valor del puntaje.",
+    solution_example: "import heapq\n\ndef top_k(puntajes, k):\n    return heapq.nlargest(k, puntajes.items(), key=lambda p: p[1])\n\nprint(top_k({'p2': 3, 'p3': 2, 'p5': 5, 'p6': 1}, 3))\n",
+    next: Some("py-1237-recommend-cache"), show_type_chips: false, micro_step: 1236,
+};
+
+pub const PY1237_RECOMMEND_CACHE: CodingStep = CodingStep {
+    id: "py-1237-recommend-cache", title: "Recomendador · Cachear similitudes", objective: "Cachear la similitud Jaccard con lru_cache.",
+    prompt_md: "**Recomendador: cachear similitudes**\n\n`lru_cache` acelera similitudes repetidas entre items.\n\n**Micro-reto:**\n1. Importá `lru_cache`\n2. Definí `similitud(conjunto_a, conjunto_b)` (Jaccard) cacheada\n3. Imprimí `similitud(frozenset({'a'}), frozenset({'a'}))`",
+    starter_code: "# from functools import lru_cache\n# @lru_cache(maxsize=None)\n# def similitud(conjunto_a, conjunto_b):\n#     inter = len(conjunto_a & conjunto_b)\n#     union = len(conjunto_a | conjunto_b)\n#     return inter / union if union else 0.0\n# print(similitud(frozenset({'a'}), frozenset({'a'})))\n",
+    pytest: "def test_cache(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    sim = ns['similitud']\n    assert sim(frozenset({'a', 'b'}), frozenset({'a', 'c'})) == 1 / 3\n    assert sim(frozenset({'a'}), frozenset({'b'})) == 0.0\n    assert capsys.readouterr().out.strip() == '1.0'\n",
+    hint: "Jaccard = intersección / unión; usa frozensets para que sea hashable.",
+    solution_example: "from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef similitud(conjunto_a, conjunto_b):\n    inter = len(conjunto_a & conjunto_b)\n    union = len(conjunto_a | conjunto_b)\n    return inter / union if union else 0.0\n\nprint(similitud(frozenset({'a'}), frozenset({'a'})))\n",
+    next: Some("py-1238-recommend-score"), show_type_chips: false, micro_step: 1237,
+};
+
+pub const PY1238_RECOMMEND_SCORE: CodingStep = CodingStep {
+    id: "py-1238-recommend-score", title: "Recomendador · Puntuar", objective: "Puntuar candidatos por tags compartidos y ordenar.",
+    prompt_md: "**Recomendador: computar**\n\nPuntúa candidatos por tags compartidos y ordená.\n\n**Micro-reto:**\n1. Definí `recomendar(items, objetivo, k=3)`\n2. Devolvé top-k por afinidad\n3. Imprimí `recomendar(items, 'p1', 2)`",
+    starter_code: "# def recomendar(items, objetivo, k=3):\n#     puntajes = {}\n#     obj_tags = items[objetivo]\n#     for id_, tags in items.items():\n#         if id_ == objetivo:\n#             continue\n#         inter = len(obj_tags & tags)\n#         if inter:\n#             puntajes[id_] = inter\n#     return sorted(puntajes.items(), key=lambda p: (-p[1], p[0]))[:k]\n# items = {'p1': {'python', 'web'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\n# print(recomendar(items, 'p1', 2))\n",
+    pytest: "def test_score(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    items = {'p1': {'python', 'web'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\n    assert ns['recomendar'](items, 'p1', 2) == [('p2', 1), ('p3', 1)]\n    assert ns['recomendar'](items, 'p4', 3) == []\n    assert capsys.readouterr().out.strip() == str([('p2', 1), ('p3', 1)])\n",
+    hint: "Ordená por (-puntaje, id) para un orden descendente y determinista.",
+    solution_example: "def recomendar(items, objetivo, k=3):\n    puntajes = {}\n    obj_tags = items[objetivo]\n    for id_, tags in items.items():\n        if id_ == objetivo:\n            continue\n        inter = len(obj_tags & tags)\n        if inter:\n            puntajes[id_] = inter\n    return sorted(puntajes.items(), key=lambda p: (-p[1], p[0]))[:k]\n\nitems = {'p1': {'python', 'web'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\nprint(recomendar(items, 'p1', 2))\n",
+    next: Some("py-1239-recommend-validate"), show_type_chips: false, micro_step: 1238,
+};
+
+pub const PY1239_RECOMMEND_VALIDATE: CodingStep = CodingStep {
+    id: "py-1239-recommend-validate", title: "Recomendador · Validar", objective: "Validar invariantes: items no vacíos y con tags.",
+    prompt_md: "**Recomendador: validar**\n\nValidá invariantes: items no vacíos y con tags.\n\n**Micro-reto:**\n1. Definí `validar_items(items)` que lance `ValueError` si falta algún tag\n2. Probá con un item sin tags\n3. Imprimí un caso válido",
+    starter_code: "# def validar_items(items):\n#     if not items:\n#         raise ValueError('items vacio')\n#     for id_, tags in items.items():\n#         if not tags:\n#             raise ValueError(f'item {id_} sin tags')\n#     return items\n# print(validar_items({'p1': {'python'}, 'p2': {'web'}}))\n",
+    pytest: "def test_validate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['validar_items']({'p1': {'python'}}) == {'p1': {'python'}}\n    try:\n        ns['validar_items']({'p1': set()})\n        raised = False\n    except ValueError:\n        raised = True\n    assert raised\n    assert capsys.readouterr().out.strip() == str({'p1': {'python'}, 'p2': {'web'}})\n",
+    hint: "Lanzá ValueError cuando un item no tenga tags.",
+    solution_example: "def validar_items(items):\n    if not items:\n        raise ValueError('items vacio')\n    for id_, tags in items.items():\n        if not tags:\n            raise ValueError(f'item {id_} sin tags')\n    return items\n\nprint(validar_items({'p1': {'python'}, 'p2': {'web'}}))\n",
+    next: Some("py-1240-recommend-assemble"), show_type_chips: false, micro_step: 1239,
+};
+
+pub const PY1240_RECOMMEND_ASSEMBLE: CodingStep = CodingStep {
+    id: "py-1240-recommend-assemble", title: "Recomendador · Ensamblar", objective: "Integrar grafo, heap y caché en un motor de recomendación end-to-end.",
+    prompt_md: "**Recomendador: ensamblar**\n\nIntegrá grafo + heap + caché en un motor de recomendación end-to-end.\n\n**Micro-reto:**\n1. Cacheá `afinidad(a, b)` con `lru_cache`\n2. Definí `recomendar(items, objetivo, k=3)` con `heapq.nlargest`\n3. Imprimí `recomendar(items, 'p1', 2)`",
+    starter_code: "# from functools import lru_cache\n# import heapq\n# @lru_cache(maxsize=None)\n# def afinidad(a, b):\n#     return len(a & b)\n# def recomendar(items, objetivo, k=3):\n#     obj_tags = frozenset(items[objetivo])\n#     puntajes = []\n#     for id_, tags in items.items():\n#         if id_ == objetivo:\n#             continue\n#         s = afinidad(obj_tags, frozenset(tags))\n#         if s > 0:\n#             puntajes.append((s, id_))\n#     top = heapq.nlargest(k, puntajes)\n#     return [(id_, s) for s, id_ in top]\n# items = {'p1': {'python', 'web', 'datos'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\n# print(recomendar(items, 'p1', 2))\n",
+    pytest: "def test_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    items = {'p1': {'python', 'web', 'datos'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\n    assert ns['recomendar'](items, 'p1', 2) == [('p2', 2), ('p3', 1)]\n    assert ns['recomendar'](items, 'p4', 3) == []\n    assert capsys.readouterr().out.strip() == str([('p2', 2), ('p3', 1)])\n",
+    hint: "afinidad cuenta tags compartidos; nlargest elige el top-k.",
+    solution_example: "from functools import lru_cache\nimport heapq\n\n@lru_cache(maxsize=None)\ndef afinidad(a, b):\n    return len(a & b)\n\ndef recomendar(items, objetivo, k=3):\n    obj_tags = frozenset(items[objetivo])\n    puntajes = []\n    for id_, tags in items.items():\n        if id_ == objetivo:\n            continue\n        s = afinidad(obj_tags, frozenset(tags))\n        if s > 0:\n            puntajes.append((s, id_))\n    top = heapq.nlargest(k, puntajes)\n    return [(id_, s) for s, id_ in top]\n\nitems = {'p1': {'python', 'web', 'datos'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\nprint(recomendar(items, 'p1', 2))\n",
+    next: None, show_type_chips: false, micro_step: 1240,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -45829,6 +46429,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1178_PROJECT_AGGREGATE,
     &PY1179_PROJECT_VALIDATE,
     &PY1180_PROJECT_ASSEMBLE,
+    &PY1181_HEAP_PUSH_POP,
+    &PY1182_HEAP_TOP_K,
+    &PY1183_HEAP_SCHEDULING,
+    &PY1184_HEAP_MERGE_K,
+    &PY1185_HEAP_TUPLE_PRIORITY,
+    &PY1186_HEAP_CUSTOM_PQ,
+    &PY1187_GRAPH_ADJACENCY,
+    &PY1188_GRAPH_BFS,
+    &PY1189_GRAPH_DISTANCES,
+    &PY1190_GRAPH_LEVELS,
+    &PY1191_GRAPH_SHORTEST_PATH,
+    &PY1192_GRAPH_BFS_PATH,
+    &PY1193_GRAPH_DFS,
+    &PY1194_GRAPH_COMPONENTS,
+    &PY1195_GRAPH_CYCLES,
+    &PY1196_GRAPH_TOPO_SORT,
+    &PY1197_GRAPH_BACKTRACKING,
+    &PY1198_GRAPH_COLORED_VISIT,
+    &PY1199_SEARCH_LRU_CACHE,
+    &PY1200_SEARCH_MEMOIZE,
+    &PY1201_SEARCH_BINARY,
+    &PY1202_SEARCH_RANGE,
+    &PY1203_SEARCH_CACHE_TTL,
+    &PY1204_SEARCH_ORDERED,
+    &PY1205_DP_OPTIMAL_SUBSTRUCTURE,
+    &PY1206_DP_FIBONACCI,
+    &PY1207_DP_COIN_CHANGE,
+    &PY1208_DP_KNAPSACK,
+    &PY1209_DP_LCS,
+    &PY1210_DP_RECONSTRUCT,
+    &PY1211_WINDOW_SLIDING,
+    &PY1212_WINDOW_PREFIX_SUM,
+    &PY1213_WINDOW_KADANE,
+    &PY1214_TWOPOINTERS_SORTED,
+    &PY1215_WINDOW_VARIABLE,
+    &PY1216_WINDOW_CONSTRAINED,
+    &PY1217_CONCURRENCY_MAP_SYNC,
+    &PY1218_CONCURRENCY_FUTURES_MAP,
+    &PY1219_CONCURRENCY_AS_COMPLETED,
+    &PY1220_CONCURRENCY_TIMEOUT,
+    &PY1221_CONCURRENCY_FALLBACK,
+    &PY1222_CONCURRENCY_MAP_REDUCE,
+    &PY1223_TEXT_REGEX,
+    &PY1224_TEXT_GROUPS,
+    &PY1225_TEXT_NORMALIZE,
+    &PY1226_TEXT_TOKENIZE,
+    &PY1227_TEXT_WORD_FREQUENCY,
+    &PY1228_TEXT_CLEAN,
+    &PY1229_IMMUTABLE_FROZENSET,
+    &PY1230_IMMUTABLE_NAMEDTUPLE,
+    &PY1231_IMMUTABLE_DEFENSE,
+    &PY1232_IMMUTABLE_TUPLE_KEY,
+    &PY1233_IMMUTABLE_HASHABLE,
+    &PY1234_IMMUTABLE_DESIGN,
+    &PY1235_RECOMMEND_GRAPH,
+    &PY1236_RECOMMEND_HEAP,
+    &PY1237_RECOMMEND_CACHE,
+    &PY1238_RECOMMEND_SCORE,
+    &PY1239_RECOMMEND_VALIDATE,
+    &PY1240_RECOMMEND_ASSEMBLE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -45996,7 +46656,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1180);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1240);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -48908,11 +49568,11 @@ mod tests {
     }
 
     #[test]
-    fn py1061_to_py1180_engineering_chain() {
+    fn py1061_to_py1240_engineering_chain() {
         let bridge = coding_step_by_micro_step(1060).expect("py-1060");
         assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
 
-        for n in 1061..=1180 {
+        for n in 1061..=1240 {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.micro_step, n);
             assert!(
@@ -48920,7 +49580,7 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1180 {
+            if n < 1240 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -48929,7 +49589,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1180 is the end of the rail");
+                assert_eq!(step.next, None, "step 1240 is the end of the rail");
             }
         }
     }
