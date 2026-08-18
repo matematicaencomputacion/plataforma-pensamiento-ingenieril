@@ -970,6 +970,66 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (1178, &[1, 5]),
     (1179, &[1, 5]),
     (1180, &[1, 5]),
+    (1181, &[1, 5]),
+    (1182, &[1, 5]),
+    (1183, &[1, 5]),
+    (1184, &[1, 5]),
+    (1185, &[1, 5]),
+    (1186, &[1, 5]),
+    (1187, &[1, 5]),
+    (1188, &[1, 5]),
+    (1189, &[1, 5]),
+    (1190, &[1, 5]),
+    (1191, &[1, 5]),
+    (1192, &[1, 5]),
+    (1193, &[1, 5]),
+    (1194, &[1, 5]),
+    (1195, &[1, 5]),
+    (1196, &[1, 5]),
+    (1197, &[1, 5]),
+    (1198, &[1, 5]),
+    (1199, &[1, 3]),
+    (1200, &[1, 3]),
+    (1201, &[1, 3]),
+    (1202, &[1, 3]),
+    (1203, &[1, 3]),
+    (1204, &[1, 3]),
+    (1205, &[1, 3]),
+    (1206, &[1, 3]),
+    (1207, &[1, 3]),
+    (1208, &[1, 3]),
+    (1209, &[1, 3]),
+    (1210, &[1, 3]),
+    (1211, &[1]),
+    (1212, &[1]),
+    (1213, &[1]),
+    (1214, &[1]),
+    (1215, &[1]),
+    (1216, &[1]),
+    (1217, &[3, 5]),
+    (1218, &[3, 5]),
+    (1219, &[3, 5]),
+    (1220, &[3, 5]),
+    (1221, &[3, 5]),
+    (1222, &[3, 5]),
+    (1223, &[5]),
+    (1224, &[5]),
+    (1225, &[5]),
+    (1226, &[5]),
+    (1227, &[5]),
+    (1228, &[5]),
+    (1229, &[1]),
+    (1230, &[1]),
+    (1231, &[1]),
+    (1232, &[1]),
+    (1233, &[1]),
+    (1234, &[1]),
+    (1235, &[1, 5]),
+    (1236, &[1, 5]),
+    (1237, &[1, 5]),
+    (1238, &[1, 5]),
+    (1239, &[1, 5]),
+    (1240, &[1, 5]),
 ];
 
 pub fn partition_by_id(id: u8) -> Option<&'static ConceptPartition> {
@@ -1281,7 +1341,7 @@ mod tests {
         assert!(partitions_for_micro_step(733).is_empty()); // window VI recipe
         assert_eq!(partitions_for_micro_step(1001), &[1, 3]); // assert contract (Wave 1)
         assert_eq!(partitions_for_micro_step(1013), &[2]); // LEGB local (Wave 1)
-        assert!(partitions_for_micro_step(1181).is_empty()); // frontier beyond Wave 3
+        assert!(partitions_for_micro_step(1241).is_empty()); // frontier beyond Wave 4
     }
 
     #[test]
@@ -1761,8 +1821,8 @@ mod tests {
         (900, &[1]),
     ];
 
-    /// Frozen `(micro_step, tags)` pairs with `micro_step > 1180` (Wave 3 ceiling).
-    const WAVE3_FROZEN_BEYOND_1180: &[(i32, &[u8])] = &[];
+    /// Frozen `(micro_step, tags)` pairs with `micro_step > 1240` (Wave 4 ceiling).
+    const WAVE4_FROZEN_BEYOND_1240: &[(i32, &[u8])] = &[];
 
     #[test]
     fn wave_b_applied_floor_101_to_300() {
@@ -2087,16 +2147,16 @@ mod tests {
     }
 
     #[test]
-    fn wave3_freeze_rows_beyond_1180() {
+    fn wave4_freeze_rows_beyond_1240() {
         let current: Vec<(i32, &[u8])> = STEP_PARTITIONS
             .iter()
             .copied()
-            .filter(|(n, _)| *n > 1180)
+            .filter(|(n, _)| *n > 1240)
             .collect();
         assert_eq!(
             current.as_slice(),
-            WAVE3_FROZEN_BEYOND_1180,
-            "do not add or remove rows > 1180"
+            WAVE4_FROZEN_BEYOND_1240,
+            "do not add or remove rows > 1240"
         );
     }
 
