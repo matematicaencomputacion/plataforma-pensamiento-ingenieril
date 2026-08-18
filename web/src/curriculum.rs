@@ -45245,7 +45245,607 @@ pub const PY1240_RECOMMEND_ASSEMBLE: CodingStep = CodingStep {
     pytest: "def test_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    items = {'p1': {'python', 'web', 'datos'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\n    assert ns['recomendar'](items, 'p1', 2) == [('p2', 2), ('p3', 1)]\n    assert ns['recomendar'](items, 'p4', 3) == []\n    assert capsys.readouterr().out.strip() == str([('p2', 2), ('p3', 1)])\n",
     hint: "afinidad cuenta tags compartidos; nlargest elige el top-k.",
     solution_example: "from functools import lru_cache\nimport heapq\n\n@lru_cache(maxsize=None)\ndef afinidad(a, b):\n    return len(a & b)\n\ndef recomendar(items, objetivo, k=3):\n    obj_tags = frozenset(items[objetivo])\n    puntajes = []\n    for id_, tags in items.items():\n        if id_ == objetivo:\n            continue\n        s = afinidad(obj_tags, frozenset(tags))\n        if s > 0:\n            puntajes.append((s, id_))\n    top = heapq.nlargest(k, puntajes)\n    return [(id_, s) for s, id_ in top]\n\nitems = {'p1': {'python', 'web', 'datos'}, 'p2': {'python', 'datos'}, 'p3': {'web'}, 'p4': {'juegos'}}\nprint(recomendar(items, 'p1', 2))\n",
-    next: None, show_type_chips: false, micro_step: 1240,
+    next: Some("py-1241-date-create"), show_type_chips: false, micro_step: 1240,
+};
+
+pub const PY1241_DATE_CREATE: CodingStep = CodingStep {
+    id: "py-1241-date-create", title: "Fechas · Crear datetime", objective: "Crear un objeto datetime con año, mes y día.",
+    prompt_md: "**Fechas: crear datetime**\n\nEl módulo `datetime` modela instantes de tiempo. `datetime(anio, mes, dia)` crea una fecha a medianoche.\n\n**Micro-reto:**\n1. Importá `datetime`\n2. Definí `crear_fecha(anio, mes, dia)` que devuelva un `datetime`\n3. Imprimí `crear_fecha(2024, 1, 15)`",
+    starter_code: "# from datetime import datetime\n# def crear_fecha(anio, mes, dia):\n#     return datetime(anio, mes, dia)\n# print(crear_fecha(2024, 1, 15))\n",
+    pytest: "def test_date_create(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import datetime\n    assert ns['crear_fecha'](2024, 1, 15) == datetime(2024, 1, 15)\n    assert ns['crear_fecha'](1999, 12, 31).year == 1999\n    assert capsys.readouterr().out.strip() == '2024-01-15 00:00:00'\n",
+    hint: "datetime(anio, mes, dia) devuelve la fecha a medianoche.",
+    solution_example: "from datetime import datetime\n\ndef crear_fecha(anio, mes, dia):\n    return datetime(anio, mes, dia)\n\nprint(crear_fecha(2024, 1, 15))\n",
+    next: Some("py-1242-date-timedelta"), show_type_chips: false, micro_step: 1241,
+};
+
+pub const PY1242_DATE_TIMEDELTA: CodingStep = CodingStep {
+    id: "py-1242-date-timedelta", title: "Fechas · Sumar/restar timedelta", objective: "Desplazar fechas sumando o restando timedelta.",
+    prompt_md: "**Fechas: timedelta**\n\n`timedelta` representa una duración. Sumarlo a un `datetime` lo desplaza en el tiempo.\n\n**Micro-reto:**\n1. Importá `datetime` y `timedelta`\n2. Definí `desplazar(fecha, dias)` que devuelva `fecha + timedelta(days=dias)`\n3. Imprimí `desplazar(datetime(2024, 1, 1), 30)`",
+    starter_code: "# from datetime import datetime, timedelta\n# def desplazar(fecha, dias):\n#     return fecha + timedelta(days=dias)\n# print(desplazar(datetime(2024, 1, 1), 30))\n",
+    pytest: "def test_timedelta(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import datetime\n    assert ns['desplazar'](datetime(2024, 1, 1), 30) == datetime(2024, 1, 31)\n    assert ns['desplazar'](datetime(2024, 1, 1), -1) == datetime(2023, 12, 31)\n    assert capsys.readouterr().out.strip() == '2024-01-31 00:00:00'\n",
+    hint: "timedelta(days=dias) puede ser negativo para restar días.",
+    solution_example: "from datetime import datetime, timedelta\n\ndef desplazar(fecha, dias):\n    return fecha + timedelta(days=dias)\n\nprint(desplazar(datetime(2024, 1, 1), 30))\n",
+    next: Some("py-1243-date-format"), show_type_chips: false, micro_step: 1242,
+};
+
+pub const PY1243_DATE_FORMAT: CodingStep = CodingStep {
+    id: "py-1243-date-format", title: "Fechas · Formatear y parsear", objective: "Convertir entre datetime y texto con strftime y strptime.",
+    prompt_md: "**Fechas: formatear y parsear**\n\n`strftime` convierte `datetime` a texto; `strptime` hace el camino inverso. Ambas usan códigos como `%d`, `%m`, `%Y`.\n\n**Micro-reto:**\n1. Importá `datetime`\n2. Definí `formatear(fecha)` con `%d/%m/%Y` y `parsear(texto)` con `strptime`\n3. Imprimí `formatear(parsear('15/01/2024'))`",
+    starter_code: "# from datetime import datetime\n# def formatear(fecha):\n#     return fecha.strftime('%d/%m/%Y')\n# def parsear(texto):\n#     return datetime.strptime(texto, '%d/%m/%Y')\n# print(formatear(parsear('15/01/2024')))\n",
+    pytest: "def test_format(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import datetime\n    assert ns['formatear'](datetime(2024, 1, 15)) == '15/01/2024'\n    assert ns['parsear']('31/12/1999') == datetime(1999, 12, 31)\n    assert capsys.readouterr().out.strip() == '15/01/2024'\n",
+    hint: "strptime necesita el mismo formato exacto que el texto.",
+    solution_example: "from datetime import datetime\n\ndef formatear(fecha):\n    return fecha.strftime('%d/%m/%Y')\n\ndef parsear(texto):\n    return datetime.strptime(texto, '%d/%m/%Y')\n\nprint(formatear(parsear('15/01/2024')))\n",
+    next: Some("py-1244-date-diff"), show_type_chips: false, micro_step: 1243,
+};
+
+pub const PY1244_DATE_DIFF: CodingStep = CodingStep {
+    id: "py-1244-date-diff", title: "Fechas · Diferencia entre fechas", objective: "Calcular días entre dos fechas restando datetimes.",
+    prompt_md: "**Fechas: diferencia**\n\nRestar dos `datetime` produce un `timedelta`; su atributo `.days` da la diferencia en días enteros.\n\n**Micro-reto:**\n1. Importá `datetime`\n2. Definí `dias_entre(fecha_a, fecha_b)` que devuelva `(fecha_b - fecha_a).days`\n3. Imprimí `dias_entre(datetime(2024, 1, 1), datetime(2024, 1, 31))`",
+    starter_code: "# from datetime import datetime\n# def dias_entre(fecha_a, fecha_b):\n#     return (fecha_b - fecha_a).days\n# print(dias_entre(datetime(2024, 1, 1), datetime(2024, 1, 31)))\n",
+    pytest: "def test_diff(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import datetime\n    assert ns['dias_entre'](datetime(2024, 1, 1), datetime(2024, 1, 31)) == 30\n    assert ns['dias_entre'](datetime(2024, 1, 31), datetime(2024, 1, 1)) == -30\n    assert capsys.readouterr().out.strip() == '30'\n",
+    hint: "La resta respeta el orden: (b - a).days.",
+    solution_example: "from datetime import datetime\n\ndef dias_entre(fecha_a, fecha_b):\n    return (fecha_b - fecha_a).days\n\nprint(dias_entre(datetime(2024, 1, 1), datetime(2024, 1, 31)))\n",
+    next: Some("py-1245-date-timezone"), show_type_chips: false, micro_step: 1244,
+};
+
+pub const PY1245_DATE_TIMEZONE: CodingStep = CodingStep {
+    id: "py-1245-date-timezone", title: "Fechas · Zonas horarias y UTC", objective: "Convertir una hora local a UTC con timezone.",
+    prompt_md: "**Fechas: zona horaria**\n\n`timezone(timedelta(hours=offset))` adjunta un offset a una hora local; `astimezone(timezone.utc)` la convierte a UTC.\n\n**Micro-reto:**\n1. Importá `datetime`, `timezone` y `timedelta`\n2. Definí `a_utc(fecha_local, offset_horas)` que convierta a UTC\n3. Imprimí `a_utc(datetime(2024, 1, 15, 12, 0), -3)`",
+    starter_code: "# from datetime import datetime, timezone, timedelta\n# def a_utc(fecha_local, offset_horas):\n#     tz = timezone(timedelta(hours=offset_horas))\n#     local = fecha_local.replace(tzinfo=tz)\n#     return local.astimezone(timezone.utc)\n# print(a_utc(datetime(2024, 1, 15, 12, 0), -3))\n",
+    pytest: "def test_timezone(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import datetime, timezone\n    assert ns['a_utc'](datetime(2024, 1, 15, 12, 0), -3) == datetime(2024, 1, 15, 15, 0, tzinfo=timezone.utc)\n    assert capsys.readouterr().out.strip() == '2024-01-15 15:00:00+00:00'\n",
+    hint: "Un offset de -3 significa que UTC va 3 horas adelante.",
+    solution_example: "from datetime import datetime, timezone, timedelta\n\ndef a_utc(fecha_local, offset_horas):\n    tz = timezone(timedelta(hours=offset_horas))\n    local = fecha_local.replace(tzinfo=tz)\n    return local.astimezone(timezone.utc)\n\nprint(a_utc(datetime(2024, 1, 15, 12, 0), -3))\n",
+    next: Some("py-1246-date-scheduling"), show_type_chips: false, micro_step: 1245,
+};
+
+pub const PY1246_DATE_SCHEDULING: CodingStep = CodingStep {
+    id: "py-1246-date-scheduling", title: "Fechas · Agenda con solapamiento", objective: "Detectar eventos solapados en una agenda ordenada.",
+    prompt_md: "**Fechas: agenda con solapamiento**\n\nCon eventos `(inicio, fin)`, dos se solapan si el inicio del siguiente es menor que el fin del anterior.\n\n**Micro-reto:**\n1. Definí `solapados(eventos)` que devuelva los pares solapados consecutivos\n2. Ordená los eventos antes de comparar\n3. Imprimí `solapados([(9, 11), (10, 12), (13, 14)])`",
+    starter_code: "# def solapados(eventos):\n#     ordenados = sorted(eventos)\n#     resultado = []\n#     for i in range(len(ordenados) - 1):\n#         a_inicio, a_fin = ordenados[i]\n#         b_inicio, b_fin = ordenados[i + 1]\n#         if b_inicio < a_fin:\n#             resultado.append((ordenados[i], ordenados[i + 1]))\n#     return resultado\n# print(solapados([(9, 11), (10, 12), (13, 14)]))\n",
+    pytest: "def test_scheduling(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['solapados']([(9, 11), (10, 12), (13, 14)]) == [((9, 11), (10, 12))]\n    assert ns['solapados']([(9, 10), (10, 11)]) == []\n    assert capsys.readouterr().out.strip() == str([((9, 11), (10, 12))])\n",
+    hint: "Compará b_inicio < a_fin para detectar solapamiento.",
+    solution_example: "def solapados(eventos):\n    ordenados = sorted(eventos)\n    resultado = []\n    for i in range(len(ordenados) - 1):\n        a_inicio, a_fin = ordenados[i]\n        b_inicio, b_fin = ordenados[i + 1]\n        if b_inicio < a_fin:\n            resultado.append((ordenados[i], ordenados[i + 1]))\n    return resultado\n\nprint(solapados([(9, 11), (10, 12), (13, 14)]))\n",
+    next: Some("py-1247-math-basic"), show_type_chips: false, micro_step: 1246,
+};
+
+pub const PY1247_MATH_BASIC: CodingStep = CodingStep {
+    id: "py-1247-math-basic", title: "Matemática · Funciones básicas", objective: "Usar math.hypot para calcular la hipotenusa.",
+    prompt_md: "**Matemática: funciones básicas**\n\nEl módulo `math` trae funciones numéricas listas, como `math.hypot(a, b)` para la hipotenusa.\n\n**Micro-reto:**\n1. Importá `math`\n2. Definí `hipotenusa(a, b)` que devuelva `math.hypot(a, b)`\n3. Imprimí `hipotenusa(3, 4)`",
+    starter_code: "# import math\n# def hipotenusa(a, b):\n#     return math.hypot(a, b)\n# print(hipotenusa(3, 4))\n",
+    pytest: "def test_math_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['hipotenusa'](3, 4) == 5.0\n    assert ns['hipotenusa'](5, 12) == 13.0\n    assert capsys.readouterr().out.strip() == '5.0'\n",
+    hint: "math.hypot(a, b) equivale a sqrt(a*a + b*b).",
+    solution_example: "import math\n\ndef hipotenusa(a, b):\n    return math.hypot(a, b)\n\nprint(hipotenusa(3, 4))\n",
+    next: Some("py-1248-math-fractions"), show_type_chips: false, micro_step: 1247,
+};
+
+pub const PY1248_MATH_FRACTIONS: CodingStep = CodingStep {
+    id: "py-1248-math-fractions", title: "Matemática · Fracciones exactas", objective: "Sumar fracciones sin pérdida de precisión con Fraction.",
+    prompt_md: "**Matemática: fracciones exactas**\n\n`Fraction` del módulo `fractions` representa racionales exactos, sin el redondeo de los `float`.\n\n**Micro-reto:**\n1. Importá `Fraction`\n2. Definí `sumar_fracciones(a, b)` que devuelva `Fraction(a) + Fraction(b)`\n3. Imprimí `sumar_fracciones('1/3', '1/6')`",
+    starter_code: "# from fractions import Fraction\n# def sumar_fracciones(a, b):\n#     return Fraction(a) + Fraction(b)\n# print(sumar_fracciones('1/3', '1/6'))\n",
+    pytest: "def test_fractions(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from fractions import Fraction\n    assert ns['sumar_fracciones']('1/3', '1/6') == Fraction(1, 2)\n    assert ns['sumar_fracciones']('1/4', '1/4') == Fraction(1, 2)\n    assert capsys.readouterr().out.strip() == '1/2'\n",
+    hint: "Fraction('1/3') + Fraction('1/6') se reduce a 1/2 exacto.",
+    solution_example: "from fractions import Fraction\n\ndef sumar_fracciones(a, b):\n    return Fraction(a) + Fraction(b)\n\nprint(sumar_fracciones('1/3', '1/6'))\n",
+    next: Some("py-1249-stat-mean-median"), show_type_chips: false, micro_step: 1248,
+};
+
+pub const PY1249_STAT_MEAN_MEDIAN: CodingStep = CodingStep {
+    id: "py-1249-stat-mean-median", title: "Estadística · Media, mediana y moda", objective: "Resumir un conjunto con statistics.",
+    prompt_md: "**Estadística: media, mediana y moda**\n\nEl módulo `statistics` trae `mean`, `median` y `mode` para resumir una muestra.\n\n**Micro-reto:**\n1. Importá `mean`, `median` y `mode`\n2. Definí `resumen(numeros)` que devuelva un dict con las tres medidas\n3. Imprimí `resumen([1, 2, 2, 3, 4])`",
+    starter_code: "# from statistics import mean, median, mode\n# def resumen(numeros):\n#     return {'media': mean(numeros), 'mediana': median(numeros), 'moda': mode(numeros)}\n# print(resumen([1, 2, 2, 3, 4]))\n",
+    pytest: "def test_mean_median(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resumen']([1, 2, 2, 3, 4]) == {'media': 2.4, 'mediana': 2, 'moda': 2}\n    assert capsys.readouterr().out.strip() == str({'media': 2.4, 'mediana': 2, 'moda': 2})\n",
+    hint: "mean es el promedio, median el valor central y mode el más frecuente.",
+    solution_example: "from statistics import mean, median, mode\n\ndef resumen(numeros):\n    return {'media': mean(numeros), 'mediana': median(numeros), 'moda': mode(numeros)}\n\nprint(resumen([1, 2, 2, 3, 4]))\n",
+    next: Some("py-1250-stat-stdev"), show_type_chips: false, micro_step: 1249,
+};
+
+pub const PY1250_STAT_STDEV: CodingStep = CodingStep {
+    id: "py-1250-stat-stdev", title: "Estadística · Desviación estándar", objective: "Medir dispersión con statistics.stdev.",
+    prompt_md: "**Estadística: desviación estándar**\n\n`stdev` mide cuánto se dispersan los valores respecto a la media. A mayor valor, más variabilidad.\n\n**Micro-reto:**\n1. Importá `stdev`\n2. Definí `dispersion(numeros)` que devuelva `round(stdev(numeros), 2)`\n3. Imprimí `dispersion([1, 2, 3, 4, 5])`",
+    starter_code: "# from statistics import stdev\n# def dispersion(numeros):\n#     return round(stdev(numeros), 2)\n# print(dispersion([1, 2, 3, 4, 5]))\n",
+    pytest: "def test_stdev(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['dispersion']([1, 2, 3, 4, 5]) == 1.58\n    assert ns['dispersion']([5, 5, 5]) == 0.0\n    assert capsys.readouterr().out.strip() == '1.58'\n",
+    hint: "round(stdev(...), 2) recorta a dos decimales.",
+    solution_example: "from statistics import stdev\n\ndef dispersion(numeros):\n    return round(stdev(numeros), 2)\n\nprint(dispersion([1, 2, 3, 4, 5]))\n",
+    next: Some("py-1251-stat-sampling"), show_type_chips: false, micro_step: 1250,
+};
+
+pub const PY1251_STAT_SAMPLING: CodingStep = CodingStep {
+    id: "py-1251-stat-sampling", title: "Estadística · Muestreo determinístico", objective: "Muestrear con random.Random(seed) reproducible.",
+    prompt_md: "**Estadística: muestreo determinístico**\n\n`random.Random(seed)` crea un generador reproducible: la misma semilla produce la misma muestra.\n\n**Micro-reto:**\n1. Importá `random`\n2. Definí `muestra(poblacion, k, semilla=42)` usando `rng.sample`\n3. Imprimí `muestra([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3)`",
+    starter_code: "# import random\n# def muestra(poblacion, k, semilla=42):\n#     rng = random.Random(semilla)\n#     return rng.sample(poblacion, k)\n# print(muestra([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3))\n",
+    pytest: "def test_sampling(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    poblacion = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n    a = ns['muestra'](poblacion, 3, 42)\n    b = ns['muestra'](poblacion, 3, 42)\n    assert a == b\n    assert len(a) == 3 and set(a) <= set(poblacion)\n    assert capsys.readouterr().out.strip() == str(a)\n",
+    hint: "La misma semilla garantiza exactamente la misma muestra.",
+    solution_example: "import random\n\ndef muestra(poblacion, k, semilla=42):\n    rng = random.Random(semilla)\n    return rng.sample(poblacion, k)\n\nprint(muestra([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3))\n",
+    next: Some("py-1252-stat-aggregate"), show_type_chips: false, micro_step: 1251,
+};
+
+pub const PY1252_STAT_AGGREGATE: CodingStep = CodingStep {
+    id: "py-1252-stat-aggregate", title: "Estadística · Agregación propia", objective: "Calcular media, mediana y rango sin librerías.",
+    prompt_md: "**Estadística: agregación propia**\n\nImplementá media, mediana y rango a mano para entender qué hay debajo de `statistics`.\n\n**Micro-reto:**\n1. Definí `estadisticas(numeros)` sin importar `statistics`\n2. Calculá media, mediana (par/impar) y rango\n3. Imprimí `estadisticas([1, 2, 3, 4, 5])`",
+    starter_code: "# def estadisticas(numeros):\n#     n = len(numeros)\n#     media = sum(numeros) / n\n#     ordenados = sorted(numeros)\n#     if n % 2 == 1:\n#         mediana = ordenados[n // 2]\n#     else:\n#         mediana = (ordenados[n // 2 - 1] + ordenados[n // 2]) / 2\n#     rango = max(numeros) - min(numeros)\n#     return {'media': media, 'mediana': mediana, 'rango': rango}\n# print(estadisticas([1, 2, 3, 4, 5]))\n",
+    pytest: "def test_aggregate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['estadisticas']([1, 2, 3, 4, 5]) == {'media': 3.0, 'mediana': 3, 'rango': 4}\n    assert ns['estadisticas']([1, 2, 3, 4]) == {'media': 2.5, 'mediana': 2.5, 'rango': 3}\n    assert capsys.readouterr().out.strip() == str({'media': 3.0, 'mediana': 3, 'rango': 4})\n",
+    hint: "Con n par, la mediana es el promedio de los dos centrales.",
+    solution_example: "def estadisticas(numeros):\n    n = len(numeros)\n    media = sum(numeros) / n\n    ordenados = sorted(numeros)\n    if n % 2 == 1:\n        mediana = ordenados[n // 2]\n    else:\n        mediana = (ordenados[n // 2 - 1] + ordenados[n // 2]) / 2\n    rango = max(numeros) - min(numeros)\n    return {'media': media, 'mediana': mediana, 'rango': rango}\n\nprint(estadisticas([1, 2, 3, 4, 5]))\n",
+    next: Some("py-1253-filesystem-path"), show_type_chips: false, micro_step: 1252,
+};
+
+pub const PY1253_FILESYSTEM_PATH: CodingStep = CodingStep {
+    id: "py-1253-filesystem-path", title: "Archivos · pathlib.Path", objective: "Extraer el nombre de archivo de una ruta.",
+    prompt_md: "**Archivos: pathlib.Path**\n\n`Path(ruta)` modela una ruta del sistema; su atributo `.name` devuelve solo el nombre del archivo.\n\n**Micro-reto:**\n1. Importá `Path`\n2. Definí `nombre_archivo(ruta)` que devuelva `Path(ruta).name`\n3. Imprimí `nombre_archivo('docs/informe.pdf')`",
+    starter_code: "# from pathlib import Path\n# def nombre_archivo(ruta):\n#     return Path(ruta).name\n# print(nombre_archivo('docs/informe.pdf'))\n",
+    pytest: "def test_path(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['nombre_archivo']('docs/informe.pdf') == 'informe.pdf'\n    assert ns['nombre_archivo']('a/b/c.txt') == 'c.txt'\n    assert capsys.readouterr().out.strip() == 'informe.pdf'\n",
+    hint: "Path(ruta).name descarta todo el directorio.",
+    solution_example: "from pathlib import Path\n\ndef nombre_archivo(ruta):\n    return Path(ruta).name\n\nprint(nombre_archivo('docs/informe.pdf'))\n",
+    next: Some("py-1254-filesystem-navigate"), show_type_chips: false, micro_step: 1253,
+};
+
+pub const PY1254_FILESYSTEM_NAVIGATE: CodingStep = CodingStep {
+    id: "py-1254-filesystem-navigate", title: "Archivos · Navegar directorios", objective: "Obtener el directorio padre de una ruta.",
+    prompt_md: "**Archivos: navegar directorios**\n\n`Path(ruta).parent` devuelve el directorio contenedor de una ruta.\n\n**Micro-reto:**\n1. Importá `Path`\n2. Definí `padre(ruta)` que devuelva `str(Path(ruta).parent)`\n3. Imprimí `padre('docs/2024/informe.pdf')`",
+    starter_code: "# from pathlib import Path\n# def padre(ruta):\n#     return str(Path(ruta).parent)\n# print(padre('docs/2024/informe.pdf'))\n",
+    pytest: "def test_navigate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['padre']('docs/2024/informe.pdf') == 'docs/2024'\n    assert ns['padre']('informe.pdf') == '.'\n    assert capsys.readouterr().out.strip() == 'docs/2024'\n",
+    hint: "El padre de un archivo suelto es el directorio actual '.'.",
+    solution_example: "from pathlib import Path\n\ndef padre(ruta):\n    return str(Path(ruta).parent)\n\nprint(padre('docs/2024/informe.pdf'))\n",
+    next: Some("py-1255-filesystem-glob"), show_type_chips: false, micro_step: 1254,
+};
+
+pub const PY1255_FILESYSTEM_GLOB: CodingStep = CodingStep {
+    id: "py-1255-filesystem-glob", title: "Archivos · Filtrar con glob", objective: "Filtrar archivos por patrón con fnmatch.",
+    prompt_md: "**Archivos: filtrar con glob**\n\n`fnmatch(nombre, patron)` aplica patrones tipo glob (`*.pdf`, `?.txt`) a nombres de archivo.\n\n**Micro-reto:**\n1. Importá `fnmatch`\n2. Definí `filtrar(archivos, patron)` que filtre con `fnmatch`\n3. Imprimí `filtrar(['a.pdf', 'b.txt', 'c.pdf', 'd.py'], '*.pdf')`",
+    starter_code: "# from fnmatch import fnmatch\n# def filtrar(archivos, patron):\n#     return [a for a in archivos if fnmatch(a, patron)]\n# archivos = ['a.pdf', 'b.txt', 'c.pdf', 'd.py']\n# print(filtrar(archivos, '*.pdf'))\n",
+    pytest: "def test_glob(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    archivos = ['a.pdf', 'b.txt', 'c.pdf', 'd.py']\n    assert ns['filtrar'](archivos, '*.pdf') == ['a.pdf', 'c.pdf']\n    assert ns['filtrar'](archivos, '?.txt') == ['b.txt']\n    assert capsys.readouterr().out.strip() == str(['a.pdf', 'c.pdf'])\n",
+    hint: "fnmatch(a, patron) devuelve True si el nombre coincide.",
+    solution_example: "from fnmatch import fnmatch\n\ndef filtrar(archivos, patron):\n    return [a for a in archivos if fnmatch(a, patron)]\n\narchivos = ['a.pdf', 'b.txt', 'c.pdf', 'd.py']\nprint(filtrar(archivos, '*.pdf'))\n",
+    next: Some("py-1256-filesystem-walk"), show_type_chips: false, micro_step: 1255,
+};
+
+pub const PY1256_FILESYSTEM_WALK: CodingStep = CodingStep {
+    id: "py-1256-filesystem-walk", title: "Archivos · Recorrido recursivo", objective: "Listar todas las rutas de un árbol anidado.",
+    prompt_md: "**Archivos: recorrido recursivo**\n\nIgual que `os.walk` recorre directorios, la recursión baja por un árbol de dicts y acumula las rutas hoja.\n\n**Micro-reto:**\n1. Definí `listar_arbol(arbol, prefijo='')` recursiva\n2. Acumulá rutas con `prefijo/nombre`\n3. Imprimí el árbol de ejemplo",
+    starter_code: "# def listar_arbol(arbol, prefijo=''):\n#     rutas = []\n#     for nombre, contenido in arbol.items():\n#         ruta = nombre if not prefijo else f'{prefijo}/{nombre}'\n#         if isinstance(contenido, dict):\n#             rutas.extend(listar_arbol(contenido, ruta))\n#         else:\n#             rutas.append(ruta)\n#     return rutas\n# arbol = {'app': {'main.py': None, 'core': {'util.py': None}}, 'README.md': None}\n# print(listar_arbol(arbol))\n",
+    pytest: "def test_walk(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    arbol = {'app': {'main.py': None, 'core': {'util.py': None}}, 'README.md': None}\n    assert ns['listar_arbol'](arbol) == ['app/main.py', 'app/core/util.py', 'README.md']\n    assert capsys.readouterr().out.strip() == str(['app/main.py', 'app/core/util.py', 'README.md'])\n",
+    hint: "Un dict anidado es un subdirectorio: volvé a llamar la función.",
+    solution_example: "def listar_arbol(arbol, prefijo=''):\n    rutas = []\n    for nombre, contenido in arbol.items():\n        ruta = nombre if not prefijo else f'{prefijo}/{nombre}'\n        if isinstance(contenido, dict):\n            rutas.extend(listar_arbol(contenido, ruta))\n        else:\n            rutas.append(ruta)\n    return rutas\n\narbol = {'app': {'main.py': None, 'core': {'util.py': None}}, 'README.md': None}\nprint(listar_arbol(arbol))\n",
+    next: Some("py-1257-filesystem-classify"), show_type_chips: false, micro_step: 1256,
+};
+
+pub const PY1257_FILESYSTEM_CLASSIFY: CodingStep = CodingStep {
+    id: "py-1257-filesystem-classify", title: "Archivos · Clasificar por extensión", objective: "Agrupar archivos por extensión.",
+    prompt_md: "**Archivos: clasificar por extensión**\n\nUsá `Path(a).suffix` para extraer la extensión y agrupá los archivos en un dict.\n\n**Micro-reto:**\n1. Importá `Path`\n2. Definí `clasificar(archivos)` que agrupe por extensión (sin punto, o `sin_ext`)\n3. Imprimí `clasificar(['a.pdf', 'b.txt', 'c.pdf', 'd'])`",
+    starter_code: "# from pathlib import Path\n# def clasificar(archivos):\n#     resultado = {}\n#     for a in archivos:\n#         ext = Path(a).suffix.lstrip('.') or 'sin_ext'\n#         resultado.setdefault(ext, []).append(a)\n#     return resultado\n# archivos = ['a.pdf', 'b.txt', 'c.pdf', 'd']\n# print(clasificar(archivos))\n",
+    pytest: "def test_classify(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    esperado = {'pdf': ['a.pdf', 'c.pdf'], 'txt': ['b.txt'], 'sin_ext': ['d']}\n    assert ns['clasificar'](['a.pdf', 'b.txt', 'c.pdf', 'd']) == esperado\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
+    hint: "lstrip('.') quita el punto; si queda vacío usá 'sin_ext'.",
+    solution_example: "from pathlib import Path\n\ndef clasificar(archivos):\n    resultado = {}\n    for a in archivos:\n        ext = Path(a).suffix.lstrip('.') or 'sin_ext'\n        resultado.setdefault(ext, []).append(a)\n    return resultado\n\narchivos = ['a.pdf', 'b.txt', 'c.pdf', 'd']\nprint(clasificar(archivos))\n",
+    next: Some("py-1258-filesystem-tree-summary"), show_type_chips: false, micro_step: 1257,
+};
+
+pub const PY1258_FILESYSTEM_TREE_SUMMARY: CodingStep = CodingStep {
+    id: "py-1258-filesystem-tree-summary", title: "Archivos · Resumen de árbol", objective: "Contar archivos por extensión en un árbol.",
+    prompt_md: "**Archivos: resumen de árbol**\n\nIntegrá recursión y clasificación para contar cuántos archivos hay por extensión en un árbol de directorios.\n\n**Micro-reto:**\n1. Recorré el árbol con recursión para reunir todas las rutas\n2. Contá por extensión\n3. Imprimí el resumen del árbol de ejemplo",
+    starter_code: "# from pathlib import Path\n# def resumir(arbol):\n#     rutas = []\n#     def recorrer(nodo, prefijo=''):\n#         for nombre, contenido in nodo.items():\n#             ruta = nombre if not prefijo else f'{prefijo}/{nombre}'\n#             if isinstance(contenido, dict):\n#                 recorrer(contenido, ruta)\n#             else:\n#                 rutas.append(ruta)\n#     recorrer(arbol)\n#     por_ext = {}\n#     for r in rutas:\n#         ext = Path(r).suffix.lstrip('.') or 'sin_ext'\n#         por_ext[ext] = por_ext.get(ext, 0) + 1\n#     return {'total': len(rutas), 'por_extension': por_ext}\n# arbol = {'src': {'main.py': None, 'util.py': None}, 'docs': {'a.md': None}, 'README.md': None}\n# print(resumir(arbol))\n",
+    pytest: "def test_tree_summary(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    arbol = {'src': {'main.py': None, 'util.py': None}, 'docs': {'a.md': None}, 'README.md': None}\n    esperado = {'total': 4, 'por_extension': {'py': 2, 'md': 2}}\n    assert ns['resumir'](arbol) == esperado\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
+    hint: "Reutilizá la lógica de recorrido y de clasificación.",
+    solution_example: "from pathlib import Path\n\ndef resumir(arbol):\n    rutas = []\n    def recorrer(nodo, prefijo=''):\n        for nombre, contenido in nodo.items():\n            ruta = nombre if not prefijo else f'{prefijo}/{nombre}'\n            if isinstance(contenido, dict):\n                recorrer(contenido, ruta)\n            else:\n                rutas.append(ruta)\n    recorrer(arbol)\n    por_ext = {}\n    for r in rutas:\n        ext = Path(r).suffix.lstrip('.') or 'sin_ext'\n        por_ext[ext] = por_ext.get(ext, 0) + 1\n    return {'total': len(rutas), 'por_extension': por_ext}\n\narbol = {'src': {'main.py': None, 'util.py': None}, 'docs': {'a.md': None}, 'README.md': None}\nprint(resumir(arbol))\n",
+    next: Some("py-1259-http-parse-json"), show_type_chips: false, micro_step: 1258,
+};
+
+pub const PY1259_HTTP_PARSE_JSON: CodingStep = CodingStep {
+    id: "py-1259-http-parse-json", title: "HTTP · Parsear JSON", objective: "Convertir texto JSON en estructuras Python.",
+    prompt_md: "**HTTP: parsear JSON**\n\nUna API devuelve texto JSON; `json.loads` lo convierte en dicts y listas de Python.\n\n**Micro-reto:**\n1. Importá `json`\n2. Definí `parsear_respuesta(texto)` que devuelva `json.loads(texto)`\n3. Imprimí `parsear_respuesta('{\"ok\": true, \"datos\": [1, 2, 3]}')`",
+    starter_code: "# import json\n# def parsear_respuesta(texto):\n#     return json.loads(texto)\n# texto = '{\"ok\": true, \"datos\": [1, 2, 3]}'\n# print(parsear_respuesta(texto))\n",
+    pytest: "def test_parse_json(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['parsear_respuesta']('{\"ok\": true, \"datos\": [1, 2, 3]}') == {'ok': True, 'datos': [1, 2, 3]}\n    assert capsys.readouterr().out.strip() == str({'ok': True, 'datos': [1, 2, 3]})\n",
+    hint: "json.loads convierte el texto en el objeto Python equivalente.",
+    solution_example: "import json\n\ndef parsear_respuesta(texto):\n    return json.loads(texto)\n\ntexto = '{\"ok\": true, \"datos\": [1, 2, 3]}'\nprint(parsear_respuesta(texto))\n",
+    next: Some("py-1260-http-extract"), show_type_chips: false, micro_step: 1259,
+};
+
+pub const PY1260_HTTP_EXTRACT: CodingStep = CodingStep {
+    id: "py-1260-http-extract", title: "HTTP · Extraer campos anidados", objective: "Navegar claves anidadas en un JSON.",
+    prompt_md: "**HTTP: extraer campos anidados**\n\nPara llegar a un dato profundo, navegá el dict paso a paso por cada clave de la ruta.\n\n**Micro-reto:**\n1. Importá `json`\n2. Definí `extraer(texto, ruta)` que baje por las claves de `ruta`\n3. Imprimí `extraer(texto, ('usuario', 'perfil', 'nombre'))`",
+    starter_code: "# import json\n# def extraer(texto, ruta):\n#     datos = json.loads(texto)\n#     for clave in ruta:\n#         datos = datos[clave]\n#     return datos\n# texto = '{\"usuario\": {\"perfil\": {\"nombre\": \"Ana\"}}}'\n# print(extraer(texto, ('usuario', 'perfil', 'nombre')))\n",
+    pytest: "def test_extract(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    texto = '{\"usuario\": {\"perfil\": {\"nombre\": \"Ana\"}}}'\n    assert ns['extraer'](texto, ('usuario', 'perfil', 'nombre')) == 'Ana'\n    assert capsys.readouterr().out.strip() == 'Ana'\n",
+    hint: "datos = datos[clave] baja un nivel por cada clave.",
+    solution_example: "import json\n\ndef extraer(texto, ruta):\n    datos = json.loads(texto)\n    for clave in ruta:\n        datos = datos[clave]\n    return datos\n\ntexto = '{\"usuario\": {\"perfil\": {\"nombre\": \"Ana\"}}}'\nprint(extraer(texto, ('usuario', 'perfil', 'nombre')))\n",
+    next: Some("py-1261-http-status"), show_type_chips: false, micro_step: 1260,
+};
+
+pub const PY1261_HTTP_STATUS: CodingStep = CodingStep {
+    id: "py-1261-http-status", title: "HTTP · Validar status", objective: "Manejar respuestas por código de estado.",
+    prompt_md: "**HTTP: validar status**\n\nUna respuesta HTTP trae un código de estado; `200` es éxito y habilita el acceso a los datos.\n\n**Micro-reto:**\n1. Importá `json`\n2. Definí `manejar_respuesta(texto)` que devuelva `datos` si `status == 200`, si no `None`\n3. Imprimí `manejar_respuesta('{\"status\": 200, \"datos\": [1, 2, 3]}')`",
+    starter_code: "# import json\n# def manejar_respuesta(texto):\n#     datos = json.loads(texto)\n#     if datos.get('status') == 200:\n#         return datos.get('datos')\n#     return None\n# print(manejar_respuesta('{\"status\": 200, \"datos\": [1, 2, 3]}'))\n",
+    pytest: "def test_status(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['manejar_respuesta']('{\"status\": 200, \"datos\": [1, 2, 3]}') == [1, 2, 3]\n    assert ns['manejar_respuesta']('{\"status\": 404}') is None\n    assert capsys.readouterr().out.strip() == str([1, 2, 3])\n",
+    hint: "Usá .get() para tolerar claves ausentes.",
+    solution_example: "import json\n\ndef manejar_respuesta(texto):\n    datos = json.loads(texto)\n    if datos.get('status') == 200:\n        return datos.get('datos')\n    return None\n\nprint(manejar_respuesta('{\"status\": 200, \"datos\": [1, 2, 3]}'))\n",
+    next: Some("py-1262-http-querystring"), show_type_chips: false, micro_step: 1261,
+};
+
+pub const PY1262_HTTP_QUERYSTRING: CodingStep = CodingStep {
+    id: "py-1262-http-querystring", title: "HTTP · Construir querystring", objective: "Serializar parámetros con urlencode.",
+    prompt_md: "**HTTP: construir querystring**\n\n`urlencode` de `urllib.parse` convierte un dict de parámetros en una cadena de consulta.\n\n**Micro-reto:**\n1. Importá `urlencode`\n2. Definí `construir_query(parametros)` que devuelva `urlencode(parametros)`\n3. Imprimí `construir_query({'q': 'python', 'pagina': 2})`",
+    starter_code: "# from urllib.parse import urlencode\n# def construir_query(parametros):\n#     return urlencode(parametros)\n# print(construir_query({'q': 'python', 'pagina': 2}))\n",
+    pytest: "def test_querystring(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['construir_query']({'q': 'python', 'pagina': 2}) == 'q=python&pagina=2'\n    assert capsys.readouterr().out.strip() == 'q=python&pagina=2'\n",
+    hint: "urlencode une clave=valor con '&' en orden de inserción.",
+    solution_example: "from urllib.parse import urlencode\n\ndef construir_query(parametros):\n    return urlencode(parametros)\n\nprint(construir_query({'q': 'python', 'pagina': 2}))\n",
+    next: Some("py-1263-http-pagination"), show_type_chips: false, micro_step: 1262,
+};
+
+pub const PY1263_HTTP_PAGINATION: CodingStep = CodingStep {
+    id: "py-1263-http-pagination", title: "HTTP · Simular paginación", objective: "Recortar una lista por página y tamaño.",
+    prompt_md: "**HTTP: simular paginación**\n\nLa paginación recorta una lista por página: `inicio = (pagina - 1) * tamano` y se toman `tamano` elementos.\n\n**Micro-reto:**\n1. Importá `json`\n2. Definí `pagina(texto, numero, tamano)` que devuelva el slice\n3. Imprimí `pagina('[10, 20, 30, 40, 50]', 2, 2)`",
+    starter_code: "# import json\n# def pagina(texto, numero, tamano):\n#     datos = json.loads(texto)\n#     inicio = (numero - 1) * tamano\n#     return datos[inicio:inicio + tamano]\n# texto = '[10, 20, 30, 40, 50]'\n# print(pagina(texto, 2, 2))\n",
+    pytest: "def test_pagination(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['pagina']('[10, 20, 30, 40, 50]', 2, 2) == [30, 40]\n    assert ns['pagina']('[10, 20, 30, 40, 50]', 3, 2) == [50]\n    assert capsys.readouterr().out.strip() == str([30, 40])\n",
+    hint: "El slice datos[inicio:inicio + tamano] entrega la página.",
+    solution_example: "import json\n\ndef pagina(texto, numero, tamano):\n    datos = json.loads(texto)\n    inicio = (numero - 1) * tamano\n    return datos[inicio:inicio + tamano]\n\ntexto = '[10, 20, 30, 40, 50]'\nprint(pagina(texto, 2, 2))\n",
+    next: Some("py-1264-http-client"), show_type_chips: false, micro_step: 1263,
+};
+
+pub const PY1264_HTTP_CLIENT: CodingStep = CodingStep {
+    id: "py-1264-http-client", title: "HTTP · Cliente puro", objective: "Procesar una respuesta en datos tipados.",
+    prompt_md: "**HTTP: cliente puro**\n\nUn cliente puro recibe el texto ya descargado y devuelve datos tipados, sin tocar la red.\n\n**Micro-reto:**\n1. Importá `json`\n2. Definí `cliente(texto)` que valide `status` y extraiga los nombres de `usuarios`\n3. Imprimí el resultado con el JSON de ejemplo",
+    starter_code: "# import json\n# def cliente(respuesta_texto):\n#     datos = json.loads(respuesta_texto)\n#     if datos.get('status') != 200:\n#         return {'ok': False, 'datos': None}\n#     usuarios = datos.get('usuarios', [])\n#     nombres = [u.get('nombre', '') for u in usuarios]\n#     return {'ok': True, 'datos': nombres}\n# texto = '{\"status\": 200, \"usuarios\": [{\"nombre\": \"Ana\"}, {\"nombre\": \"Luis\"}]}'\n# print(cliente(texto))\n",
+    pytest: "def test_client(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    texto = '{\"status\": 200, \"usuarios\": [{\"nombre\": \"Ana\"}, {\"nombre\": \"Luis\"}]}'\n    assert ns['cliente'](texto) == {'ok': True, 'datos': ['Ana', 'Luis']}\n    assert ns['cliente']('{\"status\": 404}') == {'ok': False, 'datos': None}\n    assert capsys.readouterr().out.strip() == str({'ok': True, 'datos': ['Ana', 'Luis']})\n",
+    hint: "Devolvé siempre una estructura con el mismo esquema tipado.",
+    solution_example: "import json\n\ndef cliente(respuesta_texto):\n    datos = json.loads(respuesta_texto)\n    if datos.get('status') != 200:\n        return {'ok': False, 'datos': None}\n    usuarios = datos.get('usuarios', [])\n    nombres = [u.get('nombre', '') for u in usuarios]\n    return {'ok': True, 'datos': nombres}\n\ntexto = '{\"status\": 200, \"usuarios\": [{\"nombre\": \"Ana\"}, {\"nombre\": \"Luis\"}]}'\nprint(cliente(texto))\n",
+    next: Some("py-1265-hash-sha256"), show_type_chips: false, micro_step: 1264,
+};
+
+pub const PY1265_HASH_SHA256: CodingStep = CodingStep {
+    id: "py-1265-hash-sha256", title: "Hashing · SHA-256", objective: "Calcular el hash SHA-256 de un texto.",
+    prompt_md: "**Hashing: SHA-256**\n\n`hashlib.sha256` produce un digesto determinista de 64 caracteres hex a partir de bytes.\n\n**Micro-reto:**\n1. Importá `hashlib`\n2. Definí `hash_texto(texto)` que devuelva el hexdigest de `texto.encode('utf-8')`\n3. Imprimí `hash_texto('hola')`",
+    starter_code: "# import hashlib\n# def hash_texto(texto):\n#     return hashlib.sha256(texto.encode('utf-8')).hexdigest()\n# print(hash_texto('hola'))\n",
+    pytest: "def test_sha256(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hashlib\n    esperado = hashlib.sha256(b'hola').hexdigest()\n    assert ns['hash_texto']('hola') == esperado\n    assert len(ns['hash_texto']('hola')) == 64\n    assert capsys.readouterr().out.strip() == esperado\n",
+    hint: "El mismo texto siempre produce el mismo digesto.",
+    solution_example: "import hashlib\n\ndef hash_texto(texto):\n    return hashlib.sha256(texto.encode('utf-8')).hexdigest()\n\nprint(hash_texto('hola'))\n",
+    next: Some("py-1266-hash-collection"), show_type_chips: false, micro_step: 1265,
+};
+
+pub const PY1266_HASH_COLLECTION: CodingStep = CodingStep {
+    id: "py-1266-hash-collection", title: "Hashing · Hash de colección", objective: "Generar un hash determinista de una lista.",
+    prompt_md: "**Hashing: hash de colección**\n\nPara hashear una colección, serializala a bytes de forma determinista (por ejemplo uniendo valores con comas).\n\n**Micro-reto:**\n1. Importá `hashlib`\n2. Definí `hash_coleccion(valores)` que una `str(v)` con comas y hashee\n3. Imprimí `hash_coleccion([1, 2, 3])`",
+    starter_code: "# import hashlib\n# def hash_coleccion(valores):\n#     payload = ','.join(str(v) for v in valores).encode('utf-8')\n#     return hashlib.sha256(payload).hexdigest()\n# print(hash_coleccion([1, 2, 3]))\n",
+    pytest: "def test_collection(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hashlib\n    assert ns['hash_coleccion']([1, 2, 3]) == hashlib.sha256(b'1,2,3').hexdigest()\n    assert ns['hash_coleccion']([1, 2, 3]) != ns['hash_coleccion']([3, 2, 1])\n    assert capsys.readouterr().out.strip() == hashlib.sha256(b'1,2,3').hexdigest()\n",
+    hint: "El orden importa: [1,2,3] y [3,2,1] dan distinto hash.",
+    solution_example: "import hashlib\n\ndef hash_coleccion(valores):\n    payload = ','.join(str(v) for v in valores).encode('utf-8')\n    return hashlib.sha256(payload).hexdigest()\n\nprint(hash_coleccion([1, 2, 3]))\n",
+    next: Some("py-1267-hash-integrity"), show_type_chips: false, micro_step: 1266,
+};
+
+pub const PY1267_HASH_INTEGRITY: CodingStep = CodingStep {
+    id: "py-1267-hash-integrity", title: "Hashing · Verificación de integridad", objective: "Comparar un digesto esperado con el calculado.",
+    prompt_md: "**Hashing: verificación de integridad**\n\nPara comprobar que un texto no se alteró, compará su digesto calculado con el esperado.\n\n**Micro-reto:**\n1. Importá `hashlib`\n2. Definí `verificar(texto, digesto_esperado)` que compare digests\n3. Imprimí `verificar('mensaje', hashlib.sha256(b'mensaje').hexdigest())`",
+    starter_code: "# import hashlib\n# def verificar(texto, digesto_esperado):\n#     digesto = hashlib.sha256(texto.encode('utf-8')).hexdigest()\n#     return digesto == digesto_esperado\n# print(verificar('mensaje', hashlib.sha256(b'mensaje').hexdigest()))\n",
+    pytest: "def test_integrity(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hashlib\n    assert ns['verificar']('mensaje', hashlib.sha256(b'mensaje').hexdigest()) is True\n    assert ns['verificar']('mensaje', '0' * 64) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Compará el hexdigest calculado contra el esperado.",
+    solution_example: "import hashlib\n\ndef verificar(texto, digesto_esperado):\n    digesto = hashlib.sha256(texto.encode('utf-8')).hexdigest()\n    return digesto == digesto_esperado\n\nprint(verificar('mensaje', hashlib.sha256(b'mensaje').hexdigest()))\n",
+    next: Some("py-1268-hash-hmac"), show_type_chips: false, micro_step: 1267,
+};
+
+pub const PY1268_HASH_HMAC: CodingStep = CodingStep {
+    id: "py-1268-hash-hmac", title: "Hashing · Firma HMAC", objective: "Firmar un mensaje con clave usando hmac.",
+    prompt_md: "**Hashing: firma HMAC**\n\n`hmac.new` firma un mensaje con una clave secreta, garantizando autenticidad e integridad.\n\n**Micro-reto:**\n1. Importá `hmac` y `hashlib`\n2. Definí `firmar(mensaje, clave)` con `hmac.new` y SHA-256\n3. Imprimí `firmar('orden-42', 'secreta')`",
+    starter_code: "# import hmac\n# import hashlib\n# def firmar(mensaje, clave):\n#     return hmac.new(clave.encode('utf-8'), mensaje.encode('utf-8'), hashlib.sha256).hexdigest()\n# print(firmar('orden-42', 'secreta'))\n",
+    pytest: "def test_hmac(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hmac\n    import hashlib\n    esperado = hmac.new(b'secreta', b'orden-42', hashlib.sha256).hexdigest()\n    assert ns['firmar']('orden-42', 'secreta') == esperado\n    assert ns['firmar']('orden-42', 'otra') != esperado\n    assert capsys.readouterr().out.strip() == esperado\n",
+    hint: "hmac.new(clave, mensaje, hash).hexdigest() produce la firma.",
+    solution_example: "import hmac\nimport hashlib\n\ndef firmar(mensaje, clave):\n    return hmac.new(clave.encode('utf-8'), mensaje.encode('utf-8'), hashlib.sha256).hexdigest()\n\nprint(firmar('orden-42', 'secreta'))\n",
+    next: Some("py-1269-hash-token"), show_type_chips: false, micro_step: 1268,
+};
+
+pub const PY1269_HASH_TOKEN: CodingStep = CodingStep {
+    id: "py-1269-hash-token", title: "Seguridad · Token aleatorio", objective: "Generar tokens hex con secrets.token_hex.",
+    prompt_md: "**Seguridad: token aleatorio**\n\n`secrets.token_hex(n_bytes)` genera tokens criptográficos; cada byte son dos caracteres hex.\n\n**Micro-reto:**\n1. Importá `secrets`\n2. Definí `generar_token(n_bytes=16)` que devuelva `secrets.token_hex(n_bytes)`\n3. Imprimí `len(generar_token())`",
+    starter_code: "# import secrets\n# def generar_token(n_bytes=16):\n#     return secrets.token_hex(n_bytes)\n# print(len(generar_token()))\n",
+    pytest: "def test_token(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    token = ns['generar_token']()\n    assert isinstance(token, str)\n    assert len(token) == 32\n    assert all(c in '0123456789abcdef' for c in token)\n    assert len(ns['generar_token'](8)) == 16\n    assert capsys.readouterr().out.strip() == '32'\n",
+    hint: "token_hex(16) devuelve 32 caracteres hex.",
+    solution_example: "import secrets\n\ndef generar_token(n_bytes=16):\n    return secrets.token_hex(n_bytes)\n\nprint(len(generar_token()))\n",
+    next: Some("py-1270-hash-checksum"), show_type_chips: false, micro_step: 1269,
+};
+
+pub const PY1270_HASH_CHECKSUM: CodingStep = CodingStep {
+    id: "py-1270-hash-checksum", title: "Hashing · Checksum determinista", objective: "Resumir un objeto en un checksum corto.",
+    prompt_md: "**Hashing: checksum determinista**\n\nUn checksum resume un objeto: serializalo de forma estable (claves ordenadas) y recortá el hash.\n\n**Micro-reto:**\n1. Importá `hashlib` y `json`\n2. Definí `checksum(objeto)` con `sort_keys=True` y recorte a 8 chars\n3. Imprimí `checksum({'b': 2, 'a': 1})`",
+    starter_code: "# import hashlib\n# import json\n# def checksum(objeto):\n#     payload = json.dumps(objeto, sort_keys=True).encode('utf-8')\n#     return hashlib.sha256(payload).hexdigest()[:8]\n# print(checksum({'b': 2, 'a': 1}))\n",
+    pytest: "def test_checksum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['checksum']({'b': 2, 'a': 1}) == ns['checksum']({'a': 1, 'b': 2})\n    assert ns['checksum']({'a': 1}) != ns['checksum']({'a': 2})\n    assert len(ns['checksum']({'a': 1})) == 8\n    assert capsys.readouterr().out.strip() == ns['checksum']({'b': 2, 'a': 1})\n",
+    hint: "sort_keys=True hace el resultado independiente del orden.",
+    solution_example: "import hashlib\nimport json\n\ndef checksum(objeto):\n    payload = json.dumps(objeto, sort_keys=True).encode('utf-8')\n    return hashlib.sha256(payload).hexdigest()[:8]\n\nprint(checksum({'b': 2, 'a': 1}))\n",
+    next: Some("py-1271-logging-basic"), show_type_chips: false, micro_step: 1270,
+};
+
+pub const PY1271_LOGGING_BASIC: CodingStep = CodingStep {
+    id: "py-1271-logging-basic", title: "Logging · Configuración básica", objective: "Emitir un registro con nivel y mensaje.",
+    prompt_md: "**Logging: configuración básica**\n\nUn logger con un `StreamHandler` sobre un buffer captura registros formateados de forma determinista.\n\n**Micro-reto:**\n1. Importá `logging` e `io`\n2. Definí `capturar_log(nivel, mensaje)` que escriba en un `StringIO` con formato `LEVEL:msg`\n3. Imprimí `capturar_log('info', 'hola')`",
+    starter_code: "# import logging\n# import io\n# def capturar_log(nivel, mensaje):\n#     buffer = io.StringIO()\n#     handler = logging.StreamHandler(buffer)\n#     handler.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\n#     logger = logging.getLogger('paso')\n#     logger.handlers = []\n#     logger.addHandler(handler)\n#     logger.setLevel(logging.INFO)\n#     getattr(logger, nivel)(mensaje)\n#     return buffer.getvalue().strip()\n# print(capturar_log('info', 'hola'))\n",
+    pytest: "def test_logging_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['capturar_log']('info', 'hola') == 'INFO:hola'\n    assert ns['capturar_log']('warning', 'ojo') == 'WARNING:ojo'\n    assert capsys.readouterr().out.strip() == 'INFO:hola'\n",
+    hint: "getattr(logger, nivel) llama al método info/warning/error.",
+    solution_example: "import logging\nimport io\n\ndef capturar_log(nivel, mensaje):\n    buffer = io.StringIO()\n    handler = logging.StreamHandler(buffer)\n    handler.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\n    logger = logging.getLogger('paso')\n    logger.handlers = []\n    logger.addHandler(handler)\n    logger.setLevel(logging.INFO)\n    getattr(logger, nivel)(mensaje)\n    return buffer.getvalue().strip()\n\nprint(capturar_log('info', 'hola'))\n",
+    next: Some("py-1272-logging-levels"), show_type_chips: false, micro_step: 1271,
+};
+
+pub const PY1272_LOGGING_LEVELS: CodingStep = CodingStep {
+    id: "py-1272-logging-levels", title: "Logging · Niveles", objective: "Filtrar registros según nivel mínimo.",
+    prompt_md: "**Logging: niveles**\n\n`logger.setLevel(nivel_minimo)` descarta los registros por debajo de ese umbral.\n\n**Micro-reto:**\n1. Importá `logging` e `io`\n2. Definí `filtrar_por_nivel(nivel_minimo, eventos)` que procese `(nivel, mensaje)`\n3. Imprimí el filtrado con `logging.INFO`",
+    starter_code: "# import logging\n# import io\n# def filtrar_por_nivel(nivel_minimo, eventos):\n#     buffer = io.StringIO()\n#     handler = logging.StreamHandler(buffer)\n#     handler.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\n#     logger = logging.getLogger('paso2')\n#     logger.handlers = []\n#     logger.addHandler(handler)\n#     logger.setLevel(nivel_minimo)\n#     for nivel, mensaje in eventos:\n#         getattr(logger, nivel)(mensaje)\n#     return buffer.getvalue().strip().splitlines()\n# eventos = [('debug', 'detalle'), ('info', 'avance'), ('warning', 'alerta')]\n# print(filtrar_por_nivel(logging.INFO, eventos))\n",
+    pytest: "def test_levels(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import logging\n    eventos = [('debug', 'detalle'), ('info', 'avance'), ('warning', 'alerta')]\n    assert ns['filtrar_por_nivel'](logging.INFO, eventos) == ['INFO:avance', 'WARNING:alerta']\n    assert capsys.readouterr().out.strip() == str(['INFO:avance', 'WARNING:alerta'])\n",
+    hint: "Con nivel INFO, los registros debug quedan descartados.",
+    solution_example: "import logging\nimport io\n\ndef filtrar_por_nivel(nivel_minimo, eventos):\n    buffer = io.StringIO()\n    handler = logging.StreamHandler(buffer)\n    handler.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\n    logger = logging.getLogger('paso2')\n    logger.handlers = []\n    logger.addHandler(handler)\n    logger.setLevel(nivel_minimo)\n    for nivel, mensaje in eventos:\n        getattr(logger, nivel)(mensaje)\n    return buffer.getvalue().strip().splitlines()\n\neventos = [('debug', 'detalle'), ('info', 'avance'), ('warning', 'alerta')]\nprint(filtrar_por_nivel(logging.INFO, eventos))\n",
+    next: Some("py-1273-logging-format"), show_type_chips: false, micro_step: 1272,
+};
+
+pub const PY1273_LOGGING_FORMAT: CodingStep = CodingStep {
+    id: "py-1273-logging-format", title: "Logging · Formateo", objective: "Formatear registros con nombre y nivel.",
+    prompt_md: "**Logging: formateo**\n\nUn `Formatter` define cómo se ve cada línea, incluyendo nombre del logger y nivel.\n\n**Micro-reto:**\n1. Importá `logging` e `io`\n2. Definí `formatear(evento, contexto)` con formato `name|level|msg`\n3. Imprimí `formatear('proceso finalizado', 'servicio')`",
+    starter_code: "# import logging\n# import io\n# def formatear(evento, contexto):\n#     buffer = io.StringIO()\n#     handler = logging.StreamHandler(buffer)\n#     handler.setFormatter(logging.Formatter('%(name)s|%(levelname)s|%(message)s'))\n#     logger = logging.getLogger(contexto)\n#     logger.handlers = []\n#     logger.addHandler(handler)\n#     logger.setLevel(logging.INFO)\n#     logger.info(evento)\n#     return buffer.getvalue().strip()\n# print(formatear('proceso finalizado', 'servicio'))\n",
+    pytest: "def test_format(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['formatear']('proceso finalizado', 'servicio') == 'servicio|INFO|proceso finalizado'\n    assert capsys.readouterr().out.strip() == 'servicio|INFO|proceso finalizado'\n",
+    hint: "El patrón %(name)s inserta el nombre del logger.",
+    solution_example: "import logging\nimport io\n\ndef formatear(evento, contexto):\n    buffer = io.StringIO()\n    handler = logging.StreamHandler(buffer)\n    handler.setFormatter(logging.Formatter('%(name)s|%(levelname)s|%(message)s'))\n    logger = logging.getLogger(contexto)\n    logger.handlers = []\n    logger.addHandler(handler)\n    logger.setLevel(logging.INFO)\n    logger.info(evento)\n    return buffer.getvalue().strip()\n\nprint(formatear('proceso finalizado', 'servicio'))\n",
+    next: Some("py-1274-logging-context"), show_type_chips: false, micro_step: 1273,
+};
+
+pub const PY1274_LOGGING_CONTEXT: CodingStep = CodingStep {
+    id: "py-1274-logging-context", title: "Logging · Contexto", objective: "Adjuntar el módulo como contexto del log.",
+    prompt_md: "**Logging: contexto**\n\nUn logger nombrado por módulo permite saber de dónde vino cada registro.\n\n**Micro-reto:**\n1. Importá `logging` e `io`\n2. Definí `log_con_contexto(modulo, mensaje)` con formato `name: msg`\n3. Imprimí `log_con_contexto('facturacion', 'factura emitida')`",
+    starter_code: "# import logging\n# import io\n# def log_con_contexto(modulo, mensaje):\n#     buffer = io.StringIO()\n#     handler = logging.StreamHandler(buffer)\n#     handler.setFormatter(logging.Formatter('%(name)s: %(message)s'))\n#     logger = logging.getLogger(modulo)\n#     logger.handlers = []\n#     logger.addHandler(handler)\n#     logger.setLevel(logging.INFO)\n#     logger.info(mensaje)\n#     return buffer.getvalue().strip()\n# print(log_con_contexto('facturacion', 'factura emitida'))\n",
+    pytest: "def test_context(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['log_con_contexto']('facturacion', 'factura emitida') == 'facturacion: factura emitida'\n    assert capsys.readouterr().out.strip() == 'facturacion: factura emitida'\n",
+    hint: "getLogger(modulo) separa registros por contexto.",
+    solution_example: "import logging\nimport io\n\ndef log_con_contexto(modulo, mensaje):\n    buffer = io.StringIO()\n    handler = logging.StreamHandler(buffer)\n    handler.setFormatter(logging.Formatter('%(name)s: %(message)s'))\n    logger = logging.getLogger(modulo)\n    logger.handlers = []\n    logger.addHandler(handler)\n    logger.setLevel(logging.INFO)\n    logger.info(mensaje)\n    return buffer.getvalue().strip()\n\nprint(log_con_contexto('facturacion', 'factura emitida'))\n",
+    next: Some("py-1275-logging-errors"), show_type_chips: false, micro_step: 1274,
+};
+
+pub const PY1275_LOGGING_ERRORS: CodingStep = CodingStep {
+    id: "py-1275-logging-errors", title: "Logging · Contar errores", objective: "Contar registros de nivel error.",
+    prompt_md: "**Logging: contar errores**\n\nAdemás de registrar, podés contar cuántos eventos son de nivel error en un lote.\n\n**Micro-reto:**\n1. Importá `logging` e `io`\n2. Definí `contar_errores(eventos)` que cuente los de nivel `error`\n3. Imprimí el conteo del lote de ejemplo",
+    starter_code: "# import logging\n# import io\n# def contar_errores(eventos):\n#     buffer = io.StringIO()\n#     handler = logging.StreamHandler(buffer)\n#     handler.setFormatter(logging.Formatter('%(levelname)s'))\n#     logger = logging.getLogger('paso5')\n#     logger.handlers = []\n#     logger.addHandler(handler)\n#     logger.setLevel(logging.ERROR)\n#     errores = 0\n#     for nivel, mensaje in eventos:\n#         if nivel == 'error':\n#             errores += 1\n#         getattr(logger, nivel)(mensaje)\n#     return errores\n# print(contar_errores([('info', 'ok'), ('error', 'fallo'), ('error', 'otro fallo')]))\n",
+    pytest: "def test_errors(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    eventos = [('info', 'ok'), ('error', 'fallo'), ('error', 'otro fallo')]\n    assert ns['contar_errores'](eventos) == 2\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Incrementá el contador cuando nivel == 'error'.",
+    solution_example: "import logging\nimport io\n\ndef contar_errores(eventos):\n    buffer = io.StringIO()\n    handler = logging.StreamHandler(buffer)\n    handler.setFormatter(logging.Formatter('%(levelname)s'))\n    logger = logging.getLogger('paso5')\n    logger.handlers = []\n    logger.addHandler(handler)\n    logger.setLevel(logging.ERROR)\n    errores = 0\n    for nivel, mensaje in eventos:\n        if nivel == 'error':\n            errores += 1\n        getattr(logger, nivel)(mensaje)\n    return errores\n\nprint(contar_errores([('info', 'ok'), ('error', 'fallo'), ('error', 'otro fallo')]))\n",
+    next: Some("py-1276-logging-pipeline"), show_type_chips: false, micro_step: 1275,
+};
+
+pub const PY1276_LOGGING_PIPELINE: CodingStep = CodingStep {
+    id: "py-1276-logging-pipeline", title: "Logging · Pipeline de observabilidad", objective: "Registrar y resumir un lote de operaciones.",
+    prompt_md: "**Logging: pipeline de observabilidad**\n\nIntegrá logging en un flujo: registrá cada operación y devolvé un resumen con totales y líneas.\n\n**Micro-reto:**\n1. Definí `pipeline(operaciones)` con logger propio\n2. Logueá `nombre:ok` o `nombre:fallo`\n3. Devolvé `total`, `ok` y `lineas`; imprimí el ejemplo",
+    starter_code: "# import logging\n# import io\n# def pipeline(operaciones):\n#     buffer = io.StringIO()\n#     handler = logging.StreamHandler(buffer)\n#     handler.setFormatter(logging.Formatter('%(levelname)s:%(name)s:%(message)s'))\n#     logger = logging.getLogger('pipeline')\n#     logger.handlers = []\n#     logger.addHandler(handler)\n#     logger.setLevel(logging.INFO)\n#     registros = []\n#     for nombre, ok in operaciones:\n#         if ok:\n#             logger.info(f'{nombre}:ok')\n#         else:\n#             logger.error(f'{nombre}:fallo')\n#         registros.append((nombre, ok))\n#     lineas = buffer.getvalue().strip().splitlines()\n#     return {'total': len(registros), 'ok': sum(1 for _, o in registros if o), 'lineas': lineas}\n# ops = [('carga', True), ('validacion', True), ('guardado', False)]\n# print(pipeline(ops))\n",
+    pytest: "def test_pipeline(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    ops = [('carga', True), ('validacion', True), ('guardado', False)]\n    esperado = {'total': 3, 'ok': 2, 'lineas': ['INFO:pipeline:carga:ok', 'INFO:pipeline:validacion:ok', 'ERROR:pipeline:guardado:fallo']}\n    assert ns['pipeline'](ops) == esperado\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
+    hint: "sum(1 for _, o in registros if o) cuenta los exitosos.",
+    solution_example: "import logging\nimport io\n\ndef pipeline(operaciones):\n    buffer = io.StringIO()\n    handler = logging.StreamHandler(buffer)\n    handler.setFormatter(logging.Formatter('%(levelname)s:%(name)s:%(message)s'))\n    logger = logging.getLogger('pipeline')\n    logger.handlers = []\n    logger.addHandler(handler)\n    logger.setLevel(logging.INFO)\n    registros = []\n    for nombre, ok in operaciones:\n        if ok:\n            logger.info(f'{nombre}:ok')\n        else:\n            logger.error(f'{nombre}:fallo')\n        registros.append((nombre, ok))\n    lineas = buffer.getvalue().strip().splitlines()\n    return {'total': len(registros), 'ok': sum(1 for _, o in registros if o), 'lineas': lineas}\n\nops = [('carga', True), ('validacion', True), ('guardado', False)]\nprint(pipeline(ops))\n",
+    next: Some("py-1277-modules-import"), show_type_chips: false, micro_step: 1276,
+};
+
+pub const PY1277_MODULES_IMPORT: CodingStep = CodingStep {
+    id: "py-1277-modules-import", title: "Módulos · Import propio", objective: "Crear y registrar un módulo en sys.modules.",
+    prompt_md: "**Módulos: import propio**\n\nUn módulo es un objeto con atributos; registrar uno en `sys.modules` permite luego `import`arlo.\n\n**Micro-reto:**\n1. Importá `types` y `sys`\n2. Definí `crear_modulo(nombre, atributos)` con `ModuleType` y `setattr`\n3. Registrá `geom` e imprimí `round(geom.area(2), 2)`",
+    starter_code: "# import types\n# import sys\n# def crear_modulo(nombre, atributos):\n#     modulo = types.ModuleType(nombre)\n#     for clave, valor in atributos.items():\n#         setattr(modulo, clave, valor)\n#     sys.modules[nombre] = modulo\n#     return modulo\n# m = crear_modulo('geom', {'area': lambda r: 3.1416 * r * r})\n# import geom\n# print(round(geom.area(2), 2))\n",
+    pytest: "def test_import(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'geom' in ns\n    assert abs(ns['geom'].area(2) - 12.5664) < 1e-6\n    assert abs(ns['crear_modulo']('x', {'f': lambda: 1}).f() - 1) < 1e-6\n    assert capsys.readouterr().out.strip() == '12.57'\n",
+    hint: "sys.modules[nombre] = modulo habilita el import posterior.",
+    solution_example: "import types\nimport sys\n\ndef crear_modulo(nombre, atributos):\n    modulo = types.ModuleType(nombre)\n    for clave, valor in atributos.items():\n        setattr(modulo, clave, valor)\n    sys.modules[nombre] = modulo\n    return modulo\n\nm = crear_modulo('geom', {'area': lambda r: 3.1416 * r * r})\nimport geom\nprint(round(geom.area(2), 2))\n",
+    next: Some("py-1278-modules-init"), show_type_chips: false, micro_step: 1277,
+};
+
+pub const PY1278_MODULES_INIT: CodingStep = CodingStep {
+    id: "py-1278-modules-init", title: "Módulos · __init__ de paquete", objective: "Ejecutar un inicializador al crear un paquete.",
+    prompt_md: "**Módulos: __init__ de paquete**\n\nAl importar un paquete se ejecuta su inicializador, que deja atributos listos para usar.\n\n**Micro-reto:**\n1. Importá `types` y `sys`\n2. Definí `crear_paquete(nombre, inicializador)` que ejecute el inicializador sobre el paquete\n3. Imprimí `miapp.version`",
+    starter_code: "# import types\n# import sys\n# def crear_paquete(nombre, inicializador):\n#     modulo = types.ModuleType(nombre)\n#     modulo.__path__ = []\n#     inicializador(modulo)\n#     sys.modules[nombre] = modulo\n#     return modulo\n# def inicializar(pkg):\n#     pkg.version = '1.0.0'\n#     pkg.config = {'debug': False}\n# pkg = crear_paquete('miapp', inicializar)\n# import miapp\n# print(miapp.version)\n",
+    pytest: "def test_init(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'miapp' in ns\n    assert ns['miapp'].version == '1.0.0'\n    assert ns['miapp'].config == {'debug': False}\n    assert capsys.readouterr().out.strip() == '1.0.0'\n",
+    hint: "inicializador(modulo) deja atributos listos al importar.",
+    solution_example: "import types\nimport sys\n\ndef crear_paquete(nombre, inicializador):\n    modulo = types.ModuleType(nombre)\n    modulo.__path__ = []\n    inicializador(modulo)\n    sys.modules[nombre] = modulo\n    return modulo\n\ndef inicializar(pkg):\n    pkg.version = '1.0.0'\n    pkg.config = {'debug': False}\n\npkg = crear_paquete('miapp', inicializar)\nimport miapp\nprint(miapp.version)\n",
+    next: Some("py-1279-modules-main"), show_type_chips: false, micro_step: 1278,
+};
+
+pub const PY1279_MODULES_MAIN: CodingStep = CodingStep {
+    id: "py-1279-modules-main", title: "Módulos · __main__", objective: "Distinguir ejecución principal de importación.",
+    prompt_md: "**Módulos: __main__**\n\nEl guard `if __name__ == '__main__'` distingue correr un archivo de ser importado por otro.\n\n**Micro-reto:**\n1. Definí `main_guard(nombre, cuerpo)` que ejecute `cuerpo()` solo si `nombre == '__main__'`\n2. Devolvé `'importado'` en caso contrario\n3. Imprimí ambos casos",
+    starter_code: "# def main_guard(nombre, cuerpo):\n#     if nombre == '__main__':\n#         return cuerpo()\n#     return 'importado'\n# def arrancar():\n#     return 'servicio iniciado'\n# print(main_guard('__main__', arrancar))\n# print(main_guard('servicio', arrancar))\n",
+    pytest: "def test_main(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['main_guard']('__main__', lambda: 'x') == 'x'\n    assert ns['main_guard']('modulo', lambda: 'x') == 'importado'\n    assert capsys.readouterr().out.strip() == 'servicio iniciado\\nimportado'\n",
+    hint: "Solo el nombre '__main__' dispara el cuerpo.",
+    solution_example: "def main_guard(nombre, cuerpo):\n    if nombre == '__main__':\n        return cuerpo()\n    return 'importado'\n\ndef arrancar():\n    return 'servicio iniciado'\n\nprint(main_guard('__main__', arrancar))\nprint(main_guard('servicio', arrancar))\n",
+    next: Some("py-1280-modules-all"), show_type_chips: false, micro_step: 1279,
+};
+
+pub const PY1280_MODULES_ALL: CodingStep = CodingStep {
+    id: "py-1280-modules-all", title: "Módulos · __all__", objective: "Declarar la API pública de un módulo.",
+    prompt_md: "**Módulos: __all__**\n\n`__all__` lista los nombres públicos que exporta un módulo, ocultando los internos.\n\n**Micro-reto:**\n1. Importá `types`\n2. Definí `reexportar(modulo, publicos)` que fije `__all__` y filtre por `hasattr`\n3. Imprimí `reexportar(m, ['saludar', 'ejecutar'])`",
+    starter_code: "# import types\n# def reexportar(modulo, publicos):\n#     modulo.__all__ = publicos\n#     return [n for n in modulo.__all__ if hasattr(modulo, n)]\n# m = types.ModuleType('api')\n# m.saludar = lambda: 'hola'\n# m._interno = 'secreto'\n# m.ejecutar = lambda: 'ok'\n# print(reexportar(m, ['saludar', 'ejecutar']))\n",
+    pytest: "def test_all(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import types\n    m = types.ModuleType('api')\n    m.saludar = lambda: 'hola'\n    m._interno = 'secreto'\n    m.ejecutar = lambda: 'ok'\n    assert ns['reexportar'](m, ['saludar', 'ejecutar']) == ['saludar', 'ejecutar']\n    assert '_interno' not in m.__all__\n    assert capsys.readouterr().out.strip() == str(['saludar', 'ejecutar'])\n",
+    hint: "Los nombres con guion bajo bajo quedan fuera de __all__.",
+    solution_example: "import types\n\ndef reexportar(modulo, publicos):\n    modulo.__all__ = publicos\n    return [n for n in modulo.__all__ if hasattr(modulo, n)]\n\nm = types.ModuleType('api')\nm.saludar = lambda: 'hola'\nm._interno = 'secreto'\nm.ejecutar = lambda: 'ok'\nprint(reexportar(m, ['saludar', 'ejecutar']))\n",
+    next: Some("py-1281-modules-package"), show_type_chips: false, micro_step: 1280,
+};
+
+pub const PY1281_MODULES_PACKAGE: CodingStep = CodingStep {
+    id: "py-1281-modules-package", title: "Módulos · Paquete con submódulos", objective: "Armar un paquete con submódulos anidados.",
+    prompt_md: "**Módulos: paquete con submódulos**\n\nUn paquete agrupa submódulos; cada uno vive en `paquete.submodulo` con sus atributos.\n\n**Micro-reto:**\n1. Importá `types` y `sys`\n2. Definí `crear_paquete(nombre, submodulos)` que anide submódulos\n3. Imprimí el catálogo y el cobro con IVA",
+    starter_code: "# import types\n# import sys\n# def crear_paquete(nombre, submodulos):\n#     paquete = types.ModuleType(nombre)\n#     paquete.__path__ = []\n#     for sub, atributos in submodulos.items():\n#         sub_modulo = types.ModuleType(f'{nombre}.{sub}')\n#         for clave, valor in atributos.items():\n#             setattr(sub_modulo, clave, valor)\n#         setattr(paquete, sub, sub_modulo)\n#     sys.modules[nombre] = paquete\n#     return paquete\n# pkg = crear_paquete('tienda', {\n#     'catalogo': {'listar': lambda: ['a', 'b']},\n#     'pagos': {'cobrar': lambda monto: monto * 1.21}\n# })\n# print(pkg.catalogo.listar())\n# print(round(pkg.pagos.cobrar(100), 2))\n",
+    pytest: "def test_package(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    pkg = ns['crear_paquete']('tienda', {'catalogo': {'listar': lambda: ['a', 'b']}, 'pagos': {'cobrar': lambda m: m * 1.21}})\n    assert pkg.catalogo.listar() == ['a', 'b']\n    assert round(pkg.pagos.cobrar(100), 2) == 121.0\n    assert capsys.readouterr().out.strip() == \"['a', 'b']\\n121.0\"\n",
+    hint: "setattr(paquete, sub, sub_modulo) cuelga el submódulo.",
+    solution_example: "import types\nimport sys\n\ndef crear_paquete(nombre, submodulos):\n    paquete = types.ModuleType(nombre)\n    paquete.__path__ = []\n    for sub, atributos in submodulos.items():\n        sub_modulo = types.ModuleType(f'{nombre}.{sub}')\n        for clave, valor in atributos.items():\n            setattr(sub_modulo, clave, valor)\n        setattr(paquete, sub, sub_modulo)\n    sys.modules[nombre] = paquete\n    return paquete\n\npkg = crear_paquete('tienda', {\n    'catalogo': {'listar': lambda: ['a', 'b']},\n    'pagos': {'cobrar': lambda monto: monto * 1.21}\n})\nprint(pkg.catalogo.listar())\nprint(round(pkg.pagos.cobrar(100), 2))\n",
+    next: Some("py-1282-modules-circular"), show_type_chips: false, micro_step: 1281,
+};
+
+pub const PY1282_MODULES_CIRCULAR: CodingStep = CodingStep {
+    id: "py-1282-modules-circular", title: "Módulos · Import circular", objective: "Detectar dependencias circulares entre módulos.",
+    prompt_md: "**Módulos: import circular**\n\nUn import circular (A importa B y B importa A) cuelga la carga. Detectalo con un DFS de ciclos.\n\n**Micro-reto:**\n1. Definí `detectar_ciclo(imports)` con DFS y conjunto `visitando`\n2. Devuelvé `True` si hay ciclo\n3. Imprimí `detectar_ciclo({'a': {'b'}, 'b': {'a'}})`",
+    starter_code: "# def detectar_ciclo(imports):\n#     def dfs(nodo, visitando, visitados):\n#         visitando.add(nodo)\n#         for vecino in imports.get(nodo, []):\n#             if vecino in visitando:\n#                 return True\n#             if vecino not in visitados and dfs(vecino, visitando, visitados):\n#                 return True\n#         visitando.remove(nodo)\n#         visitados.add(nodo)\n#         return False\n#     visitados = set()\n#     for modulo in imports:\n#         if modulo not in visitados and dfs(modulo, set(), visitados):\n#             return True\n#     return False\n# grafo = {'a': {'b'}, 'b': {'a'}}\n# print(detectar_ciclo(grafo))\n",
+    pytest: "def test_circular(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['detectar_ciclo']({'a': {'b'}, 'b': {'a'}}) is True\n    assert ns['detectar_ciclo']({'a': {'b'}, 'b': {'c'}, 'c': set()}) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Si reencontrás un nodo en 'visitando', hay ciclo.",
+    solution_example: "def detectar_ciclo(imports):\n    def dfs(nodo, visitando, visitados):\n        visitando.add(nodo)\n        for vecino in imports.get(nodo, []):\n            if vecino in visitando:\n                return True\n            if vecino not in visitados and dfs(vecino, visitando, visitados):\n                return True\n        visitando.remove(nodo)\n        visitados.add(nodo)\n        return False\n    visitados = set()\n    for modulo in imports:\n        if modulo not in visitados and dfs(modulo, set(), visitados):\n            return True\n    return False\n\ngrafo = {'a': {'b'}, 'b': {'a'}}\nprint(detectar_ciclo(grafo))\n",
+    next: Some("py-1283-property-invariant"), show_type_chips: false, micro_step: 1282,
+};
+
+pub const PY1283_PROPERTY_INVARIANT: CodingStep = CodingStep {
+    id: "py-1283-property-invariant", title: "Propiedades · Invariante", objective: "Verificar que ordenar preserva el multiconjunto.",
+    prompt_md: "**Propiedades: invariante**\n\nUna propiedad es una afirmación que se cumple para todo input válido. Ordenar preserva longitud y suma.\n\n**Micro-reto:**\n1. Definí `invariante_orden(numeros)` que compare `sorted` con el original\n2. Verificá longitud y suma\n3. Imprimí `invariante_orden([3, 1, 2])`",
+    starter_code: "# def invariante_orden(numeros):\n#     ordenados = sorted(numeros)\n#     return len(ordenados) == len(numeros) and sum(ordenados) == sum(numeros)\n# print(invariante_orden([3, 1, 2]))\n",
+    pytest: "def test_invariant(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['invariante_orden']([3, 1, 2]) is True\n    assert ns['invariante_orden']([]) is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "sorted no agrega ni quita elementos: longitud y suma se mantienen.",
+    solution_example: "def invariante_orden(numeros):\n    ordenados = sorted(numeros)\n    return len(ordenados) == len(numeros) and sum(ordenados) == sum(numeros)\n\nprint(invariante_orden([3, 1, 2]))\n",
+    next: Some("py-1284-property-generate"), show_type_chips: false, micro_step: 1283,
+};
+
+pub const PY1284_PROPERTY_GENERATE: CodingStep = CodingStep {
+    id: "py-1284-property-generate", title: "Propiedades · Generar entradas", objective: "Generar entradas aleatorias determinísticas.",
+    prompt_md: "**Propiedades: generar entradas**\n\nPara testear propiedades necesitás entradas; `random.Random(seed)` las hace reproducibles.\n\n**Micro-reto:**\n1. Importá `random`\n2. Definí `generar_entradas(cantidad, rango, semilla=42)` con `randint`\n3. Imprimí `generar_entradas(5, (1, 10))`",
+    starter_code: "# import random\n# def generar_entradas(cantidad, rango, semilla=42):\n#     rng = random.Random(semilla)\n#     return [rng.randint(rango[0], rango[1]) for _ in range(cantidad)]\n# print(generar_entradas(5, (1, 10)))\n",
+    pytest: "def test_generate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    a = ns['generar_entradas'](5, (1, 10), 42)\n    b = ns['generar_entradas'](5, (1, 10), 42)\n    assert a == b\n    assert len(a) == 5 and all(1 <= x <= 10 for x in a)\n    assert capsys.readouterr().out.strip() == str(a)\n",
+    hint: "randint(lo, hi) incluye ambos extremos.",
+    solution_example: "import random\n\ndef generar_entradas(cantidad, rango, semilla=42):\n    rng = random.Random(semilla)\n    return [rng.randint(rango[0], rango[1]) for _ in range(cantidad)]\n\nprint(generar_entradas(5, (1, 10)))\n",
+    next: Some("py-1285-property-assert"), show_type_chips: false, micro_step: 1284,
+};
+
+pub const PY1285_PROPERTY_ASSERT: CodingStep = CodingStep {
+    id: "py-1285-property-assert", title: "Propiedades · Assert sobre propiedad", objective: "Comprobar una propiedad sobre muchas entradas.",
+    prompt_md: "**Propiedades: assert sobre propiedad**\n\nProbá una propiedad contra muchas entradas generadas; si una sola falla, la propiedad no se cumple.\n\n**Micro-reto:**\n1. Importá `random`\n2. Definí `verificar_propiedad(funcion, generador, n=100, semilla=42)`\n3. Imprimí `verificar_propiedad(siempre_positivo, ...)`",
+    starter_code: "# import random\n# def verificar_propiedad(funcion, generador, n=100, semilla=42):\n#     rng = random.Random(semilla)\n#     for _ in range(n):\n#         entrada = generador(rng)\n#         if not funcion(entrada):\n#             return False\n#     return True\n# def siempre_positivo(x):\n#     return x ** 2 >= 0\n# print(verificar_propiedad(siempre_positivo, lambda rng: rng.randint(-100, 100)))\n",
+    pytest: "def test_property_assert(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['verificar_propiedad'](lambda x: x ** 2 >= 0, lambda rng: rng.randint(-100, 100)) is True\n    assert ns['verificar_propiedad'](lambda x: x > 0, lambda rng: rng.randint(-100, 100)) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "x ** 2 >= 0 siempre se cumple; x > 0 no.",
+    solution_example: "import random\n\ndef verificar_propiedad(funcion, generador, n=100, semilla=42):\n    rng = random.Random(semilla)\n    for _ in range(n):\n        entrada = generador(rng)\n        if not funcion(entrada):\n            return False\n    return True\n\ndef siempre_positivo(x):\n    return x ** 2 >= 0\n\nprint(verificar_propiedad(siempre_positivo, lambda rng: rng.randint(-100, 100)))\n",
+    next: Some("py-1286-property-counterexample"), show_type_chips: false, micro_step: 1285,
+};
+
+pub const PY1286_PROPERTY_COUNTEREXAMPLE: CodingStep = CodingStep {
+    id: "py-1286-property-counterexample", title: "Propiedades · Contraejemplo", objective: "Encontrar la primera entrada que viola una propiedad.",
+    prompt_md: "**Propiedades: contraejemplo**\n\nEl property testing brilla al hallar el input exacto que rompe una propiedad.\n\n**Micro-reto:**\n1. Importá `random`\n2. Definí `buscar_contraejemplo(funcion, generador, n=1000, semilla=42)`\n3. Imprimí el contraejemplo de `x > 0`",
+    starter_code: "# import random\n# def buscar_contraejemplo(funcion, generador, n=1000, semilla=42):\n#     rng = random.Random(semilla)\n#     for _ in range(n):\n#         entrada = generador(rng)\n#         if not funcion(entrada):\n#             return entrada\n#     return None\n# print(buscar_contraejemplo(lambda x: x > 0, lambda rng: rng.randint(-10, 10)))\n",
+    pytest: "def test_counterexample(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    ce = ns['buscar_contraejemplo'](lambda x: x > 0, lambda rng: rng.randint(-10, 10))\n    assert ce is not None and ce <= 0\n    assert ns['buscar_contraejemplo'](lambda x: x >= -10, lambda rng: rng.randint(-10, 10)) is None\n    assert capsys.readouterr().out.strip() == str(ce)\n",
+    hint: "Devolvé el primer input que haga falsa la propiedad.",
+    solution_example: "import random\n\ndef buscar_contraejemplo(funcion, generador, n=1000, semilla=42):\n    rng = random.Random(semilla)\n    for _ in range(n):\n        entrada = generador(rng)\n        if not funcion(entrada):\n            return entrada\n    return None\n\nprint(buscar_contraejemplo(lambda x: x > 0, lambda rng: rng.randint(-10, 10)))\n",
+    next: Some("py-1287-property-sorted"), show_type_chips: false, micro_step: 1286,
+};
+
+pub const PY1287_PROPERTY_SORTED: CodingStep = CodingStep {
+    id: "py-1287-property-sorted", title: "Propiedades · Sobre orden", objective: "Verificar la propiedad de orden con entradas aleatorias.",
+    prompt_md: "**Propiedades: sobre orden**\n\nUna lista ordenada está no decreciente y conserva la cantidad de elementos.\n\n**Micro-reto:**\n1. Importá `random`\n2. Definí `propiedad_orden(numeros)` y `verificar(generador, ...)`\n3. Imprimí `verificar(...)` con listas aleatorias",
+    starter_code: "# import random\n# def propiedad_orden(numeros):\n#     ordenados = sorted(numeros)\n#     return all(ordenados[i] <= ordenados[i + 1] for i in range(len(ordenados) - 1)) and len(ordenados) == len(numeros)\n# def verificar(generador, n=500, semilla=42):\n#     rng = random.Random(semilla)\n#     for _ in range(n):\n#         if not propiedad_orden(generador(rng)):\n#             return False\n#     return True\n# print(verificar(lambda rng: [rng.randint(1, 100) for _ in range(20)]))\n",
+    pytest: "def test_sorted(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['verificar'](lambda rng: [rng.randint(1, 100) for _ in range(20)]) is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Compará cada elemento con el siguiente en la lista ordenada.",
+    solution_example: "import random\n\ndef propiedad_orden(numeros):\n    ordenados = sorted(numeros)\n    return all(ordenados[i] <= ordenados[i + 1] for i in range(len(ordenados) - 1)) and len(ordenados) == len(numeros)\n\ndef verificar(generador, n=500, semilla=42):\n    rng = random.Random(semilla)\n    for _ in range(n):\n        if not propiedad_orden(generador(rng)):\n            return False\n    return True\n\nprint(verificar(lambda rng: [rng.randint(1, 100) for _ in range(20)]))\n",
+    next: Some("py-1288-property-framework"), show_type_chips: false, micro_step: 1287,
+};
+
+pub const PY1288_PROPERTY_FRAMEWORK: CodingStep = CodingStep {
+    id: "py-1288-property-framework", title: "Propiedades · Mini-framework", objective: "Armar un mini property-testing con reporte de fallos.",
+    prompt_md: "**Propiedades: mini-framework**\n\nUn mini-framework corre una propiedad sobre N entradas y reporta cuántas fallaron, con ejemplos.\n\n**Micro-reto:**\n1. Importá `random`\n2. Definí `para_todo(funcion, generador, n=200, semilla=42)`\n3. Imprimí el reporte de la propiedad par",
+    starter_code: "# import random\n# def para_todo(funcion, generador, n=200, semilla=42):\n#     rng = random.Random(semilla)\n#     fallos = []\n#     for _ in range(n):\n#         entrada = generador(rng)\n#         if not funcion(entrada):\n#             fallos.append(entrada)\n#     return {'total': n, 'fallos': len(fallos), 'ejemplos': fallos[:3]}\n# print(para_todo(lambda x: x % 2 == 0, lambda rng: rng.randint(0, 9)))\n",
+    pytest: "def test_framework(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    res = ns['para_todo'](lambda x: x % 2 == 0, lambda rng: rng.randint(0, 9))\n    assert res['total'] == 200\n    assert res['fallos'] > 0\n    assert 0 < len(res['ejemplos']) <= 3\n    res2 = ns['para_todo'](lambda x: x >= 0, lambda rng: rng.randint(0, 9))\n    assert res2['fallos'] == 0 and res2['ejemplos'] == []\n    assert capsys.readouterr().out.strip() == str(res)\n",
+    hint: "Reportá solo los primeros 3 ejemplos de fallo.",
+    solution_example: "import random\n\ndef para_todo(funcion, generador, n=200, semilla=42):\n    rng = random.Random(semilla)\n    fallos = []\n    for _ in range(n):\n        entrada = generador(rng)\n        if not funcion(entrada):\n            fallos.append(entrada)\n    return {'total': n, 'fallos': len(fallos), 'ejemplos': fallos[:3]}\n\nprint(para_todo(lambda x: x % 2 == 0, lambda rng: rng.randint(0, 9)))\n",
+    next: Some("py-1289-parse-tokenize"), show_type_chips: false, micro_step: 1288,
+};
+
+pub const PY1289_PARSE_TOKENIZE: CodingStep = CodingStep {
+    id: "py-1289-parse-tokenize", title: "Parsing · Tokenizar", objective: "Separar una expresión en tokens numéricos y operadores.",
+    prompt_md: "**Parsing: tokenizar**\n\nTokenizar convierte un string en una lista de piezas `(tipo, valor)` para el paso siguiente.\n\n**Micro-reto:**\n1. Definí `tokenizar(expresion)` que recorra char a char\n2. Agrupá dígitos en `('NUM', int)` y operadores en `('OP', c)`\n3. Imprimí `tokenizar('12+34')`",
+    starter_code: "# def tokenizar(expresion):\n#     tokens = []\n#     numero = ''\n#     for c in expresion:\n#         if c.isdigit():\n#             numero += c\n#         else:\n#             if numero:\n#                 tokens.append(('NUM', int(numero)))\n#                 numero = ''\n#             if c.strip():\n#                 tokens.append(('OP', c))\n#     if numero:\n#         tokens.append(('NUM', int(numero)))\n#     return tokens\n# print(tokenizar('12+34'))\n",
+    pytest: "def test_tokenize(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['tokenizar']('12+34') == [('NUM', 12), ('OP', '+'), ('NUM', 34)]\n    assert capsys.readouterr().out.strip() == str([('NUM', 12), ('OP', '+'), ('NUM', 34)])\n",
+    hint: "Acumulá dígitos hasta encontrar un operador.",
+    solution_example: "def tokenizar(expresion):\n    tokens = []\n    numero = ''\n    for c in expresion:\n        if c.isdigit():\n            numero += c\n        else:\n            if numero:\n                tokens.append(('NUM', int(numero)))\n                numero = ''\n            if c.strip():\n                tokens.append(('OP', c))\n    if numero:\n        tokens.append(('NUM', int(numero)))\n    return tokens\n\nprint(tokenizar('12+34'))\n",
+    next: Some("py-1290-parse-numbers"), show_type_chips: false, micro_step: 1289,
+};
+
+pub const PY1290_PARSE_NUMBERS: CodingStep = CodingStep {
+    id: "py-1290-parse-numbers", title: "Parsing · Reconocer números", objective: "Extraer números de un texto con tokens.",
+    prompt_md: "**Parsing: reconocer números**\n\nDe un texto con tokens mezclados, extraé solo los que sean números (enteros o con decimal).\n\n**Micro-reto:**\n1. Definí `reconocer(texto)` que parta por espacios\n2. Convertí a `float` los tokens numéricos\n3. Imprimí `reconocer('3 14 2.5 x +')`",
+    starter_code: "# def reconocer(texto):\n#     numeros = []\n#     for token in texto.split():\n#         if token.replace('.', '', 1).isdigit():\n#             numeros.append(float(token))\n#     return numeros\n# print(reconocer('3 14 2.5 x +'))\n",
+    pytest: "def test_numbers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['reconocer']('3 14 2.5 x +') == [3.0, 14.0, 2.5]\n    assert capsys.readouterr().out.strip() == str([3.0, 14.0, 2.5])\n",
+    hint: "replace('.', '', 1) tolera un único punto decimal.",
+    solution_example: "def reconocer(texto):\n    numeros = []\n    for token in texto.split():\n        if token.replace('.', '', 1).isdigit():\n            numeros.append(float(token))\n    return numeros\n\nprint(reconocer('3 14 2.5 x +'))\n",
+    next: Some("py-1291-parse-eval"), show_type_chips: false, micro_step: 1290,
+};
+
+pub const PY1291_PARSE_EVAL: CodingStep = CodingStep {
+    id: "py-1291-parse-eval", title: "Parsing · Evaluar RPN", objective: "Evaluar una expresión en notación polaca inversa.",
+    prompt_md: "**Parsing: evaluar RPN**\n\nEn notación polaca inversa los operandos van antes que el operador; se evalúa con una pila.\n\n**Micro-reto:**\n1. Definí `evaluar_rpn(tokens)` con una pila\n2. Soportá `+`, `-`, `*`, `/`\n3. Imprimí `evaluar_rpn([3, 4, '+', 2, '*'])`",
+    starter_code: "# def evaluar_rpn(tokens):\n#     pila = []\n#     for t in tokens:\n#         if isinstance(t, (int, float)):\n#             pila.append(t)\n#         else:\n#             b = pila.pop()\n#             a = pila.pop()\n#             if t == '+':\n#                 pila.append(a + b)\n#             elif t == '-':\n#                 pila.append(a - b)\n#             elif t == '*':\n#                 pila.append(a * b)\n#             elif t == '/':\n#                 pila.append(a / b)\n#     return pila[0]\n# print(evaluar_rpn([3, 4, '+', 2, '*']))\n",
+    pytest: "def test_eval(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['evaluar_rpn']([3, 4, '+', 2, '*']) == 14\n    assert ns['evaluar_rpn']([10, 2, '/']) == 5.0\n    assert capsys.readouterr().out.strip() == '14'\n",
+    hint: "Al ver un operador, sacá dos operandos y apilá el resultado.",
+    solution_example: "def evaluar_rpn(tokens):\n    pila = []\n    for t in tokens:\n        if isinstance(t, (int, float)):\n            pila.append(t)\n        else:\n            b = pila.pop()\n            a = pila.pop()\n            if t == '+':\n                pila.append(a + b)\n            elif t == '-':\n                pila.append(a - b)\n            elif t == '*':\n                pila.append(a * b)\n            elif t == '/':\n                pila.append(a / b)\n    return pila[0]\n\nprint(evaluar_rpn([3, 4, '+', 2, '*']))\n",
+    next: Some("py-1292-parse-parens"), show_type_chips: false, micro_step: 1291,
+};
+
+pub const PY1292_PARSE_PARENS: CodingStep = CodingStep {
+    id: "py-1292-parse-parens", title: "Parsing · Paréntesis válidos", objective: "Validar el balance de paréntesis, corchetes y llaves.",
+    prompt_md: "**Parsing: paréntesis válidos**\n\nUna gramática válida tiene paréntesis, corchetes y llaves balanceados y bien anidados.\n\n**Micro-reto:**\n1. Definí `parentesis_validos(texto)` con una pila\n2. Emparejá `()`, `[]`, `{}`\n3. Imprimí un caso válido y uno inválido",
+    starter_code: "# def parentesis_validos(texto):\n#     pila = []\n#     pares = {')': '(', ']': '[', '}': '{'}\n#     for c in texto:\n#         if c in '([{':\n#             pila.append(c)\n#         elif c in pares:\n#             if not pila or pila.pop() != pares[c]:\n#                 return False\n#     return not pila\n# print(parentesis_validos('(a + [b * {c}])'))\n# print(parentesis_validos('(a + b]'))\n",
+    pytest: "def test_parens(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['parentesis_validos']('(a + [b * {c}])') is True\n    assert ns['parentesis_validos']('(a + b]') is False\n    assert capsys.readouterr().out.strip() == 'True\\nFalse'\n",
+    hint: "Al cerrar, el tope de la pila debe ser el par correspondiente.",
+    solution_example: "def parentesis_validos(texto):\n    pila = []\n    pares = {')': '(', ']': '[', '}': '{'}\n    for c in texto:\n        if c in '([{':\n            pila.append(c)\n        elif c in pares:\n            if not pila or pila.pop() != pares[c]:\n                return False\n    return not pila\n\nprint(parentesis_validos('(a + [b * {c}])'))\nprint(parentesis_validos('(a + b]'))\n",
+    next: Some("py-1293-parse-ast"), show_type_chips: false, micro_step: 1292,
+};
+
+pub const PY1293_PARSE_AST: CodingStep = CodingStep {
+    id: "py-1293-parse-ast", title: "Parsing · AST simple", objective: "Construir un árbol de sintaxis abstracta simple.",
+    prompt_md: "**Parsing: AST simple**\n\nUn AST representa la estructura de una expresión; `3 + 4` se vuelve `('+', 3.0, 4.0)`.\n\n**Micro-reto:**\n1. Definí `construir_ast(expresion)` que parta por espacios\n2. Un token → `('num', valor)`; tres → `(op, a, b)`\n3. Imprimí `construir_ast('3 + 4')`",
+    starter_code: "# def construir_ast(expresion):\n#     tokens = expresion.split()\n#     if len(tokens) == 1:\n#         return ('num', float(tokens[0]))\n#     a, op, b = tokens\n#     return (op, float(a), float(b))\n# print(construir_ast('3 + 4'))\n",
+    pytest: "def test_ast(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['construir_ast']('3 + 4') == ('+', 3.0, 4.0)\n    assert ns['construir_ast']('7') == ('num', 7.0)\n    assert capsys.readouterr().out.strip() == str(('+', 3.0, 4.0))\n",
+    hint: "La tupla (op, a, b) es un nodo del árbol.",
+    solution_example: "def construir_ast(expresion):\n    tokens = expresion.split()\n    if len(tokens) == 1:\n        return ('num', float(tokens[0]))\n    a, op, b = tokens\n    return (op, float(a), float(b))\n\nprint(construir_ast('3 + 4'))\n",
+    next: Some("py-1294-parse-rules"), show_type_chips: false, micro_step: 1293,
+};
+
+pub const PY1294_PARSE_RULES: CodingStep = CodingStep {
+    id: "py-1294-parse-rules", title: "Parsing · Mini-lenguaje de reglas", objective: "Evaluar reglas condicionales sobre datos.",
+    prompt_md: "**Parsing: mini-lenguaje de reglas**\n\nUn mini-DSL de reglas evalúa condiciones `campo op valor` en orden y devuelve la primera que matchea.\n\n**Micro-reto:**\n1. Definí `evaluar_condicion(condicion, datos)` que parta por espacios\n2. Definí `evaluar_reglas(reglas, datos)` que devuelva el primer resultado\n3. Imprimí el ejemplo de edad",
+    starter_code: "# def evaluar_reglas(reglas, datos):\n#     for condicion, resultado in reglas:\n#         if evaluar_condicion(condicion, datos):\n#             return resultado\n#     return None\n# def evaluar_condicion(condicion, datos):\n#     campo, op, valor = condicion.split()\n#     v = datos[campo]\n#     if op == '>':\n#         return v > int(valor)\n#     if op == '<':\n#         return v < int(valor)\n#     if op == '==':\n#         return v == valor\n#     return False\n# reglas = [('edad > 18', 'adulto'), ('edad > 12', 'adolescente')]\n# datos = {'edad': 20}\n# print(evaluar_reglas(reglas, datos))\n",
+    pytest: "def test_rules(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    reglas = [('edad > 18', 'adulto'), ('edad > 12', 'adolescente')]\n    assert ns['evaluar_reglas'](reglas, {'edad': 20}) == 'adulto'\n    assert ns['evaluar_reglas'](reglas, {'edad': 15}) == 'adolescente'\n    assert ns['evaluar_reglas'](reglas, {'edad': 5}) is None\n    assert capsys.readouterr().out.strip() == 'adulto'\n",
+    hint: "Devolvé la primera regla cuya condición sea verdadera.",
+    solution_example: "def evaluar_reglas(reglas, datos):\n    for condicion, resultado in reglas:\n        if evaluar_condicion(condicion, datos):\n            return resultado\n    return None\n\ndef evaluar_condicion(condicion, datos):\n    campo, op, valor = condicion.split()\n    v = datos[campo]\n    if op == '>':\n        return v > int(valor)\n    if op == '<':\n        return v < int(valor)\n    if op == '==':\n        return v == valor\n    return False\n\nreglas = [('edad > 18', 'adulto'), ('edad > 12', 'adolescente')]\ndatos = {'edad': 20}\nprint(evaluar_reglas(reglas, datos))\n",
+    next: Some("py-1295-project-model"), show_type_chips: false, micro_step: 1294,
+};
+
+pub const PY1295_PROJECT_MODEL: CodingStep = CodingStep {
+    id: "py-1295-project-model", title: "Proyecto · Modelar datos", objective: "Tipar un registro de entrada con cast explícito.",
+    prompt_md: "**Proyecto: modelar datos**\n\nEl primer paso de un servicio es tipar los datos crudos: convertir `str` en `int` y `float`.\n\n**Micro-reto:**\n1. Definí `modelar_registro(fila)` que haga `int`, `str` y `float` sobre cada campo\n2. Mantené `fecha` como texto\n3. Imprimí el registro tipado",
+    starter_code: "# def modelar_registro(fila):\n#     return {\n#         'id': int(fila['id']),\n#         'nombre': str(fila['nombre']),\n#         'fecha': str(fila['fecha']),\n#         'monto': float(fila['monto']),\n#     }\n# fila = {'id': '1', 'nombre': 'venta A', 'fecha': '2024-01-01', 'monto': '150.5'}\n# print(modelar_registro(fila))\n",
+    pytest: "def test_model(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    fila = {'id': '1', 'nombre': 'venta A', 'fecha': '2024-01-01', 'monto': '150.5'}\n    esperado = {'id': 1, 'nombre': 'venta A', 'fecha': '2024-01-01', 'monto': 150.5}\n    assert ns['modelar_registro'](fila) == esperado\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
+    hint: "int/float sobre strings deja los campos con tipos correctos.",
+    solution_example: "def modelar_registro(fila):\n    return {\n        'id': int(fila['id']),\n        'nombre': str(fila['nombre']),\n        'fecha': str(fila['fecha']),\n        'monto': float(fila['monto']),\n    }\n\nfila = {'id': '1', 'nombre': 'venta A', 'fecha': '2024-01-01', 'monto': '150.5'}\nprint(modelar_registro(fila))\n",
+    next: Some("py-1296-project-load"), show_type_chips: false, micro_step: 1295,
+};
+
+pub const PY1296_PROJECT_LOAD: CodingStep = CodingStep {
+    id: "py-1296-project-load", title: "Proyecto · Cargar JSON", objective: "Leer y parsear una lista de registros JSON.",
+    prompt_md: "**Proyecto: cargar JSON**\n\nEl servicio recibe datos serializados; `json.loads` los vuelve a listas de dicts.\n\n**Micro-reto:**\n1. Importá `json`\n2. Definí `cargar_datos(texto_json)` que devuelva `json.loads(texto_json)`\n3. Imprimí la lista de registros",
+    starter_code: "# import json\n# def cargar_datos(texto_json):\n#     return json.loads(texto_json)\n# texto = '[{\"id\": 1, \"monto\": 100}, {\"id\": 2, \"monto\": 200}]'\n# print(cargar_datos(texto))\n",
+    pytest: "def test_load(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    texto = '[{\"id\": 1, \"monto\": 100}, {\"id\": 2, \"monto\": 200}]'\n    assert ns['cargar_datos'](texto) == [{'id': 1, 'monto': 100}, {'id': 2, 'monto': 200}]\n    assert capsys.readouterr().out.strip() == str([{'id': 1, 'monto': 100}, {'id': 2, 'monto': 200}])\n",
+    hint: "json.loads entrega la lista de dicts original.",
+    solution_example: "import json\n\ndef cargar_datos(texto_json):\n    return json.loads(texto_json)\n\ntexto = '[{\"id\": 1, \"monto\": 100}, {\"id\": 2, \"monto\": 200}]'\nprint(cargar_datos(texto))\n",
+    next: Some("py-1297-project-transform"), show_type_chips: false, micro_step: 1296,
+};
+
+pub const PY1297_PROJECT_TRANSFORM: CodingStep = CodingStep {
+    id: "py-1297-project-transform", title: "Proyecto · Transformar", objective: "Agregar fechas y estadísticas sobre registros.",
+    prompt_md: "**Proyecto: transformar**\n\nTransformá registros combinando fechas (ordenadas) y estadísticas (media, total).\n\n**Micro-reto:**\n1. Importá `json` y `mean`\n2. Definí `transformar(texto_json)` que devuelva total, promedio, primera, última y cantidad\n3. Imprimí el ejemplo",
+    starter_code: "# import json\n# from statistics import mean\n# def transformar(texto_json):\n#     registros = json.loads(texto_json)\n#     montos = [r['monto'] for r in registros]\n#     fechas = sorted(r['fecha'] for r in registros)\n#     return {\n#         'total': sum(montos),\n#         'promedio': mean(montos),\n#         'primera': fechas[0],\n#         'ultima': fechas[-1],\n#         'cantidad': len(registros),\n#     }\n# texto = '[{\"monto\": 100, \"fecha\": \"2024-01-03\"}, {\"monto\": 200, \"fecha\": \"2024-01-01\"}]'\n# print(transformar(texto))\n",
+    pytest: "def test_transform(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    texto = '[{\"monto\": 100, \"fecha\": \"2024-01-03\"}, {\"monto\": 200, \"fecha\": \"2024-01-01\"}]'\n    esperado = {'total': 300, 'promedio': 150, 'primera': '2024-01-01', 'ultima': '2024-01-03', 'cantidad': 2}\n    assert ns['transformar'](texto) == esperado\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
+    hint: "sorted(fechas) deja la primera y la última accesibles.",
+    solution_example: "import json\nfrom statistics import mean\n\ndef transformar(texto_json):\n    registros = json.loads(texto_json)\n    montos = [r['monto'] for r in registros]\n    fechas = sorted(r['fecha'] for r in registros)\n    return {\n        'total': sum(montos),\n        'promedio': mean(montos),\n        'primera': fechas[0],\n        'ultima': fechas[-1],\n        'cantidad': len(registros),\n    }\n\ntexto = '[{\"monto\": 100, \"fecha\": \"2024-01-03\"}, {\"monto\": 200, \"fecha\": \"2024-01-01\"}]'\nprint(transformar(texto))\n",
+    next: Some("py-1298-project-endpoint"), show_type_chips: false, micro_step: 1297,
+};
+
+pub const PY1298_PROJECT_ENDPOINT: CodingStep = CodingStep {
+    id: "py-1298-project-endpoint", title: "Proyecto · Endpoint", objective: "Exponer una consulta filtrable como función pura.",
+    prompt_md: "**Proyecto: endpoint**\n\nUn endpoint es una función pura: recibe datos y un filtro, y devuelve los registros que matchean.\n\n**Micro-reto:**\n1. Definí `endpoint(datos, filtro=None)` que filtre si hay filtro\n2. Devolvé la lista completa si no hay filtro\n3. Imprimí el filtrado por monto > 150",
+    starter_code: "# def endpoint(datos, filtro=None):\n#     if filtro:\n#         return [d for d in datos if filtro(d)]\n#     return datos\n# registros = [{'id': 1, 'monto': 100}, {'id': 2, 'monto': 200}]\n# print(endpoint(registros, lambda d: d['monto'] > 150))\n",
+    pytest: "def test_endpoint(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    registros = [{'id': 1, 'monto': 100}, {'id': 2, 'monto': 200}]\n    assert ns['endpoint'](registros, lambda d: d['monto'] > 150) == [{'id': 2, 'monto': 200}]\n    assert ns['endpoint'](registros) == registros\n    assert capsys.readouterr().out.strip() == str([{'id': 2, 'monto': 200}])\n",
+    hint: "filtro=None devuelve la colección completa.",
+    solution_example: "def endpoint(datos, filtro=None):\n    if filtro:\n        return [d for d in datos if filtro(d)]\n    return datos\n\nregistros = [{'id': 1, 'monto': 100}, {'id': 2, 'monto': 200}]\nprint(endpoint(registros, lambda d: d['monto'] > 150))\n",
+    next: Some("py-1299-project-log"), show_type_chips: false, micro_step: 1298,
+};
+
+pub const PY1299_PROJECT_LOG: CodingStep = CodingStep {
+    id: "py-1299-project-log", title: "Proyecto · Loguear", objective: "Registrar el resultado de una operación.",
+    prompt_md: "**Proyecto: loguear**\n\nTodo servicio registra sus operaciones; reutilizá logging para capturar el resultado.\n\n**Micro-reto:**\n1. Importá `logging` e `io`\n2. Definí `loguear_operacion(nombre, resultado)` con formato `LEVEL: msg`\n3. Imprimí `loguear_operacion('transformar', 'ok')`",
+    starter_code: "# import logging\n# import io\n# def loguear_operacion(nombre, resultado):\n#     buffer = io.StringIO()\n#     handler = logging.StreamHandler(buffer)\n#     handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))\n#     logger = logging.getLogger('servicio')\n#     logger.handlers = []\n#     logger.addHandler(handler)\n#     logger.setLevel(logging.INFO)\n#     logger.info(f'{nombre}: {resultado}')\n#     return buffer.getvalue().strip()\n# print(loguear_operacion('transformar', 'ok'))\n",
+    pytest: "def test_log(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['loguear_operacion']('transformar', 'ok') == 'INFO: transformar: ok'\n    assert capsys.readouterr().out.strip() == 'INFO: transformar: ok'\n",
+    hint: "El mensaje formateado incluye nombre y resultado.",
+    solution_example: "import logging\nimport io\n\ndef loguear_operacion(nombre, resultado):\n    buffer = io.StringIO()\n    handler = logging.StreamHandler(buffer)\n    handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))\n    logger = logging.getLogger('servicio')\n    logger.handlers = []\n    logger.addHandler(handler)\n    logger.setLevel(logging.INFO)\n    logger.info(f'{nombre}: {resultado}')\n    return buffer.getvalue().strip()\n\nprint(loguear_operacion('transformar', 'ok'))\n",
+    next: Some("py-1300-project-assemble"), show_type_chips: false, micro_step: 1299,
+};
+
+pub const PY1300_PROJECT_ASSEMBLE: CodingStep = CodingStep {
+    id: "py-1300-project-assemble", title: "Proyecto · Ensamblar servicio", objective: "Integrar carga, transformación y logging end-to-end.",
+    prompt_md: "**Proyecto: ensamblar servicio**\n\nIntegrá todo: cargar JSON, transformar con fechas y stats, y loguear la operación en un solo servicio.\n\n**Micro-reto:**\n1. Definí `servicio(texto_json)` que cargue y transforme\n2. Logueá cuántos registros se procesaron\n3. Devolvé total, promedio, primera, última y log; imprimí el ejemplo",
+    starter_code: "# import json\n# from statistics import mean\n# import logging\n# import io\n# def servicio(texto_json):\n#     registros = json.loads(texto_json)\n#     montos = [r['monto'] for r in registros]\n#     fechas = sorted(r['fecha'] for r in registros)\n#     buffer = io.StringIO()\n#     handler = logging.StreamHandler(buffer)\n#     handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))\n#     logger = logging.getLogger('servicio')\n#     logger.handlers = []\n#     logger.addHandler(handler)\n#     logger.setLevel(logging.INFO)\n#     logger.info(f'procesados {len(registros)} registros')\n#     return {\n#         'total': sum(montos),\n#         'promedio': mean(montos),\n#         'primera': fechas[0],\n#         'ultima': fechas[-1],\n#         'log': buffer.getvalue().strip(),\n#     }\n# texto = '[{\"monto\": 100, \"fecha\": \"2024-01-02\"}, {\"monto\": 300, \"fecha\": \"2024-01-01\"}]'\n# print(servicio(texto))\n",
+    pytest: "def test_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    texto = '[{\"monto\": 100, \"fecha\": \"2024-01-02\"}, {\"monto\": 300, \"fecha\": \"2024-01-01\"}]'\n    esperado = {'total': 400, 'promedio': 200, 'primera': '2024-01-01', 'ultima': '2024-01-02', 'log': 'INFO: procesados 2 registros'}\n    assert ns['servicio'](texto) == esperado\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
+    hint: "Cada pieza (carga, transformación, log) vive en el mismo flujo.",
+    solution_example: "import json\nfrom statistics import mean\nimport logging\nimport io\n\ndef servicio(texto_json):\n    registros = json.loads(texto_json)\n    montos = [r['monto'] for r in registros]\n    fechas = sorted(r['fecha'] for r in registros)\n    buffer = io.StringIO()\n    handler = logging.StreamHandler(buffer)\n    handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))\n    logger = logging.getLogger('servicio')\n    logger.handlers = []\n    logger.addHandler(handler)\n    logger.setLevel(logging.INFO)\n    logger.info(f'procesados {len(registros)} registros')\n    return {\n        'total': sum(montos),\n        'promedio': mean(montos),\n        'primera': fechas[0],\n        'ultima': fechas[-1],\n        'log': buffer.getvalue().strip(),\n    }\n\ntexto = '[{\"monto\": 100, \"fecha\": \"2024-01-02\"}, {\"monto\": 300, \"fecha\": \"2024-01-01\"}]'\nprint(servicio(texto))\n",
+    next: None, show_type_chips: false, micro_step: 1300,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -46489,6 +47089,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1238_RECOMMEND_SCORE,
     &PY1239_RECOMMEND_VALIDATE,
     &PY1240_RECOMMEND_ASSEMBLE,
+    &PY1241_DATE_CREATE,
+    &PY1242_DATE_TIMEDELTA,
+    &PY1243_DATE_FORMAT,
+    &PY1244_DATE_DIFF,
+    &PY1245_DATE_TIMEZONE,
+    &PY1246_DATE_SCHEDULING,
+    &PY1247_MATH_BASIC,
+    &PY1248_MATH_FRACTIONS,
+    &PY1249_STAT_MEAN_MEDIAN,
+    &PY1250_STAT_STDEV,
+    &PY1251_STAT_SAMPLING,
+    &PY1252_STAT_AGGREGATE,
+    &PY1253_FILESYSTEM_PATH,
+    &PY1254_FILESYSTEM_NAVIGATE,
+    &PY1255_FILESYSTEM_GLOB,
+    &PY1256_FILESYSTEM_WALK,
+    &PY1257_FILESYSTEM_CLASSIFY,
+    &PY1258_FILESYSTEM_TREE_SUMMARY,
+    &PY1259_HTTP_PARSE_JSON,
+    &PY1260_HTTP_EXTRACT,
+    &PY1261_HTTP_STATUS,
+    &PY1262_HTTP_QUERYSTRING,
+    &PY1263_HTTP_PAGINATION,
+    &PY1264_HTTP_CLIENT,
+    &PY1265_HASH_SHA256,
+    &PY1266_HASH_COLLECTION,
+    &PY1267_HASH_INTEGRITY,
+    &PY1268_HASH_HMAC,
+    &PY1269_HASH_TOKEN,
+    &PY1270_HASH_CHECKSUM,
+    &PY1271_LOGGING_BASIC,
+    &PY1272_LOGGING_LEVELS,
+    &PY1273_LOGGING_FORMAT,
+    &PY1274_LOGGING_CONTEXT,
+    &PY1275_LOGGING_ERRORS,
+    &PY1276_LOGGING_PIPELINE,
+    &PY1277_MODULES_IMPORT,
+    &PY1278_MODULES_INIT,
+    &PY1279_MODULES_MAIN,
+    &PY1280_MODULES_ALL,
+    &PY1281_MODULES_PACKAGE,
+    &PY1282_MODULES_CIRCULAR,
+    &PY1283_PROPERTY_INVARIANT,
+    &PY1284_PROPERTY_GENERATE,
+    &PY1285_PROPERTY_ASSERT,
+    &PY1286_PROPERTY_COUNTEREXAMPLE,
+    &PY1287_PROPERTY_SORTED,
+    &PY1288_PROPERTY_FRAMEWORK,
+    &PY1289_PARSE_TOKENIZE,
+    &PY1290_PARSE_NUMBERS,
+    &PY1291_PARSE_EVAL,
+    &PY1292_PARSE_PARENS,
+    &PY1293_PARSE_AST,
+    &PY1294_PARSE_RULES,
+    &PY1295_PROJECT_MODEL,
+    &PY1296_PROJECT_LOAD,
+    &PY1297_PROJECT_TRANSFORM,
+    &PY1298_PROJECT_ENDPOINT,
+    &PY1299_PROJECT_LOG,
+    &PY1300_PROJECT_ASSEMBLE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -46656,7 +47316,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1240);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1300);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -49568,11 +50228,11 @@ mod tests {
     }
 
     #[test]
-    fn py1061_to_py1240_engineering_chain() {
+    fn py1061_to_py1300_engineering_chain() {
         let bridge = coding_step_by_micro_step(1060).expect("py-1060");
         assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
 
-        for n in 1061..=1240 {
+        for n in 1061..=1300 {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.micro_step, n);
             assert!(
@@ -49580,7 +50240,7 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1240 {
+            if n < 1300 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -49589,7 +50249,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1240 is the end of the rail");
+                assert_eq!(step.next, None, "step 1300 is the end of the rail");
             }
         }
     }
