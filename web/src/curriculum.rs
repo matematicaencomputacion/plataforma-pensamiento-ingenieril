@@ -45845,7 +45845,548 @@ pub const PY1300_PROJECT_ASSEMBLE: CodingStep = CodingStep {
     pytest: "def test_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    texto = '[{\"monto\": 100, \"fecha\": \"2024-01-02\"}, {\"monto\": 300, \"fecha\": \"2024-01-01\"}]'\n    esperado = {'total': 400, 'promedio': 200, 'primera': '2024-01-01', 'ultima': '2024-01-02', 'log': 'INFO: procesados 2 registros'}\n    assert ns['servicio'](texto) == esperado\n    assert capsys.readouterr().out.strip() == str(esperado)\n",
     hint: "Cada pieza (carga, transformación, log) vive en el mismo flujo.",
     solution_example: "import json\nfrom statistics import mean\nimport logging\nimport io\n\ndef servicio(texto_json):\n    registros = json.loads(texto_json)\n    montos = [r['monto'] for r in registros]\n    fechas = sorted(r['fecha'] for r in registros)\n    buffer = io.StringIO()\n    handler = logging.StreamHandler(buffer)\n    handler.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))\n    logger = logging.getLogger('servicio')\n    logger.handlers = []\n    logger.addHandler(handler)\n    logger.setLevel(logging.INFO)\n    logger.info(f'procesados {len(registros)} registros')\n    return {\n        'total': sum(montos),\n        'promedio': mean(montos),\n        'primera': fechas[0],\n        'ultima': fechas[-1],\n        'log': buffer.getvalue().strip(),\n    }\n\ntexto = '[{\"monto\": 100, \"fecha\": \"2024-01-02\"}, {\"monto\": 300, \"fecha\": \"2024-01-01\"}]'\nprint(servicio(texto))\n",
-    next: None, show_type_chips: false, micro_step: 1300,
+    next: Some("py-1301-introspect-dir"), show_type_chips: false, micro_step: 1300,
+};
+
+pub const PY1301_INTROSPECT_DIR: CodingStep = CodingStep {
+    id: "py-1301-introspect-dir", title: "Introspección · dir()", objective: "Listar los atributos públicos de un objeto con dir().",
+    prompt_md: "**Introspección: dir()**\n\n`dir(obj)` devuelve los nombres de atributos de un objeto. Filtrando los que empiezan con `_` quedan solo los públicos.\n\n**Micro-reto:**\n1. Definí `class Persona` con `nombre`, `edad` y el método `saludar`\n2. Definí `atributos_publicos(obj)` que devuelva `[n for n in dir(obj) if not n.startswith('_')]`\n3. Imprimí `atributos_publicos(Persona())`",
+    starter_code: "# class Persona:\n#     def __init__(self):\n#         self.nombre = 'Ana'\n#         self.edad = 25\n#     def saludar(self):\n#         return 'hola'\n# def atributos_publicos(obj):\n#     return [n for n in dir(obj) if not n.startswith('_')]\n# print(atributos_publicos(Persona()))\n",
+    pytest: "def test_dir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Persona = ns['Persona']\n    assert ns['atributos_publicos'](Persona()) == ['edad', 'nombre', 'saludar']\n    assert capsys.readouterr().out.strip() == str(['edad', 'nombre', 'saludar'])\n",
+    hint: "dir() ya viene ordenado; filtrá los nombres que no empiezan con `_`.",
+    solution_example: "class Persona:\n    def __init__(self):\n        self.nombre = 'Ana'\n        self.edad = 25\n    def saludar(self):\n        return 'hola'\n\ndef atributos_publicos(obj):\n    return [n for n in dir(obj) if not n.startswith('_')]\n\nprint(atributos_publicos(Persona()))\n",
+    next: Some("py-1302-introspect-getattr"), show_type_chips: false, micro_step: 1301,
+};
+pub const PY1302_INTROSPECT_GETATTR: CodingStep = CodingStep {
+    id: "py-1302-introspect-getattr", title: "Introspección · getattr()", objective: "Acceder a atributos por nombre con un valor por defecto.",
+    prompt_md: "**Introspección: getattr()**\n\n`getattr(obj, nombre, default)` devuelve el atributo por nombre y, si no existe, el `default` en lugar de fallar.\n\n**Micro-reto:**\n1. Definí `class Persona` con `nombre` y `edad`\n2. Definí `obtener(obj, nombre, default=None)` que use `getattr`\n3. Imprimí `obtener(Persona(), 'edad')` y `obtener(Persona(), 'altura', 'desconocida')`",
+    starter_code: "# class Persona:\n#     def __init__(self):\n#         self.nombre = 'Ana'\n#         self.edad = 25\n# def obtener(obj, nombre, default=None):\n#     return getattr(obj, nombre, default)\n# print(obtener(Persona(), 'edad'))\n# print(obtener(Persona(), 'altura', 'desconocida'))\n",
+    pytest: "def test_getattr(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Persona = ns['Persona']\n    assert ns['obtener'](Persona(), 'edad') == 25\n    assert ns['obtener'](Persona(), 'altura', 'desconocida') == 'desconocida'\n    assert capsys.readouterr().out.strip().splitlines() == ['25', 'desconocida']\n",
+    hint: "getattr(obj, nombre, default) evita el AttributeError.",
+    solution_example: "class Persona:\n    def __init__(self):\n        self.nombre = 'Ana'\n        self.edad = 25\n\ndef obtener(obj, nombre, default=None):\n    return getattr(obj, nombre, default)\n\nprint(obtener(Persona(), 'edad'))\nprint(obtener(Persona(), 'altura', 'desconocida'))\n",
+    next: Some("py-1303-introspect-setattr"), show_type_chips: false, micro_step: 1302,
+};
+pub const PY1303_INTROSPECT_SETATTR: CodingStep = CodingStep {
+    id: "py-1303-introspect-setattr", title: "Introspección · setattr()", objective: "Asignar atributos de forma dinámica con setattr().",
+    prompt_md: "**Introspección: setattr()**\n\n`setattr(obj, nombre, valor)` crea o reemplaza un atributo en tiempo de ejecución, útil cuando el nombre viene de una variable.\n\n**Micro-reto:**\n1. Definí `class Config` vacía\n2. Definí `asignar(obj, nombre, valor)` que use `setattr` y devuelva `obj`\n3. Imprimí `asignar(c, 'color', 'rojo').color` y `asignar(c, 'tamano', 10).tamano`",
+    starter_code: "# class Config:\n#     pass\n# def asignar(obj, nombre, valor):\n#     setattr(obj, nombre, valor)\n#     return obj\n# c = Config()\n# print(asignar(c, 'color', 'rojo').color)\n# print(asignar(c, 'tamano', 10).tamano)\n",
+    pytest: "def test_setattr(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Config = ns['Config']\n    c = Config()\n    assert ns['asignar'](c, 'color', 'rojo').color == 'rojo'\n    assert ns['asignar'](c, 'tamano', 10).tamano == 10\n    assert capsys.readouterr().out.strip().splitlines() == ['rojo', '10']\n",
+    hint: "setattr crea el atributo aunque no estuviera declarado.",
+    solution_example: "class Config:\n    pass\n\ndef asignar(obj, nombre, valor):\n    setattr(obj, nombre, valor)\n    return obj\n\nc = Config()\nprint(asignar(c, 'color', 'rojo').color)\nprint(asignar(c, 'tamano', 10).tamano)\n",
+    next: Some("py-1304-introspect-iterate"), show_type_chips: false, micro_step: 1303,
+};
+pub const PY1304_INTROSPECT_ITERATE: CodingStep = CodingStep {
+    id: "py-1304-introspect-iterate", title: "Introspección · Recorrer atributos", objective: "Recorrer los atributos de instancia y recolectar sus valores.",
+    prompt_md: "**Introspección: recorrer atributos**\n\nCombiná `dir` con `getattr` para construir un dict con los atributos de datos de una instancia (excluyendo métodos).\n\n**Micro-reto:**\n1. Definí `class Producto` con `nombre` y `precio`\n2. Definí `atributos_instancia(obj)` que devuelva `{n: getattr(obj, n)}` para atributos públicos no callable\n3. Imprimí `atributos_instancia(Producto('libro', 10))`",
+    starter_code: "# class Producto:\n#     def __init__(self, nombre, precio):\n#         self.nombre = nombre\n#         self.precio = precio\n# def atributos_instancia(obj):\n#     return {n: getattr(obj, n) for n in dir(obj)\n#             if not n.startswith('_') and not callable(getattr(obj, n))}\n# print(atributos_instancia(Producto('libro', 10)))\n",
+    pytest: "def test_iterate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Producto = ns['Producto']\n    assert ns['atributos_instancia'](Producto('libro', 10)) == {'nombre': 'libro', 'precio': 10}\n    assert capsys.readouterr().out.strip() == str({'nombre': 'libro', 'precio': 10})\n",
+    hint: "Filtrá con `not callable(getattr(obj, n))` para excluir métodos.",
+    solution_example: "class Producto:\n    def __init__(self, nombre, precio):\n        self.nombre = nombre\n        self.precio = precio\n\ndef atributos_instancia(obj):\n    return {n: getattr(obj, n) for n in dir(obj)\n            if not n.startswith('_') and not callable(getattr(obj, n))}\n\nprint(atributos_instancia(Producto('libro', 10)))\n",
+    next: Some("py-1305-introspect-call-by-name"), show_type_chips: false, micro_step: 1304,
+};
+pub const PY1305_INTROSPECT_CALL_BY_NAME: CodingStep = CodingStep {
+    id: "py-1305-introspect-call-by-name", title: "Introspección · Invocar por nombre", objective: "Llamar un método usando su nombre como string.",
+    prompt_md: "**Introspección: invocar por nombre**\n\n`getattr(obj, nombre)` devuelve el método; agregando `(...)` lo invocás con argumentos.\n\n**Micro-reto:**\n1. Definí `class Calculadora` con `sumar` y `multiplicar`\n2. Definí `invocar(obj, nombre, *args)` que llame al método por nombre\n3. Imprimí `invocar(Calculadora(), 'sumar', 3, 4)` y `invocar(Calculadora(), 'multiplicar', 3, 4)`",
+    starter_code: "# class Calculadora:\n#     def sumar(self, a, b):\n#         return a + b\n#     def multiplicar(self, a, b):\n#         return a * b\n# def invocar(obj, nombre, *args):\n#     return getattr(obj, nombre)(*args)\n# print(invocar(Calculadora(), 'sumar', 3, 4))\n# print(invocar(Calculadora(), 'multiplicar', 3, 4))\n",
+    pytest: "def test_call_by_name(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Calculadora = ns['Calculadora']\n    assert ns['invocar'](Calculadora(), 'sumar', 3, 4) == 7\n    assert ns['invocar'](Calculadora(), 'multiplicar', 3, 4) == 12\n    assert capsys.readouterr().out.strip().splitlines() == ['7', '12']\n",
+    hint: "getattr(obj, nombre) devuelve el método; llamalo con `(*args)`.",
+    solution_example: "class Calculadora:\n    def sumar(self, a, b):\n        return a + b\n    def multiplicar(self, a, b):\n        return a * b\n\ndef invocar(obj, nombre, *args):\n    return getattr(obj, nombre)(*args)\n\nprint(invocar(Calculadora(), 'sumar', 3, 4))\nprint(invocar(Calculadora(), 'multiplicar', 3, 4))\n",
+    next: Some("py-1306-introspect-dispatch"), show_type_chips: false, micro_step: 1305,
+};
+pub const PY1306_INTROSPECT_DISPATCH: CodingStep = CodingStep {
+    id: "py-1306-introspect-dispatch", title: "Introspección · Tabla de despacho", objective: "Despachar operaciones por string usando getattr().",
+    prompt_md: "**Introspección: tabla de despacho**\n\nUn `getattr` sobre una clase reemplaza a una cadena de `if/elif` para elegir operación a partir de un string.\n\n**Micro-reto:**\n1. Definí `class Operaciones` con `sumar`, `restar` y `multiplicar`\n2. Definí `despachar(nombre, a, b)` que invoque el método correspondiente\n3. Imprimí `despachar('sumar', 5, 3)` y `despachar('multiplicar', 5, 3)`",
+    starter_code: "# class Operaciones:\n#     def sumar(self, a, b):\n#         return a + b\n#     def restar(self, a, b):\n#         return a - b\n#     def multiplicar(self, a, b):\n#         return a * b\n# def despachar(nombre, a, b):\n#     return getattr(Operaciones(), nombre)(a, b)\n# print(despachar('sumar', 5, 3))\n# print(despachar('multiplicar', 5, 3))\n",
+    pytest: "def test_dispatch(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['despachar']('sumar', 5, 3) == 8\n    assert ns['despachar']('multiplicar', 5, 3) == 15\n    assert capsys.readouterr().out.strip().splitlines() == ['8', '15']\n",
+    hint: "getattr(Operaciones(), nombre) devuelve el método y lo invocás al instante.",
+    solution_example: "class Operaciones:\n    def sumar(self, a, b):\n        return a + b\n    def restar(self, a, b):\n        return a - b\n    def multiplicar(self, a, b):\n        return a * b\n\ndef despachar(nombre, a, b):\n    return getattr(Operaciones(), nombre)(a, b)\n\nprint(despachar('sumar', 5, 3))\nprint(despachar('multiplicar', 5, 3))\n",
+    next: Some("py-1307-descriptor-property"), show_type_chips: false, micro_step: 1306,
+};
+pub const PY1307_DESCRIPTOR_PROPERTY: CodingStep = CodingStep {
+    id: "py-1307-descriptor-property", title: "Descriptores · @property getter", objective: "Exponer un valor calculado como atributo con @property.",
+    prompt_md: "**Descriptores: @property**\n\n`@property` convierte un método en un atributo de solo lectura; el cálculo se ejecuta en cada acceso.\n\n**Micro-reto:**\n1. Definí `class Temperatura` con `self._celsius`\n2. Agregá la propiedad `fahrenheit` que devuelva `self._celsius * 9 / 5 + 32`\n3. Imprimí `Temperatura(0).fahrenheit` y `Temperatura(100).fahrenheit`",
+    starter_code: "# class Temperatura:\n#     def __init__(self, celsius):\n#         self._celsius = celsius\n#     @property\n#     def fahrenheit(self):\n#         return self._celsius * 9 / 5 + 32\n# print(Temperatura(0).fahrenheit)\n# print(Temperatura(100).fahrenheit)\n",
+    pytest: "def test_property(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Temperatura = ns['Temperatura']\n    assert Temperatura(0).fahrenheit == 32.0\n    assert Temperatura(100).fahrenheit == 212.0\n    assert capsys.readouterr().out.strip().splitlines() == ['32.0', '212.0']\n",
+    hint: "La fórmula de conversión es `celsius * 9 / 5 + 32`.",
+    solution_example: "class Temperatura:\n    def __init__(self, celsius):\n        self._celsius = celsius\n    @property\n    def fahrenheit(self):\n        return self._celsius * 9 / 5 + 32\n\nprint(Temperatura(0).fahrenheit)\nprint(Temperatura(100).fahrenheit)\n",
+    next: Some("py-1308-descriptor-setter"), show_type_chips: false, micro_step: 1307,
+};
+pub const PY1308_DESCRIPTOR_SETTER: CodingStep = CodingStep {
+    id: "py-1308-descriptor-setter", title: "Descriptores · Setter con validación", objective: "Validar la asignación con un setter de @property.",
+    prompt_md: "**Descriptores: setter**\n\nCon `@saldo.setter` interceptás la asignación y podés validar antes de guardar el valor.\n\n**Micro-reto:**\n1. Definí `class Cuenta` con `self._saldo` y la propiedad `saldo`\n2. En el setter, rechazá saldos negativos lanzando `ValueError`\n3. Definí `actualizar(cuenta, valor)` que asigne y devuelva el saldo, o `'rechazado'` si falla\n4. Imprimí `actualizar(Cuenta(100), 50)` y `actualizar(Cuenta(100), -10)`",
+    starter_code: "# class Cuenta:\n#     def __init__(self, saldo):\n#         self._saldo = saldo\n#     @property\n#     def saldo(self):\n#         return self._saldo\n#     @saldo.setter\n#     def saldo(self, valor):\n#         if valor < 0:\n#             raise ValueError('saldo negativo')\n#         self._saldo = valor\n# def actualizar(cuenta, valor):\n#     try:\n#         cuenta.saldo = valor\n#         return cuenta.saldo\n#     except ValueError:\n#         return 'rechazado'\n# print(actualizar(Cuenta(100), 50))\n# print(actualizar(Cuenta(100), -10))\n",
+    pytest: "def test_setter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Cuenta = ns['Cuenta']\n    assert ns['actualizar'](Cuenta(100), 50) == 50\n    assert ns['actualizar'](Cuenta(100), -10) == 'rechazado'\n    assert capsys.readouterr().out.strip().splitlines() == ['50', 'rechazado']\n",
+    hint: "Capturá el ValueError con try/except y devolvé 'rechazado'.",
+    solution_example: "class Cuenta:\n    def __init__(self, saldo):\n        self._saldo = saldo\n    @property\n    def saldo(self):\n        return self._saldo\n    @saldo.setter\n    def saldo(self, valor):\n        if valor < 0:\n            raise ValueError('saldo negativo')\n        self._saldo = valor\n\ndef actualizar(cuenta, valor):\n    try:\n        cuenta.saldo = valor\n        return cuenta.saldo\n    except ValueError:\n        return 'rechazado'\n\nprint(actualizar(Cuenta(100), 50))\nprint(actualizar(Cuenta(100), -10))\n",
+    next: Some("py-1309-descriptor-get"), show_type_chips: false, micro_step: 1308,
+};
+pub const PY1309_DESCRIPTOR_GET: CodingStep = CodingStep {
+    id: "py-1309-descriptor-get", title: "Descriptores · __get__", objective: "Implementar el protocolo de descriptor con __get__.",
+    prompt_md: "**Descriptores: __get__**\n\nUn descriptor define `__get__(self, instance, owner)`. Cuando un atributo de clase es un descriptor, Python llama a su `__get__` al leerlo.\n\n**Micro-reto:**\n1. Definí `class Doble` con `__get__` que devuelva `instance._valor * 2`\n2. Definí `class Numero` con `doble = Doble()` y `self._valor`\n3. Imprimí `Numero(5).doble`",
+    starter_code: "# class Doble:\n#     def __get__(self, instance, owner):\n#         return instance._valor * 2\n# class Numero:\n#     doble = Doble()\n#     def __init__(self, valor):\n#         self._valor = valor\n# print(Numero(5).doble)\n",
+    pytest: "def test_get(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Numero = ns['Numero']\n    assert Numero(5).doble == 10\n    assert Numero(7).doble == 14\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "`__get__` recibe la instancia; leé `instance._valor` y devolvé el doble.",
+    solution_example: "class Doble:\n    def __get__(self, instance, owner):\n        return instance._valor * 2\n\nclass Numero:\n    doble = Doble()\n    def __init__(self, valor):\n        self._valor = valor\n\nprint(Numero(5).doble)\n",
+    next: Some("py-1310-descriptor-set"), show_type_chips: false, micro_step: 1309,
+};
+pub const PY1310_DESCRIPTOR_SET: CodingStep = CodingStep {
+    id: "py-1310-descriptor-set", title: "Descriptores · __set__", objective: "Validar en la escritura con __set__ y __set_name__.",
+    prompt_md: "**Descriptores: __set__**\n\n`__set__(self, instance, value)` intercepta la escritura. `__set_name__` recibe el nombre del atributo para guardar el valor en el `__dict__` de la instancia.\n\n**Micro-reto:**\n1. Definí `class Positivo` con `__set_name__`, `__get__` y `__set__` (rechazá negativos con `ValueError`)\n2. Definí `class Medida` con `valor = Positivo()`\n3. Definí `asignar(medida, valor)` que devuelva el valor o `'rechazado'`\n4. Imprimí `asignar(Medida(), 7)` y `asignar(Medida(), -3)`",
+    starter_code: "# class Positivo:\n#     def __set_name__(self, owner, name):\n#         self.nombre = '_' + name\n#     def __get__(self, instance, owner):\n#         return instance.__dict__[self.nombre]\n#     def __set__(self, instance, value):\n#         if value < 0:\n#             raise ValueError('negativo')\n#         instance.__dict__[self.nombre] = value\n# class Medida:\n#     valor = Positivo()\n# def asignar(medida, valor):\n#     try:\n#         medida.valor = valor\n#         return medida.valor\n#     except ValueError:\n#         return 'rechazado'\n# print(asignar(Medida(), 7))\n# print(asignar(Medida(), -3))\n",
+    pytest: "def test_set(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Medida = ns['Medida']\n    assert ns['asignar'](Medida(), 7) == 7\n    assert ns['asignar'](Medida(), -3) == 'rechazado'\n    assert capsys.readouterr().out.strip().splitlines() == ['7', 'rechazado']\n",
+    hint: "Guardá el valor en `instance.__dict__[self.nombre]` para no pisar otras instancias.",
+    solution_example: "class Positivo:\n    def __set_name__(self, owner, name):\n        self.nombre = '_' + name\n    def __get__(self, instance, owner):\n        return instance.__dict__[self.nombre]\n    def __set__(self, instance, value):\n        if value < 0:\n            raise ValueError('negativo')\n        instance.__dict__[self.nombre] = value\n\nclass Medida:\n    valor = Positivo()\n\ndef asignar(medida, valor):\n    try:\n        medida.valor = valor\n        return medida.valor\n    except ValueError:\n        return 'rechazado'\n\nprint(asignar(Medida(), 7))\nprint(asignar(Medida(), -3))\n",
+    next: Some("py-1311-descriptor-reusable"), show_type_chips: false, micro_step: 1310,
+};
+pub const PY1311_DESCRIPTOR_REUSABLE: CodingStep = CodingStep {
+    id: "py-1311-descriptor-reusable", title: "Descriptores · Reutilizable", objective: "Reutilizar un descriptor en varios atributos con __set_name__.",
+    prompt_md: "**Descriptores: reutilizable**\n\nGracias a `__set_name__`, el mismo descriptor se puede colgar en varios atributos sin pisarse entre sí.\n\n**Micro-reto:**\n1. Definí `class Positivo` con `__set_name__` (guardá `_<nombre>`) y validación de negativos\n2. Definí `class Producto` con `precio = Positivo()` y `stock = Positivo()`\n3. Definí `valor_total(producto)` que devuelva `precio * stock`\n4. Imprimí el total inicial y luego con `precio=10`, `stock=3`",
+    starter_code: "# class Positivo:\n#     def __set_name__(self, owner, name):\n#         self.nombre = '_' + name\n#     def __get__(self, instance, owner):\n#         return instance.__dict__.get(self.nombre, 0)\n#     def __set__(self, instance, value):\n#         if value < 0:\n#             raise ValueError('negativo')\n#         instance.__dict__[self.nombre] = value\n# class Producto:\n#     precio = Positivo()\n#     stock = Positivo()\n# def valor_total(producto):\n#     return producto.precio * producto.stock\n# p = Producto()\n# print(valor_total(p))\n# p.precio = 10\n# p.stock = 3\n# print(valor_total(p))\n",
+    pytest: "def test_reusable(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Producto = ns['Producto']\n    p = Producto()\n    assert ns['valor_total'](p) == 0\n    p.precio = 10\n    p.stock = 3\n    assert ns['valor_total'](p) == 30\n    assert capsys.readouterr().out.strip().splitlines() == ['0', '30']\n",
+    hint: "En `__get__` usá `.get(self.nombre, 0)` para devolver 0 antes de asignar.",
+    solution_example: "class Positivo:\n    def __set_name__(self, owner, name):\n        self.nombre = '_' + name\n    def __get__(self, instance, owner):\n        return instance.__dict__.get(self.nombre, 0)\n    def __set__(self, instance, value):\n        if value < 0:\n            raise ValueError('negativo')\n        instance.__dict__[self.nombre] = value\n\nclass Producto:\n    precio = Positivo()\n    stock = Positivo()\n\ndef valor_total(producto):\n    return producto.precio * producto.stock\n\np = Producto()\nprint(valor_total(p))\np.precio = 10\np.stock = 3\nprint(valor_total(p))\n",
+    next: Some("py-1312-descriptor-cached"), show_type_chips: false, micro_step: 1311,
+};
+pub const PY1312_DESCRIPTOR_CACHED: CodingStep = CodingStep {
+    id: "py-1312-descriptor-cached", title: "Descriptores · Propiedad cacheada", objective: "Calcular un valor caro una sola vez y cachearlo.",
+    prompt_md: "**Descriptores: propiedad cacheada**\n\nUna propiedad puede cachear su resultado en un atributo interno para no recalcular en cada acceso.\n\n**Micro-reto:**\n1. Definí `class Circulo` con `self.radio` y `self._area = None`\n2. Definí la propiedad `area` que calcule `3.1416 * radio ** 2` solo si `_area` es `None`\n3. Imprimí `round(Circulo(2).area, 4)`",
+    starter_code: "# class Circulo:\n#     def __init__(self, radio):\n#         self.radio = radio\n#         self._area = None\n#     @property\n#     def area(self):\n#         if self._area is None:\n#             self._area = 3.1416 * self.radio ** 2\n#         return self._area\n# c = Circulo(2)\n# print(round(c.area, 4))\n",
+    pytest: "def test_cached(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Circulo = ns['Circulo']\n    c = Circulo(2)\n    assert round(c.area, 4) == 12.5664\n    assert c.area is c.area\n    assert capsys.readouterr().out.strip() == '12.5664'\n",
+    hint: "El primer acceso calcula y guarda `_area`; los siguientes devuelven lo cacheado.",
+    solution_example: "class Circulo:\n    def __init__(self, radio):\n        self.radio = radio\n        self._area = None\n    @property\n    def area(self):\n        if self._area is None:\n            self._area = 3.1416 * self.radio ** 2\n        return self._area\n\nc = Circulo(2)\nprint(round(c.area, 4))\n",
+    next: Some("py-1313-metaclass-type"), show_type_chips: false, micro_step: 1312,
+};
+pub const PY1313_METACLASS_TYPE: CodingStep = CodingStep {
+    id: "py-1313-metaclass-type", title: "Metaclases · type()", objective: "Crear una clase dinámicamente con type().",
+    prompt_md: "**Metaclases: type()**\n\n`type(nombre, bases, atributos)` crea una clase en tiempo de ejecución; es el mecanismo detrás de toda definición de clase.\n\n**Micro-reto:**\n1. Definí `crear_clase(nombre)` que devuelva `type(nombre, (), {'saludar': lambda self: f'hola desde {nombre}'})`\n2. Imprimí `crear_clase('Foo')().saludar()`",
+    starter_code: "# def crear_clase(nombre):\n#     return type(nombre, (), {'saludar': lambda self: f'hola desde {nombre}'})\n# print(crear_clase('Foo')().saludar())\n",
+    pytest: "def test_type(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    k = ns['crear_clase']('Foo')\n    assert k.__name__ == 'Foo'\n    assert k().saludar() == 'hola desde Foo'\n    assert capsys.readouterr().out.strip() == 'hola desde Foo'\n",
+    hint: "type(nombre, bases, dict) arma la clase; el dict define sus métodos.",
+    solution_example: "def crear_clase(nombre):\n    return type(nombre, (), {'saludar': lambda self: f'hola desde {nombre}'})\n\nprint(crear_clase('Foo')().saludar())\n",
+    next: Some("py-1314-metaclass-intercept"), show_type_chips: false, micro_step: 1313,
+};
+pub const PY1314_METACLASS_INTERCEPT: CodingStep = CodingStep {
+    id: "py-1314-metaclass-intercept", title: "Metaclases · Interceptar creación", objective: "Interceptar la creación de una clase con una metaclase.",
+    prompt_md: "**Metaclases: interceptar**\n\nUna metaclase define `__new__(mcs, nombre, bases, attrs)`, que se ejecuta al crear la clase y puede modificar `attrs`.\n\n**Micro-reto:**\n1. Definí `class Meta` con `__new__` que agregue `attrs['creado_por'] = 'meta'`\n2. Definí `class Persona(metaclass=Meta)` vacía\n3. Imprimí `Persona.creado_por`",
+    starter_code: "# class Meta(type):\n#     def __new__(mcs, nombre, bases, attrs):\n#         attrs['creado_por'] = 'meta'\n#         return super().__new__(mcs, nombre, bases, attrs)\n# class Persona(metaclass=Meta):\n#     pass\n# print(Persona.creado_por)\n",
+    pytest: "def test_intercept(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Persona = ns['Persona']\n    assert Persona.creado_por == 'meta'\n    assert capsys.readouterr().out.strip() == 'meta'\n",
+    hint: "Modificá `attrs` antes de llamar a `super().__new__`.",
+    solution_example: "class Meta(type):\n    def __new__(mcs, nombre, bases, attrs):\n        attrs['creado_por'] = 'meta'\n        return super().__new__(mcs, nombre, bases, attrs)\n\nclass Persona(metaclass=Meta):\n    pass\n\nprint(Persona.creado_por)\n",
+    next: Some("py-1315-metaclass-new"), show_type_chips: false, micro_step: 1314,
+};
+pub const PY1315_METACLASS_NEW: CodingStep = CodingStep {
+    id: "py-1315-metaclass-new", title: "Metaclases · __new__", objective: "Transformar la clase creada desde __new__ de la metaclase.",
+    prompt_md: "**Metaclases: __new__**\n\n`__new__` también puede cambiar el nombre de la clase antes de que nazca, por ejemplo anteponiendo un prefijo.\n\n**Micro-reto:**\n1. Definí `class MetaPrefijo` cuyo `__new__` cree la clase con nombre `'Prefijo' + nombre`\n2. Definí `class Persona(metaclass=MetaPrefijo)` vacía\n3. Imprimí `Persona.__name__`",
+    starter_code: "# class MetaPrefijo(type):\n#     def __new__(mcs, nombre, bases, attrs):\n#         return super().__new__(mcs, 'Prefijo' + nombre, bases, attrs)\n# class Persona(metaclass=MetaPrefijo):\n#     pass\n# print(Persona.__name__)\n",
+    pytest: "def test_new(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Persona = ns['Persona']\n    assert Persona.__name__ == 'PrefijoPersona'\n    assert capsys.readouterr().out.strip() == 'PrefijoPersona'\n",
+    hint: "Pasá el nombre transformado como primer argumento a `super().__new__`.",
+    solution_example: "class MetaPrefijo(type):\n    def __new__(mcs, nombre, bases, attrs):\n        return super().__new__(mcs, 'Prefijo' + nombre, bases, attrs)\n\nclass Persona(metaclass=MetaPrefijo):\n    pass\n\nprint(Persona.__name__)\n",
+    next: Some("py-1316-metaclass-init-subclass"), show_type_chips: false, micro_step: 1315,
+};
+pub const PY1316_METACLASS_INIT_SUBCLASS: CodingStep = CodingStep {
+    id: "py-1316-metaclass-init-subclass", title: "Metaclases · __init_subclass__", objective: "Ejecutar lógica al heredar con __init_subclass__.",
+    prompt_md: "**Metaclases: __init_subclass__**\n\n`__init_subclass__` se ejecuta cuando una clase hereda de la base, sin necesidad de una metaclase completa.\n\n**Micro-reto:**\n1. Definí `class Base` con `__init_subclass__` que asigne `cls.registrada = True`\n2. Definí `class Hija(Base)` vacía\n3. Imprimí `Hija.registrada`",
+    starter_code: "# class Base:\n#     def __init_subclass__(cls, **kwargs):\n#         super().__init_subclass__(**kwargs)\n#         cls.registrada = True\n# class Hija(Base):\n#     pass\n# print(Hija.registrada)\n",
+    pytest: "def test_init_subclass(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Hija = ns['Hija']\n    assert Hija.registrada is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Llamá a `super().__init_subclass__(**kwargs)` primero, luego marcá `cls`.",
+    solution_example: "class Base:\n    def __init_subclass__(cls, **kwargs):\n        super().__init_subclass__(**kwargs)\n        cls.registrada = True\n\nclass Hija(Base):\n    pass\n\nprint(Hija.registrada)\n",
+    next: Some("py-1317-metaclass-validate"), show_type_chips: false, micro_step: 1316,
+};
+pub const PY1317_METACLASS_VALIDATE: CodingStep = CodingStep {
+    id: "py-1317-metaclass-validate", title: "Metaclases · Validar atributos", objective: "Validar que una clase cumpla un contrato al crearse.",
+    prompt_md: "**Metaclases: validar**\n\nLa metaclase puede rechazar clases que no cumplan un contrato, lanzando `TypeError` en el momento de la definición.\n\n**Micro-reto:**\n1. Definí `class MetaValidadora` cuyo `__new__` exija `attrs.get('version')`\n2. Definí `class Plugin(metaclass=MetaValidadora)` con `version = '1.0'`\n3. Definí `crear_sin_version()` que intente definir una clase sin `version` y devuelva `'rechazada'` al capturar `TypeError`\n4. Imprimí `Plugin.version` y `crear_sin_version()`",
+    starter_code: "# class MetaValidadora(type):\n#     def __new__(mcs, nombre, bases, attrs):\n#         if not attrs.get('version'):\n#             raise TypeError('version requerida')\n#         return super().__new__(mcs, nombre, bases, attrs)\n# class Plugin(metaclass=MetaValidadora):\n#     version = '1.0'\n# def crear_sin_version():\n#     try:\n#         class Invalida(metaclass=MetaValidadora):\n#             pass\n#         return 'creada'\n#     except TypeError:\n#         return 'rechazada'\n# print(Plugin.version)\n# print(crear_sin_version())\n",
+    pytest: "def test_validate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Plugin = ns['Plugin']\n    assert Plugin.version == '1.0'\n    assert ns['crear_sin_version']() == 'rechazada'\n    assert capsys.readouterr().out.strip().splitlines() == ['1.0', 'rechazada']\n",
+    hint: "Si `attrs.get('version')` es falsy, lanzá TypeError antes de crear.",
+    solution_example: "class MetaValidadora(type):\n    def __new__(mcs, nombre, bases, attrs):\n        if not attrs.get('version'):\n            raise TypeError('version requerida')\n        return super().__new__(mcs, nombre, bases, attrs)\n\nclass Plugin(metaclass=MetaValidadora):\n    version = '1.0'\n\ndef crear_sin_version():\n    try:\n        class Invalida(metaclass=MetaValidadora):\n            pass\n        return 'creada'\n    except TypeError:\n        return 'rechazada'\n\nprint(Plugin.version)\nprint(crear_sin_version())\n",
+    next: Some("py-1318-metaclass-register"), show_type_chips: false, micro_step: 1317,
+};
+pub const PY1318_METACLASS_REGISTER: CodingStep = CodingStep {
+    id: "py-1318-metaclass-register", title: "Metaclases · Registrar subclases", objective: "Registrar automáticamente cada subclase al heredar.",
+    prompt_md: "**Metaclases: registrar subclases**\n\n`__init_subclass__` permite acumular cada subclase en una lista, creando un registro automático.\n\n**Micro-reto:**\n1. Definí `class Registro` con `subclases = []` y `__init_subclass__` que agregue `cls`\n2. Definí `class Perro(Registro)` y `class Gato(Registro)`\n3. Imprimí `[c.__name__ for c in Registro.subclases]`",
+    starter_code: "# class Registro:\n#     subclases = []\n#     def __init_subclass__(cls, **kwargs):\n#         super().__init_subclass__(**kwargs)\n#         Registro.subclases.append(cls)\n# class Perro(Registro):\n#     pass\n# class Gato(Registro):\n#     pass\n# print([c.__name__ for c in Registro.subclases])\n",
+    pytest: "def test_register(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Registro = ns['Registro']\n    assert [c.__name__ for c in Registro.subclases] == ['Perro', 'Gato']\n    assert capsys.readouterr().out.strip() == str(['Perro', 'Gato'])\n",
+    hint: "`Registro.subclases.append(cls)` guarda cada subclase en orden de definición.",
+    solution_example: "class Registro:\n    subclases = []\n    def __init_subclass__(cls, **kwargs):\n        super().__init_subclass__(**kwargs)\n        Registro.subclases.append(cls)\n\nclass Perro(Registro):\n    pass\n\nclass Gato(Registro):\n    pass\n\nprint([c.__name__ for c in Registro.subclases])\n",
+    next: Some("py-1319-decorator-class"), show_type_chips: false, micro_step: 1318,
+};
+pub const PY1319_DECORATOR_CLASS: CodingStep = CodingStep {
+    id: "py-1319-decorator-class", title: "Decoradores · Decorador de clase", objective: "Decorar una clase para agregarle atributos.",
+    prompt_md: "**Decoradores: decorador de clase**\n\nUn decorador de clase recibe la clase, la modifica y la devuelve; se aplica con `@` justo antes de la clase.\n\n**Micro-reto:**\n1. Definí `con_nombre(cls)` que asigne `cls.origen = 'decorado'` y devuelva `cls`\n2. Decorá `class Persona` con `@con_nombre`\n3. Imprimí `Persona.origen`",
+    starter_code: "# def con_nombre(cls):\n#     cls.origen = 'decorado'\n#     return cls\n# @con_nombre\n# class Persona:\n#     pass\n# print(Persona.origen)\n",
+    pytest: "def test_class_decorator(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Persona = ns['Persona']\n    assert Persona.origen == 'decorado'\n    assert capsys.readouterr().out.strip() == 'decorado'\n",
+    hint: "El decorador modifica la clase y la devuelve (no devuelvas una nueva).",
+    solution_example: "def con_nombre(cls):\n    cls.origen = 'decorado'\n    return cls\n\n@con_nombre\nclass Persona:\n    pass\n\nprint(Persona.origen)\n",
+    next: Some("py-1320-decorator-registry"), show_type_chips: false, micro_step: 1319,
+};
+pub const PY1320_DECORATOR_REGISTRY: CodingStep = CodingStep {
+    id: "py-1320-decorator-registry", title: "Decoradores · Registro declarativo", objective: "Registrar clases en un dict con un decorador.",
+    prompt_md: "**Decoradores: registro declarativo**\n\nUn decorador puede insertar la clase en un dict global usando su nombre como clave, logrando registro declarativo.\n\n**Micro-reto:**\n1. Definí `REGISTRO = {}` y el decorador `registrar(cls)` que lo llene con `cls.__name__.lower()`\n2. Decorá `class Perro` y `class Gato` con `@registrar`\n3. Imprimí `sorted(REGISTRO.keys())`",
+    starter_code: "# REGISTRO = {}\n# def registrar(cls):\n#     REGISTRO[cls.__name__.lower()] = cls\n#     return cls\n# @registrar\n# class Perro:\n#     pass\n# @registrar\n# class Gato:\n#     pass\n# print(sorted(REGISTRO.keys()))\n",
+    pytest: "def test_registry(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert sorted(ns['REGISTRO'].keys()) == ['gato', 'perro']\n    assert capsys.readouterr().out.strip() == str(['gato', 'perro'])\n",
+    hint: "`cls.__name__.lower()` da la clave en minúsculas; el decorador devuelve `cls`.",
+    solution_example: "REGISTRO = {}\n\ndef registrar(cls):\n    REGISTRO[cls.__name__.lower()] = cls\n    return cls\n\n@registrar\nclass Perro:\n    pass\n\n@registrar\nclass Gato:\n    pass\n\nprint(sorted(REGISTRO.keys()))\n",
+    next: Some("py-1321-dataclass-advanced"), show_type_chips: false, micro_step: 1320,
+};
+pub const PY1321_DATACLASS_ADVANCED: CodingStep = CodingStep {
+    id: "py-1321-dataclass-advanced", title: "Decoradores · dataclass avanzado", objective: "Usar field y __post_init__ en una dataclass.",
+    prompt_md: "**Decoradores: dataclass avanzado**\n\n`field(default_factory=list)` da una lista nueva por instancia y `__post_init__` ajusta valores tras el `__init__`.\n\n**Micro-reto:**\n1. Definí `@dataclass class Producto` con `nombre`, `precio` y `etiquetas = field(default_factory=list)`\n2. En `__post_init__`, redondeá `precio` a 2 decimales\n3. Imprimí `Producto('libro', 3.14159).precio`",
+    starter_code: "# from dataclasses import dataclass, field\n# @dataclass\n# class Producto:\n#     nombre: str\n#     precio: float\n#     etiquetas: list = field(default_factory=list)\n#     def __post_init__(self):\n#         self.precio = round(self.precio, 2)\n# print(Producto('libro', 3.14159).precio)\n",
+    pytest: "def test_dataclass(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Producto = ns['Producto']\n    p = Producto('libro', 3.14159)\n    assert p.precio == 3.14\n    a = Producto('a', 1.0)\n    b = Producto('b', 2.0)\n    a.etiquetas.append('x')\n    assert b.etiquetas == []\n    assert capsys.readouterr().out.strip() == '3.14'\n",
+    hint: "`default_factory=list` evita compartir la misma lista entre instancias.",
+    solution_example: "from dataclasses import dataclass, field\n\n@dataclass\nclass Producto:\n    nombre: str\n    precio: float\n    etiquetas: list = field(default_factory=list)\n    def __post_init__(self):\n        self.precio = round(self.precio, 2)\n\nprint(Producto('libro', 3.14159).precio)\n",
+    next: Some("py-1322-decorator-args"), show_type_chips: false, micro_step: 1321,
+};
+pub const PY1322_DECORATOR_ARGS: CodingStep = CodingStep {
+    id: "py-1322-decorator-args", title: "Decoradores · Decorador con argumentos", objective: "Crear un decorador parametrizado (fábrica de decoradores).",
+    prompt_md: "**Decoradores: con argumentos**\n\nUn decorador con argumentos es una fábrica que recibe el parámetro y devuelve el decorador real.\n\n**Micro-reto:**\n1. Definí `escalar(factor)` que devuelva un decorador que multiplique el resultado por `factor`\n2. Decorá `base(x)` (devuelve `x`) con `@escalar(3)`\n3. Imprimí `base(4)`",
+    starter_code: "# def escalar(factor):\n#     def decorador(func):\n#         def envoltura(x):\n#             return func(x) * factor\n#         return envoltura\n#     return decorador\n# @escalar(3)\n# def base(x):\n#     return x\n# print(base(4))\n",
+    pytest: "def test_decorator_args(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['base'](4) == 12\n    assert capsys.readouterr().out.strip() == '12'\n",
+    hint: "Tres niveles: `escalar` devuelve `decorador`, que devuelve `envoltura`.",
+    solution_example: "def escalar(factor):\n    def decorador(func):\n        def envoltura(x):\n            return func(x) * factor\n        return envoltura\n    return decorador\n\n@escalar(3)\ndef base(x):\n    return x\n\nprint(base(4))\n",
+    next: Some("py-1323-decorator-accumulate"), show_type_chips: false, micro_step: 1322,
+};
+pub const PY1323_DECORATOR_ACCUMULATE: CodingStep = CodingStep {
+    id: "py-1323-decorator-accumulate", title: "Decoradores · Acumular resultados", objective: "Hacer que un decorador acumule resultados de llamadas.",
+    prompt_md: "**Decoradores: acumular**\n\nEl decorador puede guardar estado (una lista) en la función decorada y registrar cada resultado.\n\n**Micro-reto:**\n1. Definí `acumular(func)` cuya `envoltura` guarde `envoltura.resultados` y devuelva el resultado\n2. Decorá `sumar(a, b)` con `@acumular`\n3. Imprimí `sumar(1, 2)`, `sumar(3, 4)` y `sumar.resultados`",
+    starter_code: "# def acumular(func):\n#     def envoltura(*args):\n#         envoltura.resultados.append(func(*args))\n#         return envoltura.resultados[-1]\n#     envoltura.resultados = []\n#     return envoltura\n# @acumular\n# def sumar(a, b):\n#     return a + b\n# print(sumar(1, 2))\n# print(sumar(3, 4))\n# print(sumar.resultados)\n",
+    pytest: "def test_accumulate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['sumar'].resultados == [3, 7]\n    assert ns['sumar'](5, 5) == 10\n    assert ns['sumar'].resultados == [3, 7, 10]\n    assert capsys.readouterr().out.strip().splitlines() == ['3', '7', '[3, 7]']\n",
+    hint: "`envoltura.resultados` es el estado; appendeá antes de devolver.",
+    solution_example: "def acumular(func):\n    def envoltura(*args):\n        envoltura.resultados.append(func(*args))\n        return envoltura.resultados[-1]\n    envoltura.resultados = []\n    return envoltura\n\n@acumular\ndef sumar(a, b):\n    return a + b\n\nprint(sumar(1, 2))\nprint(sumar(3, 4))\nprint(sumar.resultados)\n",
+    next: Some("py-1324-decorator-plugin"), show_type_chips: false, micro_step: 1323,
+};
+pub const PY1324_DECORATOR_PLUGIN: CodingStep = CodingStep {
+    id: "py-1324-decorator-plugin", title: "Decoradores · Patrón plugin", objective: "Registrar funciones como plugins con un decorador.",
+    prompt_md: "**Decoradores: patrón plugin**\n\nUn decorador con nombre registra cada función en un dict, creando un sistema de plugins extensible.\n\n**Micro-reto:**\n1. Definí `PLUGINS = {}` y `plugin(nombre)` que registre la función\n2. Decorá `sumar` y `restar` con `@plugin('sumar')` y `@plugin('restar')`\n3. Definí `ejecutar(nombre, a, b)` que llame al plugin y imprimí `ejecutar('sumar', 5, 3)` y `ejecutar('restar', 5, 3)`",
+    starter_code: "# PLUGINS = {}\n# def plugin(nombre):\n#     def decorador(func):\n#         PLUGINS[nombre] = func\n#         return func\n#     return decorador\n# @plugin('sumar')\n# def op_sumar(a, b):\n#     return a + b\n# @plugin('restar')\n# def op_restar(a, b):\n#     return a - b\n# def ejecutar(nombre, a, b):\n#     return PLUGINS[nombre](a, b)\n# print(ejecutar('sumar', 5, 3))\n# print(ejecutar('restar', 5, 3))\n",
+    pytest: "def test_plugin(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert sorted(ns['PLUGINS']) == ['restar', 'sumar']\n    assert ns['ejecutar']('sumar', 5, 3) == 8\n    assert ns['ejecutar']('restar', 5, 3) == 2\n    assert capsys.readouterr().out.strip().splitlines() == ['8', '2']\n",
+    hint: "`PLUGINS[nombre] = func` registra; `ejecutar` busca y llama.",
+    solution_example: "PLUGINS = {}\n\ndef plugin(nombre):\n    def decorador(func):\n        PLUGINS[nombre] = func\n        return func\n    return decorador\n\n@plugin('sumar')\ndef op_sumar(a, b):\n    return a + b\n\n@plugin('restar')\ndef op_restar(a, b):\n    return a - b\n\ndef ejecutar(nombre, a, b):\n    return PLUGINS[nombre](a, b)\n\nprint(ejecutar('sumar', 5, 3))\nprint(ejecutar('restar', 5, 3))\n",
+    next: Some("py-1325-dunder-repr"), show_type_chips: false, micro_step: 1324,
+};
+pub const PY1325_DUNDER_REPR: CodingStep = CodingStep {
+    id: "py-1325-dunder-repr", title: "Operadores · __repr__ y __str__", objective: "Dar una representación legible a un objeto.",
+    prompt_md: "**Operadores: __repr__ / __str__**\n\n`__repr__` define la salida de `repr()` (útil para debug) y `__str__` la de `print` y `str()`.\n\n**Micro-reto:**\n1. Definí `class Punto` con `x` e `y`\n2. Implementá `__repr__` → `Punto(x, y)` y `__str__` → `(x, y)`\n3. Imprimí `repr(Punto(3, 4))` y `str(Punto(3, 4))`",
+    starter_code: "# class Punto:\n#     def __init__(self, x, y):\n#         self.x = x\n#         self.y = y\n#     def __repr__(self):\n#         return f'Punto({self.x}, {self.y})'\n#     def __str__(self):\n#         return f'({self.x}, {self.y})'\n# print(repr(Punto(3, 4)))\n# print(str(Punto(3, 4)))\n",
+    pytest: "def test_repr(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Punto = ns['Punto']\n    assert repr(Punto(3, 4)) == 'Punto(3, 4)'\n    assert str(Punto(3, 4)) == '(3, 4)'\n    assert capsys.readouterr().out.strip().splitlines() == ['Punto(3, 4)', '(3, 4)']\n",
+    hint: "`__repr__` usa f-string con la clase; `__str__` una versión amigable.",
+    solution_example: "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    def __repr__(self):\n        return f'Punto({self.x}, {self.y})'\n    def __str__(self):\n        return f'({self.x}, {self.y})'\n\nprint(repr(Punto(3, 4)))\nprint(str(Punto(3, 4)))\n",
+    next: Some("py-1326-dunder-eq-hash"), show_type_chips: false, micro_step: 1325,
+};
+pub const PY1326_DUNDER_EQ_HASH: CodingStep = CodingStep {
+    id: "py-1326-dunder-eq-hash", title: "Operadores · __eq__ y __hash__", objective: "Comparar por identidad de negocio con __eq__ y __hash__.",
+    prompt_md: "**Operadores: __eq__ / __hash__**\n\n`__eq__` define cuándo dos objetos son iguales; si lo redefinís, también `__hash__` para usarlos en sets y dicts.\n\n**Micro-reto:**\n1. Definí `class Persona` con `dni` y `nombre`\n2. Implementá `__eq__` comparando `dni` y `__hash__` con `hash(self.dni)`\n3. Imprimí `Persona('1','Ana') == Persona('1','Beto')`, `Persona('1','Ana') != Persona('2','Ana')` y `len({Persona('1','Ana'), Persona('1','Beto')})`",
+    starter_code: "# class Persona:\n#     def __init__(self, dni, nombre):\n#         self.dni = dni\n#         self.nombre = nombre\n#     def __eq__(self, other):\n#         return self.dni == other.dni\n#     def __hash__(self):\n#         return hash(self.dni)\n# a = Persona('1', 'Ana')\n# b = Persona('1', 'Beto')\n# c = Persona('2', 'Ana')\n# print(a == b)\n# print(a != c)\n# print(len({a, b}))\n",
+    pytest: "def test_eq_hash(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Persona = ns['Persona']\n    a = Persona('1', 'Ana')\n    b = Persona('1', 'Beto')\n    c = Persona('2', 'Ana')\n    assert a == b\n    assert a != c\n    assert len({a, b}) == 1\n    assert capsys.readouterr().out.strip().splitlines() == ['True', 'True', '1']\n",
+    hint: "`__eq__` compara `dni`; `__hash__` devuelve `hash(self.dni)`.",
+    solution_example: "class Persona:\n    def __init__(self, dni, nombre):\n        self.dni = dni\n        self.nombre = nombre\n    def __eq__(self, other):\n        return self.dni == other.dni\n    def __hash__(self):\n        return hash(self.dni)\n\na = Persona('1', 'Ana')\nb = Persona('1', 'Beto')\nc = Persona('2', 'Ana')\nprint(a == b)\nprint(a != c)\nprint(len({a, b}))\n",
+    next: Some("py-1327-dunder-add"), show_type_chips: false, micro_step: 1326,
+};
+pub const PY1327_DUNDER_ADD: CodingStep = CodingStep {
+    id: "py-1327-dunder-add", title: "Operadores · __add__ y __sub__", objective: "Sobrecargar + y - para tipos propios.",
+    prompt_md: "**Operadores: __add__ / __sub__**\n\nImplementando `__add__` y `__sub__` tu clase soporta los operadores `+` y `-` con la semántica que definas.\n\n**Micro-reto:**\n1. Definí `class Vector` con `x` e `y`\n2. Implementá `__add__`, `__sub__`, `__eq__` y `__repr__`\n3. Imprimí `Vector(1, 2) + Vector(3, 4)` y `Vector(5, 5) - Vector(2, 3)`",
+    starter_code: "# class Vector:\n#     def __init__(self, x, y):\n#         self.x = x\n#         self.y = y\n#     def __add__(self, other):\n#         return Vector(self.x + other.x, self.y + other.y)\n#     def __sub__(self, other):\n#         return Vector(self.x - other.x, self.y - other.y)\n#     def __eq__(self, other):\n#         return (self.x, self.y) == (other.x, other.y)\n#     def __repr__(self):\n#         return f'Vector({self.x}, {self.y})'\n# print(Vector(1, 2) + Vector(3, 4))\n# print(Vector(5, 5) - Vector(2, 3))\n",
+    pytest: "def test_add(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Vector = ns['Vector']\n    assert Vector(1, 2) + Vector(3, 4) == Vector(4, 6)\n    assert Vector(5, 5) - Vector(2, 3) == Vector(3, 2)\n    assert capsys.readouterr().out.strip().splitlines() == ['Vector(4, 6)', 'Vector(3, 2)']\n",
+    hint: "`__add__` devuelve un nuevo `Vector` con la suma componente a componente.",
+    solution_example: "class Vector:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    def __add__(self, other):\n        return Vector(self.x + other.x, self.y + other.y)\n    def __sub__(self, other):\n        return Vector(self.x - other.x, self.y - other.y)\n    def __eq__(self, other):\n        return (self.x, self.y) == (other.x, other.y)\n    def __repr__(self):\n        return f'Vector({self.x}, {self.y})'\n\nprint(Vector(1, 2) + Vector(3, 4))\nprint(Vector(5, 5) - Vector(2, 3))\n",
+    next: Some("py-1328-dunder-lt"), show_type_chips: false, micro_step: 1327,
+};
+pub const PY1328_DUNDER_LT: CodingStep = CodingStep {
+    id: "py-1328-dunder-lt", title: "Operadores · __lt__ (orden)", objective: "Habilitar sorted() implementando __lt__.",
+    prompt_md: "**Operadores: __lt__**\n\n`__lt__` define el orden `<`; con él, `sorted()` puede ordenar tus objetos automáticamente.\n\n**Micro-reto:**\n1. Definí `class Persona` con `nombre` y `edad`\n2. Implementá `__lt__` comparando `edad` y `__repr__` que devuelva el nombre\n3. Imprimí `sorted([Persona('Ana', 30), Persona('Beto', 20)])`",
+    starter_code: "# class Persona:\n#     def __init__(self, nombre, edad):\n#         self.nombre = nombre\n#         self.edad = edad\n#     def __lt__(self, other):\n#         return self.edad < other.edad\n#     def __repr__(self):\n#         return self.nombre\n# print(sorted([Persona('Ana', 30), Persona('Beto', 20)]))\n",
+    pytest: "def test_lt(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Persona = ns['Persona']\n    personas = [Persona('Ana', 30), Persona('Beto', 20)]\n    assert [p.nombre for p in sorted(personas)] == ['Beto', 'Ana']\n    assert capsys.readouterr().out.strip() == '[Beto, Ana]'\n",
+    hint: "`__lt__` compara `self.edad < other.edad`; `__repr__` devuelve `self.nombre`.",
+    solution_example: "class Persona:\n    def __init__(self, nombre, edad):\n        self.nombre = nombre\n        self.edad = edad\n    def __lt__(self, other):\n        return self.edad < other.edad\n    def __repr__(self):\n        return self.nombre\n\nprint(sorted([Persona('Ana', 30), Persona('Beto', 20)]))\n",
+    next: Some("py-1329-dunder-container"), show_type_chips: false, micro_step: 1328,
+};
+pub const PY1329_DUNDER_CONTAINER: CodingStep = CodingStep {
+    id: "py-1329-dunder-container", title: "Operadores · Contenedor (__len__/__getitem__)", objective: "Hacer tu clase indexable con __len__ y __getitem__.",
+    prompt_md: "**Operadores: contenedor**\n\n`__len__` habilita `len()` y `__getitem__` el acceso por índice `obj[i]` (incluidos índices negativos).\n\n**Micro-reto:**\n1. Definí `class Pila` con `self.items`, `apilar`, `__len__` y `__getitem__`\n2. Apilá `1` y `2`\n3. Imprimí `len(p)`, `p[0]` y `p[-1]`",
+    starter_code: "# class Pila:\n#     def __init__(self):\n#         self.items = []\n#     def apilar(self, x):\n#         self.items.append(x)\n#     def __len__(self):\n#         return len(self.items)\n#     def __getitem__(self, i):\n#         return self.items[i]\n# p = Pila()\n# p.apilar(1)\n# p.apilar(2)\n# print(len(p))\n# print(p[0])\n# print(p[-1])\n",
+    pytest: "def test_container(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Pila = ns['Pila']\n    p = Pila()\n    p.apilar(1)\n    p.apilar(2)\n    assert len(p) == 2\n    assert p[0] == 1\n    assert p[-1] == 2\n    assert capsys.readouterr().out.strip().splitlines() == ['2', '1', '2']\n",
+    hint: "`__getitem__` puede delegar en `self.items[i]`, con soporte de negativos.",
+    solution_example: "class Pila:\n    def __init__(self):\n        self.items = []\n    def apilar(self, x):\n        self.items.append(x)\n    def __len__(self):\n        return len(self.items)\n    def __getitem__(self, i):\n        return self.items[i]\n\np = Pila()\np.apilar(1)\np.apilar(2)\nprint(len(p))\nprint(p[0])\nprint(p[-1])\n",
+    next: Some("py-1330-dunder-iter"), show_type_chips: false, micro_step: 1329,
+};
+pub const PY1330_DUNDER_ITER: CodingStep = CodingStep {
+    id: "py-1330-dunder-iter", title: "Operadores · Iterador (__iter__)", objective: "Convertir tu clase en iterable con __iter__/__next__.",
+    prompt_md: "**Operadores: iterador**\n\nImplementando `__iter__` (devuelve `self`) y `__next__` (avanza y lanza `StopIteration` al final) tu clase funciona en `for`.\n\n**Micro-reto:**\n1. Definí `class Rango` con `inicio` y `fin`\n2. Implementá `__iter__` y `__next__` que genere `[inicio, fin)`\n3. Imprimí `list(Rango(1, 4))`",
+    starter_code: "# class Rango:\n#     def __init__(self, inicio, fin):\n#         self.inicio = inicio\n#         self.fin = fin\n#     def __iter__(self):\n#         self.actual = self.inicio\n#         return self\n#     def __next__(self):\n#         if self.actual >= self.fin:\n#             raise StopIteration\n#         valor = self.actual\n#         self.actual += 1\n#         return valor\n# print(list(Rango(1, 4)))\n",
+    pytest: "def test_iter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Rango = ns['Rango']\n    assert list(Rango(1, 4)) == [1, 2, 3]\n    assert sum(Rango(1, 5)) == 10\n    assert capsys.readouterr().out.strip() == str([1, 2, 3])\n",
+    hint: "`__next__` lanza `StopIteration` cuando `actual >= fin`.",
+    solution_example: "class Rango:\n    def __init__(self, inicio, fin):\n        self.inicio = inicio\n        self.fin = fin\n    def __iter__(self):\n        self.actual = self.inicio\n        return self\n    def __next__(self):\n        if self.actual >= self.fin:\n            raise StopIteration\n        valor = self.actual\n        self.actual += 1\n        return valor\n\nprint(list(Rango(1, 4)))\n",
+    next: Some("py-1331-enum-basic"), show_type_chips: false, micro_step: 1330,
+};
+pub const PY1331_ENUM_BASIC: CodingStep = CodingStep {
+    id: "py-1331-enum-basic", title: "Enum · Miembros básicos", objective: "Crear constantes con nombre usando Enum.",
+    prompt_md: "**Enum: básico**\n\n`Enum` agrupa valores constantes con nombre; cada miembro tiene `.name` y `.value`, y se puede buscar por valor.\n\n**Micro-reto:**\n1. Definí `class Color(Enum)` con `ROJO = 1`, `VERDE = 2`, `AZUL = 3`\n2. Imprimí `Color.ROJO.name`, `Color.ROJO.value` y `Color(2)`",
+    starter_code: "# from enum import Enum\n# class Color(Enum):\n#     ROJO = 1\n#     VERDE = 2\n#     AZUL = 3\n# print(Color.ROJO.name)\n# print(Color.ROJO.value)\n# print(Color(2))\n",
+    pytest: "def test_enum_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Color = ns['Color']\n    assert Color.ROJO.name == 'ROJO'\n    assert Color.ROJO.value == 1\n    assert Color(2) is Color.VERDE\n    assert capsys.readouterr().out.strip().splitlines() == ['ROJO', '1', 'Color.VERDE']\n",
+    hint: "`Color(2)` busca el miembro por valor; su repr es `Color.VERDE`.",
+    solution_example: "from enum import Enum\n\nclass Color(Enum):\n    ROJO = 1\n    VERDE = 2\n    AZUL = 3\n\nprint(Color.ROJO.name)\nprint(Color.ROJO.value)\nprint(Color(2))\n",
+    next: Some("py-1332-enum-intenum"), show_type_chips: false, micro_step: 1331,
+};
+pub const PY1332_ENUM_INTENUM: CodingStep = CodingStep {
+    id: "py-1332-enum-intenum", title: "Enum · IntEnum", objective: "Comparar miembros con enteros usando IntEnum.",
+    prompt_md: "**Enum: IntEnum**\n\n`IntEnum` permite que los miembros se comparen y sumen con enteros, útil para niveles y prioridades.\n\n**Micro-reto:**\n1. Definí `class Prioridad(IntEnum)` con `BAJA = 1`, `MEDIA = 2`, `ALTA = 3`\n2. Imprimí `Prioridad.ALTA == 3` y `Prioridad.ALTA + 1`",
+    starter_code: "# from enum import IntEnum\n# class Prioridad(IntEnum):\n#     BAJA = 1\n#     MEDIA = 2\n#     ALTA = 3\n# print(Prioridad.ALTA == 3)\n# print(Prioridad.ALTA + 1)\n",
+    pytest: "def test_intenum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Prioridad = ns['Prioridad']\n    assert Prioridad.ALTA == 3\n    assert Prioridad.ALTA + 1 == 4\n    assert sorted(Prioridad) == [Prioridad.BAJA, Prioridad.MEDIA, Prioridad.ALTA]\n    assert capsys.readouterr().out.strip().splitlines() == ['True', '4']\n",
+    hint: "`IntEnum` hace que `ALTA == 3` y `ALTA + 1 == 4` funcionen.",
+    solution_example: "from enum import IntEnum\n\nclass Prioridad(IntEnum):\n    BAJA = 1\n    MEDIA = 2\n    ALTA = 3\n\nprint(Prioridad.ALTA == 3)\nprint(Prioridad.ALTA + 1)\n",
+    next: Some("py-1333-enum-auto"), show_type_chips: false, micro_step: 1332,
+};
+pub const PY1333_ENUM_AUTO: CodingStep = CodingStep {
+    id: "py-1333-enum-auto", title: "Enum · auto()", objective: "Generar valores automáticos con auto().",
+    prompt_md: "**Enum: auto()**\n\n`auto()` asigna valores consecutivos (1, 2, 3…) sin escribirlos a mano, ideal cuando el orden es lo único que importa.\n\n**Micro-reto:**\n1. Definí `class Estado(Enum)` con `NUEVO = auto()`, `EN_PROCESO = auto()`, `COMPLETADO = auto()`\n2. Imprimí `Estado.NUEVO.value`, `Estado.COMPLETADO.value` y `Estado.EN_PROCESO.name`",
+    starter_code: "# from enum import Enum, auto\n# class Estado(Enum):\n#     NUEVO = auto()\n#     EN_PROCESO = auto()\n#     COMPLETADO = auto()\n# print(Estado.NUEVO.value)\n# print(Estado.COMPLETADO.value)\n# print(Estado.EN_PROCESO.name)\n",
+    pytest: "def test_auto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Estado = ns['Estado']\n    assert Estado.NUEVO.value == 1\n    assert Estado.COMPLETADO.value == 3\n    assert Estado.EN_PROCESO.name == 'EN_PROCESO'\n    assert capsys.readouterr().out.strip().splitlines() == ['1', '3', 'EN_PROCESO']\n",
+    hint: "`auto()` numera en orden de definición empezando por 1.",
+    solution_example: "from enum import Enum, auto\n\nclass Estado(Enum):\n    NUEVO = auto()\n    EN_PROCESO = auto()\n    COMPLETADO = auto()\n\nprint(Estado.NUEVO.value)\nprint(Estado.COMPLETADO.value)\nprint(Estado.EN_PROCESO.name)\n",
+    next: Some("py-1334-enum-iterate"), show_type_chips: false, micro_step: 1333,
+};
+pub const PY1334_ENUM_ITERATE: CodingStep = CodingStep {
+    id: "py-1334-enum-iterate", title: "Enum · Iterar miembros", objective: "Recorrer todos los miembros de un Enum.",
+    prompt_md: "**Enum: iterar**\n\nUn `Enum` es iterable: podés recorrer sus miembros en orden de definición y extraer nombres o valores.\n\n**Micro-reto:**\n1. Definí `class Color(Enum)` con `ROJO`, `VERDE`, `AZUL`\n2. Definí `nombres(clase_enum)` que devuelva `[m.name for m in clase_enum]`\n3. Imprimí `nombres(Color)`",
+    starter_code: "# from enum import Enum\n# class Color(Enum):\n#     ROJO = 1\n#     VERDE = 2\n#     AZUL = 3\n# def nombres(clase_enum):\n#     return [m.name for m in clase_enum]\n# print(nombres(Color))\n",
+    pytest: "def test_iterate_enum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Color = ns['Color']\n    assert ns['nombres'](Color) == ['ROJO', 'VERDE', 'AZUL']\n    assert capsys.readouterr().out.strip() == str(['ROJO', 'VERDE', 'AZUL'])\n",
+    hint: "Iterar un Enum recorre sus miembros en orden de definición.",
+    solution_example: "from enum import Enum\n\nclass Color(Enum):\n    ROJO = 1\n    VERDE = 2\n    AZUL = 3\n\ndef nombres(clase_enum):\n    return [m.name for m in clase_enum]\n\nprint(nombres(Color))\n",
+    next: Some("py-1335-enum-map"), show_type_chips: false, micro_step: 1334,
+};
+pub const PY1335_ENUM_MAP: CodingStep = CodingStep {
+    id: "py-1335-enum-map", title: "Enum · Mapear nombre↔valor", objective: "Convertir entre nombres y valores de un Enum.",
+    prompt_md: "**Enum: mapear**\n\n`Clase[nombre]` busca por nombre y `Clase(valor)` por valor; así convertís en ambas direcciones.\n\n**Micro-reto:**\n1. Definí `class Estado(Enum)` con valores string (`'nuevo'`, `'en_proceso'`, `'completado'`)\n2. Definí `a_valor(clase, nombre)` y `desde_valor(clase, valor)`\n3. Imprimí `a_valor(Estado, 'NUEVO')` y `desde_valor(Estado, 'en_proceso')`",
+    starter_code: "# from enum import Enum\n# class Estado(Enum):\n#     NUEVO = 'nuevo'\n#     EN_PROCESO = 'en_proceso'\n#     COMPLETADO = 'completado'\n# def a_valor(clase_enum, nombre):\n#     return clase_enum[nombre].value\n# def desde_valor(clase_enum, valor):\n#     return clase_enum(valor).name\n# print(a_valor(Estado, 'NUEVO'))\n# print(desde_valor(Estado, 'en_proceso'))\n",
+    pytest: "def test_enum_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Estado = ns['Estado']\n    assert ns['a_valor'](Estado, 'NUEVO') == 'nuevo'\n    assert ns['desde_valor'](Estado, 'en_proceso') == 'EN_PROCESO'\n    assert capsys.readouterr().out.strip().splitlines() == ['nuevo', 'EN_PROCESO']\n",
+    hint: "`clase[nombre].value` da el valor; `clase(valor).name` el nombre.",
+    solution_example: "from enum import Enum\n\nclass Estado(Enum):\n    NUEVO = 'nuevo'\n    EN_PROCESO = 'en_proceso'\n    COMPLETADO = 'completado'\n\ndef a_valor(clase_enum, nombre):\n    return clase_enum[nombre].value\n\ndef desde_valor(clase_enum, valor):\n    return clase_enum(valor).name\n\nprint(a_valor(Estado, 'NUEVO'))\nprint(desde_valor(Estado, 'en_proceso'))\n",
+    next: Some("py-1336-enum-methods"), show_type_chips: false, micro_step: 1335,
+};
+pub const PY1336_ENUM_METHODS: CodingStep = CodingStep {
+    id: "py-1336-enum-methods", title: "Enum · Métodos", objective: "Agregar comportamiento a los miembros de un Enum.",
+    prompt_md: "**Enum: métodos**\n\nUn `Enum` puede definir métodos; cada miembro los hereda y puede ramificar según cuál es (`self`).\n\n**Micro-reto:**\n1. Definí `class Operacion(Enum)` con `SUMA = '+'` y `RESTA = '-'`\n2. Agregá el método `aplicar(self, a, b)` que sume o reste según el miembro\n3. Imprimí `Operacion.SUMA.aplicar(5, 3)` y `Operacion.RESTA.aplicar(5, 3)`",
+    starter_code: "# from enum import Enum\n# class Operacion(Enum):\n#     SUMA = '+'\n#     RESTA = '-'\n#     def aplicar(self, a, b):\n#         if self is Operacion.SUMA:\n#             return a + b\n#         return a - b\n# print(Operacion.SUMA.aplicar(5, 3))\n# print(Operacion.RESTA.aplicar(5, 3))\n",
+    pytest: "def test_enum_methods(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Operacion = ns['Operacion']\n    assert Operacion.SUMA.aplicar(5, 3) == 8\n    assert Operacion.RESTA.aplicar(5, 3) == 2\n    assert capsys.readouterr().out.strip().splitlines() == ['8', '2']\n",
+    hint: "Compará `self is Operacion.SUMA` para elegir el comportamiento.",
+    solution_example: "from enum import Enum\n\nclass Operacion(Enum):\n    SUMA = '+'\n    RESTA = '-'\n    def aplicar(self, a, b):\n        if self is Operacion.SUMA:\n            return a + b\n        return a - b\n\nprint(Operacion.SUMA.aplicar(5, 3))\nprint(Operacion.RESTA.aplicar(5, 3))\n",
+    next: Some("py-1337-dynamic-lookup"), show_type_chips: false, micro_step: 1336,
+};
+pub const PY1337_DYNAMIC_LOOKUP: CodingStep = CodingStep {
+    id: "py-1337-dynamic-lookup", title: "Dinámico · Lookup anidado", objective: "Navegar dicts anidados por una lista de claves.",
+    prompt_md: "**Dinámico: lookup anidado**\n\nPara llegar a un valor profundo sin repetir corchetes, recorré una lista de claves actualizando el valor en cada paso.\n\n**Micro-reto:**\n1. Definí `buscar_anidado(datos, ruta)` que baje por las claves de `ruta`\n2. Usá `datos = {'a': {'b': {'c': 42}}}`\n3. Imprimí `buscar_anidado(datos, ['a', 'b', 'c'])`",
+    starter_code: "# def buscar_anidado(datos, ruta):\n#     actual = datos\n#     for clave in ruta:\n#         actual = actual[clave]\n#     return actual\n# datos = {'a': {'b': {'c': 42}}}\n# print(buscar_anidado(datos, ['a', 'b', 'c']))\n",
+    pytest: "def test_lookup(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    datos = {'a': {'b': {'c': 42}}}\n    assert ns['buscar_anidado'](datos, ['a', 'b', 'c']) == 42\n    assert capsys.readouterr().out.strip() == '42'\n",
+    hint: "`actual = actual[clave]` baja un nivel por cada clave de la ruta.",
+    solution_example: "def buscar_anidado(datos, ruta):\n    actual = datos\n    for clave in ruta:\n        actual = actual[clave]\n    return actual\n\ndatos = {'a': {'b': {'c': 42}}}\nprint(buscar_anidado(datos, ['a', 'b', 'c']))\n",
+    next: Some("py-1338-dynamic-path"), show_type_chips: false, micro_step: 1337,
+};
+pub const PY1338_DYNAMIC_PATH: CodingStep = CodingStep {
+    id: "py-1338-dynamic-path", title: "Dinámico · Resolver path de atributos", objective: "Resolver a.b.c sobre objetos con functools.reduce(getattr).",
+    prompt_md: "**Dinámico: resolver path**\n\n`functools.reduce(getattr, ruta, obj)` aplica `getattr` encadenado para resolver `usuario.perfil.nombre` sin `eval`.\n\n**Micro-reto:**\n1. Importá `reduce` de `functools`\n2. Definí `class Nodo` vacía y construí `raiz.usuario.nombre = 'Ana'`\n3. Definí `resolver(obj, ruta)` con `reduce(getattr, ruta, obj)`\n4. Imprimí `resolver(raiz, ['usuario', 'nombre'])`",
+    starter_code: "# from functools import reduce\n# class Nodo:\n#     pass\n# def resolver(obj, ruta):\n#     return reduce(getattr, ruta, obj)\n# raiz = Nodo()\n# raiz.usuario = Nodo()\n# raiz.usuario.nombre = 'Ana'\n# print(resolver(raiz, ['usuario', 'nombre']))\n",
+    pytest: "def test_path(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    raiz = ns['raiz']\n    assert ns['resolver'](raiz, ['usuario', 'nombre']) == 'Ana'\n    assert capsys.readouterr().out.strip() == 'Ana'\n",
+    hint: "`reduce(getattr, ruta, obj)` encadena getattr sin eval ni recursión.",
+    solution_example: "from functools import reduce\n\nclass Nodo:\n    pass\n\ndef resolver(obj, ruta):\n    return reduce(getattr, ruta, obj)\n\nraiz = Nodo()\nraiz.usuario = Nodo()\nraiz.usuario.nombre = 'Ana'\nprint(resolver(raiz, ['usuario', 'nombre']))\n",
+    next: Some("py-1339-dynamic-dispatch"), show_type_chips: false, micro_step: 1338,
+};
+pub const PY1339_DYNAMIC_DISPATCH: CodingStep = CodingStep {
+    id: "py-1339-dynamic-dispatch", title: "Dinámico · Mapeo nombre→función", objective: "Despachar por string con un dict de funciones (sin eval).",
+    prompt_md: "**Dinámico: dispatch sin eval**\n\nUn dict que mapea strings a funciones es la forma segura de ejecutar según una clave, sin recurrir a `eval`.\n\n**Micro-reto:**\n1. Definí `sumar`, `restar` y `multiplicar`\n2. Definí `OPERACIONES = {'sumar': sumar, ...}` y `ejecutar(nombre, a, b)`\n3. Imprimí `ejecutar('sumar', 5, 3)` y `ejecutar('multiplicar', 5, 3)`",
+    starter_code: "# def sumar(a, b):\n#     return a + b\n# def restar(a, b):\n#     return a - b\n# def multiplicar(a, b):\n#     return a * b\n# OPERACIONES = {'sumar': sumar, 'restar': restar, 'multiplicar': multiplicar}\n# def ejecutar(nombre, a, b):\n#     return OPERACIONES[nombre](a, b)\n# print(ejecutar('sumar', 5, 3))\n# print(ejecutar('multiplicar', 5, 3))\n",
+    pytest: "def test_dispatch_safe(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['ejecutar']('sumar', 5, 3) == 8\n    assert ns['ejecutar']('multiplicar', 5, 3) == 15\n    assert capsys.readouterr().out.strip().splitlines() == ['8', '15']\n",
+    hint: "El dict asocia nombres a funciones; `ejecutar` busca y llama.",
+    solution_example: "def sumar(a, b):\n    return a + b\n\ndef restar(a, b):\n    return a - b\n\ndef multiplicar(a, b):\n    return a * b\n\nOPERACIONES = {\n    'sumar': sumar,\n    'restar': restar,\n    'multiplicar': multiplicar,\n}\n\ndef ejecutar(nombre, a, b):\n    return OPERACIONES[nombre](a, b)\n\nprint(ejecutar('sumar', 5, 3))\nprint(ejecutar('multiplicar', 5, 3))\n",
+    next: Some("py-1340-dynamic-whitelist"), show_type_chips: false, micro_step: 1339,
+};
+pub const PY1340_DYNAMIC_WHITELIST: CodingStep = CodingStep {
+    id: "py-1340-dynamic-whitelist", title: "Dinámico · Whitelist", objective: "Permitir solo operaciones de una whitelist.",
+    prompt_md: "**Dinámico: whitelist**\n\nAntes de despachar por string, validá que el nombre esté en un conjunto permitido; así bloqueás operaciones desconocidas.\n\n**Micro-reto:**\n1. Definí `PERMITIDAS = {'sumar', 'restar'}`\n2. Definí `ejecutar_seguro(nombre, a, b)` que devuelva `None` si `nombre` no está permitido\n3. Imprimí `ejecutar_seguro('sumar', 5, 3)` y `ejecutar_seguro('multiplicar', 5, 3)`",
+    starter_code: "# PERMITIDAS = {'sumar', 'restar'}\n# def sumar(a, b):\n#     return a + b\n# def restar(a, b):\n#     return a - b\n# OPERACIONES = {'sumar': sumar, 'restar': restar}\n# def ejecutar_seguro(nombre, a, b):\n#     if nombre not in PERMITIDAS:\n#         return None\n#     return OPERACIONES[nombre](a, b)\n# print(ejecutar_seguro('sumar', 5, 3))\n# print(ejecutar_seguro('multiplicar', 5, 3))\n",
+    pytest: "def test_whitelist(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['ejecutar_seguro']('sumar', 5, 3) == 8\n    assert ns['ejecutar_seguro']('multiplicar', 5, 3) is None\n    assert capsys.readouterr().out.strip().splitlines() == ['8', 'None']\n",
+    hint: "Chequeá `nombre not in PERMITIDAS` antes de despachar.",
+    solution_example: "PERMITIDAS = {'sumar', 'restar'}\n\ndef sumar(a, b):\n    return a + b\n\ndef restar(a, b):\n    return a - b\n\nOPERACIONES = {'sumar': sumar, 'restar': restar}\n\ndef ejecutar_seguro(nombre, a, b):\n    if nombre not in PERMITIDAS:\n        return None\n    return OPERACIONES[nombre](a, b)\n\nprint(ejecutar_seguro('sumar', 5, 3))\nprint(ejecutar_seguro('multiplicar', 5, 3))\n",
+    next: Some("py-1341-dynamic-config"), show_type_chips: false, micro_step: 1340,
+};
+pub const PY1341_DYNAMIC_CONFIG: CodingStep = CodingStep {
+    id: "py-1341-dynamic-config", title: "Dinámico · Config por string", objective: "Construir un dict de configuración desde texto clave=valor.",
+    prompt_md: "**Dinámico: config por string**\n\nParseá un string `clave=valor,clave=valor` en un dict, sin evaluar código, solo separando texto.\n\n**Micro-reto:**\n1. Definí `configurar(texto)` que parta por comas y luego por `=`\n2. Devolvé un dict con las claves y valores\n3. Imprimí `configurar('tema=oscuro,idioma=es')`",
+    starter_code: "# def configurar(texto):\n#     resultado = {}\n#     for item in texto.split(','):\n#         clave, valor = item.split('=')\n#         resultado[clave] = valor\n#     return resultado\n# print(configurar('tema=oscuro,idioma=es'))\n",
+    pytest: "def test_config(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['configurar']('tema=oscuro,idioma=es') == {'tema': 'oscuro', 'idioma': 'es'}\n    assert capsys.readouterr().out.strip() == str({'tema': 'oscuro', 'idioma': 'es'})\n",
+    hint: "`item.split('=')` separa clave y valor; armá el dict en un loop.",
+    solution_example: "def configurar(texto):\n    resultado = {}\n    for item in texto.split(','):\n        clave, valor = item.split('=')\n        resultado[clave] = valor\n    return resultado\n\nprint(configurar('tema=oscuro,idioma=es'))\n",
+    next: Some("py-1342-dynamic-path-parser"), show_type_chips: false, micro_step: 1341,
+};
+pub const PY1342_DYNAMIC_PATH_PARSER: CodingStep = CodingStep {
+    id: "py-1342-dynamic-path-parser", title: "Dinámico · Parser de rutas", objective: "Partir una ruta a.b.c en sus componentes.",
+    prompt_md: "**Dinámico: parser de rutas**\n\nSeparó una ruta de atributos escrita con puntos en una lista de componentes, descartando vacíos.\n\n**Micro-reto:**\n1. Definí `parsear_ruta(ruta)` que haga `split('.')` y filtre vacíos\n2. Imprimí `parsear_ruta('usuario.perfil.nombre')` y `parsear_ruta('a..b')`",
+    starter_code: "# def parsear_ruta(ruta):\n#     return [p for p in ruta.split('.') if p]\n# print(parsear_ruta('usuario.perfil.nombre'))\n# print(parsear_ruta('a..b'))\n",
+    pytest: "def test_path_parser(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['parsear_ruta']('usuario.perfil.nombre') == ['usuario', 'perfil', 'nombre']\n    assert ns['parsear_ruta']('a..b') == ['a', 'b']\n    assert capsys.readouterr().out.strip().splitlines() == [str(['usuario', 'perfil', 'nombre']), str(['a', 'b'])]\n",
+    hint: "`[p for p in ruta.split('.') if p]` descarta los componentes vacíos.",
+    solution_example: "def parsear_ruta(ruta):\n    return [p for p in ruta.split('.') if p]\n\nprint(parsear_ruta('usuario.perfil.nombre'))\nprint(parsear_ruta('a..b'))\n",
+    next: Some("py-1343-slots-basic"), show_type_chips: false, micro_step: 1342,
+};
+pub const PY1343_SLOTS_BASIC: CodingStep = CodingStep {
+    id: "py-1343-slots-basic", title: "Memoria · __slots__ básico", objective: "Restringir atributos y ahorrar memoria con __slots__.",
+    prompt_md: "**Memoria: __slots__**\n\n`__slots__` declara los únicos atributos permitidos y elimina el `__dict__`, ahorrando memoria por instancia.\n\n**Micro-reto:**\n1. Definí `class Punto` con `__slots__ = ('x', 'y')` y su `__init__`\n2. Imprimí `Punto(1, 2).x`, `Punto(1, 2).y` y `hasattr(Punto(1, 2), '__dict__')`",
+    starter_code: "# class Punto:\n#     __slots__ = ('x', 'y')\n#     def __init__(self, x, y):\n#         self.x = x\n#         self.y = y\n# print(Punto(1, 2).x)\n# print(Punto(1, 2).y)\n# print(hasattr(Punto(1, 2), '__dict__'))\n",
+    pytest: "def test_slots_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Punto = ns['Punto']\n    assert Punto(1, 2).x == 1\n    assert Punto(1, 2).y == 2\n    assert not hasattr(Punto(1, 2), '__dict__')\n    assert capsys.readouterr().out.strip().splitlines() == ['1', '2', 'False']\n",
+    hint: "Con `__slots__` la instancia ya no tiene `__dict__`.",
+    solution_example: "class Punto:\n    __slots__ = ('x', 'y')\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\nprint(Punto(1, 2).x)\nprint(Punto(1, 2).y)\nprint(hasattr(Punto(1, 2), '__dict__'))\n",
+    next: Some("py-1344-slots-inheritance"), show_type_chips: false, micro_step: 1343,
+};
+pub const PY1344_SLOTS_INHERITANCE: CodingStep = CodingStep {
+    id: "py-1344-slots-inheritance", title: "Memoria · __slots__ con herencia", objective: "Combinar __slots__ de una clase base y una hija.",
+    prompt_md: "**Memoria: __slots__ con herencia**\n\nSi la base y la hija declaran `__slots__`, la instancia final suma ambos conjuntos y sigue sin `__dict__`.\n\n**Micro-reto:**\n1. Definí `class Base` con `__slots__ = ('id',)` y `class Punto(Base)` con `__slots__ = ('x', 'y')`\n2. Inicializá `id`, `x` e `y` en `Punto`\n3. Imprimí `p.id`, `p.x`, `p.y` y `hasattr(p, '__dict__')`",
+    starter_code: "# class Base:\n#     __slots__ = ('id',)\n#     def __init__(self, id):\n#         self.id = id\n# class Punto(Base):\n#     __slots__ = ('x', 'y')\n#     def __init__(self, id, x, y):\n#         super().__init__(id)\n#         self.x = x\n#         self.y = y\n# p = Punto(1, 2, 3)\n# print(p.id)\n# print(p.x)\n# print(p.y)\n# print(hasattr(p, '__dict__'))\n",
+    pytest: "def test_slots_inheritance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Punto = ns['Punto']\n    p = Punto(1, 2, 3)\n    assert p.id == 1\n    assert p.x == 2\n    assert p.y == 3\n    assert not hasattr(p, '__dict__')\n    assert capsys.readouterr().out.strip().splitlines() == ['1', '2', '3', 'False']\n",
+    hint: "`super().__init__(id)` inicializa los slots de la base.",
+    solution_example: "class Base:\n    __slots__ = ('id',)\n    def __init__(self, id):\n        self.id = id\n\nclass Punto(Base):\n    __slots__ = ('x', 'y')\n    def __init__(self, id, x, y):\n        super().__init__(id)\n        self.x = x\n        self.y = y\n\np = Punto(1, 2, 3)\nprint(p.id)\nprint(p.x)\nprint(p.y)\nprint(hasattr(p, '__dict__'))\n",
+    next: Some("py-1345-slots-vs-dict"), show_type_chips: false, micro_step: 1344,
+};
+pub const PY1345_SLOTS_VS_DICT: CodingStep = CodingStep {
+    id: "py-1345-slots-vs-dict", title: "Memoria · __dict__ vs __slots__", objective: "Distinguir clases con y sin __dict__.",
+    prompt_md: "**Memoria: __dict__ vs __slots__**\n\nUna clase normal guarda atributos en `__dict__`; con `__slots__` los guarda en un arreglo fijo, sin dict.\n\n**Micro-reto:**\n1. Definí `class ConDict` y `class ConSlots` (con `__slots__ = ('x',)`)\n2. Definí `tiene_dict(obj)` que devuelva `hasattr(obj, '__dict__')`\n3. Imprimí `tiene_dict(ConDict(1))` y `tiene_dict(ConSlots(1))`",
+    starter_code: "# class ConDict:\n#     def __init__(self, x):\n#         self.x = x\n# class ConSlots:\n#     __slots__ = ('x',)\n#     def __init__(self, x):\n#         self.x = x\n# def tiene_dict(obj):\n#     return hasattr(obj, '__dict__')\n# print(tiene_dict(ConDict(1)))\n# print(tiene_dict(ConSlots(1)))\n",
+    pytest: "def test_slots_vs_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['tiene_dict'](ns['ConDict'](1)) is True\n    assert ns['tiene_dict'](ns['ConSlots'](1)) is False\n    assert capsys.readouterr().out.strip().splitlines() == ['True', 'False']\n",
+    hint: "`hasattr(obj, '__dict__')` es True solo para clases normales.",
+    solution_example: "class ConDict:\n    def __init__(self, x):\n        self.x = x\n\nclass ConSlots:\n    __slots__ = ('x',)\n    def __init__(self, x):\n        self.x = x\n\ndef tiene_dict(obj):\n    return hasattr(obj, '__dict__')\n\nprint(tiene_dict(ConDict(1)))\nprint(tiene_dict(ConSlots(1)))\n",
+    next: Some("py-1346-slots-restrict"), show_type_chips: false, micro_step: 1345,
+};
+pub const PY1346_SLOTS_RESTRICT: CodingStep = CodingStep {
+    id: "py-1346-slots-restrict", title: "Memoria · Atributo no declarado", objective: "Detectar AttributeError al asignar atributos no declarados.",
+    prompt_md: "**Memoria: atributo no declarado**\n\nCon `__slots__`, asignar un atributo que no está en la tupla lanza `AttributeError`.\n\n**Micro-reto:**\n1. Definí `class Punto` con `__slots__ = ('x', 'y')`\n2. Definí `asignar(obj, nombre, valor)` que use `setattr` y devuelva `True`, o `False` si captura `AttributeError`\n3. Imprimí `asignar(p, 'x', 10)` y `asignar(p, 'z', 3)`",
+    starter_code: "# class Punto:\n#     __slots__ = ('x', 'y')\n#     def __init__(self, x, y):\n#         self.x = x\n#         self.y = y\n# def asignar(obj, nombre, valor):\n#     try:\n#         setattr(obj, nombre, valor)\n#         return True\n#     except AttributeError:\n#         return False\n# p = Punto(1, 2)\n# print(asignar(p, 'x', 10))\n# print(asignar(p, 'z', 3))\n",
+    pytest: "def test_restrict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Punto = ns['Punto']\n    p = Punto(1, 2)\n    assert ns['asignar'](p, 'x', 10) is True\n    assert p.x == 10\n    assert ns['asignar'](p, 'z', 3) is False\n    assert not hasattr(p, 'z')\n    assert capsys.readouterr().out.strip().splitlines() == ['True', 'False']\n",
+    hint: "`setattr` de un atributo fuera de `__slots__` lanza `AttributeError`.",
+    solution_example: "class Punto:\n    __slots__ = ('x', 'y')\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\ndef asignar(obj, nombre, valor):\n    try:\n        setattr(obj, nombre, valor)\n        return True\n    except AttributeError:\n        return False\n\np = Punto(1, 2)\nprint(asignar(p, 'x', 10))\nprint(asignar(p, 'z', 3))\n",
+    next: Some("py-1347-slots-sizeof"), show_type_chips: false, micro_step: 1346,
+};
+pub const PY1347_SLOTS_SIZEOF: CodingStep = CodingStep {
+    id: "py-1347-slots-sizeof", title: "Memoria · Medir con __sizeof__", objective: "Comparar el tamaño en memoria de instancias con y sin __slots__.",
+    prompt_md: "**Memoria: medir tamaño**\n\n`sys.getsizeof` no cuenta el `__dict__` de una instancia normal; hay que sumarlo para comparar el footprint real. Con `__slots__` no hay dict que sumar.\n\n**Micro-reto:**\n1. Definí `class ConDict` y `class ConSlots` (con `__slots__ = ('x', 'y')`)\n2. Definí `comparar()` que devuelva `sys.getsizeof(ConSlots(1, 2)) < sys.getsizeof(ConDict(1, 2)) + sys.getsizeof(ConDict(1, 2).__dict__)`\n3. Imprimí `comparar()`",
+    starter_code: "# import sys\n# class ConDict:\n#     def __init__(self, x, y):\n#         self.x = x\n#         self.y = y\n# class ConSlots:\n#     __slots__ = ('x', 'y')\n#     def __init__(self, x, y):\n#         self.x = x\n#         self.y = y\n# def comparar():\n#     return sys.getsizeof(ConSlots(1, 2)) < sys.getsizeof(ConDict(1, 2)) + sys.getsizeof(ConDict(1, 2).__dict__)\n# print(comparar())\n",
+    pytest: "def test_sizeof(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['comparar']() is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Sumá `sys.getsizeof(obj.__dict__)` al total de la instancia con dict; con `__slots__` no hay dict que sumar.",
+    solution_example: "import sys\n\nclass ConDict:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\nclass ConSlots:\n    __slots__ = ('x', 'y')\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\ndef comparar():\n    return sys.getsizeof(ConSlots(1, 2)) < sys.getsizeof(ConDict(1, 2)) + sys.getsizeof(ConDict(1, 2).__dict__)\n\nprint(comparar())\n",
+    next: Some("py-1348-slots-design"), show_type_chips: false, micro_step: 1347,
+};
+pub const PY1348_SLOTS_DESIGN: CodingStep = CodingStep {
+    id: "py-1348-slots-design", title: "Memoria · Diseño memory-conscious", objective: "Diseñar un registro compacto usando __slots__.",
+    prompt_md: "**Memoria: diseño memory-conscious**\n\nPara muchas instancias chicas (registros, puntos, eventos), `__slots__` evita el overhead del `__dict__`.\n\n**Micro-reto:**\n1. Definí `class Registro` con `__slots__ = ('id', 'nombre', 'activo')`\n2. Definí `crear_registro(id, nombre, activo=True)` que devuelva la instancia\n3. Imprimí `r.id`, `r.nombre`, `r.activo` y `hasattr(r, '__dict__')`",
+    starter_code: "# class Registro:\n#     __slots__ = ('id', 'nombre', 'activo')\n#     def __init__(self, id, nombre, activo):\n#         self.id = id\n#         self.nombre = nombre\n#         self.activo = activo\n# def crear_registro(id, nombre, activo=True):\n#     return Registro(id, nombre, activo)\n# r = crear_registro(1, 'Ana')\n# print(r.id)\n# print(r.nombre)\n# print(r.activo)\n# print(hasattr(r, '__dict__'))\n",
+    pytest: "def test_design(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    r = ns['crear_registro'](1, 'Ana')\n    assert r.id == 1\n    assert r.nombre == 'Ana'\n    assert r.activo is True\n    assert not hasattr(r, '__dict__')\n    assert capsys.readouterr().out.strip().splitlines() == ['1', 'Ana', 'True', 'False']\n",
+    hint: "Declará en `__slots__` exactamente los campos que va a usar la instancia.",
+    solution_example: "class Registro:\n    __slots__ = ('id', 'nombre', 'activo')\n    def __init__(self, id, nombre, activo):\n        self.id = id\n        self.nombre = nombre\n        self.activo = activo\n\ndef crear_registro(id, nombre, activo=True):\n    return Registro(id, nombre, activo)\n\nr = crear_registro(1, 'Ana')\nprint(r.id)\nprint(r.nombre)\nprint(r.activo)\nprint(hasattr(r, '__dict__'))\n",
+    next: Some("py-1349-pattern-singleton"), show_type_chips: false, micro_step: 1348,
+};
+pub const PY1349_PATTERN_SINGLETON: CodingStep = CodingStep {
+    id: "py-1349-pattern-singleton", title: "Patrones · Singleton", objective: "Garantizar una única instancia con __new__.",
+    prompt_md: "**Patrones: singleton**\n\nSobreescribiendo `__new__`, la clase devuelve siempre la misma instancia, guardándola en un atributo de clase.\n\n**Micro-reto:**\n1. Definí `class Configuracion` con `_instancia = None`\n2. En `__new__`, creá la instancia solo si `_instancia` es `None`\n3. Imprimí `Configuracion() is Configuracion()`",
+    starter_code: "# class Configuracion:\n#     _instancia = None\n#     def __new__(cls):\n#         if cls._instancia is None:\n#             cls._instancia = super().__new__(cls)\n#         return cls._instancia\n# print(Configuracion() is Configuracion())\n",
+    pytest: "def test_singleton(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Configuracion = ns['Configuracion']\n    assert Configuracion() is Configuracion()\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "`__new__` devuelve `cls._instancia` si ya existe, o la crea una vez.",
+    solution_example: "class Configuracion:\n    _instancia = None\n    def __new__(cls):\n        if cls._instancia is None:\n            cls._instancia = super().__new__(cls)\n        return cls._instancia\n\nprint(Configuracion() is Configuracion())\n",
+    next: Some("py-1350-pattern-registry"), show_type_chips: false, micro_step: 1349,
+};
+pub const PY1350_PATTERN_REGISTRY: CodingStep = CodingStep {
+    id: "py-1350-pattern-registry", title: "Patrones · Registry", objective: "Centralizar clases en un registro accesible.",
+    prompt_md: "**Patrones: registry**\n\nUn registro es un dict que asocia nombres a clases, permitiendo descubrirlas y crearlas de forma desacoplada.\n\n**Micro-reto:**\n1. Definí `REGISTRO = {}` y `registrar(nombre)` que devuelva un decorador que guarde la clase\n2. Decorá `class Perro` con `@registrar('perro')` y `class Gato` con `@registrar('gato')`\n3. Imprimí `sorted(REGISTRO.keys())` y `REGISTRO['perro'].__name__`",
+    starter_code: "# REGISTRO = {}\n# def registrar(nombre):\n#     def decorador(cls):\n#         REGISTRO[nombre] = cls\n#         return cls\n#     return decorador\n# @registrar('perro')\n# class Perro:\n#     pass\n# @registrar('gato')\n# class Gato:\n#     pass\n# print(sorted(REGISTRO.keys()))\n# print(REGISTRO['perro'].__name__)\n",
+    pytest: "def test_registry_pattern(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert sorted(ns['REGISTRO'].keys()) == ['gato', 'perro']\n    assert ns['REGISTRO']['perro'].__name__ == 'Perro'\n    assert capsys.readouterr().out.strip().splitlines() == [str(['gato', 'perro']), 'Perro']\n",
+    hint: "`REGISTRO[nombre] = cls` guarda la clase; recuperala por su clave.",
+    solution_example: "REGISTRO = {}\n\ndef registrar(nombre):\n    def decorador(cls):\n        REGISTRO[nombre] = cls\n        return cls\n    return decorador\n\n@registrar('perro')\nclass Perro:\n    pass\n\n@registrar('gato')\nclass Gato:\n    pass\n\nprint(sorted(REGISTRO.keys()))\nprint(REGISTRO['perro'].__name__)\n",
+    next: Some("py-1351-pattern-factory"), show_type_chips: false, micro_step: 1350,
+};
+pub const PY1351_PATTERN_FACTORY: CodingStep = CodingStep {
+    id: "py-1351-pattern-factory", title: "Patrones · Factory", objective: "Crear objetos por tipo con una función fábrica.",
+    prompt_md: "**Patrones: factory**\n\nUna fábrica es una función que, según un parámetro, instancia y devuelve el objeto adecuado.\n\n**Micro-reto:**\n1. Definí `class Circulo` y `class Rectangulo`, cada una con `area()`\n2. Definí `crear_forma(tipo, *args)` que instancie según el tipo\n3. Imprimí `round(crear_forma('circulo', 2).area(), 4)` y `crear_forma('rectangulo', 3, 4).area()`",
+    starter_code: "# class Circulo:\n#     def __init__(self, radio):\n#         self.radio = radio\n#     def area(self):\n#         return 3.1416 * self.radio ** 2\n# class Rectangulo:\n#     def __init__(self, base, altura):\n#         self.base = base\n#         self.altura = altura\n#     def area(self):\n#         return self.base * self.altura\n# def crear_forma(tipo, *args):\n#     if tipo == 'circulo':\n#         return Circulo(*args)\n#     if tipo == 'rectangulo':\n#         return Rectangulo(*args)\n#     raise ValueError('tipo desconocido')\n# print(round(crear_forma('circulo', 2).area(), 4))\n# print(crear_forma('rectangulo', 3, 4).area())\n",
+    pytest: "def test_factory(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert round(ns['crear_forma']('circulo', 2).area(), 4) == 12.5664\n    assert ns['crear_forma']('rectangulo', 3, 4).area() == 12\n    assert capsys.readouterr().out.strip().splitlines() == ['12.5664', '12']\n",
+    hint: "Según `tipo`, instanciá `Circulo` o `Rectangulo` con los argumentos.",
+    solution_example: "class Circulo:\n    def __init__(self, radio):\n        self.radio = radio\n    def area(self):\n        return 3.1416 * self.radio ** 2\n\nclass Rectangulo:\n    def __init__(self, base, altura):\n        self.base = base\n        self.altura = altura\n    def area(self):\n        return self.base * self.altura\n\ndef crear_forma(tipo, *args):\n    if tipo == 'circulo':\n        return Circulo(*args)\n    if tipo == 'rectangulo':\n        return Rectangulo(*args)\n    raise ValueError('tipo desconocido')\n\nprint(round(crear_forma('circulo', 2).area(), 4))\nprint(crear_forma('rectangulo', 3, 4).area())\n",
+    next: Some("py-1352-pattern-adapter"), show_type_chips: false, micro_step: 1351,
+};
+pub const PY1352_PATTERN_ADAPTER: CodingStep = CodingStep {
+    id: "py-1352-pattern-adapter", title: "Patrones · Adapter", objective: "Adaptar una interfaz externa a la que tu código espera.",
+    prompt_md: "**Patrones: adapter**\n\nUn adapter envuelve un objeto con una interfaz distinta y expone los métodos que tu código necesita.\n\n**Micro-reto:**\n1. Definí `class MedidorMilla` con `distancia_millas()` que devuelva `10`\n2. Definí `class AdaptadorKm` que reciba el medidor y exponga `distancia_km()` con `millas * 1.60934`\n3. Imprimí `AdaptadorKm(MedidorMilla()).distancia_km()`",
+    starter_code: "# class MedidorMilla:\n#     def distancia_millas(self):\n#         return 10\n# class AdaptadorKm:\n#     def __init__(self, medidor):\n#         self.medidor = medidor\n#     def distancia_km(self):\n#         return round(self.medidor.distancia_millas() * 1.60934, 2)\n# print(AdaptadorKm(MedidorMilla()).distancia_km())\n",
+    pytest: "def test_adapter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['AdaptadorKm'](ns['MedidorMilla']()).distancia_km() == 16.09\n    assert capsys.readouterr().out.strip() == '16.09'\n",
+    hint: "El adapter traduce millas a kilómetros multiplicando por 1.60934.",
+    solution_example: "class MedidorMilla:\n    def distancia_millas(self):\n        return 10\n\nclass AdaptadorKm:\n    def __init__(self, medidor):\n        self.medidor = medidor\n    def distancia_km(self):\n        return round(self.medidor.distancia_millas() * 1.60934, 2)\n\nprint(AdaptadorKm(MedidorMilla()).distancia_km())\n",
+    next: Some("py-1353-pattern-decorator"), show_type_chips: false, micro_step: 1352,
+};
+pub const PY1353_PATTERN_DECORATOR: CodingStep = CodingStep {
+    id: "py-1353-pattern-decorator", title: "Patrones · Decorator (idiomático)", objective: "Envolver funciones para agregar comportamiento.",
+    prompt_md: "**Patrones: decorator**\n\nEl patrón decorator envuelve una función para extender su salida sin modificar su código interno.\n\n**Micro-reto:**\n1. Definí `con_prefijo(prefijo)` que devuelva un decorador que anteponga `prefijo: ` al resultado\n2. Decorá `doble(x)` (devuelve `x * 2`) con `@con_prefijo('resultado')`\n3. Imprimí `doble(5)`",
+    starter_code: "# def con_prefijo(prefijo):\n#     def decorador(func):\n#         def envoltura(x):\n#             return f'{prefijo}: {func(x)}'\n#         return envoltura\n#     return decorador\n# @con_prefijo('resultado')\n# def doble(x):\n#     return x * 2\n# print(doble(5))\n",
+    pytest: "def test_decorator_pattern(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['doble'](5) == 'resultado: 10'\n    assert capsys.readouterr().out.strip() == 'resultado: 10'\n",
+    hint: "La `envoltura` antepone el prefijo y llama a la función original.",
+    solution_example: "def con_prefijo(prefijo):\n    def decorador(func):\n        def envoltura(x):\n            return f'{prefijo}: {func(x)}'\n        return envoltura\n    return decorador\n\n@con_prefijo('resultado')\ndef doble(x):\n    return x * 2\n\nprint(doble(5))\n",
+    next: Some("py-1354-pattern-strategy"), show_type_chips: false, micro_step: 1353,
+};
+pub const PY1354_PATTERN_STRATEGY: CodingStep = CodingStep {
+    id: "py-1354-pattern-strategy", title: "Patrones · Strategy", objective: "Elegir comportamiento en runtime con estrategias.",
+    prompt_md: "**Patrones: strategy**\n\nCada estrategia es una función intercambiable; un selector devuelve la adecuada según el tipo, sin `if/elif` en el cliente.\n\n**Micro-reto:**\n1. Definí las estrategias `normal`, `descuento` (×0.9) y `recargo` (×1.1)\n2. Definí `elegir(tipo)` que devuelva la estrategia desde un dict, y `aplicar(precio, estrategia)`\n3. Imprimí `aplicar(100, elegir('normal'))`, `aplicar(100, elegir('descuento'))` y `aplicar(100, elegir('recargo'))`",
+    starter_code: "# def normal(precio):\n#     return precio\n# def descuento(precio):\n#     return precio * 0.9\n# def recargo(precio):\n#     return precio * 1.1\n# def elegir(tipo):\n#     return {'normal': normal, 'descuento': descuento, 'recargo': recargo}[tipo]\n# def aplicar(precio, estrategia):\n#     return round(estrategia(precio), 2)\n# print(aplicar(100, elegir('normal')))\n# print(aplicar(100, elegir('descuento')))\n# print(aplicar(100, elegir('recargo')))\n",
+    pytest: "def test_strategy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['aplicar'](100, ns['elegir']('normal')) == 100\n    assert ns['aplicar'](100, ns['elegir']('descuento')) == 90.0\n    assert ns['aplicar'](100, ns['elegir']('recargo')) == 110.0\n    assert capsys.readouterr().out.strip().splitlines() == ['100', '90.0', '110.0']\n",
+    hint: "`elegir` devuelve la función desde un dict; `aplicar` la invoca.",
+    solution_example: "def normal(precio):\n    return precio\n\ndef descuento(precio):\n    return precio * 0.9\n\ndef recargo(precio):\n    return precio * 1.1\n\ndef elegir(tipo):\n    return {'normal': normal, 'descuento': descuento, 'recargo': recargo}[tipo]\n\ndef aplicar(precio, estrategia):\n    return round(estrategia(precio), 2)\n\nprint(aplicar(100, elegir('normal')))\nprint(aplicar(100, elegir('descuento')))\nprint(aplicar(100, elegir('recargo')))\n",
+    next: Some("py-1355-project-registry-meta"), show_type_chips: false, micro_step: 1354,
+};
+pub const PY1355_PROJECT_REGISTRY_META: CodingStep = CodingStep {
+    id: "py-1355-project-registry-meta", title: "Proyecto · Metaclase de registro", objective: "Dar a cada clase su propio registro con una metaclase.",
+    prompt_md: "**Proyecto: metaclase de registro**\n\nUna metaclase puede regalar a cada clase un diccionario `registro` propio, listo para acumular subclases.\n\n**Micro-reto:**\n1. Definí `class MetaRegistro(type)` cuyo `__new__` asigne `cls.registro = {}`\n2. Definí `class Entidad(metaclass=MetaRegistro)` vacía\n3. Imprimí `hasattr(Entidad, 'registro')` y `Entidad.registro`",
+    starter_code: "# class MetaRegistro(type):\n#     def __new__(mcs, nombre, bases, attrs):\n#         cls = super().__new__(mcs, nombre, bases, attrs)\n#         cls.registro = {}\n#         return cls\n# class Entidad(metaclass=MetaRegistro):\n#     pass\n# print(hasattr(Entidad, 'registro'))\n# print(Entidad.registro)\n",
+    pytest: "def test_registry_meta(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Entidad = ns['Entidad']\n    assert hasattr(Entidad, 'registro')\n    assert Entidad.registro == {}\n    assert capsys.readouterr().out.strip().splitlines() == ['True', '{}']\n",
+    hint: "Tras `super().__new__`, asigná `cls.registro = {}` antes de devolver.",
+    solution_example: "class MetaRegistro(type):\n    def __new__(mcs, nombre, bases, attrs):\n        cls = super().__new__(mcs, nombre, bases, attrs)\n        cls.registro = {}\n        return cls\n\nclass Entidad(metaclass=MetaRegistro):\n    pass\n\nprint(hasattr(Entidad, 'registro'))\nprint(Entidad.registro)\n",
+    next: Some("py-1356-project-validate-descriptor"), show_type_chips: false, micro_step: 1355,
+};
+pub const PY1356_PROJECT_VALIDATE_DESCRIPTOR: CodingStep = CodingStep {
+    id: "py-1356-project-validate-descriptor", title: "Proyecto · Descriptor de validación", objective: "Validar campos de texto con un descriptor reutilizable.",
+    prompt_md: "**Proyecto: descriptor de validación**\n\nUn descriptor `Validado` exige texto no vacío al asignar, reutilizable en varios campos del mini-framework.\n\n**Micro-reto:**\n1. Definí `class Validado` con `__set_name__`, `__get__` y `__set__` (rechazá no-str o vacío con `ValueError`)\n2. Definí `class Producto` con `nombre = Validado()`\n3. Definí `asignar(prod, valor)` que devuelva el valor o `'rechazado'`\n4. Imprimí `asignar(Producto(), 'libro')`, `asignar(Producto(), '')` y `asignar(Producto(), 123)`",
+    starter_code: "# class Validado:\n#     def __set_name__(self, owner, name):\n#         self.nombre = '_' + name\n#     def __get__(self, instance, owner):\n#         return instance.__dict__[self.nombre]\n#     def __set__(self, instance, value):\n#         if not isinstance(value, str) or not value:\n#             raise ValueError('texto no vacio requerido')\n#         instance.__dict__[self.nombre] = value\n# class Producto:\n#     nombre = Validado()\n# def asignar(prod, valor):\n#     try:\n#         prod.nombre = valor\n#         return prod.nombre\n#     except ValueError:\n#         return 'rechazado'\n# print(asignar(Producto(), 'libro'))\n# print(asignar(Producto(), ''))\n# print(asignar(Producto(), 123))\n",
+    pytest: "def test_validate_descriptor(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Producto = ns['Producto']\n    assert ns['asignar'](Producto(), 'libro') == 'libro'\n    assert ns['asignar'](Producto(), '') == 'rechazado'\n    assert ns['asignar'](Producto(), 123) == 'rechazado'\n    assert capsys.readouterr().out.strip().splitlines() == ['libro', 'rechazado', 'rechazado']\n",
+    hint: "Validá `isinstance(value, str) and value` antes de guardar.",
+    solution_example: "class Validado:\n    def __set_name__(self, owner, name):\n        self.nombre = '_' + name\n    def __get__(self, instance, owner):\n        return instance.__dict__[self.nombre]\n    def __set__(self, instance, value):\n        if not isinstance(value, str) or not value:\n            raise ValueError('texto no vacio requerido')\n        instance.__dict__[self.nombre] = value\n\nclass Producto:\n    nombre = Validado()\n\ndef asignar(prod, valor):\n    try:\n        prod.nombre = valor\n        return prod.nombre\n    except ValueError:\n        return 'rechazado'\n\nprint(asignar(Producto(), 'libro'))\nprint(asignar(Producto(), ''))\nprint(asignar(Producto(), 123))\n",
+    next: Some("py-1357-project-register-decorator"), show_type_chips: false, micro_step: 1356,
+};
+pub const PY1357_PROJECT_REGISTER_DECORATOR: CodingStep = CodingStep {
+    id: "py-1357-project-register-decorator", title: "Proyecto · Decorador de registro", objective: "Registrar clases del framework con un decorador.",
+    prompt_md: "**Proyecto: decorador de registro**\n\nEl decorador `registrar(nombre)` inserta cada clase en un dict compartido, pieza clave del mini-framework.\n\n**Micro-reto:**\n1. Definí `REGISTRO = {}` y `registrar(nombre)` que guarde la clase\n2. Decorá `class Producto` con `@registrar('producto')`\n3. Imprimí `sorted(REGISTRO.keys())` y `REGISTRO['producto'].__name__`",
+    starter_code: "# REGISTRO = {}\n# def registrar(nombre):\n#     def decorador(cls):\n#         REGISTRO[nombre] = cls\n#         return cls\n#     return decorador\n# @registrar('producto')\n# class Producto:\n#     pass\n# print(sorted(REGISTRO.keys()))\n# print(REGISTRO['producto'].__name__)\n",
+    pytest: "def test_register_decorator(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert 'producto' in ns['REGISTRO']\n    assert ns['REGISTRO']['producto'].__name__ == 'Producto'\n    assert capsys.readouterr().out.strip().splitlines() == [str(['producto']), 'Producto']\n",
+    hint: "`registrar(nombre)` devuelve un decorador que guarda `cls` bajo `nombre`.",
+    solution_example: "REGISTRO = {}\n\ndef registrar(nombre):\n    def decorador(cls):\n        REGISTRO[nombre] = cls\n        return cls\n    return decorador\n\n@registrar('producto')\nclass Producto:\n    pass\n\nprint(sorted(REGISTRO.keys()))\nprint(REGISTRO['producto'].__name__)\n",
+    next: Some("py-1358-project-enum-types"), show_type_chips: false, micro_step: 1357,
+};
+pub const PY1358_PROJECT_ENUM_TYPES: CodingStep = CodingStep {
+    id: "py-1358-project-enum-types", title: "Proyecto · Enum de tipos", objective: "Definir los tipos del framework con un Enum.",
+    prompt_md: "**Proyecto: enum de tipos**\n\nUn `Enum` centraliza los tipos soportados por el mini-framework, con nombre y valor string.\n\n**Micro-reto:**\n1. Definí `class Tipo(Enum)` con `PRODUCTO = 'producto'`, `SERVICIO = 'servicio'`, `SUSCRIPCION = 'suscripcion'`\n2. Imprimí `Tipo.PRODUCTO.value`, `Tipo('servicio')` y `len(list(Tipo))`",
+    starter_code: "# from enum import Enum\n# class Tipo(Enum):\n#     PRODUCTO = 'producto'\n#     SERVICIO = 'servicio'\n#     SUSCRIPCION = 'suscripcion'\n# print(Tipo.PRODUCTO.value)\n# print(Tipo('servicio'))\n# print(len(list(Tipo)))\n",
+    pytest: "def test_enum_types(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Tipo = ns['Tipo']\n    assert Tipo.PRODUCTO.value == 'producto'\n    assert Tipo('servicio') is Tipo.SERVICIO\n    assert len(list(Tipo)) == 3\n    assert capsys.readouterr().out.strip().splitlines() == ['producto', 'Tipo.SERVICIO', '3']\n",
+    hint: "`Tipo('servicio')` devuelve el miembro; `list(Tipo)` recorre los 3.",
+    solution_example: "from enum import Enum\n\nclass Tipo(Enum):\n    PRODUCTO = 'producto'\n    SERVICIO = 'servicio'\n    SUSCRIPCION = 'suscripcion'\n\nprint(Tipo.PRODUCTO.value)\nprint(Tipo('servicio'))\nprint(len(list(Tipo)))\n",
+    next: Some("py-1359-project-integrate"), show_type_chips: false, micro_step: 1358,
+};
+pub const PY1359_PROJECT_INTEGRATE: CodingStep = CodingStep {
+    id: "py-1359-project-integrate", title: "Proyecto · Integrar registro + enum", objective: "Integrar el enum de tipos con el registro de clases.",
+    prompt_md: "**Proyecto: integrar registro + enum**\n\nCombiná el decorador de registro con el enum de tipos: cada clase se registra bajo el valor de su tipo.\n\n**Micro-reto:**\n1. Definí `class Tipo(Enum)` con `PRODUCTO` y `SERVICIO`\n2. Definí `REGISTRO = {}` y `registrar(tipo)` que guarde `REGISTRO[tipo.value] = cls`\n3. Decorá `Libro` y `Consultoria` y imprimí `sorted(REGISTRO.keys())`",
+    starter_code: "# from enum import Enum\n# class Tipo(Enum):\n#     PRODUCTO = 'producto'\n#     SERVICIO = 'servicio'\n# REGISTRO = {}\n# def registrar(tipo):\n#     def decorador(cls):\n#         cls.tipo = tipo\n#         REGISTRO[tipo.value] = cls\n#         return cls\n#     return decorador\n# @registrar(Tipo.PRODUCTO)\n# class Libro:\n#     pass\n# @registrar(Tipo.SERVICIO)\n# class Consultoria:\n#     pass\n# print(sorted(REGISTRO.keys()))\n",
+    pytest: "def test_integrate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Tipo = ns['Tipo']\n    assert ns['REGISTRO']['producto'].tipo is Tipo.PRODUCTO\n    assert ns['REGISTRO']['servicio'].tipo is Tipo.SERVICIO\n    assert sorted(ns['REGISTRO']) == ['producto', 'servicio']\n    assert capsys.readouterr().out.strip() == str(['producto', 'servicio'])\n",
+    hint: "Guardá `cls.tipo = tipo` y registrá bajo `tipo.value`.",
+    solution_example: "from enum import Enum\n\nclass Tipo(Enum):\n    PRODUCTO = 'producto'\n    SERVICIO = 'servicio'\n\nREGISTRO = {}\n\ndef registrar(tipo):\n    def decorador(cls):\n        cls.tipo = tipo\n        REGISTRO[tipo.value] = cls\n        return cls\n    return decorador\n\n@registrar(Tipo.PRODUCTO)\nclass Libro:\n    pass\n\n@registrar(Tipo.SERVICIO)\nclass Consultoria:\n    pass\n\nprint(sorted(REGISTRO.keys()))\n",
+    next: Some("py-1360-project-assemble"), show_type_chips: false, micro_step: 1359,
+};
+pub const PY1360_PROJECT_ASSEMBLE: CodingStep = CodingStep {
+    id: "py-1360-project-assemble", title: "Proyecto · Ensamblar mini-framework", objective: "Integrar descriptor, registro y enum en un mini-framework.",
+    prompt_md: "**Proyecto: ensamblar**\n\nIntegrá todo: un enum de tipos, un descriptor de validación y un decorador de registro, en un único mini-framework.\n\n**Micro-reto:**\n1. Definí `class Tipo(Enum)` con `PRODUCTO` y `SERVICIO`\n2. Definí `class Validado` (descriptor) y `registrar(tipo)` (decorador de registro)\n3. Registrá `Producto` y `Servicio`, cada uno con `nombre = Validado()`\n4. Definí `crear(tipo, nombre)` que instancie desde `REGISTRO` y asigne `nombre`\n5. Imprimí `crear(Tipo.PRODUCTO, 'libro').nombre` y `crear(Tipo.SERVICIO, 'consultoria').nombre`",
+    starter_code: "# from enum import Enum\n# class Tipo(Enum):\n#     PRODUCTO = 'producto'\n#     SERVICIO = 'servicio'\n# class Validado:\n#     def __set_name__(self, owner, name):\n#         self.nombre = '_' + name\n#     def __get__(self, instance, owner):\n#         return instance.__dict__[self.nombre]\n#     def __set__(self, instance, value):\n#         if not isinstance(value, str) or not value:\n#             raise ValueError('texto no vacio requerido')\n#         instance.__dict__[self.nombre] = value\n# REGISTRO = {}\n# def registrar(tipo):\n#     def decorador(cls):\n#         cls.tipo = tipo\n#         REGISTRO[tipo.value] = cls\n#         return cls\n#     return decorador\n# @registrar(Tipo.PRODUCTO)\n# class Producto:\n#     nombre = Validado()\n# @registrar(Tipo.SERVICIO)\n# class Servicio:\n#     nombre = Validado()\n# def crear(tipo, nombre):\n#     obj = REGISTRO[tipo.value]()\n#     obj.nombre = nombre\n#     return obj\n# print(crear(Tipo.PRODUCTO, 'libro').nombre)\n# print(crear(Tipo.SERVICIO, 'consultoria').nombre)\n",
+    pytest: "def test_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    Tipo = ns['Tipo']\n    p = ns['crear'](Tipo.PRODUCTO, 'libro')\n    assert p.nombre == 'libro'\n    assert p.tipo is Tipo.PRODUCTO\n    s = ns['crear'](Tipo.SERVICIO, 'consultoria')\n    assert s.nombre == 'consultoria'\n    assert sorted(ns['REGISTRO']) == ['producto', 'servicio']\n    assert capsys.readouterr().out.strip().splitlines() == ['libro', 'consultoria']\n",
+    hint: "`crear` busca la clase en `REGISTRO[tipo.value]`, la instancia y asigna `nombre`.",
+    solution_example: "from enum import Enum\n\nclass Tipo(Enum):\n    PRODUCTO = 'producto'\n    SERVICIO = 'servicio'\n\nclass Validado:\n    def __set_name__(self, owner, name):\n        self.nombre = '_' + name\n    def __get__(self, instance, owner):\n        return instance.__dict__[self.nombre]\n    def __set__(self, instance, value):\n        if not isinstance(value, str) or not value:\n            raise ValueError('texto no vacio requerido')\n        instance.__dict__[self.nombre] = value\n\nREGISTRO = {}\n\ndef registrar(tipo):\n    def decorador(cls):\n        cls.tipo = tipo\n        REGISTRO[tipo.value] = cls\n        return cls\n    return decorador\n\n@registrar(Tipo.PRODUCTO)\nclass Producto:\n    nombre = Validado()\n\n@registrar(Tipo.SERVICIO)\nclass Servicio:\n    nombre = Validado()\n\ndef crear(tipo, nombre):\n    obj = REGISTRO[tipo.value]()\n    obj.nombre = nombre\n    return obj\n\nprint(crear(Tipo.PRODUCTO, 'libro').nombre)\nprint(crear(Tipo.SERVICIO, 'consultoria').nombre)\n",
+    next: None, show_type_chips: false, micro_step: 1360,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -47149,6 +47690,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1298_PROJECT_ENDPOINT,
     &PY1299_PROJECT_LOG,
     &PY1300_PROJECT_ASSEMBLE,
+    &PY1301_INTROSPECT_DIR,
+    &PY1302_INTROSPECT_GETATTR,
+    &PY1303_INTROSPECT_SETATTR,
+    &PY1304_INTROSPECT_ITERATE,
+    &PY1305_INTROSPECT_CALL_BY_NAME,
+    &PY1306_INTROSPECT_DISPATCH,
+    &PY1307_DESCRIPTOR_PROPERTY,
+    &PY1308_DESCRIPTOR_SETTER,
+    &PY1309_DESCRIPTOR_GET,
+    &PY1310_DESCRIPTOR_SET,
+    &PY1311_DESCRIPTOR_REUSABLE,
+    &PY1312_DESCRIPTOR_CACHED,
+    &PY1313_METACLASS_TYPE,
+    &PY1314_METACLASS_INTERCEPT,
+    &PY1315_METACLASS_NEW,
+    &PY1316_METACLASS_INIT_SUBCLASS,
+    &PY1317_METACLASS_VALIDATE,
+    &PY1318_METACLASS_REGISTER,
+    &PY1319_DECORATOR_CLASS,
+    &PY1320_DECORATOR_REGISTRY,
+    &PY1321_DATACLASS_ADVANCED,
+    &PY1322_DECORATOR_ARGS,
+    &PY1323_DECORATOR_ACCUMULATE,
+    &PY1324_DECORATOR_PLUGIN,
+    &PY1325_DUNDER_REPR,
+    &PY1326_DUNDER_EQ_HASH,
+    &PY1327_DUNDER_ADD,
+    &PY1328_DUNDER_LT,
+    &PY1329_DUNDER_CONTAINER,
+    &PY1330_DUNDER_ITER,
+    &PY1331_ENUM_BASIC,
+    &PY1332_ENUM_INTENUM,
+    &PY1333_ENUM_AUTO,
+    &PY1334_ENUM_ITERATE,
+    &PY1335_ENUM_MAP,
+    &PY1336_ENUM_METHODS,
+    &PY1337_DYNAMIC_LOOKUP,
+    &PY1338_DYNAMIC_PATH,
+    &PY1339_DYNAMIC_DISPATCH,
+    &PY1340_DYNAMIC_WHITELIST,
+    &PY1341_DYNAMIC_CONFIG,
+    &PY1342_DYNAMIC_PATH_PARSER,
+    &PY1343_SLOTS_BASIC,
+    &PY1344_SLOTS_INHERITANCE,
+    &PY1345_SLOTS_VS_DICT,
+    &PY1346_SLOTS_RESTRICT,
+    &PY1347_SLOTS_SIZEOF,
+    &PY1348_SLOTS_DESIGN,
+    &PY1349_PATTERN_SINGLETON,
+    &PY1350_PATTERN_REGISTRY,
+    &PY1351_PATTERN_FACTORY,
+    &PY1352_PATTERN_ADAPTER,
+    &PY1353_PATTERN_DECORATOR,
+    &PY1354_PATTERN_STRATEGY,
+    &PY1355_PROJECT_REGISTRY_META,
+    &PY1356_PROJECT_VALIDATE_DESCRIPTOR,
+    &PY1357_PROJECT_REGISTER_DECORATOR,
+    &PY1358_PROJECT_ENUM_TYPES,
+    &PY1359_PROJECT_INTEGRATE,
+    &PY1360_PROJECT_ASSEMBLE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -47316,7 +47917,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1300);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1360);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -50228,11 +50829,11 @@ mod tests {
     }
 
     #[test]
-    fn py1061_to_py1300_engineering_chain() {
+    fn py1061_to_py1360_engineering_chain() {
         let bridge = coding_step_by_micro_step(1060).expect("py-1060");
         assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
 
-        for n in 1061..=1300 {
+        for n in 1061..=1360 {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.micro_step, n);
             assert!(
@@ -50240,7 +50841,7 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1300 {
+            if n < 1360 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -50249,7 +50850,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1300 is the end of the rail");
+                assert_eq!(step.next, None, "step 1360 is the end of the rail");
             }
         }
     }
