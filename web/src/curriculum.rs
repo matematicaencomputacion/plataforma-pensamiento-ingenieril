@@ -48549,7 +48549,548 @@ pub const PY1600_PROJECT_ASSEMBLE: CodingStep = CodingStep {
     pytest: "def test_project_assemble_w10(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado']['indice'] == {'ab': [0, 2, 5, 7], 'ba': [1, 6], 'abc': [2]}\n    assert ns['resultado']['ranking'] == ['ab', 'ba', 'abc']\n    assert ns['ensamblar_buscador']('a', ['a']) == {'indice': {'a': [0]}, 'ranking': ['a']}\n    out = capsys.readouterr().out\n    assert 'ab' in out and 'abc' in out\n",
     hint: "Reutilizá posiciones_kmp y ordená por -len(índice).",
     solution_example: "def posiciones_kmp(texto, patron):\n    if not patron:\n        return []\n    tabla = [0] * len(patron)\n    j = 0\n    for i in range(1, len(patron)):\n        while j > 0 and patron[i] != patron[j]:\n            j = tabla[j - 1]\n        if patron[i] == patron[j]:\n            j += 1\n        tabla[i] = j\n    posiciones = []\n    j = 0\n    for i in range(len(texto)):\n        while j > 0 and texto[i] != patron[j]:\n            j = tabla[j - 1]\n        if texto[i] == patron[j]:\n            j += 1\n        if j == len(patron):\n            posiciones.append(i - j + 1)\n            j = tabla[j - 1]\n    return posiciones\n\ndef ensamblar_buscador(texto, patrones):\n    indice = {p: posiciones_kmp(texto, p) for p in patrones}\n    ranking = sorted(patrones, key=lambda p: (-len(indice[p]), p))\n    return {'indice': indice, 'ranking': ranking}\n\nresultado = ensamblar_buscador('ababcabab', ['ab', 'ba', 'abc'])\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 1600,
+    next: Some("py-1601-domain-entity"), show_type_chips: false, micro_step: 1600,
+};
+
+pub const PY1601_DOMAIN_ENTITY: CodingStep = CodingStep {
+    id: "py-1601-domain-entity", title: "Dominio · Entidad con ID", objective: "Modelar una entidad con identidad propia usando una clase.",
+    prompt_md: "**Entidad con identidad**\n\nUna entidad tiene identidad propia: dos objetos son iguales si comparten el mismo `id`, no sus atributos.\n\n**Micro-reto:**\n1. Definí `Cliente` con `id` y `nombre`\n2. Implementá `__eq__` para comparar por `id`\n3. Creá dos clientes y mostrá si son iguales",
+    starter_code: "# class Cliente:\n#     def __init__(self, id, nombre):\n#         self.id = id\n#         self.nombre = nombre\n#     def __eq__(self, otro):\n#         return isinstance(otro, Cliente) and self.id == otro.id\n# c1 = Cliente(1, 'Ana')\n# c2 = Cliente(2, 'Ana')\n# resultado = (c1.id, c1.nombre, c1 == c2)\n# print(resultado)\n",
+    pytest: "def test_domain_entity(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 'Ana', False)\n    assert ns['Cliente'](1, 'X') == ns['Cliente'](1, 'Y')\n    assert ns['Cliente'](1, 'X') != ns['Cliente'](2, 'X')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "La igualdad de una entidad depende de su id, no de sus atributos.",
+    solution_example: "class Cliente:\n    def __init__(self, id, nombre):\n        self.id = id\n        self.nombre = nombre\n\n    def __eq__(self, otro):\n        return isinstance(otro, Cliente) and self.id == otro.id\n\nc1 = Cliente(1, 'Ana')\nc2 = Cliente(2, 'Ana')\nresultado = (c1.id, c1.nombre, c1 == c2)\nprint(resultado)\n",
+    next: Some("py-1602-domain-value-object"), show_type_chips: false, micro_step: 1601,
+};
+pub const PY1602_DOMAIN_VALUE_OBJECT: CodingStep = CodingStep {
+    id: "py-1602-domain-value-object", title: "Dominio · Value object", objective: "Modelar un valor inmutable que se compara por sus atributos.",
+    prompt_md: "**Value object**\n\nUn value object se compara por su valor (atributos), no por identidad. Dos importes iguales son el mismo valor.\n\n**Micro-reto:**\n1. Definí `Dinero` con `monto` y `moneda`\n2. Implementá `__eq__` y `__hash__` por atributos\n3. Compará dos importes idénticos",
+    starter_code: "# class Dinero:\n#     def __init__(self, monto, moneda):\n#         self.monto = monto\n#         self.moneda = moneda\n#     def __eq__(self, otro):\n#         return isinstance(otro, Dinero) and (self.monto, self.moneda) == (otro.monto, otro.moneda)\n#     def __hash__(self):\n#         return hash((self.monto, self.moneda))\n# d1 = Dinero(100, 'ARS')\n# d2 = Dinero(100, 'ARS')\n# resultado = (d1 == d2, hash(d1) == hash(d2), (d1.monto, d1.moneda))\n# print(resultado)\n",
+    pytest: "def test_domain_value_object(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, True, (100, 'ARS'))\n    assert ns['Dinero'](100, 'ARS') == ns['Dinero'](100, 'ARS')\n    assert ns['Dinero'](100, 'ARS') != ns['Dinero'](100, 'USD')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Compará la tupla (monto, moneda) y hasheá esa misma tupla.",
+    solution_example: "class Dinero:\n    def __init__(self, monto, moneda):\n        self.monto = monto\n        self.moneda = moneda\n\n    def __eq__(self, otro):\n        return isinstance(otro, Dinero) and (self.monto, self.moneda) == (otro.monto, otro.moneda)\n\n    def __hash__(self):\n        return hash((self.monto, self.moneda))\n\nd1 = Dinero(100, 'ARS')\nd2 = Dinero(100, 'ARS')\nresultado = (d1 == d2, hash(d1) == hash(d2), (d1.monto, d1.moneda))\nprint(resultado)\n",
+    next: Some("py-1603-domain-invariants"), show_type_chips: false, micro_step: 1602,
+};
+pub const PY1603_DOMAIN_INVARIANTS: CodingStep = CodingStep {
+    id: "py-1603-domain-invariants", title: "Dominio · Invariantes", objective: "Proteger invariantes de negocio al construir una entidad.",
+    prompt_md: "**Invariantes de negocio**\n\nUna entidad válida nunca puede estar en un estado ilegal: el constructor y los métodos rechazan entradas inválidas.\n\n**Micro-reto:**\n1. Definí `Cuenta` que rechace saldo negativo\n2. Agregá `depositar(monto)` que exija monto positivo\n3. Depositá sobre un saldo inicial y mostrá el saldo",
+    starter_code: "# class Cuenta:\n#     def __init__(self, saldo):\n#         if saldo < 0:\n#             raise ValueError('saldo no puede ser negativo')\n#         self.saldo = saldo\n#     def depositar(self, monto):\n#         if monto <= 0:\n#             raise ValueError('monto debe ser positivo')\n#         self.saldo += monto\n#         return self.saldo\n# cuenta = Cuenta(100)\n# cuenta.depositar(50)\n# resultado = cuenta.saldo\n# print(resultado)\n",
+    pytest: "def test_domain_invariants(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 150\n    assert ns['Cuenta'](0).saldo == 0\n    try:\n        ns['Cuenta'](-5)\n        neg = False\n    except ValueError:\n        neg = True\n    assert neg\n    try:\n        ns['Cuenta'](10).depositar(0)\n        cero = False\n    except ValueError:\n        cero = True\n    assert cero\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Lanzá ValueError antes de asignar cuando la regla se rompe.",
+    solution_example: "class Cuenta:\n    def __init__(self, saldo):\n        if saldo < 0:\n            raise ValueError('saldo no puede ser negativo')\n        self.saldo = saldo\n\n    def depositar(self, monto):\n        if monto <= 0:\n            raise ValueError('monto debe ser positivo')\n        self.saldo += monto\n        return self.saldo\n\ncuenta = Cuenta(100)\ncuenta.depositar(50)\nresultado = cuenta.saldo\nprint(resultado)\n",
+    next: Some("py-1604-domain-dataclass-entity"), show_type_chips: false, micro_step: 1603,
+};
+pub const PY1604_DOMAIN_DATACLASS_ENTITY: CodingStep = CodingStep {
+    id: "py-1604-domain-dataclass-entity", title: "Dominio · Dataclass entidad", objective: "Modelar una entidad con dataclass y campo de identidad.",
+    prompt_md: "**Dataclass como entidad**\n\n`@dataclass` elimina el boilerplate de `__init__`. Con `eq=False` definís tu propia igualdad por identidad.\n\n**Micro-reto:**\n1. Definí `Producto` con `id`, `nombre` y `precio`\n2. Con `eq=False`, implementá `__eq__` por `id`\n3. Creá dos productos con el mismo id y mostrá si son iguales",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(eq=False)\n# class Producto:\n#     id: int\n#     nombre: str\n#     precio: float\n#     def __eq__(self, otro):\n#         return isinstance(otro, Producto) and self.id == otro.id\n# p1 = Producto(1, 'Lapiz', 2.5)\n# p2 = Producto(1, 'Lapiz Negro', 3.0)\n# resultado = (p1.nombre, p1.precio, p1 == p2)\n# print(resultado)\n",
+    pytest: "def test_domain_dataclass_entity(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('Lapiz', 2.5, True)\n    assert ns['Producto'](1, 'A', 1.0) == ns['Producto'](1, 'B', 2.0)\n    assert ns['Producto'](1, 'A', 1.0) != ns['Producto'](2, 'A', 1.0)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Usá @dataclass(eq=False) para controlar tu propia igualdad.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass(eq=False)\nclass Producto:\n    id: int\n    nombre: str\n    precio: float\n\n    def __eq__(self, otro):\n        return isinstance(otro, Producto) and self.id == otro.id\n\np1 = Producto(1, 'Lapiz', 2.5)\np2 = Producto(1, 'Lapiz Negro', 3.0)\nresultado = (p1.nombre, p1.precio, p1 == p2)\nprint(resultado)\n",
+    next: Some("py-1605-domain-frozen-vo"), show_type_chips: false, micro_step: 1604,
+};
+pub const PY1605_DOMAIN_FROZEN_VO: CodingStep = CodingStep {
+    id: "py-1605-domain-frozen-vo", title: "Dominio · Value object frozen", objective: "Modelar un value object inmutable con dataclass frozen.",
+    prompt_md: "**Value object inmutable**\n\n`@dataclass(frozen=True)` hace que el objeto sea inmutable y hasheable: ideal para valores que no cambian.\n\n**Micro-reto:**\n1. Definí `Direccion` con `calle` y `ciudad` como frozen\n2. Compará dos direcciones iguales\n3. Mostrá la ciudad de una dirección",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class Direccion:\n#     calle: str\n#     ciudad: str\n# d1 = Direccion('Rivadavia', 'CABA')\n# d2 = Direccion('Rivadavia', 'CABA')\n# resultado = (d1 == d2, hash(d1) == hash(d2), d1.ciudad)\n# print(resultado)\n",
+    pytest: "def test_domain_frozen_vo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, True, 'CABA')\n    assert ns['Direccion']('A', 'B') == ns['Direccion']('A', 'B')\n    try:\n        ns['Direccion']('A', 'B').calle = 'X'\n        muto = True\n    except Exception:\n        muto = False\n    assert not muto\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "frozen=True impide reasignar atributos después de crearlo.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Direccion:\n    calle: str\n    ciudad: str\n\nd1 = Direccion('Rivadavia', 'CABA')\nd2 = Direccion('Rivadavia', 'CABA')\nresultado = (d1 == d2, hash(d1) == hash(d2), d1.ciudad)\nprint(resultado)\n",
+    next: Some("py-1606-domain-aggregate"), show_type_chips: false, micro_step: 1605,
+};
+pub const PY1606_DOMAIN_AGGREGATE: CodingStep = CodingStep {
+    id: "py-1606-domain-aggregate", title: "Dominio · Agregado", objective: "Agrupar entidades bajo una raíz que garantiza consistencia.",
+    prompt_md: "**Agregado**\n\nUn agregado agrupa entidades bajo una raíz que es la única puerta de entrada. El total se calcula desde sus ítems.\n\n**Micro-reto:**\n1. Definí `Item` con nombre, precio y cantidad\n2. Definí `Pedido` que agrupe ítems\n3. Agregá ítems y mostrá la cantidad y el total",
+    starter_code: "# class Item:\n#     def __init__(self, nombre, precio, cantidad):\n#         self.nombre = nombre\n#         self.precio = precio\n#         self.cantidad = cantidad\n# class Pedido:\n#     def __init__(self, id):\n#         self.id = id\n#         self.items = []\n#     def agregar(self, item):\n#         self.items.append(item)\n#     def total(self):\n#         return sum(i.precio * i.cantidad for i in self.items)\n# pedido = Pedido(1)\n# pedido.agregar(Item('Lapiz', 2.0, 3))\n# pedido.agregar(Item('Goma', 1.5, 2))\n# resultado = (len(pedido.items), pedido.total())\n# print(resultado)\n",
+    pytest: "def test_domain_aggregate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 9.0)\n    assert ns['Pedido'](1).total() == 0\n    assert ns['Item']('A', 2.0, 2).cantidad == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El total se calcula sumando precio por cantidad de cada ítem.",
+    solution_example: "class Item:\n    def __init__(self, nombre, precio, cantidad):\n        self.nombre = nombre\n        self.precio = precio\n        self.cantidad = cantidad\n\nclass Pedido:\n    def __init__(self, id):\n        self.id = id\n        self.items = []\n\n    def agregar(self, item):\n        self.items.append(item)\n\n    def total(self):\n        return sum(i.precio * i.cantidad for i in self.items)\n\npedido = Pedido(1)\npedido.agregar(Item('Lapiz', 2.0, 3))\npedido.agregar(Item('Goma', 1.5, 2))\nresultado = (len(pedido.items), pedido.total())\nprint(resultado)\n",
+    next: Some("py-1607-repo-interface"), show_type_chips: false, micro_step: 1606,
+};
+pub const PY1607_REPO_INTERFACE: CodingStep = CodingStep {
+    id: "py-1607-repo-interface", title: "Repositorio · Interfaz", objective: "Definir el contrato de un repositorio con Protocol.",
+    prompt_md: "**Interfaz de repositorio**\n\n`Protocol` declara el contrato sin implementarlo: qué métodos debe cumplir cualquier repositorio.\n\n**Micro-reto:**\n1. Importá `Protocol`\n2. Definí `Repo` con `guardar`, `obtener` y `listar`\n3. Verificá que los tres métodos existen en la interfaz",
+    starter_code: "# from typing import Protocol\n# class Repo(Protocol):\n#     def guardar(self, id, obj) -> None: ...\n#     def obtener(self, id): ...\n#     def listar(self): ...\n# resultado = ('guardar' in dir(Repo), 'obtener' in dir(Repo), 'listar' in dir(Repo))\n# print(resultado)\n",
+    pytest: "def test_repo_interface(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, True, True)\n    assert hasattr(ns['Repo'], 'guardar')\n    assert hasattr(ns['Repo'], 'obtener')\n    assert hasattr(ns['Repo'], 'listar')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Los métodos de un Protocol usan `...` como cuerpo.",
+    solution_example: "from typing import Protocol\n\nclass Repo(Protocol):\n    def guardar(self, id, obj) -> None: ...\n    def obtener(self, id): ...\n    def listar(self): ...\n\nresultado = ('guardar' in dir(Repo), 'obtener' in dir(Repo), 'listar' in dir(Repo))\nprint(resultado)\n",
+    next: Some("py-1608-repo-inmemory"), show_type_chips: false, micro_step: 1607,
+};
+pub const PY1608_REPO_INMEMORY: CodingStep = CodingStep {
+    id: "py-1608-repo-inmemory", title: "Repositorio · En memoria", objective: "Implementar un repositorio en memoria con un dict.",
+    prompt_md: "**Repositorio en memoria**\n\nLa implementación más simple guarda los objetos en un `dict` indexado por id.\n\n**Micro-reto:**\n1. Definí `RepoMemoria` con un `dict` interno\n2. Implementá `guardar`, `obtener` y `listar`\n3. Guardá dos elementos y mostrá el primero y el total",
+    starter_code: "# class RepoMemoria:\n#     def __init__(self):\n#         self._datos = {}\n#     def guardar(self, id, obj):\n#         self._datos[id] = obj\n#     def obtener(self, id):\n#         return self._datos.get(id)\n#     def listar(self):\n#         return list(self._datos.values())\n# repo = RepoMemoria()\n# repo.guardar(1, 'A')\n# repo.guardar(2, 'B')\n# resultado = (repo.obtener(1), len(repo.listar()))\n# print(resultado)\n",
+    pytest: "def test_repo_inmemory(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('A', 2)\n    assert ns['repo'].listar() == ['A', 'B']\n    assert ns['repo'].obtener(99) is None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Usá dict.get(id) para devolver None cuando no existe.",
+    solution_example: "class RepoMemoria:\n    def __init__(self):\n        self._datos = {}\n\n    def guardar(self, id, obj):\n        self._datos[id] = obj\n\n    def obtener(self, id):\n        return self._datos.get(id)\n\n    def listar(self):\n        return list(self._datos.values())\n\nrepo = RepoMemoria()\nrepo.guardar(1, 'A')\nrepo.guardar(2, 'B')\nresultado = (repo.obtener(1), len(repo.listar()))\nprint(resultado)\n",
+    next: Some("py-1609-repo-dict"), show_type_chips: false, micro_step: 1608,
+};
+pub const PY1609_REPO_DICT: CodingStep = CodingStep {
+    id: "py-1609-repo-dict", title: "Repositorio · Dict como DB", objective: "Simular una base de datos con un dict compartido.",
+    prompt_md: "**Dict como base de datos**\n\nUn `dict` compartido simula la base: el repositorio escribe y lee sobre ese mismo dict.\n\n**Micro-reto:**\n1. Definí `RepoDB` que reciba un dict externo\n2. Implementá `guardar` y `obtener`\n3. Guardá en el repo y mostrá que el dict externo se actualizó",
+    starter_code: "# class RepoDB:\n#     def __init__(self, db=None):\n#         self.db = db if db is not None else {}\n#     def guardar(self, id, obj):\n#         self.db[id] = obj\n#         return obj\n#     def obtener(self, id):\n#         return self.db.get(id)\n# base = {}\n# repo = RepoDB(base)\n# repo.guardar(10, 'X')\n# resultado = (base[10], repo.obtener(10))\n# print(resultado)\n",
+    pytest: "def test_repo_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('X', 'X')\n    assert ns['base'][10] == 'X'\n    assert ns['repo'].obtener(99) is None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Compartí el mismo dict entre el repo y el código externo.",
+    solution_example: "class RepoDB:\n    def __init__(self, db=None):\n        self.db = db if db is not None else {}\n\n    def guardar(self, id, obj):\n        self.db[id] = obj\n        return obj\n\n    def obtener(self, id):\n        return self.db.get(id)\n\nbase = {}\nrepo = RepoDB(base)\nrepo.guardar(10, 'X')\nresultado = (base[10], repo.obtener(10))\nprint(resultado)\n",
+    next: Some("py-1610-repo-crud"), show_type_chips: false, micro_step: 1609,
+};
+pub const PY1610_REPO_CRUD: CodingStep = CodingStep {
+    id: "py-1610-repo-crud", title: "Repositorio · CRUD completo", objective: "Implementar crear, leer, actualizar y borrar.",
+    prompt_md: "**CRUD completo**\n\nUn repositorio típico expone crear, leer, actualizar y borrar, con reglas para ids inexistentes.\n\n**Micro-reto:**\n1. Definí `RepoCRUD` con un dict interno\n2. Implementá `crear`, `leer`, `actualizar` y `borrar`\n3. Creá, actualizá y borrá para mostrar el estado final",
+    starter_code: "# class RepoCRUD:\n#     def __init__(self):\n#         self._datos = {}\n#     def crear(self, id, obj):\n#         self._datos[id] = obj\n#         return obj\n#     def leer(self, id):\n#         return self._datos.get(id)\n#     def actualizar(self, id, obj):\n#         if id not in self._datos:\n#             raise KeyError(id)\n#         self._datos[id] = obj\n#         return obj\n#     def borrar(self, id):\n#         return self._datos.pop(id, None)\n# repo = RepoCRUD()\n# repo.crear(1, 'A')\n# repo.actualizar(1, 'B')\n# repo.crear(2, 'C')\n# repo.borrar(2)\n# resultado = (repo.leer(1), repo.leer(2))\n# print(resultado)\n",
+    pytest: "def test_repo_crud(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('B', None)\n    assert ns['repo'].borrar(99) is None\n    try:\n        ns['repo'].actualizar(99, 'X')\n        actualizo = True\n    except KeyError:\n        actualizo = False\n    assert not actualizo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "actualizar debe fallar con KeyError si el id no existe.",
+    solution_example: "class RepoCRUD:\n    def __init__(self):\n        self._datos = {}\n\n    def crear(self, id, obj):\n        self._datos[id] = obj\n        return obj\n\n    def leer(self, id):\n        return self._datos.get(id)\n\n    def actualizar(self, id, obj):\n        if id not in self._datos:\n            raise KeyError(id)\n        self._datos[id] = obj\n        return obj\n\n    def borrar(self, id):\n        return self._datos.pop(id, None)\n\nrepo = RepoCRUD()\nrepo.crear(1, 'A')\nrepo.actualizar(1, 'B')\nrepo.crear(2, 'C')\nrepo.borrar(2)\nresultado = (repo.leer(1), repo.leer(2))\nprint(resultado)\n",
+    next: Some("py-1611-repo-query"), show_type_chips: false, micro_step: 1610,
+};
+pub const PY1611_REPO_QUERY: CodingStep = CodingStep {
+    id: "py-1611-repo-query", title: "Repositorio · Consultas", objective: "Filtrar entidades por criterio en el repositorio.",
+    prompt_md: "**Consultas por filtro**\n\nEl repositorio puede filtrar sus entidades según un predicado definido por el llamador.\n\n**Micro-reto:**\n1. Definí `Repo` con `guardar` y `filtrar`\n2. `filtrar` recibe una función predicado\n3. Filtra personas por nombre y mostrá el resultado",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._datos = {}\n#     def guardar(self, id, obj):\n#         self._datos[id] = obj\n#     def filtrar(self, predicado):\n#         return [v for v in self._datos.values() if predicado(v)]\n# repo = Repo()\n# repo.guardar(1, {'nombre': 'Ana', 'edad': 30})\n# repo.guardar(2, {'nombre': 'Luis', 'edad': 40})\n# repo.guardar(3, {'nombre': 'Ana', 'edad': 22})\n# resultado = repo.filtrar(lambda p: p['nombre'] == 'Ana')\n# print(resultado)\n",
+    pytest: "def test_repo_query(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'nombre': 'Ana', 'edad': 30}, {'nombre': 'Ana', 'edad': 22}]\n    assert len(ns['repo'].filtrar(lambda p: p['edad'] > 25)) == 2\n    assert ns['repo'].filtrar(lambda p: p['edad'] > 100) == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Comprehension de lista filtrando con el predicado.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._datos = {}\n\n    def guardar(self, id, obj):\n        self._datos[id] = obj\n\n    def filtrar(self, predicado):\n        return [v for v in self._datos.values() if predicado(v)]\n\nrepo = Repo()\nrepo.guardar(1, {'nombre': 'Ana', 'edad': 30})\nrepo.guardar(2, {'nombre': 'Luis', 'edad': 40})\nrepo.guardar(3, {'nombre': 'Ana', 'edad': 22})\nresultado = repo.filtrar(lambda p: p['nombre'] == 'Ana')\nprint(resultado)\n",
+    next: Some("py-1612-repo-decoupled"), show_type_chips: false, micro_step: 1611,
+};
+pub const PY1612_REPO_DECOUPLED: CodingStep = CodingStep {
+    id: "py-1612-repo-decoupled", title: "Repositorio · Desacoplado", objective: "Consumir la interfaz sin depender de una implementación.",
+    prompt_md: "**Abstracción desacoplada**\n\nUn servicio depende de la interfaz, no de una implementación concreta. Cualquier repo compatible funciona.\n\n**Micro-reto:**\n1. Definí `Servicio` que reciba un repo\n2. Definí dos repos con `listar` distintos\n3. Usá el servicio con ambos y mostrá los totales",
+    starter_code: "# class Servicio:\n#     def __init__(self, repo):\n#         self.repo = repo\n#     def total_elementos(self):\n#         return len(self.repo.listar())\n# class RepoA:\n#     def listar(self):\n#         return [1, 2, 3]\n# class RepoB:\n#     def listar(self):\n#         return ['x']\n# servicio_a = Servicio(RepoA())\n# servicio_b = Servicio(RepoB())\n# resultado = (servicio_a.total_elementos(), servicio_b.total_elementos())\n# print(resultado)\n",
+    pytest: "def test_repo_decoupled(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, 1)\n    assert ns['Servicio'](ns['RepoA']()).total_elementos() == 3\n    assert ns['Servicio'](ns['RepoB']()).total_elementos() == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El servicio solo llama a repo.listar(); no importa cuál repo.",
+    solution_example: "class Servicio:\n    def __init__(self, repo):\n        self.repo = repo\n\n    def total_elementos(self):\n        return len(self.repo.listar())\n\nclass RepoA:\n    def listar(self):\n        return [1, 2, 3]\n\nclass RepoB:\n    def listar(self):\n        return ['x']\n\nservicio_a = Servicio(RepoA())\nservicio_b = Servicio(RepoB())\nresultado = (servicio_a.total_elementos(), servicio_b.total_elementos())\nprint(resultado)\n",
+    next: Some("py-1613-usecase-service"), show_type_chips: false, micro_step: 1612,
+};
+pub const PY1613_USECASE_SERVICE: CodingStep = CodingStep {
+    id: "py-1613-usecase-service", title: "Caso de uso · Servicio", objective: "Crear un servicio que ejecuta una operación de negocio.",
+    prompt_md: "**Servicio de caso de uso**\n\nUn caso de uso coordina la aplicación: recibe entrada, usa repos y devuelve un resultado.\n\n**Micro-reto:**\n1. Definí un repo mínimo con `guardar` y `obtener`\n2. Definí `RegistrarVenta` que use el repo\n3. Ejecutá una venta y mostrá lo guardado",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, id, m):\n#         self._d[id] = m\n#     def obtener(self, id):\n#         return self._d.get(id)\n# class RegistrarVenta:\n#     def __init__(self, repo):\n#         self.repo = repo\n#     def ejecutar(self, id, monto):\n#         self.repo.guardar(id, monto)\n#         return self.repo.obtener(id)\n# repo = Repo()\n# servicio = RegistrarVenta(repo)\n# servicio.ejecutar(1, 99.9)\n# resultado = repo.obtener(1)\n# print(resultado)\n",
+    pytest: "def test_usecase_service(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 99.9\n    assert ns['servicio'].ejecutar(2, 5) == 5\n    assert ns['repo'].obtener(2) == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El servicio guarda en el repo y devuelve el valor leído.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, id, m):\n        self._d[id] = m\n\n    def obtener(self, id):\n        return self._d.get(id)\n\nclass RegistrarVenta:\n    def __init__(self, repo):\n        self.repo = repo\n\n    def ejecutar(self, id, monto):\n        self.repo.guardar(id, monto)\n        return self.repo.obtener(id)\n\nrepo = Repo()\nservicio = RegistrarVenta(repo)\nservicio.ejecutar(1, 99.9)\nresultado = repo.obtener(1)\nprint(resultado)\n",
+    next: Some("py-1614-usecase-orchestration"), show_type_chips: false, micro_step: 1613,
+};
+pub const PY1614_USECASE_ORCHESTRATION: CodingStep = CodingStep {
+    id: "py-1614-usecase-orchestration", title: "Caso de uso · Orquestación", objective: "Coordinar dos repositorios en un caso de uso.",
+    prompt_md: "**Orquestación de repositorios**\n\nUn caso de uso puede coordinar varios repos: leer de uno y escribir en otro.\n\n**Micro-reto:**\n1. Definí un `Repo` reutilizable\n2. Definí `Transferir` que mueva un objeto entre repos\n3. Transferí un dato y mostrá el estado de ambos",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, id, obj):\n#         self._d[id] = obj\n#     def obtener(self, id):\n#         return self._d.get(id)\n# class Transferir:\n#     def __init__(self, origen, destino):\n#         self.origen = origen\n#         self.destino = destino\n#     def ejecutar(self, id, monto):\n#         obj = self.origen.obtener(id)\n#         self.destino.guardar(id, obj)\n#         self.origen.guardar(id, None)\n#         return self.destino.obtener(id)\n# a = Repo()\n# b = Repo()\n# a.guardar(1, 'data')\n# Transferir(a, b).ejecutar(1, 0)\n# resultado = (a.obtener(1), b.obtener(1))\n# print(resultado)\n",
+    pytest: "def test_usecase_orchestration(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (None, 'data')\n    assert ns['a'].obtener(1) is None\n    assert ns['b'].obtener(1) == 'data'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Leé del origen, escribí en el destino y vaciá el origen.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, id, obj):\n        self._d[id] = obj\n\n    def obtener(self, id):\n        return self._d.get(id)\n\nclass Transferir:\n    def __init__(self, origen, destino):\n        self.origen = origen\n        self.destino = destino\n\n    def ejecutar(self, id, monto):\n        obj = self.origen.obtener(id)\n        self.destino.guardar(id, obj)\n        self.origen.guardar(id, None)\n        return self.destino.obtener(id)\n\na = Repo()\nb = Repo()\na.guardar(1, 'data')\nTransferir(a, b).ejecutar(1, 0)\nresultado = (a.obtener(1), b.obtener(1))\nprint(resultado)\n",
+    next: Some("py-1615-usecase-transaction"), show_type_chips: false, micro_step: 1614,
+};
+pub const PY1615_USECASE_TRANSACTION: CodingStep = CodingStep {
+    id: "py-1615-usecase-transaction", title: "Caso de uso · Transaction script", objective: "Ejecutar pasos secuenciales de un flujo de negocio.",
+    prompt_md: "**Transaction script**\n\nUn flujo simple se ejecuta como pasos secuenciales en un único método, sin capas extra.\n\n**Micro-reto:**\n1. Definí un `Repo` mínimo\n2. Definí `Checkout` que sume un carrito\n3. Calculá el total y guardalo en el repo",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, id, obj):\n#         self._d[id] = obj\n#     def obtener(self, id):\n#         return self._d.get(id)\n# class Checkout:\n#     def __init__(self, repo):\n#         self.repo = repo\n#     def ejecutar(self, carrito):\n#         total = 0\n#         for item in carrito:\n#             total += item['precio'] * item['cantidad']\n#         self.repo.guardar('total', total)\n#         return total\n# repo = Repo()\n# carrito = [{'precio': 10, 'cantidad': 2}, {'precio': 5, 'cantidad': 3}]\n# resultado = Checkout(repo).ejecutar(carrito)\n# print(resultado)\n",
+    pytest: "def test_usecase_transaction(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 35\n    assert ns['repo'].obtener('total') == 35\n    assert ns['Checkout'](ns['Repo']()).ejecutar([]) == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Acumulá precio por cantidad y guardá el total al final.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, id, obj):\n        self._d[id] = obj\n\n    def obtener(self, id):\n        return self._d.get(id)\n\nclass Checkout:\n    def __init__(self, repo):\n        self.repo = repo\n\n    def ejecutar(self, carrito):\n        total = 0\n        for item in carrito:\n            total += item['precio'] * item['cantidad']\n        self.repo.guardar('total', total)\n        return total\n\nrepo = Repo()\ncarrito = [{'precio': 10, 'cantidad': 2}, {'precio': 5, 'cantidad': 3}]\nresultado = Checkout(repo).ejecutar(carrito)\nprint(resultado)\n",
+    next: Some("py-1616-usecase-errors"), show_type_chips: false, micro_step: 1615,
+};
+pub const PY1616_USECASE_ERRORS: CodingStep = CodingStep {
+    id: "py-1616-usecase-errors", title: "Caso de uso · Errores", objective: "Lanzar y capturar errores de negocio del dominio.",
+    prompt_md: "**Errores de negocio**\n\nLos casos de uso lanzan excepciones de dominio cuando una regla no se cumple, como stock insuficiente.\n\n**Micro-reto:**\n1. Definí la excepción `StockInsuficiente`\n2. Definí `Vender` que descuente stock\n3. Vendé sobre un stock y mostrá lo que queda",
+    starter_code: "# class StockInsuficiente(Exception):\n#     pass\n# class Vender:\n#     def __init__(self, stock):\n#         self.stock = stock\n#     def ejecutar(self, id, cantidad):\n#         if self.stock.get(id, 0) < cantidad:\n#             raise StockInsuficiente(id)\n#         self.stock[id] -= cantidad\n#         return self.stock[id]\n# stock = {'p1': 10}\n# servicio = Vender(stock)\n# resultado = servicio.ejecutar('p1', 3)\n# print(resultado)\n",
+    pytest: "def test_usecase_errors(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert ns['stock']['p1'] == 7\n    try:\n        ns['servicio'].ejecutar('p1', 100)\n        estallo = False\n    except ns['StockInsuficiente']:\n        estallo = True\n    assert estallo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Lanzá StockInsuficiente cuando stock < cantidad pedida.",
+    solution_example: "class StockInsuficiente(Exception):\n    pass\n\nclass Vender:\n    def __init__(self, stock):\n        self.stock = stock\n\n    def ejecutar(self, id, cantidad):\n        if self.stock.get(id, 0) < cantidad:\n            raise StockInsuficiente(id)\n        self.stock[id] -= cantidad\n        return self.stock[id]\n\nstock = {'p1': 10}\nservicio = Vender(stock)\nresultado = servicio.ejecutar('p1', 3)\nprint(resultado)\n",
+    next: Some("py-1617-usecase-validate"), show_type_chips: false, micro_step: 1616,
+};
+pub const PY1617_USECASE_VALIDATE: CodingStep = CodingStep {
+    id: "py-1617-usecase-validate", title: "Caso de uso · Validación", objective: "Validar entrada antes de aplicar la operación.",
+    prompt_md: "**Validación en el servicio**\n\nAntes de aplicar una operación, el servicio valida la entrada y rechaza datos inválidos.\n\n**Micro-reto:**\n1. Definí `CrearUsuario` con `ejecutar(nombre, email)`\n2. Rechazá nombre vacío y email sin `@`\n3. Creá un usuario válido y mostralo",
+    starter_code: "# class CrearUsuario:\n#     def ejecutar(self, nombre, email):\n#         if not nombre:\n#             raise ValueError('nombre vacio')\n#         if '@' not in email:\n#             raise ValueError('email invalido')\n#         return {'nombre': nombre, 'email': email}\n# servicio = CrearUsuario()\n# resultado = servicio.ejecutar('Ana', 'ana@mail.com')\n# print(resultado)\n",
+    pytest: "def test_usecase_validate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'nombre': 'Ana', 'email': 'ana@mail.com'}\n    try:\n        ns['servicio'].ejecutar('', 'a@b.c')\n        vacio = True\n    except ValueError:\n        vacio = False\n    assert not vacio\n    try:\n        ns['servicio'].ejecutar('Ana', 'sin-arroba')\n        malo = True\n    except ValueError:\n        malo = False\n    assert not malo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Verificá `@` con `'@' not in email` antes de crear.",
+    solution_example: "class CrearUsuario:\n    def ejecutar(self, nombre, email):\n        if not nombre:\n            raise ValueError('nombre vacio')\n        if '@' not in email:\n            raise ValueError('email invalido')\n        return {'nombre': nombre, 'email': email}\n\nservicio = CrearUsuario()\nresultado = servicio.ejecutar('Ana', 'ana@mail.com')\nprint(resultado)\n",
+    next: Some("py-1618-usecase-compose"), show_type_chips: false, micro_step: 1617,
+};
+pub const PY1618_USECASE_COMPOSE: CodingStep = CodingStep {
+    id: "py-1618-usecase-compose", title: "Caso de uso · Compuesto", objective: "Componer servicios para un flujo mayor.",
+    prompt_md: "**Servicio compuesto**\n\nComponés servicios pequeños para construir un flujo mayor, reutilizando lógica ya probada.\n\n**Micro-reto:**\n1. Definí `CalcularTotal` y `AplicarDescuento`\n2. Definí `Compra` que los componga\n3. Comprá con descuento y mostrá el total final",
+    starter_code: "# class CalcularTotal:\n#     def ejecutar(self, carrito):\n#         return sum(i['precio'] * i['cantidad'] for i in carrito)\n# class AplicarDescuento:\n#     def ejecutar(self, total, pct):\n#         return total * (1 - pct / 100)\n# class Compra:\n#     def __init__(self):\n#         self.total = CalcularTotal()\n#         self.descuento = AplicarDescuento()\n#     def ejecutar(self, carrito, pct):\n#         t = self.total.ejecutar(carrito)\n#         return self.descuento.ejecutar(t, pct)\n# carrito = [{'precio': 100, 'cantidad': 1}]\n# resultado = Compra().ejecutar(carrito, 10)\n# print(resultado)\n",
+    pytest: "def test_usecase_compose(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 90.0\n    assert ns['Compra']().ejecutar([{'precio': 100, 'cantidad': 1}], 0) == 100.0\n    assert ns['Compra']().ejecutar([], 50) == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Compra llama a total y luego a descuento con el resultado.",
+    solution_example: "class CalcularTotal:\n    def ejecutar(self, carrito):\n        return sum(i['precio'] * i['cantidad'] for i in carrito)\n\nclass AplicarDescuento:\n    def ejecutar(self, total, pct):\n        return total * (1 - pct / 100)\n\nclass Compra:\n    def __init__(self):\n        self.total = CalcularTotal()\n        self.descuento = AplicarDescuento()\n\n    def ejecutar(self, carrito, pct):\n        t = self.total.ejecutar(carrito)\n        return self.descuento.ejecutar(t, pct)\n\ncarrito = [{'precio': 100, 'cantidad': 1}]\nresultado = Compra().ejecutar(carrito, 10)\nprint(resultado)\n",
+    next: Some("py-1619-api-request-dto"), show_type_chips: false, micro_step: 1618,
+};
+pub const PY1619_API_REQUEST_DTO: CodingStep = CodingStep {
+    id: "py-1619-api-request-dto", title: "API · Request DTO", objective: "Modelar el cuerpo de una petición con un dataclass.",
+    prompt_md: "**DTO de request**\n\nUn Data Transfer Object modela el cuerpo de una petición entrante, separándolo del dominio.\n\n**Micro-reto:**\n1. Definí `CrearPedidoRequest` con `cliente_id` e `items`\n2. Instanciá una petición\n3. Mostrá el cliente y la cantidad de ítems",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class CrearPedidoRequest:\n#     cliente_id: int\n#     items: list\n# req = CrearPedidoRequest(1, [{'id': 1, 'cantidad': 2}])\n# resultado = (req.cliente_id, len(req.items))\n# print(resultado)\n",
+    pytest: "def test_api_request_dto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 1)\n    assert ns['CrearPedidoRequest'](2, []).items == []\n    assert ns['CrearPedidoRequest'](3, [1, 2]).cliente_id == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Un dataclass simple basta para modelar el request.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass CrearPedidoRequest:\n    cliente_id: int\n    items: list\n\nreq = CrearPedidoRequest(1, [{'id': 1, 'cantidad': 2}])\nresultado = (req.cliente_id, len(req.items))\nprint(resultado)\n",
+    next: Some("py-1620-api-validate"), show_type_chips: false, micro_step: 1619,
+};
+pub const PY1620_API_VALIDATE: CodingStep = CodingStep {
+    id: "py-1620-api-validate", title: "API · Validar request", objective: "Validar campos obligatorios de una petición.",
+    prompt_md: "**Validación de request**\n\nAntes de procesar, se validan los campos obligatorios y se acumulan los errores encontrados.\n\n**Micro-reto:**\n1. Definí `validar_request(req)` que devuelva una lista de errores\n2. Exigí `cliente_id` e `items`\n3. Validá una petición completa y mostrá los errores",
+    starter_code: "# def validar_request(req):\n#     errores = []\n#     if not req.get('cliente_id'):\n#         errores.append('cliente_id requerido')\n#     if not req.get('items'):\n#         errores.append('items requerido')\n#     return errores\n# resultado = validar_request({'cliente_id': 1, 'items': [1]})\n# print(resultado)\n",
+    pytest: "def test_api_validate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == []\n    assert ns['validar_request']({}) == ['cliente_id requerido', 'items requerido']\n    assert ns['validar_request']({'cliente_id': 1}) == ['items requerido']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Usá req.get(clave) para detectar campos ausentes o vacíos.",
+    solution_example: "def validar_request(req):\n    errores = []\n    if not req.get('cliente_id'):\n        errores.append('cliente_id requerido')\n    if not req.get('items'):\n        errores.append('items requerido')\n    return errores\n\nresultado = validar_request({'cliente_id': 1, 'items': [1]})\nprint(resultado)\n",
+    next: Some("py-1621-api-response"), show_type_chips: false, micro_step: 1620,
+};
+pub const PY1621_API_RESPONSE: CodingStep = CodingStep {
+    id: "py-1621-api-response", title: "API · Response", objective: "Construir una respuesta con estado y datos.",
+    prompt_md: "**Response tipado**\n\nUna respuesta tiene un código de estado, una marca de éxito y datos o un error.\n\n**Micro-reto:**\n1. Definí `response_ok(datos)`\n2. Definí `response_error(mensaje)`\n3. Construí una respuesta exitosa y mostrala",
+    starter_code: "# def response_ok(datos):\n#     return {'status': 200, 'ok': True, 'data': datos}\n# def response_error(mensaje, codigo=400):\n#     return {'status': codigo, 'ok': False, 'error': mensaje}\n# resultado = response_ok({'id': 1})\n# print(resultado)\n",
+    pytest: "def test_api_response(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'status': 200, 'ok': True, 'data': {'id': 1}}\n    assert ns['response_error']('falta id') == {'status': 400, 'ok': False, 'error': 'falta id'}\n    assert ns['response_error']('boom', 500)['status'] == 500\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "response_ok usa status 200 y ok=True; error usa ok=False.",
+    solution_example: "def response_ok(datos):\n    return {'status': 200, 'ok': True, 'data': datos}\n\ndef response_error(mensaje, codigo=400):\n    return {'status': codigo, 'ok': False, 'error': mensaje}\n\nresultado = response_ok({'id': 1})\nprint(resultado)\n",
+    next: Some("py-1622-api-map-dto"), show_type_chips: false, micro_step: 1621,
+};
+pub const PY1622_API_MAP_DTO: CodingStep = CodingStep {
+    id: "py-1622-api-map-dto", title: "API · Mapear DTO", objective: "Transformar un DTO en una entidad de dominio.",
+    prompt_md: "**Mapear DTO a entidad**\n\nEl DTO de entrada se convierte en una entidad del dominio antes de aplicar reglas de negocio.\n\n**Micro-reto:**\n1. Definí `PedidoDTO` y la entidad `Pedido`\n2. Definí `dto_a_entidad(dto)`\n3. Mapeá un DTO y mostrá la entidad resultante",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class PedidoDTO:\n#     cliente_id: int\n#     items: list\n# class Pedido:\n#     def __init__(self, cliente_id, items):\n#         self.cliente_id = cliente_id\n#         self.items = items\n# def dto_a_entidad(dto):\n#     return Pedido(dto.cliente_id, dto.items)\n# dto = PedidoDTO(7, ['a', 'b'])\n# entidad = dto_a_entidad(dto)\n# resultado = (entidad.cliente_id, entidad.items)\n# print(resultado)\n",
+    pytest: "def test_api_map_dto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (7, ['a', 'b'])\n    assert isinstance(ns['entidad'], ns['Pedido'])\n    assert ns['dto_a_entidad'](ns['PedidoDTO'](1, [])).items == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Construí Pedido con los campos del DTO.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass PedidoDTO:\n    cliente_id: int\n    items: list\n\nclass Pedido:\n    def __init__(self, cliente_id, items):\n        self.cliente_id = cliente_id\n        self.items = items\n\ndef dto_a_entidad(dto):\n    return Pedido(dto.cliente_id, dto.items)\n\ndto = PedidoDTO(7, ['a', 'b'])\nentidad = dto_a_entidad(dto)\nresultado = (entidad.cliente_id, entidad.items)\nprint(resultado)\n",
+    next: Some("py-1623-api-errors"), show_type_chips: false, micro_step: 1622,
+};
+pub const PY1623_API_ERRORS: CodingStep = CodingStep {
+    id: "py-1623-api-errors", title: "API · Errores HTTP", objective: "Mapear errores de dominio a códigos HTTP.",
+    prompt_md: "**Mapear errores a HTTP**\n\nLos errores de dominio se traducen a códigos HTTP: negocio a 400, lo demás a 500.\n\n**Micro-reto:**\n1. Definí la excepción `ErrorDominio`\n2. Definí `manejar(exc)` que devuelva el código y el mensaje\n3. Manejá un error de dominio y mostrá la respuesta",
+    starter_code: "# class ErrorDominio(Exception):\n#     pass\n# def manejar(exc):\n#     if isinstance(exc, ErrorDominio):\n#         return {'status': 400, 'error': str(exc)}\n#     return {'status': 500, 'error': 'interno'}\n# resultado = manejar(ErrorDominio('stock'))\n# print(resultado)\n",
+    pytest: "def test_api_errors(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'status': 400, 'error': 'stock'}\n    assert ns['manejar'](ValueError('x')) == {'status': 500, 'error': 'interno'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "isinstance(exc, ErrorDominio) distingue negocio de lo demás.",
+    solution_example: "class ErrorDominio(Exception):\n    pass\n\ndef manejar(exc):\n    if isinstance(exc, ErrorDominio):\n        return {'status': 400, 'error': str(exc)}\n    return {'status': 500, 'error': 'interno'}\n\nresultado = manejar(ErrorDominio('stock'))\nprint(resultado)\n",
+    next: Some("py-1624-api-contract"), show_type_chips: false, micro_step: 1623,
+};
+pub const PY1624_API_CONTRACT: CodingStep = CodingStep {
+    id: "py-1624-api-contract", title: "API · Contrato endpoint", objective: "Definir el contrato completo de un endpoint.",
+    prompt_md: "**Contrato de endpoint**\n\nUn endpoint valida el request, responde con error o con datos, y cumple un contrato estable.\n\n**Micro-reto:**\n1. Definí `validar_request`, `response_ok` y `response_error`\n2. Definí `endpoint_crear_pedido` que las combine\n3. Llamá al endpoint con un request válido y mostrá la respuesta",
+    starter_code: "# def validar_request(req):\n#     if not req.get('cliente_id'):\n#         return ['cliente_id requerido']\n#     return []\n# def response_ok(datos):\n#     return {'status': 200, 'ok': True, 'data': datos}\n# def response_error(mensaje):\n#     return {'status': 400, 'ok': False, 'error': mensaje}\n# def endpoint_crear_pedido(request):\n#     errores = validar_request(request)\n#     if errores:\n#         return response_error(errores[0])\n#     return response_ok({'id': request['cliente_id'], 'items': request['items']})\n# resultado = endpoint_crear_pedido({'cliente_id': 5, 'items': [1]})\n# print(resultado)\n",
+    pytest: "def test_api_contract(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'status': 200, 'ok': True, 'data': {'id': 5, 'items': [1]}}\n    assert ns['endpoint_crear_pedido']({})['status'] == 400\n    assert ns['endpoint_crear_pedido']({'cliente_id': 1, 'items': [2]})['data']['id'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Si hay errores respondé error; si no, response_ok con el id.",
+    solution_example: "def validar_request(req):\n    if not req.get('cliente_id'):\n        return ['cliente_id requerido']\n    return []\n\ndef response_ok(datos):\n    return {'status': 200, 'ok': True, 'data': datos}\n\ndef response_error(mensaje):\n    return {'status': 400, 'ok': False, 'error': mensaje}\n\ndef endpoint_crear_pedido(request):\n    errores = validar_request(request)\n    if errores:\n        return response_error(errores[0])\n    return response_ok({'id': request['cliente_id'], 'items': request['items']})\n\nresultado = endpoint_crear_pedido({'cliente_id': 5, 'items': [1]})\nprint(resultado)\n",
+    next: Some("py-1625-cqrs-separate"), show_type_chips: false, micro_step: 1624,
+};
+pub const PY1625_CQRS_SEPARATE: CodingStep = CodingStep {
+    id: "py-1625-cqrs-separate", title: "CQRS · Separar", objective: "Distinguir operaciones de lectura de las de escritura.",
+    prompt_md: "**Separar lectura y escritura**\n\nCQRS distingue comandos (cambian estado) de consultas (solo leen). El nombre revela la intención.\n\n**Micro-reto:**\n1. Definí `es_comando(operacion)`\n2. Definí `es_consulta(operacion)`\n3. Clasificá dos operaciones y mostrá el resultado",
+    starter_code: "# def es_comando(operacion):\n#     return operacion.startswith('crear') or operacion.startswith('actualizar') or operacion.startswith('borrar')\n# def es_consulta(operacion):\n#     return operacion.startswith('obtener') or operacion.startswith('listar')\n# resultado = (es_comando('crear_pedido'), es_consulta('obtener_pedido'))\n# print(resultado)\n",
+    pytest: "def test_cqrs_separate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, True)\n    assert ns['es_comando']('obtener') is False\n    assert ns['es_consulta']('crear') is False\n    assert ns['es_comando']('borrar_pedido') is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Clasificá por el prefijo del nombre de la operación.",
+    solution_example: "def es_comando(operacion):\n    return operacion.startswith('crear') or operacion.startswith('actualizar') or operacion.startswith('borrar')\n\ndef es_consulta(operacion):\n    return operacion.startswith('obtener') or operacion.startswith('listar')\n\nresultado = (es_comando('crear_pedido'), es_consulta('obtener_pedido'))\nprint(resultado)\n",
+    next: Some("py-1626-cqrs-command"), show_type_chips: false, micro_step: 1625,
+};
+pub const PY1626_CQRS_COMMAND: CodingStep = CodingStep {
+    id: "py-1626-cqrs-command", title: "CQRS · Command handler", objective: "Implementar un handler que ejecuta un comando.",
+    prompt_md: "**Command handler**\n\nUn comando representa una intención de cambio. Su handler la ejecuta y persiste el efecto.\n\n**Micro-reto:**\n1. Definí un `Repo` mínimo\n2. Definí `CrearPedidoHandler` con `handle(comando)`\n3. Ejecutá un comando y mostrá el objeto guardado",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, id, obj):\n#         self._d[id] = obj\n#     def obtener(self, id):\n#         return self._d.get(id)\n# class CrearPedidoHandler:\n#     def __init__(self, repo):\n#         self.repo = repo\n#     def handle(self, comando):\n#         self.repo.guardar(comando['id'], comando)\n#         return self.repo.obtener(comando['id'])\n# repo = Repo()\n# handler = CrearPedidoHandler(repo)\n# resultado = handler.handle({'id': 1, 'cliente': 'Ana'})\n# print(resultado)\n",
+    pytest: "def test_cqrs_command(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'id': 1, 'cliente': 'Ana'}\n    assert ns['repo'].obtener(1) == {'id': 1, 'cliente': 'Ana'}\n    assert ns['handler'].handle({'id': 2, 'cliente': 'Luis'})['cliente'] == 'Luis'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El handler guarda el comando en el repo y devuelve el guardado.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, id, obj):\n        self._d[id] = obj\n\n    def obtener(self, id):\n        return self._d.get(id)\n\nclass CrearPedidoHandler:\n    def __init__(self, repo):\n        self.repo = repo\n\n    def handle(self, comando):\n        self.repo.guardar(comando['id'], comando)\n        return self.repo.obtener(comando['id'])\n\nrepo = Repo()\nhandler = CrearPedidoHandler(repo)\nresultado = handler.handle({'id': 1, 'cliente': 'Ana'})\nprint(resultado)\n",
+    next: Some("py-1627-cqrs-query"), show_type_chips: false, micro_step: 1626,
+};
+pub const PY1627_CQRS_QUERY: CodingStep = CodingStep {
+    id: "py-1627-cqrs-query", title: "CQRS · Query handler", objective: "Implementar un handler de consulta que solo lee.",
+    prompt_md: "**Query handler**\n\nUna consulta lee datos sin modificar nada. Su handler devuelve una proyección filtrada.\n\n**Micro-reto:**\n1. Definí un `Repo` con datos de ejemplo\n2. Definí `ListarUsuariosHandler` con `handle(consulta)`\n3. Consultá usuarios por nombre y mostrá el resultado",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._d = {1: {'nombre': 'Ana'}, 2: {'nombre': 'Luis'}}\n#     def listar(self):\n#         return list(self._d.values())\n# class ListarUsuariosHandler:\n#     def __init__(self, repo):\n#         self.repo = repo\n#     def handle(self, consulta):\n#         return [u for u in self.repo.listar() if consulta.get('nombre', '') in u['nombre']]\n# repo = Repo()\n# resultado = ListarUsuariosHandler(repo).handle({'nombre': 'A'})\n# print(resultado)\n",
+    pytest: "def test_cqrs_query(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'nombre': 'Ana'}]\n    assert ns['ListarUsuariosHandler'](ns['repo']).handle({'nombre': 'L'}) == [{'nombre': 'Luis'}]\n    assert len(ns['ListarUsuariosHandler'](ns['repo']).handle({'nombre': ''})) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Filtrá con `if consulta.get('nombre', '') in u['nombre']`.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._d = {1: {'nombre': 'Ana'}, 2: {'nombre': 'Luis'}}\n\n    def listar(self):\n        return list(self._d.values())\n\nclass ListarUsuariosHandler:\n    def __init__(self, repo):\n        self.repo = repo\n\n    def handle(self, consulta):\n        return [u for u in self.repo.listar() if consulta.get('nombre', '') in u['nombre']]\n\nrepo = Repo()\nresultado = ListarUsuariosHandler(repo).handle({'nombre': 'A'})\nprint(resultado)\n",
+    next: Some("py-1628-cqrs-read-model"), show_type_chips: false, micro_step: 1627,
+};
+pub const PY1628_CQRS_READ_MODEL: CodingStep = CodingStep {
+    id: "py-1628-cqrs-read-model", title: "CQRS · Read model", objective: "Construir una vista optimizada para lectura.",
+    prompt_md: "**Read model**\n\nUn read model es una proyección precalculada y optimizada para las consultas, separada de la escritura.\n\n**Micro-reto:**\n1. Definí un `Repo` con entidades\n2. Definí `construir_read_model(repo)`\n3. Proyectá nombre→edad y mostrá el resultado",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._d = {1: {'nombre': 'Ana', 'edad': 30}, 2: {'nombre': 'Luis', 'edad': 40}}\n#     def listar(self):\n#         return list(self._d.values())\n# def construir_read_model(repo):\n#     return {u['nombre']: u['edad'] for u in repo.listar()}\n# repo = Repo()\n# resultado = construir_read_model(repo)\n# print(resultado)\n",
+    pytest: "def test_cqrs_read_model(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'Ana': 30, 'Luis': 40}\n    assert ns['construir_read_model'](ns['Repo']()) == {'Ana': 30, 'Luis': 40}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Comprehension de dict: {u['nombre']: u['edad'] ...}.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._d = {1: {'nombre': 'Ana', 'edad': 30}, 2: {'nombre': 'Luis', 'edad': 40}}\n\n    def listar(self):\n        return list(self._d.values())\n\ndef construir_read_model(repo):\n    return {u['nombre']: u['edad'] for u in repo.listar()}\n\nrepo = Repo()\nresultado = construir_read_model(repo)\nprint(resultado)\n",
+    next: Some("py-1629-cqrs-write-model"), show_type_chips: false, micro_step: 1628,
+};
+pub const PY1629_CQRS_WRITE_MODEL: CodingStep = CodingStep {
+    id: "py-1629-cqrs-write-model", title: "CQRS · Write model", objective: "Modelar la escritura con validación de negocio.",
+    prompt_md: "**Write model**\n\nEl write model aplica reglas de negocio y valida antes de persistir, a diferencia de la lectura.\n\n**Micro-reto:**\n1. Definí un `Repo` y `ComandoCrear`\n2. Rechazá edad negativa en `handle`\n3. Ejecutá un comando válido y mostrá el resultado",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, id, obj):\n#         self._d[id] = obj\n#     def obtener(self, id):\n#         return self._d.get(id)\n# class ComandoCrear:\n#     def __init__(self, repo):\n#         self.repo = repo\n#     def handle(self, comando):\n#         if comando.get('edad', 0) < 0:\n#             raise ValueError('edad invalida')\n#         self.repo.guardar(comando['id'], comando)\n#         return self.repo.obtener(comando['id'])\n# repo = Repo()\n# handler = ComandoCrear(repo)\n# resultado = handler.handle({'id': 1, 'edad': 30})\n# print(resultado)\n",
+    pytest: "def test_cqrs_write_model(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'id': 1, 'edad': 30}\n    assert ns['repo'].obtener(1) == {'id': 1, 'edad': 30}\n    try:\n        ns['handler'].handle({'id': 2, 'edad': -1})\n        malo = True\n    except ValueError:\n        malo = False\n    assert not malo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Validá la regla antes de guardar en el repo.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, id, obj):\n        self._d[id] = obj\n\n    def obtener(self, id):\n        return self._d.get(id)\n\nclass ComandoCrear:\n    def __init__(self, repo):\n        self.repo = repo\n\n    def handle(self, comando):\n        if comando.get('edad', 0) < 0:\n            raise ValueError('edad invalida')\n        self.repo.guardar(comando['id'], comando)\n        return self.repo.obtener(comando['id'])\n\nrepo = Repo()\nhandler = ComandoCrear(repo)\nresultado = handler.handle({'id': 1, 'edad': 30})\nprint(resultado)\n",
+    next: Some("py-1630-cqrs-consistency"), show_type_chips: false, micro_step: 1629,
+};
+pub const PY1630_CQRS_CONSISTENCY: CodingStep = CodingStep {
+    id: "py-1630-cqrs-consistency", title: "CQRS · Consistencia", objective: "Sincronizar el read model tras un comando.",
+    prompt_md: "**Consistencia entre modelos**\n\nTras un comando, el read model debe actualizarse para que la lectura refleje el nuevo estado.\n\n**Micro-reto:**\n1. Definí `Sistema` con escritura y lectura\n2. En `comando_crear`, actualizá ambos modelos\n3. Creá un usuario y consultá el read model",
+    starter_code: "# class Sistema:\n#     def __init__(self):\n#         self.escritura = {}\n#         self.lectura = {}\n#     def comando_crear(self, id, obj):\n#         self.escritura[id] = obj\n#         self.lectura[id] = {'nombre': obj['nombre']}\n#     def consulta(self, id):\n#         return self.lectura.get(id)\n# sistema = Sistema()\n# sistema.comando_crear(1, {'nombre': 'Ana', 'edad': 30})\n# resultado = sistema.consulta(1)\n# print(resultado)\n",
+    pytest: "def test_cqrs_consistency(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'nombre': 'Ana'}\n    assert ns['sistema'].escritura[1] == {'nombre': 'Ana', 'edad': 30}\n    assert ns['sistema'].consulta(99) is None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El comando escribe en escritura y proyecta en lectura.",
+    solution_example: "class Sistema:\n    def __init__(self):\n        self.escritura = {}\n        self.lectura = {}\n\n    def comando_crear(self, id, obj):\n        self.escritura[id] = obj\n        self.lectura[id] = {'nombre': obj['nombre']}\n\n    def consulta(self, id):\n        return self.lectura.get(id)\n\nsistema = Sistema()\nsistema.comando_crear(1, {'nombre': 'Ana', 'edad': 30})\nresultado = sistema.consulta(1)\nprint(resultado)\n",
+    next: Some("py-1631-event-simple"), show_type_chips: false, micro_step: 1630,
+};
+pub const PY1631_EVENT_SIMPLE: CodingStep = CodingStep {
+    id: "py-1631-event-simple", title: "Eventos · Evento", objective: "Modelar un evento como dataclass inmutable.",
+    prompt_md: "**Evento**\n\nUn evento describe algo que ya ocurrió. Un dataclass frozen lo modela de forma inmutable.\n\n**Micro-reto:**\n1. Definí `PedidoCreado` con `id` y `cliente`\n2. Instanciá un evento\n3. Mostrá sus campos",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class PedidoCreado:\n#     id: int\n#     cliente: str\n# evento = PedidoCreado(1, 'Ana')\n# resultado = (evento.id, evento.cliente)\n# print(resultado)\n",
+    pytest: "def test_event_simple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 'Ana')\n    assert ns['PedidoCreado'](2, 'Luis').cliente == 'Luis'\n    assert ns['PedidoCreado'](1, 'Ana') == ns['PedidoCreado'](1, 'Ana')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "frozen=True hace al evento inmutable y comparable.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass PedidoCreado:\n    id: int\n    cliente: str\n\nevento = PedidoCreado(1, 'Ana')\nresultado = (evento.id, evento.cliente)\nprint(resultado)\n",
+    next: Some("py-1632-event-bus"), show_type_chips: false, micro_step: 1631,
+};
+pub const PY1632_EVENT_BUS: CodingStep = CodingStep {
+    id: "py-1632-event-bus", title: "Eventos · Bus", objective: "Publicar eventos a suscriptores con un bus en memoria.",
+    prompt_md: "**Event bus en memoria**\n\nUn bus mantiene una lista de suscriptores y les entrega cada evento publicado.\n\n**Micro-reto:**\n1. Definí `EventBus` con `suscribir` y `publicar`\n2. Definí una clase `Evento` simple\n3. Suscribí una función y publicá un evento",
+    starter_code: "# class Evento:\n#     def __init__(self, id):\n#         self.id = id\n# class EventBus:\n#     def __init__(self):\n#         self._suscriptores = []\n#     def suscribir(self, fn):\n#         self._suscriptores.append(fn)\n#     def publicar(self, evento):\n#         for fn in self._suscriptores:\n#             fn(evento)\n# recibidos = []\n# bus = EventBus()\n# bus.suscribir(lambda e: recibidos.append(e.id))\n# bus.publicar(Evento(5))\n# resultado = list(recibidos)\n# print(resultado)\n",
+    pytest: "def test_event_bus(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [5]\n    assert len(ns['bus']._suscriptores) == 1\n    ns['bus'].publicar(ns['Evento'](9))\n    assert ns['recibidos'] == [5, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "publicar itera los suscriptores llamándolos con el evento.",
+    solution_example: "class Evento:\n    def __init__(self, id):\n        self.id = id\n\nclass EventBus:\n    def __init__(self):\n        self._suscriptores = []\n\n    def suscribir(self, fn):\n        self._suscriptores.append(fn)\n\n    def publicar(self, evento):\n        for fn in self._suscriptores:\n            fn(evento)\n\nrecibidos = []\nbus = EventBus()\nbus.suscribir(lambda e: recibidos.append(e.id))\nbus.publicar(Evento(5))\nresultado = list(recibidos)\nprint(resultado)\n",
+    next: Some("py-1633-event-subscriber"), show_type_chips: false, micro_step: 1632,
+};
+pub const PY1633_EVENT_SUBSCRIBER: CodingStep = CodingStep {
+    id: "py-1633-event-subscriber", title: "Eventos · Suscriptor", objective: "Crear un suscriptor que reacciona a un evento.",
+    prompt_md: "**Suscriptor**\n\nUn suscriptor reacciona a un evento y registra una acción, como un log de auditoría.\n\n**Micro-reto:**\n1. Definí `AuditLog` con un `log`\n2. Definí `on_pedido_creado(evento)`\n3. Procesá dos eventos y mostrá el log",
+    starter_code: "# class AuditLog:\n#     def __init__(self):\n#         self.log = []\n#     def on_pedido_creado(self, evento):\n#         self.log.append('pedido ' + str(evento['id']) + ' creado')\n# auditor = AuditLog()\n# auditor.on_pedido_creado({'id': 1})\n# auditor.on_pedido_creado({'id': 2})\n# resultado = auditor.log\n# print(resultado)\n",
+    pytest: "def test_event_subscriber(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['pedido 1 creado', 'pedido 2 creado']\n    assert ns['AuditLog']().log == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Concatena 'pedido ' + str(id) + ' creado' y hacé append.",
+    solution_example: "class AuditLog:\n    def __init__(self):\n        self.log = []\n\n    def on_pedido_creado(self, evento):\n        self.log.append('pedido ' + str(evento['id']) + ' creado')\n\nauditor = AuditLog()\nauditor.on_pedido_creado({'id': 1})\nauditor.on_pedido_creado({'id': 2})\nresultado = auditor.log\nprint(resultado)\n",
+    next: Some("py-1634-event-pubsub"), show_type_chips: false, micro_step: 1633,
+};
+pub const PY1634_EVENT_PUBSUB: CodingStep = CodingStep {
+    id: "py-1634-event-pubsub", title: "Eventos · Pub/Sub", objective: "Distribuir eventos por tipo entre múltiples suscriptores.",
+    prompt_md: "**Pub/Sub por tópico**\n\nEl bus agrupa suscriptores por tópico y solo entrega a los interesados en ese tipo de evento.\n\n**Micro-reto:**\n1. Definí `Bus` con `suscribir(topico, fn)` y `publicar(topico, evento)`\n2. Suscribí a un tópico\n3. Publicá en ese tópico y en otro, y mostrá lo recibido",
+    starter_code: "# class Bus:\n#     def __init__(self):\n#         self._topicos = {}\n#     def suscribir(self, topico, fn):\n#         self._topicos.setdefault(topico, []).append(fn)\n#     def publicar(self, topico, evento):\n#         for fn in self._topicos.get(topico, []):\n#             fn(evento)\n# recibidos = []\n# bus = Bus()\n# bus.suscribir('pedido', lambda e: recibidos.append(e))\n# bus.publicar('pedido', 42)\n# bus.publicar('otro', 99)\n# resultado = recibidos\n# print(resultado)\n",
+    pytest: "def test_event_pubsub(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [42]\n    assert ns['bus']._topicos['pedido'] is not None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Usá setdefault(topico, []) para crear la lista de suscriptores.",
+    solution_example: "class Bus:\n    def __init__(self):\n        self._topicos = {}\n\n    def suscribir(self, topico, fn):\n        self._topicos.setdefault(topico, []).append(fn)\n\n    def publicar(self, topico, evento):\n        for fn in self._topicos.get(topico, []):\n            fn(evento)\n\nrecibidos = []\nbus = Bus()\nbus.suscribir('pedido', lambda e: recibidos.append(e))\nbus.publicar('pedido', 42)\nbus.publicar('otro', 99)\nresultado = recibidos\nprint(resultado)\n",
+    next: Some("py-1635-event-domain"), show_type_chips: false, micro_step: 1634,
+};
+pub const PY1635_EVENT_DOMAIN: CodingStep = CodingStep {
+    id: "py-1635-event-domain", title: "Eventos · Dominio", objective: "Emitir un evento de dominio al cambiar estado.",
+    prompt_md: "**Evento de dominio**\n\nCuando una entidad cambia de estado, emite un evento que describe ese cambio.\n\n**Micro-reto:**\n1. Definí `Cuenta` con saldo y lista de eventos\n2. En `depositar`, agregá un evento\n3. Depositá dos veces y mostrá los eventos",
+    starter_code: "# class Cuenta:\n#     def __init__(self, saldo):\n#         self.saldo = saldo\n#         self.eventos = []\n#     def depositar(self, monto):\n#         self.saldo += monto\n#         self.eventos.append({'tipo': 'deposito', 'monto': monto})\n#         return self.saldo\n# cuenta = Cuenta(100)\n# cuenta.depositar(50)\n# cuenta.depositar(25)\n# resultado = cuenta.eventos\n# print(resultado)\n",
+    pytest: "def test_event_domain(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'tipo': 'deposito', 'monto': 50}, {'tipo': 'deposito', 'monto': 25}]\n    assert ns['cuenta'].saldo == 175\n    assert ns['Cuenta'](0).eventos == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Append un dict {'tipo': 'deposito', 'monto': monto} al depositar.",
+    solution_example: "class Cuenta:\n    def __init__(self, saldo):\n        self.saldo = saldo\n        self.eventos = []\n\n    def depositar(self, monto):\n        self.saldo += monto\n        self.eventos.append({'tipo': 'deposito', 'monto': monto})\n        return self.saldo\n\ncuenta = Cuenta(100)\ncuenta.depositar(50)\ncuenta.depositar(25)\nresultado = cuenta.eventos\nprint(resultado)\n",
+    next: Some("py-1636-event-history"), show_type_chips: false, micro_step: 1635,
+};
+pub const PY1636_EVENT_HISTORY: CodingStep = CodingStep {
+    id: "py-1636-event-history", title: "Eventos · Historial", objective: "Reconstruir estado desde un historial de eventos.",
+    prompt_md: "**Historial de eventos**\n\nCon el historial de eventos podés reconstruir el estado actual aplicándolos en orden.\n\n**Micro-reto:**\n1. Definí `reconstruir(eventos)`\n2. Sumá depósitos y restá retiros\n3. Reconstruí un historial y mostrá el saldo",
+    starter_code: "# def reconstruir(eventos):\n#     saldo = 0\n#     for e in eventos:\n#         if e['tipo'] == 'deposito':\n#             saldo += e['monto']\n#         elif e['tipo'] == 'retiro':\n#             saldo -= e['monto']\n#     return saldo\n# eventos = [{'tipo': 'deposito', 'monto': 100}, {'tipo': 'retiro', 'monto': 30}, {'tipo': 'deposito', 'monto': 20}]\n# resultado = reconstruir(eventos)\n# print(resultado)\n",
+    pytest: "def test_event_history(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 90\n    assert ns['reconstruir']([]) == 0\n    assert ns['reconstruir']([{'tipo': 'deposito', 'monto': 5}]) == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Sumá depósitos y restá retiros recorriendo los eventos.",
+    solution_example: "def reconstruir(eventos):\n    saldo = 0\n    for e in eventos:\n        if e['tipo'] == 'deposito':\n            saldo += e['monto']\n        elif e['tipo'] == 'retiro':\n            saldo -= e['monto']\n    return saldo\n\neventos = [{'tipo': 'deposito', 'monto': 100}, {'tipo': 'retiro', 'monto': 30}, {'tipo': 'deposito', 'monto': 20}]\nresultado = reconstruir(eventos)\nprint(resultado)\n",
+    next: Some("py-1637-cache-simple"), show_type_chips: false, micro_step: 1636,
+};
+pub const PY1637_CACHE_SIMPLE: CodingStep = CodingStep {
+    id: "py-1637-cache-simple", title: "Caché · Simple", objective: "Guardar resultados calculados en un dict.",
+    prompt_md: "**Caché simple**\n\nUna caché guarda resultados en un dict para evitar recalcular o releer la fuente.\n\n**Micro-reto:**\n1. Definí `Cache` con `obtener` y `guardar`\n2. Guardá un valor\n3. Leé el valor guardado y mostralo",
+    starter_code: "# class Cache:\n#     def __init__(self):\n#         self._d = {}\n#     def obtener(self, clave):\n#         return self._d.get(clave)\n#     def guardar(self, clave, valor):\n#         self._d[clave] = valor\n#         return valor\n# cache = Cache()\n# cache.guardar('total', 100)\n# resultado = cache.obtener('total')\n# print(resultado)\n",
+    pytest: "def test_cache_simple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 100\n    assert ns['cache'].obtener('nada') is None\n    assert ns['cache'].guardar('x', 7) == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Usá dict.get(clave) para leer sin error si no existe.",
+    solution_example: "class Cache:\n    def __init__(self):\n        self._d = {}\n\n    def obtener(self, clave):\n        return self._d.get(clave)\n\n    def guardar(self, clave, valor):\n        self._d[clave] = valor\n        return valor\n\ncache = Cache()\ncache.guardar('total', 100)\nresultado = cache.obtener('total')\nprint(resultado)\n",
+    next: Some("py-1638-cache-ttl"), show_type_chips: false, micro_step: 1637,
+};
+pub const PY1638_CACHE_TTL: CodingStep = CodingStep {
+    id: "py-1638-cache-ttl", title: "Caché · TTL", objective: "Expirar entradas de caché por tiempo conceptual.",
+    prompt_md: "**TTL conceptual**\n\nCada entrada guarda su momento de expiración. Si ya pasó, la caché la descarta.\n\n**Micro-reto:**\n1. Definí `CacheTTL` con `guardar(clave, valor, ahora, ttl)`\n2. Definí `obtener(clave, ahora)`\n3. Leé antes y después de expirar y mostrá ambos",
+    starter_code: "# class CacheTTL:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, clave, valor, ahora, ttl):\n#         self._d[clave] = (valor, ahora + ttl)\n#     def obtener(self, clave, ahora):\n#         if clave not in self._d:\n#             return None\n#         valor, expira = self._d[clave]\n#         if ahora >= expira:\n#             del self._d[clave]\n#             return None\n#         return valor\n# cache = CacheTTL()\n# cache.guardar('x', 10, ahora=100, ttl=10)\n# resultado = (cache.obtener('x', 105), cache.obtener('x', 111))\n# print(resultado)\n",
+    pytest: "def test_cache_ttl(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (10, None)\n    assert ns['CacheTTL']().obtener('x', 0) is None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Si ahora >= expira, borrá la entrada y devolvé None.",
+    solution_example: "class CacheTTL:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, clave, valor, ahora, ttl):\n        self._d[clave] = (valor, ahora + ttl)\n\n    def obtener(self, clave, ahora):\n        if clave not in self._d:\n            return None\n        valor, expira = self._d[clave]\n        if ahora >= expira:\n            del self._d[clave]\n            return None\n        return valor\n\ncache = CacheTTL()\ncache.guardar('x', 10, ahora=100, ttl=10)\nresultado = (cache.obtener('x', 105), cache.obtener('x', 111))\nprint(resultado)\n",
+    next: Some("py-1639-cache-invalidate"), show_type_chips: false, micro_step: 1638,
+};
+pub const PY1639_CACHE_INVALIDATE: CodingStep = CodingStep {
+    id: "py-1639-cache-invalidate", title: "Caché · Invalidación", objective: "Invalidar la caché cuando cambia la fuente.",
+    prompt_md: "**Invalidación**\n\nCuando la fuente cambia, la caché se invalida para que la próxima lectura traiga el valor nuevo.\n\n**Micro-reto:**\n1. Definí `Repo` y `Cache` con `leer` e `invalidar`\n2. Leé, actualizá la fuente e invalidá\n3. Volvé a leer y mostrá el valor nuevo",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._d = {'total': 100}\n#     def actualizar(self, clave, valor):\n#         self._d[clave] = valor\n#         return valor\n#     def obtener(self, clave):\n#         return self._d.get(clave)\n# class Cache:\n#     def __init__(self, repo):\n#         self.repo = repo\n#         self._d = {}\n#     def leer(self, clave):\n#         if clave not in self._d:\n#             self._d[clave] = self.repo.obtener(clave)\n#         return self._d[clave]\n#     def invalidar(self, clave):\n#         self._d.pop(clave, None)\n# repo = Repo()\n# cache = Cache(repo)\n# cache.leer('total')\n# repo.actualizar('total', 200)\n# cache.invalidar('total')\n# resultado = cache.leer('total')\n# print(resultado)\n",
+    pytest: "def test_cache_invalidate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 200\n    assert ns['repo'].obtener('total') == 200\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "invalidar hace pop de la clave; la próxima leer recarga.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._d = {'total': 100}\n\n    def actualizar(self, clave, valor):\n        self._d[clave] = valor\n        return valor\n\n    def obtener(self, clave):\n        return self._d.get(clave)\n\nclass Cache:\n    def __init__(self, repo):\n        self.repo = repo\n        self._d = {}\n\n    def leer(self, clave):\n        if clave not in self._d:\n            self._d[clave] = self.repo.obtener(clave)\n        return self._d[clave]\n\n    def invalidar(self, clave):\n        self._d.pop(clave, None)\n\nrepo = Repo()\ncache = Cache(repo)\ncache.leer('total')\nrepo.actualizar('total', 200)\ncache.invalidar('total')\nresultado = cache.leer('total')\nprint(resultado)\n",
+    next: Some("py-1640-cache-memoize"), show_type_chips: false, micro_step: 1639,
+};
+pub const PY1640_CACHE_MEMOIZE: CodingStep = CodingStep {
+    id: "py-1640-cache-memoize", title: "Caché · Memoize", objective: "Memoizar una función costosa con un dict.",
+    prompt_md: "**Memoización**\n\nUn decorador guarda el resultado por argumento para que la función costosa se calcule una sola vez.\n\n**Micro-reto:**\n1. Definí `memoizar(fn)` que devuelva un wrapper\n2. Definí `costosa` que cuente llamadas\n3. Llamá dos veces con el mismo valor y mostrá resultado y llamadas",
+    starter_code: "# def memoizar(fn):\n#     cache = {}\n#     def wrapper(x):\n#         if x not in cache:\n#             cache[x] = fn(x)\n#         return cache[x]\n#     return wrapper\n# llamadas = [0]\n# def costosa(x):\n#     llamadas[0] += 1\n#     return x * x\n# memo = memoizar(costosa)\n# memo(3)\n# memo(3)\n# resultado = (memo(3), llamadas[0])\n# print(resultado)\n",
+    pytest: "def test_cache_memoize(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (9, 1)\n    assert ns['memo'](4) == 16\n    assert ns['llamadas'][0] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Solo calculá fn(x) cuando x no esté en la caché.",
+    solution_example: "def memoizar(fn):\n    cache = {}\n\n    def wrapper(x):\n        if x not in cache:\n            cache[x] = fn(x)\n        return cache[x]\n\n    return wrapper\n\nllamadas = [0]\n\ndef costosa(x):\n    llamadas[0] += 1\n    return x * x\n\nmemo = memoizar(costosa)\nmemo(3)\nmemo(3)\nresultado = (memo(3), llamadas[0])\nprint(resultado)\n",
+    next: Some("py-1641-cache-limit"), show_type_chips: false, micro_step: 1640,
+};
+pub const PY1641_CACHE_LIMIT: CodingStep = CodingStep {
+    id: "py-1641-cache-limit", title: "Caché · Límite", objective: "Limitar el tamaño de la caché con política FIFO.",
+    prompt_md: "**Caché con límite**\n\nUna caché acotada descarta la entrada más antigua (FIFO) cuando se llena.\n\n**Micro-reto:**\n1. Definí `CacheLimitada(limite)`\n2. Implementá `guardar` con desalojo FIFO\n3. Guardá tres claves con límite 2 y mostrá qué queda",
+    starter_code: "# class CacheLimitada:\n#     def __init__(self, limite):\n#         self.limite = limite\n#         self._orden = []\n#         self._d = {}\n#     def guardar(self, clave, valor):\n#         if clave in self._d:\n#             self._d[clave] = valor\n#             return valor\n#         if len(self._orden) >= self.limite:\n#             viejo = self._orden.pop(0)\n#             del self._d[viejo]\n#         self._orden.append(clave)\n#         self._d[clave] = valor\n#         return valor\n#     def obtener(self, clave):\n#         return self._d.get(clave)\n# cache = CacheLimitada(2)\n# cache.guardar('a', 1)\n# cache.guardar('b', 2)\n# cache.guardar('c', 3)\n# resultado = (cache.obtener('a'), cache.obtener('b'), cache.obtener('c'))\n# print(resultado)\n",
+    pytest: "def test_cache_limit(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (None, 2, 3)\n    assert ns['CacheLimitada'](1).guardar('x', 1) == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Al llenarse, desalojá la clave más antigua de _orden.",
+    solution_example: "class CacheLimitada:\n    def __init__(self, limite):\n        self.limite = limite\n        self._orden = []\n        self._d = {}\n\n    def guardar(self, clave, valor):\n        if clave in self._d:\n            self._d[clave] = valor\n            return valor\n        if len(self._orden) >= self.limite:\n            viejo = self._orden.pop(0)\n            del self._d[viejo]\n        self._orden.append(clave)\n        self._d[clave] = valor\n        return valor\n\n    def obtener(self, clave):\n        return self._d.get(clave)\n\ncache = CacheLimitada(2)\ncache.guardar('a', 1)\ncache.guardar('b', 2)\ncache.guardar('c', 3)\nresultado = (cache.obtener('a'), cache.obtener('b'), cache.obtener('c'))\nprint(resultado)\n",
+    next: Some("py-1642-cache-consistency"), show_type_chips: false, micro_step: 1641,
+};
+pub const PY1642_CACHE_CONSISTENCY: CodingStep = CodingStep {
+    id: "py-1642-cache-consistency", title: "Caché · Consistencia", objective: "Mantener caché y fuente consistentes al escribir.",
+    prompt_md: "**Consistencia caché/DB**\n\nAl escribir, actualizás la fuente y la caché a la vez para que siempre coincidan.\n\n**Micro-reto:**\n1. Definí `Repo` y `CacheEscritura`\n2. En `escribir`, actualizá ambos\n3. Escribí y leé de caché y repo para verificar consistencia",
+    starter_code: "# class Repo:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, clave, valor):\n#         self._d[clave] = valor\n#         return valor\n#     def obtener(self, clave):\n#         return self._d.get(clave)\n# class CacheEscritura:\n#     def __init__(self, repo):\n#         self.repo = repo\n#         self._d = {}\n#     def escribir(self, clave, valor):\n#         self.repo.guardar(clave, valor)\n#         self._d[clave] = valor\n#         return valor\n#     def leer(self, clave):\n#         if clave not in self._d:\n#             self._d[clave] = self.repo.obtener(clave)\n#         return self._d[clave]\n# repo = Repo()\n# cache = CacheEscritura(repo)\n# cache.escribir('total', 50)\n# resultado = (cache.leer('total'), repo.obtener('total'))\n# print(resultado)\n",
+    pytest: "def test_cache_consistency(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (50, 50)\n    assert ns['repo'].obtener('total') == 50\n    assert ns['cache']._d['total'] == 50\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "escribir guarda en repo y en caché con el mismo valor.",
+    solution_example: "class Repo:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, clave, valor):\n        self._d[clave] = valor\n        return valor\n\n    def obtener(self, clave):\n        return self._d.get(clave)\n\nclass CacheEscritura:\n    def __init__(self, repo):\n        self.repo = repo\n        self._d = {}\n\n    def escribir(self, clave, valor):\n        self.repo.guardar(clave, valor)\n        self._d[clave] = valor\n        return valor\n\n    def leer(self, clave):\n        if clave not in self._d:\n            self._d[clave] = self.repo.obtener(clave)\n        return self._d[clave]\n\nrepo = Repo()\ncache = CacheEscritura(repo)\ncache.escribir('total', 50)\nresultado = (cache.leer('total'), repo.obtener('total'))\nprint(resultado)\n",
+    next: Some("py-1643-conc-atomic"), show_type_chips: false, micro_step: 1642,
+};
+pub const PY1643_CONC_ATOMIC: CodingStep = CodingStep {
+    id: "py-1643-conc-atomic", title: "Concurrencia · Atómico", objective: "Modelar una operación atómica sobre un contador.",
+    prompt_md: "**Operación atómica**\n\nUna operación atómica se ejecuta de una vez, sin pasos intermedios visibles: leer y sumar en un solo paso.\n\n**Micro-reto:**\n1. Definí `Contador` con `incrementar`\n2. Incrementá el contador dos veces\n3. Mostrá el valor final",
+    starter_code: "# class Contador:\n#     def __init__(self):\n#         self.valor = 0\n#     def incrementar(self):\n#         self.valor += 1\n#         return self.valor\n# contador = Contador()\n# contador.incrementar()\n# contador.incrementar()\n# resultado = contador.valor\n# print(resultado)\n",
+    pytest: "def test_conc_atomic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['contador'].incrementar() == 3\n    assert ns['Contador']().valor == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "`self.valor += 1` es un paso atómico en Python.",
+    solution_example: "class Contador:\n    def __init__(self):\n        self.valor = 0\n\n    def incrementar(self):\n        self.valor += 1\n        return self.valor\n\ncontador = Contador()\ncontador.incrementar()\ncontador.incrementar()\nresultado = contador.valor\nprint(resultado)\n",
+    next: Some("py-1644-conc-check-and-set"), show_type_chips: false, micro_step: 1643,
+};
+pub const PY1644_CONC_CHECK_AND_SET: CodingStep = CodingStep {
+    id: "py-1644-conc-check-and-set", title: "Concurrencia · Check-and-set", objective: "Actualizar solo si el valor esperado no cambió.",
+    prompt_md: "**Check-and-set**\n\nAntes de escribir verificás que el valor siga siendo el esperado; si cambió, rechazás la operación.\n\n**Micro-reto:**\n1. Definí `Celda` con `check_and_set(esperado, nuevo)`\n2. Intentá una actualización exitosa y una fallida\n3. Mostrá los resultados y el valor final",
+    starter_code: "# class Celda:\n#     def __init__(self, valor):\n#         self.valor = valor\n#     def check_and_set(self, esperado, nuevo):\n#         if self.valor != esperado:\n#             return False\n#         self.valor = nuevo\n#         return True\n# celda = Celda(10)\n# ok = celda.check_and_set(10, 20)\n# fallo = celda.check_and_set(10, 30)\n# resultado = (ok, fallo, celda.valor)\n# print(resultado)\n",
+    pytest: "def test_conc_check_and_set(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False, 20)\n    assert ns['Celda'](1).check_and_set(1, 2) is True\n    assert ns['Celda'](1).check_and_set(9, 2) is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Si self.valor != esperado devolvé False sin escribir.",
+    solution_example: "class Celda:\n    def __init__(self, valor):\n        self.valor = valor\n\n    def check_and_set(self, esperado, nuevo):\n        if self.valor != esperado:\n            return False\n        self.valor = nuevo\n        return True\n\ncelda = Celda(10)\nok = celda.check_and_set(10, 20)\nfallo = celda.check_and_set(10, 30)\nresultado = (ok, fallo, celda.valor)\nprint(resultado)\n",
+    next: Some("py-1645-conc-lock"), show_type_chips: false, micro_step: 1644,
+};
+pub const PY1645_CONC_LOCK: CodingStep = CodingStep {
+    id: "py-1645-conc-lock", title: "Concurrencia · Lock", objective: "Modelar un lock con un flag booleano.",
+    prompt_md: "**Locking conceptual**\n\nUn lock con un flag booleano impide que otro lo adquiera hasta que se libere.\n\n**Micro-reto:**\n1. Definí `Lock` con `adquirir` y `liberar`\n2. Adquirí, reintentá y liberá\n3. Mostrá el resultado de cada intento",
+    starter_code: "# class Lock:\n#     def __init__(self):\n#         self.bloqueado = False\n#     def adquirir(self):\n#         if self.bloqueado:\n#             return False\n#         self.bloqueado = True\n#         return True\n#     def liberar(self):\n#         self.bloqueado = False\n# lock = Lock()\n# a = lock.adquirir()\n# b = lock.adquirir()\n# lock.liberar()\n# c = lock.adquirir()\n# resultado = (a, b, c)\n# print(resultado)\n",
+    pytest: "def test_conc_lock(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False, True)\n    assert ns['Lock']().adquirir() is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Si ya está bloqueado, adquirir devuelve False.",
+    solution_example: "class Lock:\n    def __init__(self):\n        self.bloqueado = False\n\n    def adquirir(self):\n        if self.bloqueado:\n            return False\n        self.bloqueado = True\n        return True\n\n    def liberar(self):\n        self.bloqueado = False\n\nlock = Lock()\na = lock.adquirir()\nb = lock.adquirir()\nlock.liberar()\nc = lock.adquirir()\nresultado = (a, b, c)\nprint(resultado)\n",
+    next: Some("py-1646-conc-version"), show_type_chips: false, micro_step: 1645,
+};
+pub const PY1646_CONC_VERSION: CodingStep = CodingStep {
+    id: "py-1646-conc-version", title: "Concurrencia · Versión", objective: "Controlar cambios con un número de versión.",
+    prompt_md: "**Control por versión**\n\nCada escritura exige la versión esperada; al escribir, la versión avanza. Así se detectan cambios concurrentes.\n\n**Micro-reto:**\n1. Definí `Registro` con versión y datos\n2. Definí `actualizar(version_esperada, nuevos)`\n3. Hacé una actualización exitosa y una fallida",
+    starter_code: "# class Registro:\n#     def __init__(self, version, datos):\n#         self.version = version\n#         self.datos = datos\n#     def actualizar(self, version_esperada, nuevos):\n#         if self.version != version_esperada:\n#             return False\n#         self.datos = nuevos\n#         self.version += 1\n#         return True\n# r = Registro(1, 'v1')\n# ok = r.actualizar(1, 'v2')\n# fallo = r.actualizar(1, 'v3')\n# resultado = (ok, fallo, r.version, r.datos)\n# print(resultado)\n",
+    pytest: "def test_conc_version(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False, 2, 'v2')\n    assert ns['Registro'](1, 'a').actualizar(1, 'b') is True\n    assert ns['Registro'](1, 'a').actualizar(2, 'b') is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Compará versión, escribí y luego incrementá la versión.",
+    solution_example: "class Registro:\n    def __init__(self, version, datos):\n        self.version = version\n        self.datos = datos\n\n    def actualizar(self, version_esperada, nuevos):\n        if self.version != version_esperada:\n            return False\n        self.datos = nuevos\n        self.version += 1\n        return True\n\nr = Registro(1, 'v1')\nok = r.actualizar(1, 'v2')\nfallo = r.actualizar(1, 'v3')\nresultado = (ok, fallo, r.version, r.datos)\nprint(resultado)\n",
+    next: Some("py-1647-conc-retry"), show_type_chips: false, micro_step: 1646,
+};
+pub const PY1647_CONC_RETRY: CodingStep = CodingStep {
+    id: "py-1647-conc-retry", title: "Concurrencia · Retry", objective: "Reintentar una operación al detectar conflicto de versión.",
+    prompt_md: "**Retry con conflicto**\n\nCuando una operación falla por conflicto, reintentás hasta un máximo de intentos.\n\n**Micro-reto:**\n1. Definí `reintentar(fn, max_intentos)`\n2. Definí `operacion` que falle dos veces\n3. Reintentá y mostrá el resultado",
+    starter_code: "# def reintentar(fn, max_intentos):\n#     for _ in range(max_intentos):\n#         try:\n#             return fn()\n#         except Exception:\n#             pass\n#     raise RuntimeError('sin exito')\n# intentos = [0]\n# def operacion():\n#     intentos[0] += 1\n#     if intentos[0] < 3:\n#         raise RuntimeError('conflicto')\n#     return 'ok'\n# resultado = reintentar(operacion, 3)\n# print(resultado)\n",
+    pytest: "def test_conc_retry(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ok'\n    assert ns['intentos'][0] == 3\n    def siempre_falla():\n        raise RuntimeError('x')\n    try:\n        ns['reintentar'](siempre_falla, 2)\n        pudo = True\n    except RuntimeError:\n        pudo = False\n    assert not pudo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Capturá la excepción y repetí hasta agotar intentos.",
+    solution_example: "def reintentar(fn, max_intentos):\n    for _ in range(max_intentos):\n        try:\n            return fn()\n        except Exception:\n            pass\n    raise RuntimeError('sin exito')\n\nintentos = [0]\n\ndef operacion():\n    intentos[0] += 1\n    if intentos[0] < 3:\n        raise RuntimeError('conflicto')\n    return 'ok'\n\nresultado = reintentar(operacion, 3)\nprint(resultado)\n",
+    next: Some("py-1648-conc-transaction"), show_type_chips: false, micro_step: 1647,
+};
+pub const PY1648_CONC_TRANSACTION: CodingStep = CodingStep {
+    id: "py-1648-conc-transaction", title: "Concurrencia · Transacción", objective: "Aplicar cambios solo si todos los pasos tienen éxito.",
+    prompt_md: "**Transacción en memoria**\n\nUna transacción aplica todos los cambios o, si algo falla, revierte al estado anterior.\n\n**Micro-reto:**\n1. Definí `Memoria` con `transaccion(cambios)`\n2. Hacé respaldo y revertí ante un valor inválido\n3. Aplicá una transacción buena y una mala",
+    starter_code: "# class Memoria:\n#     def __init__(self):\n#         self.datos = {}\n#     def transaccion(self, cambios):\n#         respaldo = dict(self.datos)\n#         try:\n#             for clave, valor in cambios:\n#                 if valor < 0:\n#                     raise ValueError('negativo')\n#                 self.datos[clave] = valor\n#         except Exception:\n#             self.datos = respaldo\n#             return False\n#         return True\n# m = Memoria()\n# m.datos['a'] = 1\n# ok = m.transaccion([('b', 5), ('c', 6)])\n# fallo = m.transaccion([('d', 7), ('e', -1)])\n# resultado = (ok, fallo, m.datos)\n# print(resultado)\n",
+    pytest: "def test_conc_transaction(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False, {'a': 1, 'b': 5, 'c': 6})\n    assert ns['m'].datos == {'a': 1, 'b': 5, 'c': 6}\n    assert ns['Memoria']().transaccion([('x', 1)]) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Respaldá con dict(self.datos) y restaurá si algo falla.",
+    solution_example: "class Memoria:\n    def __init__(self):\n        self.datos = {}\n\n    def transaccion(self, cambios):\n        respaldo = dict(self.datos)\n        try:\n            for clave, valor in cambios:\n                if valor < 0:\n                    raise ValueError('negativo')\n                self.datos[clave] = valor\n        except Exception:\n            self.datos = respaldo\n            return False\n        return True\n\nm = Memoria()\nm.datos['a'] = 1\nok = m.transaccion([('b', 5), ('c', 6)])\nfallo = m.transaccion([('d', 7), ('e', -1)])\nresultado = (ok, fallo, m.datos)\nprint(resultado)\n",
+    next: Some("py-1649-scale-shard-hash"), show_type_chips: false, micro_step: 1648,
+};
+pub const PY1649_SCALE_SHARD_HASH: CodingStep = CodingStep {
+    id: "py-1649-scale-shard-hash", title: "Escalado · Shard por hash", objective: "Distribuir claves entre shards por hash determinista.",
+    prompt_md: "**Sharding por hash**\n\nUna función hash determinista reparte las claves entre shards de forma estable.\n\n**Micro-reto:**\n1. Definí `hash_estable(clave)` con suma de `ord`\n2. Definí `shard(clave, n)`\n3. Calculá el shard de una clave y mostralo",
+    starter_code: "# def hash_estable(clave):\n#     return sum(ord(c) for c in clave)\n# def shard(clave, n):\n#     return hash_estable(clave) % n\n# resultado = shard('cliente-1', 4)\n# print(resultado)\n",
+    pytest: "def test_scale_shard_hash(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['shard']('a', 4) == 1\n    assert 0 <= ns['shard']('z', 4) < 4\n    assert ns['shard']('cliente-1', 4) == ns['shard']('cliente-1', 4)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "hash_estable = suma de ord de cada carácter.",
+    solution_example: "def hash_estable(clave):\n    return sum(ord(c) for c in clave)\n\ndef shard(clave, n):\n    return hash_estable(clave) % n\n\nresultado = shard('cliente-1', 4)\nprint(resultado)\n",
+    next: Some("py-1650-scale-consistent-hash"), show_type_chips: false, micro_step: 1649,
+};
+pub const PY1650_SCALE_CONSISTENT_HASH: CodingStep = CodingStep {
+    id: "py-1650-scale-consistent-hash", title: "Escalado · Hash consistente", objective: "Mapear claves a nodos en un anillo conceptual.",
+    prompt_md: "**Hash consistente conceptual**\n\nLos nodos viven en un anillo; una clave va al primer nodo con hash mayor o igual.\n\n**Micro-reto:**\n1. Definí `hash_estable(clave)`\n2. Definí `nodo_responsable(clave, nodos)`\n3. Ubicá una clave en el anillo y mostrá el nodo",
+    starter_code: "# def hash_estable(clave):\n#     return sum(ord(c) for c in clave)\n# def nodo_responsable(clave, nodos):\n#     h = hash_estable(clave)\n#     for nodo in sorted(nodos):\n#         if h <= nodo:\n#             return nodo\n#     return min(nodos)\n# resultado = nodo_responsable('cliente-1', [100, 500, 900])\n# print(resultado)\n",
+    pytest: "def test_scale_consistent_hash(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 900\n    assert ns['nodo_responsable']('a', [100, 500, 900]) == 100\n    assert ns['nodo_responsable']('zzzzzzzzzz', [100, 500, 900]) == 100\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Recorré los nodos ordenados y devolvé el primero mayor o igual.",
+    solution_example: "def hash_estable(clave):\n    return sum(ord(c) for c in clave)\n\ndef nodo_responsable(clave, nodos):\n    h = hash_estable(clave)\n    for nodo in sorted(nodos):\n        if h <= nodo:\n            return nodo\n    return min(nodos)\n\nresultado = nodo_responsable('cliente-1', [100, 500, 900])\nprint(resultado)\n",
+    next: Some("py-1651-scale-range"), show_type_chips: false, micro_step: 1650,
+};
+pub const PY1651_SCALE_RANGE: CodingStep = CodingStep {
+    id: "py-1651-scale-range", title: "Escalado · Rango", objective: "Asignar claves por rangos de valores.",
+    prompt_md: "**Particionar por rango**\n\nCada partición cubre un rango de valores y una clave va a la partición que la contiene.\n\n**Micro-reto:**\n1. Definí `particion_rango(valor, limites)`\n2. Devolvé el índice de la partición\n3. Ubicá un valor entre límites y mostralo",
+    starter_code: "# def particion_rango(valor, limites):\n#     for i, lim in enumerate(limites):\n#         if valor <= lim:\n#             return i\n#     return len(limites)\n# resultado = particion_rango(75, [25, 50, 75, 100])\n# print(resultado)\n",
+    pytest: "def test_scale_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['particion_rango'](0, [10]) == 0\n    assert ns['particion_rango'](999, [10]) == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Devolvé el índice del primer límite mayor o igual al valor.",
+    solution_example: "def particion_rango(valor, limites):\n    for i, lim in enumerate(limites):\n        if valor <= lim:\n            return i\n    return len(limites)\n\nresultado = particion_rango(75, [25, 50, 75, 100])\nprint(resultado)\n",
+    next: Some("py-1652-scale-route"), show_type_chips: false, micro_step: 1651,
+};
+pub const PY1652_SCALE_ROUTE: CodingStep = CodingStep {
+    id: "py-1652-scale-route", title: "Escalado · Routing", objective: "Enrutar una operación al shard correcto.",
+    prompt_md: "**Routing a shard**\n\nUn router calcula, para cada clave, a qué shard debe ir la operación.\n\n**Micro-reto:**\n1. Definí `hash_estable(clave)`\n2. Definí `Router` con `ruta(clave)`\n3. Enrutá una clave y mostrá el shard",
+    starter_code: "# def hash_estable(clave):\n#     return sum(ord(c) for c in clave)\n# class Router:\n#     def __init__(self, n_shards):\n#         self.n_shards = n_shards\n#     def ruta(self, clave):\n#         return hash_estable(clave) % self.n_shards\n# router = Router(3)\n# resultado = router.ruta('cliente-42')\n# print(resultado)\n",
+    pytest: "def test_scale_route(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['router'].ruta('a') == 1\n    assert ns['Router'](2).ruta('a') == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "ruta = hash_estable(clave) % n_shards.",
+    solution_example: "def hash_estable(clave):\n    return sum(ord(c) for c in clave)\n\nclass Router:\n    def __init__(self, n_shards):\n        self.n_shards = n_shards\n\n    def ruta(self, clave):\n        return hash_estable(clave) % self.n_shards\n\nrouter = Router(3)\nresultado = router.ruta('cliente-42')\nprint(resultado)\n",
+    next: Some("py-1653-scale-rebalance"), show_type_chips: false, micro_step: 1652,
+};
+pub const PY1653_SCALE_REBALANCE: CodingStep = CodingStep {
+    id: "py-1653-scale-rebalance", title: "Escalado · Rebalanceo", objective: "Recalcular la ubicación de claves al cambiar nodos.",
+    prompt_md: "**Rebalanceo conceptual**\n\nAl cambiar la cantidad de shards, algunas claves cambian de ubicación; el rebalanceo las detecta.\n\n**Micro-reto:**\n1. Definí `ubicar(clave, nodos)` y `rebalancear(claves, viejos, nuevos)`\n2. Detectá qué claves se mueven\n3. Rebalanceá de 3 a 4 nodos y mostrá las movidas",
+    starter_code: "# def hash_estable(clave):\n#     return sum(ord(c) for c in clave)\n# def ubicar(clave, nodos):\n#     return hash_estable(clave) % nodos\n# def rebalancear(claves, nodos_viejos, nodos_nuevos):\n#     movidas = []\n#     for clave in claves:\n#         if ubicar(clave, nodos_viejos) != ubicar(clave, nodos_nuevos):\n#             movidas.append(clave)\n#     return movidas\n# claves = ['a', 'b', 'c', 'd']\n# resultado = rebalancear(claves, 3, 4)\n# print(resultado)\n",
+    pytest: "def test_scale_rebalance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['c', 'd']\n    assert ns['rebalancear'](['a', 'b', 'c', 'd'], 2, 2) == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Una clave se mueve si cambia su ubicación al variar nodos.",
+    solution_example: "def hash_estable(clave):\n    return sum(ord(c) for c in clave)\n\ndef ubicar(clave, nodos):\n    return hash_estable(clave) % nodos\n\ndef rebalancear(claves, nodos_viejos, nodos_nuevos):\n    movidas = []\n    for clave in claves:\n        if ubicar(clave, nodos_viejos) != ubicar(clave, nodos_nuevos):\n            movidas.append(clave)\n    return movidas\n\nclaves = ['a', 'b', 'c', 'd']\nresultado = rebalancear(claves, 3, 4)\nprint(resultado)\n",
+    next: Some("py-1654-scale-summary"), show_type_chips: false, micro_step: 1653,
+};
+pub const PY1654_SCALE_SUMMARY: CodingStep = CodingStep {
+    id: "py-1654-scale-summary", title: "Escalado · Resumen", objective: "Resumir la distribución de claves entre shards.",
+    prompt_md: "**Resumen de particiones**\n\nContás cuántas claves caen en cada shard para ver la distribución de carga.\n\n**Micro-reto:**\n1. Definí `resumen_shards(claves, n)`\n2. Contá claves por shard\n3. Resumí cuatro claves en dos shards y mostralo",
+    starter_code: "# def hash_estable(clave):\n#     return sum(ord(c) for c in clave)\n# def resumen_shards(claves, n):\n#     conteo = [0] * n\n#     for clave in claves:\n#         conteo[hash_estable(clave) % n] += 1\n#     return conteo\n# resultado = resumen_shards(['a', 'b', 'c', 'd'], 2)\n# print(resultado)\n",
+    pytest: "def test_scale_summary(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 2]\n    assert ns['resumen_shards']([], 3) == [0, 0, 0]\n    assert sum(ns['resumen_shards'](['a', 'b'], 2)) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Incrementá conteo[hash % n] por cada clave.",
+    solution_example: "def hash_estable(clave):\n    return sum(ord(c) for c in clave)\n\ndef resumen_shards(claves, n):\n    conteo = [0] * n\n    for clave in claves:\n        conteo[hash_estable(clave) % n] += 1\n    return conteo\n\nresultado = resumen_shards(['a', 'b', 'c', 'd'], 2)\nprint(resultado)\n",
+    next: Some("py-1655-project-order-model"), show_type_chips: false, micro_step: 1654,
+};
+pub const PY1655_PROJECT_ORDER_MODEL: CodingStep = CodingStep {
+    id: "py-1655-project-order-model", title: "Proyecto · Modelo pedido", objective: "Modelar pedido e ítems con dataclasses.",
+    prompt_md: "**Modelo de pedido e ítems**\n\nEl dominio del proyecto arranca modelando `Item` y `Pedido` con dataclasses y un total calculado.\n\n**Micro-reto:**\n1. Definí `Item` y `Pedido` con dataclasses\n2. Agregá `total()` al pedido\n3. Creá un pedido con ítems y mostrá el total",
+    starter_code: "# from dataclasses import dataclass, field\n# @dataclass\n# class Item:\n#     nombre: str\n#     precio: float\n#     cantidad: int\n# @dataclass\n# class Pedido:\n#     id: int\n#     cliente: str\n#     items: list = field(default_factory=list)\n#     def total(self):\n#         return sum(i.precio * i.cantidad for i in self.items)\n# pedido = Pedido(1, 'Ana', [Item('Lapiz', 2.0, 3), Item('Goma', 1.5, 2)])\n# resultado = (pedido.cliente, pedido.total())\n# print(resultado)\n",
+    pytest: "def test_project_order_model(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('Ana', 9.0)\n    assert ns['Pedido'](2, 'Luis').total() == 0\n    assert ns['Item']('A', 2.0, 2).cantidad == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "field(default_factory=list) evita compartir la lista entre pedidos.",
+    solution_example: "from dataclasses import dataclass, field\n\n@dataclass\nclass Item:\n    nombre: str\n    precio: float\n    cantidad: int\n\n@dataclass\nclass Pedido:\n    id: int\n    cliente: str\n    items: list = field(default_factory=list)\n\n    def total(self):\n        return sum(i.precio * i.cantidad for i in self.items)\n\npedido = Pedido(1, 'Ana', [Item('Lapiz', 2.0, 3), Item('Goma', 1.5, 2)])\nresultado = (pedido.cliente, pedido.total())\nprint(resultado)\n",
+    next: Some("py-1656-project-order-repo"), show_type_chips: false, micro_step: 1655,
+};
+pub const PY1656_PROJECT_ORDER_REPO: CodingStep = CodingStep {
+    id: "py-1656-project-order-repo", title: "Proyecto · Repo pedidos", objective: "Guardar y consultar pedidos en un repositorio.",
+    prompt_md: "**Repositorio de pedidos**\n\nEl proyecto necesita un repo que guarde pedidos por id y permita listarlos.\n\n**Micro-reto:**\n1. Definí `Pedido` simple\n2. Definí `RepoPedidos` con `guardar`, `obtener` y `listar`\n3. Guardá dos pedidos y mostrá el total y el id",
+    starter_code: "# class Pedido:\n#     def __init__(self, id):\n#         self.id = id\n# class RepoPedidos:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, pedido):\n#         self._d[pedido.id] = pedido\n#         return pedido\n#     def obtener(self, id):\n#         return self._d.get(id)\n#     def listar(self):\n#         return list(self._d.values())\n# repo = RepoPedidos()\n# repo.guardar(Pedido(1))\n# repo.guardar(Pedido(2))\n# resultado = (len(repo.listar()), repo.obtener(1).id)\n# print(resultado)\n",
+    pytest: "def test_project_order_repo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 1)\n    assert ns['repo'].obtener(9) is None\n    assert len(ns['repo'].listar()) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Indexá por pedido.id en el dict interno.",
+    solution_example: "class Pedido:\n    def __init__(self, id):\n        self.id = id\n\nclass RepoPedidos:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, pedido):\n        self._d[pedido.id] = pedido\n        return pedido\n\n    def obtener(self, id):\n        return self._d.get(id)\n\n    def listar(self):\n        return list(self._d.values())\n\nrepo = RepoPedidos()\nrepo.guardar(Pedido(1))\nrepo.guardar(Pedido(2))\nresultado = (len(repo.listar()), repo.obtener(1).id)\nprint(resultado)\n",
+    next: Some("py-1657-project-order-usecase"), show_type_chips: false, micro_step: 1656,
+};
+pub const PY1657_PROJECT_ORDER_USECASE: CodingStep = CodingStep {
+    id: "py-1657-project-order-usecase", title: "Proyecto · Casos de uso", objective: "Implementar crear y cancelar pedidos.",
+    prompt_md: "**Casos de uso de pedidos**\n\nLos casos de uso del proyecto crean y cancelan pedidos a través del repositorio.\n\n**Micro-reto:**\n1. Definí `Pedido` con estado\n2. Definí `GestionPedidos` con `crear` y `cancelar`\n3. Creá y cancelá un pedido, mostrá su estado",
+    starter_code: "# class Pedido:\n#     def __init__(self, id, estado='creado'):\n#         self.id = id\n#         self.estado = estado\n# class RepoPedidos:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, pedido):\n#         self._d[pedido.id] = pedido\n#         return pedido\n#     def obtener(self, id):\n#         return self._d.get(id)\n# class GestionPedidos:\n#     def __init__(self, repo):\n#         self.repo = repo\n#     def crear(self, id):\n#         return self.repo.guardar(Pedido(id))\n#     def cancelar(self, id):\n#         pedido = self.repo.obtener(id)\n#         if pedido is None:\n#             raise KeyError(id)\n#         pedido.estado = 'cancelado'\n#         return pedido\n# repo = RepoPedidos()\n# gestion = GestionPedidos(repo)\n# gestion.crear(1)\n# gestion.cancelar(1)\n# resultado = repo.obtener(1).estado\n# print(resultado)\n",
+    pytest: "def test_project_order_usecase(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'cancelado'\n    assert ns['gestion'].crear(2).estado == 'creado'\n    try:\n        ns['gestion'].cancelar(99)\n        cancelo = True\n    except KeyError:\n        cancelo = False\n    assert not cancelo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "cancelar marca estado='cancelado' o lanza KeyError.",
+    solution_example: "class Pedido:\n    def __init__(self, id, estado='creado'):\n        self.id = id\n        self.estado = estado\n\nclass RepoPedidos:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, pedido):\n        self._d[pedido.id] = pedido\n        return pedido\n\n    def obtener(self, id):\n        return self._d.get(id)\n\nclass GestionPedidos:\n    def __init__(self, repo):\n        self.repo = repo\n\n    def crear(self, id):\n        return self.repo.guardar(Pedido(id))\n\n    def cancelar(self, id):\n        pedido = self.repo.obtener(id)\n        if pedido is None:\n            raise KeyError(id)\n        pedido.estado = 'cancelado'\n        return pedido\n\nrepo = RepoPedidos()\ngestion = GestionPedidos(repo)\ngestion.crear(1)\ngestion.cancelar(1)\nresultado = repo.obtener(1).estado\nprint(resultado)\n",
+    next: Some("py-1658-project-order-event"), show_type_chips: false, micro_step: 1657,
+};
+pub const PY1658_PROJECT_ORDER_EVENT: CodingStep = CodingStep {
+    id: "py-1658-project-order-event", title: "Proyecto · Evento pedido", objective: "Emitir eventos al crear y cancelar pedidos.",
+    prompt_md: "**Eventos de pedido**\n\nEl sistema emite eventos inmutables al crear y cancelar pedidos, para auditoría o reacción.\n\n**Micro-reto:**\n1. Definí `EventoPedido` frozen con `tipo` e `id`\n2. Definí `GestionPedidos` que emita eventos\n3. Creá y cancelá un pedido y mostrá los eventos",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class EventoPedido:\n#     tipo: str\n#     id: int\n# class GestionPedidos:\n#     def __init__(self):\n#         self.eventos = []\n#     def crear(self, id):\n#         self.eventos.append(EventoPedido('creado', id))\n#         return self.eventos[-1]\n#     def cancelar(self, id):\n#         self.eventos.append(EventoPedido('cancelado', id))\n#         return self.eventos[-1]\n# g = GestionPedidos()\n# g.crear(1)\n# g.cancelar(1)\n# resultado = g.eventos\n# print(resultado)\n",
+    pytest: "def test_project_order_event(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [ns['EventoPedido']('creado', 1), ns['EventoPedido']('cancelado', 1)]\n    assert ns['resultado'][0].tipo == 'creado'\n    assert len(ns['resultado']) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Append de EventoPedido en cada operación.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass EventoPedido:\n    tipo: str\n    id: int\n\nclass GestionPedidos:\n    def __init__(self):\n        self.eventos = []\n\n    def crear(self, id):\n        self.eventos.append(EventoPedido('creado', id))\n        return self.eventos[-1]\n\n    def cancelar(self, id):\n        self.eventos.append(EventoPedido('cancelado', id))\n        return self.eventos[-1]\n\ng = GestionPedidos()\ng.crear(1)\ng.cancelar(1)\nresultado = g.eventos\nprint(resultado)\n",
+    next: Some("py-1659-project-stock-cache"), show_type_chips: false, micro_step: 1658,
+};
+pub const PY1659_PROJECT_STOCK_CACHE: CodingStep = CodingStep {
+    id: "py-1659-project-stock-cache", title: "Proyecto · Caché stock", objective: "Cachear el stock para lecturas rápidas.",
+    prompt_md: "**Cachear stock**\n\nEl stock se lee seguido, así que se cachea y se invalida al descontar.\n\n**Micro-reto:**\n1. Definí `RepoStock` con `obtener` y `descontar`\n2. Definí `CacheStock` con `leer` e `invalidar`\n3. Descontá, invalidá y mostrá el stock actualizado",
+    starter_code: "# class RepoStock:\n#     def __init__(self):\n#         self._d = {'p1': 10}\n#     def obtener(self, id):\n#         return self._d.get(id)\n#     def descontar(self, id, cantidad):\n#         if self._d.get(id, 0) < cantidad:\n#             return False\n#         self._d[id] -= cantidad\n#         return True\n# class CacheStock:\n#     def __init__(self, repo):\n#         self.repo = repo\n#         self._d = {}\n#     def leer(self, id):\n#         if id not in self._d:\n#             self._d[id] = self.repo.obtener(id)\n#         return self._d[id]\n#     def invalidar(self, id):\n#         self._d.pop(id, None)\n# repo = RepoStock()\n# cache = CacheStock(repo)\n# cache.leer('p1')\n# repo.descontar('p1', 3)\n# cache.invalidar('p1')\n# resultado = cache.leer('p1')\n# print(resultado)\n",
+    pytest: "def test_project_stock_cache(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert ns['repo'].descontar('p1', 100) is False\n    assert ns['repo'].obtener('p1') == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Invalidá la caché después de descontar stock.",
+    solution_example: "class RepoStock:\n    def __init__(self):\n        self._d = {'p1': 10}\n\n    def obtener(self, id):\n        return self._d.get(id)\n\n    def descontar(self, id, cantidad):\n        if self._d.get(id, 0) < cantidad:\n            return False\n        self._d[id] -= cantidad\n        return True\n\nclass CacheStock:\n    def __init__(self, repo):\n        self.repo = repo\n        self._d = {}\n\n    def leer(self, id):\n        if id not in self._d:\n            self._d[id] = self.repo.obtener(id)\n        return self._d[id]\n\n    def invalidar(self, id):\n        self._d.pop(id, None)\n\nrepo = RepoStock()\ncache = CacheStock(repo)\ncache.leer('p1')\nrepo.descontar('p1', 3)\ncache.invalidar('p1')\nresultado = cache.leer('p1')\nprint(resultado)\n",
+    next: Some("py-1660-project-assemble"), show_type_chips: false, micro_step: 1659,
+};
+pub const PY1660_PROJECT_ASSEMBLE: CodingStep = CodingStep {
+    id: "py-1660-project-assemble", title: "Proyecto · Ensamblar", objective: "Integrar dominio, repo, casos de uso y eventos.",
+    prompt_md: "**Ensamblar el sistema**\n\nIntegrás dominio, repositorio, casos de uso y eventos en un único sistema end-to-end.\n\n**Micro-reto:**\n1. Definí `Item`, `Pedido`, `RepoPedidos`\n2. Definí `SistemaPedidos` con `crear_pedido` y `cancelar_pedido`\n3. Creá, cancelá y mostrá total, estado y eventos",
+    starter_code: "# from dataclasses import dataclass, field\n# @dataclass\n# class Item:\n#     nombre: str\n#     precio: float\n#     cantidad: int\n# @dataclass\n# class Pedido:\n#     id: int\n#     cliente: str\n#     items: list = field(default_factory=list)\n#     estado: str = 'creado'\n#     def total(self):\n#         return sum(i.precio * i.cantidad for i in self.items)\n# class RepoPedidos:\n#     def __init__(self):\n#         self._d = {}\n#     def guardar(self, pedido):\n#         self._d[pedido.id] = pedido\n#         return pedido\n#     def obtener(self, id):\n#         return self._d.get(id)\n# class SistemaPedidos:\n#     def __init__(self):\n#         self.repo = RepoPedidos()\n#         self.eventos = []\n#     def crear_pedido(self, id, cliente, items):\n#         pedido = Pedido(id, cliente, items)\n#         self.repo.guardar(pedido)\n#         self.eventos.append(('creado', id))\n#         return pedido\n#     def cancelar_pedido(self, id):\n#         pedido = self.repo.obtener(id)\n#         if pedido is None:\n#             raise KeyError(id)\n#         pedido.estado = 'cancelado'\n#         self.eventos.append(('cancelado', id))\n#         return pedido\n# sistema = SistemaPedidos()\n# pedido = sistema.crear_pedido(1, 'Ana', [Item('Lapiz', 2.0, 3)])\n# sistema.cancelar_pedido(1)\n# resultado = (pedido.total(), pedido.estado, sistema.eventos)\n# print(resultado)\n",
+    pytest: "def test_project_assemble_w11(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (6.0, 'cancelado', [('creado', 1), ('cancelado', 1)])\n    assert ns['sistema'].repo.obtener(1).total() == 6.0\n    try:\n        ns['sistema'].cancelar_pedido(99)\n        cancelo = True\n    except KeyError:\n        cancelo = False\n    assert not cancelo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "crear_pedido arma el pedido, lo guarda y emite el evento.",
+    solution_example: "from dataclasses import dataclass, field\n\n@dataclass\nclass Item:\n    nombre: str\n    precio: float\n    cantidad: int\n\n@dataclass\nclass Pedido:\n    id: int\n    cliente: str\n    items: list = field(default_factory=list)\n    estado: str = 'creado'\n\n    def total(self):\n        return sum(i.precio * i.cantidad for i in self.items)\n\nclass RepoPedidos:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, pedido):\n        self._d[pedido.id] = pedido\n        return pedido\n\n    def obtener(self, id):\n        return self._d.get(id)\n\nclass SistemaPedidos:\n    def __init__(self):\n        self.repo = RepoPedidos()\n        self.eventos = []\n\n    def crear_pedido(self, id, cliente, items):\n        pedido = Pedido(id, cliente, items)\n        self.repo.guardar(pedido)\n        self.eventos.append(('creado', id))\n        return pedido\n\n    def cancelar_pedido(self, id):\n        pedido = self.repo.obtener(id)\n        if pedido is None:\n            raise KeyError(id)\n        pedido.estado = 'cancelado'\n        self.eventos.append(('cancelado', id))\n        return pedido\n\nsistema = SistemaPedidos()\npedido = sistema.crear_pedido(1, 'Ana', [Item('Lapiz', 2.0, 3)])\nsistema.cancelar_pedido(1)\nresultado = (pedido.total(), pedido.estado, sistema.eventos)\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 1660,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -50153,6 +50694,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1598_PROJECT_POSITIONS,
     &PY1599_PROJECT_RANK,
     &PY1600_PROJECT_ASSEMBLE,
+    &PY1601_DOMAIN_ENTITY,
+    &PY1602_DOMAIN_VALUE_OBJECT,
+    &PY1603_DOMAIN_INVARIANTS,
+    &PY1604_DOMAIN_DATACLASS_ENTITY,
+    &PY1605_DOMAIN_FROZEN_VO,
+    &PY1606_DOMAIN_AGGREGATE,
+    &PY1607_REPO_INTERFACE,
+    &PY1608_REPO_INMEMORY,
+    &PY1609_REPO_DICT,
+    &PY1610_REPO_CRUD,
+    &PY1611_REPO_QUERY,
+    &PY1612_REPO_DECOUPLED,
+    &PY1613_USECASE_SERVICE,
+    &PY1614_USECASE_ORCHESTRATION,
+    &PY1615_USECASE_TRANSACTION,
+    &PY1616_USECASE_ERRORS,
+    &PY1617_USECASE_VALIDATE,
+    &PY1618_USECASE_COMPOSE,
+    &PY1619_API_REQUEST_DTO,
+    &PY1620_API_VALIDATE,
+    &PY1621_API_RESPONSE,
+    &PY1622_API_MAP_DTO,
+    &PY1623_API_ERRORS,
+    &PY1624_API_CONTRACT,
+    &PY1625_CQRS_SEPARATE,
+    &PY1626_CQRS_COMMAND,
+    &PY1627_CQRS_QUERY,
+    &PY1628_CQRS_READ_MODEL,
+    &PY1629_CQRS_WRITE_MODEL,
+    &PY1630_CQRS_CONSISTENCY,
+    &PY1631_EVENT_SIMPLE,
+    &PY1632_EVENT_BUS,
+    &PY1633_EVENT_SUBSCRIBER,
+    &PY1634_EVENT_PUBSUB,
+    &PY1635_EVENT_DOMAIN,
+    &PY1636_EVENT_HISTORY,
+    &PY1637_CACHE_SIMPLE,
+    &PY1638_CACHE_TTL,
+    &PY1639_CACHE_INVALIDATE,
+    &PY1640_CACHE_MEMOIZE,
+    &PY1641_CACHE_LIMIT,
+    &PY1642_CACHE_CONSISTENCY,
+    &PY1643_CONC_ATOMIC,
+    &PY1644_CONC_CHECK_AND_SET,
+    &PY1645_CONC_LOCK,
+    &PY1646_CONC_VERSION,
+    &PY1647_CONC_RETRY,
+    &PY1648_CONC_TRANSACTION,
+    &PY1649_SCALE_SHARD_HASH,
+    &PY1650_SCALE_CONSISTENT_HASH,
+    &PY1651_SCALE_RANGE,
+    &PY1652_SCALE_ROUTE,
+    &PY1653_SCALE_REBALANCE,
+    &PY1654_SCALE_SUMMARY,
+    &PY1655_PROJECT_ORDER_MODEL,
+    &PY1656_PROJECT_ORDER_REPO,
+    &PY1657_PROJECT_ORDER_USECASE,
+    &PY1658_PROJECT_ORDER_EVENT,
+    &PY1659_PROJECT_STOCK_CACHE,
+    &PY1660_PROJECT_ASSEMBLE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -50320,7 +50921,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1600);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1660);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -53232,11 +53833,11 @@ mod tests {
     }
 
     #[test]
-    fn py1061_to_py1600_engineering_chain() {
+    fn py1061_to_py1660_engineering_chain() {
         let bridge = coding_step_by_micro_step(1060).expect("py-1060");
         assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
 
-        for n in 1061..=1600 {
+        for n in 1061..=1660 {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.micro_step, n);
             assert!(
@@ -53244,7 +53845,7 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1600 {
+            if n < 1660 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -53253,7 +53854,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1600 is the end of the rail");
+                assert_eq!(step.next, None, "step 1660 is the end of the rail");
             }
         }
     }
