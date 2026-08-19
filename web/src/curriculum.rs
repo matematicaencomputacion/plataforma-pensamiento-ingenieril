@@ -47468,7 +47468,548 @@ pub const PY1480_PROJECT_ASSEMBLE: CodingStep = CodingStep {
     pytest: "def test_project_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'ruta': [0, 2, 3], 'distancia': 6, 'flujo': 5, 'componentes': 1}\n    assert ns['pipeline_red']([(0, 1, 3)], 0, 1) == {'ruta': [0, 1], 'distancia': 3, 'flujo': 3, 'componentes': 1}\n    assert capsys.readouterr().out.strip() == str({'ruta': [0, 2, 3], 'distancia': 6, 'flujo': 5, 'componentes': 1})\n",
     hint: "Integrá las funciones del bloque 10.",
     solution_example: "import heapq\n\ndef modelar_red(aristas):\n    ady = {}\n    for a, b, peso in aristas:\n        ady.setdefault(a, []).append((b, peso))\n        ady.setdefault(b, []).append((a, peso))\n    return ady\n\ndef ruta_mas_corta(ady, inicio, destino):\n    dist = {inicio: 0}\n    prev = {}\n    heap = [(0, inicio)]\n    while heap:\n        d, nodo = heapq.heappop(heap)\n        if d > dist.get(nodo, float('inf')):\n            continue\n        for vecino, peso in ady.get(nodo, []):\n            nueva = d + peso\n            if nueva < dist.get(vecino, float('inf')):\n                dist[vecino] = nueva\n                prev[vecino] = nodo\n                heapq.heappush(heap, (nueva, vecino))\n    camino = []\n    nodo = destino\n    while nodo in prev:\n        camino.append(nodo)\n        nodo = prev[nodo]\n    camino.append(inicio)\n    return dist.get(destino, float('inf')), camino[::-1]\n\ndef cuello_botella(ady, fuente, sumidero):\n    residual = {}\n    for u in ady:\n        for v, cap in ady[u]:\n            residual.setdefault(u, {})[v] = cap\n    total = 0\n    while True:\n        visitados = {fuente}\n        cola = [fuente]\n        previo = {}\n        while cola:\n            u = cola.pop(0)\n            for v, c in residual.get(u, {}).items():\n                if c > 0 and v not in visitados:\n                    visitados.add(v)\n                    previo[v] = u\n                    cola.append(v)\n        if sumidero not in visitados:\n            break\n        cuello = float('inf')\n        v = sumidero\n        while v != fuente:\n            u = previo[v]\n            cuello = min(cuello, residual[u][v])\n            v = u\n        v = sumidero\n        while v != fuente:\n            u = previo[v]\n            residual[u][v] -= cuello\n            residual.setdefault(v, {})[u] = residual.setdefault(v, {}).get(u, 0) + cuello\n            v = u\n        total += cuello\n    return total\n\ndef componentes_conexas(ady):\n    visitados = set()\n    cantidad = 0\n    for inicio in ady:\n        if inicio in visitados:\n            continue\n        cantidad += 1\n        pila = [inicio]\n        visitados.add(inicio)\n        while pila:\n            nodo = pila.pop()\n            for vecino, _ in ady[nodo]:\n                if vecino not in visitados:\n                    visitados.add(vecino)\n                    pila.append(vecino)\n    return cantidad\n\ndef pipeline_red(aristas, fuente, sumidero):\n    red = modelar_red(aristas)\n    distancia, ruta = ruta_mas_corta(red, fuente, sumidero)\n    flujo = cuello_botella(red, fuente, sumidero)\n    componentes = componentes_conexas(red)\n    return {'ruta': ruta, 'distancia': distancia, 'flujo': flujo, 'componentes': componentes}\n\nresultado = pipeline_red([(0, 1, 5), (0, 2, 2), (1, 3, 3), (2, 3, 4)], 0, 3)\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 1480,
+    next: Some("py-1481-trie-insert"), show_type_chips: false, micro_step: 1480,
+};
+
+pub const PY1481_TRIE_INSERT: CodingStep = CodingStep {
+    id: "py-1481-trie-insert", title: "Tries · Insertar palabra", objective: "Insertar una palabra en un trie (árbol de prefijos).",
+    prompt_md: "**Insertar en un trie**\n\nUn trie guarda palabras carácter a carácter. Cada nodo es un dict; el marcador `#` indica fin de palabra.\n\n**Micro-reto:**\n1. Definí `insertar(trie, palabra)` que recorra cada carácter y lo cree con `setdefault`\n2. Marcá el final con `nodo['#'] = True`\n3. Insertá `hola` e imprimí el trie",
+    starter_code: "# def insertar(trie, palabra):\n#     nodo = trie\n#     for c in palabra:\n#         nodo = nodo.setdefault(c, {})\n#     nodo['#'] = True\n# trie = {}\n# insertar(trie, 'hola')\n# print(trie)\n",
+    pytest: "def test_trie_insert(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['trie'] == {'h': {'o': {'l': {'a': {'#': True}}}}}\n    t2 = {}\n    ns['insertar'](t2, 'sol')\n    assert t2 == {'s': {'o': {'l': {'#': True}}}}\n    assert capsys.readouterr().out.strip() == str({'h': {'o': {'l': {'a': {'#': True}}}}})\n",
+    hint: "Recorré cada letra con setdefault(c, {}).",
+    solution_example: "def insertar(trie, palabra):\n    nodo = trie\n    for c in palabra:\n        nodo = nodo.setdefault(c, {})\n    nodo['#'] = True\n\ntrie = {}\ninsertar(trie, 'hola')\nprint(trie)\n",
+    next: Some("py-1482-trie-search"), show_type_chips: false, micro_step: 1481,
+};
+pub const PY1482_TRIE_SEARCH: CodingStep = CodingStep {
+    id: "py-1482-trie-search", title: "Tries · Buscar palabra exacta", objective: "Buscar si una palabra exacta existe en el trie.",
+    prompt_md: "**Buscar palabra exacta**\n\nPara buscar recorrés carácter a carácter; si falta uno, la palabra no está. Al final debe existir el marcador `#`.\n\n**Micro-reto:**\n1. Definí `buscar(trie, palabra)` que devuelva `True/False`\n2. Construí un trie con `hola` y `ola`\n3. Imprimí `buscar(trie, 'hola')`",
+    starter_code: "# def insertar(trie, palabra):\n#     nodo = trie\n#     for c in palabra:\n#         nodo = nodo.setdefault(c, {})\n#     nodo['#'] = True\n# def buscar(trie, palabra):\n#     nodo = trie\n#     for c in palabra:\n#         if c not in nodo:\n#             return False\n#         nodo = nodo[c]\n#     return '#' in nodo\n# trie = {}\n# for p in ['hola', 'ola']:\n#     insertar(trie, p)\n# resultado = buscar(trie, 'hola')\n# print(resultado)\n",
+    pytest: "def test_trie_search(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert ns['buscar'](ns['trie'], 'ola') is True\n    assert ns['buscar'](ns['trie'], 'holas') is False\n    assert ns['buscar'](ns['trie'], 'ho') is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Al final verificá que '#' esté en el nodo.",
+    solution_example: "def insertar(trie, palabra):\n    nodo = trie\n    for c in palabra:\n        nodo = nodo.setdefault(c, {})\n    nodo['#'] = True\n\ndef buscar(trie, palabra):\n    nodo = trie\n    for c in palabra:\n        if c not in nodo:\n            return False\n        nodo = nodo[c]\n    return '#' in nodo\n\ntrie = {}\nfor p in ['hola', 'ola']:\n    insertar(trie, p)\nresultado = buscar(trie, 'hola')\nprint(resultado)\n",
+    next: Some("py-1483-trie-prefix"), show_type_chips: false, micro_step: 1482,
+};
+pub const PY1483_TRIE_PREFIX: CodingStep = CodingStep {
+    id: "py-1483-trie-prefix", title: "Tries · Existe prefijo", objective: "Verificar si alguna palabra del trie empieza con un prefijo dado.",
+    prompt_md: "**Existe prefijo**\n\nUn prefijo es un camino del trie que no necesariamente termina en `#`. Solo hay que poder recorrer todos sus caracteres.\n\n**Micro-reto:**\n1. Definí `tiene_prefijo(trie, prefijo)`\n2. Construí un trie con `hola`, `ola` y `hogar`\n3. Imprimí `tiene_prefijo(trie, 'ho')`",
+    starter_code: "# def insertar(trie, palabra):\n#     nodo = trie\n#     for c in palabra:\n#         nodo = nodo.setdefault(c, {})\n#     nodo['#'] = True\n# def tiene_prefijo(trie, prefijo):\n#     nodo = trie\n#     for c in prefijo:\n#         if c not in nodo:\n#             return False\n#         nodo = nodo[c]\n#     return True\n# trie = {}\n# for p in ['hola', 'ola', 'hogar']:\n#     insertar(trie, p)\n# resultado = tiene_prefijo(trie, 'ho')\n# print(resultado)\n",
+    pytest: "def test_trie_prefix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert ns['tiene_prefijo'](ns['trie'], 'ol') is True\n    assert ns['tiene_prefijo'](ns['trie'], 'hog') is True\n    assert ns['tiene_prefijo'](ns['trie'], 'x') is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "No hace falta el marcador final.",
+    solution_example: "def insertar(trie, palabra):\n    nodo = trie\n    for c in palabra:\n        nodo = nodo.setdefault(c, {})\n    nodo['#'] = True\n\ndef tiene_prefijo(trie, prefijo):\n    nodo = trie\n    for c in prefijo:\n        if c not in nodo:\n            return False\n        nodo = nodo[c]\n    return True\n\ntrie = {}\nfor p in ['hola', 'ola', 'hogar']:\n    insertar(trie, p)\nresultado = tiene_prefijo(trie, 'ho')\nprint(resultado)\n",
+    next: Some("py-1484-trie-count-prefix"), show_type_chips: false, micro_step: 1483,
+};
+pub const PY1484_TRIE_COUNT_PREFIX: CodingStep = CodingStep {
+    id: "py-1484-trie-count-prefix", title: "Tries · Contar con prefijo", objective: "Contar cuántas palabras almacenadas empiezan con un prefijo.",
+    prompt_md: "**Contar palabras con prefijo**\n\nUna vez que llegás al nodo del prefijo, contás todos los marcadores `#` en su subárbol con recursión.\n\n**Micro-reto:**\n1. Definí `contar_prefijo(trie, prefijo)`\n2. Construí un trie con `hola`, `ola` y `hogar`\n3. Imprimí `contar_prefijo(trie, 'ho')`",
+    starter_code: "# def insertar(trie, palabra):\n#     nodo = trie\n#     for c in palabra:\n#         nodo = nodo.setdefault(c, {})\n#     nodo['#'] = True\n# def contar_terminos(nodo):\n#     total = 1 if '#' in nodo else 0\n#     for c, hijo in nodo.items():\n#         if c != '#':\n#             total += contar_terminos(hijo)\n#     return total\n# def contar_prefijo(trie, prefijo):\n#     nodo = trie\n#     for c in prefijo:\n#         if c not in nodo:\n#             return 0\n#         nodo = nodo[c]\n#     return contar_terminos(nodo)\n# trie = {}\n# for p in ['hola', 'ola', 'hogar']:\n#     insertar(trie, p)\n# resultado = contar_prefijo(trie, 'ho')\n# print(resultado)\n",
+    pytest: "def test_trie_count_prefix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['contar_prefijo'](ns['trie'], 'o') == 1\n    assert ns['contar_prefijo'](ns['trie'], '') == 3\n    assert ns['contar_prefijo'](ns['trie'], 'z') == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Sumá recursivamente los marcadores del subárbol.",
+    solution_example: "def insertar(trie, palabra):\n    nodo = trie\n    for c in palabra:\n        nodo = nodo.setdefault(c, {})\n    nodo['#'] = True\n\ndef contar_terminos(nodo):\n    total = 1 if '#' in nodo else 0\n    for c, hijo in nodo.items():\n        if c != '#':\n            total += contar_terminos(hijo)\n    return total\n\ndef contar_prefijo(trie, prefijo):\n    nodo = trie\n    for c in prefijo:\n        if c not in nodo:\n            return 0\n        nodo = nodo[c]\n    return contar_terminos(nodo)\n\ntrie = {}\nfor p in ['hola', 'ola', 'hogar']:\n    insertar(trie, p)\nresultado = contar_prefijo(trie, 'ho')\nprint(resultado)\n",
+    next: Some("py-1485-trie-autocomplete"), show_type_chips: false, micro_step: 1484,
+};
+pub const PY1485_TRIE_AUTOCOMPLETE: CodingStep = CodingStep {
+    id: "py-1485-trie-autocomplete", title: "Tries · Autocompletar", objective: "Devolver las palabras que empiezan con un prefijo, ordenadas.",
+    prompt_md: "**Autocompletar**\n\nDesde el nodo del prefijo recolectás todas las palabras del subárbol y las ordenás alfabéticamente.\n\n**Micro-reto:**\n1. Definí `autocompletar(trie, prefijo)`\n2. Construí un trie con `hola`, `ola` y `hogar`\n3. Imprimí `autocompletar(trie, 'ho')`",
+    starter_code: "# def insertar(trie, palabra):\n#     nodo = trie\n#     for c in palabra:\n#         nodo = nodo.setdefault(c, {})\n#     nodo['#'] = True\n# def recolectar(nodo, actual, out):\n#     if '#' in nodo:\n#         out.append(actual)\n#     for c in sorted(nodo):\n#         if c != '#':\n#             recolectar(nodo[c], actual + c, out)\n# def autocompletar(trie, prefijo):\n#     nodo = trie\n#     for c in prefijo:\n#         if c not in nodo:\n#             return []\n#         nodo = nodo[c]\n#     out = []\n#     recolectar(nodo, prefijo, out)\n#     return out\n# trie = {}\n# for p in ['hola', 'ola', 'hogar']:\n#     insertar(trie, p)\n# resultado = autocompletar(trie, 'ho')\n# print(resultado)\n",
+    pytest: "def test_trie_autocomplete(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['hogar', 'hola']\n    assert ns['autocompletar'](ns['trie'], 'o') == ['ola']\n    assert ns['autocompletar'](ns['trie'], 'z') == []\n    assert capsys.readouterr().out.strip() == str(['hogar', 'hola'])\n",
+    hint: "Recorré sorted(nodo) para ordenar.",
+    solution_example: "def insertar(trie, palabra):\n    nodo = trie\n    for c in palabra:\n        nodo = nodo.setdefault(c, {})\n    nodo['#'] = True\n\ndef recolectar(nodo, actual, out):\n    if '#' in nodo:\n        out.append(actual)\n    for c in sorted(nodo):\n        if c != '#':\n            recolectar(nodo[c], actual + c, out)\n\ndef autocompletar(trie, prefijo):\n    nodo = trie\n    for c in prefijo:\n        if c not in nodo:\n            return []\n        nodo = nodo[c]\n    out = []\n    recolectar(nodo, prefijo, out)\n    return out\n\ntrie = {}\nfor p in ['hola', 'ola', 'hogar']:\n    insertar(trie, p)\nresultado = autocompletar(trie, 'ho')\nprint(resultado)\n",
+    next: Some("py-1486-trie-delete"), show_type_chips: false, micro_step: 1485,
+};
+pub const PY1486_TRIE_DELETE: CodingStep = CodingStep {
+    id: "py-1486-trie-delete", title: "Tries · Borrar palabra", objective: "Eliminar una palabra del trie (borrado lógico del marcador).",
+    prompt_md: "**Borrar palabra**\n\nEl borrado lógico quita el marcador `#` del nodo final. La palabra deja de ser buscable aunque los nodos queden.\n\n**Micro-reto:**\n1. Definí `borrar(trie, palabra)` que devuelva `True` si borró\n2. Construí un trie con `hola` y `ola`\n3. Borrá `hola` e imprimí `buscar(trie, 'hola')`",
+    starter_code: "# def insertar(trie, palabra):\n#     nodo = trie\n#     for c in palabra:\n#         nodo = nodo.setdefault(c, {})\n#     nodo['#'] = True\n# def buscar(trie, palabra):\n#     nodo = trie\n#     for c in palabra:\n#         if c not in nodo:\n#             return False\n#         nodo = nodo[c]\n#     return '#' in nodo\n# def borrar(trie, palabra):\n#     nodo = trie\n#     for c in palabra:\n#         if c not in nodo:\n#             return False\n#         nodo = nodo[c]\n#     if '#' in nodo:\n#         del nodo['#']\n#         return True\n#     return False\n# trie = {}\n# for p in ['hola', 'ola']:\n#     insertar(trie, p)\n# borrar(trie, 'hola')\n# resultado = buscar(trie, 'hola')\n# print(resultado)\n",
+    pytest: "def test_trie_delete(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert ns['buscar'](ns['trie'], 'ola') is True\n    assert ns['borrar'](ns['trie'], 'ola') is True\n    assert ns['buscar'](ns['trie'], 'ola') is False\n    assert capsys.readouterr().out.strip() == 'False'\n",
+    hint: "Quitá el '#' del nodo final.",
+    solution_example: "def insertar(trie, palabra):\n    nodo = trie\n    for c in palabra:\n        nodo = nodo.setdefault(c, {})\n    nodo['#'] = True\n\ndef buscar(trie, palabra):\n    nodo = trie\n    for c in palabra:\n        if c not in nodo:\n            return False\n        nodo = nodo[c]\n    return '#' in nodo\n\ndef borrar(trie, palabra):\n    nodo = trie\n    for c in palabra:\n        if c not in nodo:\n            return False\n        nodo = nodo[c]\n    if '#' in nodo:\n        del nodo['#']\n        return True\n    return False\n\ntrie = {}\nfor p in ['hola', 'ola']:\n    insertar(trie, p)\nborrar(trie, 'hola')\nresultado = buscar(trie, 'hola')\nprint(resultado)\n",
+    next: Some("py-1487-bst-node"), show_type_chips: false, micro_step: 1486,
+};
+pub const PY1487_BST_NODE: CodingStep = CodingStep {
+    id: "py-1487-bst-node", title: "Árboles · Nodo", objective: "Crear un nodo de árbol binario con valor e hijos.",
+    prompt_md: "**Nodo de árbol binario**\n\nUn nodo guarda un valor y dos referencias: hijo izquierdo y derecho. Con clases queda limpio.\n\n**Micro-reto:**\n1. Definí la clase `Nodo` con `valor`, `izq` y `der`\n2. Creá `raiz = Nodo(10)`\n3. Imprimí `raiz.valor`",
+    starter_code: "# class Nodo:\n#     def __init__(self, valor):\n#         self.valor = valor\n#         self.izq = None\n#         self.der = None\n# raiz = Nodo(10)\n# print(raiz.valor)\n",
+    pytest: "def test_bst_node(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['raiz'].valor == 10\n    assert ns['raiz'].izq is None\n    assert ns['raiz'].der is None\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "Inicializá izq y der en None.",
+    solution_example: "class Nodo:\n    def __init__(self, valor):\n        self.valor = valor\n        self.izq = None\n        self.der = None\n\nraiz = Nodo(10)\nprint(raiz.valor)\n",
+    next: Some("py-1488-bst-height"), show_type_chips: false, micro_step: 1487,
+};
+pub const PY1488_BST_HEIGHT: CodingStep = CodingStep {
+    id: "py-1488-bst-height", title: "Árboles · Altura", objective: "Calcular la altura de un árbol binario.",
+    prompt_md: "**Altura**\n\nLa altura es la longitud del camino más largo desde la raíz a una hoja. El nodo `None` tiene altura 0.\n\n**Micro-reto:**\n1. Definí `altura(nodo)` recursiva\n2. Construí un árbol: raíz 1, hijos 2 y 3, nieto 4 (izq de 2)\n3. Imprimí `altura(raiz)`",
+    starter_code: "# class Nodo:\n#     def __init__(self, valor):\n#         self.valor = valor\n#         self.izq = None\n#         self.der = None\n# def altura(nodo):\n#     if nodo is None:\n#         return 0\n#     return 1 + max(altura(nodo.izq), altura(nodo.der))\n# raiz = Nodo(1)\n# raiz.izq = Nodo(2)\n# raiz.der = Nodo(3)\n# raiz.izq.izq = Nodo(4)\n# resultado = altura(raiz)\n# print(resultado)\n",
+    pytest: "def test_bst_height(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['altura'](ns['Nodo'](5)) == 1\n    assert ns['altura'](None) == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "altura = 1 + max(izq, der).",
+    solution_example: "class Nodo:\n    def __init__(self, valor):\n        self.valor = valor\n        self.izq = None\n        self.der = None\n\ndef altura(nodo):\n    if nodo is None:\n        return 0\n    return 1 + max(altura(nodo.izq), altura(nodo.der))\n\nraiz = Nodo(1)\nraiz.izq = Nodo(2)\nraiz.der = Nodo(3)\nraiz.izq.izq = Nodo(4)\nresultado = altura(raiz)\nprint(resultado)\n",
+    next: Some("py-1489-bst-rotate"), show_type_chips: false, micro_step: 1488,
+};
+pub const PY1489_BST_ROTATE: CodingStep = CodingStep {
+    id: "py-1489-bst-rotate", title: "Árboles · Rotación simple", objective: "Aplicar una rotación a la derecha para rebalancear.",
+    prompt_md: "**Rotación a la derecha**\n\nLa rotación derecha sube el hijo izquierdo `x` y baja el nodo `y`. El subárbol derecho de `x` pasa a ser el izquierdo de `y`.\n\n**Micro-reto:**\n1. Definí `rotar_derecha(y)`\n2. Armá `y=5` con `x=3` (izq) y `z=4` (der de x)\n3. Imprimí el valor de la nueva raíz",
+    starter_code: "# class Nodo:\n#     def __init__(self, valor):\n#         self.valor = valor\n#         self.izq = None\n#         self.der = None\n# def rotar_derecha(y):\n#     x = y.izq\n#     y.izq = x.der\n#     x.der = y\n#     return x\n# y = Nodo(5)\n# x = Nodo(3)\n# z = Nodo(4)\n# y.izq = x\n# x.der = z\n# nueva = rotar_derecha(y)\n# resultado = nueva.valor\n# print(resultado)\n",
+    pytest: "def test_bst_rotate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['nueva'].der.valor == 5\n    assert ns['nueva'].der.izq.valor == 4\n    assert ns['nueva'].izq is None\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "x.der pasa a ser y; y.izq pasa a ser x.der.",
+    solution_example: "class Nodo:\n    def __init__(self, valor):\n        self.valor = valor\n        self.izq = None\n        self.der = None\n\ndef rotar_derecha(y):\n    x = y.izq\n    y.izq = x.der\n    x.der = y\n    return x\n\ny = Nodo(5)\nx = Nodo(3)\nz = Nodo(4)\ny.izq = x\nx.der = z\nnueva = rotar_derecha(y)\nresultado = nueva.valor\nprint(resultado)\n",
+    next: Some("py-1490-bst-balance-invariant"), show_type_chips: false, micro_step: 1489,
+};
+pub const PY1490_BST_BALANCE_INVARIANT: CodingStep = CodingStep {
+    id: "py-1490-bst-balance-invariant", title: "Árboles · Invariante de balance", objective: "Calcular el factor de balance de un nodo.",
+    prompt_md: "**Factor de balance**\n\nEn AVL, el balance de un nodo es `altura(izq) - altura(der)`. Debe estar entre -1 y 1 para ser válido.\n\n**Micro-reto:**\n1. Definí `factor_balance(nodo)`\n2. Armá un árbol desbalanceado: raíz 1, izq 2, izq.izq 3\n3. Imprimí `factor_balance(raiz)`",
+    starter_code: "# class Nodo:\n#     def __init__(self, valor):\n#         self.valor = valor\n#         self.izq = None\n#         self.der = None\n# def altura(nodo):\n#     if nodo is None:\n#         return 0\n#     return 1 + max(altura(nodo.izq), altura(nodo.der))\n# def factor_balance(nodo):\n#     if nodo is None:\n#         return 0\n#     return altura(nodo.izq) - altura(nodo.der)\n# raiz = Nodo(1)\n# raiz.izq = Nodo(2)\n# raiz.izq.izq = Nodo(3)\n# resultado = factor_balance(raiz)\n# print(resultado)\n",
+    pytest: "def test_bst_balance_invariant(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['factor_balance'](ns['Nodo'](7)) == 0\n    assert ns['factor_balance'](None) == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "balance = altura(izq) - altura(der).",
+    solution_example: "class Nodo:\n    def __init__(self, valor):\n        self.valor = valor\n        self.izq = None\n        self.der = None\n\ndef altura(nodo):\n    if nodo is None:\n        return 0\n    return 1 + max(altura(nodo.izq), altura(nodo.der))\n\ndef factor_balance(nodo):\n    if nodo is None:\n        return 0\n    return altura(nodo.izq) - altura(nodo.der)\n\nraiz = Nodo(1)\nraiz.izq = Nodo(2)\nraiz.izq.izq = Nodo(3)\nresultado = factor_balance(raiz)\nprint(resultado)\n",
+    next: Some("py-1491-bst-insert"), show_type_chips: false, micro_step: 1490,
+};
+pub const PY1491_BST_INSERT: CodingStep = CodingStep {
+    id: "py-1491-bst-insert", title: "Árboles · Insertar en BST", objective: "Insertar valores manteniendo el orden del BST.",
+    prompt_md: "**Insertar en BST**\n\nEn un BST, los menores van a la izquierda y los mayores a la derecha. Insertar es recursivo y preserva el orden.\n\n**Micro-reto:**\n1. Definí `insertar(nodo, valor)`\n2. Definí `recorrer(nodo)` en orden\n3. Insertá `[5, 3, 7, 2]` e imprimí el recorrido",
+    starter_code: "# class Nodo:\n#     def __init__(self, valor):\n#         self.valor = valor\n#         self.izq = None\n#         self.der = None\n# def insertar(nodo, valor):\n#     if nodo is None:\n#         return Nodo(valor)\n#     if valor < nodo.valor:\n#         nodo.izq = insertar(nodo.izq, valor)\n#     else:\n#         nodo.der = insertar(nodo.der, valor)\n#     return nodo\n# def recorrer(nodo):\n#     if nodo is None:\n#         return []\n#     return recorrer(nodo.izq) + [nodo.valor] + recorrer(nodo.der)\n# raiz = None\n# for v in [5, 3, 7, 2]:\n#     raiz = insertar(raiz, v)\n# resultado = recorrer(raiz)\n# print(resultado)\n",
+    pytest: "def test_bst_insert(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 3, 5, 7]\n    raiz2 = None\n    for v in [8, 4, 12]:\n        raiz2 = ns['insertar'](raiz2, v)\n    assert ns['recorrer'](raiz2) == [4, 8, 12]\n    assert capsys.readouterr().out.strip() == str([2, 3, 5, 7])\n",
+    hint: "Menores a la izquierda, mayores a la derecha.",
+    solution_example: "class Nodo:\n    def __init__(self, valor):\n        self.valor = valor\n        self.izq = None\n        self.der = None\n\ndef insertar(nodo, valor):\n    if nodo is None:\n        return Nodo(valor)\n    if valor < nodo.valor:\n        nodo.izq = insertar(nodo.izq, valor)\n    else:\n        nodo.der = insertar(nodo.der, valor)\n    return nodo\n\ndef recorrer(nodo):\n    if nodo is None:\n        return []\n    return recorrer(nodo.izq) + [nodo.valor] + recorrer(nodo.der)\n\nraiz = None\nfor v in [5, 3, 7, 2]:\n    raiz = insertar(raiz, v)\nresultado = recorrer(raiz)\nprint(resultado)\n",
+    next: Some("py-1492-bst-traverse"), show_type_chips: false, micro_step: 1491,
+};
+pub const PY1492_BST_TRAVERSE: CodingStep = CodingStep {
+    id: "py-1492-bst-traverse", title: "Árboles · Recorrido en orden", objective: "Recorrer un BST en orden para obtener valores ordenados.",
+    prompt_md: "**Recorrido en orden**\n\nEl recorrido in-order visita izquierda, luego el nodo, luego derecha. En un BST produce los valores ordenados.\n\n**Micro-reto:**\n1. Definí `recorrer_en_orden(nodo, resultado)` que llene la lista\n2. Armá un BST con raíz 5, izq 3 y der 7\n3. Imprimí la lista recorrida",
+    starter_code: "# class Nodo:\n#     def __init__(self, valor):\n#         self.valor = valor\n#         self.izq = None\n#         self.der = None\n# def recorrer_en_orden(nodo, resultado):\n#     if nodo is None:\n#         return\n#     recorrer_en_orden(nodo.izq, resultado)\n#     resultado.append(nodo.valor)\n#     recorrer_en_orden(nodo.der, resultado)\n# raiz = Nodo(5)\n# raiz.izq = Nodo(3)\n# raiz.der = Nodo(7)\n# resultado = []\n# recorrer_en_orden(raiz, resultado)\n# print(resultado)\n",
+    pytest: "def test_bst_traverse(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 5, 7]\n    r2 = ns['Nodo'](10)\n    r2.izq = ns['Nodo'](4)\n    out2 = []\n    ns['recorrer_en_orden'](r2, out2)\n    assert out2 == [4, 10]\n    assert capsys.readouterr().out.strip() == str([3, 5, 7])\n",
+    hint: "Izquierda → nodo → derecha.",
+    solution_example: "class Nodo:\n    def __init__(self, valor):\n        self.valor = valor\n        self.izq = None\n        self.der = None\n\ndef recorrer_en_orden(nodo, resultado):\n    if nodo is None:\n        return\n    recorrer_en_orden(nodo.izq, resultado)\n    resultado.append(nodo.valor)\n    recorrer_en_orden(nodo.der, resultado)\n\nraiz = Nodo(5)\nraiz.izq = Nodo(3)\nraiz.der = Nodo(7)\nresultado = []\nrecorrer_en_orden(raiz, resultado)\nprint(resultado)\n",
+    next: Some("py-1493-segtree-build"), show_type_chips: false, micro_step: 1492,
+};
+pub const PY1493_SEGTREE_BUILD: CodingStep = CodingStep {
+    id: "py-1493-segtree-build", title: "Segment tree · Construir", objective: "Construir un segment tree iterativo de sumas.",
+    prompt_md: "**Construir segment tree**\n\nLa versión iterativa usa un array de tamaño `2n`: las hojas en `[n:]` y cada nodo interno suma a sus dos hijos.\n\n**Micro-reto:**\n1. Definí `construir(arr)`\n2. Construí para `[1, 3, 5, 7, 9, 11]`\n3. Imprimí la suma total (raíz `arbol[1]`)",
+    starter_code: "# def construir(arr):\n#     n = len(arr)\n#     arbol = [0] * (2 * n)\n#     arbol[n:] = arr\n#     for i in range(n - 1, 0, -1):\n#         arbol[i] = arbol[2 * i] + arbol[2 * i + 1]\n#     return arbol\n# arbol = construir([1, 3, 5, 7, 9, 11])\n# resultado = arbol[1]\n# print(resultado)\n",
+    pytest: "def test_segtree_build(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 36\n    assert ns['construir']([2, 4, 6])[1] == 12\n    assert capsys.readouterr().out.strip() == '36'\n",
+    hint: "arbol[i] = arbol[2i] + arbol[2i+1].",
+    solution_example: "def construir(arr):\n    n = len(arr)\n    arbol = [0] * (2 * n)\n    arbol[n:] = arr\n    for i in range(n - 1, 0, -1):\n        arbol[i] = arbol[2 * i] + arbol[2 * i + 1]\n    return arbol\n\narbol = construir([1, 3, 5, 7, 9, 11])\nresultado = arbol[1]\nprint(resultado)\n",
+    next: Some("py-1494-segtree-range-sum"), show_type_chips: false, micro_step: 1493,
+};
+pub const PY1494_SEGTREE_RANGE_SUM: CodingStep = CodingStep {
+    id: "py-1494-segtree-range-sum", title: "Segment tree · Suma de rango", objective: "Consultar la suma de un rango en el segment tree.",
+    prompt_md: "**Suma de rango**\n\nLa consulta sube por el árbol acumulando los nodos que cubren el intervalo `[izquierda, derecha)`.\n\n**Micro-reto:**\n1. Definí `consultar(arbol, n, izquierda, derecha)`\n2. Construí para `[1, 3, 5, 7, 9, 11]`\n3. Imprimí `consultar(arbol, 6, 1, 4)`",
+    starter_code: "# def construir(arr):\n#     n = len(arr)\n#     arbol = [0] * (2 * n)\n#     arbol[n:] = arr\n#     for i in range(n - 1, 0, -1):\n#         arbol[i] = arbol[2 * i] + arbol[2 * i + 1]\n#     return arbol\n# def consultar(arbol, n, izquierda, derecha):\n#     izquierda += n\n#     derecha += n\n#     total = 0\n#     while izquierda < derecha:\n#         if izquierda % 2 == 1:\n#             total += arbol[izquierda]\n#             izquierda += 1\n#         if derecha % 2 == 1:\n#             derecha -= 1\n#             total += arbol[derecha]\n#         izquierda //= 2\n#         derecha //= 2\n#     return total\n# arbol = construir([1, 3, 5, 7, 9, 11])\n# resultado = consultar(arbol, 6, 1, 4)\n# print(resultado)\n",
+    pytest: "def test_segtree_range_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 15\n    assert ns['consultar'](ns['arbol'], 6, 0, 6) == 36\n    assert ns['consultar'](ns['arbol'], 6, 3, 5) == 16\n    assert capsys.readouterr().out.strip() == '15'\n",
+    hint: "Acumulá nodos con extremos impares.",
+    solution_example: "def construir(arr):\n    n = len(arr)\n    arbol = [0] * (2 * n)\n    arbol[n:] = arr\n    for i in range(n - 1, 0, -1):\n        arbol[i] = arbol[2 * i] + arbol[2 * i + 1]\n    return arbol\n\ndef consultar(arbol, n, izquierda, derecha):\n    izquierda += n\n    derecha += n\n    total = 0\n    while izquierda < derecha:\n        if izquierda % 2 == 1:\n            total += arbol[izquierda]\n            izquierda += 1\n        if derecha % 2 == 1:\n            derecha -= 1\n            total += arbol[derecha]\n        izquierda //= 2\n        derecha //= 2\n    return total\n\narbol = construir([1, 3, 5, 7, 9, 11])\nresultado = consultar(arbol, 6, 1, 4)\nprint(resultado)\n",
+    next: Some("py-1495-segtree-point-update"), show_type_chips: false, micro_step: 1494,
+};
+pub const PY1495_SEGTREE_POINT_UPDATE: CodingStep = CodingStep {
+    id: "py-1495-segtree-point-update", title: "Segment tree · Update puntual", objective: "Actualizar un elemento y propagar el cambio hacia la raíz.",
+    prompt_md: "**Update puntual**\n\nCambiás la hoja y subís por el árbol recalculando las sumas de los ancestros.\n\n**Micro-reto:**\n1. Definí `actualizar(arbol, n, pos, valor)`\n2. Construí para `[1, 3, 5, 7]`\n3. Actualizá la posición 1 a 10 e imprimí la suma total",
+    starter_code: "# def construir(arr):\n#     n = len(arr)\n#     arbol = [0] * (2 * n)\n#     arbol[n:] = arr\n#     for i in range(n - 1, 0, -1):\n#         arbol[i] = arbol[2 * i] + arbol[2 * i + 1]\n#     return arbol\n# def actualizar(arbol, n, pos, valor):\n#     pos += n\n#     arbol[pos] = valor\n#     while pos > 1:\n#         pos //= 2\n#         arbol[pos] = arbol[2 * pos] + arbol[2 * pos + 1]\n# arbol = construir([1, 3, 5, 7])\n# actualizar(arbol, 4, 1, 10)\n# resultado = arbol[1]\n# print(resultado)\n",
+    pytest: "def test_segtree_point_update(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 23\n    assert ns['arbol'][2] == 11\n    assert capsys.readouterr().out.strip() == '23'\n",
+    hint: "Subí recalculando arbol[pos] en cada ancestro.",
+    solution_example: "def construir(arr):\n    n = len(arr)\n    arbol = [0] * (2 * n)\n    arbol[n:] = arr\n    for i in range(n - 1, 0, -1):\n        arbol[i] = arbol[2 * i] + arbol[2 * i + 1]\n    return arbol\n\ndef actualizar(arbol, n, pos, valor):\n    pos += n\n    arbol[pos] = valor\n    while pos > 1:\n        pos //= 2\n        arbol[pos] = arbol[2 * pos] + arbol[2 * pos + 1]\n\narbol = construir([1, 3, 5, 7])\nactualizar(arbol, 4, 1, 10)\nresultado = arbol[1]\nprint(resultado)\n",
+    next: Some("py-1496-segtree-range-min"), show_type_chips: false, micro_step: 1495,
+};
+pub const PY1496_SEGTREE_RANGE_MIN: CodingStep = CodingStep {
+    id: "py-1496-segtree-range-min", title: "Segment tree · Mínimo de rango", objective: "Consultar el mínimo de un rango con un segment tree.",
+    prompt_md: "**Mínimo de rango**\n\nUn segment tree también puede guardar el mínimo: cada nodo es `min(hijo_izq, hijo_der)`.\n\n**Micro-reto:**\n1. Definí `construir_min(arr)` y `consultar_min(arbol, n, izq, der)`\n2. Construí para `[3, 1, 4, 1, 5, 9]`\n3. Imprimí `consultar_min(arbol, 6, 1, 4)`",
+    starter_code: "# def construir_min(arr):\n#     n = len(arr)\n#     arbol = [float('inf')] * (2 * n)\n#     arbol[n:] = arr\n#     for i in range(n - 1, 0, -1):\n#         arbol[i] = min(arbol[2 * i], arbol[2 * i + 1])\n#     return arbol\n# def consultar_min(arbol, n, izquierda, derecha):\n#     izquierda += n\n#     derecha += n\n#     mejor = float('inf')\n#     while izquierda < derecha:\n#         if izquierda % 2 == 1:\n#             mejor = min(mejor, arbol[izquierda])\n#             izquierda += 1\n#         if derecha % 2 == 1:\n#             derecha -= 1\n#             mejor = min(mejor, arbol[derecha])\n#         izquierda //= 2\n#         derecha //= 2\n#     return mejor\n# arbol = construir_min([3, 1, 4, 1, 5, 9])\n# resultado = consultar_min(arbol, 6, 1, 4)\n# print(resultado)\n",
+    pytest: "def test_segtree_range_min(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert ns['consultar_min'](ns['arbol'], 6, 0, 6) == 1\n    assert ns['consultar_min'](ns['arbol'], 6, 4, 6) == 5\n    assert capsys.readouterr().out.strip() == '1'\n",
+    hint: "Usá min() en vez de sumar.",
+    solution_example: "def construir_min(arr):\n    n = len(arr)\n    arbol = [float('inf')] * (2 * n)\n    arbol[n:] = arr\n    for i in range(n - 1, 0, -1):\n        arbol[i] = min(arbol[2 * i], arbol[2 * i + 1])\n    return arbol\n\ndef consultar_min(arbol, n, izquierda, derecha):\n    izquierda += n\n    derecha += n\n    mejor = float('inf')\n    while izquierda < derecha:\n        if izquierda % 2 == 1:\n            mejor = min(mejor, arbol[izquierda])\n            izquierda += 1\n        if derecha % 2 == 1:\n            derecha -= 1\n            mejor = min(mejor, arbol[derecha])\n        izquierda //= 2\n        derecha //= 2\n    return mejor\n\narbol = construir_min([3, 1, 4, 1, 5, 9])\nresultado = consultar_min(arbol, 6, 1, 4)\nprint(resultado)\n",
+    next: Some("py-1497-segtree-range-update"), show_type_chips: false, micro_step: 1496,
+};
+pub const PY1497_SEGTREE_RANGE_UPDATE: CodingStep = CodingStep {
+    id: "py-1497-segtree-range-update", title: "Segment tree · Update de rango", objective: "Actualizar un rango completo con propagación perezosa.",
+    prompt_md: "**Update de rango (lazy)**\n\nCon propagación perezosa difieres la actualización de los hijos usando un array `lazy`. Al tocar un nodo, propagás su pendiente.\n\n**Micro-reto:**\n1. Definí `construir`, `propagar` y `actualizar_rango`\n2. Construí para `[1, 2, 3, 4]`\n3. Sumá 10 al rango `[1, 2]` e imprimí la suma total",
+    starter_code: "# def construir(arr):\n#     n = len(arr)\n#     arbol = [0] * (4 * n)\n#     lazy = [0] * (4 * n)\n#     def construir_rec(nodo, ini, fin):\n#         if ini == fin:\n#             arbol[nodo] = arr[ini]\n#             return\n#         medio = (ini + fin) // 2\n#         construir_rec(nodo * 2, ini, medio)\n#         construir_rec(nodo * 2 + 1, medio + 1, fin)\n#         arbol[nodo] = arbol[nodo * 2] + arbol[nodo * 2 + 1]\n#     construir_rec(1, 0, n - 1)\n#     return arbol, lazy, n\n# def propagar(arbol, lazy, nodo, ini, fin):\n#     if lazy[nodo] != 0:\n#         arbol[nodo] += (fin - ini + 1) * lazy[nodo]\n#         if ini != fin:\n#             lazy[nodo * 2] += lazy[nodo]\n#             lazy[nodo * 2 + 1] += lazy[nodo]\n#         lazy[nodo] = 0\n# def actualizar_rango(arbol, lazy, nodo, ini, fin, izquierda, derecha, delta):\n#     propagar(arbol, lazy, nodo, ini, fin)\n#     if derecha < ini or fin < izquierda:\n#         return\n#     if izquierda <= ini and fin <= derecha:\n#         arbol[nodo] += (fin - ini + 1) * delta\n#         if ini != fin:\n#             lazy[nodo * 2] += delta\n#             lazy[nodo * 2 + 1] += delta\n#         return\n#     medio = (ini + fin) // 2\n#     actualizar_rango(arbol, lazy, nodo * 2, ini, medio, izquierda, derecha, delta)\n#     actualizar_rango(arbol, lazy, nodo * 2 + 1, medio + 1, fin, izquierda, derecha, delta)\n#     arbol[nodo] = arbol[nodo * 2] + arbol[nodo * 2 + 1]\n# arbol, lazy, n = construir([1, 2, 3, 4])\n# actualizar_rango(arbol, lazy, 1, 0, n - 1, 1, 2, 10)\n# resultado = arbol[1]\n# print(resultado)\n",
+    pytest: "def test_segtree_range_update(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 30\n    a2, l2, n2 = ns['construir']([1, 2, 3, 4])\n    ns['actualizar_rango'](a2, l2, 1, 0, n2 - 1, 0, 3, 5)\n    assert a2[1] == 30\n    assert capsys.readouterr().out.strip() == '30'\n",
+    hint: "Propagá lazy antes de tocar un nodo.",
+    solution_example: "def construir(arr):\n    n = len(arr)\n    arbol = [0] * (4 * n)\n    lazy = [0] * (4 * n)\n    def construir_rec(nodo, ini, fin):\n        if ini == fin:\n            arbol[nodo] = arr[ini]\n            return\n        medio = (ini + fin) // 2\n        construir_rec(nodo * 2, ini, medio)\n        construir_rec(nodo * 2 + 1, medio + 1, fin)\n        arbol[nodo] = arbol[nodo * 2] + arbol[nodo * 2 + 1]\n    construir_rec(1, 0, n - 1)\n    return arbol, lazy, n\n\ndef propagar(arbol, lazy, nodo, ini, fin):\n    if lazy[nodo] != 0:\n        arbol[nodo] += (fin - ini + 1) * lazy[nodo]\n        if ini != fin:\n            lazy[nodo * 2] += lazy[nodo]\n            lazy[nodo * 2 + 1] += lazy[nodo]\n        lazy[nodo] = 0\n\ndef actualizar_rango(arbol, lazy, nodo, ini, fin, izquierda, derecha, delta):\n    propagar(arbol, lazy, nodo, ini, fin)\n    if derecha < ini or fin < izquierda:\n        return\n    if izquierda <= ini and fin <= derecha:\n        arbol[nodo] += (fin - ini + 1) * delta\n        if ini != fin:\n            lazy[nodo * 2] += delta\n            lazy[nodo * 2 + 1] += delta\n        return\n    medio = (ini + fin) // 2\n    actualizar_rango(arbol, lazy, nodo * 2, ini, medio, izquierda, derecha, delta)\n    actualizar_rango(arbol, lazy, nodo * 2 + 1, medio + 1, fin, izquierda, derecha, delta)\n    arbol[nodo] = arbol[nodo * 2] + arbol[nodo * 2 + 1]\n\narbol, lazy, n = construir([1, 2, 3, 4])\nactualizar_rango(arbol, lazy, 1, 0, n - 1, 1, 2, 10)\nresultado = arbol[1]\nprint(resultado)\n",
+    next: Some("py-1498-segtree-combined"), show_type_chips: false, micro_step: 1497,
+};
+pub const PY1498_SEGTREE_COMBINED: CodingStep = CodingStep {
+    id: "py-1498-segtree-combined", title: "Segment tree · Combinado", objective: "Combinar updates puntuales y consultas de rango.",
+    prompt_md: "**Consulta + update combinados**\n\nCombinás `construir`, `actualizar` y `consultar` para procesar una secuencia de operaciones sobre el mismo árbol.\n\n**Micro-reto:**\n1. Definí las tres funciones y `procesar(arr, operaciones)`\n2. Usá `arr = [1, 2, 3, 4, 5]` con una consulta y un update\n3. Imprimí la lista de resultados",
+    starter_code: "# def construir(arr):\n#     n = len(arr)\n#     arbol = [0] * (2 * n)\n#     arbol[n:] = arr\n#     for i in range(n - 1, 0, -1):\n#         arbol[i] = arbol[2 * i] + arbol[2 * i + 1]\n#     return arbol, n\n# def actualizar(arbol, n, pos, valor):\n#     pos += n\n#     arbol[pos] = valor\n#     while pos > 1:\n#         pos //= 2\n#         arbol[pos] = arbol[2 * pos] + arbol[2 * pos + 1]\n# def consultar(arbol, n, izquierda, derecha):\n#     izquierda += n\n#     derecha += n\n#     total = 0\n#     while izquierda < derecha:\n#         if izquierda % 2 == 1:\n#             total += arbol[izquierda]\n#             izquierda += 1\n#         if derecha % 2 == 1:\n#             derecha -= 1\n#             total += arbol[derecha]\n#         izquierda //= 2\n#         derecha //= 2\n#     return total\n# arbol, n = construir([1, 2, 3, 4, 5])\n# resultado = [consultar(arbol, n, 0, 5)]\n# actualizar(arbol, n, 1, 10)\n# resultado.append(consultar(arbol, n, 0, 5))\n# print(resultado)\n",
+    pytest: "def test_segtree_combined(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [15, 23]\n    arbol2, n2 = ns['construir']([2, 4, 6])\n    assert ns['consultar'](arbol2, n2, 0, 3) == 12\n    assert capsys.readouterr().out.strip() == str([15, 23])\n",
+    hint: "Reutilizá actualizar y consultar sobre el mismo árbol.",
+    solution_example: "def construir(arr):\n    n = len(arr)\n    arbol = [0] * (2 * n)\n    arbol[n:] = arr\n    for i in range(n - 1, 0, -1):\n        arbol[i] = arbol[2 * i] + arbol[2 * i + 1]\n    return arbol, n\n\ndef actualizar(arbol, n, pos, valor):\n    pos += n\n    arbol[pos] = valor\n    while pos > 1:\n        pos //= 2\n        arbol[pos] = arbol[2 * pos] + arbol[2 * pos + 1]\n\ndef consultar(arbol, n, izquierda, derecha):\n    izquierda += n\n    derecha += n\n    total = 0\n    while izquierda < derecha:\n        if izquierda % 2 == 1:\n            total += arbol[izquierda]\n            izquierda += 1\n        if derecha % 2 == 1:\n            derecha -= 1\n            total += arbol[derecha]\n        izquierda //= 2\n        derecha //= 2\n    return total\n\narbol, n = construir([1, 2, 3, 4, 5])\nresultado = [consultar(arbol, n, 0, 5)]\nactualizar(arbol, n, 1, 10)\nresultado.append(consultar(arbol, n, 0, 5))\nprint(resultado)\n",
+    next: Some("py-1499-fenwick-build"), show_type_chips: false, micro_step: 1498,
+};
+pub const PY1499_FENWICK_BUILD: CodingStep = CodingStep {
+    id: "py-1499-fenwick-build", title: "Fenwick · Construir BIT", objective: "Construir un Binary Indexed Tree desde un array.",
+    prompt_md: "**Construir BIT**\n\nUn BIT (Fenwick) guarda sumas parciales. Cada índice `i` cubre un rango de tamaño `i & -i`.\n\n**Micro-reto:**\n1. Definí `construir_fenwick(arr)`\n2. Construí para `[1, 3, 5, 7]`\n3. Imprimí `bit[4]` (la suma total)",
+    starter_code: "# def construir_fenwick(arr):\n#     n = len(arr)\n#     bit = [0] * (n + 1)\n#     for i, valor in enumerate(arr, start=1):\n#         j = i\n#         while j <= n:\n#             bit[j] += valor\n#             j += j & -j\n#     return bit\n# bit = construir_fenwick([1, 3, 5, 7])\n# resultado = bit[4]\n# print(resultado)\n",
+    pytest: "def test_fenwick_build(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 16\n    assert ns['bit'][2] == 4\n    assert ns['construir_fenwick']([2, 4, 6])[2] == 6\n    assert capsys.readouterr().out.strip() == '16'\n",
+    hint: "j += j & -j salta al siguiente rango.",
+    solution_example: "def construir_fenwick(arr):\n    n = len(arr)\n    bit = [0] * (n + 1)\n    for i, valor in enumerate(arr, start=1):\n        j = i\n        while j <= n:\n            bit[j] += valor\n            j += j & -j\n    return bit\n\nbit = construir_fenwick([1, 3, 5, 7])\nresultado = bit[4]\nprint(resultado)\n",
+    next: Some("py-1500-fenwick-prefix"), show_type_chips: false, micro_step: 1499,
+};
+pub const PY1500_FENWICK_PREFIX: CodingStep = CodingStep {
+    id: "py-1500-fenwick-prefix", title: "Fenwick · Prefix sum", objective: "Consultar la suma de prefijo hasta un índice.",
+    prompt_md: "**Prefix sum con BIT**\n\nLa suma de prefijo hasta `i` se obtiene bajando por el árbol: `i -= i & -i`.\n\n**Micro-reto:**\n1. Definí `suma_prefijo(bit, i)`\n2. Construí para `[1, 3, 5, 7]`\n3. Imprimí `suma_prefijo(bit, 3)`",
+    starter_code: "# def construir_fenwick(arr):\n#     n = len(arr)\n#     bit = [0] * (n + 1)\n#     for i, valor in enumerate(arr, start=1):\n#         j = i\n#         while j <= n:\n#             bit[j] += valor\n#             j += j & -j\n#     return bit\n# def suma_prefijo(bit, i):\n#     total = 0\n#     while i > 0:\n#         total += bit[i]\n#         i -= i & -i\n#     return total\n# bit = construir_fenwick([1, 3, 5, 7])\n# resultado = suma_prefijo(bit, 3)\n# print(resultado)\n",
+    pytest: "def test_fenwick_prefix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9\n    assert ns['suma_prefijo'](ns['bit'], 4) == 16\n    assert ns['suma_prefijo'](ns['bit'], 1) == 1\n    assert capsys.readouterr().out.strip() == '9'\n",
+    hint: "i -= i & -i baja por el árbol.",
+    solution_example: "def construir_fenwick(arr):\n    n = len(arr)\n    bit = [0] * (n + 1)\n    for i, valor in enumerate(arr, start=1):\n        j = i\n        while j <= n:\n            bit[j] += valor\n            j += j & -j\n    return bit\n\ndef suma_prefijo(bit, i):\n    total = 0\n    while i > 0:\n        total += bit[i]\n        i -= i & -i\n    return total\n\nbit = construir_fenwick([1, 3, 5, 7])\nresultado = suma_prefijo(bit, 3)\nprint(resultado)\n",
+    next: Some("py-1501-fenwick-update"), show_type_chips: false, micro_step: 1500,
+};
+pub const PY1501_FENWICK_UPDATE: CodingStep = CodingStep {
+    id: "py-1501-fenwick-update", title: "Fenwick · Update puntual", objective: "Sumar un delta a un elemento del BIT.",
+    prompt_md: "**Update puntual en BIT**\n\nPara actualizar un elemento sumás el delta a todos los nodos que lo cubren, subiendo con `i += i & -i`.\n\n**Micro-reto:**\n1. Definí `actualizar(bit, n, i, delta)`\n2. Construí para `[1, 3, 5, 7]`\n3. Sumá 10 al índice 2 e imprimí `bit[4]`",
+    starter_code: "# def construir_fenwick(arr):\n#     n = len(arr)\n#     bit = [0] * (n + 1)\n#     for i, valor in enumerate(arr, start=1):\n#         j = i\n#         while j <= n:\n#             bit[j] += valor\n#             j += j & -j\n#     return bit\n# def actualizar(bit, n, i, delta):\n#     while i <= n:\n#         bit[i] += delta\n#         i += i & -i\n# bit = construir_fenwick([1, 3, 5, 7])\n# actualizar(bit, 4, 2, 10)\n# resultado = bit[4]\n# print(resultado)\n",
+    pytest: "def test_fenwick_update(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 26\n    assert ns['bit'][2] == 14\n    assert capsys.readouterr().out.strip() == '26'\n",
+    hint: "i += i & -i sube por el árbol.",
+    solution_example: "def construir_fenwick(arr):\n    n = len(arr)\n    bit = [0] * (n + 1)\n    for i, valor in enumerate(arr, start=1):\n        j = i\n        while j <= n:\n            bit[j] += valor\n            j += j & -j\n    return bit\n\ndef actualizar(bit, n, i, delta):\n    while i <= n:\n        bit[i] += delta\n        i += i & -i\n\nbit = construir_fenwick([1, 3, 5, 7])\nactualizar(bit, 4, 2, 10)\nresultado = bit[4]\nprint(resultado)\n",
+    next: Some("py-1502-fenwick-range"), show_type_chips: false, micro_step: 1501,
+};
+pub const PY1502_FENWICK_RANGE: CodingStep = CodingStep {
+    id: "py-1502-fenwick-range", title: "Fenwick · Suma de rango", objective: "Calcular la suma de un rango usando dos prefix sums.",
+    prompt_md: "**Suma de rango con BIT**\n\nLa suma de `[izquierda, derecha]` es `prefijo(derecha) - prefijo(izquierda - 1)`.\n\n**Micro-reto:**\n1. Definí `suma_rango(bit, izquierda, derecha)`\n2. Construí para `[1, 3, 5, 7]`\n3. Imprimí `suma_rango(bit, 2, 4)`",
+    starter_code: "# def construir_fenwick(arr):\n#     n = len(arr)\n#     bit = [0] * (n + 1)\n#     for i, valor in enumerate(arr, start=1):\n#         j = i\n#         while j <= n:\n#             bit[j] += valor\n#             j += j & -j\n#     return bit\n# def suma_prefijo(bit, i):\n#     total = 0\n#     while i > 0:\n#         total += bit[i]\n#         i -= i & -i\n#     return total\n# def suma_rango(bit, izquierda, derecha):\n#     return suma_prefijo(bit, derecha) - suma_prefijo(bit, izquierda - 1)\n# bit = construir_fenwick([1, 3, 5, 7])\n# resultado = suma_rango(bit, 2, 4)\n# print(resultado)\n",
+    pytest: "def test_fenwick_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 15\n    assert ns['suma_rango'](ns['bit'], 1, 2) == 4\n    assert ns['suma_rango'](ns['bit'], 3, 3) == 5\n    assert capsys.readouterr().out.strip() == '15'\n",
+    hint: "Rango = prefijo(der) - prefijo(izq - 1).",
+    solution_example: "def construir_fenwick(arr):\n    n = len(arr)\n    bit = [0] * (n + 1)\n    for i, valor in enumerate(arr, start=1):\n        j = i\n        while j <= n:\n            bit[j] += valor\n            j += j & -j\n    return bit\n\ndef suma_prefijo(bit, i):\n    total = 0\n    while i > 0:\n        total += bit[i]\n        i -= i & -i\n    return total\n\ndef suma_rango(bit, izquierda, derecha):\n    return suma_prefijo(bit, derecha) - suma_prefijo(bit, izquierda - 1)\n\nbit = construir_fenwick([1, 3, 5, 7])\nresultado = suma_rango(bit, 2, 4)\nprint(resultado)\n",
+    next: Some("py-1503-fenwick-inversions"), show_type_chips: false, micro_step: 1502,
+};
+pub const PY1503_FENWICK_INVERSIONS: CodingStep = CodingStep {
+    id: "py-1503-fenwick-inversions", title: "Fenwick · Contar inversiones", objective: "Contar inversiones de un array usando un BIT.",
+    prompt_md: "**Contar inversiones**\n\nUna inversión es un par `i < j` con `arr[i] > arr[j]`. Recorrés de derecha a izquierda y contás los menores ya vistos con un BIT.\n\n**Micro-reto:**\n1. Definí `contar_inversiones(arr)` (comprime coordenadas con un dict)\n2. Aplicala a `[3, 1, 2]`\n3. Imprimí el resultado",
+    starter_code: "# def contar_inversiones(arr):\n#     ordenados = sorted(set(arr))\n#     rango = {v: i + 1 for i, v in enumerate(ordenados)}\n#     n = len(arr)\n#     bit = [0] * (n + 1)\n#     inversiones = 0\n#     for valor in reversed(arr):\n#         r = rango[valor]\n#         total = 0\n#         i = r - 1\n#         while i > 0:\n#             total += bit[i]\n#             i -= i & -i\n#         inversiones += total\n#         i = r\n#         while i <= n:\n#             bit[i] += 1\n#             i += i & -i\n#     return inversiones\n# resultado = contar_inversiones([3, 1, 2])\n# print(resultado)\n",
+    pytest: "def test_fenwick_inversions(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['contar_inversiones']([2, 1, 3]) == 1\n    assert ns['contar_inversiones']([1, 2, 3]) == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Contá menores ya vistos a la derecha.",
+    solution_example: "def contar_inversiones(arr):\n    ordenados = sorted(set(arr))\n    rango = {v: i + 1 for i, v in enumerate(ordenados)}\n    n = len(arr)\n    bit = [0] * (n + 1)\n    inversiones = 0\n    for valor in reversed(arr):\n        r = rango[valor]\n        total = 0\n        i = r - 1\n        while i > 0:\n            total += bit[i]\n            i -= i & -i\n        inversiones += total\n        i = r\n        while i <= n:\n            bit[i] += 1\n            i += i & -i\n    return inversiones\n\nresultado = contar_inversiones([3, 1, 2])\nprint(resultado)\n",
+    next: Some("py-1504-fenwick-2d"), show_type_chips: false, micro_step: 1503,
+};
+pub const PY1504_FENWICK_2D: CodingStep = CodingStep {
+    id: "py-1504-fenwick-2d", title: "Fenwick · BIT 2D", objective: "Construir un BIT 2D y consultar sumas de submatriz.",
+    prompt_md: "**BIT 2D (conceptual)**\n\nUn BIT 2D extiende el BIT a matrices: anidás dos bucles de `+=`/`-=` de bit menos significativo.\n\n**Micro-reto:**\n1. Definí `construir_2d(matriz)` y `suma_2d(bit, x, y)`\n2. Construí para `[[1, 2], [3, 4]]`\n3. Imprimí `suma_2d(bit, 2, 2)`",
+    starter_code: "# def construir_2d(matriz):\n#     n = len(matriz)\n#     m = len(matriz[0]) if n else 0\n#     bit = [[0] * (m + 1) for _ in range(n + 1)]\n#     for i in range(n):\n#         for j in range(m):\n#             x = i + 1\n#             while x <= n:\n#                 y = j + 1\n#                 while y <= m:\n#                     bit[x][y] += matriz[i][j]\n#                     y += y & -y\n#                 x += x & -x\n#     return bit\n# def suma_2d(bit, x, y):\n#     total = 0\n#     while x > 0:\n#         j = y\n#         while j > 0:\n#             total += bit[x][j]\n#             j -= j & -j\n#         x -= x & -x\n#     return total\n# bit = construir_2d([[1, 2], [3, 4]])\n# resultado = suma_2d(bit, 2, 2)\n# print(resultado)\n",
+    pytest: "def test_fenwick_2d(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert ns['suma_2d'](ns['bit'], 1, 2) == 3\n    assert ns['suma_2d'](ns['bit'], 2, 1) == 4\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "Anidá los bucles con y & -y.",
+    solution_example: "def construir_2d(matriz):\n    n = len(matriz)\n    m = len(matriz[0]) if n else 0\n    bit = [[0] * (m + 1) for _ in range(n + 1)]\n    for i in range(n):\n        for j in range(m):\n            x = i + 1\n            while x <= n:\n                y = j + 1\n                while y <= m:\n                    bit[x][y] += matriz[i][j]\n                    y += y & -y\n                x += x & -x\n    return bit\n\ndef suma_2d(bit, x, y):\n    total = 0\n    while x > 0:\n        j = y\n        while j > 0:\n            total += bit[x][j]\n            j -= j & -j\n        x -= x & -x\n    return total\n\nbit = construir_2d([[1, 2], [3, 4]])\nresultado = suma_2d(bit, 2, 2)\nprint(resultado)\n",
+    next: Some("py-1505-dsu-make"), show_type_chips: false, micro_step: 1504,
+};
+pub const PY1505_DSU_MAKE: CodingStep = CodingStep {
+    id: "py-1505-dsu-make", title: "Union-Find · Crear conjuntos", objective: "Inicializar la estructura de conjuntos disjuntos.",
+    prompt_md: "**Crear conjuntos**\n\nLa estructura Disjoint Set (DSU) arranca con cada elemento como su propio padre: `padre[i] = i`.\n\n**Micro-reto:**\n1. Definí `crear_dsu(n)`\n2. Creá la estructura para 5 elementos\n3. Imprimí la lista de padres",
+    starter_code: "# def crear_dsu(n):\n#     return list(range(n))\n# resultado = crear_dsu(5)\n# print(resultado)\n",
+    pytest: "def test_dsu_make(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 2, 3, 4]\n    assert ns['crear_dsu'](3) == [0, 1, 2]\n    assert capsys.readouterr().out.strip() == str([0, 1, 2, 3, 4])\n",
+    hint: "list(range(n)) inicializa cada padre.",
+    solution_example: "def crear_dsu(n):\n    return list(range(n))\n\nresultado = crear_dsu(5)\nprint(resultado)\n",
+    next: Some("py-1506-dsu-find"), show_type_chips: false, micro_step: 1505,
+};
+pub const PY1506_DSU_FIND: CodingStep = CodingStep {
+    id: "py-1506-dsu-find", title: "Union-Find · Encontrar", objective: "Encontrar el representante (raíz) de un elemento.",
+    prompt_md: "**Encontrar (find)**\n\n`find` sube por los padres hasta llegar a un elemento cuyo padre es él mismo.\n\n**Micro-reto:**\n1. Definí `encontrar(padre, x)`\n2. Armá una cadena `2 -> 1 -> 0`\n3. Imprimí `encontrar(padre, 2)`",
+    starter_code: "# def crear_dsu(n):\n#     return list(range(n))\n# def encontrar(padre, x):\n#     while padre[x] != x:\n#         x = padre[x]\n#     return x\n# padre = crear_dsu(4)\n# padre[1] = 0\n# padre[2] = 1\n# resultado = encontrar(padre, 2)\n# print(resultado)\n",
+    pytest: "def test_dsu_find(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert ns['encontrar'](ns['padre'], 3) == 3\n    assert capsys.readouterr().out.strip() == '0'\n",
+    hint: "Subí mientras padre[x] != x.",
+    solution_example: "def crear_dsu(n):\n    return list(range(n))\n\ndef encontrar(padre, x):\n    while padre[x] != x:\n        x = padre[x]\n    return x\n\npadre = crear_dsu(4)\npadre[1] = 0\npadre[2] = 1\nresultado = encontrar(padre, 2)\nprint(resultado)\n",
+    next: Some("py-1507-dsu-union"), show_type_chips: false, micro_step: 1506,
+};
+pub const PY1507_DSU_UNION: CodingStep = CodingStep {
+    id: "py-1507-dsu-union", title: "Union-Find · Unir", objective: "Unir dos conjuntos enlazando sus raíces.",
+    prompt_md: "**Unir (union)**\n\nPara unir dos conjuntos, enlazás la raíz de uno como hijo de la raíz del otro.\n\n**Micro-reto:**\n1. Definí `unir(padre, a, b)`\n2. Uní 0-1 y 1-2 en una DSU de 4\n3. Imprimí `encontrar(padre, 0)`",
+    starter_code: "# def crear_dsu(n):\n#     return list(range(n))\n# def encontrar(padre, x):\n#     while padre[x] != x:\n#         x = padre[x]\n#     return x\n# def unir(padre, a, b):\n#     ra, rb = encontrar(padre, a), encontrar(padre, b)\n#     if ra != rb:\n#         padre[ra] = rb\n# padre = crear_dsu(4)\n# unir(padre, 0, 1)\n# unir(padre, 1, 2)\n# resultado = encontrar(padre, 0)\n# print(resultado)\n",
+    pytest: "def test_dsu_union(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['encontrar'](ns['padre'], 0) == ns['encontrar'](ns['padre'], 2)\n    assert ns['encontrar'](ns['padre'], 3) == 3\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Enlazá solo si las raíces difieren.",
+    solution_example: "def crear_dsu(n):\n    return list(range(n))\n\ndef encontrar(padre, x):\n    while padre[x] != x:\n        x = padre[x]\n    return x\n\ndef unir(padre, a, b):\n    ra, rb = encontrar(padre, a), encontrar(padre, b)\n    if ra != rb:\n        padre[ra] = rb\n\npadre = crear_dsu(4)\nunir(padre, 0, 1)\nunir(padre, 1, 2)\nresultado = encontrar(padre, 0)\nprint(resultado)\n",
+    next: Some("py-1508-dsu-path-compression"), show_type_chips: false, micro_step: 1507,
+};
+pub const PY1508_DSU_PATH_COMPRESSION: CodingStep = CodingStep {
+    id: "py-1508-dsu-path-compression", title: "Union-Find · Path compression", objective: "Aplanar la cadena de padres durante find.",
+    prompt_md: "**Path compression**\n\nAl hacer `find`, apuntás cada nodo directo a la raíz para aplanar el árbol y acelerar futuras búsquedas.\n\n**Micro-reto:**\n1. Definí `encontrar_comprimiendo(padre, x)` recursiva\n2. Armá una cadena `3 -> 2 -> 1 -> 0`\n3. Imprimí `encontrar_comprimiendo(padre, 3)`",
+    starter_code: "# def encontrar_comprimiendo(padre, x):\n#     if padre[x] != x:\n#         padre[x] = encontrar_comprimiendo(padre, padre[x])\n#     return padre[x]\n# padre = [0, 0, 1, 2]\n# resultado = encontrar_comprimiendo(padre, 3)\n# print(resultado)\n",
+    pytest: "def test_dsu_path_compression(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert ns['padre'][3] == 0\n    assert capsys.readouterr().out.strip() == '0'\n",
+    hint: "padre[x] = find(padre[x]).",
+    solution_example: "def encontrar_comprimiendo(padre, x):\n    if padre[x] != x:\n        padre[x] = encontrar_comprimiendo(padre, padre[x])\n    return padre[x]\n\npadre = [0, 0, 1, 2]\nresultado = encontrar_comprimiendo(padre, 3)\nprint(resultado)\n",
+    next: Some("py-1509-dsu-union-rank"), show_type_chips: false, micro_step: 1508,
+};
+pub const PY1509_DSU_UNION_RANK: CodingStep = CodingStep {
+    id: "py-1509-dsu-union-rank", title: "Union-Find · Union by rank", objective: "Unir por rango para mantener el árbol balanceado.",
+    prompt_md: "**Union by rank**\n\nUnís el árbol de menor rango bajo el de mayor rango. Si empatan, subís el rango de la nueva raíz.\n\n**Micro-reto:**\n1. Definí `unir_por_rango(padre, rango, a, b)`\n2. Uní 0-1, 2-3 y luego 0-2 en una DSU de 4\n3. Imprimí `encontrar(padre, 3)`",
+    starter_code: "# def crear_dsu(n):\n#     return list(range(n))\n# def encontrar(padre, x):\n#     while padre[x] != x:\n#         x = padre[x]\n#     return x\n# def unir_por_rango(padre, rango, a, b):\n#     ra, rb = encontrar(padre, a), encontrar(padre, b)\n#     if ra == rb:\n#         return\n#     if rango[ra] < rango[rb]:\n#         padre[ra] = rb\n#     elif rango[ra] > rango[rb]:\n#         padre[rb] = ra\n#     else:\n#         padre[rb] = ra\n#         rango[ra] += 1\n# padre = crear_dsu(4)\n# rango = [0] * 4\n# unir_por_rango(padre, rango, 0, 1)\n# unir_por_rango(padre, rango, 2, 3)\n# unir_por_rango(padre, rango, 0, 2)\n# resultado = encontrar(padre, 3)\n# print(resultado)\n",
+    pytest: "def test_dsu_union_rank(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert ns['rango'][0] == 2\n    assert capsys.readouterr().out.strip() == '0'\n",
+    hint: "Colgá el rango menor del mayor.",
+    solution_example: "def crear_dsu(n):\n    return list(range(n))\n\ndef encontrar(padre, x):\n    while padre[x] != x:\n        x = padre[x]\n    return x\n\ndef unir_por_rango(padre, rango, a, b):\n    ra, rb = encontrar(padre, a), encontrar(padre, b)\n    if ra == rb:\n        return\n    if rango[ra] < rango[rb]:\n        padre[ra] = rb\n    elif rango[ra] > rango[rb]:\n        padre[rb] = ra\n    else:\n        padre[rb] = ra\n        rango[ra] += 1\n\npadre = crear_dsu(4)\nrango = [0] * 4\nunir_por_rango(padre, rango, 0, 1)\nunir_por_rango(padre, rango, 2, 3)\nunir_por_rango(padre, rango, 0, 2)\nresultado = encontrar(padre, 3)\nprint(resultado)\n",
+    next: Some("py-1510-dsu-components"), show_type_chips: false, micro_step: 1509,
+};
+pub const PY1510_DSU_COMPONENTS: CodingStep = CodingStep {
+    id: "py-1510-dsu-components", title: "Union-Find · Componentes", objective: "Contar la cantidad de componentes conectados.",
+    prompt_md: "**Componentes conectados**\n\nTras las uniones, el número de componentes es la cantidad de raíces distintas.\n\n**Micro-reto:**\n1. Definí `contar_componentes(padre, n)`\n2. Uní 0-1-2 y 3-4 en una DSU de 5\n3. Imprimí el número de componentes",
+    starter_code: "# def crear_dsu(n):\n#     return list(range(n))\n# def encontrar(padre, x):\n#     while padre[x] != x:\n#         x = padre[x]\n#     return x\n# def unir(padre, a, b):\n#     ra, rb = encontrar(padre, a), encontrar(padre, b)\n#     if ra != rb:\n#         padre[ra] = rb\n# def contar_componentes(padre, n):\n#     raices = set()\n#     for i in range(n):\n#         raices.add(encontrar(padre, i))\n#     return len(raices)\n# padre = crear_dsu(5)\n# unir(padre, 0, 1)\n# unir(padre, 1, 2)\n# unir(padre, 3, 4)\n# resultado = contar_componentes(padre, 5)\n# print(resultado)\n",
+    pytest: "def test_dsu_components(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['contar_componentes'](ns['crear_dsu'](3), 3) == 3\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Contá raíces únicas con un set.",
+    solution_example: "def crear_dsu(n):\n    return list(range(n))\n\ndef encontrar(padre, x):\n    while padre[x] != x:\n        x = padre[x]\n    return x\n\ndef unir(padre, a, b):\n    ra, rb = encontrar(padre, a), encontrar(padre, b)\n    if ra != rb:\n        padre[ra] = rb\n\ndef contar_componentes(padre, n):\n    raices = set()\n    for i in range(n):\n        raices.add(encontrar(padre, i))\n    return len(raices)\n\npadre = crear_dsu(5)\nunir(padre, 0, 1)\nunir(padre, 1, 2)\nunir(padre, 3, 4)\nresultado = contar_componentes(padre, 5)\nprint(resultado)\n",
+    next: Some("py-1511-deque-basic"), show_type_chips: false, micro_step: 1510,
+};
+pub const PY1511_DEQUE_BASIC: CodingStep = CodingStep {
+    id: "py-1511-deque-basic", title: "Deque · Básico", objective: "Crear una cola doble (deque) y operar con ella.",
+    prompt_md: "**Deque básico**\n\n`collections.deque` es una cola doble: permite agregar y quitar de ambos extremos en O(1).\n\n**Micro-reto:**\n1. Importá `deque` de `collections`\n2. Creá `cola = deque([1, 2, 3])`\n3. Imprimí la lista de la cola",
+    starter_code: "# from collections import deque\n# cola = deque([1, 2, 3])\n# resultado = list(cola)\n# print(resultado)\n",
+    pytest: "def test_deque_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert len(ns['cola']) == 3\n    assert capsys.readouterr().out.strip() == str([1, 2, 3])\n",
+    hint: "deque acepta un iterable.",
+    solution_example: "from collections import deque\n\ncola = deque([1, 2, 3])\nresultado = list(cola)\nprint(resultado)\n",
+    next: Some("py-1512-deque-push-pop"), show_type_chips: false, micro_step: 1511,
+};
+pub const PY1512_DEQUE_PUSH_POP: CodingStep = CodingStep {
+    id: "py-1512-deque-push-pop", title: "Deque · Push/Pop ambos lados", objective: "Agregar y quitar de ambos extremos de la deque.",
+    prompt_md: "**Push y pop en ambos lados**\n\n`append`/`pop` operan por la derecha; `appendleft`/`popleft` por la izquierda.\n\n**Micro-reto:**\n1. Definí `operar_deque()`\n2. Agregá por ambos lados y quitá por ambos lados\n3. Imprimí la lista resultante",
+    starter_code: "# from collections import deque\n# def operar_deque():\n#     cola = deque()\n#     cola.append(1)\n#     cola.appendleft(0)\n#     cola.append(2)\n#     derecha = cola.pop()\n#     izquierda = cola.popleft()\n#     return list(cola), derecha, izquierda\n# resultado, derecha, izquierda = operar_deque()\n# print(resultado)\n",
+    pytest: "def test_deque_push_pop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1]\n    assert ns['derecha'] == 2\n    assert ns['izquierda'] == 0\n    assert capsys.readouterr().out.strip() == str([1])\n",
+    hint: "append/pop derecha; appendleft/popleft izquierda.",
+    solution_example: "from collections import deque\n\ndef operar_deque():\n    cola = deque()\n    cola.append(1)\n    cola.appendleft(0)\n    cola.append(2)\n    derecha = cola.pop()\n    izquierda = cola.popleft()\n    return list(cola), derecha, izquierda\n\nresultado, derecha, izquierda = operar_deque()\nprint(resultado)\n",
+    next: Some("py-1513-deque-rotate"), show_type_chips: false, micro_step: 1512,
+};
+pub const PY1513_DEQUE_ROTATE: CodingStep = CodingStep {
+    id: "py-1513-deque-rotate", title: "Deque · Rotar", objective: "Rotar los elementos de la deque.",
+    prompt_md: "**Rotar**\n\n`rotate(n)` mueve los elementos `n` posiciones. Positivo rota a la derecha, negativo a la izquierda.\n\n**Micro-reto:**\n1. Creá `cola = deque([1, 2, 3, 4])`\n2. Rotala 2 posiciones a la derecha\n3. Imprimí la lista resultante",
+    starter_code: "# from collections import deque\n# cola = deque([1, 2, 3, 4])\n# cola.rotate(2)\n# resultado = list(cola)\n# print(resultado)\n",
+    pytest: "def test_deque_rotate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 4, 1, 2]\n    ns['cola'].rotate(-2)\n    assert list(ns['cola']) == [1, 2, 3, 4]\n    assert capsys.readouterr().out.strip() == str([3, 4, 1, 2])\n",
+    hint: "rotate(2) rota dos a la derecha.",
+    solution_example: "from collections import deque\n\ncola = deque([1, 2, 3, 4])\ncola.rotate(2)\nresultado = list(cola)\nprint(resultado)\n",
+    next: Some("py-1514-deque-sliding"), show_type_chips: false, micro_step: 1513,
+};
+pub const PY1514_DEQUE_SLIDING: CodingStep = CodingStep {
+    id: "py-1514-deque-sliding", title: "Deque · Ventana deslizante", objective: "Calcular sumas de ventanas deslizantes con una deque.",
+    prompt_md: "**Ventana deslizante**\n\nMantenés una ventana de tamaño `k` en una deque, sumando al entrar y restando al salir.\n\n**Micro-reto:**\n1. Definí `sumas_ventana(arr, k)`\n2. Aplicala a `[1, 2, 3, 4, 5]` con `k=3`\n3. Imprimí la lista de sumas",
+    starter_code: "# from collections import deque\n# def sumas_ventana(arr, k):\n#     cola = deque()\n#     resultado = []\n#     suma = 0\n#     for v in arr:\n#         cola.append(v)\n#         suma += v\n#         if len(cola) > k:\n#             suma -= cola.popleft()\n#         if len(cola) == k:\n#             resultado.append(suma)\n#     return resultado\n# resultado = sumas_ventana([1, 2, 3, 4, 5], 3)\n# print(resultado)\n",
+    pytest: "def test_deque_sliding(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [6, 9, 12]\n    assert ns['sumas_ventana']([1, 1, 1, 1], 2) == [2, 2, 2]\n    assert capsys.readouterr().out.strip() == str([6, 9, 12])\n",
+    hint: "Restá el que sale de la ventana.",
+    solution_example: "from collections import deque\n\ndef sumas_ventana(arr, k):\n    cola = deque()\n    resultado = []\n    suma = 0\n    for v in arr:\n        cola.append(v)\n        suma += v\n        if len(cola) > k:\n            suma -= cola.popleft()\n        if len(cola) == k:\n            resultado.append(suma)\n    return resultado\n\nresultado = sumas_ventana([1, 2, 3, 4, 5], 3)\nprint(resultado)\n",
+    next: Some("py-1515-deque-window-max"), show_type_chips: false, micro_step: 1514,
+};
+pub const PY1515_DEQUE_WINDOW_MAX: CodingStep = CodingStep {
+    id: "py-1515-deque-window-max", title: "Deque · Máximo de ventana", objective: "Calcular el máximo de cada ventana con una deque monótona.",
+    prompt_md: "**Máximo de ventana**\n\nUna deque monótona decreciente guarda índices. Al entrar un valor, descartás los menores; al salir, descartás los fuera de ventana.\n\n**Micro-reto:**\n1. Definí `maximos_ventana(arr, k)`\n2. Aplicala a `[1, 3, -1, -3, 5, 3, 6, 7]` con `k=3`\n3. Imprimí la lista de máximos",
+    starter_code: "# from collections import deque\n# def maximos_ventana(arr, k):\n#     cola = deque()\n#     resultado = []\n#     for i, v in enumerate(arr):\n#         while cola and arr[cola[-1]] <= v:\n#             cola.pop()\n#         cola.append(i)\n#         if cola[0] <= i - k:\n#             cola.popleft()\n#         if i >= k - 1:\n#             resultado.append(arr[cola[0]])\n#     return resultado\n# resultado = maximos_ventana([1, 3, -1, -3, 5, 3, 6, 7], 3)\n# print(resultado)\n",
+    pytest: "def test_deque_window_max(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 3, 5, 5, 6, 7]\n    assert ns['maximos_ventana']([1, -1], 1) == [1, -1]\n    assert capsys.readouterr().out.strip() == str([3, 3, 5, 5, 6, 7])\n",
+    hint: "Mantené la deque decreciente.",
+    solution_example: "from collections import deque\n\ndef maximos_ventana(arr, k):\n    cola = deque()\n    resultado = []\n    for i, v in enumerate(arr):\n        while cola and arr[cola[-1]] <= v:\n            cola.pop()\n        cola.append(i)\n        if cola[0] <= i - k:\n            cola.popleft()\n        if i >= k - 1:\n            resultado.append(arr[cola[0]])\n    return resultado\n\nresultado = maximos_ventana([1, 3, -1, -3, 5, 3, 6, 7], 3)\nprint(resultado)\n",
+    next: Some("py-1516-deque-stack-queue"), show_type_chips: false, micro_step: 1515,
+};
+pub const PY1516_DEQUE_STACK_QUEUE: CodingStep = CodingStep {
+    id: "py-1516-deque-stack-queue", title: "Deque · Cola y pila", objective: "Usar la deque como pila (LIFO) y como cola (FIFO).",
+    prompt_md: "**Deque como pila y cola**\n\nLa deque sirve de pila (LIFO) con `append`/`pop` y de cola (FIFO) con `append`/`popleft`.\n\n**Micro-reto:**\n1. Definí `usar_como_pila(secuencia)` y `usar_como_cola(secuencia)`\n2. Aplicalas a `[1, 2, 3]`\n3. Imprimí el resultado de la pila",
+    starter_code: "# from collections import deque\n# def usar_como_pila(secuencia):\n#     pila = deque()\n#     for x in secuencia:\n#         pila.append(x)\n#     salida = []\n#     while pila:\n#         salida.append(pila.pop())\n#     return salida\n# def usar_como_cola(secuencia):\n#     cola = deque()\n#     for x in secuencia:\n#         cola.append(x)\n#     salida = []\n#     while cola:\n#         salida.append(cola.popleft())\n#     return salida\n# resultado = usar_como_pila([1, 2, 3])\n# print(resultado)\n",
+    pytest: "def test_deque_stack_queue(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 2, 1]\n    assert ns['usar_como_cola']([1, 2, 3]) == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str([3, 2, 1])\n",
+    hint: "Pila: pop(); cola: popleft().",
+    solution_example: "from collections import deque\n\ndef usar_como_pila(secuencia):\n    pila = deque()\n    for x in secuencia:\n        pila.append(x)\n    salida = []\n    while pila:\n        salida.append(pila.pop())\n    return salida\n\ndef usar_como_cola(secuencia):\n    cola = deque()\n    for x in secuencia:\n        cola.append(x)\n    salida = []\n    while cola:\n        salida.append(cola.popleft())\n    return salida\n\nresultado = usar_como_pila([1, 2, 3])\nprint(resultado)\n",
+    next: Some("py-1517-sort-merge"), show_type_chips: false, micro_step: 1516,
+};
+pub const PY1517_SORT_MERGE: CodingStep = CodingStep {
+    id: "py-1517-sort-merge", title: "Orden · Merge sort", objective: "Ordenar con merge sort (divide y vencerás).",
+    prompt_md: "**Merge sort**\n\nDividís el array en mitades, las ordenás recursivamente y fusionás las mitades ordenadas.\n\n**Micro-reto:**\n1. Definí `merge_sort(arr)` y `fusionar(a, b)`\n2. Aplicala a `[38, 27, 43, 3, 9, 82, 10]`\n3. Imprimí el resultado",
+    starter_code: "# def fusionar(a, b):\n#     resultado = []\n#     i = j = 0\n#     while i < len(a) and j < len(b):\n#         if a[i] <= b[j]:\n#             resultado.append(a[i])\n#             i += 1\n#         else:\n#             resultado.append(b[j])\n#             j += 1\n#     resultado.extend(a[i:])\n#     resultado.extend(b[j:])\n#     return resultado\n# def merge_sort(arr):\n#     if len(arr) <= 1:\n#         return arr\n#     medio = len(arr) // 2\n#     return fusionar(merge_sort(arr[:medio]), merge_sort(arr[medio:]))\n# resultado = merge_sort([38, 27, 43, 3, 9, 82, 10])\n# print(resultado)\n",
+    pytest: "def test_sort_merge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 9, 10, 27, 38, 43, 82]\n    assert ns['merge_sort']([5, 1, 4]) == [1, 4, 5]\n    assert ns['merge_sort']([]) == []\n    assert capsys.readouterr().out.strip() == str([3, 9, 10, 27, 38, 43, 82])\n",
+    hint: "Fusioná mitades ya ordenadas.",
+    solution_example: "def fusionar(a, b):\n    resultado = []\n    i = j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            resultado.append(a[i])\n            i += 1\n        else:\n            resultado.append(b[j])\n            j += 1\n    resultado.extend(a[i:])\n    resultado.extend(b[j:])\n    return resultado\n\ndef merge_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    medio = len(arr) // 2\n    return fusionar(merge_sort(arr[:medio]), merge_sort(arr[medio:]))\n\nresultado = merge_sort([38, 27, 43, 3, 9, 82, 10])\nprint(resultado)\n",
+    next: Some("py-1518-sort-quickselect"), show_type_chips: false, micro_step: 1517,
+};
+pub const PY1518_SORT_QUICKSELECT: CodingStep = CodingStep {
+    id: "py-1518-sort-quickselect", title: "Orden · Quickselect", objective: "Encontrar el k-ésimo menor elemento con quickselect.",
+    prompt_md: "**Quickselect**\n\nParticionás en menores, iguales y mayores que un pivote, y seguís solo en la partición que contiene el índice `k`.\n\n**Micro-reto:**\n1. Definí `quickselect(arr, k)` con `k` en base 0\n2. Aplicala a `[7, 10, 4, 3, 20, 15]` con `k=3`\n3. Imprimí el resultado",
+    starter_code: "# def quickselect(arr, k):\n#     if len(arr) == 1:\n#         return arr[0]\n#     pivote = arr[len(arr) // 2]\n#     menores = [x for x in arr if x < pivote]\n#     iguales = [x for x in arr if x == pivote]\n#     mayores = [x for x in arr if x > pivote]\n#     if k < len(menores):\n#         return quickselect(menores, k)\n#     if k < len(menores) + len(iguales):\n#         return pivote\n#     return quickselect(mayores, k - len(menores) - len(iguales))\n# resultado = quickselect([7, 10, 4, 3, 20, 15], 3)\n# print(resultado)\n",
+    pytest: "def test_sort_quickselect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert ns['quickselect']([7, 10, 4, 3, 20, 15], 0) == 3\n    assert ns['quickselect']([5], 0) == 5\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "Seguí solo en la partición con k.",
+    solution_example: "def quickselect(arr, k):\n    if len(arr) == 1:\n        return arr[0]\n    pivote = arr[len(arr) // 2]\n    menores = [x for x in arr if x < pivote]\n    iguales = [x for x in arr if x == pivote]\n    mayores = [x for x in arr if x > pivote]\n    if k < len(menores):\n        return quickselect(menores, k)\n    if k < len(menores) + len(iguales):\n        return pivote\n    return quickselect(mayores, k - len(menores) - len(iguales))\n\nresultado = quickselect([7, 10, 4, 3, 20, 15], 3)\nprint(resultado)\n",
+    next: Some("py-1519-sort-rotated"), show_type_chips: false, micro_step: 1518,
+};
+pub const PY1519_SORT_ROTATED: CodingStep = CodingStep {
+    id: "py-1519-sort-rotated", title: "Orden · Búsqueda en rotado", objective: "Buscar un objetivo en un array ordenado y rotado.",
+    prompt_md: "**Búsqueda en array rotado**\n\nUna búsqueda binaria modificada detecta qué mitad está ordenada y decide en cuál buscar.\n\n**Micro-reto:**\n1. Definí `buscar_en_rotado(arr, objetivo)` que devuelva el índice o `-1`\n2. Aplicala a `[4, 5, 6, 7, 0, 1, 2]` buscando `0`\n3. Imprimí el resultado",
+    starter_code: "# def buscar_en_rotado(arr, objetivo):\n#     izquierda, derecha = 0, len(arr) - 1\n#     while izquierda <= derecha:\n#         medio = (izquierda + derecha) // 2\n#         if arr[medio] == objetivo:\n#             return medio\n#         if arr[izquierda] <= arr[medio]:\n#             if arr[izquierda] <= objetivo < arr[medio]:\n#                 derecha = medio - 1\n#             else:\n#                 izquierda = medio + 1\n#         else:\n#             if arr[medio] < objetivo <= arr[derecha]:\n#                 izquierda = medio + 1\n#             else:\n#                 derecha = medio - 1\n#     return -1\n# resultado = buscar_en_rotado([4, 5, 6, 7, 0, 1, 2], 0)\n# print(resultado)\n",
+    pytest: "def test_sort_rotated(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert ns['buscar_en_rotado']([4, 5, 6, 7, 0, 1, 2], 3) == -1\n    assert ns['buscar_en_rotado']([1, 3], 3) == 1\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "Detectá qué mitad está ordenada.",
+    solution_example: "def buscar_en_rotado(arr, objetivo):\n    izquierda, derecha = 0, len(arr) - 1\n    while izquierda <= derecha:\n        medio = (izquierda + derecha) // 2\n        if arr[medio] == objetivo:\n            return medio\n        if arr[izquierda] <= arr[medio]:\n            if arr[izquierda] <= objetivo < arr[medio]:\n                derecha = medio - 1\n            else:\n                izquierda = medio + 1\n        else:\n            if arr[medio] < objetivo <= arr[derecha]:\n                izquierda = medio + 1\n            else:\n                derecha = medio - 1\n    return -1\n\nresultado = buscar_en_rotado([4, 5, 6, 7, 0, 1, 2], 0)\nprint(resultado)\n",
+    next: Some("py-1520-sort-bisect"), show_type_chips: false, micro_step: 1519,
+};
+pub const PY1520_SORT_BISECT: CodingStep = CodingStep {
+    id: "py-1520-sort-bisect", title: "Orden · bisect", objective: "Insertar y localizar elementos en una lista ordenada con bisect.",
+    prompt_md: "**bisect**\n\nEl módulo `bisect` mantiene listas ordenadas: `insort` inserta en su lugar y `bisect_left` da la posición.\n\n**Micro-reto:**\n1. Importá `bisect`\n2. Insertá `4` en `[1, 3, 5]` y calculá la posición de `3`\n3. Imprimí la lista resultante",
+    starter_code: "# import bisect\n# lista = [1, 3, 5]\n# bisect.insort(lista, 4)\n# posicion = bisect.bisect_left(lista, 3)\n# resultado = lista\n# print(resultado)\n",
+    pytest: "def test_sort_bisect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 3, 4, 5]\n    assert ns['posicion'] == 1\n    assert capsys.readouterr().out.strip() == str([1, 3, 4, 5])\n",
+    hint: "insort inserta manteniendo el orden.",
+    solution_example: "import bisect\n\nlista = [1, 3, 5]\nbisect.insort(lista, 4)\nposicion = bisect.bisect_left(lista, 3)\nresultado = lista\nprint(resultado)\n",
+    next: Some("py-1521-sort-key"), show_type_chips: false, micro_step: 1520,
+};
+pub const PY1521_SORT_KEY: CodingStep = CodingStep {
+    id: "py-1521-sort-key", title: "Orden · Ordenar con key", objective: "Ordenar usando una función clave.",
+    prompt_md: "**Ordenar con key**\n\n`sorted` acepta `key`, una función que transforma cada elemento antes de comparar.\n\n**Micro-reto:**\n1. Definí `ordenar_por_clave(items, clave)`\n2. Ordená `[('b', 2), ('a', 3), ('c', 1)]` por el segundo elemento\n3. Imprimí el resultado",
+    starter_code: "# def ordenar_por_clave(items, clave):\n#     return sorted(items, key=clave)\n# resultado = ordenar_por_clave([('b', 2), ('a', 3), ('c', 1)], lambda x: x[1])\n# print(resultado)\n",
+    pytest: "def test_sort_key(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('c', 1), ('b', 2), ('a', 3)]\n    assert ns['ordenar_por_clave']([(3,), (1,)], lambda x: x[0]) == [(1,), (3,)]\n    assert capsys.readouterr().out.strip() == str([('c', 1), ('b', 2), ('a', 3)])\n",
+    hint: "key transforma antes de comparar.",
+    solution_example: "def ordenar_por_clave(items, clave):\n    return sorted(items, key=clave)\n\nresultado = ordenar_por_clave([('b', 2), ('a', 3), ('c', 1)], lambda x: x[1])\nprint(resultado)\n",
+    next: Some("py-1522-sort-topk"), show_type_chips: false, micro_step: 1521,
+};
+pub const PY1522_SORT_TOPK: CodingStep = CodingStep {
+    id: "py-1522-sort-topk", title: "Orden · Top-k", objective: "Obtener los k mayores con heap y con sort.",
+    prompt_md: "**Top-k**\n\nPodés obtener los k mayores con `heapq.nlargest` o con `sorted` y un slice. Compará ambos.\n\n**Micro-reto:**\n1. Definí `topk_heap(arr, k)` y `topk_sort(arr, k)`\n2. Aplicalas a `[3, 1, 4, 1, 5, 9, 2, 6]` con `k=3`\n3. Imprimí `topk_heap`",
+    starter_code: "# import heapq\n# def topk_heap(arr, k):\n#     return heapq.nlargest(k, arr)\n# def topk_sort(arr, k):\n#     return sorted(arr, reverse=True)[:k]\n# resultado = topk_heap([3, 1, 4, 1, 5, 9, 2, 6], 3)\n# print(resultado)\n",
+    pytest: "def test_sort_topk(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [9, 6, 5]\n    assert ns['topk_sort']([3, 1, 4, 1, 5, 9, 2, 6], 3) == [9, 6, 5]\n    assert capsys.readouterr().out.strip() == str([9, 6, 5])\n",
+    hint: "nlargest o sorted desc + slice.",
+    solution_example: "import heapq\n\ndef topk_heap(arr, k):\n    return heapq.nlargest(k, arr)\n\ndef topk_sort(arr, k):\n    return sorted(arr, reverse=True)[:k]\n\nresultado = topk_heap([3, 1, 4, 1, 5, 9, 2, 6], 3)\nprint(resultado)\n",
+    next: Some("py-1523-hash-dict"), show_type_chips: false, micro_step: 1522,
+};
+pub const PY1523_HASH_DICT: CodingStep = CodingStep {
+    id: "py-1523-hash-dict", title: "Hashing · dict", objective: "Usar las operaciones básicas de un dict.",
+    prompt_md: "**dict**\n\nUn dict mapea claves a valores con búsqueda en O(1) promedio. `get`, `in` y asignación son sus operaciones clave.\n\n**Micro-reto:**\n1. Creá `mapa = {'a': 1, 'b': 2}`\n2. Agregá `c -> 3` y consultá `a` con `get`\n3. Imprimí el mapa",
+    starter_code: "# mapa = {'a': 1, 'b': 2}\n# mapa['c'] = 3\n# valor = mapa.get('a')\n# resultado = mapa\n# print(resultado)\n",
+    pytest: "def test_hash_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 1, 'b': 2, 'c': 3}\n    assert ns['valor'] == 1\n    assert capsys.readouterr().out.strip() == str({'a': 1, 'b': 2, 'c': 3})\n",
+    hint: "get('a') devuelve el valor o default.",
+    solution_example: "mapa = {'a': 1, 'b': 2}\nmapa['c'] = 3\nvalor = mapa.get('a')\nresultado = mapa\nprint(resultado)\n",
+    next: Some("py-1524-hash-defaultdict"), show_type_chips: false, micro_step: 1523,
+};
+pub const PY1524_HASH_DEFAULTDICT: CodingStep = CodingStep {
+    id: "py-1524-hash-defaultdict", title: "Hashing · defaultdict", objective: "Agrupar elementos con un defaultdict.",
+    prompt_md: "**defaultdict**\n\n`defaultdict(list)` crea una lista vacía automáticamente al acceder a una clave ausente.\n\n**Micro-reto:**\n1. Definí `agrupar_letras(palabras)` que agrupe por inicial\n2. Aplicala a `['ana', 'al', 'bala', 'beso']`\n3. Imprimí el resultado",
+    starter_code: "# from collections import defaultdict\n# def agrupar_letras(palabras):\n#     grupos = defaultdict(list)\n#     for palabra in palabras:\n#         grupos[palabra[0]].append(palabra)\n#     return dict(grupos)\n# resultado = agrupar_letras(['ana', 'al', 'bala', 'beso'])\n# print(resultado)\n",
+    pytest: "def test_hash_defaultdict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': ['ana', 'al'], 'b': ['bala', 'beso']}\n    assert ns['agrupar_letras'](['x']) == {'x': ['x']}\n    assert capsys.readouterr().out.strip() == str({'a': ['ana', 'al'], 'b': ['bala', 'beso']})\n",
+    hint: "grupos[palabra[0]].append(...).",
+    solution_example: "from collections import defaultdict\n\ndef agrupar_letras(palabras):\n    grupos = defaultdict(list)\n    for palabra in palabras:\n        grupos[palabra[0]].append(palabra)\n    return dict(grupos)\n\nresultado = agrupar_letras(['ana', 'al', 'bala', 'beso'])\nprint(resultado)\n",
+    next: Some("py-1525-hash-frequency"), show_type_chips: false, micro_step: 1524,
+};
+pub const PY1525_HASH_FREQUENCY: CodingStep = CodingStep {
+    id: "py-1525-hash-frequency", title: "Hashing · Frecuencias", objective: "Contar frecuencias de caracteres o elementos.",
+    prompt_md: "**Contar frecuencias**\n\nContás las apariciones con un dict: `freq[item] = freq.get(item, 0) + 1`.\n\n**Micro-reto:**\n1. Definí `contar_frecuencias(secuencia)`\n2. Aplicala a `'abracadabra'`\n3. Imprimí el resultado",
+    starter_code: "# def contar_frecuencias(secuencia):\n#     frecuencias = {}\n#     for item in secuencia:\n#         frecuencias[item] = frecuencias.get(item, 0) + 1\n#     return frecuencias\n# resultado = contar_frecuencias('abracadabra')\n# print(resultado)\n",
+    pytest: "def test_hash_frequency(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 5, 'b': 2, 'r': 2, 'c': 1, 'd': 1}\n    assert ns['contar_frecuencias']('aa') == {'a': 2}\n    assert capsys.readouterr().out.strip() == str({'a': 5, 'b': 2, 'r': 2, 'c': 1, 'd': 1})\n",
+    hint: "get(item, 0) + 1 acumula.",
+    solution_example: "def contar_frecuencias(secuencia):\n    frecuencias = {}\n    for item in secuencia:\n        frecuencias[item] = frecuencias.get(item, 0) + 1\n    return frecuencias\n\nresultado = contar_frecuencias('abracadabra')\nprint(resultado)\n",
+    next: Some("py-1526-hash-groupby"), show_type_chips: false, micro_step: 1525,
+};
+pub const PY1526_HASH_GROUPBY: CodingStep = CodingStep {
+    id: "py-1526-hash-groupby", title: "Hashing · Agrupar consecutivos", objective: "Agrupar elementos consecutivos con itertools.groupby.",
+    prompt_md: "**groupby**\n\n`itertools.groupby` agrupa elementos consecutivos idénticos y devuelve `(clave, iterador)`.\n\n**Micro-reto:**\n1. Definí `agrupar_consecutivos(secuencia)`\n2. Aplicala a `'aabbbcc'`\n3. Imprimí el resultado",
+    starter_code: "# from itertools import groupby\n# def agrupar_consecutivos(secuencia):\n#     return [(k, list(g)) for k, g in groupby(secuencia)]\n# resultado = agrupar_consecutivos('aabbbcc')\n# print(resultado)\n",
+    pytest: "def test_hash_groupby(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', ['a', 'a']), ('b', ['b', 'b', 'b']), ('c', ['c', 'c'])]\n    assert ns['agrupar_consecutivos']([1, 1, 2]) == [(1, [1, 1]), (2, [2])]\n    assert capsys.readouterr().out.strip() == str([('a', ['a', 'a']), ('b', ['b', 'b', 'b']), ('c', ['c', 'c'])])\n",
+    hint: "Convertí cada grupo con list(g).",
+    solution_example: "from itertools import groupby\n\ndef agrupar_consecutivos(secuencia):\n    return [(k, list(g)) for k, g in groupby(secuencia)]\n\nresultado = agrupar_consecutivos('aabbbcc')\nprint(resultado)\n",
+    next: Some("py-1527-hash-collision"), show_type_chips: false, micro_step: 1526,
+};
+pub const PY1527_HASH_COLLISION: CodingStep = CodingStep {
+    id: "py-1527-hash-collision", title: "Hashing · Colisiones", objective: "Manejar colisiones con encadenamiento en una tabla hash propia.",
+    prompt_md: "**Colisiones**\n\nDos claves pueden caer en el mismo bucket. El encadenamiento guarda una lista de pares por bucket.\n\n**Micro-reto:**\n1. Definí `hash_simple(clave, tamaño)` y las funciones de insertar/obtener\n2. Insertá `abc` y `cba` (misma suma) en una tabla de 5\n3. Imprimí `obtener_con_colision(tabla, 5, 'cba')`",
+    starter_code: "# def hash_simple(clave, tamaño):\n#     return sum(ord(c) for c in clave) % tamaño\n# def insertar_con_colision(tabla, tamaño, clave, valor):\n#     indice = hash_simple(clave, tamaño)\n#     tabla[indice].append((clave, valor))\n# def obtener_con_colision(tabla, tamaño, clave):\n#     indice = hash_simple(clave, tamaño)\n#     for k, v in tabla[indice]:\n#         if k == clave:\n#             return v\n#     return None\n# tabla = [[] for _ in range(5)]\n# insertar_con_colision(tabla, 5, 'abc', 1)\n# insertar_con_colision(tabla, 5, 'cba', 2)\n# resultado = obtener_con_colision(tabla, 5, 'cba')\n# print(resultado)\n",
+    pytest: "def test_hash_collision(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['hash_simple']('abc', 5) == ns['hash_simple']('cba', 5)\n    assert ns['obtener_con_colision'](ns['tabla'], 5, 'abc') == 1\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Recorré la lista del bucket buscando la clave.",
+    solution_example: "def hash_simple(clave, tamaño):\n    return sum(ord(c) for c in clave) % tamaño\n\ndef insertar_con_colision(tabla, tamaño, clave, valor):\n    indice = hash_simple(clave, tamaño)\n    tabla[indice].append((clave, valor))\n\ndef obtener_con_colision(tabla, tamaño, clave):\n    indice = hash_simple(clave, tamaño)\n    for k, v in tabla[indice]:\n        if k == clave:\n            return v\n    return None\n\ntabla = [[] for _ in range(5)]\ninsertar_con_colision(tabla, 5, 'abc', 1)\ninsertar_con_colision(tabla, 5, 'cba', 2)\nresultado = obtener_con_colision(tabla, 5, 'cba')\nprint(resultado)\n",
+    next: Some("py-1528-hash-ordered"), show_type_chips: false, micro_step: 1527,
+};
+pub const PY1528_HASH_ORDERED: CodingStep = CodingStep {
+    id: "py-1528-hash-ordered", title: "Hashing · Claves ordenadas", objective: "Recorrer un mapa en orden de clave.",
+    prompt_md: "**Mapa ordenado**\n\nAunque un dict no garantiza orden, podés iterar sus claves ordenadas con `sorted`.\n\n**Micro-reto:**\n1. Definí `claves_ordenadas(mapa)` y `items_ordenados(mapa)`\n2. Aplicalas a `{'b': 2, 'a': 1, 'c': 3}`\n3. Imprimí las claves ordenadas",
+    starter_code: "# def claves_ordenadas(mapa):\n#     return sorted(mapa.keys())\n# def items_ordenados(mapa):\n#     return sorted(mapa.items())\n# resultado = claves_ordenadas({'b': 2, 'a': 1, 'c': 3})\n# print(resultado)\n",
+    pytest: "def test_hash_ordered(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b', 'c']\n    assert ns['items_ordenados']({'b': 2, 'a': 1}) == [('a', 1), ('b', 2)]\n    assert capsys.readouterr().out.strip() == str(['a', 'b', 'c'])\n",
+    hint: "sorted(mapa.keys()) o sorted(mapa.items()).",
+    solution_example: "def claves_ordenadas(mapa):\n    return sorted(mapa.keys())\n\ndef items_ordenados(mapa):\n    return sorted(mapa.items())\n\nresultado = claves_ordenadas({'b': 2, 'a': 1, 'c': 3})\nprint(resultado)\n",
+    next: Some("py-1529-heap-max"), show_type_chips: false, micro_step: 1528,
+};
+pub const PY1529_HEAP_MAX: CodingStep = CodingStep {
+    id: "py-1529-heap-max", title: "Heaps · Max-heap", objective: "Implementar un max-heap negando los valores.",
+    prompt_md: "**Max-heap por negación**\n\n`heapq` es un min-heap. Para un max-heap guardás los valores negados.\n\n**Micro-reto:**\n1. Definí `max_heap_push(heap, v)` y `max_heap_pop(heap)`\n2. Insertá `3`, `1`, `4`\n3. Imprimí el primer pop",
+    starter_code: "# import heapq\n# def max_heap_push(heap, valor):\n#     heapq.heappush(heap, -valor)\n# def max_heap_pop(heap):\n#     return -heapq.heappop(heap)\n# heap = []\n# for v in [3, 1, 4]:\n#     max_heap_push(heap, v)\n# resultado = max_heap_pop(heap)\n# print(resultado)\n",
+    pytest: "def test_heap_max(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert ns['max_heap_pop'](ns['heap']) == 3\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "Guardá -valor y negá al sacar.",
+    solution_example: "import heapq\n\ndef max_heap_push(heap, valor):\n    heapq.heappush(heap, -valor)\n\ndef max_heap_pop(heap):\n    return -heapq.heappop(heap)\n\nheap = []\nfor v in [3, 1, 4]:\n    max_heap_push(heap, v)\nresultado = max_heap_pop(heap)\nprint(resultado)\n",
+    next: Some("py-1530-heap-median"), show_type_chips: false, micro_step: 1529,
+};
+pub const PY1530_HEAP_MEDIAN: CodingStep = CodingStep {
+    id: "py-1530-heap-median", title: "Heaps · Median heap", objective: "Mantener la mediana con dos heaps.",
+    prompt_md: "**Median heap**\n\nUn max-heap para la mitad inferior y un min-heap para la superior mantienen la mediana en O(log n) por inserción.\n\n**Micro-reto:**\n1. Definí la clase `MedianHeap` con `insertar` y `mediana`\n2. Insertá `1`, `2`, `3`\n3. Imprimí la mediana",
+    starter_code: "# import heapq\n# class MedianHeap:\n#     def __init__(self):\n#         self.menores = []\n#         self.mayores = []\n#     def insertar(self, valor):\n#         if not self.menores or valor <= -self.menores[0]:\n#             heapq.heappush(self.menores, -valor)\n#         else:\n#             heapq.heappush(self.mayores, valor)\n#         if len(self.menores) > len(self.mayores) + 1:\n#             heapq.heappush(self.mayores, -heapq.heappop(self.menores))\n#         elif len(self.mayores) > len(self.menores):\n#             heapq.heappush(self.menores, -heapq.heappop(self.mayores))\n#     def mediana(self):\n#         if len(self.menores) > len(self.mayores):\n#             return float(-self.menores[0])\n#         return (-self.menores[0] + self.mayores[0]) / 2\n# mh = MedianHeap()\n# for v in [1, 2, 3]:\n#     mh.insertar(v)\n# resultado = mh.mediana()\n# print(resultado)\n",
+    pytest: "def test_heap_median(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2.0\n    mh2 = ns['MedianHeap']()\n    mh2.insertar(1)\n    mh2.insertar(2)\n    assert mh2.mediana() == 1.5\n    assert capsys.readouterr().out.strip() == '2.0'\n",
+    hint: "Rebalanceá cuando un heap crezca de más.",
+    solution_example: "import heapq\n\nclass MedianHeap:\n    def __init__(self):\n        self.menores = []\n        self.mayores = []\n    def insertar(self, valor):\n        if not self.menores or valor <= -self.menores[0]:\n            heapq.heappush(self.menores, -valor)\n        else:\n            heapq.heappush(self.mayores, valor)\n        if len(self.menores) > len(self.mayores) + 1:\n            heapq.heappush(self.mayores, -heapq.heappop(self.menores))\n        elif len(self.mayores) > len(self.menores):\n            heapq.heappush(self.menores, -heapq.heappop(self.mayores))\n    def mediana(self):\n        if len(self.menores) > len(self.mayores):\n            return float(-self.menores[0])\n        return (-self.menores[0] + self.mayores[0]) / 2\n\nmh = MedianHeap()\nfor v in [1, 2, 3]:\n    mh.insertar(v)\nresultado = mh.mediana()\nprint(resultado)\n",
+    next: Some("py-1531-heap-monotonic"), show_type_chips: false, micro_step: 1530,
+};
+pub const PY1531_HEAP_MONOTONIC: CodingStep = CodingStep {
+    id: "py-1531-heap-monotonic", title: "Heaps · Estructura monotónica", objective: "Calcular el siguiente mayor con una pila monotónica.",
+    prompt_md: "**Estructura monotónica**\n\nUna pila que se mantiene decreciente te da el siguiente elemento mayor en O(n). Es el patrón detrás de varias ventanas.\n\n**Micro-reto:**\n1. Definí `siguiente_mayor(arr)`\n2. Aplicala a `[2, 1, 2, 4, 3]`\n3. Imprimí el resultado",
+    starter_code: "# def siguiente_mayor(arr):\n#     pila = []\n#     resultado = [-1] * len(arr)\n#     for i, v in enumerate(arr):\n#         while pila and arr[pila[-1]] < v:\n#             resultado[pila.pop()] = v\n#         pila.append(i)\n#     return resultado\n# resultado = siguiente_mayor([2, 1, 2, 4, 3])\n# print(resultado)\n",
+    pytest: "def test_heap_monotonic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [4, 2, 4, -1, -1]\n    assert ns['siguiente_mayor']([5]) == [-1]\n    assert capsys.readouterr().out.strip() == str([4, 2, 4, -1, -1])\n",
+    hint: "Descartá los menores al entrar uno nuevo.",
+    solution_example: "def siguiente_mayor(arr):\n    pila = []\n    resultado = [-1] * len(arr)\n    for i, v in enumerate(arr):\n        while pila and arr[pila[-1]] < v:\n            resultado[pila.pop()] = v\n        pila.append(i)\n    return resultado\n\nresultado = siguiente_mayor([2, 1, 2, 4, 3])\nprint(resultado)\n",
+    next: Some("py-1532-heap-merge-k"), show_type_chips: false, micro_step: 1531,
+};
+pub const PY1532_HEAP_MERGE_K: CodingStep = CodingStep {
+    id: "py-1532-heap-merge-k", title: "Heaps · Fusionar k", objective: "Fusionar k listas ordenadas usando un heap.",
+    prompt_md: "**Fusionar k listas**\n\nCon un heap tomás siempre el menor de los frentes de las k listas y avanzas en esa lista.\n\n**Micro-reto:**\n1. Definí `fusionar_k(listas)`\n2. Aplicala a `[[1, 4, 7], [2, 5, 8], [3, 6, 9]]`\n3. Imprimí el resultado",
+    starter_code: "# import heapq\n# def fusionar_k(listas):\n#     heap = []\n#     for i, lista in enumerate(listas):\n#         if lista:\n#             heapq.heappush(heap, (lista[0], i, 0))\n#     resultado = []\n#     while heap:\n#         valor, i, j = heapq.heappop(heap)\n#         resultado.append(valor)\n#         if j + 1 < len(listas[i]):\n#             heapq.heappush(heap, (listas[i][j + 1], i, j + 1))\n#     return resultado\n# resultado = fusionar_k([[1, 4, 7], [2, 5, 8], [3, 6, 9]])\n# print(resultado)\n",
+    pytest: "def test_heap_merge_k(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4, 5, 6, 7, 8, 9]\n    assert ns['fusionar_k']([[1], [0]]) == [0, 1]\n    assert capsys.readouterr().out.strip() == str([1, 2, 3, 4, 5, 6, 7, 8, 9])\n",
+    hint: "Guardá (valor, i, j) en el heap.",
+    solution_example: "import heapq\n\ndef fusionar_k(listas):\n    heap = []\n    for i, lista in enumerate(listas):\n        if lista:\n            heapq.heappush(heap, (lista[0], i, 0))\n    resultado = []\n    while heap:\n        valor, i, j = heapq.heappop(heap)\n        resultado.append(valor)\n        if j + 1 < len(listas[i]):\n            heapq.heappush(heap, (listas[i][j + 1], i, j + 1))\n    return resultado\n\nresultado = fusionar_k([[1, 4, 7], [2, 5, 8], [3, 6, 9]])\nprint(resultado)\n",
+    next: Some("py-1533-heap-dynamic"), show_type_chips: false, micro_step: 1532,
+};
+pub const PY1533_HEAP_DYNAMIC: CodingStep = CodingStep {
+    id: "py-1533-heap-dynamic", title: "Heaps · Prioridad dinámica", objective: "Procesar tareas por prioridad con orden estable.",
+    prompt_md: "**Prioridad dinámica**\n\nUn contador de inserción como desempate mantiene el orden estable al cambiar prioridades en un heap.\n\n**Micro-reto:**\n1. Definí `procesar(prioridades)` que devuelva los índices en orden de prioridad\n2. Aplicala a `[3, 1, 2]`\n3. Imprimí el resultado",
+    starter_code: "# import heapq\n# def procesar(prioridades):\n#     heap = []\n#     for i, p in enumerate(prioridades):\n#         heapq.heappush(heap, (p, i))\n#     orden = []\n#     while heap:\n#         p, i = heapq.heappop(heap)\n#         orden.append(i)\n#     return orden\n# resultado = procesar([3, 1, 2])\n# print(resultado)\n",
+    pytest: "def test_heap_dynamic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 0]\n    assert ns['procesar']([2, 2]) == [0, 1]\n    assert capsys.readouterr().out.strip() == str([1, 2, 0])\n",
+    hint: "El índice desempata prioridades iguales.",
+    solution_example: "import heapq\n\ndef procesar(prioridades):\n    heap = []\n    for i, p in enumerate(prioridades):\n        heapq.heappush(heap, (p, i))\n    orden = []\n    while heap:\n        p, i = heapq.heappop(heap)\n        orden.append(i)\n    return orden\n\nresultado = procesar([3, 1, 2])\nprint(resultado)\n",
+    next: Some("py-1534-heap-streaming"), show_type_chips: false, micro_step: 1533,
+};
+pub const PY1534_HEAP_STREAMING: CodingStep = CodingStep {
+    id: "py-1534-heap-streaming", title: "Heaps · Mediana streaming", objective: "Calcular la mediana tras cada elemento de un flujo.",
+    prompt_md: "**Mediana streaming**\n\nCon dos heaps mantenés la mediana actualizada y la registrás después de cada inserción.\n\n**Micro-reto:**\n1. Definí `medianas_stream(secuencia)`\n2. Aplicala a `[1, 2, 3, 4]`\n3. Imprimí la lista de medianas",
+    starter_code: "# import heapq\n# def medianas_stream(secuencia):\n#     menores = []\n#     mayores = []\n#     resultado = []\n#     for valor in secuencia:\n#         if not menores or valor <= -menores[0]:\n#             heapq.heappush(menores, -valor)\n#         else:\n#             heapq.heappush(mayores, valor)\n#         if len(menores) > len(mayores) + 1:\n#             heapq.heappush(mayores, -heapq.heappop(menores))\n#         elif len(mayores) > len(menores):\n#             heapq.heappush(menores, -heapq.heappop(mayores))\n#         if len(menores) > len(mayores):\n#             resultado.append(float(-menores[0]))\n#         else:\n#             resultado.append((-menores[0] + mayores[0]) / 2)\n#     return resultado\n# resultado = medianas_stream([1, 2, 3, 4])\n# print(resultado)\n",
+    pytest: "def test_heap_streaming(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1.0, 1.5, 2.0, 2.5]\n    assert ns['medianas_stream']([5]) == [5.0]\n    assert capsys.readouterr().out.strip() == str([1.0, 1.5, 2.0, 2.5])\n",
+    hint: "Registrá la mediana tras cada inserción.",
+    solution_example: "import heapq\n\ndef medianas_stream(secuencia):\n    menores = []\n    mayores = []\n    resultado = []\n    for valor in secuencia:\n        if not menores or valor <= -menores[0]:\n            heapq.heappush(menores, -valor)\n        else:\n            heapq.heappush(mayores, valor)\n        if len(menores) > len(mayores) + 1:\n            heapq.heappush(mayores, -heapq.heappop(menores))\n        elif len(mayores) > len(menores):\n            heapq.heappush(menores, -heapq.heappop(mayores))\n        if len(menores) > len(mayores):\n            resultado.append(float(-menores[0]))\n        else:\n            resultado.append((-menores[0] + mayores[0]) / 2)\n    return resultado\n\nresultado = medianas_stream([1, 2, 3, 4])\nprint(resultado)\n",
+    next: Some("py-1535-project-trie"), show_type_chips: false, micro_step: 1534,
+};
+pub const PY1535_PROJECT_TRIE: CodingStep = CodingStep {
+    id: "py-1535-project-trie", title: "Proyecto · Trie de términos", objective: "Construir un trie con los términos de un corpus.",
+    prompt_md: "**Proyecto: trie de términos**\n\nConstruís un trie a partir de una lista de términos para soportar búsquedas por prefijo.\n\n**Micro-reto:**\n1. Definí `construir_trie(terminos)`\n2. Construí con `['hola', 'ola', 'hogar']`\n3. Imprimí si `hogar` está marcado",
+    starter_code: "# def construir_trie(terminos):\n#     trie = {}\n#     for termino in terminos:\n#         nodo = trie\n#         for c in termino:\n#             nodo = nodo.setdefault(c, {})\n#         nodo['#'] = True\n#     return trie\n# trie = construir_trie(['hola', 'ola', 'hogar'])\n# resultado = trie['h']['o']['g']['a']['r']['#']\n# print(resultado)\n",
+    pytest: "def test_project_trie(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert ns['trie']['o']['l']['a']['#'] is True\n    assert ns['construir_trie'](['x']) == {'x': {'#': True}}\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Reutilizá la inserción del bloque de tries.",
+    solution_example: "def construir_trie(terminos):\n    trie = {}\n    for termino in terminos:\n        nodo = trie\n        for c in termino:\n            nodo = nodo.setdefault(c, {})\n        nodo['#'] = True\n    return trie\n\ntrie = construir_trie(['hola', 'ola', 'hogar'])\nresultado = trie['h']['o']['g']['a']['r']['#']\nprint(resultado)\n",
+    next: Some("py-1536-project-inverted-index"), show_type_chips: false, micro_step: 1535,
+};
+pub const PY1536_PROJECT_INVERTED_INDEX: CodingStep = CodingStep {
+    id: "py-1536-project-inverted-index", title: "Proyecto · Índice invertido", objective: "Construir un índice invertido término → documentos.",
+    prompt_md: "**Proyecto: índice invertido**\n\nUn índice invertido mapea cada término a la lista de documentos que lo contienen.\n\n**Micro-reto:**\n1. Definí `indice_invertido(documentos)`\n2. Aplicala a tres documentos\n3. Imprimí el índice",
+    starter_code: "# def indice_invertido(documentos):\n#     indice = {}\n#     for doc_id, texto in documentos.items():\n#         for termino in texto.split():\n#             indice.setdefault(termino, set()).add(doc_id)\n#     return {t: sorted(ids) for t, ids in indice.items()}\n# resultado = indice_invertido({'d1': 'hola mundo', 'd2': 'hola sol', 'd3': 'sol mundo'})\n# print(resultado)\n",
+    pytest: "def test_project_inverted_index(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'hola': ['d1', 'd2'], 'mundo': ['d1', 'd3'], 'sol': ['d2', 'd3']}\n    assert ns['indice_invertido']({'a': 'x'}) == {'x': ['a']}\n    assert capsys.readouterr().out.strip() == str({'hola': ['d1', 'd2'], 'mundo': ['d1', 'd3'], 'sol': ['d2', 'd3']})\n",
+    hint: "setdefault(termino, set()).add(doc_id).",
+    solution_example: "def indice_invertido(documentos):\n    indice = {}\n    for doc_id, texto in documentos.items():\n        for termino in texto.split():\n            indice.setdefault(termino, set()).add(doc_id)\n    return {t: sorted(ids) for t, ids in indice.items()}\n\nresultado = indice_invertido({'d1': 'hola mundo', 'd2': 'hola sol', 'd3': 'sol mundo'})\nprint(resultado)\n",
+    next: Some("py-1537-project-relevance-sort"), show_type_chips: false, micro_step: 1536,
+};
+pub const PY1537_PROJECT_RELEVANCE_SORT: CodingStep = CodingStep {
+    id: "py-1537-project-relevance-sort", title: "Proyecto · Relevancia", objective: "Ordenar documentos por frecuencia del término.",
+    prompt_md: "**Proyecto: ordenar por relevancia**\n\nLa relevancia se mide por la frecuencia del término en cada documento.\n\n**Micro-reto:**\n1. Definí `ordenar_por_relevancia(documentos, termino)`\n2. Aplicala buscando `hola`\n3. Imprimí los ids ordenados",
+    starter_code: "# def ordenar_por_relevancia(documentos, termino):\n#     puntajes = []\n#     for doc_id, texto in documentos.items():\n#         frecuencia = texto.split().count(termino)\n#         if frecuencia > 0:\n#             puntajes.append((doc_id, frecuencia))\n#     puntajes.sort(key=lambda p: (-p[1], p[0]))\n#     return [doc_id for doc_id, _ in puntajes]\n# resultado = ordenar_por_relevancia({'d1': 'hola mundo hola', 'd2': 'hola sol', 'd3': 'sol'}, 'hola')\n# print(resultado)\n",
+    pytest: "def test_project_relevance_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['d1', 'd2']\n    assert ns['ordenar_por_relevancia']({'a': 'x y x'}, 'x') == ['a']\n    assert capsys.readouterr().out.strip() == str(['d1', 'd2'])\n",
+    hint: "Ordená por (-frecuencia, doc_id).",
+    solution_example: "def ordenar_por_relevancia(documentos, termino):\n    puntajes = []\n    for doc_id, texto in documentos.items():\n        frecuencia = texto.split().count(termino)\n        if frecuencia > 0:\n            puntajes.append((doc_id, frecuencia))\n    puntajes.sort(key=lambda p: (-p[1], p[0]))\n    return [doc_id for doc_id, _ in puntajes]\n\nresultado = ordenar_por_relevancia({'d1': 'hola mundo hola', 'd2': 'hola sol', 'd3': 'sol'}, 'hola')\nprint(resultado)\n",
+    next: Some("py-1538-project-autocomplete"), show_type_chips: false, micro_step: 1537,
+};
+pub const PY1538_PROJECT_AUTOCOMPLETE: CodingStep = CodingStep {
+    id: "py-1538-project-autocomplete", title: "Proyecto · Autocompletar", objective: "Autocompletar términos desde un trie.",
+    prompt_md: "**Proyecto: autocompletar**\n\nDesde el trie, recolectás los términos que comparten prefijo, ordenados.\n\n**Micro-reto:**\n1. Definí `construir_trie` y `autocompletar(trie, prefijo)`\n2. Construí con `['hola', 'ola', 'hogar']`\n3. Imprimí `autocompletar(trie, 'ho')`",
+    starter_code: "# def construir_trie(terminos):\n#     trie = {}\n#     for termino in terminos:\n#         nodo = trie\n#         for c in termino:\n#             nodo = nodo.setdefault(c, {})\n#         nodo['#'] = True\n#     return trie\n# def autocompletar(trie, prefijo):\n#     nodo = trie\n#     for c in prefijo:\n#         if c not in nodo:\n#             return []\n#         nodo = nodo[c]\n#     resultado = []\n#     def recolectar(nodo, actual):\n#         if '#' in nodo:\n#             resultado.append(actual)\n#         for c in sorted(nodo):\n#             if c != '#':\n#                 recolectar(nodo[c], actual + c)\n#     recolectar(nodo, prefijo)\n#     return resultado\n# trie = construir_trie(['hola', 'ola', 'hogar'])\n# resultado = autocompletar(trie, 'ho')\n# print(resultado)\n",
+    pytest: "def test_project_autocomplete(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['hogar', 'hola']\n    assert ns['autocompletar'](ns['trie'], 'o') == ['ola']\n    assert ns['autocompletar'](ns['trie'], 'zz') == []\n    assert capsys.readouterr().out.strip() == str(['hogar', 'hola'])\n",
+    hint: "Recolectá recursivamente el subárbol.",
+    solution_example: "def construir_trie(terminos):\n    trie = {}\n    for termino in terminos:\n        nodo = trie\n        for c in termino:\n            nodo = nodo.setdefault(c, {})\n        nodo['#'] = True\n    return trie\n\ndef autocompletar(trie, prefijo):\n    nodo = trie\n    for c in prefijo:\n        if c not in nodo:\n            return []\n        nodo = nodo[c]\n    resultado = []\n    def recolectar(nodo, actual):\n        if '#' in nodo:\n            resultado.append(actual)\n        for c in sorted(nodo):\n            if c != '#':\n                recolectar(nodo[c], actual + c)\n    recolectar(nodo, prefijo)\n    return resultado\n\ntrie = construir_trie(['hola', 'ola', 'hogar'])\nresultado = autocompletar(trie, 'ho')\nprint(resultado)\n",
+    next: Some("py-1539-project-topk"), show_type_chips: false, micro_step: 1538,
+};
+pub const PY1539_PROJECT_TOPK: CodingStep = CodingStep {
+    id: "py-1539-project-topk", title: "Proyecto · Top-k", objective: "Reportar los k términos más frecuentes.",
+    prompt_md: "**Proyecto: top-k términos**\n\nContás frecuencias y devolvés los k términos más frecuentes con `heapq.nlargest`.\n\n**Micro-reto:**\n1. Definí `top_k_terminos(texto, k)`\n2. Aplicala a `'a b a c b a d'` con `k=2`\n3. Imprimí el resultado",
+    starter_code: "# import heapq\n# def top_k_terminos(texto, k):\n#     frecuencias = {}\n#     for termino in texto.split():\n#         frecuencias[termino] = frecuencias.get(termino, 0) + 1\n#     top = heapq.nlargest(k, frecuencias.items(), key=lambda p: p[1])\n#     return [termino for termino, _ in top]\n# resultado = top_k_terminos('a b a c b a d', 2)\n# print(resultado)\n",
+    pytest: "def test_project_topk(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b']\n    assert ns['top_k_terminos']('x y x', 1) == ['x']\n    assert capsys.readouterr().out.strip() == str(['a', 'b'])\n",
+    hint: "nlargest por frecuencia.",
+    solution_example: "import heapq\n\ndef top_k_terminos(texto, k):\n    frecuencias = {}\n    for termino in texto.split():\n        frecuencias[termino] = frecuencias.get(termino, 0) + 1\n    top = heapq.nlargest(k, frecuencias.items(), key=lambda p: p[1])\n    return [termino for termino, _ in top]\n\nresultado = top_k_terminos('a b a c b a d', 2)\nprint(resultado)\n",
+    next: Some("py-1540-project-assemble"), show_type_chips: false, micro_step: 1539,
+};
+pub const PY1540_PROJECT_ASSEMBLE: CodingStep = CodingStep {
+    id: "py-1540-project-assemble", title: "Proyecto · Ensamblar índice", objective: "Integrar trie, índice invertido y búsqueda en un índice de búsqueda.",
+    prompt_md: "**Proyecto: ensamblar índice de búsqueda**\n\nIntegrás el trie y el índice invertido y exponés una función de búsqueda por término.\n\n**Micro-reto:**\n1. Definí `ensamblar_indice(documentos)` y `buscar(ensamblado, termino)`\n2. Aplicala a dos documentos\n3. Imprimí `buscar(ensamblado, 'hola')`",
+    starter_code: "# def ensamblar_indice(documentos):\n#     indice = {}\n#     trie = {}\n#     for doc_id, texto in documentos.items():\n#         for termino in texto.split():\n#             indice.setdefault(termino, set()).add(doc_id)\n#             nodo = trie\n#             for c in termino:\n#                 nodo = nodo.setdefault(c, {})\n#             nodo['#'] = True\n#     return {'indice': {t: sorted(ids) for t, ids in indice.items()}, 'trie': trie, 'terminos': sorted(indice.keys())}\n# def buscar(ensamblado, termino):\n#     return ensamblado['indice'].get(termino, [])\n# ensamblado = ensamblar_indice({'d1': 'hola mundo', 'd2': 'hola sol'})\n# resultado = buscar(ensamblado, 'hola')\n# print(resultado)\n",
+    pytest: "def test_project_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['d1', 'd2']\n    assert ns['buscar'](ns['ensamblado'], 'sol') == ['d2']\n    assert ns['ensamblado']['terminos'] == ['hola', 'mundo', 'sol']\n    assert capsys.readouterr().out.strip() == str(['d1', 'd2'])\n",
+    hint: "Integrá trie + índice + búsqueda.",
+    solution_example: "def ensamblar_indice(documentos):\n    indice = {}\n    trie = {}\n    for doc_id, texto in documentos.items():\n        for termino in texto.split():\n            indice.setdefault(termino, set()).add(doc_id)\n            nodo = trie\n            for c in termino:\n                nodo = nodo.setdefault(c, {})\n            nodo['#'] = True\n    return {'indice': {t: sorted(ids) for t, ids in indice.items()}, 'trie': trie, 'terminos': sorted(indice.keys())}\n\ndef buscar(ensamblado, termino):\n    return ensamblado['indice'].get(termino, [])\n\nensamblado = ensamblar_indice({'d1': 'hola mundo', 'd2': 'hola sol'})\nresultado = buscar(ensamblado, 'hola')\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 1540,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -48952,6 +49493,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1478_PROJECT_COMPONENTS,
     &PY1479_PROJECT_METRICS,
     &PY1480_PROJECT_ASSEMBLE,
+    &PY1481_TRIE_INSERT,
+    &PY1482_TRIE_SEARCH,
+    &PY1483_TRIE_PREFIX,
+    &PY1484_TRIE_COUNT_PREFIX,
+    &PY1485_TRIE_AUTOCOMPLETE,
+    &PY1486_TRIE_DELETE,
+    &PY1487_BST_NODE,
+    &PY1488_BST_HEIGHT,
+    &PY1489_BST_ROTATE,
+    &PY1490_BST_BALANCE_INVARIANT,
+    &PY1491_BST_INSERT,
+    &PY1492_BST_TRAVERSE,
+    &PY1493_SEGTREE_BUILD,
+    &PY1494_SEGTREE_RANGE_SUM,
+    &PY1495_SEGTREE_POINT_UPDATE,
+    &PY1496_SEGTREE_RANGE_MIN,
+    &PY1497_SEGTREE_RANGE_UPDATE,
+    &PY1498_SEGTREE_COMBINED,
+    &PY1499_FENWICK_BUILD,
+    &PY1500_FENWICK_PREFIX,
+    &PY1501_FENWICK_UPDATE,
+    &PY1502_FENWICK_RANGE,
+    &PY1503_FENWICK_INVERSIONS,
+    &PY1504_FENWICK_2D,
+    &PY1505_DSU_MAKE,
+    &PY1506_DSU_FIND,
+    &PY1507_DSU_UNION,
+    &PY1508_DSU_PATH_COMPRESSION,
+    &PY1509_DSU_UNION_RANK,
+    &PY1510_DSU_COMPONENTS,
+    &PY1511_DEQUE_BASIC,
+    &PY1512_DEQUE_PUSH_POP,
+    &PY1513_DEQUE_ROTATE,
+    &PY1514_DEQUE_SLIDING,
+    &PY1515_DEQUE_WINDOW_MAX,
+    &PY1516_DEQUE_STACK_QUEUE,
+    &PY1517_SORT_MERGE,
+    &PY1518_SORT_QUICKSELECT,
+    &PY1519_SORT_ROTATED,
+    &PY1520_SORT_BISECT,
+    &PY1521_SORT_KEY,
+    &PY1522_SORT_TOPK,
+    &PY1523_HASH_DICT,
+    &PY1524_HASH_DEFAULTDICT,
+    &PY1525_HASH_FREQUENCY,
+    &PY1526_HASH_GROUPBY,
+    &PY1527_HASH_COLLISION,
+    &PY1528_HASH_ORDERED,
+    &PY1529_HEAP_MAX,
+    &PY1530_HEAP_MEDIAN,
+    &PY1531_HEAP_MONOTONIC,
+    &PY1532_HEAP_MERGE_K,
+    &PY1533_HEAP_DYNAMIC,
+    &PY1534_HEAP_STREAMING,
+    &PY1535_PROJECT_TRIE,
+    &PY1536_PROJECT_INVERTED_INDEX,
+    &PY1537_PROJECT_RELEVANCE_SORT,
+    &PY1538_PROJECT_AUTOCOMPLETE,
+    &PY1539_PROJECT_TOPK,
+    &PY1540_PROJECT_ASSEMBLE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -49119,7 +49720,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1480);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1540);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -52031,11 +52632,11 @@ mod tests {
     }
 
     #[test]
-    fn py1061_to_py1480_engineering_chain() {
+    fn py1061_to_py1540_engineering_chain() {
         let bridge = coding_step_by_micro_step(1060).expect("py-1060");
         assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
 
-        for n in 1061..=1480 {
+        for n in 1061..=1540 {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.micro_step, n);
             assert!(
@@ -52043,7 +52644,7 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1480 {
+            if n < 1540 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -52052,7 +52653,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1480 is the end of the rail");
+                assert_eq!(step.next, None, "step 1540 is the end of the rail");
             }
         }
     }
