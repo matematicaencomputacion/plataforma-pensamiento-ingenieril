@@ -48009,7 +48009,547 @@ pub const PY1540_PROJECT_ASSEMBLE: CodingStep = CodingStep {
     pytest: "def test_project_assemble(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['d1', 'd2']\n    assert ns['buscar'](ns['ensamblado'], 'sol') == ['d2']\n    assert ns['ensamblado']['terminos'] == ['hola', 'mundo', 'sol']\n    assert capsys.readouterr().out.strip() == str(['d1', 'd2'])\n",
     hint: "Integrá trie + índice + búsqueda.",
     solution_example: "def ensamblar_indice(documentos):\n    indice = {}\n    trie = {}\n    for doc_id, texto in documentos.items():\n        for termino in texto.split():\n            indice.setdefault(termino, set()).add(doc_id)\n            nodo = trie\n            for c in termino:\n                nodo = nodo.setdefault(c, {})\n            nodo['#'] = True\n    return {'indice': {t: sorted(ids) for t, ids in indice.items()}, 'trie': trie, 'terminos': sorted(indice.keys())}\n\ndef buscar(ensamblado, termino):\n    return ensamblado['indice'].get(termino, [])\n\nensamblado = ensamblar_indice({'d1': 'hola mundo', 'd2': 'hola sol'})\nresultado = buscar(ensamblado, 'hola')\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 1540,
+    next: Some("py-1541-bt-permutations"), show_type_chips: false, micro_step: 1540,
+};
+pub const PY1541_BT_PERMUTATIONS: CodingStep = CodingStep {
+    id: "py-1541-bt-permutations", title: "Backtracking · Permutaciones", objective: "Generar todas las permutaciones de una lista con backtracking.",
+    prompt_md: "**Permutaciones por backtracking**\n\nEl backtracking explora todas las opciones y retrocede al agotar cada camino. Para permutar, elegís un elemento, lo usás, seguís con el resto y al volver lo liberás.\n\n**Micro-reto:**\n1. Definí `permutaciones(arr)` que devuelva la lista de permutaciones\n2. Aplicala a `[1, 2, 3]`\n3. Imprimí el resultado",
+    starter_code: "# def permutaciones(arr):\n#     resultado = []\n#     def backtrack(actual, restantes):\n#         if not restantes:\n#             resultado.append(actual[:])\n#             return\n#         for i, v in enumerate(restantes):\n#             actual.append(v)\n#             backtrack(actual, restantes[:i] + restantes[i + 1:])\n#             actual.pop()\n#     backtrack([], arr)\n#     return resultado\n# resultado = permutaciones([1, 2, 3])\n# print(resultado)\n",
+    pytest: "def test_bt_permutations(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\n    assert ns['permutaciones']([1, 2]) == [[1, 2], [2, 1]]\n    assert ns['permutaciones']([]) == [[]]\n    assert capsys.readouterr().out.strip() == str([[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]])\n",
+    hint: "Elegí un elemento, recursá sobre el resto y retrocedé con pop().",
+    solution_example: "def permutaciones(arr):\n    resultado = []\n    def backtrack(actual, restantes):\n        if not restantes:\n            resultado.append(actual[:])\n            return\n        for i, v in enumerate(restantes):\n            actual.append(v)\n            backtrack(actual, restantes[:i] + restantes[i + 1:])\n            actual.pop()\n    backtrack([], arr)\n    return resultado\n\nresultado = permutaciones([1, 2, 3])\nprint(resultado)\n",
+    next: Some("py-1542-bt-subsets"), show_type_chips: false, micro_step: 1541,
+};
+pub const PY1542_BT_SUBSETS: CodingStep = CodingStep {
+    id: "py-1542-bt-subsets", title: "Backtracking · Subconjuntos", objective: "Generar todos los subconjuntos (conjunto potencia) por backtracking.",
+    prompt_md: "**Subconjuntos por backtracking**\n\nCada elemento tiene dos caminos: incluirlo o excluirlo. Recolectás cada subconjunto al entrar a una rama.\n\n**Micro-reto:**\n1. Definí `subconjuntos(arr)` que devuelva todos los subconjuntos\n2. Aplicala a `[1, 2, 3]`\n3. Imprimí el resultado",
+    starter_code: "# def subconjuntos(arr):\n#     resultado = []\n#     def backtrack(inicio, actual):\n#         resultado.append(actual[:])\n#         for i in range(inicio, len(arr)):\n#             actual.append(arr[i])\n#             backtrack(i + 1, actual)\n#             actual.pop()\n#     backtrack(0, [])\n#     return resultado\n# resultado = subconjuntos([1, 2, 3])\n# print(resultado)\n",
+    pytest: "def test_bt_subsets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]\n    assert ns['subconjuntos']([1, 2]) == [[], [1], [1, 2], [2]]\n    assert capsys.readouterr().out.strip() == str([[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]])\n",
+    hint: "Añadí cada subconjunto al entrar y avanzá con inicio + 1.",
+    solution_example: "def subconjuntos(arr):\n    resultado = []\n    def backtrack(inicio, actual):\n        resultado.append(actual[:])\n        for i in range(inicio, len(arr)):\n            actual.append(arr[i])\n            backtrack(i + 1, actual)\n            actual.pop()\n    backtrack(0, [])\n    return resultado\n\nresultado = subconjuntos([1, 2, 3])\nprint(resultado)\n",
+    next: Some("py-1543-bt-nqueens"), show_type_chips: false, micro_step: 1542,
+};
+pub const PY1543_BT_NQUEENS: CodingStep = CodingStep {
+    id: "py-1543-bt-nqueens", title: "Backtracking · N-reinas", objective: "Colocar N reinas en un tablero N×N sin que se ataquen.",
+    prompt_md: "**N-reinas por backtracking**\n\nColocás una reina por fila y retrocedés cuando choca con una ya puesta. Verificás columna y diagonales.\n\n**Micro-reto:**\n1. Definí `n_reinas(n)` que devuelva las soluciones (columna por fila)\n2. Aplicala a `n=4`\n3. Imprimí el resultado",
+    starter_code: "# def n_reinas(n):\n#     soluciones = []\n#     tablero = []\n#     def es_valido(fila, col):\n#         for f in range(fila):\n#             c = tablero[f]\n#             if c == col or abs(c - col) == abs(f - fila):\n#                 return False\n#         return True\n#     def backtrack(fila):\n#         if fila == n:\n#             soluciones.append(tablero[:])\n#             return\n#         for col in range(n):\n#             if es_valido(fila, col):\n#                 tablero.append(col)\n#                 backtrack(fila + 1)\n#                 tablero.pop()\n#     backtrack(0)\n#     return soluciones\n# resultado = n_reinas(4)\n# print(resultado)\n",
+    pytest: "def test_bt_nqueens(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 3, 0, 2], [2, 0, 3, 1]]\n    assert ns['n_reinas'](1) == [[0]]\n    assert capsys.readouterr().out.strip() == str([[1, 3, 0, 2], [2, 0, 3, 1]])\n",
+    hint: "Dos reinas chocan si comparten columna o diagonal.",
+    solution_example: "def n_reinas(n):\n    soluciones = []\n    tablero = []\n    def es_valido(fila, col):\n        for f in range(fila):\n            c = tablero[f]\n            if c == col or abs(c - col) == abs(f - fila):\n                return False\n        return True\n    def backtrack(fila):\n        if fila == n:\n            soluciones.append(tablero[:])\n            return\n        for col in range(n):\n            if es_valido(fila, col):\n                tablero.append(col)\n                backtrack(fila + 1)\n                tablero.pop()\n    backtrack(0)\n    return soluciones\n\nresultado = n_reinas(4)\nprint(resultado)\n",
+    next: Some("py-1544-bt-sudoku"), show_type_chips: false, micro_step: 1543,
+};
+pub const PY1544_BT_SUDOKU: CodingStep = CodingStep {
+    id: "py-1544-bt-sudoku", title: "Backtracking · Sudoku mini", objective: "Resolver un mini-sudoku 4×4 por backtracking.",
+    prompt_md: "**Mini-sudoku por backtracking**\n\nEn un sudoku 4×4 cada fila, columna y caja 2×2 lleva los dígitos 1 a 4. Probás un dígito, avanzás y retrocedés si falla.\n\n**Micro-reto:**\n1. Definí `resolver_sudoku(tablero)` que lo resuelva en su lugar\n2. Aplicala al tablero dado\n3. Imprimí el resultado",
+    starter_code: "# def resolver_sudoku(tablero):\n#     def valido(fila, col, num):\n#         for i in range(4):\n#             if tablero[fila][i] == num or tablero[i][col] == num:\n#                 return False\n#         fr, fc = (fila // 2) * 2, (col // 2) * 2\n#         for i in range(fr, fr + 2):\n#             for j in range(fc, fc + 2):\n#                 if tablero[i][j] == num:\n#                     return False\n#         return True\n#     def backtrack():\n#         for fila in range(4):\n#             for col in range(4):\n#                 if tablero[fila][col] == 0:\n#                     for num in range(1, 5):\n#                         if valido(fila, col, num):\n#                             tablero[fila][col] = num\n#                             if backtrack():\n#                                 return True\n#                             tablero[fila][col] = 0\n#                     return False\n#         return True\n#     backtrack()\n#     return tablero\n# tablero = [[1, 0, 0, 4], [0, 4, 1, 0], [0, 1, 4, 0], [4, 0, 0, 1]]\n# resultado = resolver_sudoku(tablero)\n# print(resultado)\n",
+    pytest: "def test_bt_sudoku(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 2, 3, 4], [3, 4, 1, 2], [2, 1, 4, 3], [4, 3, 2, 1]]\n    assert ns['resolver_sudoku']([[1, 2, 3, 4], [3, 4, 1, 2], [2, 1, 4, 3], [4, 3, 2, 1]]) == [[1, 2, 3, 4], [3, 4, 1, 2], [2, 1, 4, 3], [4, 3, 2, 1]]\n    assert capsys.readouterr().out.strip() == str([[1, 2, 3, 4], [3, 4, 1, 2], [2, 1, 4, 3], [4, 3, 2, 1]])\n",
+    hint: "Probá 1..4 en cada celda vacía y retrocedé si no es válido.",
+    solution_example: "def resolver_sudoku(tablero):\n    def valido(fila, col, num):\n        for i in range(4):\n            if tablero[fila][i] == num or tablero[i][col] == num:\n                return False\n        fr, fc = (fila // 2) * 2, (col // 2) * 2\n        for i in range(fr, fr + 2):\n            for j in range(fc, fc + 2):\n                if tablero[i][j] == num:\n                    return False\n        return True\n    def backtrack():\n        for fila in range(4):\n            for col in range(4):\n                if tablero[fila][col] == 0:\n                    for num in range(1, 5):\n                        if valido(fila, col, num):\n                            tablero[fila][col] = num\n                            if backtrack():\n                                return True\n                            tablero[fila][col] = 0\n                    return False\n        return True\n    backtrack()\n    return tablero\n\ntablero = [[1, 0, 0, 4], [0, 4, 1, 0], [0, 1, 4, 0], [4, 0, 0, 1]]\nresultado = resolver_sudoku(tablero)\nprint(resultado)\n",
+    next: Some("py-1545-bt-prune"), show_type_chips: false, micro_step: 1544,
+};
+pub const PY1545_BT_PRUNE: CodingStep = CodingStep {
+    id: "py-1545-bt-prune", title: "Backtracking · Poda", objective: "Podar ramas inválidas por restricción antes de explorarlas.",
+    prompt_md: "**Poda por restricción**\n\nAntes de expandir una rama verificás si puede llegar a una solución; si no, la cortás (podás) y ahorrás trabajo.\n\n**Micro-reto:**\n1. Definí `suma_objetivo(arr, objetivo)` que devuelva `True` si un subconjunto suma `objetivo`\n2. Aplicala a `[1, 2, 3, 4]` con objetivo `5`\n3. Imprimí el resultado",
+    starter_code: "# def suma_objetivo(arr, objetivo):\n#     def backtrack(i, actual):\n#         if actual == objetivo:\n#             return True\n#         if actual > objetivo or i == len(arr):\n#             return False\n#         return backtrack(i + 1, actual + arr[i]) or backtrack(i + 1, actual)\n#     return backtrack(0, 0)\n# resultado = suma_objetivo([1, 2, 3, 4], 5)\n# print(resultado)\n",
+    pytest: "def test_bt_prune(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert ns['suma_objetivo']([1, 2, 3, 4], 20) is False\n    assert ns['suma_objetivo']([5], 5) is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Cortá cuando la suma parcial ya supera el objetivo.",
+    solution_example: "def suma_objetivo(arr, objetivo):\n    def backtrack(i, actual):\n        if actual == objetivo:\n            return True\n        if actual > objetivo or i == len(arr):\n            return False\n        return backtrack(i + 1, actual + arr[i]) or backtrack(i + 1, actual)\n    return backtrack(0, 0)\n\nresultado = suma_objetivo([1, 2, 3, 4], 5)\nprint(resultado)\n",
+    next: Some("py-1546-bt-count"), show_type_chips: false, micro_step: 1545,
+};
+pub const PY1546_BT_COUNT: CodingStep = CodingStep {
+    id: "py-1546-bt-count", title: "Backtracking · Contar soluciones", objective: "Contar cuántas soluciones válidas existen por backtracking.",
+    prompt_md: "**Contar soluciones**\n\nEn vez de recolectar las soluciones, solo las contás. Mismo árbol de búsqueda, menos memoria.\n\n**Micro-reto:**\n1. Definí `contar_n_reinas(n)` que devuelva la cantidad de soluciones\n2. Aplicala a `n=4`\n3. Imprimí el resultado",
+    starter_code: "# def contar_n_reinas(n):\n#     tablero = []\n#     cuenta = 0\n#     def es_valido(fila, col):\n#         for f in range(fila):\n#             c = tablero[f]\n#             if c == col or abs(c - col) == abs(f - fila):\n#                 return False\n#         return True\n#     def backtrack(fila):\n#         nonlocal cuenta\n#         if fila == n:\n#             cuenta += 1\n#             return\n#         for col in range(n):\n#             if es_valido(fila, col):\n#                 tablero.append(col)\n#                 backtrack(fila + 1)\n#                 tablero.pop()\n#     backtrack(0)\n#     return cuenta\n# resultado = contar_n_reinas(4)\n# print(resultado)\n",
+    pytest: "def test_bt_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['contar_n_reinas'](1) == 1\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Incrementá un contador en lugar de guardar cada solución.",
+    solution_example: "def contar_n_reinas(n):\n    tablero = []\n    cuenta = 0\n    def es_valido(fila, col):\n        for f in range(fila):\n            c = tablero[f]\n            if c == col or abs(c - col) == abs(f - fila):\n                return False\n        return True\n    def backtrack(fila):\n        nonlocal cuenta\n        if fila == n:\n            cuenta += 1\n            return\n        for col in range(n):\n            if es_valido(fila, col):\n                tablero.append(col)\n                backtrack(fila + 1)\n                tablero.pop()\n    backtrack(0)\n    return cuenta\n\nresultado = contar_n_reinas(4)\nprint(resultado)\n",
+    next: Some("py-1547-dp-2d"), show_type_chips: false, micro_step: 1546,
+};
+pub const PY1547_DP_2D: CodingStep = CodingStep {
+    id: "py-1547-dp-2d", title: "DP · 2D (LCS)", objective: "Calcular la subsecuencia común más larga con DP 2D.",
+    prompt_md: "**DP 2D: LCS**\n\nUna tabla de dos dimensiones guarda la subsecuencia común más larga entre prefijos. Si los caracteres coinciden, sumás 1 en diagonal.\n\n**Micro-reto:**\n1. Definí `lcs(a, b)`\n2. Aplicala a `abcde` y `ace`\n3. Imprimí el resultado",
+    starter_code: "# def lcs(a, b):\n#     m, n = len(a), len(b)\n#     tabla = [[0] * (n + 1) for _ in range(m + 1)]\n#     for i in range(1, m + 1):\n#         for j in range(1, n + 1):\n#             if a[i - 1] == b[j - 1]:\n#                 tabla[i][j] = tabla[i - 1][j - 1] + 1\n#             else:\n#                 tabla[i][j] = max(tabla[i - 1][j], tabla[i][j - 1])\n#     return tabla[m][n]\n# resultado = lcs('abcde', 'ace')\n# print(resultado)\n",
+    pytest: "def test_dp_2d(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['lcs']('abc', 'ac') == 2\n    assert ns['lcs']('a', 'b') == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "Si coinciden, sumás 1 a la diagonal; si no, tomás el máximo.",
+    solution_example: "def lcs(a, b):\n    m, n = len(a), len(b)\n    tabla = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                tabla[i][j] = tabla[i - 1][j - 1] + 1\n            else:\n                tabla[i][j] = max(tabla[i - 1][j], tabla[i][j - 1])\n    return tabla[m][n]\n\nresultado = lcs('abcde', 'ace')\nprint(resultado)\n",
+    next: Some("py-1548-dp-knapsack-reconstruct"), show_type_chips: false, micro_step: 1547,
+};
+pub const PY1548_DP_KNAPSACK_RECONSTRUCT: CodingStep = CodingStep {
+    id: "py-1548-dp-knapsack-reconstruct", title: "DP · Knapsack con reconstrucción", objective: "Resolver la mochila 0/1 y reconstruir los ítems elegidos.",
+    prompt_md: "**Knapsack 0/1 con reconstrucción**\n\nAdemás del valor máximo, reconstruís qué ítems lo logran leyendo la tabla de atrás hacia adelante.\n\n**Micro-reto:**\n1. Definí `mochila(pesos, valores, capacidad)` que devuelva `(valor, indices)`\n2. Aplicala a pesos `[2, 3, 4]`, valores `[3, 4, 5]`, capacidad `5`\n3. Imprimí el resultado",
+    starter_code: "# def mochila(pesos, valores, capacidad):\n#     n = len(pesos)\n#     tabla = [[0] * (capacidad + 1) for _ in range(n + 1)]\n#     for i in range(1, n + 1):\n#         for w in range(capacidad + 1):\n#             if pesos[i - 1] <= w:\n#                 tabla[i][w] = max(tabla[i - 1][w], valores[i - 1] + tabla[i - 1][w - pesos[i - 1]])\n#             else:\n#                 tabla[i][w] = tabla[i - 1][w]\n#     elegidos = []\n#     w = capacidad\n#     for i in range(n, 0, -1):\n#         if tabla[i][w] != tabla[i - 1][w]:\n#             elegidos.append(i - 1)\n#             w -= pesos[i - 1]\n#     elegidos.reverse()\n#     return tabla[n][capacidad], elegidos\n# resultado = mochila([2, 3, 4], [3, 4, 5], 5)\n# print(resultado)\n",
+    pytest: "def test_dp_knapsack_reconstruct(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (7, [0, 1])\n    assert ns['mochila']([1], [1], 1) == (1, [0])\n    assert capsys.readouterr().out.strip() == '(7, [0, 1])'\n",
+    hint: "Reconstruí de atrás: si el valor cambió, el ítem entró.",
+    solution_example: "def mochila(pesos, valores, capacidad):\n    n = len(pesos)\n    tabla = [[0] * (capacidad + 1) for _ in range(n + 1)]\n    for i in range(1, n + 1):\n        for w in range(capacidad + 1):\n            if pesos[i - 1] <= w:\n                tabla[i][w] = max(tabla[i - 1][w], valores[i - 1] + tabla[i - 1][w - pesos[i - 1]])\n            else:\n                tabla[i][w] = tabla[i - 1][w]\n    elegidos = []\n    w = capacidad\n    for i in range(n, 0, -1):\n        if tabla[i][w] != tabla[i - 1][w]:\n            elegidos.append(i - 1)\n            w -= pesos[i - 1]\n    elegidos.reverse()\n    return tabla[n][capacidad], elegidos\n\nresultado = mochila([2, 3, 4], [3, 4, 5], 5)\nprint(resultado)\n",
+    next: Some("py-1549-dp-coin-min"), show_type_chips: false, micro_step: 1548,
+};
+pub const PY1549_DP_COIN_MIN: CodingStep = CodingStep {
+    id: "py-1549-dp-coin-min", title: "DP · Cambio mínimo", objective: "Calcular la mínima cantidad de monedas para una suma.",
+    prompt_md: "**Cambio mínimo de monedas**\n\nUna tabla unidimensional guarda la mínima cantidad de monedas para cada monto, acumulando hacia arriba.\n\n**Micro-reto:**\n1. Definí `cambio_minimo(monedas, cantidad)` que devuelva `-1` si es imposible\n2. Aplicala a `[1, 5, 10]` con cantidad `27`\n3. Imprimí el resultado",
+    starter_code: "# def cambio_minimo(monedas, cantidad):\n#     INF = float('inf')\n#     tabla = [0] + [INF] * cantidad\n#     for c in monedas:\n#         for m in range(c, cantidad + 1):\n#             tabla[m] = min(tabla[m], tabla[m - c] + 1)\n#     return tabla[cantidad] if tabla[cantidad] != INF else -1\n# resultado = cambio_minimo([1, 5, 10], 27)\n# print(resultado)\n",
+    pytest: "def test_dp_coin_min(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert ns['cambio_minimo']([2], 3) == -1\n    assert ns['cambio_minimo']([1], 0) == 0\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "tabla[m] = min(tabla[m], tabla[m - c] + 1).",
+    solution_example: "def cambio_minimo(monedas, cantidad):\n    INF = float('inf')\n    tabla = [0] + [INF] * cantidad\n    for c in monedas:\n        for m in range(c, cantidad + 1):\n            tabla[m] = min(tabla[m], tabla[m - c] + 1)\n    return tabla[cantidad] if tabla[cantidad] != INF else -1\n\nresultado = cambio_minimo([1, 5, 10], 27)\nprint(resultado)\n",
+    next: Some("py-1550-dp-lis"), show_type_chips: false, micro_step: 1549,
+};
+pub const PY1550_DP_LIS: CodingStep = CodingStep {
+    id: "py-1550-dp-lis", title: "DP · Subsecuencia creciente", objective: "Calcular la subsecuencia creciente más larga (LIS).",
+    prompt_md: "**Longest increasing subsequence**\n\nGuardás en cada posición la longitud de la mejor subsecuencia creciente que termina allí.\n\n**Micro-reto:**\n1. Definí `lis(arr)`\n2. Aplicala a `[10, 9, 2, 5, 3, 7, 101, 18]`\n3. Imprimí el resultado",
+    starter_code: "# def lis(arr):\n#     n = len(arr)\n#     if n == 0:\n#         return 0\n#     tabla = [1] * n\n#     for i in range(n):\n#         for j in range(i):\n#             if arr[j] < arr[i]:\n#                 tabla[i] = max(tabla[i], tabla[j] + 1)\n#     return max(tabla)\n# resultado = lis([10, 9, 2, 5, 3, 7, 101, 18])\n# print(resultado)\n",
+    pytest: "def test_dp_lis(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert ns['lis']([]) == 0\n    assert ns['lis']([1]) == 1\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "Compará cada par (j < i) y extendé la mejor subsecuencia.",
+    solution_example: "def lis(arr):\n    n = len(arr)\n    if n == 0:\n        return 0\n    tabla = [1] * n\n    for i in range(n):\n        for j in range(i):\n            if arr[j] < arr[i]:\n                tabla[i] = max(tabla[i], tabla[j] + 1)\n    return max(tabla)\n\nresultado = lis([10, 9, 2, 5, 3, 7, 101, 18])\nprint(resultado)\n",
+    next: Some("py-1551-dp-edit-distance"), show_type_chips: false, micro_step: 1550,
+};
+pub const PY1551_DP_EDIT_DISTANCE: CodingStep = CodingStep {
+    id: "py-1551-dp-edit-distance", title: "DP · Distancia de edición", objective: "Calcular la distancia de edición (Levenshtein) entre dos strings.",
+    prompt_md: "**Distancia de edición**\n\nMide el mínimo de inserciones, borrados y reemplazos para transformar un string en otro, con una tabla 2D.\n\n**Micro-reto:**\n1. Definí `distancia_edicion(a, b)`\n2. Aplicala a `horse` y `ros`\n3. Imprimí el resultado",
+    starter_code: "# def distancia_edicion(a, b):\n#     m, n = len(a), len(b)\n#     tabla = [[0] * (n + 1) for _ in range(m + 1)]\n#     for i in range(m + 1):\n#         tabla[i][0] = i\n#     for j in range(n + 1):\n#         tabla[0][j] = j\n#     for i in range(1, m + 1):\n#         for j in range(1, n + 1):\n#             if a[i - 1] == b[j - 1]:\n#                 tabla[i][j] = tabla[i - 1][j - 1]\n#             else:\n#                 tabla[i][j] = 1 + min(tabla[i - 1][j], tabla[i][j - 1], tabla[i - 1][j - 1])\n#     return tabla[m][n]\n# resultado = distancia_edicion('horse', 'ros')\n# print(resultado)\n",
+    pytest: "def test_dp_edit_distance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['distancia_edicion']('a', 'b') == 1\n    assert ns['distancia_edicion']('', '') == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "Si difieren, es 1 + el mínimo de las tres celdas vecinas.",
+    solution_example: "def distancia_edicion(a, b):\n    m, n = len(a), len(b)\n    tabla = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1):\n        tabla[i][0] = i\n    for j in range(n + 1):\n        tabla[0][j] = j\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                tabla[i][j] = tabla[i - 1][j - 1]\n            else:\n                tabla[i][j] = 1 + min(tabla[i - 1][j], tabla[i][j - 1], tabla[i - 1][j - 1])\n    return tabla[m][n]\n\nresultado = distancia_edicion('horse', 'ros')\nprint(resultado)\n",
+    next: Some("py-1552-dp-state-machine"), show_type_chips: false, micro_step: 1551,
+};
+pub const PY1552_DP_STATE_MACHINE: CodingStep = CodingStep {
+    id: "py-1552-dp-state-machine", title: "DP · Máquina de estados", objective: "Maximizar la ganancia de acciones con una máquina de estados.",
+    prompt_md: "**DP con máquina de estados**\n\nDos estados —sin acción y con acción— se actualizan día a día para maximizar la ganancia de una compraventa.\n\n**Micro-reto:**\n1. Definí `max_ganancia(precios)` para una única transacción\n2. Aplicala a `[7, 1, 5, 3, 6, 4]`\n3. Imprimí el resultado",
+    starter_code: "# def max_ganancia(precios):\n#     sin_accion = 0\n#     con_accion = float('-inf')\n#     for p in precios:\n#         sin_accion = max(sin_accion, con_accion + p)\n#         con_accion = max(con_accion, -p)\n#     return sin_accion\n# resultado = max_ganancia([7, 1, 5, 3, 6, 4])\n# print(resultado)\n",
+    pytest: "def test_dp_state_machine(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert ns['max_ganancia']([7, 6, 4, 3, 1]) == 0\n    assert ns['max_ganancia']([]) == 0\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "con_accion arranca en -infinito para no vender antes de comprar.",
+    solution_example: "def max_ganancia(precios):\n    sin_accion = 0\n    con_accion = float('-inf')\n    for p in precios:\n        sin_accion = max(sin_accion, con_accion + p)\n        con_accion = max(con_accion, -p)\n    return sin_accion\n\nresultado = max_ganancia([7, 1, 5, 3, 6, 4])\nprint(resultado)\n",
+    next: Some("py-1553-dc-merge-sort"), show_type_chips: false, micro_step: 1552,
+};
+pub const PY1553_DC_MERGE_SORT: CodingStep = CodingStep {
+    id: "py-1553-dc-merge-sort", title: "Divide · Merge sort", objective: "Implementar merge sort por divide y vencerás.",
+    prompt_md: "**Merge sort**\n\nDividís el array en mitades, ordenás cada una recursivamente y fusionás las mitades ordenadas.\n\n**Micro-reto:**\n1. Definí `ordenar_merge(arr)` y `fusionar(a, b)`\n2. Aplicala a `[38, 27, 43, 3, 9, 82, 10]`\n3. Imprimí el resultado",
+    starter_code: "# def fusionar(a, b):\n#     resultado = []\n#     i = j = 0\n#     while i < len(a) and j < len(b):\n#         if a[i] <= b[j]:\n#             resultado.append(a[i])\n#             i += 1\n#         else:\n#             resultado.append(b[j])\n#             j += 1\n#     resultado.extend(a[i:])\n#     resultado.extend(b[j:])\n#     return resultado\n# def ordenar_merge(arr):\n#     if len(arr) <= 1:\n#         return arr\n#     medio = len(arr) // 2\n#     return fusionar(ordenar_merge(arr[:medio]), ordenar_merge(arr[medio:]))\n# resultado = ordenar_merge([38, 27, 43, 3, 9, 82, 10])\n# print(resultado)\n",
+    pytest: "def test_dc_merge_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 9, 10, 27, 38, 43, 82]\n    assert ns['ordenar_merge']([5, 1, 4]) == [1, 4, 5]\n    assert ns['ordenar_merge']([]) == []\n    assert capsys.readouterr().out.strip() == str([3, 9, 10, 27, 38, 43, 82])\n",
+    hint: "Dividí a la mitad, ordená y fusioná.",
+    solution_example: "def fusionar(a, b):\n    resultado = []\n    i = j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            resultado.append(a[i])\n            i += 1\n        else:\n            resultado.append(b[j])\n            j += 1\n    resultado.extend(a[i:])\n    resultado.extend(b[j:])\n    return resultado\n\ndef ordenar_merge(arr):\n    if len(arr) <= 1:\n        return arr\n    medio = len(arr) // 2\n    return fusionar(ordenar_merge(arr[:medio]), ordenar_merge(arr[medio:]))\n\nresultado = ordenar_merge([38, 27, 43, 3, 9, 82, 10])\nprint(resultado)\n",
+    next: Some("py-1554-dc-quickselect"), show_type_chips: false, micro_step: 1553,
+};
+pub const PY1554_DC_QUICKSELECT: CodingStep = CodingStep {
+    id: "py-1554-dc-quickselect", title: "Divide · Quickselect", objective: "Encontrar el k-ésimo menor con quickselect in-place.",
+    prompt_md: "**Quickselect**\n\nParticionás alrededor de un pivote y seguís solo en la partición que contiene el índice buscado.\n\n**Micro-reto:**\n1. Definí `seleccion_rapida(arr, k)` con `k` en base 1\n2. Aplicala a `[7, 10, 4, 3, 20, 15]` con `k=3`\n3. Imprimí el resultado",
+    starter_code: "# def seleccion_rapida(arr, k):\n#     def particionar(izq, der):\n#         pivote = arr[der]\n#         i = izq\n#         for j in range(izq, der):\n#             if arr[j] <= pivote:\n#                 arr[i], arr[j] = arr[j], arr[i]\n#                 i += 1\n#         arr[i], arr[der] = arr[der], arr[i]\n#         return i\n#     def seleccion(izq, der, k):\n#         if izq == der:\n#             return arr[izq]\n#         indice = particionar(izq, der)\n#         if k == indice:\n#             return arr[indice]\n#         if k < indice:\n#             return seleccion(izq, indice - 1, k)\n#         return seleccion(indice + 1, der, k)\n#     return seleccion(0, len(arr) - 1, k - 1)\n# resultado = seleccion_rapida([7, 10, 4, 3, 20, 15], 3)\n# print(resultado)\n",
+    pytest: "def test_dc_quickselect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert ns['seleccion_rapida']([7, 10, 4, 3, 20, 15], 1) == 3\n    assert ns['seleccion_rapida']([5], 1) == 5\n    assert capsys.readouterr().out.strip() == '7'\n",
+    hint: "Particioná y seguí solo en la mitad que contiene k.",
+    solution_example: "def seleccion_rapida(arr, k):\n    def particionar(izq, der):\n        pivote = arr[der]\n        i = izq\n        for j in range(izq, der):\n            if arr[j] <= pivote:\n                arr[i], arr[j] = arr[j], arr[i]\n                i += 1\n        arr[i], arr[der] = arr[der], arr[i]\n        return i\n    def seleccion(izq, der, k):\n        if izq == der:\n            return arr[izq]\n        indice = particionar(izq, der)\n        if k == indice:\n            return arr[indice]\n        if k < indice:\n            return seleccion(izq, indice - 1, k)\n        return seleccion(indice + 1, der, k)\n    return seleccion(0, len(arr) - 1, k - 1)\n\nresultado = seleccion_rapida([7, 10, 4, 3, 20, 15], 3)\nprint(resultado)\n",
+    next: Some("py-1555-dc-inversions"), show_type_chips: false, micro_step: 1554,
+};
+pub const PY1555_DC_INVERSIONS: CodingStep = CodingStep {
+    id: "py-1555-dc-inversions", title: "Divide · Inversiones", objective: "Contar inversiones en un array con divide y vencerás.",
+    prompt_md: "**Contar inversiones**\n\nUna inversión es un par `(i, j)` con `i < j` y `arr[i] > arr[j]`. La contás durante el merge.\n\n**Micro-reto:**\n1. Definí `contar_inversiones(arr)`\n2. Aplicala a `[2, 4, 1, 3, 5]`\n3. Imprimí el resultado",
+    starter_code: "# def contar_inversiones(arr):\n#     def fusionar_y_contar(a, b):\n#         resultado = []\n#         i = j = 0\n#         cuenta = 0\n#         while i < len(a) and j < len(b):\n#             if a[i] <= b[j]:\n#                 resultado.append(a[i])\n#                 i += 1\n#             else:\n#                 resultado.append(b[j])\n#                 cuenta += len(a) - i\n#                 j += 1\n#         resultado.extend(a[i:])\n#         resultado.extend(b[j:])\n#         return resultado, cuenta\n#     def dividir(lista):\n#         if len(lista) <= 1:\n#             return lista, 0\n#         medio = len(lista) // 2\n#         izq, ci = dividir(lista[:medio])\n#         der, cd = dividir(lista[medio:])\n#         fusion, cf = fusionar_y_contar(izq, der)\n#         return fusion, ci + cd + cf\n#     _, total = dividir(arr)\n#     return total\n# resultado = contar_inversiones([2, 4, 1, 3, 5])\n# print(resultado)\n",
+    pytest: "def test_dc_inversions(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['contar_inversiones']([1, 2, 3]) == 0\n    assert ns['contar_inversiones']([3, 2, 1]) == 3\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "Cuando b[j] entra antes que a[i], suma len(a) - i.",
+    solution_example: "def contar_inversiones(arr):\n    def fusionar_y_contar(a, b):\n        resultado = []\n        i = j = 0\n        cuenta = 0\n        while i < len(a) and j < len(b):\n            if a[i] <= b[j]:\n                resultado.append(a[i])\n                i += 1\n            else:\n                resultado.append(b[j])\n                cuenta += len(a) - i\n                j += 1\n        resultado.extend(a[i:])\n        resultado.extend(b[j:])\n        return resultado, cuenta\n    def dividir(lista):\n        if len(lista) <= 1:\n            return lista, 0\n        medio = len(lista) // 2\n        izq, ci = dividir(lista[:medio])\n        der, cd = dividir(lista[medio:])\n        fusion, cf = fusionar_y_contar(izq, der)\n        return fusion, ci + cd + cf\n    _, total = dividir(arr)\n    return total\n\nresultado = contar_inversiones([2, 4, 1, 3, 5])\nprint(resultado)\n",
+    next: Some("py-1556-dc-max-subarray"), show_type_chips: false, micro_step: 1555,
+};
+pub const PY1556_DC_MAX_SUBARRAY: CodingStep = CodingStep {
+    id: "py-1556-dc-max-subarray", title: "Divide · Máximo subarray", objective: "Hallar el subarray de suma máxima por divide y vencerás.",
+    prompt_md: "**Máximo subarray**\n\nEl máximo subarray está en la izquierda, en la derecha o cruza el medio. Combinás los tres casos.\n\n**Micro-reto:**\n1. Definí `max_subarray(arr)`\n2. Aplicala a `[-2, 1, -3, 4, -1, 2, 1, -5, 4]`\n3. Imprimí el resultado",
+    starter_code: "# def max_subarray(arr):\n#     def dividir(izq, der):\n#         if izq == der:\n#             return arr[izq]\n#         medio = (izq + der) // 2\n#         return max(dividir(izq, medio), dividir(medio + 1, der), cruzar(izq, medio, der))\n#     def cruzar(izq, medio, der):\n#         suma_izq = float('-inf')\n#         suma = 0\n#         for i in range(medio, izq - 1, -1):\n#             suma += arr[i]\n#             suma_izq = max(suma_izq, suma)\n#         suma_der = float('-inf')\n#         suma = 0\n#         for i in range(medio + 1, der + 1):\n#             suma += arr[i]\n#             suma_der = max(suma_der, suma)\n#         return suma_izq + suma_der\n#     return dividir(0, len(arr) - 1)\n# resultado = max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4])\n# print(resultado)\n",
+    pytest: "def test_dc_max_subarray(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert ns['max_subarray']([-1, -2]) == -1\n    assert ns['max_subarray']([5]) == 5\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "El caso cruzado suma lo mejor hacia cada lado del medio.",
+    solution_example: "def max_subarray(arr):\n    def dividir(izq, der):\n        if izq == der:\n            return arr[izq]\n        medio = (izq + der) // 2\n        return max(dividir(izq, medio), dividir(medio + 1, der), cruzar(izq, medio, der))\n    def cruzar(izq, medio, der):\n        suma_izq = float('-inf')\n        suma = 0\n        for i in range(medio, izq - 1, -1):\n            suma += arr[i]\n            suma_izq = max(suma_izq, suma)\n        suma_der = float('-inf')\n        suma = 0\n        for i in range(medio + 1, der + 1):\n            suma += arr[i]\n            suma_der = max(suma_der, suma)\n        return suma_izq + suma_der\n    return dividir(0, len(arr) - 1)\n\nresultado = max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4])\nprint(resultado)\n",
+    next: Some("py-1557-dc-karatsuba"), show_type_chips: false, micro_step: 1556,
+};
+pub const PY1557_DC_KARATSUBA: CodingStep = CodingStep {
+    id: "py-1557-dc-karatsuba", title: "Divide · Karatsuba", objective: "Multiplicar enteros grandes con el algoritmo de Karatsuba.",
+    prompt_md: "**Karatsuba**\n\nDivide cada número en mitades y reduce las multiplicaciones de cuatro a tres recursivas.\n\n**Micro-reto:**\n1. Definí `karatsuba(x, y)`\n2. Aplicala a `1234` y `5678`\n3. Imprimí el resultado",
+    starter_code: "# def karatsuba(x, y):\n#     if x < 10 or y < 10:\n#         return x * y\n#     n = max(len(str(x)), len(str(y)))\n#     mitad = n // 2\n#     divisor = 10 ** mitad\n#     a, b = x // divisor, x % divisor\n#     c, d = y // divisor, y % divisor\n#     ac = karatsuba(a, c)\n#     bd = karatsuba(b, d)\n#     ab_cd = karatsuba(a + b, c + d) - ac - bd\n#     return ac * (10 ** (2 * mitad)) + ab_cd * (10 ** mitad) + bd\n# resultado = karatsuba(1234, 5678)\n# print(resultado)\n",
+    pytest: "def test_dc_karatsuba(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7006652\n    assert ns['karatsuba'](12, 34) == 408\n    assert ns['karatsuba'](7, 8) == 56\n    assert capsys.readouterr().out.strip() == '7006652'\n",
+    hint: "Tres multiplicaciones recursivas en lugar de cuatro.",
+    solution_example: "def karatsuba(x, y):\n    if x < 10 or y < 10:\n        return x * y\n    n = max(len(str(x)), len(str(y)))\n    mitad = n // 2\n    divisor = 10 ** mitad\n    a, b = x // divisor, x % divisor\n    c, d = y // divisor, y % divisor\n    ac = karatsuba(a, c)\n    bd = karatsuba(b, d)\n    ab_cd = karatsuba(a + b, c + d) - ac - bd\n    return ac * (10 ** (2 * mitad)) + ab_cd * (10 ** mitad) + bd\n\nresultado = karatsuba(1234, 5678)\nprint(resultado)\n",
+    next: Some("py-1558-dc-pow"), show_type_chips: false, micro_step: 1557,
+};
+pub const PY1558_DC_POW: CodingStep = CodingStep {
+    id: "py-1558-dc-pow", title: "Divide · Potencia rápida", objective: "Calcular potencias por exponenciación binaria.",
+    prompt_md: "**Potencia rápida**\n\nReducís el exponente a la mitad en cada paso: `a^n = (a^(n/2))^2` (por 2 si n es impar).\n\n**Micro-reto:**\n1. Definí `potencia_rapida(base, exponente)`\n2. Aplicala a base `2`, exponente `10`\n3. Imprimí el resultado",
+    starter_code: "# def potencia_rapida(base, exponente):\n#     if exponente == 0:\n#         return 1\n#     mitad = potencia_rapida(base, exponente // 2)\n#     cuadrado = mitad * mitad\n#     if exponente % 2 == 0:\n#         return cuadrado\n#     return cuadrado * base\n# resultado = potencia_rapida(2, 10)\n# print(resultado)\n",
+    pytest: "def test_dc_pow(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1024\n    assert ns['potencia_rapida'](3, 5) == 243\n    assert ns['potencia_rapida'](5, 0) == 1\n    assert capsys.readouterr().out.strip() == '1024'\n",
+    hint: "Recursá con exponente // 2 y multiplicá por base si es impar.",
+    solution_example: "def potencia_rapida(base, exponente):\n    if exponente == 0:\n        return 1\n    mitad = potencia_rapida(base, exponente // 2)\n    cuadrado = mitad * mitad\n    if exponente % 2 == 0:\n        return cuadrado\n    return cuadrado * base\n\nresultado = potencia_rapida(2, 10)\nprint(resultado)\n",
+    next: Some("py-1559-greedy-interval"), show_type_chips: false, micro_step: 1558,
+};
+pub const PY1559_GREEDY_INTERVAL: CodingStep = CodingStep {
+    id: "py-1559-greedy-interval", title: "Greedy · Intervalos", objective: "Seleccionar el máximo de intervalos no solapados.",
+    prompt_md: "**Interval scheduling**\n\nOrdenás por hora de fin y tomás cada intervalo que empieza después del último elegido.\n\n**Micro-reto:**\n1. Definí `max_intervalos(intervalos)`\n2. Aplicala a `[(1, 3), (2, 5), (4, 6), (6, 8)]`\n3. Imprimí el resultado",
+    starter_code: "# def max_intervalos(intervalos):\n#     intervalos = sorted(intervalos, key=lambda x: x[1])\n#     cuenta = 0\n#     fin_previo = float('-inf')\n#     for inicio, fin in intervalos:\n#         if inicio >= fin_previo:\n#             cuenta += 1\n#             fin_previo = fin\n#     return cuenta\n# resultado = max_intervalos([(1, 3), (2, 5), (4, 6), (6, 8)])\n# print(resultado)\n",
+    pytest: "def test_greedy_interval(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['max_intervalos']([(1, 2), (2, 3), (3, 4)]) == 3\n    assert ns['max_intervalos']([]) == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "Ordená por fin y elegí el primero compatible.",
+    solution_example: "def max_intervalos(intervalos):\n    intervalos = sorted(intervalos, key=lambda x: x[1])\n    cuenta = 0\n    fin_previo = float('-inf')\n    for inicio, fin in intervalos:\n        if inicio >= fin_previo:\n            cuenta += 1\n            fin_previo = fin\n    return cuenta\n\nresultado = max_intervalos([(1, 3), (2, 5), (4, 6), (6, 8)])\nprint(resultado)\n",
+    next: Some("py-1560-greedy-fractional"), show_type_chips: false, micro_step: 1559,
+};
+pub const PY1560_GREEDY_FRACTIONAL: CodingStep = CodingStep {
+    id: "py-1560-greedy-fractional", title: "Greedy · Mochila fraccionaria", objective: "Resolver la mochila fraccionaria por ratio valor/peso.",
+    prompt_md: "**Mochila fraccionaria**\n\nPodés tomar fracciones de un ítem. Ordenás por ratio valor/peso y llenás la mochila de mayor a menor.\n\n**Micro-reto:**\n1. Definí `mochila_fraccionaria(items, capacidad)`\n2. Aplicala a `[(60, 10), (100, 20), (120, 30)]` con capacidad `50`\n3. Imprimí el resultado",
+    starter_code: "# def mochila_fraccionaria(items, capacidad):\n#     items = sorted(items, key=lambda x: x[0] / x[1], reverse=True)\n#     valor_total = 0.0\n#     for valor, peso in items:\n#         if capacidad >= peso:\n#             valor_total += valor\n#             capacidad -= peso\n#         else:\n#             valor_total += valor * (capacidad / peso)\n#             break\n#     return valor_total\n# resultado = mochila_fraccionaria([(60, 10), (100, 20), (120, 30)], 50)\n# print(resultado)\n",
+    pytest: "def test_greedy_fractional(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 240.0\n    assert ns['mochila_fraccionaria']([(10, 2)], 1) == 5.0\n    assert capsys.readouterr().out.strip() == '240.0'\n",
+    hint: "Tomá del mejor ratio valor/peso hasta llenar.",
+    solution_example: "def mochila_fraccionaria(items, capacidad):\n    items = sorted(items, key=lambda x: x[0] / x[1], reverse=True)\n    valor_total = 0.0\n    for valor, peso in items:\n        if capacidad >= peso:\n            valor_total += valor\n            capacidad -= peso\n        else:\n            valor_total += valor * (capacidad / peso)\n            break\n    return valor_total\n\nresultado = mochila_fraccionaria([(60, 10), (100, 20), (120, 30)], 50)\nprint(resultado)\n",
+    next: Some("py-1561-greedy-coins"), show_type_chips: false, micro_step: 1560,
+};
+pub const PY1561_GREEDY_COINS: CodingStep = CodingStep {
+    id: "py-1561-greedy-coins", title: "Greedy · Cambio mínimo", objective: "Dar cambio con el mínimo de monedas (sistema canónico).",
+    prompt_md: "**Cambio greedy**\n\nCon monedas canónicas, usar siempre la mayor moneda posible da el cambio mínimo.\n\n**Micro-reto:**\n1. Definí `cambio_greedy(monedas, cantidad)`\n2. Aplicala a `[1, 5, 10, 25]` con cantidad `63`\n3. Imprimí el resultado",
+    starter_code: "# def cambio_greedy(monedas, cantidad):\n#     monedas = sorted(monedas, reverse=True)\n#     cuenta = 0\n#     for moneda in monedas:\n#         while cantidad >= moneda:\n#             cantidad -= moneda\n#             cuenta += 1\n#     return cuenta\n# resultado = cambio_greedy([1, 5, 10, 25], 63)\n# print(resultado)\n",
+    pytest: "def test_greedy_coins(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert ns['cambio_greedy']([1, 5, 10], 27) == 5\n    assert ns['cambio_greedy']([1], 0) == 0\n    assert capsys.readouterr().out.strip() == '6'\n",
+    hint: "Usá siempre la moneda más grande disponible.",
+    solution_example: "def cambio_greedy(monedas, cantidad):\n    monedas = sorted(monedas, reverse=True)\n    cuenta = 0\n    for moneda in monedas:\n        while cantidad >= moneda:\n            cantidad -= moneda\n            cuenta += 1\n    return cuenta\n\nresultado = cambio_greedy([1, 5, 10, 25], 63)\nprint(resultado)\n",
+    next: Some("py-1562-greedy-huffman"), show_type_chips: false, micro_step: 1561,
+};
+pub const PY1562_GREEDY_HUFFMAN: CodingStep = CodingStep {
+    id: "py-1562-greedy-huffman", title: "Greedy · Huffman", objective: "Calcular la longitud total del código de Huffman.",
+    prompt_md: "**Huffman**\n\nUn heap combina siempre las dos frecuencias menores; cada combinación suma a la longitud total del código.\n\n**Micro-reto:**\n1. Definí `longitud_huffman(frecuencias)`\n2. Aplicala a `[5, 9, 12, 13, 16, 45]`\n3. Imprimí el resultado",
+    starter_code: "# import heapq\n# def longitud_huffman(frecuencias):\n#     heap = frecuencias[:]\n#     heapq.heapify(heap)\n#     total = 0\n#     while len(heap) > 1:\n#         a = heapq.heappop(heap)\n#         b = heapq.heappop(heap)\n#         suma = a + b\n#         total += suma\n#         heapq.heappush(heap, suma)\n#     return total\n# resultado = longitud_huffman([5, 9, 12, 13, 16, 45])\n# print(resultado)\n",
+    pytest: "def test_greedy_huffman(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 224\n    assert ns['longitud_huffman']([1]) == 0\n    assert ns['longitud_huffman']([2, 3, 4, 5]) == 28\n    assert capsys.readouterr().out.strip() == '224'\n",
+    hint: "Sumá cada combinación de las dos menores al total.",
+    solution_example: "import heapq\n\ndef longitud_huffman(frecuencias):\n    heap = frecuencias[:]\n    heapq.heapify(heap)\n    total = 0\n    while len(heap) > 1:\n        a = heapq.heappop(heap)\n        b = heapq.heappop(heap)\n        suma = a + b\n        total += suma\n        heapq.heappush(heap, suma)\n    return total\n\nresultado = longitud_huffman([5, 9, 12, 13, 16, 45])\nprint(resultado)\n",
+    next: Some("py-1563-greedy-activity"), show_type_chips: false, micro_step: 1562,
+};
+pub const PY1563_GREEDY_ACTIVITY: CodingStep = CodingStep {
+    id: "py-1563-greedy-activity", title: "Greedy · Actividades", objective: "Seleccionar actividades compatibles devolviendo sus índices.",
+    prompt_md: "**Activity selection**\n\nElegís el máximo de actividades compatibles ordenando por hora de fin y devolviendo sus índices originales.\n\n**Micro-reto:**\n1. Definí `seleccionar_actividades(inicios, fines)`\n2. Aplicala a inicios `[1, 3, 0, 5, 8, 5]` y fines `[2, 4, 6, 7, 9, 9]`\n3. Imprimí el resultado",
+    starter_code: "# def seleccionar_actividades(inicios, fines):\n#     orden = sorted(range(len(inicios)), key=lambda i: fines[i])\n#     elegidas = []\n#     fin_previo = float('-inf')\n#     for i in orden:\n#         if inicios[i] >= fin_previo:\n#             elegidas.append(i)\n#             fin_previo = fines[i]\n#     return elegidas\n# resultado = seleccionar_actividades([1, 3, 0, 5, 8, 5], [2, 4, 6, 7, 9, 9])\n# print(resultado)\n",
+    pytest: "def test_greedy_activity(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 3, 4]\n    assert ns['seleccionar_actividades']([1], [2]) == [0]\n    assert capsys.readouterr().out.strip() == str([0, 1, 3, 4])\n",
+    hint: "Ordená índices por fin y guardá los compatibles.",
+    solution_example: "def seleccionar_actividades(inicios, fines):\n    orden = sorted(range(len(inicios)), key=lambda i: fines[i])\n    elegidas = []\n    fin_previo = float('-inf')\n    for i in orden:\n        if inicios[i] >= fin_previo:\n            elegidas.append(i)\n            fin_previo = fines[i]\n    return elegidas\n\nresultado = seleccionar_actividades([1, 3, 0, 5, 8, 5], [2, 4, 6, 7, 9, 9])\nprint(resultado)\n",
+    next: Some("py-1564-greedy-sort"), show_type_chips: false, micro_step: 1563,
+};
+pub const PY1564_GREEDY_SORT: CodingStep = CodingStep {
+    id: "py-1564-greedy-sort", title: "Greedy · Ordenar y servir", objective: "Minimizar el tiempo total de espera ordenando por duración.",
+    prompt_md: "**Minimizar espera**\n\nSirviendo primero los trabajos más cortos (SJF) minimizás la suma de tiempos de espera.\n\n**Micro-reto:**\n1. Definí `minimizar_espera(duraciones)`\n2. Aplicala a `[4, 2, 3, 1]`\n3. Imprimí el resultado",
+    starter_code: "# def minimizar_espera(duraciones):\n#     duraciones = sorted(duraciones)\n#     espera = 0\n#     acumulado = 0\n#     for d in duraciones:\n#         espera += acumulado\n#         acumulado += d\n#     return espera\n# resultado = minimizar_espera([4, 2, 3, 1])\n# print(resultado)\n",
+    pytest: "def test_greedy_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert ns['minimizar_espera']([5]) == 0\n    assert ns['minimizar_espera']([2, 2]) == 2\n    assert capsys.readouterr().out.strip() == '10'\n",
+    hint: "Ordená ascendentemente y acumulá la espera previa.",
+    solution_example: "def minimizar_espera(duraciones):\n    duraciones = sorted(duraciones)\n    espera = 0\n    acumulado = 0\n    for d in duraciones:\n        espera += acumulado\n        acumulado += d\n    return espera\n\nresultado = minimizar_espera([4, 2, 3, 1])\nprint(resultado)\n",
+    next: Some("py-1565-state-bfs"), show_type_chips: false, micro_step: 1564,
+};
+pub const PY1565_STATE_BFS: CodingStep = CodingStep {
+    id: "py-1565-state-bfs", title: "Estados · BFS", objective: "Recorrer un grafo de estados con BFS y medir la distancia.",
+    prompt_md: "**BFS en estados**\n\nUna cola explora los estados por niveles, garantizando el camino más corto en grafos no ponderados.\n\n**Micro-reto:**\n1. Definí `bfs_distancia(grafo, inicio, objetivo)`\n2. Aplicala al grafo dado buscando de `A` a `D`\n3. Imprimí el resultado",
+    starter_code: "# from collections import deque\n# def bfs_distancia(grafo, inicio, objetivo):\n#     visitados = {inicio}\n#     cola = deque([(inicio, 0)])\n#     while cola:\n#         nodo, distancia = cola.popleft()\n#         if nodo == objetivo:\n#             return distancia\n#         for vecino in grafo.get(nodo, []):\n#             if vecino not in visitados:\n#                 visitados.add(vecino)\n#                 cola.append((vecino, distancia + 1))\n#     return -1\n# resultado = bfs_distancia({'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}, 'A', 'D')\n# print(resultado)\n",
+    pytest: "def test_state_bfs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['bfs_distancia']({'A': ['B'], 'B': []}, 'A', 'C') == -1\n    assert ns['bfs_distancia']({'A': []}, 'A', 'A') == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Cola con (nodo, distancia); marcá visitados al encolar.",
+    solution_example: "from collections import deque\n\ndef bfs_distancia(grafo, inicio, objetivo):\n    visitados = {inicio}\n    cola = deque([(inicio, 0)])\n    while cola:\n        nodo, distancia = cola.popleft()\n        if nodo == objetivo:\n            return distancia\n        for vecino in grafo.get(nodo, []):\n            if vecino not in visitados:\n                visitados.add(vecino)\n                cola.append((vecino, distancia + 1))\n    return -1\n\nresultado = bfs_distancia({'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}, 'A', 'D')\nprint(resultado)\n",
+    next: Some("py-1566-state-dfs"), show_type_chips: false, micro_step: 1565,
+};
+pub const PY1566_STATE_DFS: CodingStep = CodingStep {
+    id: "py-1566-state-dfs", title: "Estados · DFS", objective: "Recorrer en profundidad y detectar si un estado es alcanzable.",
+    prompt_md: "**DFS en estados**\n\nLa recursión baja por una rama hasta el fondo antes de probar la siguiente, marcando visitados.\n\n**Micro-reto:**\n1. Definí `dfs_alcanzable(grafo, inicio, objetivo)`\n2. Aplicala al grafo dado buscando de `A` a `D`\n3. Imprimí el resultado",
+    starter_code: "# def dfs_alcanzable(grafo, inicio, objetivo):\n#     visitados = set()\n#     def dfs(nodo):\n#         if nodo == objetivo:\n#             return True\n#         visitados.add(nodo)\n#         for vecino in grafo.get(nodo, []):\n#             if vecino not in visitados and dfs(vecino):\n#                 return True\n#         return False\n#     return dfs(inicio)\n# resultado = dfs_alcanzable({'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}, 'A', 'D')\n# print(resultado)\n",
+    pytest: "def test_state_dfs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert ns['dfs_alcanzable']({'A': ['B'], 'B': []}, 'A', 'Z') is False\n    assert ns['dfs_alcanzable']({'A': []}, 'A', 'A') is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Recursá y marcá visitados para evitar ciclos.",
+    solution_example: "def dfs_alcanzable(grafo, inicio, objetivo):\n    visitados = set()\n    def dfs(nodo):\n        if nodo == objetivo:\n            return True\n        visitados.add(nodo)\n        for vecino in grafo.get(nodo, []):\n            if vecino not in visitados and dfs(vecino):\n                return True\n        return False\n    return dfs(inicio)\n\nresultado = dfs_alcanzable({'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}, 'A', 'D')\nprint(resultado)\n",
+    next: Some("py-1567-state-maze"), show_type_chips: false, micro_step: 1566,
+};
+pub const PY1567_STATE_MAZE: CodingStep = CodingStep {
+    id: "py-1567-state-maze", title: "Estados · Laberinto", objective: "Encontrar el camino más corto en un laberinto con BFS.",
+    prompt_md: "**Camino en laberinto**\n\nTratás cada celda como un estado y usás BFS para hallar la distancia más corta a la meta.\n\n**Micro-reto:**\n1. Definí `camino_laberinto(laberinto, inicio, objetivo)`\n2. Aplicala al laberinto dado de `(0, 0)` a `(2, 2)`\n3. Imprimí el resultado",
+    starter_code: "# from collections import deque\n# def camino_laberinto(laberinto, inicio, objetivo):\n#     filas, columnas = len(laberinto), len(laberinto[0])\n#     visitados = {inicio}\n#     cola = deque([(inicio, 0)])\n#     direcciones = [(1, 0), (-1, 0), (0, 1), (0, -1)]\n#     while cola:\n#         (f, c), distancia = cola.popleft()\n#         if (f, c) == objetivo:\n#             return distancia\n#         for df, dc in direcciones:\n#             nf, nc = f + df, c + dc\n#             if 0 <= nf < filas and 0 <= nc < columnas and laberinto[nf][nc] == 0 and (nf, nc) not in visitados:\n#                 visitados.add((nf, nc))\n#                 cola.append(((nf, nc), distancia + 1))\n#     return -1\n# laberinto = [[0, 0, 0], [1, 1, 0], [0, 0, 0]]\n# resultado = camino_laberinto(laberinto, (0, 0), (2, 2))\n# print(resultado)\n",
+    pytest: "def test_state_maze(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert ns['camino_laberinto']([[0, 1], [1, 0]], (0, 0), (1, 1)) == -1\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "BFS sobre la grilla con cuatro direcciones.",
+    solution_example: "from collections import deque\n\ndef camino_laberinto(laberinto, inicio, objetivo):\n    filas, columnas = len(laberinto), len(laberinto[0])\n    visitados = {inicio}\n    cola = deque([(inicio, 0)])\n    direcciones = [(1, 0), (-1, 0), (0, 1), (0, -1)]\n    while cola:\n        (f, c), distancia = cola.popleft()\n        if (f, c) == objetivo:\n            return distancia\n        for df, dc in direcciones:\n            nf, nc = f + df, c + dc\n            if 0 <= nf < filas and 0 <= nc < columnas and laberinto[nf][nc] == 0 and (nf, nc) not in visitados:\n                visitados.add((nf, nc))\n                cola.append(((nf, nc), distancia + 1))\n    return -1\n\nlaberinto = [[0, 0, 0], [1, 1, 0], [0, 0, 0]]\nresultado = camino_laberinto(laberinto, (0, 0), (2, 2))\nprint(resultado)\n",
+    next: Some("py-1568-state-astar"), show_type_chips: false, micro_step: 1567,
+};
+pub const PY1568_STATE_ASTAR: CodingStep = CodingStep {
+    id: "py-1568-state-astar", title: "Estados · A*", objective: "Implementar A* con heurística de Manhattan.",
+    prompt_md: "**A* conceptual**\n\nA* expande primero los estados con menor `costo + heurística`. Con Manhattan en una grilla es óptimo.\n\n**Micro-reto:**\n1. Definí `a_star(laberinto, inicio, objetivo)`\n2. Aplicala al laberinto dado de `(0, 0)` a `(2, 2)`\n3. Imprimí el resultado",
+    starter_code: "# import heapq\n# def a_star(laberinto, inicio, objetivo):\n#     filas, columnas = len(laberinto), len(laberinto[0])\n#     def heuristica(p):\n#         return abs(p[0] - objetivo[0]) + abs(p[1] - objetivo[1])\n#     abiertos = [(heuristica(inicio), 0, inicio)]\n#     g = {inicio: 0}\n#     direcciones = [(1, 0), (-1, 0), (0, 1), (0, -1)]\n#     while abiertos:\n#         f, costo, (r, c) = heapq.heappop(abiertos)\n#         if (r, c) == objetivo:\n#             return costo\n#         for dr, dc in direcciones:\n#             nr, nc = r + dr, c + dc\n#             if 0 <= nr < filas and 0 <= nc < columnas and laberinto[nr][nc] == 0:\n#                 nuevo = costo + 1\n#                 if nuevo < g.get((nr, nc), float('inf')):\n#                     g[(nr, nc)] = nuevo\n#                     heapq.heappush(abiertos, (nuevo + heuristica((nr, nc)), nuevo, (nr, nc)))\n#     return -1\n# laberinto = [[0, 0, 0], [1, 1, 0], [0, 0, 0]]\n# resultado = a_star(laberinto, (0, 0), (2, 2))\n# print(resultado)\n",
+    pytest: "def test_state_astar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert ns['a_star']([[0]], (0, 0), (0, 0)) == 0\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "Ordená la cola por costo acumulado más heurística.",
+    solution_example: "import heapq\n\ndef a_star(laberinto, inicio, objetivo):\n    filas, columnas = len(laberinto), len(laberinto[0])\n    def heuristica(p):\n        return abs(p[0] - objetivo[0]) + abs(p[1] - objetivo[1])\n    abiertos = [(heuristica(inicio), 0, inicio)]\n    g = {inicio: 0}\n    direcciones = [(1, 0), (-1, 0), (0, 1), (0, -1)]\n    while abiertos:\n        f, costo, (r, c) = heapq.heappop(abiertos)\n        if (r, c) == objetivo:\n            return costo\n        for dr, dc in direcciones:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < filas and 0 <= nc < columnas and laberinto[nr][nc] == 0:\n                nuevo = costo + 1\n                if nuevo < g.get((nr, nc), float('inf')):\n                    g[(nr, nc)] = nuevo\n                    heapq.heappush(abiertos, (nuevo + heuristica((nr, nc)), nuevo, (nr, nc)))\n    return -1\n\nlaberinto = [[0, 0, 0], [1, 1, 0], [0, 0, 0]]\nresultado = a_star(laberinto, (0, 0), (2, 2))\nprint(resultado)\n",
+    next: Some("py-1569-state-8puzzle"), show_type_chips: false, micro_step: 1568,
+};
+pub const PY1569_STATE_8PUZZLE: CodingStep = CodingStep {
+    id: "py-1569-state-8puzzle", title: "Estados · Puzzle 8", objective: "Calcular la distancia Manhattan de un estado del puzzle 8.",
+    prompt_md: "**Puzzle 8 y Manhattan**\n\nLa distancia de Manhattan suma cuánto se aleja cada ficha de su posición objetivo, ignorando el hueco.\n\n**Micro-reto:**\n1. Definí `distancia_manhattan(estado, objetivo)`\n2. Aplicala al estado dado\n3. Imprimí el resultado",
+    starter_code: "# def distancia_manhattan(estado, objetivo):\n#     pos = {v: (i, j) for i, fila in enumerate(objetivo) for j, v in enumerate(fila)}\n#     distancia = 0\n#     for i in range(3):\n#         for j in range(3):\n#             valor = estado[i][j]\n#             if valor != 0:\n#                 oi, oj = pos[valor]\n#                 distancia += abs(i - oi) + abs(j - oj)\n#     return distancia\n# objetivo = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]\n# estado = [[1, 2, 3], [4, 5, 6], [0, 7, 8]]\n# resultado = distancia_manhattan(estado, objetivo)\n# print(resultado)\n",
+    pytest: "def test_state_8puzzle(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['distancia_manhattan'](ns['objetivo'], ns['objetivo']) == 0\n    assert capsys.readouterr().out.strip() == '2'\n",
+    hint: "Sumá |fila - fila_obj| + |col - col_obj| por ficha.",
+    solution_example: "def distancia_manhattan(estado, objetivo):\n    pos = {v: (i, j) for i, fila in enumerate(objetivo) for j, v in enumerate(fila)}\n    distancia = 0\n    for i in range(3):\n        for j in range(3):\n            valor = estado[i][j]\n            if valor != 0:\n                oi, oj = pos[valor]\n                distancia += abs(i - oi) + abs(j - oj)\n    return distancia\n\nobjetivo = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]\nestado = [[1, 2, 3], [4, 5, 6], [0, 7, 8]]\nresultado = distancia_manhattan(estado, objetivo)\nprint(resultado)\n",
+    next: Some("py-1570-state-goal"), show_type_chips: false, micro_step: 1569,
+};
+pub const PY1570_STATE_GOAL: CodingStep = CodingStep {
+    id: "py-1570-state-goal", title: "Estados · Alcanzable", objective: "Determinar si un estado objetivo es alcanzable por paridad.",
+    prompt_md: "**Estado alcanzable**\n\nUn puzzle 8 es resoluble si su número de inversiones (fichas fuera del hueco) es par.\n\n**Micro-reto:**\n1. Definí `es_alcanzable(estado)`\n2. Aplicala al estado resuelto\n3. Imprimí el resultado",
+    starter_code: "# def es_alcanzable(estado):\n#     plano = [v for fila in estado for v in fila if v != 0]\n#     inversiones = 0\n#     for i in range(len(plano)):\n#         for j in range(i + 1, len(plano)):\n#             if plano[i] > plano[j]:\n#                 inversiones += 1\n#     return inversiones % 2 == 0\n# resultado = es_alcanzable([[1, 2, 3], [4, 5, 6], [7, 8, 0]])\n# print(resultado)\n",
+    pytest: "def test_state_goal(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert ns['es_alcanzable']([[1, 2, 3], [4, 5, 6], [8, 7, 0]]) is False\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Contá inversiones e ignorá el hueco (0).",
+    solution_example: "def es_alcanzable(estado):\n    plano = [v for fila in estado for v in fila if v != 0]\n    inversiones = 0\n    for i in range(len(plano)):\n        for j in range(i + 1, len(plano)):\n            if plano[i] > plano[j]:\n                inversiones += 1\n    return inversiones % 2 == 0\n\nresultado = es_alcanzable([[1, 2, 3], [4, 5, 6], [7, 8, 0]])\nprint(resultado)\n",
+    next: Some("py-1571-geo-cross"), show_type_chips: false, micro_step: 1570,
+};
+pub const PY1571_GEO_CROSS: CodingStep = CodingStep {
+    id: "py-1571-geo-cross", title: "Geometría · Producto cruz", objective: "Calcular el producto cruz de dos vectores 2D.",
+    prompt_md: "**Producto cruz**\n\nEn 2D, `p × q = p.x·q.y - p.y·q.x`. Su signo indica el sentido del giro entre vectores.\n\n**Micro-reto:**\n1. Definí `producto_cruz(p, q)`\n2. Aplicala a `(1, 0)` y `(0, 1)`\n3. Imprimí el resultado",
+    starter_code: "# def producto_cruz(p, q):\n#     return p[0] * q[1] - p[1] * q[0]\n# resultado = producto_cruz((1, 0), (0, 1))\n# print(resultado)\n",
+    pytest: "def test_geo_cross(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert ns['producto_cruz']((1, 0), (2, 0)) == 0\n    assert ns['producto_cruz']((0, 1), (1, 0)) == -1\n    assert capsys.readouterr().out.strip() == '1'\n",
+    hint: "p[0] * q[1] - p[1] * q[0].",
+    solution_example: "def producto_cruz(p, q):\n    return p[0] * q[1] - p[1] * q[0]\n\nresultado = producto_cruz((1, 0), (0, 1))\nprint(resultado)\n",
+    next: Some("py-1572-geo-orientation"), show_type_chips: false, micro_step: 1571,
+};
+pub const PY1572_GEO_ORIENTATION: CodingStep = CodingStep {
+    id: "py-1572-geo-orientation", title: "Geometría · Orientación", objective: "Determinar la orientación de tres puntos.",
+    prompt_md: "**Orientación de tres puntos**\n\nEl signo del producto cruz de `(q-p)` y `(r-p)` dice si el giro es antihorario, horario o colineal.\n\n**Micro-reto:**\n1. Definí `orientacion(p, q, r)` que devuelva `1`, `-1` o `0`\n2. Aplicala a `(0, 0)`, `(1, 1)`, `(2, 2)`\n3. Imprimí el resultado",
+    starter_code: "# def orientacion(p, q, r):\n#     cruz = (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])\n#     if cruz > 0:\n#         return 1\n#     if cruz < 0:\n#         return -1\n#     return 0\n# resultado = orientacion((0, 0), (1, 1), (2, 2))\n# print(resultado)\n",
+    pytest: "def test_geo_orientation(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert ns['orientacion']((0, 0), (1, 0), (0, 1)) == 1\n    assert ns['orientacion']((0, 0), (0, 1), (1, 0)) == -1\n    assert capsys.readouterr().out.strip() == '0'\n",
+    hint: "Signo del producto cruz de (q-p) y (r-p).",
+    solution_example: "def orientacion(p, q, r):\n    cruz = (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])\n    if cruz > 0:\n        return 1\n    if cruz < 0:\n        return -1\n    return 0\n\nresultado = orientacion((0, 0), (1, 1), (2, 2))\nprint(resultado)\n",
+    next: Some("py-1573-geo-segment"), show_type_chips: false, micro_step: 1572,
+};
+pub const PY1573_GEO_SEGMENT: CodingStep = CodingStep {
+    id: "py-1573-geo-segment", title: "Geometría · Punto en segmento", objective: "Determinar si un punto está sobre un segmento.",
+    prompt_md: "**Punto sobre segmento**\n\nUn punto está en un segmento si es colineal con sus extremos y queda dentro del rectángulo que los contiene.\n\n**Micro-reto:**\n1. Definí `punto_en_segmento(p, a, b)`\n2. Aplicala a `(1, 1)` sobre `(0, 0)`-`(2, 2)`\n3. Imprimí el resultado",
+    starter_code: "# def punto_en_segmento(p, a, b):\n#     def orientacion(x, y, z):\n#         return (y[0] - x[0]) * (z[1] - x[1]) - (y[1] - x[1]) * (z[0] - x[0])\n#     colineal = orientacion(a, b, p) == 0\n#     dentro = min(a[0], b[0]) <= p[0] <= max(a[0], b[0]) and min(a[1], b[1]) <= p[1] <= max(a[1], b[1])\n#     return colineal and dentro\n# resultado = punto_en_segmento((1, 1), (0, 0), (2, 2))\n# print(resultado)\n",
+    pytest: "def test_geo_segment(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert ns['punto_en_segmento']((3, 3), (0, 0), (2, 2)) is False\n    assert ns['punto_en_segmento']((0, 0), (0, 0), (2, 2)) is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Colineal más estar dentro de la caja del segmento.",
+    solution_example: "def punto_en_segmento(p, a, b):\n    def orientacion(x, y, z):\n        return (y[0] - x[0]) * (z[1] - x[1]) - (y[1] - x[1]) * (z[0] - x[0])\n    colineal = orientacion(a, b, p) == 0\n    dentro = min(a[0], b[0]) <= p[0] <= max(a[0], b[0]) and min(a[1], b[1]) <= p[1] <= max(a[1], b[1])\n    return colineal and dentro\n\nresultado = punto_en_segmento((1, 1), (0, 0), (2, 2))\nprint(resultado)\n",
+    next: Some("py-1574-geo-convex-hull"), show_type_chips: false, micro_step: 1573,
+};
+pub const PY1574_GEO_CONVEX_HULL: CodingStep = CodingStep {
+    id: "py-1574-geo-convex-hull", title: "Geometría · Convex hull", objective: "Construir el cierre convexo con la cadena monótona.",
+    prompt_md: "**Convex hull (cadena monótona)**\n\nOrdenás los puntos y construís la cadena inferior y superior descartando giros horarios.\n\n**Micro-reto:**\n1. Definí `convex_hull(puntos)`\n2. Aplicala a `[(0, 0), (1, 0), (1, 1), (0, 1), (0.5, 0.5)]`\n3. Imprimí el resultado",
+    starter_code: "# def convex_hull(puntos):\n#     puntos = sorted(set(puntos))\n#     if len(puntos) <= 1:\n#         return puntos\n#     def orientacion(p, q, r):\n#         return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])\n#     inferior = []\n#     for p in puntos:\n#         while len(inferior) >= 2 and orientacion(inferior[-2], inferior[-1], p) <= 0:\n#             inferior.pop()\n#         inferior.append(p)\n#     superior = []\n#     for p in reversed(puntos):\n#         while len(superior) >= 2 and orientacion(superior[-2], superior[-1], p) <= 0:\n#             superior.pop()\n#         superior.append(p)\n#     return inferior[:-1] + superior[:-1]\n# resultado = convex_hull([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, 0.5)])\n# print(resultado)\n",
+    pytest: "def test_geo_convex_hull(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, 0), (1, 0), (1, 1), (0, 1)]\n    assert ns['convex_hull']([(0, 0)]) == [(0, 0)]\n    assert capsys.readouterr().out.strip() == str([(0, 0), (1, 0), (1, 1), (0, 1)])\n",
+    hint: "Descartá giros horarios (cruz <= 0) en ambas cadenas.",
+    solution_example: "def convex_hull(puntos):\n    puntos = sorted(set(puntos))\n    if len(puntos) <= 1:\n        return puntos\n    def orientacion(p, q, r):\n        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])\n    inferior = []\n    for p in puntos:\n        while len(inferior) >= 2 and orientacion(inferior[-2], inferior[-1], p) <= 0:\n            inferior.pop()\n        inferior.append(p)\n    superior = []\n    for p in reversed(puntos):\n        while len(superior) >= 2 and orientacion(superior[-2], superior[-1], p) <= 0:\n            superior.pop()\n        superior.append(p)\n    return inferior[:-1] + superior[:-1]\n\nresultado = convex_hull([(0, 0), (1, 0), (1, 1), (0, 1), (0.5, 0.5)])\nprint(resultado)\n",
+    next: Some("py-1575-geo-area"), show_type_chips: false, micro_step: 1574,
+};
+pub const PY1575_GEO_AREA: CodingStep = CodingStep {
+    id: "py-1575-geo-area", title: "Geometría · Área", objective: "Calcular el área de un polígono con la fórmula del cordón.",
+    prompt_md: "**Área de polígono (shoelace)**\n\nLa fórmula del cordón suma productos cruzados de vértices consecutivos y toma la mitad del valor absoluto.\n\n**Micro-reto:**\n1. Definí `area_poligono(vertices)`\n2. Aplicala a `[(0, 0), (4, 0), (4, 3)]`\n3. Imprimí el resultado",
+    starter_code: "# def area_poligono(vertices):\n#     n = len(vertices)\n#     area = 0\n#     for i in range(n):\n#         x1, y1 = vertices[i]\n#         x2, y2 = vertices[(i + 1) % n]\n#         area += x1 * y2 - x2 * y1\n#     return abs(area) / 2\n# resultado = area_poligono([(0, 0), (4, 0), (4, 3)])\n# print(resultado)\n",
+    pytest: "def test_geo_area(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6.0\n    assert ns['area_poligono']([(0, 0), (2, 0), (2, 2), (0, 2)]) == 4.0\n    assert capsys.readouterr().out.strip() == '6.0'\n",
+    hint: "Sumá x1*y2 - x2*y1 y tomá abs() / 2.",
+    solution_example: "def area_poligono(vertices):\n    n = len(vertices)\n    area = 0\n    for i in range(n):\n        x1, y1 = vertices[i]\n        x2, y2 = vertices[(i + 1) % n]\n        area += x1 * y2 - x2 * y1\n    return abs(area) / 2\n\nresultado = area_poligono([(0, 0), (4, 0), (4, 3)])\nprint(resultado)\n",
+    next: Some("py-1576-geo-point-in-poly"), show_type_chips: false, micro_step: 1575,
+};
+pub const PY1576_GEO_POINT_IN_POLY: CodingStep = CodingStep {
+    id: "py-1576-geo-point-in-poly", title: "Geometría · Punto en polígono", objective: "Determinar si un punto está dentro de un polígono.",
+    prompt_md: "**Punto en polígono**\n\nEl ray casting lanza un rayo horizontal y cuenta cuántas veces cruza los bordes del polígono.\n\n**Micro-reto:**\n1. Definí `punto_en_poligono(punto, vertices)`\n2. Aplicala a `(1, 1)` en un cuadrado de lado 4\n3. Imprimí el resultado",
+    starter_code: "# def punto_en_poligono(punto, vertices):\n#     x, y = punto\n#     n = len(vertices)\n#     dentro = False\n#     j = n - 1\n#     for i in range(n):\n#         xi, yi = vertices[i]\n#         xj, yj = vertices[j]\n#         if (yi > y) != (yj > y):\n#             interseccion = (xj - xi) * (y - yi) / (yj - yi) + xi\n#             if x < interseccion:\n#                 dentro = not dentro\n#         j = i\n#     return dentro\n# cuadrado = [(0, 0), (4, 0), (4, 4), (0, 4)]\n# resultado = punto_en_poligono((1, 1), cuadrado)\n# print(resultado)\n",
+    pytest: "def test_geo_point_in_poly(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert ns['punto_en_poligono']((5, 5), ns['cuadrado']) is False\n    assert ns['punto_en_poligono']((2, 2), ns['cuadrado']) is True\n    assert capsys.readouterr().out.strip() == 'True'\n",
+    hint: "Contá cruces del rayo con los bordes.",
+    solution_example: "def punto_en_poligono(punto, vertices):\n    x, y = punto\n    n = len(vertices)\n    dentro = False\n    j = n - 1\n    for i in range(n):\n        xi, yi = vertices[i]\n        xj, yj = vertices[j]\n        if (yi > y) != (yj > y):\n            interseccion = (xj - xi) * (y - yi) / (yj - yi) + xi\n            if x < interseccion:\n                dentro = not dentro\n        j = i\n    return dentro\n\ncuadrado = [(0, 0), (4, 0), (4, 4), (0, 4)]\nresultado = punto_en_poligono((1, 1), cuadrado)\nprint(resultado)\n",
+    next: Some("py-1577-bit-ops"), show_type_chips: false, micro_step: 1576,
+};
+pub const PY1577_BIT_OPS: CodingStep = CodingStep {
+    id: "py-1577-bit-ops", title: "Bits · Operadores", objective: "Aplicar los operadores bit a bit básicos.",
+    prompt_md: "**Operadores bit a bit**\n\n`&` (AND), `|` (OR), `^` (XOR), `~` (NOT) y `<<`/`>>` (desplazamiento) operan sobre bits.\n\n**Micro-reto:**\n1. Calculá `y`, `o`, `xor`, `negado` y `desplazado` para `a=12` y `b=10`\n2. Guardalos en `resultado` como tupla\n3. Imprimí `resultado`",
+    starter_code: "# a = 12  # 1100\n# b = 10  # 1010\n# y = a & b\n# o = a | b\n# xor = a ^ b\n# negado = ~a\n# desplazado = a << 1\n# resultado = (y, o, xor, negado, desplazado)\n# print(resultado)\n",
+    pytest: "def test_bit_ops(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (8, 14, 6, -13, 24)\n    assert ns['y'] == 8 and ns['o'] == 14\n    assert capsys.readouterr().out.strip() == str((8, 14, 6, -13, 24))\n",
+    hint: "AND deja los bits comunes; XOR los distintos.",
+    solution_example: "a = 12  # 1100\nb = 10  # 1010\ny = a & b\no = a | b\nxor = a ^ b\nnegado = ~a\ndesplazado = a << 1\nresultado = (y, o, xor, negado, desplazado)\nprint(resultado)\n",
+    next: Some("py-1578-bit-count"), show_type_chips: false, micro_step: 1577,
+};
+pub const PY1578_BIT_COUNT: CodingStep = CodingStep {
+    id: "py-1578-bit-count", title: "Bits · Contar bits", objective: "Contar bits encendidos con bit_count.",
+    prompt_md: "**Contar bits encendidos**\n\nEl método `int.bit_count()` cuenta cuántos bits están en 1 en la representación binaria.\n\n**Micro-reto:**\n1. Definí `contar_bits(n)`\n2. Aplicala a `255`\n3. Imprimí el resultado",
+    starter_code: "# def contar_bits(n):\n#     return n.bit_count()\n# resultado = contar_bits(255)\n# print(resultado)\n",
+    pytest: "def test_bit_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 8\n    assert ns['contar_bits'](0) == 0\n    assert ns['contar_bits'](7) == 3\n    assert capsys.readouterr().out.strip() == '8'\n",
+    hint: "n.bit_count() devuelve los unos de n.",
+    solution_example: "def contar_bits(n):\n    return n.bit_count()\n\nresultado = contar_bits(255)\nprint(resultado)\n",
+    next: Some("py-1579-bit-mask"), show_type_chips: false, micro_step: 1578,
+};
+pub const PY1579_BIT_MASK: CodingStep = CodingStep {
+    id: "py-1579-bit-mask", title: "Bits · Máscaras", objective: "Construir máscaras para aislar los bits bajos.",
+    prompt_md: "**Máscaras de bits**\n\nUna máscara de `k` bits es `(1 << k) - 1`. Con `&` aislás los `k` bits más bajos de un número.\n\n**Micro-reto:**\n1. Definí `mascara(bits)` y `aislar(n, bits)`\n2. Aplicala a `0b110101` con 4 bits\n3. Imprimí el resultado",
+    starter_code: "# def mascara(bits):\n#     return (1 << bits) - 1\n# def aislar(n, bits):\n#     return n & mascara(bits)\n# resultado = aislar(0b110101, 4)\n# print(resultado)\n",
+    pytest: "def test_bit_mask(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert ns['mascara'](3) == 7\n    assert ns['aislar'](0xFF, 8) == 255\n    assert capsys.readouterr().out.strip() == '5'\n",
+    hint: "(1 << k) - 1 genera k unos.",
+    solution_example: "def mascara(bits):\n    return (1 << bits) - 1\n\ndef aislar(n, bits):\n    return n & mascara(bits)\n\nresultado = aislar(0b110101, 4)\nprint(resultado)\n",
+    next: Some("py-1580-bit-get-set"), show_type_chips: false, micro_step: 1579,
+};
+pub const PY1580_BIT_GET_SET: CodingStep = CodingStep {
+    id: "py-1580-bit-get-set", title: "Bits · Get/set bit", objective: "Leer, encender y apagar un bit en una posición dada.",
+    prompt_md: "**Get, set y clear bit**\n\nLeés un bit con `(n >> pos) & 1`, lo encendés con `n | (1 << pos)` y lo apagás con `n & ~(1 << pos)`.\n\n**Micro-reto:**\n1. Definí `obtener_bit`, `poner_bit` y `limpiar_bit`\n2. Aplicalas a `0b1010` en la posición 3\n3. Imprimí la tupla de resultados",
+    starter_code: "# def obtener_bit(n, pos):\n#     return (n >> pos) & 1\n# def poner_bit(n, pos):\n#     return n | (1 << pos)\n# def limpiar_bit(n, pos):\n#     return n & ~(1 << pos)\n# resultado = (obtener_bit(0b1010, 3), poner_bit(0b1010, 0), limpiar_bit(0b1010, 3))\n# print(resultado)\n",
+    pytest: "def test_bit_get_set(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 11, 2)\n    assert ns['obtener_bit'](8, 3) == 1\n    assert ns['limpiar_bit'](0, 0) == 0\n    assert capsys.readouterr().out.strip() == str((1, 11, 2))\n",
+    hint: "Usá máscaras de un solo bit con | y & ~.",
+    solution_example: "def obtener_bit(n, pos):\n    return (n >> pos) & 1\n\ndef poner_bit(n, pos):\n    return n | (1 << pos)\n\ndef limpiar_bit(n, pos):\n    return n & ~(1 << pos)\n\nresultado = (obtener_bit(0b1010, 3), poner_bit(0b1010, 0), limpiar_bit(0b1010, 3))\nprint(resultado)\n",
+    next: Some("py-1581-bit-subsets"), show_type_chips: false, micro_step: 1580,
+};
+pub const PY1581_BIT_SUBSETS: CodingStep = CodingStep {
+    id: "py-1581-bit-subsets", title: "Bits · Subconjuntos", objective: "Enumerar subconjuntos usando máscaras de bits.",
+    prompt_md: "**Subconjuntos con bits**\n\nCada máscara de `n` bits representa un subconjunto: el bit `i` en 1 incluye al elemento `i`.\n\n**Micro-reto:**\n1. Definí `subconjuntos_bits(elementos)`\n2. Aplicala a `['a', 'b', 'c']`\n3. Imprimí el resultado",
+    starter_code: "# def subconjuntos_bits(elementos):\n#     n = len(elementos)\n#     resultado = []\n#     for mascara in range(1 << n):\n#         subconjunto = [elementos[i] for i in range(n) if (mascara >> i) & 1]\n#         resultado.append(subconjunto)\n#     return resultado\n# resultado = subconjuntos_bits(['a', 'b', 'c'])\n# print(resultado)\n",
+    pytest: "def test_bit_subsets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[], ['a'], ['b'], ['a', 'b'], ['c'], ['a', 'c'], ['b', 'c'], ['a', 'b', 'c']]\n    assert ns['subconjuntos_bits'](['x']) == [[], ['x']]\n    assert capsys.readouterr().out.strip() == str([[], ['a'], ['b'], ['a', 'b'], ['c'], ['a', 'c'], ['b', 'c'], ['a', 'b', 'c']])\n",
+    hint: "Recorré máscaras de 0 a (1 << n) - 1.",
+    solution_example: "def subconjuntos_bits(elementos):\n    n = len(elementos)\n    resultado = []\n    for mascara in range(1 << n):\n        subconjunto = [elementos[i] for i in range(n) if (mascara >> i) & 1]\n        resultado.append(subconjunto)\n    return resultado\n\nresultado = subconjuntos_bits(['a', 'b', 'c'])\nprint(resultado)\n",
+    next: Some("py-1582-bit-xor"), show_type_chips: false, micro_step: 1581,
+};
+pub const PY1582_BIT_XOR: CodingStep = CodingStep {
+    id: "py-1582-bit-xor", title: "Bits · XOR", objective: "Usar XOR para encontrar el elemento sin par.",
+    prompt_md: "**XOR y paridad**\n\n`x ^ x = 0`, así que hacer XOR de todos los elementos deja solo el que aparece una vez.\n\n**Micro-reto:**\n1. Definí `elemento_unico(arr)`\n2. Aplicala a `[1, 2, 3, 2, 1]`\n3. Imprimí el resultado",
+    starter_code: "# def elemento_unico(arr):\n#     resultado = 0\n#     for v in arr:\n#         resultado ^= v\n#     return resultado\n# resultado = elemento_unico([1, 2, 3, 2, 1])\n# print(resultado)\n",
+    pytest: "def test_bit_xor(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['elemento_unico']([7]) == 7\n    assert ns['elemento_unico']([0, 0]) == 0\n    assert capsys.readouterr().out.strip() == '3'\n",
+    hint: "XOR acumulado cancela los pares repetidos.",
+    solution_example: "def elemento_unico(arr):\n    resultado = 0\n    for v in arr:\n        resultado ^= v\n    return resultado\n\nresultado = elemento_unico([1, 2, 3, 2, 1])\nprint(resultado)\n",
+    next: Some("py-1583-str-naive"), show_type_chips: false, micro_step: 1582,
+};
+pub const PY1583_STR_NAIVE: CodingStep = CodingStep {
+    id: "py-1583-str-naive", title: "Patrones · Naive", objective: "Buscar un substring de forma ingenua.",
+    prompt_md: "**Búsqueda ingenua**\n\nDeslizás el patrón por el texto y comparás ventana a ventana. Es simple aunque O(n·m).\n\n**Micro-reto:**\n1. Definí `buscar_naive(texto, patron)` que devuelva las posiciones\n2. Aplicala a `hola como hola estas hola` buscando `hola`\n3. Imprimí el resultado",
+    starter_code: "# def buscar_naive(texto, patron):\n#     posiciones = []\n#     for i in range(len(texto) - len(patron) + 1):\n#         if texto[i:i + len(patron)] == patron:\n#             posiciones.append(i)\n#     return posiciones\n# resultado = buscar_naive('hola como hola estas hola', 'hola')\n# print(resultado)\n",
+    pytest: "def test_str_naive(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 10, 21]\n    assert ns['buscar_naive']('aaa', 'aa') == [0, 1]\n    assert ns['buscar_naive']('abc', 'z') == []\n    assert capsys.readouterr().out.strip() == str([0, 10, 21])\n",
+    hint: "Compará cada ventana de largo len(patron).",
+    solution_example: "def buscar_naive(texto, patron):\n    posiciones = []\n    for i in range(len(texto) - len(patron) + 1):\n        if texto[i:i + len(patron)] == patron:\n            posiciones.append(i)\n    return posiciones\n\nresultado = buscar_naive('hola como hola estas hola', 'hola')\nprint(resultado)\n",
+    next: Some("py-1584-str-kmp"), show_type_chips: false, micro_step: 1583,
+};
+pub const PY1584_STR_KMP: CodingStep = CodingStep {
+    id: "py-1584-str-kmp", title: "Patrones · KMP", objective: "Construir la tabla de prefijos (función de fallo) de KMP.",
+    prompt_md: "**Tabla de prefijos de KMP**\n\nLa tabla guarda el largo del prefijo propio más largo que también es sufijo en cada posición del patrón.\n\n**Micro-reto:**\n1. Definí `tabla_prefijos(patron)`\n2. Aplicala a `ABABCABAB`\n3. Imprimí el resultado",
+    starter_code: "# def tabla_prefijos(patron):\n#     tabla = [0] * len(patron)\n#     j = 0\n#     for i in range(1, len(patron)):\n#         while j > 0 and patron[i] != patron[j]:\n#             j = tabla[j - 1]\n#         if patron[i] == patron[j]:\n#             j += 1\n#         tabla[i] = j\n#     return tabla\n# resultado = tabla_prefijos('ABABCABAB')\n# print(resultado)\n",
+    pytest: "def test_str_kmp(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 0, 1, 2, 0, 1, 2, 3, 4]\n    assert ns['tabla_prefijos']('AAAA') == [0, 1, 2, 3]\n    assert ns['tabla_prefijos']('AB') == [0, 0]\n    assert capsys.readouterr().out.strip() == str([0, 0, 1, 2, 0, 1, 2, 3, 4])\n",
+    hint: "Reutilizá el fallo previo con j = tabla[j - 1].",
+    solution_example: "def tabla_prefijos(patron):\n    tabla = [0] * len(patron)\n    j = 0\n    for i in range(1, len(patron)):\n        while j > 0 and patron[i] != patron[j]:\n            j = tabla[j - 1]\n        if patron[i] == patron[j]:\n            j += 1\n        tabla[i] = j\n    return tabla\n\nresultado = tabla_prefijos('ABABCABAB')\nprint(resultado)\n",
+    next: Some("py-1585-str-rabin-karp"), show_type_chips: false, micro_step: 1584,
+};
+pub const PY1585_STR_RABIN_KARP: CodingStep = CodingStep {
+    id: "py-1585-str-rabin-karp", title: "Patrones · Rabin-Karp", objective: "Buscar un patrón con rolling hash.",
+    prompt_md: "**Rabin-Karp**\n\nUn hash deslizante actualiza el valor de cada ventana en O(1) y solo compara cuando el hash coincide.\n\n**Micro-reto:**\n1. Definí `rabin_karp(texto, patron)`\n2. Aplicala a `hola como hola estas hola` buscando `hola`\n3. Imprimí el resultado",
+    starter_code: "# def rabin_karp(texto, patron):\n#     base, primo = 256, 101\n#     n, m = len(texto), len(patron)\n#     hash_patron = hash_ventana = 0\n#     h = 1\n#     for _ in range(m - 1):\n#         h = (h * base) % primo\n#     for i in range(m):\n#         hash_patron = (base * hash_patron + ord(patron[i])) % primo\n#         hash_ventana = (base * hash_ventana + ord(texto[i])) % primo\n#     posiciones = []\n#     for i in range(n - m + 1):\n#         if hash_patron == hash_ventana and texto[i:i + m] == patron:\n#             posiciones.append(i)\n#         if i < n - m:\n#             hash_ventana = (base * (hash_ventana - ord(texto[i]) * h) + ord(texto[i + m])) % primo\n#     return posiciones\n# resultado = rabin_karp('hola como hola estas hola', 'hola')\n# print(resultado)\n",
+    pytest: "def test_str_rabin_karp(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 10, 21]\n    assert ns['rabin_karp']('aaa', 'aa') == [0, 1]\n    assert capsys.readouterr().out.strip() == str([0, 10, 21])\n",
+    hint: "Rodá el hash restando el carácter que sale y sumando el que entra.",
+    solution_example: "def rabin_karp(texto, patron):\n    base, primo = 256, 101\n    n, m = len(texto), len(patron)\n    hash_patron = hash_ventana = 0\n    h = 1\n    for _ in range(m - 1):\n        h = (h * base) % primo\n    for i in range(m):\n        hash_patron = (base * hash_patron + ord(patron[i])) % primo\n        hash_ventana = (base * hash_ventana + ord(texto[i])) % primo\n    posiciones = []\n    for i in range(n - m + 1):\n        if hash_patron == hash_ventana and texto[i:i + m] == patron:\n            posiciones.append(i)\n        if i < n - m:\n            hash_ventana = (base * (hash_ventana - ord(texto[i]) * h) + ord(texto[i + m])) % primo\n    return posiciones\n\nresultado = rabin_karp('hola como hola estas hola', 'hola')\nprint(resultado)\n",
+    next: Some("py-1586-str-occurrences"), show_type_chips: false, micro_step: 1585,
+};
+pub const PY1586_STR_OCCURRENCES: CodingStep = CodingStep {
+    id: "py-1586-str-occurrences", title: "Patrones · Ocurrencias", objective: "Contar ocurrencias de un patrón con solapamiento.",
+    prompt_md: "**Contar ocurrencias**\n\nContás cuántas veces aparece un patrón, incluyendo solapamientos entre ventanas.\n\n**Micro-reto:**\n1. Definí `contar_ocurrencias(texto, patron)`\n2. Aplicala a `AAAAA` buscando `AA`\n3. Imprimí el resultado",
+    starter_code: "# def contar_ocurrencias(texto, patron):\n#     cuenta = 0\n#     for i in range(len(texto) - len(patron) + 1):\n#         if texto[i:i + len(patron)] == patron:\n#             cuenta += 1\n#     return cuenta\n# resultado = contar_ocurrencias('AAAAA', 'AA')\n# print(resultado)\n",
+    pytest: "def test_str_occurrences(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert ns['contar_ocurrencias']('abc', 'z') == 0\n    assert ns['contar_ocurrencias']('hola', 'hola') == 1\n    assert capsys.readouterr().out.strip() == '4'\n",
+    hint: "Recorré todas las ventanas y contá las coincidencias.",
+    solution_example: "def contar_ocurrencias(texto, patron):\n    cuenta = 0\n    for i in range(len(texto) - len(patron) + 1):\n        if texto[i:i + len(patron)] == patron:\n            cuenta += 1\n    return cuenta\n\nresultado = contar_ocurrencias('AAAAA', 'AA')\nprint(resultado)\n",
+    next: Some("py-1587-str-lcp"), show_type_chips: false, micro_step: 1586,
+};
+pub const PY1587_STR_LCP: CodingStep = CodingStep {
+    id: "py-1587-str-lcp", title: "Patrones · Prefijo común", objective: "Calcular el prefijo común más largo entre dos strings.",
+    prompt_md: "**Longest common prefix**\n\nComparás carácter a carácter desde el inicio y te detenés en la primera diferencia.\n\n**Micro-reto:**\n1. Definí `prefijo_comun(a, b)`\n2. Aplicala a `flor` y `flota`\n3. Imprimí el resultado",
+    starter_code: "# def prefijo_comun(a, b):\n#     i = 0\n#     while i < len(a) and i < len(b) and a[i] == b[i]:\n#         i += 1\n#     return a[:i]\n# resultado = prefijo_comun('flor', 'flota')\n# print(resultado)\n",
+    pytest: "def test_str_lcp(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'flo'\n    assert ns['prefijo_comun']('abc', 'abd') == 'ab'\n    assert ns['prefijo_comun']('a', 'b') == ''\n    assert capsys.readouterr().out.strip() == 'flo'\n",
+    hint: "Avanzá mientras coincidan los caracteres.",
+    solution_example: "def prefijo_comun(a, b):\n    i = 0\n    while i < len(a) and i < len(b) and a[i] == b[i]:\n        i += 1\n    return a[:i]\n\nresultado = prefijo_comun('flor', 'flota')\nprint(resultado)\n",
+    next: Some("py-1588-str-wildcard"), show_type_chips: false, micro_step: 1587,
+};
+pub const PY1588_STR_WILDCARD: CodingStep = CodingStep {
+    id: "py-1588-str-wildcard", title: "Patrones · Wildcard", objective: "Emparejar un patrón con `?` (un carácter) contra un texto.",
+    prompt_md: "**Patrón con wildcard `?`**\n\n`?` coincide con cualquier carácter. Recorrés las posiciones y comparás los que no son `?`.\n\n**Micro-reto:**\n1. Definí `buscar_wildcard(texto, patron)`\n2. Aplicala a `abcabc` buscando `a?c`\n3. Imprimí el resultado",
+    starter_code: "# def buscar_wildcard(texto, patron):\n#     def coincide(texto, patron):\n#         if len(texto) != len(patron):\n#             return False\n#         for t, p in zip(texto, patron):\n#             if p != '?' and p != t:\n#                 return False\n#         return True\n#     return [i for i in range(len(texto) - len(patron) + 1) if coincide(texto[i:i + len(patron)], patron)]\n# resultado = buscar_wildcard('abcabc', 'a?c')\n# print(resultado)\n",
+    pytest: "def test_str_wildcard(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 3]\n    assert ns['buscar_wildcard']('xyz', '???') == [0]\n    assert ns['buscar_wildcard']('abc', 'd') == []\n    assert capsys.readouterr().out.strip() == str([0, 3])\n",
+    hint: "`?` salta la comparación; el resto debe coincidir.",
+    solution_example: "def buscar_wildcard(texto, patron):\n    def coincide(texto, patron):\n        if len(texto) != len(patron):\n            return False\n        for t, p in zip(texto, patron):\n            if p != '?' and p != t:\n                return False\n        return True\n    return [i for i in range(len(texto) - len(patron) + 1) if coincide(texto[i:i + len(patron)], patron)]\n\nresultado = buscar_wildcard('abcabc', 'a?c')\nprint(resultado)\n",
+    next: Some("py-1589-compress-rle-encode"), show_type_chips: false, micro_step: 1588,
+};
+pub const PY1589_COMPRESS_RLE_ENCODE: CodingStep = CodingStep {
+    id: "py-1589-compress-rle-encode", title: "Compresión · RLE codificar", objective: "Codificar una cadena con run-length encoding.",
+    prompt_md: "**Run-length encoding**\n\nCada corrida de caracteres iguales se reemplaza por el carácter y su conteo.\n\n**Micro-reto:**\n1. Definí `rle_codificar(texto)`\n2. Aplicala a `AAABBBCCCA`\n3. Imprimí el resultado",
+    starter_code: "# def rle_codificar(texto):\n#     if not texto:\n#         return ''\n#     resultado = []\n#     cuenta = 1\n#     for i in range(1, len(texto)):\n#         if texto[i] == texto[i - 1]:\n#             cuenta += 1\n#         else:\n#             resultado.append(texto[i - 1] + str(cuenta))\n#             cuenta = 1\n#     resultado.append(texto[-1] + str(cuenta))\n#     return ''.join(resultado)\n# resultado = rle_codificar('AAABBBCCCA')\n# print(resultado)\n",
+    pytest: "def test_compress_rle_encode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'A3B3C3A1'\n    assert ns['rle_codificar']('') == ''\n    assert ns['rle_codificar']('A') == 'A1'\n    assert capsys.readouterr().out.strip() == 'A3B3C3A1'\n",
+    hint: "Contá la corrida y emití carácter + conteo al cambiar.",
+    solution_example: "def rle_codificar(texto):\n    if not texto:\n        return ''\n    resultado = []\n    cuenta = 1\n    for i in range(1, len(texto)):\n        if texto[i] == texto[i - 1]:\n            cuenta += 1\n        else:\n            resultado.append(texto[i - 1] + str(cuenta))\n            cuenta = 1\n    resultado.append(texto[-1] + str(cuenta))\n    return ''.join(resultado)\n\nresultado = rle_codificar('AAABBBCCCA')\nprint(resultado)\n",
+    next: Some("py-1590-compress-rle-decode"), show_type_chips: false, micro_step: 1589,
+};
+pub const PY1590_COMPRESS_RLE_DECODE: CodingStep = CodingStep {
+    id: "py-1590-compress-rle-decode", title: "Compresión · RLE decodificar", objective: "Decodificar una cadena run-length.",
+    prompt_md: "**Decodificar RLE**\n\nLeés cada carácter, su conteo, y lo repetís esa cantidad de veces para reconstruir el texto.\n\n**Micro-reto:**\n1. Definí `rle_decodificar(codificado)`\n2. Aplicala a `A3B2C4`\n3. Imprimí el resultado",
+    starter_code: "# def rle_decodificar(codificado):\n#     resultado = []\n#     i = 0\n#     while i < len(codificado):\n#         char = codificado[i]\n#         i += 1\n#         numero = ''\n#         while i < len(codificado) and codificado[i].isdigit():\n#             numero += codificado[i]\n#             i += 1\n#         resultado.append(char * int(numero))\n#     return ''.join(resultado)\n# resultado = rle_decodificar('A3B2C4')\n# print(resultado)\n",
+    pytest: "def test_compress_rle_decode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'AAABBCCCC'\n    assert ns['rle_decodificar']('X1') == 'X'\n    assert ns['rle_decodificar']('') == ''\n    assert capsys.readouterr().out.strip() == 'AAABBCCCC'\n",
+    hint: "Leé el carácter y luego los dígitos del conteo.",
+    solution_example: "def rle_decodificar(codificado):\n    resultado = []\n    i = 0\n    while i < len(codificado):\n        char = codificado[i]\n        i += 1\n        numero = ''\n        while i < len(codificado) and codificado[i].isdigit():\n            numero += codificado[i]\n            i += 1\n        resultado.append(char * int(numero))\n    return ''.join(resultado)\n\nresultado = rle_decodificar('A3B2C4')\nprint(resultado)\n",
+    next: Some("py-1591-compress-frequency"), show_type_chips: false, micro_step: 1590,
+};
+pub const PY1591_COMPRESS_FREQUENCY: CodingStep = CodingStep {
+    id: "py-1591-compress-frequency", title: "Compresión · Frecuencias", objective: "Contar la frecuencia de caracteres de un texto.",
+    prompt_md: "**Frecuencia de caracteres**\n\nUn dict acumula cuántas veces aparece cada carácter. Es la base de la compresión estadística.\n\n**Micro-reto:**\n1. Definí `frecuencias(texto)`\n2. Aplicala a `abracadabra`\n3. Imprimí el resultado",
+    starter_code: "# def frecuencias(texto):\n#     resultado = {}\n#     for c in texto:\n#         resultado[c] = resultado.get(c, 0) + 1\n#     return resultado\n# resultado = frecuencias('abracadabra')\n# print(resultado)\n",
+    pytest: "def test_compress_frequency(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 5, 'b': 2, 'r': 2, 'c': 1, 'd': 1}\n    assert ns['frecuencias']('aa') == {'a': 2}\n    assert capsys.readouterr().out.strip() == str({'a': 5, 'b': 2, 'r': 2, 'c': 1, 'd': 1})\n",
+    hint: "resultado.get(c, 0) + 1 acumula cada aparición.",
+    solution_example: "def frecuencias(texto):\n    resultado = {}\n    for c in texto:\n        resultado[c] = resultado.get(c, 0) + 1\n    return resultado\n\nresultado = frecuencias('abracadabra')\nprint(resultado)\n",
+    next: Some("py-1592-compress-entropy"), show_type_chips: false, micro_step: 1591,
+};
+pub const PY1592_COMPRESS_ENTROPY: CodingStep = CodingStep {
+    id: "py-1592-compress-entropy", title: "Compresión · Entropía", objective: "Estimar la entropía de Shannon de un texto.",
+    prompt_md: "**Entropía de Shannon**\n\n`H = -Σ p·log2(p)` mide la información promedio por símbolo; es el límite teórico de compresión.\n\n**Micro-reto:**\n1. Definí `entropia(texto)`\n2. Aplicala a `ab`\n3. Imprimí el resultado",
+    starter_code: "# import math\n# def entropia(texto):\n#     frecuencias = {}\n#     for c in texto:\n#         frecuencias[c] = frecuencias.get(c, 0) + 1\n#     n = len(texto)\n#     resultado = 0.0\n#     for cuenta in frecuencias.values():\n#         p = cuenta / n\n#         resultado -= p * math.log2(p)\n#     return resultado\n# resultado = entropia('ab')\n# print(resultado)\n",
+    pytest: "def test_compress_entropy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert abs(ns['resultado'] - 1.0) < 1e-9\n    assert abs(ns['entropia']('aaaa') - 0.0) < 1e-9\n    assert capsys.readouterr().out.strip() == '1.0'\n",
+    hint: "Sumá -p * log2(p) para cada símbolo.",
+    solution_example: "import math\n\ndef entropia(texto):\n    frecuencias = {}\n    for c in texto:\n        frecuencias[c] = frecuencias.get(c, 0) + 1\n    n = len(texto)\n    resultado = 0.0\n    for cuenta in frecuencias.values():\n        p = cuenta / n\n        resultado -= p * math.log2(p)\n    return resultado\n\nresultado = entropia('ab')\nprint(resultado)\n",
+    next: Some("py-1593-compress-repetition"), show_type_chips: false, micro_step: 1592,
+};
+pub const PY1593_COMPRESS_REPETITION: CodingStep = CodingStep {
+    id: "py-1593-compress-repetition", title: "Compresión · Corridas", objective: "Comprimir repeticiones consecutivas en pares (char, n).",
+    prompt_md: "**Compresión por repetición**\n\nRepresentás cada corrida como una tupla `(carácter, conteo)` en lugar de un string plano.\n\n**Micro-reto:**\n1. Definí `comprimir_corridas(texto)`\n2. Aplicala a `AAABBBCC`\n3. Imprimí el resultado",
+    starter_code: "# def comprimir_corridas(texto):\n#     resultado = []\n#     if not texto:\n#         return resultado\n#     cuenta = 1\n#     for i in range(1, len(texto)):\n#         if texto[i] == texto[i - 1]:\n#             cuenta += 1\n#         else:\n#             resultado.append((texto[i - 1], cuenta))\n#             cuenta = 1\n#     resultado.append((texto[-1], cuenta))\n#     return resultado\n# resultado = comprimir_corridas('AAABBBCC')\n# print(resultado)\n",
+    pytest: "def test_compress_repetition(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('A', 3), ('B', 3), ('C', 2)]\n    assert ns['comprimir_corridas']('') == []\n    assert ns['comprimir_corridas']('Z') == [('Z', 1)]\n    assert capsys.readouterr().out.strip() == str([('A', 3), ('B', 3), ('C', 2)])\n",
+    hint: "Guardá (carácter, conteo) al cerrar cada corrida.",
+    solution_example: "def comprimir_corridas(texto):\n    resultado = []\n    if not texto:\n        return resultado\n    cuenta = 1\n    for i in range(1, len(texto)):\n        if texto[i] == texto[i - 1]:\n            cuenta += 1\n        else:\n            resultado.append((texto[i - 1], cuenta))\n            cuenta = 1\n    resultado.append((texto[-1], cuenta))\n    return resultado\n\nresultado = comprimir_corridas('AAABBBCC')\nprint(resultado)\n",
+    next: Some("py-1594-compress-decompress"), show_type_chips: false, micro_step: 1593,
+};
+pub const PY1594_COMPRESS_DECOMPRESS: CodingStep = CodingStep {
+    id: "py-1594-compress-decompress", title: "Compresión · Descomprimir", objective: "Descomprimir una secuencia (char, n) de forma robusta.",
+    prompt_md: "**Descompresión robusta**\n\nReconstruís el texto expandiendo cada tupla `(carácter, conteo)` y validás que el conteo sea positivo.\n\n**Micro-reto:**\n1. Definí `descomprimir_corridas(corridas)`\n2. Aplicala a `[('A', 3), ('B', 2), ('C', 4)]`\n3. Imprimí el resultado",
+    starter_code: "# def descomprimir_corridas(corridas):\n#     resultado = []\n#     for char, cuenta in corridas:\n#         resultado.append(char * cuenta)\n#     return ''.join(resultado)\n# resultado = descomprimir_corridas([('A', 3), ('B', 2), ('C', 4)])\n# print(resultado)\n",
+    pytest: "def test_compress_decompress(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'AAABBCCCC'\n    assert ns['descomprimir_corridas']([]) == ''\n    assert ns['descomprimir_corridas']([('X', 1)]) == 'X'\n    assert capsys.readouterr().out.strip() == 'AAABBCCCC'\n",
+    hint: "char * cuenta repite el carácter y ''.join lo une.",
+    solution_example: "def descomprimir_corridas(corridas):\n    resultado = []\n    for char, cuenta in corridas:\n        resultado.append(char * cuenta)\n    return ''.join(resultado)\n\nresultado = descomprimir_corridas([('A', 3), ('B', 2), ('C', 4)])\nprint(resultado)\n",
+    next: Some("py-1595-project-preprocess"), show_type_chips: false, micro_step: 1594,
+};
+pub const PY1595_PROJECT_PREPROCESS: CodingStep = CodingStep {
+    id: "py-1595-project-preprocess", title: "Buscador · Preprocesar", objective: "Preprocesar texto a minúsculas y tokenizar.",
+    prompt_md: "**Buscador: preprocesar texto**\n\nNormalizás a minúsculas y separás en palabras descartando puntuación.\n\n**Micro-reto:**\n1. Definí `preprocesar(texto)`\n2. Aplicala a `Hola, mundo! HOLA de nuevo.`\n3. Imprimí el resultado",
+    starter_code: "# def preprocesar(texto):\n#     limpio = ''.join(c if c.isalnum() else ' ' for c in texto.lower())\n#     return limpio.split()\n# resultado = preprocesar('Hola, mundo! HOLA de nuevo.')\n# print(resultado)\n",
+    pytest: "def test_project_preprocess(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['hola', 'mundo', 'hola', 'de', 'nuevo']\n    assert ns['preprocesar']('A-B C') == ['a', 'b', 'c']\n    assert capsys.readouterr().out.strip() == str(['hola', 'mundo', 'hola', 'de', 'nuevo'])\n",
+    hint: "Reemplazá no alfanuméricos por espacio y hacé split().",
+    solution_example: "def preprocesar(texto):\n    limpio = ''.join(c if c.isalnum() else ' ' for c in texto.lower())\n    return limpio.split()\n\nresultado = preprocesar('Hola, mundo! HOLA de nuevo.')\nprint(resultado)\n",
+    next: Some("py-1596-project-kmp-table"), show_type_chips: false, micro_step: 1595,
+};
+pub const PY1596_PROJECT_KMP_TABLE: CodingStep = CodingStep {
+    id: "py-1596-project-kmp-table", title: "Buscador · Tabla KMP", objective: "Construir la tabla KMP para un patrón del buscador.",
+    prompt_md: "**Buscador: tabla KMP**\n\nReutilizás la función de fallo para que la búsqueda evite retrocesos innecesarios.\n\n**Micro-reto:**\n1. Definí `tabla_kmp(patron)`\n2. Aplicala a `ANANA`\n3. Imprimí el resultado",
+    starter_code: "# def tabla_kmp(patron):\n#     tabla = [0] * len(patron)\n#     j = 0\n#     for i in range(1, len(patron)):\n#         while j > 0 and patron[i] != patron[j]:\n#             j = tabla[j - 1]\n#         if patron[i] == patron[j]:\n#             j += 1\n#         tabla[i] = j\n#     return tabla\n# resultado = tabla_kmp('ANANA')\n# print(resultado)\n",
+    pytest: "def test_project_kmp_table(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 0, 1, 2, 3]\n    assert ns['tabla_kmp']('AA') == [0, 1]\n    assert capsys.readouterr().out.strip() == str([0, 0, 1, 2, 3])\n",
+    hint: "Misma función de fallo del bloque de patrones.",
+    solution_example: "def tabla_kmp(patron):\n    tabla = [0] * len(patron)\n    j = 0\n    for i in range(1, len(patron)):\n        while j > 0 and patron[i] != patron[j]:\n            j = tabla[j - 1]\n        if patron[i] == patron[j]:\n            j += 1\n        tabla[i] = j\n    return tabla\n\nresultado = tabla_kmp('ANANA')\nprint(resultado)\n",
+    next: Some("py-1597-project-multipattern"), show_type_chips: false, micro_step: 1596,
+};
+pub const PY1597_PROJECT_MULTIPATTERN: CodingStep = CodingStep {
+    id: "py-1597-project-multipattern", title: "Buscador · Multi-patrón", objective: "Buscar múltiples patrones en un texto.",
+    prompt_md: "**Buscador: múltiples patrones**\n\nDevolvés un diccionario que mapea cada patrón a su lista de posiciones en el texto.\n\n**Micro-reto:**\n1. Definí `buscar_patrones(texto, patrones)`\n2. Aplicala a `ababcabab` con `['ab', 'ba']`\n3. Imprimí el resultado",
+    starter_code: "# def buscar_patrones(texto, patrones):\n#     resultado = {}\n#     for patron in patrones:\n#         posiciones = []\n#         for i in range(len(texto) - len(patron) + 1):\n#             if texto[i:i + len(patron)] == patron:\n#                 posiciones.append(i)\n#         resultado[patron] = posiciones\n#     return resultado\n# resultado = buscar_patrones('ababcabab', ['ab', 'ba'])\n# print(resultado)\n",
+    pytest: "def test_project_multipattern(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'ab': [0, 2, 5, 7], 'ba': [1, 6]}\n    assert ns['buscar_patrones']('aaa', ['aa', 'a']) == {'aa': [0, 1], 'a': [0, 1, 2]}\n    assert capsys.readouterr().out.strip() == str({'ab': [0, 2, 5, 7], 'ba': [1, 6]})\n",
+    hint: "Iterá patrones y recolectá posiciones por ventana.",
+    solution_example: "def buscar_patrones(texto, patrones):\n    resultado = {}\n    for patron in patrones:\n        posiciones = []\n        for i in range(len(texto) - len(patron) + 1):\n            if texto[i:i + len(patron)] == patron:\n                posiciones.append(i)\n        resultado[patron] = posiciones\n    return resultado\n\nresultado = buscar_patrones('ababcabab', ['ab', 'ba'])\nprint(resultado)\n",
+    next: Some("py-1598-project-positions"), show_type_chips: false, micro_step: 1597,
+};
+pub const PY1598_PROJECT_POSITIONS: CodingStep = CodingStep {
+    id: "py-1598-project-positions", title: "Buscador · Posiciones", objective: "Reportar todas las posiciones de un patrón con KMP.",
+    prompt_md: "**Buscador: posiciones con KMP**\n\nUsás la tabla de fallo para recorrer el texto una sola vez y reportar cada coincidencia.\n\n**Micro-reto:**\n1. Definí `posiciones_kmp(texto, patron)`\n2. Aplicala a `ABABDABACDABABCABAB` buscando `ABABCABAB`\n3. Imprimí el resultado",
+    starter_code: "# def posiciones_kmp(texto, patron):\n#     if not patron:\n#         return []\n#     tabla = [0] * len(patron)\n#     j = 0\n#     for i in range(1, len(patron)):\n#         while j > 0 and patron[i] != patron[j]:\n#             j = tabla[j - 1]\n#         if patron[i] == patron[j]:\n#             j += 1\n#         tabla[i] = j\n#     posiciones = []\n#     j = 0\n#     for i in range(len(texto)):\n#         while j > 0 and texto[i] != patron[j]:\n#             j = tabla[j - 1]\n#         if texto[i] == patron[j]:\n#             j += 1\n#         if j == len(patron):\n#             posiciones.append(i - j + 1)\n#             j = tabla[j - 1]\n#     return posiciones\n# resultado = posiciones_kmp('ABABDABACDABABCABAB', 'ABABCABAB')\n# print(resultado)\n",
+    pytest: "def test_project_positions(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [10]\n    assert ns['posiciones_kmp']('aaa', 'aa') == [0, 1]\n    assert capsys.readouterr().out.strip() == str([10])\n",
+    hint: "Al coincidir completo, registrá i - j + 1 y seguí con el fallo.",
+    solution_example: "def posiciones_kmp(texto, patron):\n    if not patron:\n        return []\n    tabla = [0] * len(patron)\n    j = 0\n    for i in range(1, len(patron)):\n        while j > 0 and patron[i] != patron[j]:\n            j = tabla[j - 1]\n        if patron[i] == patron[j]:\n            j += 1\n        tabla[i] = j\n    posiciones = []\n    j = 0\n    for i in range(len(texto)):\n        while j > 0 and texto[i] != patron[j]:\n            j = tabla[j - 1]\n        if texto[i] == patron[j]:\n            j += 1\n        if j == len(patron):\n            posiciones.append(i - j + 1)\n            j = tabla[j - 1]\n    return posiciones\n\nresultado = posiciones_kmp('ABABDABACDABABCABAB', 'ABABCABAB')\nprint(resultado)\n",
+    next: Some("py-1599-project-rank"), show_type_chips: false, micro_step: 1598,
+};
+pub const PY1599_PROJECT_RANK: CodingStep = CodingStep {
+    id: "py-1599-project-rank", title: "Buscador · Ranking", objective: "Rankear patrones por frecuencia de aparición.",
+    prompt_md: "**Buscador: rankear por frecuencia**\n\nOrdenás los patrones por cantidad de apariciones, desempatando alfabéticamente.\n\n**Micro-reto:**\n1. Definí `rankear_patrones(texto, patrones)`\n2. Aplicala a `abracadabra` con `['a', 'br', 'ra']`\n3. Imprimí el resultado",
+    starter_code: "# def rankear_patrones(texto, patrones):\n#     frecuencias = {}\n#     for patron in patrones:\n#         cuenta = 0\n#         for i in range(len(texto) - len(patron) + 1):\n#             if texto[i:i + len(patron)] == patron:\n#                 cuenta += 1\n#         frecuencias[patron] = cuenta\n#     return sorted(patrones, key=lambda p: (-frecuencias[p], p))\n# resultado = rankear_patrones('abracadabra', ['a', 'br', 'ra'])\n# print(resultado)\n",
+    pytest: "def test_project_rank(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'br', 'ra']\n    assert ns['rankear_patrones']('aaa', ['a', 'aa']) == ['a', 'aa']\n    assert capsys.readouterr().out.strip() == str(['a', 'br', 'ra'])\n",
+    hint: "Ordená por (-frecuencia, patron) para desempatar.",
+    solution_example: "def rankear_patrones(texto, patrones):\n    frecuencias = {}\n    for patron in patrones:\n        cuenta = 0\n        for i in range(len(texto) - len(patron) + 1):\n            if texto[i:i + len(patron)] == patron:\n                cuenta += 1\n        frecuencias[patron] = cuenta\n    return sorted(patrones, key=lambda p: (-frecuencias[p], p))\n\nresultado = rankear_patrones('abracadabra', ['a', 'br', 'ra'])\nprint(resultado)\n",
+    next: Some("py-1600-project-assemble"), show_type_chips: false, micro_step: 1599,
+};
+pub const PY1600_PROJECT_ASSEMBLE: CodingStep = CodingStep {
+    id: "py-1600-project-assemble", title: "Buscador · Ensamblar", objective: "Ensamblar el buscador integrando KMP, índices y ranking.",
+    prompt_md: "**Buscador: ensamblar todo**\n\nIntegrás la búsqueda KMP con el ranking en una sola función que devuelve índice y orden.\n\n**Micro-reto:**\n1. Definí `ensamblar_buscador(texto, patrones)` que devuelva `{'indice': ..., 'ranking': ...}`\n2. Aplicala a `ababcabab` con `['ab', 'ba', 'abc']`\n3. Imprimí el resultado",
+    starter_code: "# def posiciones_kmp(texto, patron):\n#     if not patron:\n#         return []\n#     tabla = [0] * len(patron)\n#     j = 0\n#     for i in range(1, len(patron)):\n#         while j > 0 and patron[i] != patron[j]:\n#             j = tabla[j - 1]\n#         if patron[i] == patron[j]:\n#             j += 1\n#         tabla[i] = j\n#     posiciones = []\n#     j = 0\n#     for i in range(len(texto)):\n#         while j > 0 and texto[i] != patron[j]:\n#             j = tabla[j - 1]\n#         if texto[i] == patron[j]:\n#             j += 1\n#         if j == len(patron):\n#             posiciones.append(i - j + 1)\n#             j = tabla[j - 1]\n#     return posiciones\n# def ensamblar_buscador(texto, patrones):\n#     indice = {p: posiciones_kmp(texto, p) for p in patrones}\n#     ranking = sorted(patrones, key=lambda p: (-len(indice[p]), p))\n#     return {'indice': indice, 'ranking': ranking}\n# resultado = ensamblar_buscador('ababcabab', ['ab', 'ba', 'abc'])\n# print(resultado)\n",
+    pytest: "def test_project_assemble_w10(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado']['indice'] == {'ab': [0, 2, 5, 7], 'ba': [1, 6], 'abc': [2]}\n    assert ns['resultado']['ranking'] == ['ab', 'ba', 'abc']\n    assert ns['ensamblar_buscador']('a', ['a']) == {'indice': {'a': [0]}, 'ranking': ['a']}\n    out = capsys.readouterr().out\n    assert 'ab' in out and 'abc' in out\n",
+    hint: "Reutilizá posiciones_kmp y ordená por -len(índice).",
+    solution_example: "def posiciones_kmp(texto, patron):\n    if not patron:\n        return []\n    tabla = [0] * len(patron)\n    j = 0\n    for i in range(1, len(patron)):\n        while j > 0 and patron[i] != patron[j]:\n            j = tabla[j - 1]\n        if patron[i] == patron[j]:\n            j += 1\n        tabla[i] = j\n    posiciones = []\n    j = 0\n    for i in range(len(texto)):\n        while j > 0 and texto[i] != patron[j]:\n            j = tabla[j - 1]\n        if texto[i] == patron[j]:\n            j += 1\n        if j == len(patron):\n            posiciones.append(i - j + 1)\n            j = tabla[j - 1]\n    return posiciones\n\ndef ensamblar_buscador(texto, patrones):\n    indice = {p: posiciones_kmp(texto, p) for p in patrones}\n    ranking = sorted(patrones, key=lambda p: (-len(indice[p]), p))\n    return {'indice': indice, 'ranking': ranking}\n\nresultado = ensamblar_buscador('ababcabab', ['ab', 'ba', 'abc'])\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 1600,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -49553,6 +50093,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1538_PROJECT_AUTOCOMPLETE,
     &PY1539_PROJECT_TOPK,
     &PY1540_PROJECT_ASSEMBLE,
+    &PY1541_BT_PERMUTATIONS,
+    &PY1542_BT_SUBSETS,
+    &PY1543_BT_NQUEENS,
+    &PY1544_BT_SUDOKU,
+    &PY1545_BT_PRUNE,
+    &PY1546_BT_COUNT,
+    &PY1547_DP_2D,
+    &PY1548_DP_KNAPSACK_RECONSTRUCT,
+    &PY1549_DP_COIN_MIN,
+    &PY1550_DP_LIS,
+    &PY1551_DP_EDIT_DISTANCE,
+    &PY1552_DP_STATE_MACHINE,
+    &PY1553_DC_MERGE_SORT,
+    &PY1554_DC_QUICKSELECT,
+    &PY1555_DC_INVERSIONS,
+    &PY1556_DC_MAX_SUBARRAY,
+    &PY1557_DC_KARATSUBA,
+    &PY1558_DC_POW,
+    &PY1559_GREEDY_INTERVAL,
+    &PY1560_GREEDY_FRACTIONAL,
+    &PY1561_GREEDY_COINS,
+    &PY1562_GREEDY_HUFFMAN,
+    &PY1563_GREEDY_ACTIVITY,
+    &PY1564_GREEDY_SORT,
+    &PY1565_STATE_BFS,
+    &PY1566_STATE_DFS,
+    &PY1567_STATE_MAZE,
+    &PY1568_STATE_ASTAR,
+    &PY1569_STATE_8PUZZLE,
+    &PY1570_STATE_GOAL,
+    &PY1571_GEO_CROSS,
+    &PY1572_GEO_ORIENTATION,
+    &PY1573_GEO_SEGMENT,
+    &PY1574_GEO_CONVEX_HULL,
+    &PY1575_GEO_AREA,
+    &PY1576_GEO_POINT_IN_POLY,
+    &PY1577_BIT_OPS,
+    &PY1578_BIT_COUNT,
+    &PY1579_BIT_MASK,
+    &PY1580_BIT_GET_SET,
+    &PY1581_BIT_SUBSETS,
+    &PY1582_BIT_XOR,
+    &PY1583_STR_NAIVE,
+    &PY1584_STR_KMP,
+    &PY1585_STR_RABIN_KARP,
+    &PY1586_STR_OCCURRENCES,
+    &PY1587_STR_LCP,
+    &PY1588_STR_WILDCARD,
+    &PY1589_COMPRESS_RLE_ENCODE,
+    &PY1590_COMPRESS_RLE_DECODE,
+    &PY1591_COMPRESS_FREQUENCY,
+    &PY1592_COMPRESS_ENTROPY,
+    &PY1593_COMPRESS_REPETITION,
+    &PY1594_COMPRESS_DECOMPRESS,
+    &PY1595_PROJECT_PREPROCESS,
+    &PY1596_PROJECT_KMP_TABLE,
+    &PY1597_PROJECT_MULTIPATTERN,
+    &PY1598_PROJECT_POSITIONS,
+    &PY1599_PROJECT_RANK,
+    &PY1600_PROJECT_ASSEMBLE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -49720,7 +50320,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1540);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1600);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -52632,11 +53232,11 @@ mod tests {
     }
 
     #[test]
-    fn py1061_to_py1540_engineering_chain() {
+    fn py1061_to_py1600_engineering_chain() {
         let bridge = coding_step_by_micro_step(1060).expect("py-1060");
         assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
 
-        for n in 1061..=1540 {
+        for n in 1061..=1600 {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.micro_step, n);
             assert!(
@@ -52644,7 +53244,7 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1540 {
+            if n < 1600 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -52653,7 +53253,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1540 is the end of the rail");
+                assert_eq!(step.next, None, "step 1600 is the end of the rail");
             }
         }
     }
