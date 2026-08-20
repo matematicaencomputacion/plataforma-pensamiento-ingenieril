@@ -49090,7 +49090,548 @@ pub const PY1660_PROJECT_ASSEMBLE: CodingStep = CodingStep {
     pytest: "def test_project_assemble_w11(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (6.0, 'cancelado', [('creado', 1), ('cancelado', 1)])\n    assert ns['sistema'].repo.obtener(1).total() == 6.0\n    try:\n        ns['sistema'].cancelar_pedido(99)\n        cancelo = True\n    except KeyError:\n        cancelo = False\n    assert not cancelo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "crear_pedido arma el pedido, lo guarda y emite el evento.",
     solution_example: "from dataclasses import dataclass, field\n\n@dataclass\nclass Item:\n    nombre: str\n    precio: float\n    cantidad: int\n\n@dataclass\nclass Pedido:\n    id: int\n    cliente: str\n    items: list = field(default_factory=list)\n    estado: str = 'creado'\n\n    def total(self):\n        return sum(i.precio * i.cantidad for i in self.items)\n\nclass RepoPedidos:\n    def __init__(self):\n        self._d = {}\n\n    def guardar(self, pedido):\n        self._d[pedido.id] = pedido\n        return pedido\n\n    def obtener(self, id):\n        return self._d.get(id)\n\nclass SistemaPedidos:\n    def __init__(self):\n        self.repo = RepoPedidos()\n        self.eventos = []\n\n    def crear_pedido(self, id, cliente, items):\n        pedido = Pedido(id, cliente, items)\n        self.repo.guardar(pedido)\n        self.eventos.append(('creado', id))\n        return pedido\n\n    def cancelar_pedido(self, id):\n        pedido = self.repo.obtener(id)\n        if pedido is None:\n            raise KeyError(id)\n        pedido.estado = 'cancelado'\n        self.eventos.append(('cancelado', id))\n        return pedido\n\nsistema = SistemaPedidos()\npedido = sistema.crear_pedido(1, 'Ana', [Item('Lapiz', 2.0, 3)])\nsistema.cancelar_pedido(1)\nresultado = (pedido.total(), pedido.estado, sistema.eventos)\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 1660,
+    next: Some("py-1661-json-dumps"), show_type_chips: false, micro_step: 1660,
+};
+
+pub const PY1661_JSON_DUMPS: CodingStep = CodingStep {
+    id: "py-1661-json-dumps", title: "JSON · Serializar dict", objective: "Convertir un dict a texto JSON con json.dumps.",
+    prompt_md: "**Serializar a JSON**\n\n`json.dumps` convierte dicts, listas, str, int, float, bool y None en un string JSON, preservando el orden de inserción de las claves.\n\n**Micro-reto:**\n1. Importá `json`\n2. Convertí `datos` con `json.dumps`\n3. Guardá el texto en `resultado` y mostralo",
+    starter_code: "# import json\n# datos = {'nombre': 'Ana', 'edad': 30, 'activo': True}\n# resultado = json.dumps(datos)\n# print(resultado)\n",
+    pytest: "def test_json_dumps(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '{\"nombre\": \"Ana\", \"edad\": 30, \"activo\": true}'\n    assert capsys.readouterr().out.strip() == ns['resultado']\n",
+    hint: "json.dumps(datos) devuelve el texto; True se vuelve true.",
+    solution_example: "import json\n\ndatos = {'nombre': 'Ana', 'edad': 30, 'activo': True}\nresultado = json.dumps(datos)\nprint(resultado)\n",
+    next: Some("py-1662-json-loads"), show_type_chips: false, micro_step: 1661,
+};
+pub const PY1662_JSON_LOADS: CodingStep = CodingStep {
+    id: "py-1662-json-loads", title: "JSON · Deserializar", objective: "Convertir texto JSON de vuelta a objetos Python con json.loads.",
+    prompt_md: "**Deserializar JSON**\n\n`json.loads` convierte un string JSON en objetos de Python: objetos en dicts, arrays en listas, `true` en `True`.\n\n**Micro-reto:**\n1. Importá `json`\n2. Convertí `texto` con `json.loads`\n3. Guardá `(datos['nombre'], datos['edad'])` en `resultado` y mostralo",
+    starter_code: "# import json\n# texto = '{\"nombre\": \"Ana\", \"edad\": 30}'\n# datos = json.loads(texto)\n# resultado = (datos['nombre'], datos['edad'])\n# print(resultado)\n",
+    pytest: "def test_json_loads(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('Ana', 30)\n    assert ns['datos'] == {'nombre': 'Ana', 'edad': 30}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "json.loads(texto) devuelve un dict; accedé por clave.",
+    solution_example: "import json\n\ntexto = '{\"nombre\": \"Ana\", \"edad\": 30}'\ndatos = json.loads(texto)\nresultado = (datos['nombre'], datos['edad'])\nprint(resultado)\n",
+    next: Some("py-1663-json-indent"), show_type_chips: false, micro_step: 1662,
+};
+pub const PY1663_JSON_INDENT: CodingStep = CodingStep {
+    id: "py-1663-json-indent", title: "JSON · Indentado", objective: "Generar JSON legible con indentación usando indent.",
+    prompt_md: "**Indentado**\n\n`json.dumps(datos, indent=2)` agrega saltos de línea e indentación para que el JSON sea legible por humanos.\n\n**Micro-reto:**\n1. Importá `json`\n2. Serializá `datos` con `indent=2`\n3. Guardá el texto en `resultado` y mostralo",
+    starter_code: "# import json\n# datos = {'nombre': 'Ana', 'hijos': ['Luz', 'Sol']}\n# resultado = json.dumps(datos, indent=2)\n# print(resultado)\n",
+    pytest: "def test_json_indent(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '{\\n  \"nombre\": \"Ana\",\\n  \"hijos\": [\\n    \"Luz\",\\n    \"Sol\"\\n  ]\\n}'\n    assert '\\n  ' in ns['resultado']\n    assert capsys.readouterr().out.strip() == ns['resultado']\n",
+    hint: "indent=2 pone dos espacios por nivel.",
+    solution_example: "import json\n\ndatos = {'nombre': 'Ana', 'hijos': ['Luz', 'Sol']}\nresultado = json.dumps(datos, indent=2)\nprint(resultado)\n",
+    next: Some("py-1664-json-ensure-ascii"), show_type_chips: false, micro_step: 1663,
+};
+pub const PY1664_JSON_ENSURE_ASCII: CodingStep = CodingStep {
+    id: "py-1664-json-ensure-ascii", title: "JSON · Caracteres no ASCII", objective: "Controlar el escape de caracteres con ensure_ascii.",
+    prompt_md: "**ensure_ascii**\n\nPor defecto `json.dumps` escapa caracteres no ASCII a secuencias `\\uXXXX`. Con `ensure_ascii=False` los deja legibles.\n\n**Micro-reto:**\n1. Importá `json`\n2. Serializá `datos` con `ensure_ascii=False`\n3. Guardá el texto en `resultado` y mostralo",
+    starter_code: "# import json\n# datos = {'ciudad': 'São Paulo'}\n# resultado = json.dumps(datos, ensure_ascii=False)\n# print(resultado)\n",
+    pytest: "def test_json_ensure_ascii(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '{\"ciudad\": \"São Paulo\"}'\n    assert 'ã' in ns['resultado']\n    assert capsys.readouterr().out.strip() == ns['resultado']\n",
+    hint: "ensure_ascii=False conserva 'ã' en lugar de \\u00e3.",
+    solution_example: "import json\n\ndatos = {'ciudad': 'São Paulo'}\nresultado = json.dumps(datos, ensure_ascii=False)\nprint(resultado)\n",
+    next: Some("py-1665-json-default"), show_type_chips: false, micro_step: 1664,
+};
+pub const PY1665_JSON_DEFAULT: CodingStep = CodingStep {
+    id: "py-1665-json-default", title: "JSON · Serializar objetos propios", objective: "Serializar objetos custom con el parámetro default.",
+    prompt_md: "**default**\n\n`json.dumps` no sabe serializar objetos propios; `default` recibe una función que los convierte en algo serializable.\n\n**Micro-reto:**\n1. Definí la clase `Punto` con `x` e `y`\n2. Definí `a_dict(obj)` que devuelva `{'x': obj.x, 'y': obj.y}` si es `Punto`\n3. Serializá `Punto(3, 4)` con `default=a_dict`, convertilo a dict y mostralo",
+    starter_code: "# import json\n# class Punto:\n#     def __init__(self, x, y):\n#         self.x = x\n#         self.y = y\n# def a_dict(obj):\n#     if isinstance(obj, Punto):\n#         return {'x': obj.x, 'y': obj.y}\n#     raise TypeError\n# resultado = json.loads(json.dumps(Punto(3, 4), default=a_dict))\n# print(resultado)\n",
+    pytest: "def test_json_default(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'x': 3, 'y': 4}\n    assert json.dumps(ns['Punto'](1, 2), default=ns['a_dict']) == '{\"x\": 1, \"y\": 2}'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "default recibe la función que convierte el objeto en dict.",
+    solution_example: "import json\n\nclass Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\ndef a_dict(obj):\n    if isinstance(obj, Punto):\n        return {'x': obj.x, 'y': obj.y}\n    raise TypeError\n\nresultado = json.loads(json.dumps(Punto(3, 4), default=a_dict))\nprint(resultado)\n",
+    next: Some("py-1666-json-object-hook"), show_type_chips: false, micro_step: 1665,
+};
+pub const PY1666_JSON_OBJECT_HOOK: CodingStep = CodingStep {
+    id: "py-1666-json-object-hook", title: "JSON · Decodificar objetos", objective: "Transformar dicts al deserializar con object_hook.",
+    prompt_md: "**object_hook**\n\n`json.loads(texto, object_hook=f)` aplica `f` a cada objeto JSON, permitiendo transformar las claves o reconstruir tipos.\n\n**Micro-reto:**\n1. Importá `json`\n2. Definí `mayusculas(d)` que devuelva un dict con las claves en mayúscula\n3. Deserializá `texto` con `object_hook=mayusculas` y mostralo",
+    starter_code: "# import json\n# def mayusculas(d):\n#     return {k.upper(): v for k, v in d.items()}\n# texto = '{\"nombre\": \"ana\", \"puntos\": 10}'\n# resultado = json.loads(texto, object_hook=mayusculas)\n# print(resultado)\n",
+    pytest: "def test_json_object_hook(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'NOMBRE': 'ana', 'PUNTOS': 10}\n    assert 'nombre' not in ns['resultado']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "object_hook recibe cada dict y devuelve el transformado.",
+    solution_example: "import json\n\ndef mayusculas(d):\n    return {k.upper(): v for k, v in d.items()}\n\ntexto = '{\"nombre\": \"ana\", \"puntos\": 10}'\nresultado = json.loads(texto, object_hook=mayusculas)\nprint(resultado)\n",
+    next: Some("py-1667-bytes-encode"), show_type_chips: false, micro_step: 1666,
+};
+pub const PY1667_BYTES_ENCODE: CodingStep = CodingStep {
+    id: "py-1667-bytes-encode", title: "Bytes · Codificar y decodificar", objective: "Convertir texto a bytes y de vuelta con encode/decode.",
+    prompt_md: "**bytes**\n\n`str.encode('utf-8')` produce `bytes` y `bytes.decode('utf-8')` recupera el texto original.\n\n**Micro-reto:**\n1. Codificá `mensaje` a bytes\n2. Decodificá los bytes de vuelta a texto\n3. Guardá `(como_bytes, de_nuevo)` en `resultado` y mostralo",
+    starter_code: "# mensaje = 'hola'\n# como_bytes = mensaje.encode('utf-8')\n# de_nuevo = como_bytes.decode('utf-8')\n# resultado = (como_bytes, de_nuevo)\n# print(resultado)\n",
+    pytest: "def test_bytes_encode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (b'hola', 'hola')\n    assert isinstance(ns['como_bytes'], bytes)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "encode('utf-8') y decode('utf-8') son la pareja inversa.",
+    solution_example: "mensaje = 'hola'\ncomo_bytes = mensaje.encode('utf-8')\nde_nuevo = como_bytes.decode('utf-8')\nresultado = (como_bytes, de_nuevo)\nprint(resultado)\n",
+    next: Some("py-1668-base64-encode"), show_type_chips: false, micro_step: 1667,
+};
+pub const PY1668_BASE64_ENCODE: CodingStep = CodingStep {
+    id: "py-1668-base64-encode", title: "Base64 · Codificar", objective: "Codificar bytes a texto Base64.",
+    prompt_md: "**Base64 encode**\n\n`base64.b64encode` convierte bytes binarios en texto ASCII seguro para transportar por canales de texto.\n\n**Micro-reto:**\n1. Importá `base64`\n2. Codificá `datos` con `b64encode`\n3. Guardá el resultado y mostralo",
+    starter_code: "# import base64\n# datos = b'hola mundo'\n# resultado = base64.b64encode(datos)\n# print(resultado)\n",
+    pytest: "def test_base64_encode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == b'aG9sYSBtdW5kbw=='\n    assert isinstance(ns['resultado'], bytes)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "b64encode devuelve bytes; se decodifica a texto si hace falta.",
+    solution_example: "import base64\n\ndatos = b'hola mundo'\nresultado = base64.b64encode(datos)\nprint(resultado)\n",
+    next: Some("py-1669-base64-decode"), show_type_chips: false, micro_step: 1668,
+};
+pub const PY1669_BASE64_DECODE: CodingStep = CodingStep {
+    id: "py-1669-base64-decode", title: "Base64 · Decodificar", objective: "Recuperar los bytes originales con b64decode.",
+    prompt_md: "**Base64 decode**\n\n`base64.b64decode` revierte la codificación y devuelve los bytes originales.\n\n**Micro-reto:**\n1. Importá `base64`\n2. Decodificá `codificado` con `b64decode`\n3. Guardá el resultado y mostralo",
+    starter_code: "# import base64\n# codificado = b'aG9sYSBtdW5kbw=='\n# resultado = base64.b64decode(codificado)\n# print(resultado)\n",
+    pytest: "def test_base64_decode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == b'hola mundo'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "b64decode devuelve los bytes originales.",
+    solution_example: "import base64\n\ncodificado = b'aG9sYSBtdW5kbw=='\nresultado = base64.b64decode(codificado)\nprint(resultado)\n",
+    next: Some("py-1670-hex-encode"), show_type_chips: false, micro_step: 1669,
+};
+pub const PY1670_HEX_ENCODE: CodingStep = CodingStep {
+    id: "py-1670-hex-encode", title: "Hex · Codificar", objective: "Convertir bytes a hexadecimal con binascii.hexlify.",
+    prompt_md: "**hexlify**\n\n`binascii.hexlify` representa cada byte como dos dígitos hexadecimales, útil para logs y hashes.\n\n**Micro-reto:**\n1. Importá `binascii`\n2. Convertí `datos` con `hexlify`\n3. Guardá el resultado y mostralo",
+    starter_code: "# import binascii\n# datos = b'hola'\n# resultado = binascii.hexlify(datos)\n# print(resultado)\n",
+    pytest: "def test_hex_encode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == b'686f6c61'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "hexlify devuelve bytes en hexadecimal.",
+    solution_example: "import binascii\n\ndatos = b'hola'\nresultado = binascii.hexlify(datos)\nprint(resultado)\n",
+    next: Some("py-1671-hex-decode"), show_type_chips: false, micro_step: 1670,
+};
+pub const PY1671_HEX_DECODE: CodingStep = CodingStep {
+    id: "py-1671-hex-decode", title: "Hex · Decodificar", objective: "Recuperar bytes desde hexadecimal con unhexlify.",
+    prompt_md: "**unhexlify**\n\n`binascii.unhexlify` convierte una cadena hexadecimal de vuelta en bytes.\n\n**Micro-reto:**\n1. Importá `binascii`\n2. Convertí `hex_string` con `unhexlify`\n3. Guardá el resultado y mostralo",
+    starter_code: "# import binascii\n# hex_string = b'686f6c61'\n# resultado = binascii.unhexlify(hex_string)\n# print(resultado)\n",
+    pytest: "def test_hex_decode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == b'hola'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "unhexlify revierte hexlify.",
+    solution_example: "import binascii\n\nhex_string = b'686f6c61'\nresultado = binascii.unhexlify(hex_string)\nprint(resultado)\n",
+    next: Some("py-1672-bytes-roundtrip"), show_type_chips: false, micro_step: 1671,
+};
+pub const PY1672_BYTES_ROUNDTRIP: CodingStep = CodingStep {
+    id: "py-1672-bytes-roundtrip", title: "Bytes · Round-trip", objective: "Encadenar base64 y hex sin perder los bytes.",
+    prompt_md: "**Round-trip de codificación**\n\nCombinar Base64 y hexadecimal y revertir demuestra que ninguna transformación pierde información.\n\n**Micro-reto:**\n1. Importá `base64` y `binascii`\n2. Codificá `datos` a Base64 y a hex\n3. Recuperá los bytes desde hex y guardá la tupla en `resultado`",
+    starter_code: "# import base64, binascii\n# datos = b'hola'\n# en_base64 = base64.b64encode(datos)\n# en_hex = binascii.hexlify(datos)\n# de_vuelta = binascii.unhexlify(en_hex)\n# resultado = (en_base64, en_hex, de_vuelta)\n# print(resultado)\n",
+    pytest: "def test_bytes_roundtrip(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (b'aG9sYQ==', b'686f6c61', b'hola')\n    assert ns['de_vuelta'] == b'hola'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "de_vuelta debe ser idéntico a datos.",
+    solution_example: "import base64, binascii\n\ndatos = b'hola'\nen_base64 = base64.b64encode(datos)\nen_hex = binascii.hexlify(datos)\nde_vuelta = binascii.unhexlify(en_hex)\nresultado = (en_base64, en_hex, de_vuelta)\nprint(resultado)\n",
+    next: Some("py-1673-csv-writer"), show_type_chips: false, micro_step: 1672,
+};
+pub const PY1673_CSV_WRITER: CodingStep = CodingStep {
+    id: "py-1673-csv-writer", title: "CSV · Escribir", objective: "Escribir filas CSV en memoria con csv.writer.",
+    prompt_md: "**csv.writer**\n\n`csv.writer` escribe filas separadas por comas en un `io.StringIO`, sin tocar el disco.\n\n**Micro-reto:**\n1. Importá `csv` e `io`\n2. Definí `escribir_csv(filas)` que escriba con `csv.writer` y devuelva el texto\n3. Escribí dos filas, guardá las líneas en `resultado` y mostralo",
+    starter_code: "# import csv, io\n# def escribir_csv(filas):\n#     salida = io.StringIO()\n#     csv.writer(salida, lineterminator='\\n').writerows(filas)\n#     return salida.getvalue()\n# texto = escribir_csv([['nombre', 'edad'], ['Ana', 30]])\n# resultado = texto.splitlines()\n# print(resultado)\n",
+    pytest: "def test_csv_writer(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['nombre,edad', 'Ana,30']\n    assert ns['texto'] == 'nombre,edad\\nAna,30\\n'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "lineterminator='\\n' produce saltos de línea limpios.",
+    solution_example: "import csv, io\n\ndef escribir_csv(filas):\n    salida = io.StringIO()\n    csv.writer(salida, lineterminator='\\n').writerows(filas)\n    return salida.getvalue()\n\ntexto = escribir_csv([['nombre', 'edad'], ['Ana', 30]])\nresultado = texto.splitlines()\nprint(resultado)\n",
+    next: Some("py-1674-csv-reader"), show_type_chips: false, micro_step: 1673,
+};
+pub const PY1674_CSV_READER: CodingStep = CodingStep {
+    id: "py-1674-csv-reader", title: "CSV · Leer", objective: "Parsear texto CSV en filas con csv.reader.",
+    prompt_md: "**csv.reader**\n\n`csv.reader` convierte texto CSV en una lista de filas, cada fila en una lista de celdas.\n\n**Micro-reto:**\n1. Importá `csv` e `io`\n2. Definí `leer_csv(texto)` que devuelva `list(csv.reader(...))`\n3. Leé un CSV de tres líneas y mostralo",
+    starter_code: "# import csv, io\n# def leer_csv(texto):\n#     return list(csv.reader(io.StringIO(texto)))\n# texto = 'nombre,edad\\nAna,30\\nLuis,25\\n'\n# resultado = leer_csv(texto)\n# print(resultado)\n",
+    pytest: "def test_csv_reader(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [['nombre', 'edad'], ['Ana', '30'], ['Luis', '25']]\n    assert ns['resultado'][1] == ['Ana', '30']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "csv.reader sobre io.StringIO devuelve un iterador de filas.",
+    solution_example: "import csv, io\n\ndef leer_csv(texto):\n    return list(csv.reader(io.StringIO(texto)))\n\ntexto = 'nombre,edad\\nAna,30\\nLuis,25\\n'\nresultado = leer_csv(texto)\nprint(resultado)\n",
+    next: Some("py-1675-csv-dictwriter"), show_type_chips: false, micro_step: 1674,
+};
+pub const PY1675_CSV_DICTWRITER: CodingStep = CodingStep {
+    id: "py-1675-csv-dictwriter", title: "CSV · DictWriter", objective: "Escribir CSV desde dicts con encabezado.",
+    prompt_md: "**DictWriter**\n\n`csv.DictWriter` escribe filas desde dicts usando `fieldnames` y genera un encabezado con `writeheader`.\n\n**Micro-reto:**\n1. Importá `csv` e `io`\n2. Definí `escribir_dict(filas, campos)` con `DictWriter` y `writeheader`\n3. Escribí dos registros, guardá las líneas en `resultado` y mostralo",
+    starter_code: "# import csv, io\n# def escribir_dict(filas, campos):\n#     salida = io.StringIO()\n#     w = csv.DictWriter(salida, fieldnames=campos, lineterminator='\\n')\n#     w.writeheader()\n#     for fila in filas:\n#         w.writerow(fila)\n#     return salida.getvalue()\n# campos = ['nombre', 'edad']\n# texto = escribir_dict([{'nombre': 'Ana', 'edad': 30}, {'nombre': 'Luis', 'edad': 25}], campos)\n# resultado = texto.splitlines()\n# print(resultado)\n",
+    pytest: "def test_csv_dictwriter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['nombre,edad', 'Ana,30', 'Luis,25']\n    assert ns['texto'] == 'nombre,edad\\nAna,30\\nLuis,25\\n'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "writeheader escribe la fila de nombres de campos.",
+    solution_example: "import csv, io\n\ndef escribir_dict(filas, campos):\n    salida = io.StringIO()\n    w = csv.DictWriter(salida, fieldnames=campos, lineterminator='\\n')\n    w.writeheader()\n    for fila in filas:\n        w.writerow(fila)\n    return salida.getvalue()\n\ncampos = ['nombre', 'edad']\ntexto = escribir_dict([{'nombre': 'Ana', 'edad': 30}, {'nombre': 'Luis', 'edad': 25}], campos)\nresultado = texto.splitlines()\nprint(resultado)\n",
+    next: Some("py-1676-csv-dictreader"), show_type_chips: false, micro_step: 1675,
+};
+pub const PY1676_CSV_DICTREADER: CodingStep = CodingStep {
+    id: "py-1676-csv-dictreader", title: "CSV · DictReader", objective: "Leer CSV en dicts usando el encabezado.",
+    prompt_md: "**DictReader**\n\n`csv.DictReader` usa la primera fila como encabezado y devuelve cada registro como un dict clave→valor.\n\n**Micro-reto:**\n1. Importá `csv` e `io`\n2. Definí `leer_dict(texto)` que devuelva `list(csv.DictReader(...))`\n3. Leé un CSV de dos registros y mostralo",
+    starter_code: "# import csv, io\n# def leer_dict(texto):\n#     return list(csv.DictReader(io.StringIO(texto)))\n# texto = 'nombre,edad\\nAna,30\\nLuis,25\\n'\n# resultado = leer_dict(texto)\n# print(resultado)\n",
+    pytest: "def test_csv_dictreader(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'nombre': 'Ana', 'edad': '30'}, {'nombre': 'Luis', 'edad': '25'}]\n    assert ns['resultado'][0]['nombre'] == 'Ana'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "DictReader mapea cada celda al nombre de su columna.",
+    solution_example: "import csv, io\n\ndef leer_dict(texto):\n    return list(csv.DictReader(io.StringIO(texto)))\n\ntexto = 'nombre,edad\\nAna,30\\nLuis,25\\n'\nresultado = leer_dict(texto)\nprint(resultado)\n",
+    next: Some("py-1677-csv-quoting"), show_type_chips: false, micro_step: 1676,
+};
+pub const PY1677_CSV_QUOTING: CodingStep = CodingStep {
+    id: "py-1677-csv-quoting", title: "CSV · Quoting", objective: "Controlar el entrecomillado con el parámetro quoting.",
+    prompt_md: "**quoting**\n\n`csv.QUOTE_ALL` fuerza comillas en todas las celdas, útil cuando los datos contienen comas o espacios ambiguos.\n\n**Micro-reto:**\n1. Importá `csv` e `io`\n2. Escribí con `quoting=csv.QUOTE_ALL`\n3. Guardá las líneas en `resultado` y mostralo",
+    starter_code: "# import csv, io\n# salida = io.StringIO()\n# csv.writer(salida, quoting=csv.QUOTE_ALL, lineterminator='\\n').writerows([['nombre', 'nota'], ['Ana', 'muy, buena']])\n# texto = salida.getvalue()\n# resultado = texto.splitlines()\n# print(resultado)\n",
+    pytest: "def test_csv_quoting(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['\"nombre\",\"nota\"', '\"Ana\",\"muy, buena\"']\n    assert ns['texto'] == '\"nombre\",\"nota\"\\n\"Ana\",\"muy, buena\"\\n'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "QUOTE_ALL entrecomilla todas las celdas.",
+    solution_example: "import csv, io\n\nsalida = io.StringIO()\ncsv.writer(salida, quoting=csv.QUOTE_ALL, lineterminator='\\n').writerows([['nombre', 'nota'], ['Ana', 'muy, buena']])\ntexto = salida.getvalue()\nresultado = texto.splitlines()\nprint(resultado)\n",
+    next: Some("py-1678-csv-delimiter"), show_type_chips: false, micro_step: 1677,
+};
+pub const PY1678_CSV_DELIMITER: CodingStep = CodingStep {
+    id: "py-1678-csv-delimiter", title: "CSV · Delimitador", objective: "Cambiar el separador de columnas con delimiter.",
+    prompt_md: "**delimiter**\n\n`csv.writer(salida, delimiter=';')` cambia la coma por otro separador, habitual en hojas de cálculo europeas.\n\n**Micro-reto:**\n1. Importá `csv` e `io`\n2. Escribí con `delimiter=';'`\n3. Guardá las líneas en `resultado` y mostralo",
+    starter_code: "# import csv, io\n# salida = io.StringIO()\n# csv.writer(salida, delimiter=';', lineterminator='\\n').writerows([['nombre', 'edad'], ['Ana', 30]])\n# texto = salida.getvalue()\n# resultado = texto.splitlines()\n# print(resultado)\n",
+    pytest: "def test_csv_delimiter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['nombre;edad', 'Ana;30']\n    assert ns['texto'] == 'nombre;edad\\nAna;30\\n'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "delimiter=';' reemplaza la coma como separador.",
+    solution_example: "import csv, io\n\nsalida = io.StringIO()\ncsv.writer(salida, delimiter=';', lineterminator='\\n').writerows([['nombre', 'edad'], ['Ana', 30]])\ntexto = salida.getvalue()\nresultado = texto.splitlines()\nprint(resultado)\n",
+    next: Some("py-1679-schema-types"), show_type_chips: false, micro_step: 1678,
+};
+pub const PY1679_SCHEMA_TYPES: CodingStep = CodingStep {
+    id: "py-1679-schema-types", title: "Schema · Validar tipos", objective: "Validar tipos de campos con isinstance.",
+    prompt_md: "**Validar tipos**\n\nUn contrato de datos exige que cada campo tenga el tipo esperado; `isinstance` lo comprueba.\n\n**Micro-reto:**\n1. Definí `validar_tipos(registro, esperados)` que recorra los pares clave→tipo\n2. Devolvé `False` si falta una clave o el tipo no coincide\n3. Validá un registro bueno y uno malo y mostralo",
+    starter_code: "# def validar_tipos(registro, esperados):\n#     for clave, tipo in esperados.items():\n#         if clave not in registro or not isinstance(registro[clave], tipo):\n#             return False\n#     return True\n# registro = {'nombre': 'Ana', 'edad': 30}\n# resultado = (validar_tipos(registro, {'nombre': str, 'edad': int}), validar_tipos(registro, {'nombre': str, 'edad': str}))\n# print(resultado)\n",
+    pytest: "def test_schema_types(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['validar_tipos']({'nombre': 'Ana', 'edad': 30}, {'nombre': str, 'edad': int}) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "isinstance(registro[clave], tipo) comprueba el tipo.",
+    solution_example: "def validar_tipos(registro, esperados):\n    for clave, tipo in esperados.items():\n        if clave not in registro or not isinstance(registro[clave], tipo):\n            return False\n    return True\n\nregistro = {'nombre': 'Ana', 'edad': 30}\nresultado = (validar_tipos(registro, {'nombre': str, 'edad': int}), validar_tipos(registro, {'nombre': str, 'edad': str}))\nprint(resultado)\n",
+    next: Some("py-1680-schema-required"), show_type_chips: false, micro_step: 1679,
+};
+pub const PY1680_SCHEMA_REQUIRED: CodingStep = CodingStep {
+    id: "py-1680-schema-required", title: "Schema · Campos requeridos", objective: "Verificar que los campos obligatorios existan.",
+    prompt_md: "**Campos requeridos**\n\nUn schema marca qué campos son obligatorios; validar exige que todos estén presentes.\n\n**Micro-reto:**\n1. Definí `campos_requeridos(registro, campos)`\n2. Devolvé `False` si falta alguno\n3. Validá con y sin un campo faltante y mostralo",
+    starter_code: "# def campos_requeridos(registro, campos):\n#     for campo in campos:\n#         if campo not in registro:\n#             return False\n#     return True\n# registro = {'nombre': 'Ana', 'edad': 30}\n# resultado = (campos_requeridos(registro, ['nombre', 'edad']), campos_requeridos(registro, ['nombre', 'email']))\n# print(resultado)\n",
+    pytest: "def test_schema_required(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['campos_requeridos']({}, []) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "campo not in registro detecta el faltante.",
+    solution_example: "def campos_requeridos(registro, campos):\n    for campo in campos:\n        if campo not in registro:\n            return False\n    return True\n\nregistro = {'nombre': 'Ana', 'edad': 30}\nresultado = (campos_requeridos(registro, ['nombre', 'edad']), campos_requeridos(registro, ['nombre', 'email']))\nprint(resultado)\n",
+    next: Some("py-1681-schema-range"), show_type_chips: false, micro_step: 1680,
+};
+pub const PY1681_SCHEMA_RANGE: CodingStep = CodingStep {
+    id: "py-1681-schema-range", title: "Schema · Rangos", objective: "Validar que un número esté dentro de un rango.",
+    prompt_md: "**Rangos numéricos**\n\nUn contrato limita los valores a un rango; `minimo <= valor <= maximo` lo comprueba en una sola expresión.\n\n**Micro-reto:**\n1. Definí `validar_rango(valor, minimo, maximo)`\n2. Devolvé `minimo <= valor <= maximo`\n3. Validá un valor dentro y otro fuera y mostralo",
+    starter_code: "# def validar_rango(valor, minimo, maximo):\n#     return minimo <= valor <= maximo\n# resultado = (validar_rango(5, 0, 10), validar_rango(15, 0, 10))\n# print(resultado)\n",
+    pytest: "def test_schema_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['validar_rango'](0, 0, 10) is True\n    assert ns['validar_rango'](10, 0, 10) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "La comparación encadenada cubre ambos límites.",
+    solution_example: "def validar_rango(valor, minimo, maximo):\n    return minimo <= valor <= maximo\n\nresultado = (validar_rango(5, 0, 10), validar_rango(15, 0, 10))\nprint(resultado)\n",
+    next: Some("py-1682-schema-length"), show_type_chips: false, micro_step: 1681,
+};
+pub const PY1682_SCHEMA_LENGTH: CodingStep = CodingStep {
+    id: "py-1682-schema-length", title: "Schema · Longitud", objective: "Validar la longitud de un string.",
+    prompt_md: "**Longitud de strings**\n\nUn schema limita la cantidad de caracteres; `len` junto a un rango lo valida.\n\n**Micro-reto:**\n1. Definí `validar_longitud(texto, minimo, maximo)`\n2. Devolvé `minimo <= len(texto) <= maximo`\n3. Validá un texto corto y uno largo y mostralo",
+    starter_code: "# def validar_longitud(texto, minimo, maximo):\n#     return minimo <= len(texto) <= maximo\n# resultado = (validar_longitud('Ana', 2, 20), validar_longitud('A', 2, 20))\n# print(resultado)\n",
+    pytest: "def test_schema_length(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['validar_longitud']('Ana', 2, 20) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "len(texto) devuelve la cantidad de caracteres.",
+    solution_example: "def validar_longitud(texto, minimo, maximo):\n    return minimo <= len(texto) <= maximo\n\nresultado = (validar_longitud('Ana', 2, 20), validar_longitud('A', 2, 20))\nprint(resultado)\n",
+    next: Some("py-1683-schema-contract"), show_type_chips: false, micro_step: 1682,
+};
+pub const PY1683_SCHEMA_CONTRACT: CodingStep = CodingStep {
+    id: "py-1683-schema-contract", title: "Schema · Contrato completo", objective: "Combinar varias reglas en una función de contrato.",
+    prompt_md: "**Contrato completo**\n\nUna función de contrato combina tipos y rangos en una sola validación que rechaza datos inválidos.\n\n**Micro-reto:**\n1. Definí `validar_persona(registro)` que exija `nombre` str y `edad` int en 0..120\n2. Devolvé `False` ante cualquier violación\n3. Validá un registro bueno y uno malo y mostralo",
+    starter_code: "# def validar_persona(registro):\n#     if 'nombre' not in registro or not isinstance(registro['nombre'], str):\n#         return False\n#     if 'edad' not in registro or not isinstance(registro['edad'], int):\n#         return False\n#     return 0 <= registro['edad'] <= 120\n# resultado = (validar_persona({'nombre': 'Ana', 'edad': 30}), validar_persona({'nombre': 'Ana', 'edad': -5}))\n# print(resultado)\n",
+    pytest: "def test_schema_contract(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['validar_persona']({'nombre': 'Ana', 'edad': 30}) is True\n    assert ns['validar_persona']({'nombre': 'Ana', 'edad': 150}) is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Chequeá presencia, tipo y rango en ese orden.",
+    solution_example: "def validar_persona(registro):\n    if 'nombre' not in registro or not isinstance(registro['nombre'], str):\n        return False\n    if 'edad' not in registro or not isinstance(registro['edad'], int):\n        return False\n    return 0 <= registro['edad'] <= 120\n\nresultado = (validar_persona({'nombre': 'Ana', 'edad': 30}), validar_persona({'nombre': 'Ana', 'edad': -5}))\nprint(resultado)\n",
+    next: Some("py-1684-schema-list"), show_type_chips: false, micro_step: 1683,
+};
+pub const PY1684_SCHEMA_LIST: CodingStep = CodingStep {
+    id: "py-1684-schema-list", title: "Schema · Validar colección", objective: "Aplicar un contrato a cada registro de una lista.",
+    prompt_md: "**Validar colección**\n\n`all(validar(r) for r in registros)` comprueba que todos los registros cumplen el contrato.\n\n**Micro-reto:**\n1. Definí `valido(registro)` que exija `edad` int no negativa\n2. Definí `validar_todos(registros, validar)` con `all`\n3. Validá una lista mixta y mostrá el resultado y los válidos",
+    starter_code: "# def valido(registro):\n#     return isinstance(registro.get('edad'), int) and registro['edad'] >= 0\n# def validar_todos(registros, validar):\n#     return all(validar(r) for r in registros)\n# registros = [{'edad': 30}, {'edad': -1}, {'edad': 25}]\n# resultado = (validar_todos(registros, valido), [r for r in registros if valido(r)])\n# print(resultado)\n",
+    pytest: "def test_schema_list(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (False, [{'edad': 30}, {'edad': 25}])\n    assert ns['validar_todos']([{'edad': 1}, {'edad': 2}], ns['valido']) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "all sobre una expresión generadora valida toda la lista.",
+    solution_example: "def valido(registro):\n    return isinstance(registro.get('edad'), int) and registro['edad'] >= 0\n\ndef validar_todos(registros, validar):\n    return all(validar(r) for r in registros)\n\nregistros = [{'edad': 30}, {'edad': -1}, {'edad': 25}]\nresultado = (validar_todos(registros, valido), [r for r in registros if valido(r)])\nprint(resultado)\n",
+    next: Some("py-1685-dataclass-basic"), show_type_chips: false, micro_step: 1684,
+};
+pub const PY1685_DATACLASS_BASIC: CodingStep = CodingStep {
+    id: "py-1685-dataclass-basic", title: "Dataclass · Básico", objective: "Modelar datos con @dataclass y comparación por valor.",
+    prompt_md: "**@dataclass**\n\n`@dataclass` genera `__init__`, `__repr__` y `__eq__` automáticamente, comparando instancias por sus campos.\n\n**Micro-reto:**\n1. Importá `dataclass`\n2. Definí `Persona` con `nombre` y `edad`\n3. Creá `p` y guardá `(p.nombre, p.edad, p == Persona('Ana', 30))` en `resultado`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Persona:\n#     nombre: str\n#     edad: int\n# p = Persona('Ana', 30)\n# resultado = (p.nombre, p.edad, p == Persona('Ana', 30))\n# print(resultado)\n",
+    pytest: "def test_dataclass_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('Ana', 30, True)\n    assert ns['Persona']('Ana', 30) == ns['Persona']('Ana', 30)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "@dataclass compara por campos, no por identidad.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Persona:\n    nombre: str\n    edad: int\n\np = Persona('Ana', 30)\nresultado = (p.nombre, p.edad, p == Persona('Ana', 30))\nprint(resultado)\n",
+    next: Some("py-1686-dataclass-frozen"), show_type_chips: false, micro_step: 1685,
+};
+pub const PY1686_DATACLASS_FROZEN: CodingStep = CodingStep {
+    id: "py-1686-dataclass-frozen", title: "Dataclass · Inmutable", objective: "Bloquear la reasignación con frozen=True.",
+    prompt_md: "**frozen=True**\n\n`@dataclass(frozen=True)` hace inmutable la instancia: reasignar un campo lanza una excepción.\n\n**Micro-reto:**\n1. Definí `Punto` frozen con `x` e `y`\n2. Intentá reasignar `p.x` capturando el fallo\n3. Guardá `(p.x, pudo)` en `resultado` y mostralo",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class Punto:\n#     x: int\n#     y: int\n# p = Punto(3, 4)\n# try:\n#     p.x = 10\n#     pudo = True\n# except Exception:\n#     pudo = False\n# resultado = (p.x, pudo)\n# print(resultado)\n",
+    pytest: "def test_dataclass_frozen(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, False)\n    assert ns['p'].x == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "frozen=True bloquea la reasignación de atributos.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Punto:\n    x: int\n    y: int\n\np = Punto(3, 4)\ntry:\n    p.x = 10\n    pudo = True\nexcept Exception:\n    pudo = False\nresultado = (p.x, pudo)\nprint(resultado)\n",
+    next: Some("py-1687-dataclass-field"), show_type_chips: false, micro_step: 1686,
+};
+pub const PY1687_DATACLASS_FIELD: CodingStep = CodingStep {
+    id: "py-1687-dataclass-field", title: "Dataclass · default_factory", objective: "Dar default mutable seguro con field.",
+    prompt_md: "**default_factory**\n\n`field(default_factory=list)` crea una lista nueva por instancia, evitando compartir el mismo mutable entre objetos.\n\n**Micro-reto:**\n1. Importá `dataclass` y `field`\n2. Definí `Carrito` con `items` por `default_factory=list`\n3. Agregá un ítem a `a` y mostrá `(a.items, b.items)`",
+    starter_code: "# from dataclasses import dataclass, field\n# @dataclass\n# class Carrito:\n#     items: list = field(default_factory=list)\n# a = Carrito()\n# b = Carrito()\n# a.items.append('manzana')\n# resultado = (a.items, b.items)\n# print(resultado)\n",
+    pytest: "def test_dataclass_field(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (['manzana'], [])\n    assert ns['b'].items == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "default_factory=list crea una lista independiente por instancia.",
+    solution_example: "from dataclasses import dataclass, field\n\n@dataclass\nclass Carrito:\n    items: list = field(default_factory=list)\n\na = Carrito()\nb = Carrito()\na.items.append('manzana')\nresultado = (a.items, b.items)\nprint(resultado)\n",
+    next: Some("py-1688-dataclass-post-init"), show_type_chips: false, micro_step: 1687,
+};
+pub const PY1688_DATACLASS_POST_INIT: CodingStep = CodingStep {
+    id: "py-1688-dataclass-post-init", title: "Dataclass · Validar en __post_init__", objective: "Validar invariantes al construir con __post_init__.",
+    prompt_md: "**__post_init__**\n\n`__post_init__` corre justo después del `__init__` generado, ideal para validar invariantes al construir.\n\n**Micro-reto:**\n1. Definí `Temperatura` con `celsius` y `__post_init__`\n2. Lanzá `ValueError` si `celsius < -273.15`\n3. Construí una válida y una inválida y mostralo",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Temperatura:\n#     celsius: float\n#     def __post_init__(self):\n#         if self.celsius < -273.15:\n#             raise ValueError('bajo cero absoluto')\n# buena = Temperatura(20.0)\n# try:\n#     Temperatura(-300.0)\n#     pudo = True\n# except ValueError:\n#     pudo = False\n# resultado = (buena.celsius, pudo)\n# print(resultado)\n",
+    pytest: "def test_dataclass_post_init(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (20.0, False)\n    try:\n        ns['Temperatura'](-300.0)\n        pudo = True\n    except ValueError:\n        pudo = False\n    assert not pudo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "__post_init__ recibe self ya inicializado.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass\nclass Temperatura:\n    celsius: float\n\n    def __post_init__(self):\n        if self.celsius < -273.15:\n            raise ValueError('bajo cero absoluto')\n\nbuena = Temperatura(20.0)\ntry:\n    Temperatura(-300.0)\n    pudo = True\nexcept ValueError:\n    pudo = False\nresultado = (buena.celsius, pudo)\nprint(resultado)\n",
+    next: Some("py-1689-dataclass-asdict"), show_type_chips: false, micro_step: 1688,
+};
+pub const PY1689_DATACLASS_ASDICT: CodingStep = CodingStep {
+    id: "py-1689-dataclass-asdict", title: "Dataclass · asdict", objective: "Convertir una dataclass a dict con asdict.",
+    prompt_md: "**asdict**\n\n`dataclasses.asdict` convierte una dataclass en un dict plano, listo para serializar a JSON.\n\n**Micro-reto:**\n1. Importá `dataclass` y `asdict`\n2. Definí `Persona` con `nombre` y `edad`\n3. Convertí `Persona('Ana', 30)` con `asdict` y mostralo",
+    starter_code: "# from dataclasses import dataclass, asdict\n# @dataclass\n# class Persona:\n#     nombre: str\n#     edad: int\n# resultado = asdict(Persona('Ana', 30))\n# print(resultado)\n",
+    pytest: "def test_dataclass_asdict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'nombre': 'Ana', 'edad': 30}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "asdict devuelve un dict con los campos como claves.",
+    solution_example: "from dataclasses import dataclass, asdict\n\n@dataclass\nclass Persona:\n    nombre: str\n    edad: int\n\nresultado = asdict(Persona('Ana', 30))\nprint(resultado)\n",
+    next: Some("py-1690-dataclass-compose"), show_type_chips: false, micro_step: 1689,
+};
+pub const PY1690_DATACLASS_COMPOSE: CodingStep = CodingStep {
+    id: "py-1690-dataclass-compose", title: "Dataclass · Composición inmutable", objective: "Componer dataclasses frozen anidadas.",
+    prompt_md: "**Composición inmutable**\n\nUna dataclass frozen puede contener otra, modelando relaciones anidadas sin permitir mutación.\n\n**Micro-reto:**\n1. Definí `Direccion` frozen con `calle` y `ciudad`\n2. Definí `Cliente` frozen con `nombre` y `direccion`\n3. Creá un cliente y mostrá `(c.nombre, c.direccion.ciudad)`",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class Direccion:\n#     calle: str\n#     ciudad: str\n# @dataclass(frozen=True)\n# class Cliente:\n#     nombre: str\n#     direccion: Direccion\n# c = Cliente('Ana', Direccion('Av. 1', 'CABA'))\n# resultado = (c.nombre, c.direccion.ciudad)\n# print(resultado)\n",
+    pytest: "def test_dataclass_compose(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('Ana', 'CABA')\n    assert ns['c'].direccion.ciudad == 'CABA'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Anidá una dataclass como campo de otra.",
+    solution_example: "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Direccion:\n    calle: str\n    ciudad: str\n\n@dataclass(frozen=True)\nclass Cliente:\n    nombre: str\n    direccion: Direccion\n\nc = Cliente('Ana', Direccion('Av. 1', 'CABA'))\nresultado = (c.nombre, c.direccion.ciudad)\nprint(resultado)\n",
+    next: Some("py-1691-enum-basic"), show_type_chips: false, micro_step: 1690,
+};
+pub const PY1691_ENUM_BASIC: CodingStep = CodingStep {
+    id: "py-1691-enum-basic", title: "Enum · Básico", objective: "Definir un conjunto cerrado de valores con enum.Enum.",
+    prompt_md: "**enum.Enum**\n\n`Enum` define un conjunto cerrado de constantes con nombre y valor, evitando strings mágicos.\n\n**Micro-reto:**\n1. Importá `Enum`\n2. Definí `Estado` con `PENDIENTE`, `ACTIVO` y `CERRADO`\n3. Guardá `(Estado.ACTIVO.name, Estado.ACTIVO.value)` en `resultado`",
+    starter_code: "# from enum import Enum\n# class Estado(Enum):\n#     PENDIENTE = 1\n#     ACTIVO = 2\n#     CERRADO = 3\n# resultado = (Estado.ACTIVO.name, Estado.ACTIVO.value)\n# print(resultado)\n",
+    pytest: "def test_enum_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ACTIVO', 2)\n    assert ns['Estado'].PENDIENTE.value == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: ".name es el identificador y .value el valor.",
+    solution_example: "from enum import Enum\n\nclass Estado(Enum):\n    PENDIENTE = 1\n    ACTIVO = 2\n    CERRADO = 3\n\nresultado = (Estado.ACTIVO.name, Estado.ACTIVO.value)\nprint(resultado)\n",
+    next: Some("py-1692-enum-auto"), show_type_chips: false, micro_step: 1691,
+};
+pub const PY1692_ENUM_AUTO: CodingStep = CodingStep {
+    id: "py-1692-enum-auto", title: "Enum · auto()", objective: "Asignar valores automáticos con auto().",
+    prompt_md: "**auto()**\n\n`enum.auto()` asigna valores secuenciales automáticamente cuando el número concreto no importa.\n\n**Micro-reto:**\n1. Importá `Enum` y `auto`\n2. Definí `Color` con tres miembros usando `auto()`\n3. Guardá `[c.value for c in Color]` en `resultado` y mostralo",
+    starter_code: "# from enum import Enum, auto\n# class Color(Enum):\n#     ROJO = auto()\n#     VERDE = auto()\n#     AZUL = auto()\n# resultado = [c.value for c in Color]\n# print(resultado)\n",
+    pytest: "def test_enum_auto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert len(list(ns['Color'])) == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "auto() numera los miembros en orden de declaración.",
+    solution_example: "from enum import Enum, auto\n\nclass Color(Enum):\n    ROJO = auto()\n    VERDE = auto()\n    AZUL = auto()\n\nresultado = [c.value for c in Color]\nprint(resultado)\n",
+    next: Some("py-1693-enum-compare"), show_type_chips: false, micro_step: 1692,
+};
+pub const PY1693_ENUM_COMPARE: CodingStep = CodingStep {
+    id: "py-1693-enum-compare", title: "Enum · Comparar e iterar", objective: "Comparar e iterar los miembros de un Enum.",
+    prompt_md: "**Comparar e iterar**\n\nLos miembros de un Enum son únicos y comparables por identidad; además se pueden iterar y listar.\n\n**Micro-reto:**\n1. Definí `Nivel` con `BAJO`, `MEDIO` y `ALTO`\n2. Guardá `(Nivel.MEDIO == Nivel.MEDIO, len(list(Nivel)), [n.name for n in Nivel])`\n3. Mostralo",
+    starter_code: "# from enum import Enum\n# class Nivel(Enum):\n#     BAJO = 1\n#     MEDIO = 2\n#     ALTO = 3\n# resultado = (Nivel.MEDIO == Nivel.MEDIO, len(list(Nivel)), [n.name for n in Nivel])\n# print(resultado)\n",
+    pytest: "def test_enum_compare(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, 3, ['BAJO', 'MEDIO', 'ALTO'])\n    assert ns['Nivel'].MEDIO is ns['Nivel'].MEDIO\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Los miembros se comparan por identidad (is).",
+    solution_example: "from enum import Enum\n\nclass Nivel(Enum):\n    BAJO = 1\n    MEDIO = 2\n    ALTO = 3\n\nresultado = (Nivel.MEDIO == Nivel.MEDIO, len(list(Nivel)), [n.name for n in Nivel])\nprint(resultado)\n",
+    next: Some("py-1694-state-simple"), show_type_chips: false, micro_step: 1693,
+};
+pub const PY1694_STATE_SIMPLE: CodingStep = CodingStep {
+    id: "py-1694-state-simple", title: "Estado · Máquina simple", objective: "Modelar transición de estado con un Enum.",
+    prompt_md: "**Máquina de estado simple**\n\nUn objeto cambia de estado de forma explícita; el Enum fija los estados válidos.\n\n**Micro-reto:**\n1. Definí `Estado` con `NUEVO` y `PROCESADO`\n2. Definí `Pedido` con `estado` inicial `NUEVO` y método `procesar`\n3. Mostrá `(antes.name, despues.name)`",
+    starter_code: "# from enum import Enum, auto\n# class Estado(Enum):\n#     NUEVO = auto()\n#     PROCESADO = auto()\n# class Pedido:\n#     def __init__(self):\n#         self.estado = Estado.NUEVO\n#     def procesar(self):\n#         self.estado = Estado.PROCESADO\n#         return self.estado\n# p = Pedido()\n# antes = p.estado\n# despues = p.procesar()\n# resultado = (antes.name, despues.name)\n# print(resultado)\n",
+    pytest: "def test_state_simple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('NUEVO', 'PROCESADO')\n    assert ns['p'].estado == ns['Estado'].PROCESADO\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "procesar asigna el nuevo estado y lo devuelve.",
+    solution_example: "from enum import Enum, auto\n\nclass Estado(Enum):\n    NUEVO = auto()\n    PROCESADO = auto()\n\nclass Pedido:\n    def __init__(self):\n        self.estado = Estado.NUEVO\n\n    def procesar(self):\n        self.estado = Estado.PROCESADO\n        return self.estado\n\np = Pedido()\nantes = p.estado\ndespues = p.procesar()\nresultado = (antes.name, despues.name)\nprint(resultado)\n",
+    next: Some("py-1695-state-invalid"), show_type_chips: false, micro_step: 1694,
+};
+pub const PY1695_STATE_INVALID: CodingStep = CodingStep {
+    id: "py-1695-state-invalid", title: "Estado · Transición inválida", objective: "Rechazar transiciones no permitidas.",
+    prompt_md: "**Transición inválida**\n\nUna máquina de estados debe rechazar transiciones no permitidas; lanzar un error evita estados inconsistentes.\n\n**Micro-reto:**\n1. Definí `Pedido` con `estado` `NUEVO` y método `cerrar`\n2. Lanzá `ValueError` si ya está `CERRADO`\n3. Cerrá dos veces y mostrá `(estado, pudo)`",
+    starter_code: "# from enum import Enum, auto\n# class Estado(Enum):\n#     NUEVO = auto()\n#     CERRADO = auto()\n# class Pedido:\n#     def __init__(self):\n#         self.estado = Estado.NUEVO\n#     def cerrar(self):\n#         if self.estado == Estado.CERRADO:\n#             raise ValueError('ya cerrado')\n#         self.estado = Estado.CERRADO\n#         return self.estado\n# p = Pedido()\n# p.cerrar()\n# try:\n#     p.cerrar()\n#     pudo = True\n# except ValueError:\n#     pudo = False\n# resultado = (p.estado.name, pudo)\n# print(resultado)\n",
+    pytest: "def test_state_invalid(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('CERRADO', False)\n    try:\n        ns['p'].cerrar()\n        pudo = True\n    except ValueError:\n        pudo = False\n    assert not pudo\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Chequeá el estado actual antes de transicionar.",
+    solution_example: "from enum import Enum, auto\n\nclass Estado(Enum):\n    NUEVO = auto()\n    CERRADO = auto()\n\nclass Pedido:\n    def __init__(self):\n        self.estado = Estado.NUEVO\n\n    def cerrar(self):\n        if self.estado == Estado.CERRADO:\n            raise ValueError('ya cerrado')\n        self.estado = Estado.CERRADO\n        return self.estado\n\np = Pedido()\np.cerrar()\ntry:\n    p.cerrar()\n    pudo = True\nexcept ValueError:\n    pudo = False\nresultado = (p.estado.name, pudo)\nprint(resultado)\n",
+    next: Some("py-1696-state-history"), show_type_chips: false, micro_step: 1695,
+};
+pub const PY1696_STATE_HISTORY: CodingStep = CodingStep {
+    id: "py-1696-state-history", title: "Estado · Historial", objective: "Registrar el historial de transiciones.",
+    prompt_md: "**Historial de estados**\n\nGuardar cada estado por el que pasa el objeto permite auditar la secuencia completa de transiciones.\n\n**Micro-reto:**\n1. Definí `Pedido` con `estado` y `historial` inicial\n2. Definí `transicion(nuevo)` que actualice estado y agregue al historial\n3. Recorré `NUEVO → PAGADO → ENVIADO` y mostrá el historial",
+    starter_code: "# from enum import Enum, auto\n# class Estado(Enum):\n#     NUEVO = auto()\n#     PAGADO = auto()\n#     ENVIADO = auto()\n# class Pedido:\n#     def __init__(self):\n#         self.estado = Estado.NUEVO\n#         self.historial = [Estado.NUEVO]\n#     def transicion(self, nuevo):\n#         self.estado = nuevo\n#         self.historial.append(nuevo)\n#         return nuevo\n# p = Pedido()\n# p.transicion(Estado.PAGADO)\n# p.transicion(Estado.ENVIADO)\n# resultado = [e.name for e in p.historial]\n# print(resultado)\n",
+    pytest: "def test_state_history(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['NUEVO', 'PAGADO', 'ENVIADO']\n    assert ns['p'].estado == ns['Estado'].ENVIADO\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Append cada nuevo estado al historial.",
+    solution_example: "from enum import Enum, auto\n\nclass Estado(Enum):\n    NUEVO = auto()\n    PAGADO = auto()\n    ENVIADO = auto()\n\nclass Pedido:\n    def __init__(self):\n        self.estado = Estado.NUEVO\n        self.historial = [Estado.NUEVO]\n\n    def transicion(self, nuevo):\n        self.estado = nuevo\n        self.historial.append(nuevo)\n        return nuevo\n\np = Pedido()\np.transicion(Estado.PAGADO)\np.transicion(Estado.ENVIADO)\nresultado = [e.name for e in p.historial]\nprint(resultado)\n",
+    next: Some("py-1697-norm-strip"), show_type_chips: false, micro_step: 1696,
+};
+pub const PY1697_NORM_STRIP: CodingStep = CodingStep {
+    id: "py-1697-norm-strip", title: "Normalizar · strip y lower", objective: "Limpiar espacios y normalizar mayúsculas.",
+    prompt_md: "**strip y lower**\n\n`strip()` quita espacios en los extremos y `lower()` normaliza a minúsculas para comparar texto de forma robusta.\n\n**Micro-reto:**\n1. Definí `limpiar(texto)` que aplique `strip().lower()`\n2. Limpiá dos textos\n3. Guardá la tupla en `resultado` y mostralo",
+    starter_code: "# def limpiar(texto):\n#     return texto.strip().lower()\n# resultado = (limpiar('  Hola  '), limpiar('  MUNDO '))\n# print(resultado)\n",
+    pytest: "def test_norm_strip(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('hola', 'mundo')\n    assert ns['limpiar']('  Ana ') == 'ana'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Encadená strip() y lower().",
+    solution_example: "def limpiar(texto):\n    return texto.strip().lower()\n\nresultado = (limpiar('  Hola  '), limpiar('  MUNDO '))\nprint(resultado)\n",
+    next: Some("py-1698-norm-spaces"), show_type_chips: false, micro_step: 1697,
+};
+pub const PY1698_NORM_SPACES: CodingStep = CodingStep {
+    id: "py-1698-norm-spaces", title: "Normalizar · Espacios internos", objective: "Colapsar espacios repetidos con split/join.",
+    prompt_md: "**Espacios internos**\n\n`' '.join(texto.split())` colapsa cualquier secuencia de espacios en un único espacio entre palabras.\n\n**Micro-reto:**\n1. Definí `normalizar(texto)` que devuelva `' '.join(texto.split())`\n2. Normalizá un texto con espacios irregulares\n3. Mostralo",
+    starter_code: "# def normalizar(texto):\n#     return ' '.join(texto.split())\n# resultado = normalizar('  hola   mundo  feliz ')\n# print(resultado)\n",
+    pytest: "def test_norm_spaces(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'hola mundo feliz'\n    assert ns['normalizar']('a    b') == 'a b'\n    assert capsys.readouterr().out.strip() == ns['resultado']\n",
+    hint: "split() sin argumentos parte por cualquier espacio.",
+    solution_example: "def normalizar(texto):\n    return ' '.join(texto.split())\n\nresultado = normalizar('  hola   mundo  feliz ')\nprint(resultado)\n",
+    next: Some("py-1699-dedup-order"), show_type_chips: false, micro_step: 1698,
+};
+pub const PY1699_DEDUP_ORDER: CodingStep = CodingStep {
+    id: "py-1699-dedup-order", title: "Dedup · Preservar orden", objective: "Eliminar duplicados manteniendo el orden.",
+    prompt_md: "**Deduplicación ordenada**\n\nUn `set` registra lo ya visto para eliminar duplicados sin alterar el orden de aparición.\n\n**Micro-reto:**\n1. Definí `dedup(lista)` que recorra y saltee los ya vistos\n2. Devolvé una lista nueva preservando el orden\n3. Aplicalo a una lista con repetidos y mostralo",
+    starter_code: "# def dedup(lista):\n#     vistos = set()\n#     resultado = []\n#     for item in lista:\n#         if item not in vistos:\n#             vistos.add(item)\n#             resultado.append(item)\n#     return resultado\n# resultado = dedup(['a', 'b', 'a', 'c', 'b', 'd'])\n# print(resultado)\n",
+    pytest: "def test_dedup_order(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b', 'c', 'd']\n    assert ns['dedup']([]) == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Usá un set para recordar qué ya viste.",
+    solution_example: "def dedup(lista):\n    vistos = set()\n    resultado = []\n    for item in lista:\n        if item not in vistos:\n            vistos.add(item)\n            resultado.append(item)\n    return resultado\n\nresultado = dedup(['a', 'b', 'a', 'c', 'b', 'd'])\nprint(resultado)\n",
+    next: Some("py-1700-norm-dedup"), show_type_chips: false, micro_step: 1699,
+};
+pub const PY1700_NORM_DEDUP: CodingStep = CodingStep {
+    id: "py-1700-norm-dedup", title: "Normalizar · Dedup de texto", objective: "Normalizar antes de deduplicar cadenas.",
+    prompt_md: "**Normalizar y deduplicar**\n\nNormalizar antes de deduplicar agrupa variantes como 'Ana' y ' ana ' en una sola entrada canónica.\n\n**Micro-reto:**\n1. Definí `normalizar(texto)` con `strip().lower()`\n2. Definí `dedup(lista)` que deduplique por la clave normalizada\n3. Aplicalo a una lista con variantes y mostralo",
+    starter_code: "# def normalizar(texto):\n#     return texto.strip().lower()\n# def dedup(lista):\n#     vistos = set()\n#     resultado = []\n#     for item in lista:\n#         clave = normalizar(item)\n#         if clave not in vistos:\n#             vistos.add(clave)\n#             resultado.append(clave)\n#     return resultado\n# resultado = dedup(['  Ana ', 'ana', ' Luis ', 'ANA'])\n# print(resultado)\n",
+    pytest: "def test_norm_dedup(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['ana', 'luis']\n    assert ns['dedup'](['A', 'a']) == ['a']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "La clave del set es la versión normalizada.",
+    solution_example: "def normalizar(texto):\n    return texto.strip().lower()\n\ndef dedup(lista):\n    vistos = set()\n    resultado = []\n    for item in lista:\n        clave = normalizar(item)\n        if clave not in vistos:\n            vistos.add(clave)\n            resultado.append(clave)\n    return resultado\n\nresultado = dedup(['  Ana ', 'ana', ' Luis ', 'ANA'])\nprint(resultado)\n",
+    next: Some("py-1701-norm-dict-keys"), show_type_chips: false, micro_step: 1700,
+};
+pub const PY1701_NORM_DICT_KEYS: CodingStep = CodingStep {
+    id: "py-1701-norm-dict-keys", title: "Normalizar · Claves de dict", objective: "Normalizar las claves de un diccionario.",
+    prompt_md: "**Claves de dict**\n\nNormalizar las claves evita duplicados como 'Nombre' y ' nombre ' al construir un dict canónico.\n\n**Micro-reto:**\n1. Definí `normalizar_claves(d)` que recorra `items()`\n2. Guardá cada valor bajo `clave.strip().lower()`\n3. Aplicalo a un dict con claves sucias y mostralo",
+    starter_code: "# def normalizar_claves(d):\n#     resultado = {}\n#     for clave, valor in d.items():\n#         resultado[clave.strip().lower()] = valor\n#     return resultado\n# resultado = normalizar_claves({' Nombre ': 'Ana', ' EDAD ': 30})\n# print(resultado)\n",
+    pytest: "def test_norm_dict_keys(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'nombre': 'Ana', 'edad': 30}\n    assert ns['normalizar_claves']({}) == {}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Iterá d.items() y reconstruí con claves limpias.",
+    solution_example: "def normalizar_claves(d):\n    resultado = {}\n    for clave, valor in d.items():\n        resultado[clave.strip().lower()] = valor\n    return resultado\n\nresultado = normalizar_claves({' Nombre ': 'Ana', ' EDAD ': 30})\nprint(resultado)\n",
+    next: Some("py-1702-canonicalize"), show_type_chips: false, micro_step: 1701,
+};
+pub const PY1702_CANONICALIZE: CodingStep = CodingStep {
+    id: "py-1702-canonicalize", title: "Normalizar · Canonicalizar", objective: "Normalizar registros a una forma canónica.",
+    prompt_md: "**Canonicalizar registros**\n\nAplicar reglas por campo produce una representación canónica estable para comparar y deduplicar registros.\n\n**Micro-reto:**\n1. Definí `canonicalizar(registro)` con `nombre` en minúsculas y `ciudad` en `title`\n2. Aplicalo a un registro con espacios y mayúsculas\n3. Mostralo",
+    starter_code: "# def canonicalizar(registro):\n#     return {\n#         'nombre': registro['nombre'].strip().lower(),\n#         'ciudad': registro['ciudad'].strip().title(),\n#     }\n# resultado = canonicalizar({'nombre': ' ANA ', 'ciudad': ' buenos aires '})\n# print(resultado)\n",
+    pytest: "def test_canonicalize(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'nombre': 'ana', 'ciudad': 'Buenos Aires'}\n    assert ns['canonicalizar']({'nombre': 'Ana', 'ciudad': 'CABA'}) == {'nombre': 'ana', 'ciudad': 'Caba'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "title() capitaliza la primera letra de cada palabra.",
+    solution_example: "def canonicalizar(registro):\n    return {\n        'nombre': registro['nombre'].strip().lower(),\n        'ciudad': registro['ciudad'].strip().title(),\n    }\n\nresultado = canonicalizar({'nombre': ' ANA ', 'ciudad': ' buenos aires '})\nprint(resultado)\n",
+    next: Some("py-1703-etl-extract"), show_type_chips: false, micro_step: 1702,
+};
+pub const PY1703_ETL_EXTRACT: CodingStep = CodingStep {
+    id: "py-1703-etl-extract", title: "ETL · Extraer", objective: "Extraer datos con un generador síncrono.",
+    prompt_md: "**Extract con generador**\n\nUn generador con `yield` entrega los registros uno a uno, sin materializar toda la lista de golpe.\n\n**Micro-reto:**\n1. Definí `extraer(registros)` que haga `yield` de cada registro\n2. Convertí el generador a lista\n3. Mostralo",
+    starter_code: "# def extraer(registros):\n#     for r in registros:\n#         yield r\n# datos = [{'id': 1}, {'id': 2}, {'id': 3}]\n# resultado = list(extraer(datos))\n# print(resultado)\n",
+    pytest: "def test_etl_extract(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'id': 1}, {'id': 2}, {'id': 3}]\n    assert list(ns['extraer']([])) == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "yield convierte la función en generador.",
+    solution_example: "def extraer(registros):\n    for r in registros:\n        yield r\n\ndatos = [{'id': 1}, {'id': 2}, {'id': 3}]\nresultado = list(extraer(datos))\nprint(resultado)\n",
+    next: Some("py-1704-etl-transform"), show_type_chips: false, micro_step: 1703,
+};
+pub const PY1704_ETL_TRANSFORM: CodingStep = CodingStep {
+    id: "py-1704-etl-transform", title: "ETL · Transformar", objective: "Transformar registros con un generador.",
+    prompt_md: "**Transform con generador**\n\nUn generador transforma cada registro en uno nuevo, aplicando la regla de negocio de forma perezosa.\n\n**Micro-reto:**\n1. Definí `transformar(registros)` que haga `yield` de un dict con `doble`\n2. Convertí a lista\n3. Mostralo",
+    starter_code: "# def transformar(registros):\n#     for r in registros:\n#         yield {'id': r['id'], 'doble': r['valor'] * 2}\n# datos = [{'id': 1, 'valor': 2}, {'id': 2, 'valor': 5}]\n# resultado = list(transformar(datos))\n# print(resultado)\n",
+    pytest: "def test_etl_transform(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'id': 1, 'doble': 4}, {'id': 2, 'doble': 10}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "yield el dict transformado en cada iteración.",
+    solution_example: "def transformar(registros):\n    for r in registros:\n        yield {'id': r['id'], 'doble': r['valor'] * 2}\n\ndatos = [{'id': 1, 'valor': 2}, {'id': 2, 'valor': 5}]\nresultado = list(transformar(datos))\nprint(resultado)\n",
+    next: Some("py-1705-etl-filter"), show_type_chips: false, micro_step: 1704,
+};
+pub const PY1705_ETL_FILTER: CodingStep = CodingStep {
+    id: "py-1705-etl-filter", title: "ETL · Filtrar", objective: "Filtrar registros en el pipeline con yield.",
+    prompt_md: "**Filter en pipeline**\n\nUn generador puede descartar registros que no cumplen una condición, dejando pasar solo los válidos.\n\n**Micro-reto:**\n1. Definí `filtrar(registros, campo)` que haga `yield` solo si el campo existe\n2. Convertí a lista\n3. Mostralo",
+    starter_code: "# def filtrar(registros, campo):\n#     for r in registros:\n#         if r.get(campo) is not None:\n#             yield r\n# datos = [{'id': 1, 'nota': 5}, {'id': 2}, {'id': 3, 'nota': 8}]\n# resultado = list(filtrar(datos, 'nota'))\n# print(resultado)\n",
+    pytest: "def test_etl_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'id': 1, 'nota': 5}, {'id': 3, 'nota': 8}]\n    assert list(ns['filtrar']([{'id': 1}], 'nota')) == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "r.get(campo) devuelve None si el campo falta.",
+    solution_example: "def filtrar(registros, campo):\n    for r in registros:\n        if r.get(campo) is not None:\n            yield r\n\ndatos = [{'id': 1, 'nota': 5}, {'id': 2}, {'id': 3, 'nota': 8}]\nresultado = list(filtrar(datos, 'nota'))\nprint(resultado)\n",
+    next: Some("py-1706-etl-load"), show_type_chips: false, micro_step: 1705,
+};
+pub const PY1706_ETL_LOAD: CodingStep = CodingStep {
+    id: "py-1706-etl-load", title: "ETL · Cargar", objective: "Acumular los resultados en una estructura final.",
+    prompt_md: "**Load**\n\nLa etapa de carga consume el generador y acumula los resultados en la estructura de destino.\n\n**Micro-reto:**\n1. Definí `cargar(registros)` que acumule en una lista\n2. Cargá un iterador de números\n3. Mostralo",
+    starter_code: "# def cargar(registros):\n#     acumulador = []\n#     for r in registros:\n#         acumulador.append(r)\n#     return acumulador\n# resultado = cargar(iter([1, 2, 3]))\n# print(resultado)\n",
+    pytest: "def test_etl_load(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert ns['cargar'](iter([])) == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Consumí el iterador y agregá cada elemento.",
+    solution_example: "def cargar(registros):\n    acumulador = []\n    for r in registros:\n        acumulador.append(r)\n    return acumulador\n\nresultado = cargar(iter([1, 2, 3]))\nprint(resultado)\n",
+    next: Some("py-1707-etl-pipeline"), show_type_chips: false, micro_step: 1706,
+};
+pub const PY1707_ETL_PIPELINE: CodingStep = CodingStep {
+    id: "py-1707-etl-pipeline", title: "ETL · Pipeline completo", objective: "Encadenar extract, transform y load.",
+    prompt_md: "**Pipeline completo**\n\nComponer extracción, transformación y carga en una sola expresión encadena el flujo de datos end-to-end.\n\n**Micro-reto:**\n1. Definí `extraer`, `transformar` y `cargar` con `yield`/`sum`\n2. Encadená `cargar(transformar(extraer()))`\n3. Mostrá la suma de los valores por 10",
+    starter_code: "# def extraer():\n#     yield from [{'valor': 1}, {'valor': 2}, {'valor': 3}]\n# def transformar(registros):\n#     for r in registros:\n#         yield r['valor'] * 10\n# def cargar(registros):\n#     return sum(registros)\n# resultado = cargar(transformar(extraer()))\n# print(resultado)\n",
+    pytest: "def test_etl_pipeline(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 60\n    assert ns['cargar'](ns['transformar'](ns['extraer']())) == 60\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "cada etapa recibe el generador de la anterior.",
+    solution_example: "def extraer():\n    yield from [{'valor': 1}, {'valor': 2}, {'valor': 3}]\n\ndef transformar(registros):\n    for r in registros:\n        yield r['valor'] * 10\n\ndef cargar(registros):\n    return sum(registros)\n\nresultado = cargar(transformar(extraer()))\nprint(resultado)\n",
+    next: Some("py-1708-etl-compose"), show_type_chips: false, micro_step: 1707,
+};
+pub const PY1708_ETL_COMPOSE: CodingStep = CodingStep {
+    id: "py-1708-etl-compose", title: "ETL · Pipeline compuesto", objective: "Componer múltiples etapas en una función pipeline.",
+    prompt_md: "**Pipeline compuesto**\n\nEncapsular varias etapas en una función `pipeline` esconde la complejidad y deja un único punto de entrada.\n\n**Micro-reto:**\n1. Definí `extraer`, `duplicar` y `filtrar_pares` con `yield`\n2. Definí `pipeline(datos)` que las encadene\n3. Aplicalo a `[1, 2, 3, 4]` y mostralo",
+    starter_code: "# def extraer(datos):\n#     yield from datos\n# def duplicar(registros):\n#     for x in registros:\n#         yield x * 2\n# def filtrar_pares(registros):\n#     for x in registros:\n#         if x % 2 == 0:\n#             yield x\n# def pipeline(datos):\n#     return list(filtrar_pares(duplicar(extraer(datos))))\n# resultado = pipeline([1, 2, 3, 4])\n# print(resultado)\n",
+    pytest: "def test_etl_compose(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4, 6, 8]\n    assert ns['pipeline']([]) == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "pipeline encadena las tres etapas en orden.",
+    solution_example: "def extraer(datos):\n    yield from datos\n\ndef duplicar(registros):\n    for x in registros:\n        yield x * 2\n\ndef filtrar_pares(registros):\n    for x in registros:\n        if x % 2 == 0:\n            yield x\n\ndef pipeline(datos):\n    return list(filtrar_pares(duplicar(extraer(datos))))\n\nresultado = pipeline([1, 2, 3, 4])\nprint(resultado)\n",
+    next: Some("py-1709-memo-dict"), show_type_chips: false, micro_step: 1708,
+};
+pub const PY1709_MEMO_DICT: CodingStep = CodingStep {
+    id: "py-1709-memo-dict", title: "Caché · Memo con dict", objective: "Memoizar resultados con un dict manual.",
+    prompt_md: "**Memoización con dict**\n\nUn dict guarda resultados ya calculados por clave, evitando recomputar llamadas repetidas.\n\n**Micro-reto:**\n1. Definí `cuadrado_memo(n, cache)` que use `cache`\n2. Llamá dos veces con la misma clave\n3. Mostrá `(resultado, len(cache))`",
+    starter_code: "# def cuadrado_memo(n, cache):\n#     if n not in cache:\n#         cache[n] = n * n\n#     return cache[n]\n# cache = {}\n# resultado = (cuadrado_memo(5, cache), cuadrado_memo(5, cache), len(cache))\n# print(resultado)\n",
+    pytest: "def test_memo_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (25, 25, 1)\n    assert len(ns['cache']) == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Chequeá n in cache antes de calcular.",
+    solution_example: "def cuadrado_memo(n, cache):\n    if n not in cache:\n        cache[n] = n * n\n    return cache[n]\n\ncache = {}\nresultado = (cuadrado_memo(5, cache), cuadrado_memo(5, cache), len(cache))\nprint(resultado)\n",
+    next: Some("py-1710-lru-cache"), show_type_chips: false, micro_step: 1709,
+};
+pub const PY1710_LRU_CACHE: CodingStep = CodingStep {
+    id: "py-1710-lru-cache", title: "Caché · lru_cache", objective: "Memoizar con functools.lru_cache.",
+    prompt_md: "**lru_cache**\n\n`@lru_cache` memoiza automáticamente y expone `cache_info()` para inspeccionar aciertos y fallos.\n\n**Micro-reto:**\n1. Importá `lru_cache`\n2. Decorá `cuadrado(n)` con `@lru_cache(maxsize=None)`\n3. Llamá dos veces y mostrá `(cuadrado(4), cache_info().hits)`",
+    starter_code: "# from functools import lru_cache\n# @lru_cache(maxsize=None)\n# def cuadrado(n):\n#     return n * n\n# resultado = (cuadrado(4), cuadrado(4), cuadrado.cache_info().hits)\n# print(resultado)\n",
+    pytest: "def test_lru_cache(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (16, 16, 1)\n    assert ns['cuadrado'](4) == 16\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "cache_info().hits cuenta las llamadas servidas de caché.",
+    solution_example: "from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef cuadrado(n):\n    return n * n\n\nresultado = (cuadrado(4), cuadrado(4), cuadrado.cache_info().hits)\nprint(resultado)\n",
+    next: Some("py-1711-lru-maxsize"), show_type_chips: false, micro_step: 1710,
+};
+pub const PY1711_LRU_MAXSIZE: CodingStep = CodingStep {
+    id: "py-1711-lru-maxsize", title: "Caché · Límite maxsize", objective: "Limitar el tamaño de la caché con maxsize.",
+    prompt_md: "**maxsize**\n\n`@lru_cache(maxsize=N)` limita la caché y desaloja las entradas menos usadas al superar el tope.\n\n**Micro-reto:**\n1. Decorá `identidad(n)` con `@lru_cache(maxsize=2)`\n2. Llamá con 1, 2 y 3\n3. Mostrá `(currsize, misses)` de `cache_info()`",
+    starter_code: "# from functools import lru_cache\n# @lru_cache(maxsize=2)\n# def identidad(n):\n#     return n\n# identidad(1)\n# identidad(2)\n# identidad(3)\n# info = identidad.cache_info()\n# resultado = (info.currsize, info.misses)\n# print(resultado)\n",
+    pytest: "def test_lru_maxsize(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 3)\n    assert ns['identidad'].cache_info().currsize == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "maxsize=2 desaloja la entrada menos usada.",
+    solution_example: "from functools import lru_cache\n\n@lru_cache(maxsize=2)\ndef identidad(n):\n    return n\n\nidentidad(1)\nidentidad(2)\nidentidad(3)\ninfo = identidad.cache_info()\nresultado = (info.currsize, info.misses)\nprint(resultado)\n",
+    next: Some("py-1712-cache-invalidate"), show_type_chips: false, micro_step: 1711,
+};
+pub const PY1712_CACHE_INVALIDATE: CodingStep = CodingStep {
+    id: "py-1712-cache-invalidate", title: "Caché · Invalidar", objective: "Invalidar una entrada obsoleta del caché.",
+    prompt_md: "**Invalidación**\n\nCuando el dato de origen cambia, la entrada en caché queda obsoleta y hay que descartarla para recalcular.\n\n**Micro-reto:**\n1. Definí `valor(n, cache)` que calcule `n * 2` si falta\n2. Invalidá `cache.pop(4)`\n3. Recalculá y mostrá `(valor(4, cache), cache[4])`",
+    starter_code: "# def valor(n, cache):\n#     if n not in cache:\n#         cache[n] = n * 2\n#     return cache[n]\n# cache = {4: 100}\n# cache.pop(4)\n# resultado = (valor(4, cache), cache[4])\n# print(resultado)\n",
+    pytest: "def test_cache_invalidate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (8, 8)\n    assert ns['cache'] == {4: 8}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "pop elimina la entrada antes de recalcular.",
+    solution_example: "def valor(n, cache):\n    if n not in cache:\n        cache[n] = n * 2\n    return cache[n]\n\ncache = {4: 100}\ncache.pop(4)\nresultado = (valor(4, cache), cache[4])\nprint(resultado)\n",
+    next: Some("py-1713-memo-fib"), show_type_chips: false, micro_step: 1712,
+};
+pub const PY1713_MEMO_FIB: CodingStep = CodingStep {
+    id: "py-1713-memo-fib", title: "Caché · Fibonacci memoizado", objective: "Acelerar recursión con memoización manual.",
+    prompt_md: "**Fibonacci memoizado**\n\nMemoizar la recursión de Fibonacci evita recomputar los mismos subproblemas y la vuelve eficiente.\n\n**Micro-reto:**\n1. Definí `fib(n)` recursiva con un `cache` externo\n2. Guardá el resultado de cada subproblema\n3. Mostrá `(fib(10), len(cache))`",
+    starter_code: "# cache = {}\n# def fib(n):\n#     if n in cache:\n#         return cache[n]\n#     if n < 2:\n#         cache[n] = n\n#     else:\n#         cache[n] = fib(n - 1) + fib(n - 2)\n#     return cache[n]\n# resultado = (fib(10), len(cache))\n# print(resultado)\n",
+    pytest: "def test_memo_fib(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (55, 11)\n    assert ns['fib'](10) == 55\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Guardá cada fib(n) en cache antes de devolver.",
+    solution_example: "cache = {}\n\ndef fib(n):\n    if n in cache:\n        return cache[n]\n    if n < 2:\n        cache[n] = n\n    else:\n        cache[n] = fib(n - 1) + fib(n - 2)\n    return cache[n]\n\nresultado = (fib(10), len(cache))\nprint(resultado)\n",
+    next: Some("py-1714-cache-key"), show_type_chips: false, micro_step: 1713,
+};
+pub const PY1714_CACHE_KEY: CodingStep = CodingStep {
+    id: "py-1714-cache-key", title: "Caché · Clave normalizada", objective: "Usar una clave normalizada para la caché.",
+    prompt_md: "**Clave normalizada**\n\nNormalizar la clave antes de consultar la caché agrupa entradas equivalentes como ' Ana ' y 'ana'.\n\n**Micro-reto:**\n1. Definí `normalizar(texto)` con `strip().lower()`\n2. Definí `buscar(texto, datos, cache)` que cachee por clave normalizada\n3. Buscá `'  ANA '` y mostrá `(resultado, cache)`",
+    starter_code: "# def normalizar(texto):\n#     return texto.strip().lower()\n# def buscar(texto, datos, cache):\n#     clave = normalizar(texto)\n#     if clave not in cache:\n#         cache[clave] = datos.get(clave)\n#     return cache[clave]\n# datos = {'ana': 30}\n# cache = {}\n# resultado = (buscar('  ANA ', datos, cache), cache)\n# print(resultado)\n",
+    pytest: "def test_cache_key(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (30, {'ana': 30})\n    assert ns['buscar']('ANA', ns['datos'], ns['cache']) == 30\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "La clave del cache es la versión normalizada del texto.",
+    solution_example: "def normalizar(texto):\n    return texto.strip().lower()\n\ndef buscar(texto, datos, cache):\n    clave = normalizar(texto)\n    if clave not in cache:\n        cache[clave] = datos.get(clave)\n    return cache[clave]\n\ndatos = {'ana': 30}\ncache = {}\nresultado = (buscar('  ANA ', datos, cache), cache)\nprint(resultado)\n",
+    next: Some("py-1715-test-assert"), show_type_chips: false, micro_step: 1714,
+};
+pub const PY1715_TEST_ASSERT: CodingStep = CodingStep {
+    id: "py-1715-test-assert", title: "Testing · Assert de contrato", objective: "Validar contratos con assert.",
+    prompt_md: "**Assert de contrato**\n\n`assert` verifica una condición y lanza `AssertionError` si falla, definiendo el contrato de una función.\n\n**Micro-reto:**\n1. Definí `validar_edad(edad)` con asserts de tipo y rango\n2. Llamá con una edad válida y una inválida\n3. Mostrá `(validar_edad(30), pudo)`",
+    starter_code: "# def validar_edad(edad):\n#     assert isinstance(edad, int), 'edad debe ser int'\n#     assert 0 <= edad <= 120, 'edad fuera de rango'\n#     return True\n# try:\n#     validar_edad(-1)\n#     pudo = True\n# except AssertionError:\n#     pudo = False\n# resultado = (validar_edad(30), pudo)\n# print(resultado)\n",
+    pytest: "def test_test_assert(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['validar_edad'](30) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "assert condición, mensaje define el contrato.",
+    solution_example: "def validar_edad(edad):\n    assert isinstance(edad, int), 'edad debe ser int'\n    assert 0 <= edad <= 120, 'edad fuera de rango'\n    return True\n\ntry:\n    validar_edad(-1)\n    pudo = True\nexcept AssertionError:\n    pudo = False\nresultado = (validar_edad(30), pudo)\nprint(resultado)\n",
+    next: Some("py-1716-test-fixture"), show_type_chips: false, micro_step: 1715,
+};
+pub const PY1716_TEST_FIXTURE: CodingStep = CodingStep {
+    id: "py-1716-test-fixture", title: "Testing · Fixture manual", objective: "Construir datos de prueba con una función fixture.",
+    prompt_md: "**Fixture manual**\n\nUna función `fixture_*` construye datos de prueba reutilizables, separando la preparación de la aserción.\n\n**Micro-reto:**\n1. Definí `fixture_persona()` que devuelva un registro\n2. Definí `validar(registro)` que exija `edad >= 0`\n3. Mostrá `(validar(persona), persona['nombre'])`",
+    starter_code: "# def fixture_persona():\n#     return {'nombre': 'Ana', 'edad': 30}\n# def validar(registro):\n#     return registro.get('edad', 0) >= 0\n# persona = fixture_persona()\n# resultado = (validar(persona), persona['nombre'])\n# print(resultado)\n",
+    pytest: "def test_test_fixture(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, 'Ana')\n    assert ns['fixture_persona']()['nombre'] == 'Ana'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "La fixture devuelve un dato listo para probar.",
+    solution_example: "def fixture_persona():\n    return {'nombre': 'Ana', 'edad': 30}\n\ndef validar(registro):\n    return registro.get('edad', 0) >= 0\n\npersona = fixture_persona()\nresultado = (validar(persona), persona['nombre'])\nprint(resultado)\n",
+    next: Some("py-1717-test-invariant"), show_type_chips: false, micro_step: 1716,
+};
+pub const PY1717_TEST_INVARIANT: CodingStep = CodingStep {
+    id: "py-1717-test-invariant", title: "Testing · Invariantes", objective: "Verificar que un invariante se mantiene.",
+    prompt_md: "**Invariantes**\n\nUn invariante es una propiedad que siempre debe cumplirse; el test la comprueba tras cada operación.\n\n**Micro-reto:**\n1. Definí `Cuenta` con `saldo` y `depositar` que valide montos positivos\n2. Definí `verificar_invariante()` que devuelva `saldo >= 0`\n3. Depositá y mostrá `(saldo, invariante, pudo)`",
+    starter_code: "# class Cuenta:\n#     def __init__(self):\n#         self.saldo = 0\n#     def depositar(self, monto):\n#         assert monto > 0, 'monto debe ser positivo'\n#         self.saldo += monto\n#         return self.saldo\n#     def verificar_invariante(self):\n#         return self.saldo >= 0\n# c = Cuenta()\n# c.depositar(100)\n# try:\n#     c.depositar(-5)\n#     pudo = True\n# except AssertionError:\n#     pudo = False\n# resultado = (c.saldo, c.verificar_invariante(), pudo)\n# print(resultado)\n",
+    pytest: "def test_test_invariant(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (100, True, False)\n    assert ns['c'].verificar_invariante() is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El invariante saldo >= 0 se mantiene tras cada depósito.",
+    solution_example: "class Cuenta:\n    def __init__(self):\n        self.saldo = 0\n\n    def depositar(self, monto):\n        assert monto > 0, 'monto debe ser positivo'\n        self.saldo += monto\n        return self.saldo\n\n    def verificar_invariante(self):\n        return self.saldo >= 0\n\nc = Cuenta()\nc.depositar(100)\ntry:\n    c.depositar(-5)\n    pudo = True\nexcept AssertionError:\n    pudo = False\nresultado = (c.saldo, c.verificar_invariante(), pudo)\nprint(resultado)\n",
+    next: Some("py-1718-test-property"), show_type_chips: false, micro_step: 1717,
+};
+pub const PY1718_TEST_PROPERTY: CodingStep = CodingStep {
+    id: "py-1718-test-property", title: "Testing · Propiedad determinista", objective: "Verificar una propiedad idempotente.",
+    prompt_md: "**Propiedad determinista**\n\nUna función idempotente produce el mismo resultado si se aplica dos veces; el test comprueba esa propiedad.\n\n**Micro-reto:**\n1. Definí `normalizar(texto)` con `' '.join(texto.split())`\n2. Definí `propiedad(texto)` que compare `normalizar(normalizar(x)) == normalizar(x)`\n3. Mostrá `(propiedad(texto), normalizar(texto))`",
+    starter_code: "# def normalizar(texto):\n#     return ' '.join(texto.split())\n# def propiedad(texto):\n#     return normalizar(normalizar(texto)) == normalizar(texto)\n# resultado = (propiedad('  hola   mundo '), normalizar('  hola   mundo '))\n# print(resultado)\n",
+    pytest: "def test_test_property(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, 'hola mundo')\n    assert ns['propiedad']('a  b') is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Idempotencia: aplicar dos veces no cambia el resultado.",
+    solution_example: "def normalizar(texto):\n    return ' '.join(texto.split())\n\ndef propiedad(texto):\n    return normalizar(normalizar(texto)) == normalizar(texto)\n\nresultado = (propiedad('  hola   mundo '), normalizar('  hola   mundo '))\nprint(resultado)\n",
+    next: Some("py-1719-test-roundtrip"), show_type_chips: false, micro_step: 1718,
+};
+pub const PY1719_TEST_ROUNDTRIP: CodingStep = CodingStep {
+    id: "py-1719-test-roundtrip", title: "Testing · Round-trip", objective: "Verificar serialización y deserialización inversas.",
+    prompt_md: "**Round-trip**\n\nSerializar y luego deserializar debe devolver el dato original; el test comprueba esa inversa.\n\n**Micro-reto:**\n1. Importá `json`\n2. Definí `serializar` con `sort_keys=True` y `deserializar`\n3. Mostrá `(texto, de_vuelta == original)`",
+    starter_code: "# import json\n# def serializar(objeto):\n#     return json.dumps(objeto, sort_keys=True)\n# def deserializar(texto):\n#     return json.loads(texto)\n# original = {'b': 2, 'a': 1}\n# texto = serializar(original)\n# de_vuelta = deserializar(texto)\n# resultado = (texto, de_vuelta == original)\n# print(resultado)\n",
+    pytest: "def test_test_roundtrip(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('{\"a\": 1, \"b\": 2}', True)\n    assert ns['deserializar'](ns['serializar']({'x': 1})) == {'x': 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "sort_keys=True hace el orden determinista.",
+    solution_example: "import json\n\ndef serializar(objeto):\n    return json.dumps(objeto, sort_keys=True)\n\ndef deserializar(texto):\n    return json.loads(texto)\n\noriginal = {'b': 2, 'a': 1}\ntexto = serializar(original)\nde_vuelta = deserializar(texto)\nresultado = (texto, de_vuelta == original)\nprint(resultado)\n",
+    next: Some("py-1720-test-suite"), show_type_chips: false, micro_step: 1719,
+};
+pub const PY1720_TEST_SUITE: CodingStep = CodingStep {
+    id: "py-1720-test-suite", title: "Testing · Suite de contratos", objective: "Componer varios contratos en una suite.",
+    prompt_md: "**Suite de contratos**\n\nCombinar varias reglas de contrato y aplicarlas a una colección cierra la ola integrando validación y testing.\n\n**Micro-reto:**\n1. Definí `contrato_registro(registro)` con reglas de `id` y `nombre`\n2. Definí `suite(registros)` con `all`\n3. Validá una lista buena y una mala y mostrá `(suite(buenos), suite(malos))`",
+    starter_code: "# def contrato_registro(registro):\n#     if not isinstance(registro, dict):\n#         return False\n#     if 'id' not in registro or not isinstance(registro['id'], int):\n#         return False\n#     if 'nombre' not in registro or not isinstance(registro['nombre'], str):\n#         return False\n#     return registro['nombre'].strip() != ''\n# def suite(registros):\n#     return all(contrato_registro(r) for r in registros)\n# buenos = [{'id': 1, 'nombre': 'Ana'}, {'id': 2, 'nombre': 'Luis'}]\n# malos = [{'id': 'x', 'nombre': 'Ana'}]\n# resultado = (suite(buenos), suite(malos))\n# print(resultado)\n",
+    pytest: "def test_test_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['suite']([{'id': 1, 'nombre': 'Ana'}]) is True\n    assert ns['contrato_registro']({'id': 1, 'nombre': '  '}) is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "all aplica el contrato a cada registro.",
+    solution_example: "def contrato_registro(registro):\n    if not isinstance(registro, dict):\n        return False\n    if 'id' not in registro or not isinstance(registro['id'], int):\n        return False\n    if 'nombre' not in registro or not isinstance(registro['nombre'], str):\n        return False\n    return registro['nombre'].strip() != ''\n\ndef suite(registros):\n    return all(contrato_registro(r) for r in registros)\n\nbuenos = [{'id': 1, 'nombre': 'Ana'}, {'id': 2, 'nombre': 'Luis'}]\nmalos = [{'id': 'x', 'nombre': 'Ana'}]\nresultado = (suite(buenos), suite(malos))\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 1720,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -50754,6 +51295,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1658_PROJECT_ORDER_EVENT,
     &PY1659_PROJECT_STOCK_CACHE,
     &PY1660_PROJECT_ASSEMBLE,
+    &PY1661_JSON_DUMPS,
+    &PY1662_JSON_LOADS,
+    &PY1663_JSON_INDENT,
+    &PY1664_JSON_ENSURE_ASCII,
+    &PY1665_JSON_DEFAULT,
+    &PY1666_JSON_OBJECT_HOOK,
+    &PY1667_BYTES_ENCODE,
+    &PY1668_BASE64_ENCODE,
+    &PY1669_BASE64_DECODE,
+    &PY1670_HEX_ENCODE,
+    &PY1671_HEX_DECODE,
+    &PY1672_BYTES_ROUNDTRIP,
+    &PY1673_CSV_WRITER,
+    &PY1674_CSV_READER,
+    &PY1675_CSV_DICTWRITER,
+    &PY1676_CSV_DICTREADER,
+    &PY1677_CSV_QUOTING,
+    &PY1678_CSV_DELIMITER,
+    &PY1679_SCHEMA_TYPES,
+    &PY1680_SCHEMA_REQUIRED,
+    &PY1681_SCHEMA_RANGE,
+    &PY1682_SCHEMA_LENGTH,
+    &PY1683_SCHEMA_CONTRACT,
+    &PY1684_SCHEMA_LIST,
+    &PY1685_DATACLASS_BASIC,
+    &PY1686_DATACLASS_FROZEN,
+    &PY1687_DATACLASS_FIELD,
+    &PY1688_DATACLASS_POST_INIT,
+    &PY1689_DATACLASS_ASDICT,
+    &PY1690_DATACLASS_COMPOSE,
+    &PY1691_ENUM_BASIC,
+    &PY1692_ENUM_AUTO,
+    &PY1693_ENUM_COMPARE,
+    &PY1694_STATE_SIMPLE,
+    &PY1695_STATE_INVALID,
+    &PY1696_STATE_HISTORY,
+    &PY1697_NORM_STRIP,
+    &PY1698_NORM_SPACES,
+    &PY1699_DEDUP_ORDER,
+    &PY1700_NORM_DEDUP,
+    &PY1701_NORM_DICT_KEYS,
+    &PY1702_CANONICALIZE,
+    &PY1703_ETL_EXTRACT,
+    &PY1704_ETL_TRANSFORM,
+    &PY1705_ETL_FILTER,
+    &PY1706_ETL_LOAD,
+    &PY1707_ETL_PIPELINE,
+    &PY1708_ETL_COMPOSE,
+    &PY1709_MEMO_DICT,
+    &PY1710_LRU_CACHE,
+    &PY1711_LRU_MAXSIZE,
+    &PY1712_CACHE_INVALIDATE,
+    &PY1713_MEMO_FIB,
+    &PY1714_CACHE_KEY,
+    &PY1715_TEST_ASSERT,
+    &PY1716_TEST_FIXTURE,
+    &PY1717_TEST_INVARIANT,
+    &PY1718_TEST_PROPERTY,
+    &PY1719_TEST_ROUNDTRIP,
+    &PY1720_TEST_SUITE,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -50921,7 +51522,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1660);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1720);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -53833,11 +54434,11 @@ mod tests {
     }
 
     #[test]
-    fn py1061_to_py1660_engineering_chain() {
+    fn py1061_to_py1720_engineering_chain() {
         let bridge = coding_step_by_micro_step(1060).expect("py-1060");
         assert_eq!(bridge.next, Some("py-1061-unit-test-intro"));
 
-        for n in 1061..=1660 {
+        for n in 1061..=1720 {
             let step = coding_step_by_micro_step(n).expect("engineering chain step");
             assert_eq!(step.micro_step, n);
             assert!(
@@ -53845,7 +54446,7 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1660 {
+            if n < 1720 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -53854,7 +54455,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1660 is the end of the rail");
+                assert_eq!(step.next, None, "step 1720 is the end of the rail");
             }
         }
     }
