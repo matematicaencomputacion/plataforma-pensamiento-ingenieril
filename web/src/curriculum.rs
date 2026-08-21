@@ -50713,7 +50713,547 @@ pub const PY1840_VAL_CHECK: CodingStep = CodingStep {
     pytest: "def test_val_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('Ada_1', True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "Sanitize primero, luego el patrón.",
     solution_example: "import re\nbruto = \" Ada_1! \"\nclean = \"\".join(ch for ch in bruto.strip() if ch.isalnum() or ch == \"_\")\nvalid = bool(re.fullmatch(r\"[A-Za-z_]+\\d\", clean))\nresultado = (clean, valid)\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 1840,
+    next: Some("py-1841-hof-map"), show_type_chips: false, micro_step: 1840,
+};
+pub const PY1841_HOF_MAP: CodingStep = CodingStep {
+    id: "py-1841-hof-map", title: "HOF · map manual", objective: "Implementar map aplicando f a cada elemento.",
+    prompt_md: "**Map manual**\n\nUna función de orden superior recibe otra función. `map_manual(f, xs)` aplica `f` a cada elemento y devuelve una lista nueva.\n\n**Micro-reto:**\n1. Definí `map_manual(f, xs)`\n2. Aplicá `lambda x: x*2` a `[1,2,3]`\n3. Mostrá el resultado",
+    starter_code: "# def map_manual(f, xs):\n#     out = []\n#     for x in xs:\n#         out.append(f(x))\n#     return out\n# resultado = map_manual(lambda x: x * 2, [1, 2, 3])\n# print(resultado)\n",
+    pytest: "def test_hof_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4, 6]\n    assert ns['map_manual'](lambda x: x + 1, [0]) == [1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Lista nueva; no mutés xs.",
+    solution_example: "def map_manual(f, xs):\n    out = []\n    for x in xs:\n        out.append(f(x))\n    return out\nresultado = map_manual(lambda x: x * 2, [1, 2, 3])\nprint(resultado)\n",
+    next: Some("py-1842-hof-filter"), show_type_chips: false, micro_step: 1841,
+};
+pub const PY1842_HOF_FILTER: CodingStep = CodingStep {
+    id: "py-1842-hof-filter", title: "HOF · filter manual", objective: "Filtrar elementos con un predicado.",
+    prompt_md: "**Filter manual**\n\n`filter_manual(pred, xs)` conserva solo los elementos donde `pred(x)` es verdadero. El predicado es una función; el filtro es de orden superior.\n\n**Micro-reto:**\n1. Definí `filter_manual`\n2. Filtrá pares de `[1,2,3,4]`\n3. Mostrá la lista",
+    starter_code: "# def filter_manual(pred, xs):\n#     out = []\n#     for x in xs:\n#         if pred(x):\n#             out.append(x)\n#     return out\n# resultado = filter_manual(lambda x: x % 2 == 0, [1, 2, 3, 4])\n# print(resultado)\n",
+    pytest: "def test_hof_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4]\n    assert ns['filter_manual'](lambda x: x > 0, [-1, 0, 2]) == [2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "if pred(x): append.",
+    solution_example: "def filter_manual(pred, xs):\n    out = []\n    for x in xs:\n        if pred(x):\n            out.append(x)\n    return out\nresultado = filter_manual(lambda x: x % 2 == 0, [1, 2, 3, 4])\nprint(resultado)\n",
+    next: Some("py-1843-hof-reduce"), show_type_chips: false, micro_step: 1842,
+};
+pub const PY1843_HOF_REDUCE: CodingStep = CodingStep {
+    id: "py-1843-hof-reduce", title: "HOF · reduce manual", objective: "Acumular con reduce de izquierda a derecha.",
+    prompt_md: "**Reduce manual**\n\n`reduce_manual(f, xs, init)` pliega la lista: empieza en `init` y aplica `f(acc, x)` por cada elemento.\n\n**Micro-reto:**\n1. Definí `reduce_manual`\n2. Sumá `[1,2,3,4]` con init 0\n3. Mostrá el total",
+    starter_code: "# def reduce_manual(f, xs, init):\n#     acc = init\n#     for x in xs:\n#         acc = f(acc, x)\n#     return acc\n# resultado = reduce_manual(lambda a, b: a + b, [1, 2, 3, 4], 0)\n# print(resultado)\n",
+    pytest: "def test_hof_reduce(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert ns['reduce_manual'](lambda a, b: a * b, [2, 3], 1) == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "acc = f(acc, x) en el bucle.",
+    solution_example: "def reduce_manual(f, xs, init):\n    acc = init\n    for x in xs:\n        acc = f(acc, x)\n    return acc\nresultado = reduce_manual(lambda a, b: a + b, [1, 2, 3, 4], 0)\nprint(resultado)\n",
+    next: Some("py-1844-hof-map-filter"), show_type_chips: false, micro_step: 1843,
+};
+pub const PY1844_HOF_MAP_FILTER: CodingStep = CodingStep {
+    id: "py-1844-hof-map-filter", title: "HOF · map luego filter", objective: "Componer map y filter sin mutar.",
+    prompt_md: "**Map + filter**\n\nPrimero transformás, después filtrás. Ambas HOF producen listas nuevas: la composición es transparente.\n\n**Micro-reto:**\n1. Duplicá `[1,2,3,4,5]`\n2. Filtrá los > 5\n3. Mostrá la lista",
+    starter_code: "# def map_manual(f, xs):\n#     return [f(x) for x in xs]\n# def filter_manual(pred, xs):\n#     return [x for x in xs if pred(x)]\n# dobles = map_manual(lambda x: x * 2, [1, 2, 3, 4, 5])\n# resultado = filter_manual(lambda x: x > 5, dobles)\n# print(resultado)\n",
+    pytest: "def test_hof_map_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [6, 8, 10]\n    assert ns['dobles'] == [2, 4, 6, 8, 10]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Dobles: 2..10; filtro >5 → 6,8,10.",
+    solution_example: "def map_manual(f, xs):\n    return [f(x) for x in xs]\ndef filter_manual(pred, xs):\n    return [x for x in xs if pred(x)]\ndobles = map_manual(lambda x: x * 2, [1, 2, 3, 4, 5])\nresultado = filter_manual(lambda x: x > 5, dobles)\nprint(resultado)\n",
+    next: Some("py-1845-hof-reduce-seed"), show_type_chips: false, micro_step: 1844,
+};
+pub const PY1845_HOF_REDUCE_SEED: CodingStep = CodingStep {
+    id: "py-1845-hof-reduce-seed", title: "HOF · reduce con semilla", objective: "Usar init distinto de cero / identidad.",
+    prompt_md: "**Semilla**\n\nEl `init` define el neutro: 0 para suma, 1 para producto, `[]` para concatenar. Elegir mal la semilla rompe el pliegue.\n\n**Micro-reto:**\n1. Producto de `[2,3,4]` con init 1\n2. Guardá en resultado\n3. Mostrá",
+    starter_code: "# def reduce_manual(f, xs, init):\n#     acc = init\n#     for x in xs:\n#         acc = f(acc, x)\n#     return acc\n# resultado = reduce_manual(lambda a, b: a * b, [2, 3, 4], 1)\n# print(resultado)\n",
+    pytest: "def test_hof_reduce_seed(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 24\n    assert ns['reduce_manual'](lambda a, b: a + [b], [1, 2], []) == [1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2*3*4=24 con init 1.",
+    solution_example: "def reduce_manual(f, xs, init):\n    acc = init\n    for x in xs:\n        acc = f(acc, x)\n    return acc\nresultado = reduce_manual(lambda a, b: a * b, [2, 3, 4], 1)\nprint(resultado)\n",
+    next: Some("py-1846-hof-check"), show_type_chips: false, micro_step: 1845,
+};
+pub const PY1846_HOF_CHECK: CodingStep = CodingStep {
+    id: "py-1846-hof-check", title: "HOF · Suite map/filter/reduce", objective: "Integrar las tres HOF en un pipeline.",
+    prompt_md: "**Suite HOF**\n\nPipeline: map cuadrados → filter pares → reduce suma.\n\n**Micro-reto:**\n1. Sobre `[1,2,3,4]`\n2. Cuadrados pares sumados\n3. Mostrá el entero",
+    starter_code: "# xs = [1, 2, 3, 4]\n# squares = [x * x for x in xs]\n# evens = [x for x in squares if x % 2 == 0]\n# resultado = 0\n# for x in evens:\n#     resultado += x\n# print(resultado)\n",
+    pytest: "def test_hof_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 20\n    assert ns['squares'] == [1, 4, 9, 16]\n    assert ns['evens'] == [4, 16]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1+4+9+16; pares 4+16=20.",
+    solution_example: "xs = [1, 2, 3, 4]\nsquares = [x * x for x in xs]\nevens = [x for x in squares if x % 2 == 0]\nresultado = 0\nfor x in evens:\n    resultado += x\nprint(resultado)\n",
+    next: Some("py-1847-ft-partial"), show_type_chips: false, micro_step: 1846,
+};
+pub const PY1847_FT_PARTIAL: CodingStep = CodingStep {
+    id: "py-1847-ft-partial", title: "functools · partial básico", objective: "Fijar argumentos con functools.partial.",
+    prompt_md: "**partial**\n\n`functools.partial(f, *args)` crea una nueva función con argumentos prefijados. Es aplicación parcial sin escribir un wrapper a mano.\n\n**Micro-reto:**\n1. `from functools import partial`\n2. `add10 = partial(lambda a, b: a + b, 10)`\n3. Evaluá `add10(7)` y mostrá",
+    starter_code: "# from functools import partial\n# add10 = partial(lambda a, b: a + b, 10)\n# resultado = add10(7)\n# print(resultado)\n",
+    pytest: "def test_ft_partial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 17\n    assert ns['add10'](0) == 10\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "partial fija el primer arg en 10.",
+    solution_example: "from functools import partial\nadd10 = partial(lambda a, b: a + b, 10)\nresultado = add10(7)\nprint(resultado)\n",
+    next: Some("py-1848-ft-partial-kw"), show_type_chips: false, micro_step: 1847,
+};
+pub const PY1848_FT_PARTIAL_KW: CodingStep = CodingStep {
+    id: "py-1848-ft-partial-kw", title: "functools · partial con kwargs", objective: "Prefijar keyword args con partial.",
+    prompt_md: "**partial + kwargs**\n\nTambién podés fijar keywords: `partial(f, x=1)`. Útil para APIs con muchos defaults.\n\n**Micro-reto:**\n1. Definí `def etiqueta(nombre, prefijo=\"\")`\n2. `saludo = partial(etiqueta, prefijo=\"Hola\")`\n3. Llamá con nombre Ada; mostrá",
+    starter_code: "# from functools import partial\n# def etiqueta(nombre, prefijo=\"\"):\n#     return f\"{prefijo} {nombre}\".strip()\n# saludo = partial(etiqueta, prefijo=\"Hola\")\n# resultado = saludo(\"Ada\")\n# print(resultado)\n",
+    pytest: "def test_ft_partial_kw(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'Hola Ada'\n    assert ns['saludo']('Bob') == 'Hola Bob'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "prefijo queda fijado.",
+    solution_example: "from functools import partial\ndef etiqueta(nombre, prefijo=\"\"):\n    return f\"{prefijo} {nombre}\".strip()\nsaludo = partial(etiqueta, prefijo=\"Hola\")\nresultado = saludo(\"Ada\")\nprint(resultado)\n",
+    next: Some("py-1849-ft-wraps"), show_type_chips: false, micro_step: 1848,
+};
+pub const PY1849_FT_WRAPS: CodingStep = CodingStep {
+    id: "py-1849-ft-wraps", title: "functools · wraps", objective: "Preservar __name__ con wraps en un decorador.",
+    prompt_md: "**wraps**\n\nUn decorador naive pisa `__name__`. `@wraps(f)` copia metadata del original para introspección y docs honestas.\n\n**Micro-reto:**\n1. Decorá `hola` con un wrapper que use wraps\n2. Compará `__name__` con y sin wraps conceptualmente\n3. Mostrá `hola.__name__` (debe ser hola)",
+    starter_code: "# from functools import wraps\n# def deco(f):\n#     @wraps(f)\n#     def wrapper(*a, **k):\n#         return f(*a, **k)\n#     return wrapper\n# @deco\n# def hola():\n#     return \"ok\"\n# resultado = hola.__name__\n# print(resultado)\n",
+    pytest: "def test_ft_wraps(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'hola'\n    assert ns['hola']() == 'ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "@wraps(f) antes de def wrapper.",
+    solution_example: "from functools import wraps\ndef deco(f):\n    @wraps(f)\n    def wrapper(*a, **k):\n        return f(*a, **k)\n    return wrapper\n@deco\ndef hola():\n    return \"ok\"\nresultado = hola.__name__\nprint(resultado)\n",
+    next: Some("py-1850-ft-partial-map"), show_type_chips: false, micro_step: 1849,
+};
+pub const PY1850_FT_PARTIAL_MAP: CodingStep = CodingStep {
+    id: "py-1850-ft-partial-map", title: "functools · partial + map", objective: "Reusar partial como mapper.",
+    prompt_md: "**partial como mapper**\n\n`partial` produce un callable de un argumento listo para `map`/`list(map(...))`.\n\n**Micro-reto:**\n1. `mul3 = partial(lambda a,b: a*b, 3)`\n2. Mapeá sobre `[1,2,3]`\n3. Mostrá la lista",
+    starter_code: "# from functools import partial\n# mul3 = partial(lambda a, b: a * b, 3)\n# resultado = list(map(mul3, [1, 2, 3]))\n# print(resultado)\n",
+    pytest: "def test_ft_partial_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 6, 9]\n    assert ns['mul3'](4) == 12\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "list(map(mul3, ...)).",
+    solution_example: "from functools import partial\nmul3 = partial(lambda a, b: a * b, 3)\nresultado = list(map(mul3, [1, 2, 3]))\nprint(resultado)\n",
+    next: Some("py-1851-ft-partial-chain"), show_type_chips: false, micro_step: 1850,
+};
+pub const PY1851_FT_PARTIAL_CHAIN: CodingStep = CodingStep {
+    id: "py-1851-ft-partial-chain", title: "functools · partial encadenado", objective: "Componer dos partials en pipeline.",
+    prompt_md: "**Partial encadenado**\n\nDos funciones parciales se pueden componer a mano: `g(f(x))`. Es el germen de un pipeline FP.\n\n**Micro-reto:**\n1. `add1 = partial(...)` suma 1\n2. `mul2` multiplica por 2\n3. Resultado de mul2(add1(3))",
+    starter_code: "# from functools import partial\n# add1 = partial(lambda a, b: a + b, 1)\n# mul2 = partial(lambda a, b: a * b, 2)\n# resultado = mul2(add1(3))\n# print(resultado)\n",
+    pytest: "def test_ft_partial_chain(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 8\n    assert ns['add1'](0) == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(3+1)*2 = 8.",
+    solution_example: "from functools import partial\nadd1 = partial(lambda a, b: a + b, 1)\nmul2 = partial(lambda a, b: a * b, 2)\nresultado = mul2(add1(3))\nprint(resultado)\n",
+    next: Some("py-1852-ft-check"), show_type_chips: false, micro_step: 1851,
+};
+pub const PY1852_FT_CHECK: CodingStep = CodingStep {
+    id: "py-1852-ft-check", title: "functools · Suite partial/wraps", objective: "Integrar partial y wraps.",
+    prompt_md: "**Suite functools**\n\nCreá un decorador con wraps y un partial que sume 5; aplicá ambos conceptos.\n\n**Micro-reto:**\n1. `add5 = partial(lambda a,b: a+b, 5)`\n2. Decorá `inc` con wraps-deco identidad\n3. Mostrá `(add5(2), inc.__name__)`",
+    starter_code: "# from functools import partial, wraps\n# def deco(f):\n#     @wraps(f)\n#     def wrapper(*a, **k):\n#         return f(*a, **k)\n#     return wrapper\n# @deco\n# def inc(x):\n#     return x + 1\n# add5 = partial(lambda a, b: a + b, 5)\n# resultado = (add5(2), inc.__name__)\n# print(resultado)\n",
+    pytest: "def test_ft_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (7, 'inc')\n    assert ns['inc'](1) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "add5(2)=7; nombre preservado.",
+    solution_example: "from functools import partial, wraps\ndef deco(f):\n    @wraps(f)\n    def wrapper(*a, **k):\n        return f(*a, **k)\n    return wrapper\n@deco\ndef inc(x):\n    return x + 1\nadd5 = partial(lambda a, b: a + b, 5)\nresultado = (add5(2), inc.__name__)\nprint(resultado)\n",
+    next: Some("py-1853-op-itemgetter"), show_type_chips: false, micro_step: 1852,
+};
+pub const PY1853_OP_ITEMGETTER: CodingStep = CodingStep {
+    id: "py-1853-op-itemgetter", title: "operator · itemgetter", objective: "Extraer índices con itemgetter.",
+    prompt_md: "**itemgetter**\n\n`operator.itemgetter(i)` es un callable que hace `obj[i]`. Ideal como `key=` en sorted/max.\n\n**Micro-reto:**\n1. `from operator import itemgetter`\n2. Sobre tuplas `[(1,\"b\"),(2,\"a\")]` tomá el campo 1\n3. Mostrá la lista mapeada",
+    starter_code: "# from operator import itemgetter\n# filas = [(1, \"b\"), (2, \"a\")]\n# get1 = itemgetter(1)\n# resultado = list(map(get1, filas))\n# print(resultado)\n",
+    pytest: "def test_op_itemgetter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['b', 'a']\n    assert ns['get1']((9, 'z')) == 'z'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "itemgetter(1) → segundo campo.",
+    solution_example: "from operator import itemgetter\nfilas = [(1, \"b\"), (2, \"a\")]\nget1 = itemgetter(1)\nresultado = list(map(get1, filas))\nprint(resultado)\n",
+    next: Some("py-1854-op-attrgetter"), show_type_chips: false, micro_step: 1853,
+};
+pub const PY1854_OP_ATTRGETTER: CodingStep = CodingStep {
+    id: "py-1854-op-attrgetter", title: "operator · attrgetter", objective: "Leer atributos con attrgetter.",
+    prompt_md: "**attrgetter**\n\n`attrgetter(\"x\")` equivale a `lambda o: o.x`. Sirve con namedtuples/objetos simples sin lambdas verbosas.\n\n**Micro-reto:**\n1. Usá `collections.namedtuple`\n2. Lista de Point; extraé `.x`\n3. Mostrá",
+    starter_code: "# from collections import namedtuple\n# from operator import attrgetter\n# Point = namedtuple(\"Point\", \"x y\")\n# pts = [Point(1, 2), Point(3, 4)]\n# resultado = list(map(attrgetter(\"x\"), pts))\n# print(resultado)\n",
+    pytest: "def test_op_attrgetter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "attrgetter(\"x\") sobre cada Point.",
+    solution_example: "from collections import namedtuple\nfrom operator import attrgetter\nPoint = namedtuple(\"Point\", \"x y\")\npts = [Point(1, 2), Point(3, 4)]\nresultado = list(map(attrgetter(\"x\"), pts))\nprint(resultado)\n",
+    next: Some("py-1855-op-methodcaller"), show_type_chips: false, micro_step: 1854,
+};
+pub const PY1855_OP_METHODCALLER: CodingStep = CodingStep {
+    id: "py-1855-op-methodcaller", title: "operator · methodcaller", objective: "Invocar métodos con methodcaller.",
+    prompt_md: "**methodcaller**\n\n`methodcaller(\"upper\")` llama `obj.upper()`. Podés pasar args fijos al método.\n\n**Micro-reto:**\n1. Mapeá `methodcaller(\"lower\")` sobre `[\"A\",\"B\"]`\n2. Mostrá la lista",
+    starter_code: "# from operator import methodcaller\n# resultado = list(map(methodcaller(\"lower\"), [\"A\", \"B\"]))\n# print(resultado)\n",
+    pytest: "def test_op_methodcaller(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "lower sobre cada string.",
+    solution_example: "from operator import methodcaller\nresultado = list(map(methodcaller(\"lower\"), [\"A\", \"B\"]))\nprint(resultado)\n",
+    next: Some("py-1856-op-add-mul"), show_type_chips: false, micro_step: 1855,
+};
+pub const PY1856_OP_ADD_MUL: CodingStep = CodingStep {
+    id: "py-1856-op-add-mul", title: "operator · add y mul", objective: "Usar operator.add/mul como funciones.",
+    prompt_md: "**add / mul**\n\n`operator.add` y `mul` son las versiones función de `+` y `*`. Encajan en reduce/map sin lambdas.\n\n**Micro-reto:**\n1. `from operator import add, mul`\n2. reduce-manual suma y producto de `[2,3,4]`\n3. Mostrá `(suma, prod)`",
+    starter_code: "# from operator import add, mul\n# def fold(f, xs, init):\n#     acc = init\n#     for x in xs:\n#         acc = f(acc, x)\n#     return acc\n# xs = [2, 3, 4]\n# resultado = (fold(add, xs, 0), fold(mul, xs, 1))\n# print(resultado)\n",
+    pytest: "def test_op_add_mul(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (9, 24)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2+3+4=9; 2*3*4=24.",
+    solution_example: "from operator import add, mul\ndef fold(f, xs, init):\n    acc = init\n    for x in xs:\n        acc = f(acc, x)\n    return acc\nxs = [2, 3, 4]\nresultado = (fold(add, xs, 0), fold(mul, xs, 1))\nprint(resultado)\n",
+    next: Some("py-1857-op-sorted-key"), show_type_chips: false, micro_step: 1856,
+};
+pub const PY1857_OP_SORTED_KEY: CodingStep = CodingStep {
+    id: "py-1857-op-sorted-key", title: "operator · sorted + itemgetter", objective: "Ordenar filas con key=itemgetter.",
+    prompt_md: "**sorted + itemgetter**\n\n`sorted(rows, key=itemgetter(1))` ordena por la segunda columna sin lambda.\n\n**Micro-reto:**\n1. Filas `[(1,\"b\"),(2,\"a\"),(3,\"c\")]`\n2. Ordená por campo 1\n3. Mostrá",
+    starter_code: "# from operator import itemgetter\n# filas = [(1, \"b\"), (2, \"a\"), (3, \"c\")]\n# resultado = sorted(filas, key=itemgetter(1))\n# print(resultado)\n",
+    pytest: "def test_op_sorted_key(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(2, 'a'), (1, 'b'), (3, 'c')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Orden lexicográfico de la 2ª columna.",
+    solution_example: "from operator import itemgetter\nfilas = [(1, \"b\"), (2, \"a\"), (3, \"c\")]\nresultado = sorted(filas, key=itemgetter(1))\nprint(resultado)\n",
+    next: Some("py-1858-op-check"), show_type_chips: false, micro_step: 1857,
+};
+pub const PY1858_OP_CHECK: CodingStep = CodingStep {
+    id: "py-1858-op-check", title: "operator · Suite getters", objective: "Integrar itemgetter y methodcaller.",
+    prompt_md: "**Suite operator**\n\nCombiná itemgetter para sort y methodcaller para normalizar strings.\n\n**Micro-reto:**\n1. Datos `[(\"Ada\",\"X\"),(\"Bob\",\"Y\")]`\n2. Tomá nombres lower\n3. Mostrá lista",
+    starter_code: "# from operator import itemgetter, methodcaller\n# datos = [(\"Ada\", \"X\"), (\"Bob\", \"Y\")]\n# nombres = list(map(itemgetter(0), datos))\n# resultado = list(map(methodcaller(\"lower\"), nombres))\n# print(resultado)\n",
+    pytest: "def test_op_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['ada', 'bob']\n    assert ns['nombres'] == ['Ada', 'Bob']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "itemgetter(0) luego lower.",
+    solution_example: "from operator import itemgetter, methodcaller\ndatos = [(\"Ada\", \"X\"), (\"Bob\", \"Y\")]\nnombres = list(map(itemgetter(0), datos))\nresultado = list(map(methodcaller(\"lower\"), nombres))\nprint(resultado)\n",
+    next: Some("py-1859-cl-simple"), show_type_chips: false, micro_step: 1858,
+};
+pub const PY1859_CL_SIMPLE: CodingStep = CodingStep {
+    id: "py-1859-cl-simple", title: "Closure · captura simple", objective: "Retornar una función que cierra sobre n.",
+    prompt_md: "**Closure**\n\nUna función interna puede leer variables del enclosing scope. Eso es un closure: captura léxica del entorno.\n\n**Micro-reto:**\n1. `def make_add(n):` retorna lambda que suma n\n2. `add3 = make_add(3)`\n3. Mostrá add3(4)",
+    starter_code: "# def make_add(n):\n#     def inner(x):\n#         return x + n\n#     return inner\n# add3 = make_add(3)\n# resultado = add3(4)\n# print(resultado)\n",
+    pytest: "def test_cl_simple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert ns['add3'](0) == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "n vive en el enclosing.",
+    solution_example: "def make_add(n):\n    def inner(x):\n        return x + n\n    return inner\nadd3 = make_add(3)\nresultado = add3(4)\nprint(resultado)\n",
+    next: Some("py-1860-cl-legb"), show_type_chips: false, micro_step: 1859,
+};
+pub const PY1860_CL_LEGB: CodingStep = CodingStep {
+    id: "py-1860-cl-legb", title: "Closure · LEGB enclosing", objective: "Resolver nombre en enclosing antes que global.",
+    prompt_md: "**LEGB · E**\n\nPython busca Local → Enclosing → Global → Built-in. Un nombre en la función externa gana al global homónimo.\n\n**Micro-reto:**\n1. `x = 1` global\n2. `def outer(): x=2; def inner(): return x; return inner`\n3. Mostrá outer()()",
+    starter_code: "# x = 1\n# def outer():\n#     x = 2\n#     def inner():\n#         return x\n#     return inner\n# resultado = outer()()\n# print(resultado)\n",
+    pytest: "def test_cl_legb(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['x'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Enclosing (2) gana a global (1).",
+    solution_example: "x = 1\ndef outer():\n    x = 2\n    def inner():\n        return x\n    return inner\nresultado = outer()()\nprint(resultado)\n",
+    next: Some("py-1861-cl-late-bind"), show_type_chips: false, micro_step: 1860,
+};
+pub const PY1861_CL_LATE_BIND: CodingStep = CodingStep {
+    id: "py-1861-cl-late-bind", title: "Closure · late binding", objective: "Observar el clásico bug del loop + closure.",
+    prompt_md: "**Late binding**\n\nLas closures capturan la variable, no el valor. En un loop, todas ven el valor final salvo que fijes con default.\n\n**Micro-reto:**\n1. Creá funcs en un for i in range(3) sin default\n2. Evaluá [f() for f in funcs]\n3. Mostrá (todas 2)",
+    starter_code: "# funcs = []\n# for i in range(3):\n#     funcs.append(lambda: i)\n# resultado = [f() for f in funcs]\n# print(resultado)\n",
+    pytest: "def test_cl_late_bind(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 2, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "i queda en 2 al terminar el for.",
+    solution_example: "funcs = []\nfor i in range(3):\n    funcs.append(lambda: i)\nresultado = [f() for f in funcs]\nprint(resultado)\n",
+    next: Some("py-1862-cl-default-fix"), show_type_chips: false, micro_step: 1861,
+};
+pub const PY1862_CL_DEFAULT_FIX: CodingStep = CodingStep {
+    id: "py-1862-cl-default-fix", title: "Closure · fix con default", objective: "Congelar el valor con argumento default.",
+    prompt_md: "**Fix default**\n\n`lambda i=i: i` (o `def f(i=i)`) captura el valor actual al definir. Es el arreglo idiomático al late binding.\n\n**Micro-reto:**\n1. Mismo loop con `lambda i=i: i`\n2. Evaluá las tres\n3. Mostrá `[0,1,2]`",
+    starter_code: "# funcs = []\n# for i in range(3):\n#     funcs.append(lambda i=i: i)\n# resultado = [f() for f in funcs]\n# print(resultado)\n",
+    pytest: "def test_cl_default_fix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Default se evalúa en definición.",
+    solution_example: "funcs = []\nfor i in range(3):\n    funcs.append(lambda i=i: i)\nresultado = [f() for f in funcs]\nprint(resultado)\n",
+    next: Some("py-1863-cl-nonlocal"), show_type_chips: false, micro_step: 1862,
+};
+pub const PY1863_CL_NONLOCAL: CodingStep = CodingStep {
+    id: "py-1863-cl-nonlocal", title: "Closure · nonlocal", objective: "Mutar enclosing con nonlocal.",
+    prompt_md: "**nonlocal**\n\nSin `nonlocal`, asignar crea un local nuevo. Con `nonlocal`, escribís en el enclosing (contador de factory).\n\n**Micro-reto:**\n1. `make_counter` con n=0 y `inc` que hace nonlocal n += 1\n2. Llamá inc dos veces\n3. Mostrá el valor",
+    starter_code: "# def make_counter():\n#     n = 0\n#     def inc():\n#         nonlocal n\n#         n += 1\n#         return n\n#     return inc\n# c = make_counter()\n# c(); c()\n# resultado = c()\n# print(resultado)\n",
+    pytest: "def test_cl_nonlocal(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['c']() == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tres llamadas → 3.",
+    solution_example: "def make_counter():\n    n = 0\n    def inc():\n        nonlocal n\n        n += 1\n        return n\n    return inc\nc = make_counter()\nc(); c()\nresultado = c()\nprint(resultado)\n",
+    next: Some("py-1864-cl-check"), show_type_chips: false, micro_step: 1863,
+};
+pub const PY1864_CL_CHECK: CodingStep = CodingStep {
+    id: "py-1864-cl-check", title: "Closure · Suite LEGB", objective: "Integrar captura y fix de late binding.",
+    prompt_md: "**Suite closures**\n\nFactory con valor fijado + lista de lambdas corregidas.\n\n**Micro-reto:**\n1. `make_mul(k)` retorna lambda x: x*k\n2. Armá `[make_mul(i)(2) for i in range(3)]`\n3. Mostrá",
+    starter_code: "# def make_mul(k):\n#     return lambda x: x * k\n# resultado = [make_mul(i)(2) for i in range(3)]\n# print(resultado)\n",
+    pytest: "def test_cl_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 2, 4]\n    assert ns['make_mul'](5)(3) == 15\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Factory por i evita late binding.",
+    solution_example: "def make_mul(k):\n    return lambda x: x * k\nresultado = [make_mul(i)(2) for i in range(3)]\nprint(resultado)\n",
+    next: Some("py-1865-dec-simple"), show_type_chips: false, micro_step: 1864,
+};
+pub const PY1865_DEC_SIMPLE: CodingStep = CodingStep {
+    id: "py-1865-dec-simple", title: "Decorador · wrapper simple", objective: "Escribir un decorador que registre llamadas.",
+    prompt_md: "**Decorador**\n\n`@deco` es azúcar de `f = deco(f)`. El wrapper recibe la función y devuelve otra.\n\n**Micro-reto:**\n1. Decorá `ping` para devolver `(\"called\", f())`\n2. Mostrá ping()",
+    starter_code: "# def deco(f):\n#     def wrapper():\n#         return (\"called\", f())\n#     return wrapper\n# @deco\n# def ping():\n#     return \"pong\"\n# resultado = ping()\n# print(resultado)\n",
+    pytest: "def test_dec_simple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('called', 'pong')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "wrapper llama f y empaqueta.",
+    solution_example: "def deco(f):\n    def wrapper():\n        return (\"called\", f())\n    return wrapper\n@deco\ndef ping():\n    return \"pong\"\nresultado = ping()\nprint(resultado)\n",
+    next: Some("py-1866-dec-wraps"), show_type_chips: false, micro_step: 1865,
+};
+pub const PY1866_DEC_WRAPS: CodingStep = CodingStep {
+    id: "py-1866-dec-wraps", title: "Decorador · con wraps", objective: "Preservar metadata al decorar.",
+    prompt_md: "**Decorador + wraps**\n\nCombiná el patrón anterior con `@wraps(f)` para no perder el nombre.\n\n**Micro-reto:**\n1. Decorá `tarea` con wraps\n2. Mostrá `(tarea(), tarea.__name__)`",
+    starter_code: "# from functools import wraps\n# def deco(f):\n#     @wraps(f)\n#     def wrapper():\n#         return f() + \"!\"\n#     return wrapper\n# @deco\n# def tarea():\n#     return \"ok\"\n# resultado = (tarea(), tarea.__name__)\n# print(resultado)\n",
+    pytest: "def test_dec_wraps(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ok!', 'tarea')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "wraps mantiene __name__.",
+    solution_example: "from functools import wraps\ndef deco(f):\n    @wraps(f)\n    def wrapper():\n        return f() + \"!\"\n    return wrapper\n@deco\ndef tarea():\n    return \"ok\"\nresultado = (tarea(), tarea.__name__)\nprint(resultado)\n",
+    next: Some("py-1867-dec-stack"), show_type_chips: false, micro_step: 1866,
+};
+pub const PY1867_DEC_STACK: CodingStep = CodingStep {
+    id: "py-1867-dec-stack", title: "Decorador · stack de orden", objective: "Entender el orden de aplicación apilada.",
+    prompt_md: "**Stack**\n\n`@a` luego `@b` sobre `f` es `f = a(b(f))`. El más cercano a `def` se aplica primero.\n\n**Micro-reto:**\n1. Dos deco que anteponen \"A:\" y \"B:\"\n2. Stack A sobre B sobre `f` que retorna \"x\"\n3. Mostrá resultado",
+    starter_code: "# def A(f):\n#     def w():\n#         return \"A:\" + f()\n#     return w\n# def B(f):\n#     def w():\n#         return \"B:\" + f()\n#     return w\n# @A\n# @B\n# def f():\n#     return \"x\"\n# resultado = f()\n# print(resultado)\n",
+    pytest: "def test_dec_stack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'A:B:x'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "@A @B ⇒ A(B(f)) ⇒ A:B:x.",
+    solution_example: "def A(f):\n    def w():\n        return \"A:\" + f()\n    return w\ndef B(f):\n    def w():\n        return \"B:\" + f()\n    return w\n@A\n@B\ndef f():\n    return \"x\"\nresultado = f()\nprint(resultado)\n",
+    next: Some("py-1868-dec-factory"), show_type_chips: false, micro_step: 1867,
+};
+pub const PY1868_DEC_FACTORY: CodingStep = CodingStep {
+    id: "py-1868-dec-factory", title: "Decorador · factory con args", objective: "Decorador parametrizado que cierra sobre n.",
+    prompt_md: "**Factory**\n\n`def repeat(n):` retorna un decorador. Es closure + decorator: el parámetro vive en enclosing.\n\n**Micro-reto:**\n1. `@repeat(3)` sobre `hola` que retorna \"!\"`\n2. Concatená 3 veces\n3. Mostrá",
+    starter_code: "# def repeat(n):\n#     def deco(f):\n#         def wrapper():\n#             return \"\".join(f() for _ in range(n))\n#         return wrapper\n#     return deco\n# @repeat(3)\n# def hola():\n#     return \"!\"\n# resultado = hola()\n# print(resultado)\n",
+    pytest: "def test_dec_factory(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '!!!'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "repeat(3) cierra sobre n.",
+    solution_example: "def repeat(n):\n    def deco(f):\n        def wrapper():\n            return \"\".join(f() for _ in range(n))\n        return wrapper\n    return deco\n@repeat(3)\ndef hola():\n    return \"!\"\nresultado = hola()\nprint(resultado)\n",
+    next: Some("py-1869-dec-compose"), show_type_chips: false, micro_step: 1868,
+};
+pub const PY1869_DEC_COMPOSE: CodingStep = CodingStep {
+    id: "py-1869-dec-compose", title: "Decorador · composición", objective: "Componer dos transformaciones vía deco.",
+    prompt_md: "**Composición**\n\nDos decoradores que transforman el retorno se comportan como compose: el externo ve el resultado del interno.\n\n**Micro-reto:**\n1. `exclaim` agrega \"!\"\n2. `upper` hace upper\n3. `@exclaim @upper` sobre `msg` → \"HOLA!\"",
+    starter_code: "# def exclaim(f):\n#     def w():\n#         return f() + \"!\"\n#     return w\n# def upper(f):\n#     def w():\n#         return f().upper()\n#     return w\n# @exclaim\n# @upper\n# def msg():\n#     return \"hola\"\n# resultado = msg()\n# print(resultado)\n",
+    pytest: "def test_dec_compose(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'HOLA!'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "upper primero, luego exclaim.",
+    solution_example: "def exclaim(f):\n    def w():\n        return f() + \"!\"\n    return w\ndef upper(f):\n    def w():\n        return f().upper()\n    return w\n@exclaim\n@upper\ndef msg():\n    return \"hola\"\nresultado = msg()\nprint(resultado)\n",
+    next: Some("py-1870-dec-check"), show_type_chips: false, micro_step: 1869,
+};
+pub const PY1870_DEC_CHECK: CodingStep = CodingStep {
+    id: "py-1870-dec-check", title: "Decorador · Suite stack", objective: "Integrar factory y stack.",
+    prompt_md: "**Suite decoradores**\n\n`@repeat(2)` + un deco que antepone \"go:\" sobre `step` → \"ok\".\n\n**Micro-reto:**\n1. Combiná ambos\n2. Resultado esperado \"go:okgo:ok\"\n3. Mostrá",
+    starter_code: "# def tag(f):\n#     def w():\n#         return \"go:\" + f()\n#     return w\n# def repeat(n):\n#     def deco(f):\n#         def w():\n#             return \"\".join(f() for _ in range(n))\n#         return w\n#     return deco\n# @repeat(2)\n# @tag\n# def step():\n#     return \"ok\"\n# resultado = step()\n# print(resultado)\n",
+    pytest: "def test_dec_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'go:okgo:ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "repeat aplica tag dos veces.",
+    solution_example: "def tag(f):\n    def w():\n        return \"go:\" + f()\n    return w\ndef repeat(n):\n    def deco(f):\n        def w():\n            return \"\".join(f() for _ in range(n))\n        return w\n    return deco\n@repeat(2)\n@tag\ndef step():\n    return \"ok\"\nresultado = step()\nprint(resultado)\n",
+    next: Some("py-1871-imm-copy"), show_type_chips: false, micro_step: 1870,
+};
+pub const PY1871_IMM_COPY: CodingStep = CodingStep {
+    id: "py-1871-imm-copy", title: "Inmutable · copiar antes", objective: "Evitar mutación aliasando una copia.",
+    prompt_md: "**Copia**\n\nMutar una lista compartida rompe otras vistas. `xs[:]` / `list(xs)` crea una copia superficial antes de transformar.\n\n**Micro-reto:**\n1. `orig = [1,2,3]`\n2. Trabajá sobre copia y sort reverse\n3. Mostrá `(orig, copia)`",
+    starter_code: "# orig = [1, 2, 3]\n# copia = orig[:]\n# copia.sort(reverse=True)\n# resultado = (orig, copia)\n# print(resultado)\n",
+    pytest: "def test_imm_copy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([1, 2, 3], [3, 2, 1])\n    assert ns['orig'] is not ns['copia']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "orig intacta; copia ordenada.",
+    solution_example: "orig = [1, 2, 3]\ncopia = orig[:]\ncopia.sort(reverse=True)\nresultado = (orig, copia)\nprint(resultado)\n",
+    next: Some("py-1872-imm-tuple-pipe"), show_type_chips: false, micro_step: 1871,
+};
+pub const PY1872_IMM_TUPLE_PIPE: CodingStep = CodingStep {
+    id: "py-1872-imm-tuple-pipe", title: "Inmutable · pipeline de tuplas", objective: "Encadenar transformaciones que devuelven tuplas.",
+    prompt_md: "**Tuplas**\n\nUna tupla no muta: cada paso produce un valor nuevo. Ideal para pipelines deterministas.\n\n**Micro-reto:**\n1. Partí de `(1,2,3)`\n2. Map *2 vía tuple comprehension\n3. Mostrá",
+    starter_code: "# t = (1, 2, 3)\n# resultado = tuple(x * 2 for x in t)\n# print(resultado)\n",
+    pytest: "def test_imm_tuple_pipe(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 4, 6)\n    assert ns['t'] == (1, 2, 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "t no cambia.",
+    solution_example: "t = (1, 2, 3)\nresultado = tuple(x * 2 for x in t)\nprint(resultado)\n",
+    next: Some("py-1873-imm-frozenset"), show_type_chips: false, micro_step: 1872,
+};
+pub const PY1873_IMM_FROZENSET: CodingStep = CodingStep {
+    id: "py-1873-imm-frozenset", title: "Inmutable · frozenset", objective: "Usar frozenset como set inmutable.",
+    prompt_md: "**frozenset**\n\n`frozenset` no tiene add/remove. Sirve como clave de dict o etapa inmutable de un pipeline de conjuntos.\n\n**Micro-reto:**\n1. `a = frozenset([1,2,3])`\n2. Unión con frozenset([3,4])\n3. Mostrá sorted",
+    starter_code: "# a = frozenset([1, 2, 3])\n# b = a | frozenset([3, 4])\n# resultado = sorted(b)\n# print(resultado)\n",
+    pytest: "def test_imm_frozenset(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4]\n    assert isinstance(ns['a'], frozenset)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "| entre frozensets crea otro.",
+    solution_example: "a = frozenset([1, 2, 3])\nb = a | frozenset([3, 4])\nresultado = sorted(b)\nprint(resultado)\n",
+    next: Some("py-1874-imm-map-new"), show_type_chips: false, micro_step: 1873,
+};
+pub const PY1874_IMM_MAP_NEW: CodingStep = CodingStep {
+    id: "py-1874-imm-map-new", title: "Inmutable · map a lista nueva", objective: "Transformar sin tocar la fuente.",
+    prompt_md: "**Map nuevo**\n\n`[f(x) for x in xs]` (o map) nunca escribe en `xs`. El pipeline FP favorece valores nuevos.\n\n**Micro-reto:**\n1. `xs = [1,2,3]`\n2. `ys = [x+10 for x in xs]`\n3. Mostrá `(xs, ys)`",
+    starter_code: "# xs = [1, 2, 3]\n# ys = [x + 10 for x in xs]\n# resultado = (xs, ys)\n# print(resultado)\n",
+    pytest: "def test_imm_map_new(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([1, 2, 3], [11, 12, 13])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "xs intacta.",
+    solution_example: "xs = [1, 2, 3]\nys = [x + 10 for x in xs]\nresultado = (xs, ys)\nprint(resultado)\n",
+    next: Some("py-1875-imm-reduce-new"), show_type_chips: false, micro_step: 1874,
+};
+pub const PY1875_IMM_REDUCE_NEW: CodingStep = CodingStep {
+    id: "py-1875-imm-reduce-new", title: "Inmutable · reduce construye", objective: "Acumular una estructura nueva sin side-effects.",
+    prompt_md: "**Reduce nuevo**\n\nUn reduce que concatena tuplas/listas nuevas evita mutar el acumulador in-place de forma sorprendente si sos disciplinado.\n\n**Micro-reto:**\n1. Plegá `[1,2,3]` a una tupla con `(acc + (x,))`\n2. Init `()`\n3. Mostrá",
+    starter_code: "# def fold(xs):\n#     acc = ()\n#     for x in xs:\n#         acc = acc + (x,)\n#     return acc\n# resultado = fold([1, 2, 3])\n# print(resultado)\n",
+    pytest: "def test_imm_reduce_new(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 2, 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "acc + (x,) crea tupla nueva.",
+    solution_example: "def fold(xs):\n    acc = ()\n    for x in xs:\n        acc = acc + (x,)\n    return acc\nresultado = fold([1, 2, 3])\nprint(resultado)\n",
+    next: Some("py-1876-imm-check"), show_type_chips: false, micro_step: 1875,
+};
+pub const PY1876_IMM_CHECK: CodingStep = CodingStep {
+    id: "py-1876-imm-check", title: "Inmutable · Suite pipeline", objective: "Pipeline inmutable map→filter→tuple.",
+    prompt_md: "**Suite inmutable**\n\nDe `[1,2,3,4,5]`: *2, filtrá >5, tupla final. Fuente intacta.\n\n**Micro-reto:**\n1. Guardá también `xs`\n2. Resultado la tupla\n3. Mostrá `(xs, resultado)`",
+    starter_code: "# xs = [1, 2, 3, 4, 5]\n# mid = [x * 2 for x in xs]\n# resultado = tuple(x for x in mid if x > 5)\n# out = (xs, resultado)\n# print(out)\n# resultado = out\n",
+    pytest: "def test_imm_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([1, 2, 3, 4, 5], (6, 8, 10))\n    assert ns['xs'] == [1, 2, 3, 4, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "xs no muta; tupla (6,8,10).",
+    solution_example: "xs = [1, 2, 3, 4, 5]\nmid = [x * 2 for x in xs]\nresultado = tuple(x for x in mid if x > 5)\nresultado = (xs, resultado)\nprint(resultado)\n",
+    next: Some("py-1877-cu-curry2"), show_type_chips: false, micro_step: 1876,
+};
+pub const PY1877_CU_CURRY2: CodingStep = CodingStep {
+    id: "py-1877-cu-curry2", title: "Curry · dos argumentos", objective: "Convertir f(a,b) en f(a)(b).",
+    prompt_md: "**Curry 2**\n\nCurrying transforma `f(a,b)` en `f(a)(b)`. Cada llamada fija un argumento y retorna otra función.\n\n**Micro-reto:**\n1. `def curry2(f): return lambda a: lambda b: f(a,b)`\n2. `add = curry2(lambda a,b: a+b)`\n3. Mostrá add(2)(3)",
+    starter_code: "# def curry2(f):\n#     return lambda a: lambda b: f(a, b)\n# add = curry2(lambda a, b: a + b)\n# resultado = add(2)(3)\n# print(resultado)\n",
+    pytest: "def test_cu_curry2(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert ns['add'](1)(1) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "add(2) retorna función.",
+    solution_example: "def curry2(f):\n    return lambda a: lambda b: f(a, b)\nadd = curry2(lambda a, b: a + b)\nresultado = add(2)(3)\nprint(resultado)\n",
+    next: Some("py-1878-cu-curry3"), show_type_chips: false, micro_step: 1877,
+};
+pub const PY1878_CU_CURRY3: CodingStep = CodingStep {
+    id: "py-1878-cu-curry3", title: "Curry · tres argumentos", objective: "Extender curry a f(a)(b)(c).",
+    prompt_md: "**Curry 3**\n\nMisma idea en tres niveles. Útil para configuraciones parciales estilo FP.\n\n**Micro-reto:**\n1. curry3 de `lambda a,b,c: a+b+c`\n2. Evaluá (1)(2)(3)\n3. Mostrá",
+    starter_code: "# def curry3(f):\n#     return lambda a: lambda b: lambda c: f(a, b, c)\n# add3 = curry3(lambda a, b, c: a + b + c)\n# resultado = add3(1)(2)(3)\n# print(resultado)\n",
+    pytest: "def test_cu_curry3(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert ns['add3'](0)(0)(5) == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1+2+3=6.",
+    solution_example: "def curry3(f):\n    return lambda a: lambda b: lambda c: f(a, b, c)\nadd3 = curry3(lambda a, b, c: a + b + c)\nresultado = add3(1)(2)(3)\nprint(resultado)\n",
+    next: Some("py-1879-cu-compose"), show_type_chips: false, micro_step: 1878,
+};
+pub const PY1879_CU_COMPOSE: CodingStep = CodingStep {
+    id: "py-1879-cu-compose", title: "Compose · compose(f,g)", objective: "Definir composición matemática f∘g.",
+    prompt_md: "**compose(f,g)**\n\n`compose(f,g)(x) = f(g(x))`. Primero g, después f. Es el ladrillo de pipelines FP.\n\n**Micro-reto:**\n1. Definí compose\n2. f=str, g=lambda x: x+1\n3. Mostrá compose(f,g)(3)",
+    starter_code: "# def compose(f, g):\n#     return lambda x: f(g(x))\n# resultado = compose(str, lambda x: x + 1)(3)\n# print(resultado)\n",
+    pytest: "def test_cu_compose(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '4'\n    assert ns['compose'](lambda x: x * 2, lambda x: x + 1)(3) == 8\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "g primero: 3+1 → \"4\".",
+    solution_example: "def compose(f, g):\n    return lambda x: f(g(x))\nresultado = compose(str, lambda x: x + 1)(3)\nprint(resultado)\n",
+    next: Some("py-1880-cu-compose3"), show_type_chips: false, micro_step: 1879,
+};
+pub const PY1880_CU_COMPOSE3: CodingStep = CodingStep {
+    id: "py-1880-cu-compose3", title: "Compose · tres funciones", objective: "Componer f∘g∘h.",
+    prompt_md: "**compose3**\n\n`compose3(f,g,h)(x) = f(g(h(x)))`. El orden de lectura es de derecha a izquierda.\n\n**Micro-reto:**\n1. h: +1, g: *2, f: str\n2. Sobre 3\n3. Mostrá",
+    starter_code: "# def compose3(f, g, h):\n#     return lambda x: f(g(h(x)))\n# resultado = compose3(str, lambda x: x * 2, lambda x: x + 1)(3)\n# print(resultado)\n",
+    pytest: "def test_cu_compose3(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '8'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(3+1)*2 → \"8\".",
+    solution_example: "def compose3(f, g, h):\n    return lambda x: f(g(h(x)))\nresultado = compose3(str, lambda x: x * 2, lambda x: x + 1)(3)\nprint(resultado)\n",
+    next: Some("py-1881-cu-pipe"), show_type_chips: false, micro_step: 1880,
+};
+pub const PY1881_CU_PIPE: CodingStep = CodingStep {
+    id: "py-1881-cu-pipe", title: "Pipe · izquierda a derecha", objective: "Pipeline pipe(x, f, g) = g(f(x)).",
+    prompt_md: "**pipe**\n\nA veces es más legible aplicar de izquierda a derecha: `pipe(x, f, g) = g(f(x))`.\n\n**Micro-reto:**\n1. Definí pipe\n2. x=3, f=+1, g=*2\n3. Mostrá",
+    starter_code: "# def pipe(x, f, g):\n#     return g(f(x))\n# resultado = pipe(3, lambda x: x + 1, lambda x: x * 2)\n# print(resultado)\n",
+    pytest: "def test_cu_pipe(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 8\n    assert ns['pipe'](1, lambda x: x + 1, lambda x: x + 1) == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3→4→8.",
+    solution_example: "def pipe(x, f, g):\n    return g(f(x))\nresultado = pipe(3, lambda x: x + 1, lambda x: x * 2)\nprint(resultado)\n",
+    next: Some("py-1882-cu-check"), show_type_chips: false, micro_step: 1881,
+};
+pub const PY1882_CU_CHECK: CodingStep = CodingStep {
+    id: "py-1882-cu-check", title: "Curry/Compose · Suite", objective: "Integrar curry2 y compose.",
+    prompt_md: "**Suite compose**\n\n`compose(mul2, add3)` curried mentalmente: primero +3, luego *2.\n\n**Micro-reto:**\n1. compose(lambda x: x*2, lambda x: x+3)\n2. Aplicá a 4\n3. Mostrá",
+    starter_code: "# def compose(f, g):\n#     return lambda x: f(g(x))\n# resultado = compose(lambda x: x * 2, lambda x: x + 3)(4)\n# print(resultado)\n",
+    pytest: "def test_cu_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 14\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(4+3)*2=14.",
+    solution_example: "def compose(f, g):\n    return lambda x: f(g(x))\nresultado = compose(lambda x: x * 2, lambda x: x + 3)(4)\nprint(resultado)\n",
+    next: Some("py-1883-lz-yield-map"), show_type_chips: false, micro_step: 1882,
+};
+pub const PY1883_LZ_YIELD_MAP: CodingStep = CodingStep {
+    id: "py-1883-lz-yield-map", title: "Lazy · map con yield", objective: "Generador que aplica f perezosamente.",
+    prompt_md: "**yield map**\n\nUn generador con `yield f(x)` no materializa la lista hasta que se itera. Lazy FP en stdlib.\n\n**Micro-reto:**\n1. `def gmap(f, xs):` yield f(x)\n2. list(gmap(...)) sobre [1,2,3] *2\n3. Mostrá",
+    starter_code: "# def gmap(f, xs):\n#     for x in xs:\n#         yield f(x)\n# resultado = list(gmap(lambda x: x * 2, [1, 2, 3]))\n# print(resultado)\n",
+    pytest: "def test_lz_yield_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4, 6]\n    assert list(ns['gmap'](lambda x: x, [9])) == [9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "yield no crea lista intermedia sola.",
+    solution_example: "def gmap(f, xs):\n    for x in xs:\n        yield f(x)\nresultado = list(gmap(lambda x: x * 2, [1, 2, 3]))\nprint(resultado)\n",
+    next: Some("py-1884-lz-yield-filter"), show_type_chips: false, micro_step: 1883,
+};
+pub const PY1884_LZ_YIELD_FILTER: CodingStep = CodingStep {
+    id: "py-1884-lz-yield-filter", title: "Lazy · filter con yield", objective: "Generador predicado perezoso.",
+    prompt_md: "**yield filter**\n\nIgual que filter, pero como generador: solo avanza cuando pedís el siguiente valor.\n\n**Micro-reto:**\n1. gfilter pares\n2. Sobre range(6)\n3. Mostrá list",
+    starter_code: "# def gfilter(pred, xs):\n#     for x in xs:\n#         if pred(x):\n#             yield x\n# resultado = list(gfilter(lambda x: x % 2 == 0, range(6)))\n# print(resultado)\n",
+    pytest: "def test_lz_yield_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 2, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "0,2,4 de range(6).",
+    solution_example: "def gfilter(pred, xs):\n    for x in xs:\n        if pred(x):\n            yield x\nresultado = list(gfilter(lambda x: x % 2 == 0, range(6)))\nprint(resultado)\n",
+    next: Some("py-1885-lz-chain"), show_type_chips: false, micro_step: 1884,
+};
+pub const PY1885_LZ_CHAIN: CodingStep = CodingStep {
+    id: "py-1885-lz-chain", title: "Lazy · encadenar generadores", objective: "Pipeline gmap∘gfilter sin listas.",
+    prompt_md: "**Chain lazy**\n\nPasar un generador a otro mantiene la pereza: no hay listas intermedias hasta `list(...)`.\n\n**Micro-reto:**\n1. Filtrá pares de range(5)\n2. Map *10\n3. Mostrá list",
+    starter_code: "# def gfilter(pred, xs):\n#     for x in xs:\n#         if pred(x):\n#             yield x\n# def gmap(f, xs):\n#     for x in xs:\n#         yield f(x)\n# resultado = list(gmap(lambda x: x * 10, gfilter(lambda x: x % 2 == 0, range(5))))\n# print(resultado)\n",
+    pytest: "def test_lz_chain(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 20, 40]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "0,2,4 → 0,20,40.",
+    solution_example: "def gfilter(pred, xs):\n    for x in xs:\n        if pred(x):\n            yield x\ndef gmap(f, xs):\n    for x in xs:\n        yield f(x)\nresultado = list(gmap(lambda x: x * 10, gfilter(lambda x: x % 2 == 0, range(5))))\nprint(resultado)\n",
+    next: Some("py-1886-lz-islice"), show_type_chips: false, micro_step: 1885,
+};
+pub const PY1886_LZ_ISLICE: CodingStep = CodingStep {
+    id: "py-1886-lz-islice", title: "Lazy · islice take", objective: "Tomar N elementos con itertools.islice.",
+    prompt_md: "**islice**\n\n`itertools.islice(it, n)` toma n elementos sin consumir todo el iterable infinito/potencial.\n\n**Micro-reto:**\n1. Generador infinito de naturales\n2. islice 5\n3. Mostrá list",
+    starter_code: "# from itertools import islice, count\n# resultado = list(islice(count(1), 5))\n# print(resultado)\n",
+    pytest: "def test_lz_islice(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "count(1) + islice 5.",
+    solution_example: "from itertools import islice, count\nresultado = list(islice(count(1), 5))\nprint(resultado)\n",
+    next: Some("py-1887-lz-sum-pipe"), show_type_chips: false, micro_step: 1886,
+};
+pub const PY1887_LZ_SUM_PIPE: CodingStep = CodingStep {
+    id: "py-1887-lz-sum-pipe", title: "Lazy · sum sobre pipeline", objective: "Agregar sin materializar listas intermedias.",
+    prompt_md: "**sum lazy**\n\n`sum(gen)` consume el generador directamente. Ideal para pipelines de agregación.\n\n**Micro-reto:**\n1. yield x*x for x in range(1,5)\n2. sum\n3. Mostrá",
+    starter_code: "# def squares(n):\n#     for x in range(1, n):\n#         yield x * x\n# resultado = sum(squares(5))\n# print(resultado)\n",
+    pytest: "def test_lz_sum_pipe(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 30\n    assert sum(ns['squares'](3)) == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1+4+9+16=30.",
+    solution_example: "def squares(n):\n    for x in range(1, n):\n        yield x * x\nresultado = sum(squares(5))\nprint(resultado)\n",
+    next: Some("py-1888-lz-check"), show_type_chips: false, micro_step: 1887,
+};
+pub const PY1888_LZ_CHECK: CodingStep = CodingStep {
+    id: "py-1888-lz-check", title: "Lazy · Suite generadores", objective: "Integrar filter/map lazy + sum.",
+    prompt_md: "**Suite lazy**\n\nPares de range(10) → cuadrados → sum. Todo con generadores.\n\n**Micro-reto:**\n1. Pipeline lazy\n2. Suma de cuadrados pares\n3. Mostrá",
+    starter_code: "# def gfilter(pred, xs):\n#     for x in xs:\n#         if pred(x):\n#             yield x\n# def gmap(f, xs):\n#     for x in xs:\n#         yield f(x)\n# resultado = sum(gmap(lambda x: x * x, gfilter(lambda x: x % 2 == 0, range(10))))\n# print(resultado)\n",
+    pytest: "def test_lz_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 120\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "0+4+16+36+64=120.",
+    solution_example: "def gfilter(pred, xs):\n    for x in xs:\n        if pred(x):\n            yield x\ndef gmap(f, xs):\n    for x in xs:\n        yield f(x)\nresultado = sum(gmap(lambda x: x * x, gfilter(lambda x: x % 2 == 0, range(10))))\nprint(resultado)\n",
+    next: Some("py-1889-mb-some-none"), show_type_chips: false, micro_step: 1888,
+};
+pub const PY1889_MB_SOME_NONE: CodingStep = CodingStep {
+    id: "py-1889-mb-some-none", title: "Maybe · Some/None manual", objective: "Modelar opción con tupla tagueada.",
+    prompt_md: "**Maybe**\n\nSin libs: `(\"some\", v)` / `(\"none\", None)`. Un tag discrimina presencia de valor.\n\n**Micro-reto:**\n1. Definí `some(v)` y `none()`\n2. Armá `(some(1), none())`\n3. Mostrá",
+    starter_code: "# def some(v):\n#     return (\"some\", v)\n# def none():\n#     return (\"none\", None)\n# resultado = (some(1), none())\n# print(resultado)\n",
+    pytest: "def test_mb_some_none(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (('some', 1), ('none', None))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tuplas tagueadas.",
+    solution_example: "def some(v):\n    return (\"some\", v)\ndef none():\n    return (\"none\", None)\nresultado = (some(1), none())\nprint(resultado)\n",
+    next: Some("py-1890-mb-map"), show_type_chips: false, micro_step: 1889,
+};
+pub const PY1890_MB_MAP: CodingStep = CodingStep {
+    id: "py-1890-mb-map", title: "Maybe · map", objective: "Aplicar f solo si Some.",
+    prompt_md: "**Maybe map**\n\n`map_maybe(f, m)` aplica f si tag es some; si none, propaga none. Evita ifs anidados.\n\n**Micro-reto:**\n1. map *2 sobre some(3) y none()\n2. Mostrá el par",
+    starter_code: "# def some(v):\n#     return (\"some\", v)\n# def none():\n#     return (\"none\", None)\n# def map_maybe(f, m):\n#     tag, v = m\n#     if tag == \"some\":\n#         return some(f(v))\n#     return none()\n# resultado = (map_maybe(lambda x: x * 2, some(3)), map_maybe(lambda x: x * 2, none()))\n# print(resultado)\n",
+    pytest: "def test_mb_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (('some', 6), ('none', None))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "none corto-circuita.",
+    solution_example: "def some(v):\n    return (\"some\", v)\ndef none():\n    return (\"none\", None)\ndef map_maybe(f, m):\n    tag, v = m\n    if tag == \"some\":\n        return some(f(v))\n    return none()\nresultado = (map_maybe(lambda x: x * 2, some(3)), map_maybe(lambda x: x * 2, none()))\nprint(resultado)\n",
+    next: Some("py-1891-mb-ok-err"), show_type_chips: false, micro_step: 1890,
+};
+pub const PY1891_MB_OK_ERR: CodingStep = CodingStep {
+    id: "py-1891-mb-ok-err", title: "Result · Ok/Err manual", objective: "Modelar éxito/error con tags.",
+    prompt_md: "**Ok / Err**\n\n`(\"ok\", v)` / `(\"err\", msg)` separa el canal de error del valor. Estilo Result sin dependencias.\n\n**Micro-reto:**\n1. Definí ok/err\n2. Par (ok(10), err(\"boom\"))\n3. Mostrá",
+    starter_code: "# def ok(v):\n#     return (\"ok\", v)\n# def err(msg):\n#     return (\"err\", msg)\n# resultado = (ok(10), err(\"boom\"))\n# print(resultado)\n",
+    pytest: "def test_mb_ok_err(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (('ok', 10), ('err', 'boom'))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tags ok/err.",
+    solution_example: "def ok(v):\n    return (\"ok\", v)\ndef err(msg):\n    return (\"err\", msg)\nresultado = (ok(10), err(\"boom\"))\nprint(resultado)\n",
+    next: Some("py-1892-mb-bind"), show_type_chips: false, micro_step: 1891,
+};
+pub const PY1892_MB_BIND: CodingStep = CodingStep {
+    id: "py-1892-mb-bind", title: "Result · and_then / bind", objective: "Encadenar computaciones que pueden fallar.",
+    prompt_md: "**bind**\n\n`bind(m, f)` si ok aplica f(v) que retorna otro Result; si err, propaga. Es el flatMap de Result.\n\n**Micro-reto:**\n1. `safe_div(a,b)` err si b==0\n2. bind ok(8) con lambda x: safe_div(x,2)\n3. Mostrá",
+    starter_code: "# def ok(v):\n#     return (\"ok\", v)\n# def err(msg):\n#     return (\"err\", msg)\n# def bind(m, f):\n#     tag, v = m\n#     if tag == \"ok\":\n#         return f(v)\n#     return m\n# def safe_div(a, b):\n#     if b == 0:\n#         return err(\"div0\")\n#     return ok(a // b)\n# resultado = bind(ok(8), lambda x: safe_div(x, 2))\n# print(resultado)\n",
+    pytest: "def test_mb_bind(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ok', 4)\n    assert ns['bind'](ns['ok'](8), lambda x: ns['safe_div'](x, 0)) == ('err', 'div0')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "8//2=4 en ok.",
+    solution_example: "def ok(v):\n    return (\"ok\", v)\ndef err(msg):\n    return (\"err\", msg)\ndef bind(m, f):\n    tag, v = m\n    if tag == \"ok\":\n        return f(v)\n    return m\ndef safe_div(a, b):\n    if b == 0:\n        return err(\"div0\")\n    return ok(a // b)\nresultado = bind(ok(8), lambda x: safe_div(x, 2))\nprint(resultado)\n",
+    next: Some("py-1893-mb-unwrap"), show_type_chips: false, micro_step: 1892,
+};
+pub const PY1893_MB_UNWRAP: CodingStep = CodingStep {
+    id: "py-1893-mb-unwrap", title: "Maybe · unwrap_or", objective: "Proveer default ante None/none.",
+    prompt_md: "**unwrap_or**\n\n`unwrap_or(m, default)` extrae el valor o usa un fallback. Cierra el Maybe hacia un valor concreto.\n\n**Micro-reto:**\n1. unwrap some(5) → 5\n2. unwrap none → 0\n3. Mostrá el par",
+    starter_code: "# def some(v):\n#     return (\"some\", v)\n# def none():\n#     return (\"none\", None)\n# def unwrap_or(m, default):\n#     tag, v = m\n#     return v if tag == \"some\" else default\n# resultado = (unwrap_or(some(5), 0), unwrap_or(none(), 0))\n# print(resultado)\n",
+    pytest: "def test_mb_unwrap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (5, 0)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "default solo si none.",
+    solution_example: "def some(v):\n    return (\"some\", v)\ndef none():\n    return (\"none\", None)\ndef unwrap_or(m, default):\n    tag, v = m\n    return v if tag == \"some\" else default\nresultado = (unwrap_or(some(5), 0), unwrap_or(none(), 0))\nprint(resultado)\n",
+    next: Some("py-1894-mb-check"), show_type_chips: false, micro_step: 1893,
+};
+pub const PY1894_MB_CHECK: CodingStep = CodingStep {
+    id: "py-1894-mb-check", title: "Maybe/Result · Suite", objective: "Pipeline parse→bind→unwrap.",
+    prompt_md: "**Suite Optional**\n\nParseá int seguro: ok si dígitos, err si no; bind a *2; mostrá ambos casos.\n\n**Micro-reto:**\n1. parse(\"4\") y parse(\"x\")\n2. bind *2 en el ok\n3. Mostrá `(r1, r2)`",
+    starter_code: "# def ok(v):\n#     return (\"ok\", v)\n# def err(msg):\n#     return (\"err\", msg)\n# def bind(m, f):\n#     return f(m[1]) if m[0] == \"ok\" else m\n# def parse(s):\n#     return ok(int(s)) if s.isdigit() else err(\"bad\")\n# r1 = bind(parse(\"4\"), lambda n: ok(n * 2))\n# r2 = bind(parse(\"x\"), lambda n: ok(n * 2))\n# resultado = (r1, r2)\n# print(resultado)\n",
+    pytest: "def test_mb_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (('ok', 8), ('err', 'bad'))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "4→8 ok; x→err.",
+    solution_example: "def ok(v):\n    return (\"ok\", v)\ndef err(msg):\n    return (\"err\", msg)\ndef bind(m, f):\n    return f(m[1]) if m[0] == \"ok\" else m\ndef parse(s):\n    return ok(int(s)) if s.isdigit() else err(\"bad\")\nr1 = bind(parse(\"4\"), lambda n: ok(n * 2))\nr2 = bind(parse(\"x\"), lambda n: ok(n * 2))\nresultado = (r1, r2)\nprint(resultado)\n",
+    next: Some("py-1895-dom-etl"), show_type_chips: false, micro_step: 1894,
+};
+pub const PY1895_DOM_ETL: CodingStep = CodingStep {
+    id: "py-1895-dom-etl", title: "Dominio · ETL funcional", objective: "Extraer-transformar-cargar con map/filter.",
+    prompt_md: "**ETL FP**\n\nFilas crudas → filter válidas → map tipado. Sin mutar la fuente: ETL como pipeline puro.\n\n**Micro-reto:**\n1. rows = `[(\"a\",1),(\"b\",-1),(\"c\",2)]`\n2. Filtrá v>0; map nombre upper\n3. Mostrá lista",
+    starter_code: "# rows = [(\"a\", 1), (\"b\", -1), (\"c\", 2)]\n# clean = [(n.upper(), v) for n, v in rows if v > 0]\n# resultado = clean\n# print(resultado)\n",
+    pytest: "def test_dom_etl(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('A', 1), ('C', 2)]\n    assert ns['rows'][1] == ('b', -1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "b queda afuera.",
+    solution_example: "rows = [(\"a\", 1), (\"b\", -1), (\"c\", 2)]\nclean = [(n.upper(), v) for n, v in rows if v > 0]\nresultado = clean\nprint(resultado)\n",
+    next: Some("py-1896-dom-score"), show_type_chips: false, micro_step: 1895,
+};
+pub const PY1896_DOM_SCORE: CodingStep = CodingStep {
+    id: "py-1896-dom-score", title: "Dominio · score pipeline", objective: "Calcular puntajes con compose de reglas.",
+    prompt_md: "**Score**\n\nCada regla es `f(row)->int`. El score total es la suma de reglas — reduce sobre funciones.\n\n**Micro-reto:**\n1. row = dict puntos=3, bonus=2\n2. reglas: get puntos, get bonus\n3. Mostrá suma",
+    starter_code: "# row = {\"puntos\": 3, \"bonus\": 2}\n# reglas = [lambda r: r[\"puntos\"], lambda r: r[\"bonus\"]]\n# resultado = sum(f(row) for f in reglas)\n# print(resultado)\n",
+    pytest: "def test_dom_score(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3+2=5.",
+    solution_example: "row = {\"puntos\": 3, \"bonus\": 2}\nreglas = [lambda r: r[\"puntos\"], lambda r: r[\"bonus\"]]\nresultado = sum(f(row) for f in reglas)\nprint(resultado)\n",
+    next: Some("py-1897-dom-rank"), show_type_chips: false, micro_step: 1896,
+};
+pub const PY1897_DOM_RANK: CodingStep = CodingStep {
+    id: "py-1897-dom-rank", title: "Dominio · ranking funcional", objective: "Ordenar por score sin mutar.",
+    prompt_md: "**Ranking**\n\n`sorted(items, key=score, reverse=True)` produce un ranking nuevo. La lista original queda intacta.\n\n**Micro-reto:**\n1. items = `[(\"Ada\",10),(\"Bob\",15),(\"Cy\",12)]`\n2. Ranking por score desc\n3. Mostrá nombres en orden",
+    starter_code: "# items = [(\"Ada\", 10), (\"Bob\", 15), (\"Cy\", 12)]\n# ranked = sorted(items, key=lambda t: t[1], reverse=True)\n# resultado = [n for n, _ in ranked]\n# print(resultado)\n",
+    pytest: "def test_dom_rank(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['Bob', 'Cy', 'Ada']\n    assert ns['items'][0] == ('Ada', 10)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "sorted no muta items.",
+    solution_example: "items = [(\"Ada\", 10), (\"Bob\", 15), (\"Cy\", 12)]\nranked = sorted(items, key=lambda t: t[1], reverse=True)\nresultado = [n for n, _ in ranked]\nprint(resultado)\n",
+    next: Some("py-1898-dom-agg"), show_type_chips: false, micro_step: 1897,
+};
+pub const PY1898_DOM_AGG: CodingStep = CodingStep {
+    id: "py-1898-dom-agg", title: "Dominio · agregación reduce", objective: "Agregar métricas con pliegue puro.",
+    prompt_md: "**Agregación**\n\nReduce un stream de eventos a un dict de totales sin actualizar un global mutable a la vista.\n\n**Micro-reto:**\n1. events = `[(\"a\",1),(\"b\",2),(\"a\",3)]`\n2. fold a dict sumas\n3. Mostrá sorted items",
+    starter_code: "# events = [(\"a\", 1), (\"b\", 2), (\"a\", 3)]\n# acc = {}\n# for k, v in events:\n#     acc = {**acc, k: acc.get(k, 0) + v}\n# resultado = sorted(acc.items())\n# print(resultado)\n",
+    pytest: "def test_dom_agg(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', 4), ('b', 2)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "{**acc,...} copia al actualizar.",
+    solution_example: "events = [(\"a\", 1), (\"b\", 2), (\"a\", 3)]\nacc = {}\nfor k, v in events:\n    acc = {**acc, k: acc.get(k, 0) + v}\nresultado = sorted(acc.items())\nprint(resultado)\n",
+    next: Some("py-1899-dom-report"), show_type_chips: false, micro_step: 1898,
+};
+pub const PY1899_DOM_REPORT: CodingStep = CodingStep {
+    id: "py-1899-dom-report", title: "Dominio · reporte inmutable", objective: "Armar un reporte como tupla final.",
+    prompt_md: "**Reporte**\n\nEl deliverable del pipeline es una tupla/dict nuevo: totales + top. Nada de prints intermedios como estado.\n\n**Micro-reto:**\n1. scores = `[10, 20, 15]`\n2. reporte (sum, max, len)\n3. Mostrá",
+    starter_code: "# scores = [10, 20, 15]\n# resultado = (sum(scores), max(scores), len(scores))\n# print(resultado)\n",
+    pytest: "def test_dom_report(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (45, 20, 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "45, 20, 3.",
+    solution_example: "scores = [10, 20, 15]\nresultado = (sum(scores), max(scores), len(scores))\nprint(resultado)\n",
+    next: Some("py-1900-dom-check"), show_type_chips: false, micro_step: 1899,
+};
+pub const PY1900_DOM_CHECK: CodingStep = CodingStep {
+    id: "py-1900-dom-check", title: "Dominio · Suite ETL/score/rank", objective: "Cerrar la ola con pipeline de dominio.",
+    prompt_md: "**Suite dominio**\n\nETL de ventas → score=qty*price → top nombre.\n\n**Micro-reto:**\n1. rows `[(\"a\",2,3),(\"b\",1,10),(\"c\",5,3)]` (nombre,qty,price)\n2. score = qty*price; ranking desc\n3. Mostrá top nombre",
+    starter_code: "# rows = [(\"a\", 2, 3), (\"b\", 1, 10), (\"c\", 5, 3)]\n# scored = [(n, q * p) for n, q, p in rows]\n# top = sorted(scored, key=lambda t: t[1], reverse=True)[0][0]\n# resultado = top\n# print(resultado)\n",
+    pytest: "def test_dom_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'c'\n    assert ns['scored'] == [('a', 6), ('b', 10), ('c', 15)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "c=15 gana.",
+    solution_example: "rows = [(\"a\", 2, 3), (\"b\", 1, 10), (\"c\", 5, 3)]\nscored = [(n, q * p) for n, q, p in rows]\ntop = sorted(scored, key=lambda t: t[1], reverse=True)[0][0]\nresultado = top\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 1900,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -52557,6 +53097,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1838_VAL_CHARSET,
     &PY1839_VAL_CONTRACT,
     &PY1840_VAL_CHECK,
+    &PY1841_HOF_MAP,
+    &PY1842_HOF_FILTER,
+    &PY1843_HOF_REDUCE,
+    &PY1844_HOF_MAP_FILTER,
+    &PY1845_HOF_REDUCE_SEED,
+    &PY1846_HOF_CHECK,
+    &PY1847_FT_PARTIAL,
+    &PY1848_FT_PARTIAL_KW,
+    &PY1849_FT_WRAPS,
+    &PY1850_FT_PARTIAL_MAP,
+    &PY1851_FT_PARTIAL_CHAIN,
+    &PY1852_FT_CHECK,
+    &PY1853_OP_ITEMGETTER,
+    &PY1854_OP_ATTRGETTER,
+    &PY1855_OP_METHODCALLER,
+    &PY1856_OP_ADD_MUL,
+    &PY1857_OP_SORTED_KEY,
+    &PY1858_OP_CHECK,
+    &PY1859_CL_SIMPLE,
+    &PY1860_CL_LEGB,
+    &PY1861_CL_LATE_BIND,
+    &PY1862_CL_DEFAULT_FIX,
+    &PY1863_CL_NONLOCAL,
+    &PY1864_CL_CHECK,
+    &PY1865_DEC_SIMPLE,
+    &PY1866_DEC_WRAPS,
+    &PY1867_DEC_STACK,
+    &PY1868_DEC_FACTORY,
+    &PY1869_DEC_COMPOSE,
+    &PY1870_DEC_CHECK,
+    &PY1871_IMM_COPY,
+    &PY1872_IMM_TUPLE_PIPE,
+    &PY1873_IMM_FROZENSET,
+    &PY1874_IMM_MAP_NEW,
+    &PY1875_IMM_REDUCE_NEW,
+    &PY1876_IMM_CHECK,
+    &PY1877_CU_CURRY2,
+    &PY1878_CU_CURRY3,
+    &PY1879_CU_COMPOSE,
+    &PY1880_CU_COMPOSE3,
+    &PY1881_CU_PIPE,
+    &PY1882_CU_CHECK,
+    &PY1883_LZ_YIELD_MAP,
+    &PY1884_LZ_YIELD_FILTER,
+    &PY1885_LZ_CHAIN,
+    &PY1886_LZ_ISLICE,
+    &PY1887_LZ_SUM_PIPE,
+    &PY1888_LZ_CHECK,
+    &PY1889_MB_SOME_NONE,
+    &PY1890_MB_MAP,
+    &PY1891_MB_OK_ERR,
+    &PY1892_MB_BIND,
+    &PY1893_MB_UNWRAP,
+    &PY1894_MB_CHECK,
+    &PY1895_DOM_ETL,
+    &PY1896_DOM_SCORE,
+    &PY1897_DOM_RANK,
+    &PY1898_DOM_AGG,
+    &PY1899_DOM_REPORT,
+    &PY1900_DOM_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -52724,7 +53324,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1840);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1900);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -55707,7 +56307,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1840 is the end of the rail");
+                assert_eq!(step.next, Some("py-1841-hof-map"), "step 1840 chains to wave15");
+            }
+        }
+    }
+
+    #[test]
+    fn py1841_to_py1900_programacion_funcional_chain() {
+        let bridge = coding_step_by_micro_step(1840).expect("py-1840");
+        assert_eq!(bridge.next, Some("py-1841-hof-map"));
+
+        for n in 1841..=1900 {
+            let step = coding_step_by_micro_step(n).expect("wave15 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 1900 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 1900 is the end of the rail");
             }
         }
     }
