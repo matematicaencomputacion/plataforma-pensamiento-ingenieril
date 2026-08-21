@@ -49631,7 +49631,548 @@ pub const PY1720_TEST_SUITE: CodingStep = CodingStep {
     pytest: "def test_test_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['suite']([{'id': 1, 'nombre': 'Ana'}]) is True\n    assert ns['contrato_registro']({'id': 1, 'nombre': '  '}) is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "all aplica el contrato a cada registro.",
     solution_example: "def contrato_registro(registro):\n    if not isinstance(registro, dict):\n        return False\n    if 'id' not in registro or not isinstance(registro['id'], int):\n        return False\n    if 'nombre' not in registro or not isinstance(registro['nombre'], str):\n        return False\n    return registro['nombre'].strip() != ''\n\ndef suite(registros):\n    return all(contrato_registro(r) for r in registros)\n\nbuenos = [{'id': 1, 'nombre': 'Ana'}, {'id': 2, 'nombre': 'Luis'}]\nmalos = [{'id': 'x', 'nombre': 'Ana'}]\nresultado = (suite(buenos), suite(malos))\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 1720,
+    next: Some("py-1721-graph-adj-dict"), show_type_chips: false, micro_step: 1720,
+};
+
+pub const PY1721_GRAPH_ADJ_DICT: CodingStep = CodingStep {
+    id: "py-1721-graph-adj-dict", title: "Grafos · Dict de adyacencia", objective: "Representar un grafo no dirigido con dict de sets.",
+    prompt_md: "**Dict de adyacencia**\n\nUn grafo se modela como `dict[nodo] -> set(vecinos)`. Cada arista no dirigida aparece en ambos extremos.\n\n**Micro-reto:**\n1. Creá `g` con nodos `A` y `B` conectados\n2. Asegurá simetría: `B in g[A]` y `A in g[B]`\n3. Guardá `(sorted(g[A]), sorted(g[B]))` en `resultado` y mostralo",
+    starter_code: "# g = {'A': {'B'}, 'B': {'A'}}\n# resultado = (sorted(g['A']), sorted(g['B']))\n# print(resultado)\n",
+    pytest: "def test_graph_adj_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (['B'], ['A'])\n    assert 'B' in ns['g']['A'] and 'A' in ns['g']['B']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Cada arista no dirigida vive en ambos sets.",
+    solution_example: "g = {'A': {'B'}, 'B': {'A'}}\nresultado = (sorted(g['A']), sorted(g['B']))\nprint(resultado)\n",
+    next: Some("py-1722-graph-add-edge"), show_type_chips: false, micro_step: 1721,
+};
+pub const PY1722_GRAPH_ADD_EDGE: CodingStep = CodingStep {
+    id: "py-1722-graph-add-edge", title: "Grafos · Agregar arista", objective: "Agregar aristas simétricas a un dict de adyacencia.",
+    prompt_md: "**Agregar arista**\n\nUna función `add_edge(g, u, v)` inserta `v` en `g[u]` y `u` en `g[v]`, creando nodos si faltan.\n\n**Micro-reto:**\n1. Definí `add_edge(g, u, v)` con `setdefault`\n2. Partí de `g = {}` y agregá `A-B` y `B-C`\n3. Mostrá `(sorted(g[A]), sorted(g[B]), sorted(g[C]))`",
+    starter_code: "# def add_edge(g, u, v):\n#     g.setdefault(u, set()).add(v)\n#     g.setdefault(v, set()).add(u)\n# g = {}\n# add_edge(g, 'A', 'B')\n# add_edge(g, 'B', 'C')\n# resultado = (sorted(g['A']), sorted(g['B']), sorted(g['C']))\n# print(resultado)\n",
+    pytest: "def test_graph_add_edge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (['B'], ['A', 'C'], ['B'])\n    ns['add_edge'](ns['g'], 'C', 'A')\n    assert 'A' in ns['g']['C']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "setdefault(u, set()).add(v) crea el nodo si no existe.",
+    solution_example: "def add_edge(g, u, v):\n    g.setdefault(u, set()).add(v)\n    g.setdefault(v, set()).add(u)\n\ng = {}\nadd_edge(g, 'A', 'B')\nadd_edge(g, 'B', 'C')\nresultado = (sorted(g['A']), sorted(g['B']), sorted(g['C']))\nprint(resultado)\n",
+    next: Some("py-1723-graph-degree"), show_type_chips: false, micro_step: 1722,
+};
+pub const PY1723_GRAPH_DEGREE: CodingStep = CodingStep {
+    id: "py-1723-graph-degree", title: "Grafos · Grado de un nodo", objective: "Calcular el grado como tamaño del set de vecinos.",
+    prompt_md: "**Grado**\n\nEl grado de un nodo es `len(g[nodo])`: cuántos vecinos tiene.\n\n**Micro-reto:**\n1. Definí `grado(g, nodo)` que devuelva el grado\n2. Usá el grafo estrella A-B, A-C, A-D\n3. Mostrá `(grado(g, A), grado(g, B))`",
+    starter_code: "# g = {'A': {'B', 'C', 'D'}, 'B': {'A'}, 'C': {'A'}, 'D': {'A'}}\n# def grado(g, nodo):\n#     return len(g[nodo])\n# resultado = (grado(g, 'A'), grado(g, 'B'))\n# print(resultado)\n",
+    pytest: "def test_graph_degree(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, 1)\n    assert ns['grado'](ns['g'], 'C') == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "grado = len(g[nodo]).",
+    solution_example: "g = {'A': {'B', 'C', 'D'}, 'B': {'A'}, 'C': {'A'}, 'D': {'A'}}\n\ndef grado(g, nodo):\n    return len(g[nodo])\n\nresultado = (grado(g, 'A'), grado(g, 'B'))\nprint(resultado)\n",
+    next: Some("py-1724-graph-neighbors"), show_type_chips: false, micro_step: 1723,
+};
+pub const PY1724_GRAPH_NEIGHBORS: CodingStep = CodingStep {
+    id: "py-1724-graph-neighbors", title: "Grafos · Vecinos ordenados", objective: "Listar vecinos de forma determinista con sorted.",
+    prompt_md: "**Vecinos ordenados**\n\nLos `set` no tienen orden; `sorted(g[nodo])` da una lista estable para tests y BFS.\n\n**Micro-reto:**\n1. Definí `vecinos(g, nodo)` con `sorted`\n2. Usá un grafo con A conectado a C, B, D\n3. Mostrá `vecinos(g, A)`",
+    starter_code: "# g = {'A': {'C', 'B', 'D'}, 'B': {'A'}, 'C': {'A'}, 'D': {'A'}}\n# def vecinos(g, nodo):\n#     return sorted(g[nodo])\n# resultado = vecinos(g, 'A')\n# print(resultado)\n",
+    pytest: "def test_graph_neighbors(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['B', 'C', 'D']\n    assert ns['vecinos'](ns['g'], 'B') == ['A']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "sorted convierte el set en lista determinista.",
+    solution_example: "g = {'A': {'C', 'B', 'D'}, 'B': {'A'}, 'C': {'A'}, 'D': {'A'}}\n\ndef vecinos(g, nodo):\n    return sorted(g[nodo])\n\nresultado = vecinos(g, 'A')\nprint(resultado)\n",
+    next: Some("py-1725-graph-edge-count"), show_type_chips: false, micro_step: 1724,
+};
+pub const PY1725_GRAPH_EDGE_COUNT: CodingStep = CodingStep {
+    id: "py-1725-graph-edge-count", title: "Grafos · Contar aristas", objective: "Contar aristas no dirigidas sin duplicar.",
+    prompt_md: "**Contar aristas**\n\nEn un grafo no dirigido, sumar grados y dividir por 2 evita contar cada arista dos veces.\n\n**Micro-reto:**\n1. Definí `contar_aristas(g)` como `sum(len(v) for v in g.values()) // 2`\n2. Contá en un camino A-B-C-D\n3. Mostrá el total",
+    starter_code: "# g = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B', 'D'}, 'D': {'C'}}\n# def contar_aristas(g):\n#     return sum(len(v) for v in g.values()) // 2\n# resultado = contar_aristas(g)\n# print(resultado)\n",
+    pytest: "def test_graph_edge_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['contar_aristas']({'X': {'Y'}, 'Y': {'X'}}) == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Suma de grados / 2 = aristas no dirigidas.",
+    solution_example: "g = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B', 'D'}, 'D': {'C'}}\n\ndef contar_aristas(g):\n    return sum(len(v) for v in g.values()) // 2\n\nresultado = contar_aristas(g)\nprint(resultado)\n",
+    next: Some("py-1726-graph-validate"), show_type_chips: false, micro_step: 1725,
+};
+pub const PY1726_GRAPH_VALIDATE: CodingStep = CodingStep {
+    id: "py-1726-graph-validate", title: "Grafos · Validar simetría", objective: "Verificar que toda arista sea bidireccional.",
+    prompt_md: "**Validar simetría**\n\nUn grafo no dirigido es válido si `v in g[u]` implica `u in g[v]`.\n\n**Micro-reto:**\n1. Definí `es_simetrico(g)` que recorra todas las adyacencias\n2. Probá un grafo bueno y uno roto\n3. Mostrá `(es_simetrico(bueno), es_simetrico(roto))`",
+    starter_code: "# def es_simetrico(g):\n#     for u, vs in g.items():\n#         for v in vs:\n#             if u not in g.get(v, set()):\n#                 return False\n#     return True\n# bueno = {'A': {'B'}, 'B': {'A'}}\n# roto = {'A': {'B'}, 'B': set()}\n# resultado = (es_simetrico(bueno), es_simetrico(roto))\n# print(resultado)\n",
+    pytest: "def test_graph_validate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['es_simetrico']({'A': set()}) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Si v está en g[u], u debe estar en g[v].",
+    solution_example: "def es_simetrico(g):\n    for u, vs in g.items():\n        for v in vs:\n            if u not in g.get(v, set()):\n                return False\n    return True\n\nbueno = {'A': {'B'}, 'B': {'A'}}\nroto = {'A': {'B'}, 'B': set()}\nresultado = (es_simetrico(bueno), es_simetrico(roto))\nprint(resultado)\n",
+    next: Some("py-1727-bfs-queue"), show_type_chips: false, micro_step: 1726,
+};
+pub const PY1727_BFS_QUEUE: CodingStep = CodingStep {
+    id: "py-1727-bfs-queue", title: "BFS · Cola con deque", objective: "Recorrer un grafo en amplitud con collections.deque.",
+    prompt_md: "**BFS con deque**\n\nBFS usa una cola: se visita el nodo, se encolan vecinos no vistos. `deque` da `popleft` O(1).\n\n**Micro-reto:**\n1. Importá `deque`\n2. Definí `bfs(g, inicio)` que devuelva el orden de visita\n3. Recorré A-B-C (estrella desde A) con vecinos ordenados",
+    starter_code: "# from collections import deque\n# g = {'A': {'B', 'C'}, 'B': {'A'}, 'C': {'A'}}\n# def bfs(g, inicio):\n#     vistos = {inicio}\n#     cola = deque([inicio])\n#     orden = []\n#     while cola:\n#         u = cola.popleft()\n#         orden.append(u)\n#         for v in sorted(g[u]):\n#             if v not in vistos:\n#                 vistos.add(v)\n#                 cola.append(v)\n#     return orden\n# resultado = bfs(g, 'A')\n# print(resultado)\n",
+    pytest: "def test_bfs_queue(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B', 'C']\n    assert ns['bfs'](ns['g'], 'B') == ['B', 'A', 'C']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "popleft + sorted(vecinos) hace el BFS determinista.",
+    solution_example: "from collections import deque\n\ng = {'A': {'B', 'C'}, 'B': {'A'}, 'C': {'A'}}\n\ndef bfs(g, inicio):\n    vistos = {inicio}\n    cola = deque([inicio])\n    orden = []\n    while cola:\n        u = cola.popleft()\n        orden.append(u)\n        for v in sorted(g[u]):\n            if v not in vistos:\n                vistos.add(v)\n                cola.append(v)\n    return orden\n\nresultado = bfs(g, 'A')\nprint(resultado)\n",
+    next: Some("py-1728-bfs-levels"), show_type_chips: false, micro_step: 1727,
+};
+pub const PY1728_BFS_LEVELS: CodingStep = CodingStep {
+    id: "py-1728-bfs-levels", title: "BFS · Niveles de distancia", objective: "Calcular la distancia por niveles desde el origen.",
+    prompt_md: "**Niveles BFS**\n\nCada oleada de la cola es un nivel: distancia = nivel del padre + 1.\n\n**Micro-reto:**\n1. Definí `distancias(g, inicio)` que devuelva un dict nodo→distancia\n2. Usá el camino A-B-C-D\n3. Mostrá `distancias(g, A)` ordenado por clave",
+    starter_code: "# from collections import deque\n# g = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B', 'D'}, 'D': {'C'}}\n# def distancias(g, inicio):\n#     dist = {inicio: 0}\n#     cola = deque([inicio])\n#     while cola:\n#         u = cola.popleft()\n#         for v in sorted(g[u]):\n#             if v not in dist:\n#                 dist[v] = dist[u] + 1\n#                 cola.append(v)\n#     return dist\n# d = distancias(g, 'A')\n# resultado = [(k, d[k]) for k in sorted(d)]\n# print(resultado)\n",
+    pytest: "def test_bfs_levels(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('A', 0), ('B', 1), ('C', 2), ('D', 3)]\n    assert ns['distancias'](ns['g'], 'A')['D'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "La primera vez que se alcanza un nodo fija su distancia.",
+    solution_example: "from collections import deque\n\ng = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B', 'D'}, 'D': {'C'}}\n\ndef distancias(g, inicio):\n    dist = {inicio: 0}\n    cola = deque([inicio])\n    while cola:\n        u = cola.popleft()\n        for v in sorted(g[u]):\n            if v not in dist:\n                dist[v] = dist[u] + 1\n                cola.append(v)\n    return dist\n\nd = distancias(g, 'A')\nresultado = [(k, d[k]) for k in sorted(d)]\nprint(resultado)\n",
+    next: Some("py-1729-bfs-path"), show_type_chips: false, micro_step: 1728,
+};
+pub const PY1729_BFS_PATH: CodingStep = CodingStep {
+    id: "py-1729-bfs-path", title: "BFS · Camino más corto", objective: "Reconstruir el camino más corto con padres.",
+    prompt_md: "**Camino BFS**\n\nGuardando `padre[v] = u` al descubrir v, se reconstruye el camino más corto hacia atrás.\n\n**Micro-reto:**\n1. Definí `camino(g, origen, destino)` vía BFS + padres\n2. Buscá A→D en el camino A-B-C-D\n3. Mostrá el camino",
+    starter_code: "# from collections import deque\n# g = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B', 'D'}, 'D': {'C'}}\n# def camino(g, origen, destino):\n#     padre = {origen: None}\n#     cola = deque([origen])\n#     while cola:\n#         u = cola.popleft()\n#         if u == destino:\n#             break\n#         for v in sorted(g[u]):\n#             if v not in padre:\n#                 padre[v] = u\n#                 cola.append(v)\n#     if destino not in padre:\n#         return None\n#     ruta = []\n#     cur = destino\n#     while cur is not None:\n#         ruta.append(cur)\n#         cur = padre[cur]\n#     ruta.reverse()\n#     return ruta\n# resultado = camino(g, 'A', 'D')\n# print(resultado)\n",
+    pytest: "def test_bfs_path(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B', 'C', 'D']\n    assert ns['camino'](ns['g'], 'D', 'A') == ['D', 'C', 'B', 'A']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Reconstruí desde destino hacia origen con padre[].",
+    solution_example: "from collections import deque\n\ng = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B', 'D'}, 'D': {'C'}}\n\ndef camino(g, origen, destino):\n    padre = {origen: None}\n    cola = deque([origen])\n    while cola:\n        u = cola.popleft()\n        if u == destino:\n            break\n        for v in sorted(g[u]):\n            if v not in padre:\n                padre[v] = u\n                cola.append(v)\n    if destino not in padre:\n        return None\n    ruta = []\n    cur = destino\n    while cur is not None:\n        ruta.append(cur)\n        cur = padre[cur]\n    ruta.reverse()\n    return ruta\n\nresultado = camino(g, 'A', 'D')\nprint(resultado)\n",
+    next: Some("py-1730-bfs-components"), show_type_chips: false, micro_step: 1729,
+};
+pub const PY1730_BFS_COMPONENTS: CodingStep = CodingStep {
+    id: "py-1730-bfs-components", title: "BFS · Componentes por oleadas", objective: "Descubrir componentes conexas lanzando BFS repetido.",
+    prompt_md: "**Componentes con BFS**\n\nMientras queden nodos sin visitar, un BFS desde el menor pendiente marca una componente.\n\n**Micro-reto:**\n1. Definí `componentes(g)` que devuelva listas ordenadas de nodos\n2. Usá dos componentes: A-B y C-D\n3. Mostrá las componentes",
+    starter_code: "# from collections import deque\n# g = {'A': {'B'}, 'B': {'A'}, 'C': {'D'}, 'D': {'C'}}\n# def componentes(g):\n#     vistos = set()\n#     comps = []\n#     for inicio in sorted(g):\n#         if inicio in vistos:\n#             continue\n#         cola = deque([inicio])\n#         vistos.add(inicio)\n#         comp = []\n#         while cola:\n#             u = cola.popleft()\n#             comp.append(u)\n#             for v in sorted(g[u]):\n#                 if v not in vistos:\n#                     vistos.add(v)\n#                     cola.append(v)\n#         comps.append(comp)\n#     return comps\n# resultado = componentes(g)\n# print(resultado)\n",
+    pytest: "def test_bfs_components(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [['A', 'B'], ['C', 'D']]\n    assert len(ns['componentes'](ns['g'])) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Ordená nodos de inicio para componentes deterministas.",
+    solution_example: "from collections import deque\n\ng = {'A': {'B'}, 'B': {'A'}, 'C': {'D'}, 'D': {'C'}}\n\ndef componentes(g):\n    vistos = set()\n    comps = []\n    for inicio in sorted(g):\n        if inicio in vistos:\n            continue\n        cola = deque([inicio])\n        vistos.add(inicio)\n        comp = []\n        while cola:\n            u = cola.popleft()\n            comp.append(u)\n            for v in sorted(g[u]):\n                if v not in vistos:\n                    vistos.add(v)\n                    cola.append(v)\n        comps.append(comp)\n    return comps\n\nresultado = componentes(g)\nprint(resultado)\n",
+    next: Some("py-1731-bfs-bipartite"), show_type_chips: false, micro_step: 1730,
+};
+pub const PY1731_BFS_BIPARTITE: CodingStep = CodingStep {
+    id: "py-1731-bfs-bipartite", title: "BFS · Grafo bipartito", objective: "Colorear por niveles para detectar bipartición.",
+    prompt_md: "**Bipartito**\n\nSi se puede colorear con 2 colores sin vecinos del mismo color, el grafo es bipartito. BFS asigna colores alternados.\n\n**Micro-reto:**\n1. Definí `es_bipartito(g)` con colores 0/1\n2. Probá un ciclo par C4 y un triángulo\n3. Mostrá `(bipartito(c4), bipartito(tri))`",
+    starter_code: "# from collections import deque\n# def es_bipartito(g):\n#     color = {}\n#     for inicio in sorted(g):\n#         if inicio in color:\n#             continue\n#         color[inicio] = 0\n#         cola = deque([inicio])\n#         while cola:\n#             u = cola.popleft()\n#             for v in sorted(g[u]):\n#                 if v not in color:\n#                     color[v] = 1 - color[u]\n#                     cola.append(v)\n#                 elif color[v] == color[u]:\n#                     return False\n#     return True\n# c4 = {'A': {'B', 'D'}, 'B': {'A', 'C'}, 'C': {'B', 'D'}, 'D': {'A', 'C'}}\n# tri = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}\n# resultado = (es_bipartito(c4), es_bipartito(tri))\n# print(resultado)\n",
+    pytest: "def test_bfs_bipartite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['es_bipartito']({'A': {'B'}, 'B': {'A'}}) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Si un vecino ya tiene el mismo color, no es bipartito.",
+    solution_example: "from collections import deque\n\ndef es_bipartito(g):\n    color = {}\n    for inicio in sorted(g):\n        if inicio in color:\n            continue\n        color[inicio] = 0\n        cola = deque([inicio])\n        while cola:\n            u = cola.popleft()\n            for v in sorted(g[u]):\n                if v not in color:\n                    color[v] = 1 - color[u]\n                    cola.append(v)\n                elif color[v] == color[u]:\n                    return False\n    return True\n\nc4 = {'A': {'B', 'D'}, 'B': {'A', 'C'}, 'C': {'B', 'D'}, 'D': {'A', 'C'}}\ntri = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}\nresultado = (es_bipartito(c4), es_bipartito(tri))\nprint(resultado)\n",
+    next: Some("py-1732-bfs-check"), show_type_chips: false, micro_step: 1731,
+};
+pub const PY1732_BFS_CHECK: CodingStep = CodingStep {
+    id: "py-1732-bfs-check", title: "BFS · Chequeo de alcance", objective: "Verificar si un nodo es alcanzable desde otro.",
+    prompt_md: "**Alcance BFS**\n\n`alcanzable(g, a, b)` es True si BFS desde a visita b.\n\n**Micro-reto:**\n1. Definí `alcanzable` con BFS\n2. En A-B | C, verificá A→B y A→C\n3. Mostrá `(alcanzable(A,B), alcanzable(A,C))`",
+    starter_code: "# from collections import deque\n# g = {'A': {'B'}, 'B': {'A'}, 'C': set()}\n# def alcanzable(g, origen, destino):\n#     vistos = {origen}\n#     cola = deque([origen])\n#     while cola:\n#         u = cola.popleft()\n#         if u == destino:\n#             return True\n#         for v in sorted(g.get(u, [])):\n#             if v not in vistos:\n#                 vistos.add(v)\n#                 cola.append(v)\n#     return False\n# resultado = (alcanzable(g, 'A', 'B'), alcanzable(g, 'A', 'C'))\n# print(resultado)\n",
+    pytest: "def test_bfs_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['alcanzable'](ns['g'], 'A', 'A') is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Si el destino entra a vistos, es alcanzable.",
+    solution_example: "from collections import deque\n\ng = {'A': {'B'}, 'B': {'A'}, 'C': set()}\n\ndef alcanzable(g, origen, destino):\n    vistos = {origen}\n    cola = deque([origen])\n    while cola:\n        u = cola.popleft()\n        if u == destino:\n            return True\n        for v in sorted(g.get(u, [])):\n            if v not in vistos:\n                vistos.add(v)\n                cola.append(v)\n    return False\n\nresultado = (alcanzable(g, 'A', 'B'), alcanzable(g, 'A', 'C'))\nprint(resultado)\n",
+    next: Some("py-1733-dfs-recur"), show_type_chips: false, micro_step: 1732,
+};
+pub const PY1733_DFS_RECUR: CodingStep = CodingStep {
+    id: "py-1733-dfs-recur", title: "DFS · Recursivo", objective: "Recorrer en profundidad con recursión determinista.",
+    prompt_md: "**DFS recursivo**\n\nDFS visita un vecino por completo antes del siguiente. Ordenar vecinos fija el recorrido.\n\n**Micro-reto:**\n1. Definí `dfs(g, inicio)` recursivo que acumule el orden\n2. Usá A→B,C con B→D\n3. Mostrá el orden desde A",
+    starter_code: "# g = {'A': {'B', 'C'}, 'B': {'D'}, 'C': set(), 'D': set()}\n# def dfs(g, inicio):\n#     orden = []\n#     vistos = set()\n#     def visitar(u):\n#         vistos.add(u)\n#         orden.append(u)\n#         for v in sorted(g[u]):\n#             if v not in vistos:\n#                 visitar(v)\n#     visitar(inicio)\n#     return orden\n# resultado = dfs(g, 'A')\n# print(resultado)\n",
+    pytest: "def test_dfs_recur(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B', 'D', 'C']\n    assert ns['dfs'](ns['g'], 'B') == ['B', 'D']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Visitá vecinos en sorted para orden fijo.",
+    solution_example: "g = {'A': {'B', 'C'}, 'B': {'D'}, 'C': set(), 'D': set()}\n\ndef dfs(g, inicio):\n    orden = []\n    vistos = set()\n    def visitar(u):\n        vistos.add(u)\n        orden.append(u)\n        for v in sorted(g[u]):\n            if v not in vistos:\n                visitar(v)\n    visitar(inicio)\n    return orden\n\nresultado = dfs(g, 'A')\nprint(resultado)\n",
+    next: Some("py-1734-dfs-stack"), show_type_chips: false, micro_step: 1733,
+};
+pub const PY1734_DFS_STACK: CodingStep = CodingStep {
+    id: "py-1734-dfs-stack", title: "DFS · Con pila explícita", objective: "Simular DFS con una pila en lugar de recursión.",
+    prompt_md: "**DFS con pila**\n\nUna pila explícita evita la recursión: se apilan vecinos en orden inverso para visitar el menor primero.\n\n**Micro-reto:**\n1. Definí `dfs_pila(g, inicio)` con lista como pila\n2. Apilá vecinos `reversed(sorted(...))`\n3. Mostrá el orden desde A",
+    starter_code: "# g = {'A': {'B', 'C'}, 'B': {'D'}, 'C': set(), 'D': set()}\n# def dfs_pila(g, inicio):\n#     orden = []\n#     vistos = set()\n#     pila = [inicio]\n#     while pila:\n#         u = pila.pop()\n#         if u in vistos:\n#             continue\n#         vistos.add(u)\n#         orden.append(u)\n#         for v in reversed(sorted(g[u])):\n#             if v not in vistos:\n#                 pila.append(v)\n#     return orden\n# resultado = dfs_pila(g, 'A')\n# print(resultado)\n",
+    pytest: "def test_dfs_stack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B', 'D', 'C']\n    assert ns['dfs_pila'](ns['g'], 'C') == ['C']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "reversed(sorted) hace que el menor salga primero de la pila.",
+    solution_example: "g = {'A': {'B', 'C'}, 'B': {'D'}, 'C': set(), 'D': set()}\n\ndef dfs_pila(g, inicio):\n    orden = []\n    vistos = set()\n    pila = [inicio]\n    while pila:\n        u = pila.pop()\n        if u in vistos:\n            continue\n        vistos.add(u)\n        orden.append(u)\n        for v in reversed(sorted(g[u])):\n            if v not in vistos:\n                pila.append(v)\n    return orden\n\nresultado = dfs_pila(g, 'A')\nprint(resultado)\n",
+    next: Some("py-1735-topo-kahn"), show_type_chips: false, micro_step: 1734,
+};
+pub const PY1735_TOPO_KAHN: CodingStep = CodingStep {
+    id: "py-1735-topo-kahn", title: "Topo · Kahn (indegree)", objective: "Orden topológico con cola de indegree cero.",
+    prompt_md: "**Kahn**\n\nEl orden topológico de Kahn procesa nodos con indegree 0 y reduce el de sus vecinos.\n\n**Micro-reto:**\n1. Definí `topo_kahn(g)` sobre digrafo A→B, A→C, B→D, C→D\n2. Usá `deque` y vecinos ordenados\n3. Mostrá el orden",
+    starter_code: "# from collections import deque\n# g = {'A': {'B', 'C'}, 'B': {'D'}, 'C': {'D'}, 'D': set()}\n# def topo_kahn(g):\n#     indeg = {u: 0 for u in g}\n#     for u in g:\n#         for v in g[u]:\n#             indeg[v] += 1\n#     cola = deque(sorted(u for u, d in indeg.items() if d == 0))\n#     orden = []\n#     while cola:\n#         u = cola.popleft()\n#         orden.append(u)\n#         for v in sorted(g[u]):\n#             indeg[v] -= 1\n#             if indeg[v] == 0:\n#                 cola.append(v)\n#     return orden\n# resultado = topo_kahn(g)\n# print(resultado)\n",
+    pytest: "def test_topo_kahn(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B', 'C', 'D']\n    assert len(ns['topo_kahn'](ns['g'])) == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Encolá primero los de indegree 0 en orden.",
+    solution_example: "from collections import deque\n\ng = {'A': {'B', 'C'}, 'B': {'D'}, 'C': {'D'}, 'D': set()}\n\ndef topo_kahn(g):\n    indeg = {u: 0 for u in g}\n    for u in g:\n        for v in g[u]:\n            indeg[v] += 1\n    cola = deque(sorted(u for u, d in indeg.items() if d == 0))\n    orden = []\n    while cola:\n        u = cola.popleft()\n        orden.append(u)\n        for v in sorted(g[u]):\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                cola.append(v)\n    return orden\n\nresultado = topo_kahn(g)\nprint(resultado)\n",
+    next: Some("py-1736-topo-dfs"), show_type_chips: false, micro_step: 1735,
+};
+pub const PY1736_TOPO_DFS: CodingStep = CodingStep {
+    id: "py-1736-topo-dfs", title: "Topo · DFS postorden", objective: "Orden topológico por postorden DFS invertido.",
+    prompt_md: "**Topo DFS**\n\nTras visitar todos los vecinos de u, se agrega u a una pila de postorden; al invertirlo se obtiene un orden topológico.\n\n**Micro-reto:**\n1. Definí `topo_dfs(g)` con postorden\n2. Usá A→B→C\n3. Mostrá el orden",
+    starter_code: "# g = {'A': {'B'}, 'B': {'C'}, 'C': set()}\n# def topo_dfs(g):\n#     vistos = set()\n#     post = []\n#     def visitar(u):\n#         vistos.add(u)\n#         for v in sorted(g[u]):\n#             if v not in vistos:\n#                 visitar(v)\n#         post.append(u)\n#     for u in sorted(g):\n#         if u not in vistos:\n#             visitar(u)\n#     post.reverse()\n#     return post\n# resultado = topo_dfs(g)\n# print(resultado)\n",
+    pytest: "def test_topo_dfs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B', 'C']\n    assert ns['topo_dfs'](ns['g'])[0] == 'A'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Postorden invertido = orden topológico.",
+    solution_example: "g = {'A': {'B'}, 'B': {'C'}, 'C': set()}\n\ndef topo_dfs(g):\n    vistos = set()\n    post = []\n    def visitar(u):\n        vistos.add(u)\n        for v in sorted(g[u]):\n            if v not in vistos:\n                visitar(v)\n        post.append(u)\n    for u in sorted(g):\n        if u not in vistos:\n            visitar(u)\n    post.reverse()\n    return post\n\nresultado = topo_dfs(g)\nprint(resultado)\n",
+    next: Some("py-1737-topo-deps"), show_type_chips: false, micro_step: 1736,
+};
+pub const PY1737_TOPO_DEPS: CodingStep = CodingStep {
+    id: "py-1737-topo-deps", title: "Topo · Resolver dependencias", objective: "Ordenar tareas según dependencias dirigidas.",
+    prompt_md: "**Dependencias**\n\nSi la tarea B depende de A, el digrafo tiene arista A→B (A antes que B).\n\n**Micro-reto:**\n1. Modelá deps: build→test, build→lint, test→deploy\n2. Corré Kahn\n3. Mostrá el orden de tareas",
+    starter_code: "# from collections import deque\n# g = {'build': {'test', 'lint'}, 'test': {'deploy'}, 'lint': set(), 'deploy': set()}\n# def orden_tareas(g):\n#     indeg = {u: 0 for u in g}\n#     for u in g:\n#         for v in g[u]:\n#             indeg[v] += 1\n#     cola = deque(sorted(u for u, d in indeg.items() if d == 0))\n#     orden = []\n#     while cola:\n#         u = cola.popleft()\n#         orden.append(u)\n#         for v in sorted(g[u]):\n#             indeg[v] -= 1\n#             if indeg[v] == 0:\n#                 cola.append(v)\n#     return orden\n# resultado = orden_tareas(g)\n# print(resultado)\n",
+    pytest: "def test_topo_deps(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['build', 'lint', 'test', 'deploy']\n    assert ns['resultado'][0] == 'build'\n    assert ns['resultado'][-1] == 'deploy'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "build tiene indegree 0 y sale primero.",
+    solution_example: "from collections import deque\n\ng = {'build': {'test', 'lint'}, 'test': {'deploy'}, 'lint': set(), 'deploy': set()}\n\ndef orden_tareas(g):\n    indeg = {u: 0 for u in g}\n    for u in g:\n        for v in g[u]:\n            indeg[v] += 1\n    cola = deque(sorted(u for u, d in indeg.items() if d == 0))\n    orden = []\n    while cola:\n        u = cola.popleft()\n        orden.append(u)\n        for v in sorted(g[u]):\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                cola.append(v)\n    return orden\n\nresultado = orden_tareas(g)\nprint(resultado)\n",
+    next: Some("py-1738-topo-check"), show_type_chips: false, micro_step: 1737,
+};
+pub const PY1738_TOPO_CHECK: CodingStep = CodingStep {
+    id: "py-1738-topo-check", title: "Topo · Detectar incompleto", objective: "Detectar ciclo si Kahn no cubre todos los nodos.",
+    prompt_md: "**Topo incompleto**\n\nSi al terminar Kahn `len(orden) < len(g)`, hay un ciclo y no hay orden topológico.\n\n**Micro-reto:**\n1. Definí `tiene_orden(g)` que compare longitudes\n2. Probá DAG A→B y ciclo A→B→A\n3. Mostrá `(tiene_orden(dag), tiene_orden(ciclo))`",
+    starter_code: "# from collections import deque\n# def tiene_orden(g):\n#     indeg = {u: 0 for u in g}\n#     for u in g:\n#         for v in g[u]:\n#             indeg[v] += 1\n#     cola = deque(sorted(u for u, d in indeg.items() if d == 0))\n#     orden = []\n#     while cola:\n#         u = cola.popleft()\n#         orden.append(u)\n#         for v in sorted(g[u]):\n#             indeg[v] -= 1\n#             if indeg[v] == 0:\n#                 cola.append(v)\n#     return len(orden) == len(g)\n# dag = {'A': {'B'}, 'B': set()}\n# ciclo = {'A': {'B'}, 'B': {'A'}}\n# resultado = (tiene_orden(dag), tiene_orden(ciclo))\n# print(resultado)\n",
+    pytest: "def test_topo_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['tiene_orden']({'X': set()}) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "len(orden) < len(g) implica ciclo.",
+    solution_example: "from collections import deque\n\ndef tiene_orden(g):\n    indeg = {u: 0 for u in g}\n    for u in g:\n        for v in g[u]:\n            indeg[v] += 1\n    cola = deque(sorted(u for u, d in indeg.items() if d == 0))\n    orden = []\n    while cola:\n        u = cola.popleft()\n        orden.append(u)\n        for v in sorted(g[u]):\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                cola.append(v)\n    return len(orden) == len(g)\n\ndag = {'A': {'B'}, 'B': set()}\nciclo = {'A': {'B'}, 'B': {'A'}}\nresultado = (tiene_orden(dag), tiene_orden(ciclo))\nprint(resultado)\n",
+    next: Some("py-1739-uf-parent"), show_type_chips: false, micro_step: 1738,
+};
+pub const PY1739_UF_PARENT: CodingStep = CodingStep {
+    id: "py-1739-uf-parent", title: "UF · Parent array", objective: "Inicializar parent[i]=i para union-find.",
+    prompt_md: "**Parent**\n\nEn union-find, `parent[x] = x` significa que x es su propio representante al inicio.\n\n**Micro-reto:**\n1. Definí `make(n)` que devuelva `list(range(n))`\n2. Creá parent para 4 elementos\n3. Mostrá `parent`",
+    starter_code: "# def make(n):\n#     return list(range(n))\n# parent = make(4)\n# resultado = parent\n# print(resultado)\n",
+    pytest: "def test_uf_parent(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 2, 3]\n    assert ns['make'](2) == [0, 1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Cada elemento empieza como su propia raíz.",
+    solution_example: "def make(n):\n    return list(range(n))\n\nparent = make(4)\nresultado = parent\nprint(resultado)\n",
+    next: Some("py-1740-uf-find"), show_type_chips: false, micro_step: 1739,
+};
+pub const PY1740_UF_FIND: CodingStep = CodingStep {
+    id: "py-1740-uf-find", title: "UF · Find con path compression", objective: "Encontrar la raíz comprimiendo el camino.",
+    prompt_md: "**Find**\n\n`find(x)` sigue parent hasta la raíz y opcionalmente comprime: `parent[x] = raíz`.\n\n**Micro-reto:**\n1. Definí `find(parent, x)` recursivo con compresión\n2. Partí de parent `[0,0,1,3]`\n3. Mostrá `(find(2), parent)` tras comprimir",
+    starter_code: "# parent = [0, 0, 1, 3]\n# def find(parent, x):\n#     if parent[x] != x:\n#         parent[x] = find(parent, parent[x])\n#     return parent[x]\n# raiz = find(parent, 2)\n# resultado = (raiz, list(parent))\n# print(resultado)\n",
+    pytest: "def test_uf_find(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (0, [0, 0, 0, 3])\n    assert ns['find'](ns['parent'], 3) == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tras find(2), parent[2] apunta directo a 0.",
+    solution_example: "parent = [0, 0, 1, 3]\n\ndef find(parent, x):\n    if parent[x] != x:\n        parent[x] = find(parent, parent[x])\n    return parent[x]\n\nraiz = find(parent, 2)\nresultado = (raiz, list(parent))\nprint(resultado)\n",
+    next: Some("py-1741-uf-union"), show_type_chips: false, micro_step: 1740,
+};
+pub const PY1741_UF_UNION: CodingStep = CodingStep {
+    id: "py-1741-uf-union", title: "UF · Union por rank", objective: "Unir dos conjuntos con rank para equilibrar.",
+    prompt_md: "**Union por rank**\n\nAl unir, la raíz de menor rank cuelga de la de mayor rank; si empatan, se incrementa rank.\n\n**Micro-reto:**\n1. Implementá `union(parent, rank, a, b)`\n2. Uní 0-1 y 2-3, luego 1-2\n3. Mostrá `(find(0), find(3), rank)`",
+    starter_code: "# def find(parent, x):\n#     if parent[x] != x:\n#         parent[x] = find(parent, parent[x])\n#     return parent[x]\n# def union(parent, rank, a, b):\n#     ra, rb = find(parent, a), find(parent, b)\n#     if ra == rb:\n#         return\n#     if rank[ra] < rank[rb]:\n#         parent[ra] = rb\n#     elif rank[ra] > rank[rb]:\n#         parent[rb] = ra\n#     else:\n#         parent[rb] = ra\n#         rank[ra] += 1\n# parent = [0, 1, 2, 3]\n# rank = [0, 0, 0, 0]\n# union(parent, rank, 0, 1)\n# union(parent, rank, 2, 3)\n# union(parent, rank, 1, 2)\n# resultado = (find(parent, 0), find(parent, 3), list(rank))\n# print(resultado)\n",
+    pytest: "def test_uf_union(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'][0] == ns['resultado'][1]\n    assert ns['resultado'][0] in (0, 2)\n    assert sum(1 for i in range(4) if ns['find'](ns['parent'], i) == ns['resultado'][0]) == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tras tres unions, los 4 nodos comparten raíz.",
+    solution_example: "def find(parent, x):\n    if parent[x] != x:\n        parent[x] = find(parent, parent[x])\n    return parent[x]\n\ndef union(parent, rank, a, b):\n    ra, rb = find(parent, a), find(parent, b)\n    if ra == rb:\n        return\n    if rank[ra] < rank[rb]:\n        parent[ra] = rb\n    elif rank[ra] > rank[rb]:\n        parent[rb] = ra\n    else:\n        parent[rb] = ra\n        rank[ra] += 1\n\nparent = [0, 1, 2, 3]\nrank = [0, 0, 0, 0]\nunion(parent, rank, 0, 1)\nunion(parent, rank, 2, 3)\nunion(parent, rank, 1, 2)\nresultado = (find(parent, 0), find(parent, 3), list(rank))\nprint(resultado)\n",
+    next: Some("py-1742-uf-connected"), show_type_chips: false, micro_step: 1741,
+};
+pub const PY1742_UF_CONNECTED: CodingStep = CodingStep {
+    id: "py-1742-uf-connected", title: "UF · Misma componente", objective: "Consultar si dos nodos están unidos.",
+    prompt_md: "**Connected**\n\n`connected(a, b)` es True si `find(a) == find(b)`.\n\n**Micro-reto:**\n1. Uní 0-1 y 1-2 (no 3)\n2. Consultá connected(0,2) y connected(0,3)\n3. Mostrá el par de booleanos",
+    starter_code: "# def find(parent, x):\n#     if parent[x] != x:\n#         parent[x] = find(parent, parent[x])\n#     return parent[x]\n# def union(parent, a, b):\n#     parent[find(parent, b)] = find(parent, a)\n# def connected(parent, a, b):\n#     return find(parent, a) == find(parent, b)\n# parent = [0, 1, 2, 3]\n# union(parent, 0, 1)\n# union(parent, 1, 2)\n# resultado = (connected(parent, 0, 2), connected(parent, 0, 3))\n# print(resultado)\n",
+    pytest: "def test_uf_connected(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['connected'](ns['parent'], 1, 2) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Misma raíz ⇒ misma componente.",
+    solution_example: "def find(parent, x):\n    if parent[x] != x:\n        parent[x] = find(parent, parent[x])\n    return parent[x]\n\ndef union(parent, a, b):\n    parent[find(parent, b)] = find(parent, a)\n\ndef connected(parent, a, b):\n    return find(parent, a) == find(parent, b)\n\nparent = [0, 1, 2, 3]\nunion(parent, 0, 1)\nunion(parent, 1, 2)\nresultado = (connected(parent, 0, 2), connected(parent, 0, 3))\nprint(resultado)\n",
+    next: Some("py-1743-uf-components"), show_type_chips: false, micro_step: 1742,
+};
+pub const PY1743_UF_COMPONENTS: CodingStep = CodingStep {
+    id: "py-1743-uf-components", title: "UF · Contar componentes", objective: "Contar raíces distintas tras las uniones.",
+    prompt_md: "**Contar componentes**\n\nEl número de componentes es la cantidad de x con `parent[x]==x` (tras finds), o raíces únicas.\n\n**Micro-reto:**\n1. Uní aristas (0,1) y (2,3) en n=4\n2. Definí `num_comp` contando raíces\n3. Mostrá el número",
+    starter_code: "# def find(parent, x):\n#     if parent[x] != x:\n#         parent[x] = find(parent, parent[x])\n#     return parent[x]\n# def union(parent, a, b):\n#     parent[find(parent, b)] = find(parent, a)\n# parent = [0, 1, 2, 3]\n# for a, b in [(0, 1), (2, 3)]:\n#     union(parent, a, b)\n# resultado = len({find(parent, i) for i in range(4)})\n# print(resultado)\n",
+    pytest: "def test_uf_components(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert len({ns['find'](ns['parent'], i) for i in range(4)}) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Dos uniones disjuntas ⇒ 2 componentes.",
+    solution_example: "def find(parent, x):\n    if parent[x] != x:\n        parent[x] = find(parent, parent[x])\n    return parent[x]\n\ndef union(parent, a, b):\n    parent[find(parent, b)] = find(parent, a)\n\nparent = [0, 1, 2, 3]\nfor a, b in [(0, 1), (2, 3)]:\n    union(parent, a, b)\nresultado = len({find(parent, i) for i in range(4)})\nprint(resultado)\n",
+    next: Some("py-1744-uf-edges"), show_type_chips: false, micro_step: 1743,
+};
+pub const PY1744_UF_EDGES: CodingStep = CodingStep {
+    id: "py-1744-uf-edges", title: "UF · Componentes desde aristas", objective: "Construir componentes a partir de lista de aristas.",
+    prompt_md: "**Desde aristas**\n\nDado n y una lista de aristas, union-find agrupa nodos y reporta el tamaño de cada componente.\n\n**Micro-reto:**\n1. Procesá aristas [(0,1),(1,2),(3,4)] con n=5\n2. Armá un dict raíz→tamaño\n3. Mostrá tamaños ordenados",
+    starter_code: "# def find(parent, x):\n#     if parent[x] != x:\n#         parent[x] = find(parent, parent[x])\n#     return parent[x]\n# def union(parent, a, b):\n#     parent[find(parent, b)] = find(parent, a)\n# n = 5\n# parent = list(range(n))\n# for a, b in [(0, 1), (1, 2), (3, 4)]:\n#     union(parent, a, b)\n# sizes = {}\n# for i in range(n):\n#     r = find(parent, i)\n#     sizes[r] = sizes.get(r, 0) + 1\n# resultado = sorted(sizes.values())\n# print(resultado)\n",
+    pytest: "def test_uf_edges(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 3]\n    assert sum(ns['resultado']) == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tamaños 3 y 2 tras las tres aristas.",
+    solution_example: "def find(parent, x):\n    if parent[x] != x:\n        parent[x] = find(parent, parent[x])\n    return parent[x]\n\ndef union(parent, a, b):\n    parent[find(parent, b)] = find(parent, a)\n\nn = 5\nparent = list(range(n))\nfor a, b in [(0, 1), (1, 2), (3, 4)]:\n    union(parent, a, b)\nsizes = {}\nfor i in range(n):\n    r = find(parent, i)\n    sizes[r] = sizes.get(r, 0) + 1\nresultado = sorted(sizes.values())\nprint(resultado)\n",
+    next: Some("py-1745-cycle-colors"), show_type_chips: false, micro_step: 1744,
+};
+pub const PY1745_CYCLE_COLORS: CodingStep = CodingStep {
+    id: "py-1745-cycle-colors", title: "Ciclos · Colores DFS", objective: "Usar blanco/gris/negro para marcar estado DFS.",
+    prompt_md: "**Colores**\n\nBlanco=0 no visitado, gris=1 en stack, negro=2 terminado. Un back-edge a gris detecta ciclo.\n\n**Micro-reto:**\n1. Definí dict `color` inicializado en 0 para A,B,C\n2. Simulá entrar a A (gris) y salir (negro)\n3. Mostrá `(color[A] tras entrar, tras salir)`",
+    starter_code: "# color = {'A': 0, 'B': 0, 'C': 0}\n# color['A'] = 1  # gris\n# entrando = color['A']\n# color['A'] = 2  # negro\n# resultado = (entrando, color['A'])\n# print(resultado)\n",
+    pytest: "def test_cycle_colors(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 2)\n    assert ns['color']['B'] == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1=gris (en stack), 2=negro (terminado).",
+    solution_example: "color = {'A': 0, 'B': 0, 'C': 0}\ncolor['A'] = 1  # gris\nentrando = color['A']\ncolor['A'] = 2  # negro\nresultado = (entrando, color['A'])\nprint(resultado)\n",
+    next: Some("py-1746-cycle-detect"), show_type_chips: false, micro_step: 1745,
+};
+pub const PY1746_CYCLE_DETECT: CodingStep = CodingStep {
+    id: "py-1746-cycle-detect", title: "Ciclos · Detectar en digrafo", objective: "Detectar ciclo dirigido con DFS de colores.",
+    prompt_md: "**Detectar ciclo**\n\nSi al explorar u→v el color de v es gris, hay un ciclo dirigido.\n\n**Micro-reto:**\n1. Definí `tiene_ciclo(g)` con colores\n2. Probá A→B→C y A→B→A\n3. Mostrá `(tiene_ciclo(dag), tiene_ciclo(ciclo))`",
+    starter_code: "# def tiene_ciclo(g):\n#     BLANCO, GRIS, NEGRO = 0, 1, 2\n#     color = {u: BLANCO for u in g}\n#     def dfs(u):\n#         color[u] = GRIS\n#         for v in sorted(g[u]):\n#             if color[v] == GRIS:\n#                 return True\n#             if color[v] == BLANCO and dfs(v):\n#                 return True\n#         color[u] = NEGRO\n#         return False\n#     for u in sorted(g):\n#         if color[u] == BLANCO and dfs(u):\n#             return True\n#     return False\n# dag = {'A': {'B'}, 'B': {'C'}, 'C': set()}\n# ciclo = {'A': {'B'}, 'B': {'A'}}\n# resultado = (tiene_ciclo(dag), tiene_ciclo(ciclo))\n# print(resultado)\n",
+    pytest: "def test_cycle_detect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (False, True)\n    assert ns['tiene_ciclo']({'X': set()}) is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Arista a nodo gris ⇒ ciclo.",
+    solution_example: "def tiene_ciclo(g):\n    BLANCO, GRIS, NEGRO = 0, 1, 2\n    color = {u: BLANCO for u in g}\n    def dfs(u):\n        color[u] = GRIS\n        for v in sorted(g[u]):\n            if color[v] == GRIS:\n                return True\n            if color[v] == BLANCO and dfs(v):\n                return True\n        color[u] = NEGRO\n        return False\n    for u in sorted(g):\n        if color[u] == BLANCO and dfs(u):\n            return True\n    return False\n\ndag = {'A': {'B'}, 'B': {'C'}, 'C': set()}\nciclo = {'A': {'B'}, 'B': {'A'}}\nresultado = (tiene_ciclo(dag), tiene_ciclo(ciclo))\nprint(resultado)\n",
+    next: Some("py-1747-cycle-path"), show_type_chips: false, micro_step: 1746,
+};
+pub const PY1747_CYCLE_PATH: CodingStep = CodingStep {
+    id: "py-1747-cycle-path", title: "Ciclos · Recuperar ciclo", objective: "Reconstruir un ciclo dirigido con la pila DFS.",
+    prompt_md: "**Recuperar ciclo**\n\nGuardando el padre gris, al hallar back-edge v←u se reconstruye el ciclo hasta v.\n\n**Micro-reto:**\n1. Definí `un_ciclo(g)` que devuelva nodos del ciclo o None\n2. Usá A→B→C→A\n3. Mostrá el ciclo normalizado (rotar al mínimo)",
+    starter_code: "# def un_ciclo(g):\n#     BLANCO, GRIS, NEGRO = 0, 1, 2\n#     color = {u: BLANCO for u in g}\n#     padre = {}\n#     hallado = []\n#     def dfs(u):\n#         color[u] = GRIS\n#         for v in sorted(g[u]):\n#             if color[v] == GRIS:\n#                 cur = u\n#                 ciclo = [v]\n#                 while cur != v:\n#                     ciclo.append(cur)\n#                     cur = padre[cur]\n#                 ciclo.reverse()\n#                 hallado.append(ciclo)\n#                 return True\n#             if color[v] == BLANCO:\n#                 padre[v] = u\n#                 if dfs(v):\n#                     return True\n#         color[u] = NEGRO\n#         return False\n#     for u in sorted(g):\n#         if color[u] == BLANCO:\n#             padre[u] = None\n#             if dfs(u):\n#                 break\n#     if not hallado:\n#         return None\n#     c = hallado[0]\n#     i = c.index(min(c))\n#     return c[i:] + c[:i]\n# g = {'A': {'B'}, 'B': {'C'}, 'C': {'A'}}\n# resultado = un_ciclo(g)\n# print(resultado)\n",
+    pytest: "def test_cycle_path(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B', 'C']\n    assert ns['un_ciclo']({'A': {'B'}, 'B': set()}) is None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Rotá el ciclo para que empiece en el nodo mínimo.",
+    solution_example: "def un_ciclo(g):\n    BLANCO, GRIS, NEGRO = 0, 1, 2\n    color = {u: BLANCO for u in g}\n    padre = {}\n    hallado = []\n    def dfs(u):\n        color[u] = GRIS\n        for v in sorted(g[u]):\n            if color[v] == GRIS:\n                cur = u\n                ciclo = [v]\n                while cur != v:\n                    ciclo.append(cur)\n                    cur = padre[cur]\n                ciclo.reverse()\n                hallado.append(ciclo)\n                return True\n            if color[v] == BLANCO:\n                padre[v] = u\n                if dfs(v):\n                    return True\n        color[u] = NEGRO\n        return False\n    for u in sorted(g):\n        if color[u] == BLANCO:\n            padre[u] = None\n            if dfs(u):\n                break\n    if not hallado:\n        return None\n    c = hallado[0]\n    i = c.index(min(c))\n    return c[i:] + c[:i]\n\ng = {'A': {'B'}, 'B': {'C'}, 'C': {'A'}}\nresultado = un_ciclo(g)\nprint(resultado)\n",
+    next: Some("py-1748-cycle-undirected"), show_type_chips: false, micro_step: 1747,
+};
+pub const PY1748_CYCLE_UNDIRECTED: CodingStep = CodingStep {
+    id: "py-1748-cycle-undirected", title: "Ciclos · No dirigido", objective: "Detectar ciclo en grafo no dirigido ignorando el padre.",
+    prompt_md: "**Ciclo no dirigido**\n\nEn no dirigido, un vecino visitado que no es el padre implica ciclo.\n\n**Micro-reto:**\n1. Definí `ciclo_nd(g)`\n2. Probá un árbol A-B-C y un triángulo\n3. Mostrá `(ciclo_nd(arbol), ciclo_nd(tri))`",
+    starter_code: "# def ciclo_nd(g):\n#     vistos = set()\n#     def dfs(u, padre):\n#         vistos.add(u)\n#         for v in sorted(g[u]):\n#             if v == padre:\n#                 continue\n#             if v in vistos:\n#                 return True\n#             if dfs(v, u):\n#                 return True\n#         return False\n#     for u in sorted(g):\n#         if u not in vistos and dfs(u, None):\n#             return True\n#     return False\n# arbol = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B'}}\n# tri = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}\n# resultado = (ciclo_nd(arbol), ciclo_nd(tri))\n# print(resultado)\n",
+    pytest: "def test_cycle_undirected(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (False, True)\n    assert ns['ciclo_nd']({'X': set()}) is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Ignorá el padre; cualquier otro visitado es ciclo.",
+    solution_example: "def ciclo_nd(g):\n    vistos = set()\n    def dfs(u, padre):\n        vistos.add(u)\n        for v in sorted(g[u]):\n            if v == padre:\n                continue\n            if v in vistos:\n                return True\n            if dfs(v, u):\n                return True\n        return False\n    for u in sorted(g):\n        if u not in vistos and dfs(u, None):\n            return True\n    return False\n\narbol = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B'}}\ntri = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}\nresultado = (ciclo_nd(arbol), ciclo_nd(tri))\nprint(resultado)\n",
+    next: Some("py-1749-cycle-self"), show_type_chips: false, micro_step: 1748,
+};
+pub const PY1749_CYCLE_SELF: CodingStep = CodingStep {
+    id: "py-1749-cycle-self", title: "Ciclos · Self-loop", objective: "Detectar bucles u→u como ciclo trivial.",
+    prompt_md: "**Self-loop**\n\nUna arista `u→u` es un ciclo de longitud 1; se detecta antes del DFS profundo.\n\n**Micro-reto:**\n1. Definí `tiene_self_loop(g)`\n2. Probá g1 sin bucles y g2 con A→A\n3. Mostrá el par",
+    starter_code: "# def tiene_self_loop(g):\n#     return any(u in vs for u, vs in g.items())\n# g1 = {'A': {'B'}, 'B': set()}\n# g2 = {'A': {'A', 'B'}, 'B': set()}\n# resultado = (tiene_self_loop(g1), tiene_self_loop(g2))\n# print(resultado)\n",
+    pytest: "def test_cycle_self(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (False, True)\n    assert ns['tiene_self_loop']({'X': set()}) is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "u in g[u] ⇒ self-loop.",
+    solution_example: "def tiene_self_loop(g):\n    return any(u in vs for u, vs in g.items())\n\ng1 = {'A': {'B'}, 'B': set()}\ng2 = {'A': {'A', 'B'}, 'B': set()}\nresultado = (tiene_self_loop(g1), tiene_self_loop(g2))\nprint(resultado)\n",
+    next: Some("py-1750-cycle-check"), show_type_chips: false, micro_step: 1749,
+};
+pub const PY1750_CYCLE_CHECK: CodingStep = CodingStep {
+    id: "py-1750-cycle-check", title: "Ciclos · Suite de detección", objective: "Combinar self-loop y DFS de colores.",
+    prompt_md: "**Suite de ciclos**\n\nPrimero self-loops; si no hay, DFS con colores. Así se cubren ciclos triviales y profundos.\n\n**Micro-reto:**\n1. Definí `detectar(g)` que combine ambas\n2. Probá DAG, self-loop y ciclo A→B→A\n3. Mostrá `(dag, loop, ciclo)`",
+    starter_code: "# def detectar(g):\n#     if any(u in vs for u, vs in g.items()):\n#         return True\n#     BLANCO, GRIS, NEGRO = 0, 1, 2\n#     color = {u: BLANCO for u in g}\n#     def dfs(u):\n#         color[u] = GRIS\n#         for v in sorted(g[u]):\n#             if color[v] == GRIS:\n#                 return True\n#             if color[v] == BLANCO and dfs(v):\n#                 return True\n#         color[u] = NEGRO\n#         return False\n#     return any(color[u] == BLANCO and dfs(u) for u in sorted(g))\n# dag = {'A': {'B'}, 'B': set()}\n# loop = {'A': {'A'}}\n# ciclo = {'A': {'B'}, 'B': {'A'}}\n# resultado = (detectar(dag), detectar(loop), detectar(ciclo))\n# print(resultado)\n",
+    pytest: "def test_cycle_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (False, True, True)\n    assert ns['detectar']({'A': {'B'}, 'B': {'C'}, 'C': set()}) is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Self-loop o back-edge gris ⇒ hay ciclo.",
+    solution_example: "def detectar(g):\n    if any(u in vs for u, vs in g.items()):\n        return True\n    BLANCO, GRIS, NEGRO = 0, 1, 2\n    color = {u: BLANCO for u in g}\n    def dfs(u):\n        color[u] = GRIS\n        for v in sorted(g[u]):\n            if color[v] == GRIS:\n                return True\n            if color[v] == BLANCO and dfs(v):\n                return True\n        color[u] = NEGRO\n        return False\n    return any(color[u] == BLANCO and dfs(u) for u in sorted(g))\n\ndag = {'A': {'B'}, 'B': set()}\nloop = {'A': {'A'}}\nciclo = {'A': {'B'}, 'B': {'A'}}\nresultado = (detectar(dag), detectar(loop), detectar(ciclo))\nprint(resultado)\n",
+    next: Some("py-1751-perm-basic"), show_type_chips: false, micro_step: 1750,
+};
+pub const PY1751_PERM_BASIC: CodingStep = CodingStep {
+    id: "py-1751-perm-basic", title: "Perms · permutations", objective: "Generar permutaciones con itertools.permutations.",
+    prompt_md: "**permutations**\n\n`itertools.permutations(iterable)` produce todas las ordenaciones. Convertí a lista para inspeccionar.\n\n**Micro-reto:**\n1. Importá `itertools`\n2. Generá permutaciones de `(1, 2, 3)`\n3. Mostrá `list(perms)`",
+    starter_code: "# import itertools\n# resultado = list(itertools.permutations((1, 2, 3)))\n# print(resultado)\n",
+    pytest: "def test_perm_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 2, 3), (1, 3, 2), (2, 1, 3), (2, 3, 1), (3, 1, 2), (3, 2, 1)]\n    assert len(ns['resultado']) == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3! = 6 permutaciones.",
+    solution_example: "import itertools\n\nresultado = list(itertools.permutations((1, 2, 3)))\nprint(resultado)\n",
+    next: Some("py-1752-perm-r"), show_type_chips: false, micro_step: 1751,
+};
+pub const PY1752_PERM_R: CodingStep = CodingStep {
+    id: "py-1752-perm-r", title: "Perms · Longitud r", objective: "Permutaciones de longitud r con permutations(x, r).",
+    prompt_md: "**permutations r**\n\n`permutations(xs, r)` toma r elementos en orden, sin repetición.\n\n**Micro-reto:**\n1. Generá permutaciones de longitud 2 sobre `ABCD`\n2. Contá cuántas hay\n3. Mostrá `(len, primeras 3)`",
+    starter_code: "# import itertools\n# perms = list(itertools.permutations('ABCD', 2))\n# resultado = (len(perms), perms[:3])\n# print(resultado)\n",
+    pytest: "def test_perm_r(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (12, [('A', 'B'), ('A', 'C'), ('A', 'D')])\n    assert ('B', 'A') in ns['perms']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "P(4,2) = 4*3 = 12.",
+    solution_example: "import itertools\n\nperms = list(itertools.permutations('ABCD', 2))\nresultado = (len(perms), perms[:3])\nprint(resultado)\n",
+    next: Some("py-1753-comb-basic"), show_type_chips: false, micro_step: 1752,
+};
+pub const PY1753_COMB_BASIC: CodingStep = CodingStep {
+    id: "py-1753-comb-basic", title: "Combs · combinations", objective: "Generar combinaciones sin orden con combinations.",
+    prompt_md: "**combinations**\n\n`combinations(xs, r)` elige r elementos sin importar el orden (no hay (B,A) si está (A,B)).\n\n**Micro-reto:**\n1. Combinaciones de longitud 2 sobre `(1,2,3,4)`\n2. Mostrá la lista completa",
+    starter_code: "# import itertools\n# resultado = list(itertools.combinations((1, 2, 3, 4), 2))\n# print(resultado)\n",
+    pytest: "def test_comb_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]\n    assert len(ns['resultado']) == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "C(4,2) = 6.",
+    solution_example: "import itertools\n\nresultado = list(itertools.combinations((1, 2, 3, 4), 2))\nprint(resultado)\n",
+    next: Some("py-1754-comb-with-rep"), show_type_chips: false, micro_step: 1753,
+};
+pub const PY1754_COMB_WITH_REP: CodingStep = CodingStep {
+    id: "py-1754-comb-with-rep", title: "Combs · Con repetición", objective: "Usar combinations_with_replacement.",
+    prompt_md: "**Con repetición**\n\n`combinations_with_replacement` permite repetir elementos, p.ej. (1,1).\n\n**Micro-reto:**\n1. Generá combos con rep de `(1,2,3)` tomados de a 2\n2. Mostrá la lista",
+    starter_code: "# import itertools\n# resultado = list(itertools.combinations_with_replacement((1, 2, 3), 2))\n# print(resultado)\n",
+    pytest: "def test_comb_with_rep(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)]\n    assert (1, 1) in ns['resultado']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Incluye pares diagonales (i,i).",
+    solution_example: "import itertools\n\nresultado = list(itertools.combinations_with_replacement((1, 2, 3), 2))\nprint(resultado)\n",
+    next: Some("py-1755-product-grid"), show_type_chips: false, micro_step: 1754,
+};
+pub const PY1755_PRODUCT_GRID: CodingStep = CodingStep {
+    id: "py-1755-product-grid", title: "Product · Producto cartesiano", objective: "Generar grillas con itertools.product.",
+    prompt_md: "**product**\n\n`product(A, B)` es el producto cartesiano; útil para grillas y casos de prueba.\n\n**Micro-reto:**\n1. Producto de `[0,1]` x `[a,b]`\n2. Mostrá la lista",
+    starter_code: "# import itertools\n# resultado = list(itertools.product([0, 1], ['a', 'b']))\n# print(resultado)\n",
+    pytest: "def test_product_grid(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, 'a'), (0, 'b'), (1, 'a'), (1, 'b')]\n    assert len(ns['resultado']) == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "product anida loops en orden lexicográfico.",
+    solution_example: "import itertools\n\nresultado = list(itertools.product([0, 1], ['a', 'b']))\nprint(resultado)\n",
+    next: Some("py-1756-perm-filter"), show_type_chips: false, micro_step: 1755,
+};
+pub const PY1756_PERM_FILTER: CodingStep = CodingStep {
+    id: "py-1756-perm-filter", title: "Perms · Filtrar LEGB local", objective: "Filtrar permutaciones con un predicado local.",
+    prompt_md: "**Filtro local**\n\nUna función local (scope LEGB) filtra permutaciones que cumplen una regla, p.ej. no adyacentes iguales en valor absoluto.\n\n**Micro-reto:**\n1. Definí `validas(xs)` que use `permutations` y un predicado local\n2. Filtrá perms de `(1,-1,2)` donde `abs(a)!=abs(b)` para adyacentes… mejor: primera > última\n3. Mostrá las válidas",
+    starter_code: "# import itertools\n# def validas(xs):\n#     def ok(p):\n#         return p[0] < p[-1]\n#     return [p for p in itertools.permutations(xs) if ok(p)]\n# resultado = validas((1, 2, 3))\n# print(resultado)\n",
+    pytest: "def test_perm_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 2, 3), (1, 3, 2), (2, 1, 3)]\n    assert all(p[0] < p[-1] for p in ns['resultado'])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "ok es local a validas (LEGB).",
+    solution_example: "import itertools\n\ndef validas(xs):\n    def ok(p):\n        return p[0] < p[-1]\n    return [p for p in itertools.permutations(xs) if ok(p)]\n\nresultado = validas((1, 2, 3))\nprint(resultado)\n",
+    next: Some("py-1757-math-factorial"), show_type_chips: false, micro_step: 1756,
+};
+pub const PY1757_MATH_FACTORIAL: CodingStep = CodingStep {
+    id: "py-1757-math-factorial", title: "Conteo · Factorial", objective: "Calcular n! con math.factorial.",
+    prompt_md: "**factorial**\n\n`math.factorial(n)` calcula n! de forma exacta para enteros no negativos.\n\n**Micro-reto:**\n1. Importá `math`\n2. Calculá 5! y 0!\n3. Mostrá `(fact(5), fact(0))`",
+    starter_code: "# import math\n# resultado = (math.factorial(5), math.factorial(0))\n# print(resultado)\n",
+    pytest: "def test_math_factorial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (120, 1)\n    assert __import__('math').factorial(3) == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "0! = 1 por definición.",
+    solution_example: "import math\n\nresultado = (math.factorial(5), math.factorial(0))\nprint(resultado)\n",
+    next: Some("py-1758-math-comb"), show_type_chips: false, micro_step: 1757,
+};
+pub const PY1758_MATH_COMB: CodingStep = CodingStep {
+    id: "py-1758-math-comb", title: "Conteo · math.comb", objective: "Coeficiente binomial con math.comb.",
+    prompt_md: "**math.comb**\n\n`math.comb(n, k)` = C(n,k) = n!/(k!(n-k)!) sin desbordar intermedios de más.\n\n**Micro-reto:**\n1. Calculá C(5,2) y C(10,0)\n2. Mostrá el par",
+    starter_code: "# import math\n# resultado = (math.comb(5, 2), math.comb(10, 0))\n# print(resultado)\n",
+    pytest: "def test_math_comb(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (10, 1)\n    assert __import__('math').comb(6, 3) == 20\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "C(n,0) = 1.",
+    solution_example: "import math\n\nresultado = (math.comb(5, 2), math.comb(10, 0))\nprint(resultado)\n",
+    next: Some("py-1759-math-perm"), show_type_chips: false, micro_step: 1758,
+};
+pub const PY1759_MATH_PERM: CodingStep = CodingStep {
+    id: "py-1759-math-perm", title: "Conteo · math.perm", objective: "Variaciones P(n,k) con math.perm.",
+    prompt_md: "**math.perm**\n\n`math.perm(n, k)` = P(n,k) = n!/(n-k)!, permutaciones de k sobre n.\n\n**Micro-reto:**\n1. Calculá P(5,2) y P(5,5)\n2. Mostrá el par",
+    starter_code: "# import math\n# resultado = (math.perm(5, 2), math.perm(5, 5))\n# print(resultado)\n",
+    pytest: "def test_math_perm(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (20, 120)\n    assert __import__('math').perm(4, 1) == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "P(n,n) = n!.",
+    solution_example: "import math\n\nresultado = (math.perm(5, 2), math.perm(5, 5))\nprint(resultado)\n",
+    next: Some("py-1760-count-paths"), show_type_chips: false, micro_step: 1759,
+};
+pub const PY1760_COUNT_PATHS: CodingStep = CodingStep {
+    id: "py-1760-count-paths", title: "Conteo · Caminos en grilla", objective: "Contar caminos en grilla con comb.",
+    prompt_md: "**Caminos en grilla**\n\nPara ir de (0,0) a (a,b) solo derecha/arriba hacen falta C(a+b, a) caminos.\n\n**Micro-reto:**\n1. Definí `caminos(a, b) = math.comb(a+b, a)`\n2. Calculá caminos a (2,3)\n3. Mostrá el resultado",
+    starter_code: "# import math\n# def caminos(a, b):\n#     return math.comb(a + b, a)\n# resultado = caminos(2, 3)\n# print(resultado)\n",
+    pytest: "def test_count_paths(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert ns['caminos'](1, 1) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "C(5,2) = 10 caminos a (2,3).",
+    solution_example: "import math\n\ndef caminos(a, b):\n    return math.comb(a + b, a)\n\nresultado = caminos(2, 3)\nprint(resultado)\n",
+    next: Some("py-1761-count-teams"), show_type_chips: false, micro_step: 1760,
+};
+pub const PY1761_COUNT_TEAMS: CodingStep = CodingStep {
+    id: "py-1761-count-teams", title: "Conteo · Elegir equipos", objective: "Contar formas de elegir un equipo.",
+    prompt_md: "**Equipos**\n\nElegir k personas de n es C(n,k). Dominio: organización de equipos.\n\n**Micro-reto:**\n1. Definí `equipos(n, k) = math.comb(n, k)`\n2. Formas de elegir 3 de 8\n3. Mostrá el número",
+    starter_code: "# import math\n# def equipos(n, k):\n#     return math.comb(n, k)\n# resultado = equipos(8, 3)\n# print(resultado)\n",
+    pytest: "def test_count_teams(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 56\n    assert ns['equipos'](5, 5) == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "C(8,3) = 56.",
+    solution_example: "import math\n\ndef equipos(n, k):\n    return math.comb(n, k)\n\nresultado = equipos(8, 3)\nprint(resultado)\n",
+    next: Some("py-1762-count-identity"), show_type_chips: false, micro_step: 1761,
+};
+pub const PY1762_COUNT_IDENTITY: CodingStep = CodingStep {
+    id: "py-1762-count-identity", title: "Conteo · Identidad binomial", objective: "Verificar C(n,k) = C(n,n-k).",
+    prompt_md: "**Identidad**\n\n`math.comb(n, k) == math.comb(n, n-k)` es una identidad básica de conteo.\n\n**Micro-reto:**\n1. Definí `check(n, k)` que compare ambos\n2. Verificá (10,3) y (7,0)\n3. Mostrá `(check(10,3), check(7,0), comb(10,3))`",
+    starter_code: "# import math\n# def check(n, k):\n#     return math.comb(n, k) == math.comb(n, n - k)\n# resultado = (check(10, 3), check(7, 0), math.comb(10, 3))\n# print(resultado)\n",
+    pytest: "def test_count_identity(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, True, 120)\n    assert ns['check'](6, 2) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Elegir k es elegir cuáles n-k quedan afuera.",
+    solution_example: "import math\n\ndef check(n, k):\n    return math.comb(n, k) == math.comb(n, n - k)\n\nresultado = (check(10, 3), check(7, 0), math.comb(10, 3))\nprint(resultado)\n",
+    next: Some("py-1763-lis-length"), show_type_chips: false, micro_step: 1762,
+};
+pub const PY1763_LIS_LENGTH: CodingStep = CodingStep {
+    id: "py-1763-lis-length", title: "DP · Longitud LIS", objective: "Calcular longitud de la subsecuencia creciente más larga.",
+    prompt_md: "**LIS longitud**\n\n`dp[i] = 1 + max(dp[j] for j<i if a[j]<a[i])` o 1 si no hay j.\n\n**Micro-reto:**\n1. Definí `lis_len(a)` con DP O(n²)\n2. Calculá sobre `[3,1,2,4]`\n3. Mostrá la longitud",
+    starter_code: "# def lis_len(a):\n#     n = len(a)\n#     dp = [1] * n\n#     for i in range(n):\n#         for j in range(i):\n#             if a[j] < a[i]:\n#                 dp[i] = max(dp[i], dp[j] + 1)\n#     return max(dp) if dp else 0\n# resultado = lis_len([3, 1, 2, 4])\n# print(resultado)\n",
+    pytest: "def test_lis_length(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['lis_len']([1, 2, 3]) == 3\n    assert ns['lis_len']([3, 2, 1]) == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1,2,4 es LIS de longitud 3.",
+    solution_example: "def lis_len(a):\n    n = len(a)\n    dp = [1] * n\n    for i in range(n):\n        for j in range(i):\n            if a[j] < a[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if dp else 0\n\nresultado = lis_len([3, 1, 2, 4])\nprint(resultado)\n",
+    next: Some("py-1764-lis-seq"), show_type_chips: false, micro_step: 1763,
+};
+pub const PY1764_LIS_SEQ: CodingStep = CodingStep {
+    id: "py-1764-lis-seq", title: "DP · Reconstruir LIS", objective: "Reconstruir una LIS con predecesores.",
+    prompt_md: "**LIS secuencia**\n\nGuardando `prev[i]`, se reconstruye una LIS al final desde el índice de máximo dp.\n\n**Micro-reto:**\n1. Definí `lis_seq(a)` que devuelva una LIS\n2. Sobre `[3,1,2,4]`\n3. Mostrá la secuencia",
+    starter_code: "# def lis_seq(a):\n#     n = len(a)\n#     dp = [1] * n\n#     prev = [-1] * n\n#     for i in range(n):\n#         for j in range(i):\n#             if a[j] < a[i] and dp[j] + 1 > dp[i]:\n#                 dp[i] = dp[j] + 1\n#                 prev[i] = j\n#     k = max(range(n), key=lambda i: dp[i])\n#     seq = []\n#     while k != -1:\n#         seq.append(a[k])\n#         k = prev[k]\n#     seq.reverse()\n#     return seq\n# resultado = lis_seq([3, 1, 2, 4])\n# print(resultado)\n",
+    pytest: "def test_lis_seq(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 4]\n    assert ns['lis_seq']([5, 4, 3]) == [5] or ns['lis_seq']([5, 4, 3]) == [4] or ns['lis_seq']([5, 4, 3]) == [3]\n    assert len(ns['resultado']) == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "prev permite reconstruir hacia atrás.",
+    solution_example: "def lis_seq(a):\n    n = len(a)\n    dp = [1] * n\n    prev = [-1] * n\n    for i in range(n):\n        for j in range(i):\n            if a[j] < a[i] and dp[j] + 1 > dp[i]:\n                dp[i] = dp[j] + 1\n                prev[i] = j\n    k = max(range(n), key=lambda i: dp[i])\n    seq = []\n    while k != -1:\n        seq.append(a[k])\n        k = prev[k]\n    seq.reverse()\n    return seq\n\nresultado = lis_seq([3, 1, 2, 4])\nprint(resultado)\n",
+    next: Some("py-1765-lcs-len"), show_type_chips: false, micro_step: 1764,
+};
+pub const PY1765_LCS_LEN: CodingStep = CodingStep {
+    id: "py-1765-lcs-len", title: "DP · Longitud LCS", objective: "Calcular LCS entre dos strings con tabla DP.",
+    prompt_md: "**LCS longitud**\n\n`dp[i][j] = dp[i-1][j-1]+1` si igual, si no `max(dp[i-1][j], dp[i][j-1])`.\n\n**Micro-reto:**\n1. Definí `lcs_len(a, b)`\n2. Compará `ABCBDAB` y `BDCAB`\n3. Mostrá la longitud",
+    starter_code: "# def lcs_len(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0] * (n + 1) for _ in range(m + 1)]\n#     for i in range(1, m + 1):\n#         for j in range(1, n + 1):\n#             if a[i - 1] == b[j - 1]:\n#                 dp[i][j] = dp[i - 1][j - 1] + 1\n#             else:\n#                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n#     return dp[m][n]\n# resultado = lcs_len('ABCBDAB', 'BDCAB')\n# print(resultado)\n",
+    pytest: "def test_lcs_len(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert ns['lcs_len']('ABC', 'AC') == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "BDAB o BCAB son LCS de largo 4.",
+    solution_example: "def lcs_len(a, b):\n    m, n = len(a), len(b)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1] + 1\n            else:\n                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n    return dp[m][n]\n\nresultado = lcs_len('ABCBDAB', 'BDCAB')\nprint(resultado)\n",
+    next: Some("py-1766-lcs-str"), show_type_chips: false, micro_step: 1765,
+};
+pub const PY1766_LCS_STR: CodingStep = CodingStep {
+    id: "py-1766-lcs-str", title: "DP · Reconstruir LCS", objective: "Reconstruir una LCS desde la tabla DP.",
+    prompt_md: "**LCS string**\n\nDesde `dp[m][n]` se retrocede: si iguales, se agrega el char; si no, se mueve al max vecino.\n\n**Micro-reto:**\n1. Definí `lcs_str(a, b)`\n2. Sobre `AXYT` y `AYZX`\n3. Mostrá la LCS",
+    starter_code: "# def lcs_str(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0] * (n + 1) for _ in range(m + 1)]\n#     for i in range(1, m + 1):\n#         for j in range(1, n + 1):\n#             if a[i - 1] == b[j - 1]:\n#                 dp[i][j] = dp[i - 1][j - 1] + 1\n#             else:\n#                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n#     i, j = m, n\n#     out = []\n#     while i > 0 and j > 0:\n#         if a[i - 1] == b[j - 1]:\n#             out.append(a[i - 1])\n#             i -= 1\n#             j -= 1\n#         elif dp[i - 1][j] >= dp[i][j - 1]:\n#             i -= 1\n#         else:\n#             j -= 1\n#     out.reverse()\n#     return ''.join(out)\n# resultado = lcs_str('AXYT', 'AYZX')\n# print(resultado)\n",
+    pytest: "def test_lcs_str(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'AX'\n    assert len(ns['resultado']) == 2\n    assert ns['lcs_str']('ABC', 'AC') == 'AC'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Retrocedé por la tabla eligiendo el max.",
+    solution_example: "def lcs_str(a, b):\n    m, n = len(a), len(b)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1] + 1\n            else:\n                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n    i, j = m, n\n    out = []\n    while i > 0 and j > 0:\n        if a[i - 1] == b[j - 1]:\n            out.append(a[i - 1])\n            i -= 1\n            j -= 1\n        elif dp[i - 1][j] >= dp[i][j - 1]:\n            i -= 1\n        else:\n            j -= 1\n    out.reverse()\n    return ''.join(out)\n\nresultado = lcs_str('AXYT', 'AYZX')\nprint(resultado)\n",
+    next: Some("py-1767-dp-edit"), show_type_chips: false, micro_step: 1766,
+};
+pub const PY1767_DP_EDIT: CodingStep = CodingStep {
+    id: "py-1767-dp-edit", title: "DP · Distancia de edición", objective: "Calcular Levenshtein con DP de secuencias.",
+    prompt_md: "**Edit distance**\n\n`dp[i][j]` = min insert/delete/replace para transformar a[:i] en b[:j].\n\n**Micro-reto:**\n1. Definí `edit(a, b)`\n2. Distancia entre `kitten` y `sitting`\n3. Mostrá la distancia",
+    starter_code: "# def edit(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0] * (n + 1) for _ in range(m + 1)]\n#     for i in range(m + 1):\n#         dp[i][0] = i\n#     for j in range(n + 1):\n#         dp[0][j] = j\n#     for i in range(1, m + 1):\n#         for j in range(1, n + 1):\n#             cost = 0 if a[i - 1] == b[j - 1] else 1\n#             dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)\n#     return dp[m][n]\n# resultado = edit('kitten', 'sitting')\n# print(resultado)\n",
+    pytest: "def test_dp_edit(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['edit']('a', 'a') == 0\n    assert ns['edit']('a', 'b') == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "kitten→sitting requiere 3 ediciones.",
+    solution_example: "def edit(a, b):\n    m, n = len(a), len(b)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1):\n        dp[i][0] = i\n    for j in range(n + 1):\n        dp[0][j] = j\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            cost = 0 if a[i - 1] == b[j - 1] else 1\n            dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)\n    return dp[m][n]\n\nresultado = edit('kitten', 'sitting')\nprint(resultado)\n",
+    next: Some("py-1768-dp-check"), show_type_chips: false, micro_step: 1767,
+};
+pub const PY1768_DP_CHECK: CodingStep = CodingStep {
+    id: "py-1768-dp-check", title: "DP · Suite LIS/LCS", objective: "Componer checks de LIS y LCS.",
+    prompt_md: "**Suite DP**\n\nCombinar LIS y LCS en un mismo chequeo cierra el bloque de DP sobre secuencias.\n\n**Micro-reto:**\n1. Reutilizá `lis_len` y `lcs_len`\n2. Evaluá lis([1,3,2]) y lcs(ABC,AC)\n3. Mostrá `(lis, lcs)`",
+    starter_code: "# def lis_len(a):\n#     dp = [1] * len(a)\n#     for i in range(len(a)):\n#         for j in range(i):\n#             if a[j] < a[i]:\n#                 dp[i] = max(dp[i], dp[j] + 1)\n#     return max(dp)\n# def lcs_len(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0] * (n + 1) for _ in range(m + 1)]\n#     for i in range(1, m + 1):\n#         for j in range(1, n + 1):\n#             if a[i - 1] == b[j - 1]:\n#                 dp[i][j] = dp[i - 1][j - 1] + 1\n#             else:\n#                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n#     return dp[m][n]\n# resultado = (lis_len([1, 3, 2]), lcs_len('ABC', 'AC'))\n# print(resultado)\n",
+    pytest: "def test_dp_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 2)\n    assert ns['lis_len']([1, 2, 3]) == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "LIS de [1,3,2]=2; LCS ABC/AC=2.",
+    solution_example: "def lis_len(a):\n    dp = [1] * len(a)\n    for i in range(len(a)):\n        for j in range(i):\n            if a[j] < a[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp)\n\ndef lcs_len(a, b):\n    m, n = len(a), len(b)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if a[i - 1] == b[j - 1]:\n                dp[i][j] = dp[i - 1][j - 1] + 1\n            else:\n                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n    return dp[m][n]\n\nresultado = (lis_len([1, 3, 2]), lcs_len('ABC', 'AC'))\nprint(resultado)\n",
+    next: Some("py-1769-bt-subsets"), show_type_chips: false, micro_step: 1768,
+};
+pub const PY1769_BT_SUBSETS: CodingStep = CodingStep {
+    id: "py-1769-bt-subsets", title: "BT · Subsets", objective: "Generar todos los subsets con backtracking.",
+    prompt_md: "**Subsets**\n\nBacktracking decide incluir o no cada elemento; al final se guarda una copia del camino.\n\n**Micro-reto:**\n1. Definí `subsets(nums)` determinista\n2. Generá subsets de `[1,2]`\n3. Mostrá la lista ordenada",
+    starter_code: "# def subsets(nums):\n#     out = []\n#     camino = []\n#     def bt(i):\n#         if i == len(nums):\n#             out.append(list(camino))\n#             return\n#         bt(i + 1)\n#         camino.append(nums[i])\n#         bt(i + 1)\n#         camino.pop()\n#     bt(0)\n#     out.sort()\n#     return out\n# resultado = subsets([1, 2])\n# print(resultado)\n",
+    pytest: "def test_bt_subsets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[], [1], [1, 2], [2]]\n    assert len(ns['subsets']([1])) == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Incluir/excluir en orden produce subsets deterministas.",
+    solution_example: "def subsets(nums):\n    out = []\n    camino = []\n    def bt(i):\n        if i == len(nums):\n            out.append(list(camino))\n            return\n        bt(i + 1)\n        camino.append(nums[i])\n        bt(i + 1)\n        camino.pop()\n    bt(0)\n    out.sort()\n    return out\n\nresultado = subsets([1, 2])\nprint(resultado)\n",
+    next: Some("py-1770-bt-permutations"), show_type_chips: false, micro_step: 1769,
+};
+pub const PY1770_BT_PERMUTATIONS: CodingStep = CodingStep {
+    id: "py-1770-bt-permutations", title: "BT · Permutaciones", objective: "Generar permutaciones con backtracking.",
+    prompt_md: "**Perms BT**\n\nSe elige un elemento no usado, se avanza, y se deshace (swap o used[]).\n\n**Micro-reto:**\n1. Definí `perms(nums)` con used\n2. Permutá `[1,2]`\n3. Mostrá la lista",
+    starter_code: "# def perms(nums):\n#     out = []\n#     camino = []\n#     used = [False] * len(nums)\n#     def bt():\n#         if len(camino) == len(nums):\n#             out.append(list(camino))\n#             return\n#         for i, x in enumerate(nums):\n#             if used[i]:\n#                 continue\n#             used[i] = True\n#             camino.append(x)\n#             bt()\n#             camino.pop()\n#             used[i] = False\n#     bt()\n#     return out\n# resultado = perms([1, 2])\n# print(resultado)\n",
+    pytest: "def test_bt_permutations(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 2], [2, 1]]\n    assert len(ns['perms']([1, 2, 3])) == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Marcá used[i] al entrar y liberá al salir.",
+    solution_example: "def perms(nums):\n    out = []\n    camino = []\n    used = [False] * len(nums)\n    def bt():\n        if len(camino) == len(nums):\n            out.append(list(camino))\n            return\n        for i, x in enumerate(nums):\n            if used[i]:\n                continue\n            used[i] = True\n            camino.append(x)\n            bt()\n            camino.pop()\n            used[i] = False\n    bt()\n    return out\n\nresultado = perms([1, 2])\nprint(resultado)\n",
+    next: Some("py-1771-bt-nqueens"), show_type_chips: false, micro_step: 1770,
+};
+pub const PY1771_BT_NQUEENS: CodingStep = CodingStep {
+    id: "py-1771-bt-nqueens", title: "BT · N-reinas conteo", objective: "Contar soluciones al problema de N-reinas.",
+    prompt_md: "**N-reinas**\n\nColocar N reinas sin atacarse: misma fila/columna/diagonal prohibidas.\n\n**Micro-reto:**\n1. Definí `nreinas(n)` que cuente soluciones\n2. Calculá para n=4\n3. Mostrá el conteo",
+    starter_code: "# def nreinas(n):\n#     cols = set()\n#     diag1 = set()\n#     diag2 = set()\n#     cont = [0]\n#     def bt(fila):\n#         if fila == n:\n#             cont[0] += 1\n#             return\n#         for c in range(n):\n#             if c in cols or (fila - c) in diag1 or (fila + c) in diag2:\n#                 continue\n#             cols.add(c)\n#             diag1.add(fila - c)\n#             diag2.add(fila + c)\n#             bt(fila + 1)\n#             cols.remove(c)\n#             diag1.remove(fila - c)\n#             diag2.remove(fila + c)\n#     bt(0)\n#     return cont[0]\n# resultado = nreinas(4)\n# print(resultado)\n",
+    pytest: "def test_bt_nqueens(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert ns['nreinas'](1) == 1\n    assert ns['nreinas'](2) == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "n=4 tiene exactamente 2 soluciones.",
+    solution_example: "def nreinas(n):\n    cols = set()\n    diag1 = set()\n    diag2 = set()\n    cont = [0]\n    def bt(fila):\n        if fila == n:\n            cont[0] += 1\n            return\n        for c in range(n):\n            if c in cols or (fila - c) in diag1 or (fila + c) in diag2:\n                continue\n            cols.add(c)\n            diag1.add(fila - c)\n            diag2.add(fila + c)\n            bt(fila + 1)\n            cols.remove(c)\n            diag1.remove(fila - c)\n            diag2.remove(fila + c)\n    bt(0)\n    return cont[0]\n\nresultado = nreinas(4)\nprint(resultado)\n",
+    next: Some("py-1772-bt-nqueens-board"), show_type_chips: false, micro_step: 1771,
+};
+pub const PY1772_BT_NQUEENS_BOARD: CodingStep = CodingStep {
+    id: "py-1772-bt-nqueens-board", title: "BT · N-reinas tablero", objective: "Devolver un tablero solución de N-reinas.",
+    prompt_md: "**Tablero N-reinas**\n\nAdemás de contar, se puede devolver una colocación como lista de columnas por fila.\n\n**Micro-reto:**\n1. Definí `una_solucion(n)` que devuelva cols[fila]=columna\n2. Para n=4 devolvés una solución válida\n3. Mostrá el vector",
+    starter_code: "# def una_solucion(n):\n#     cols = [-1] * n\n#     used_c = set()\n#     d1 = set()\n#     d2 = set()\n#     hallada = []\n#     def bt(fila):\n#         if hallada:\n#             return\n#         if fila == n:\n#             hallada.append(list(cols))\n#             return\n#         for c in range(n):\n#             if c in used_c or (fila - c) in d1 or (fila + c) in d2:\n#                 continue\n#             cols[fila] = c\n#             used_c.add(c)\n#             d1.add(fila - c)\n#             d2.add(fila + c)\n#             bt(fila + 1)\n#             used_c.remove(c)\n#             d1.remove(fila - c)\n#             d2.remove(fila + c)\n#             cols[fila] = -1\n#     bt(0)\n#     return hallada[0] if hallada else None\n# resultado = una_solucion(4)\n# print(resultado)\n",
+    pytest: "def test_bt_nqueens_board(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] in ([1, 3, 0, 2], [2, 0, 3, 1])\n    assert len(ns['resultado']) == 4\n    assert len(set(ns['resultado'])) == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Las dos soluciones canónicas de n=4 son conocidas.",
+    solution_example: "def una_solucion(n):\n    cols = [-1] * n\n    used_c = set()\n    d1 = set()\n    d2 = set()\n    hallada = []\n    def bt(fila):\n        if hallada:\n            return\n        if fila == n:\n            hallada.append(list(cols))\n            return\n        for c in range(n):\n            if c in used_c or (fila - c) in d1 or (fila + c) in d2:\n                continue\n            cols[fila] = c\n            used_c.add(c)\n            d1.add(fila - c)\n            d2.add(fila + c)\n            bt(fila + 1)\n            used_c.remove(c)\n            d1.remove(fila - c)\n            d2.remove(fila + c)\n            cols[fila] = -1\n    bt(0)\n    return hallada[0] if hallada else None\n\nresultado = una_solucion(4)\nprint(resultado)\n",
+    next: Some("py-1773-bt-combination-sum"), show_type_chips: false, micro_step: 1772,
+};
+pub const PY1773_BT_COMBINATION_SUM: CodingStep = CodingStep {
+    id: "py-1773-bt-combination-sum", title: "BT · Combination sum", objective: "Encontrar combinaciones que suman un target.",
+    prompt_md: "**Combination sum**\n\nBacktracking agrega candidatos >= último para evitar duplicados y respeta el target.\n\n**Micro-reto:**\n1. Definí `combos(cands, target)` con cands ordenados\n2. Cands `[2,3,5]`, target 8\n3. Mostrá las combinaciones",
+    starter_code: "# def combos(cands, target):\n#     cands = sorted(cands)\n#     out = []\n#     camino = []\n#     def bt(start, resto):\n#         if resto == 0:\n#             out.append(list(camino))\n#             return\n#         for i in range(start, len(cands)):\n#             x = cands[i]\n#             if x > resto:\n#                 break\n#             camino.append(x)\n#             bt(i, resto - x)\n#             camino.pop()\n#     bt(0, target)\n#     return out\n# resultado = combos([2, 3, 5], 8)\n# print(resultado)\n",
+    pytest: "def test_bt_combination_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[2, 2, 2, 2], [2, 3, 3], [3, 5]]\n    assert ns['combos']([2], 4) == [[2, 2]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "bt(i, ...) permite reutilizar el mismo candidato.",
+    solution_example: "def combos(cands, target):\n    cands = sorted(cands)\n    out = []\n    camino = []\n    def bt(start, resto):\n        if resto == 0:\n            out.append(list(camino))\n            return\n        for i in range(start, len(cands)):\n            x = cands[i]\n            if x > resto:\n                break\n            camino.append(x)\n            bt(i, resto - x)\n            camino.pop()\n    bt(0, target)\n    return out\n\nresultado = combos([2, 3, 5], 8)\nprint(resultado)\n",
+    next: Some("py-1774-bt-check"), show_type_chips: false, micro_step: 1773,
+};
+pub const PY1774_BT_CHECK: CodingStep = CodingStep {
+    id: "py-1774-bt-check", title: "BT · Suite backtracking", objective: "Validar subsets y n-reinas juntos.",
+    prompt_md: "**Suite BT**\n\nUn chequeo final combina subsets y conteo de N-reinas.\n\n**Micro-reto:**\n1. Calculá `len(subsets([1]))` y `nreinas(4)`\n2. Mostrá el par",
+    starter_code: "# def subsets(nums):\n#     out = []\n#     camino = []\n#     def bt(i):\n#         if i == len(nums):\n#             out.append(list(camino))\n#             return\n#         bt(i + 1)\n#         camino.append(nums[i])\n#         bt(i + 1)\n#         camino.pop()\n#     bt(0)\n#     return out\n# def nreinas(n):\n#     cols, d1, d2 = set(), set(), set()\n#     cont = [0]\n#     def bt(fila):\n#         if fila == n:\n#             cont[0] += 1\n#             return\n#         for c in range(n):\n#             if c in cols or (fila - c) in d1 or (fila + c) in d2:\n#                 continue\n#             cols.add(c); d1.add(fila - c); d2.add(fila + c)\n#             bt(fila + 1)\n#             cols.remove(c); d1.remove(fila - c); d2.remove(fila + c)\n#     bt(0)\n#     return cont[0]\n# resultado = (len(subsets([1])), nreinas(4))\n# print(resultado)\n",
+    pytest: "def test_bt_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 2)\n    assert ns['nreinas'](1) == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2 subsets de [1]; 2 soluciones de 4-reinas.",
+    solution_example: "def subsets(nums):\n    out = []\n    camino = []\n    def bt(i):\n        if i == len(nums):\n            out.append(list(camino))\n            return\n        bt(i + 1)\n        camino.append(nums[i])\n        bt(i + 1)\n        camino.pop()\n    bt(0)\n    return out\n\ndef nreinas(n):\n    cols, d1, d2 = set(), set(), set()\n    cont = [0]\n    def bt(fila):\n        if fila == n:\n            cont[0] += 1\n            return\n        for c in range(n):\n            if c in cols or (fila - c) in d1 or (fila + c) in d2:\n                continue\n            cols.add(c); d1.add(fila - c); d2.add(fila + c)\n            bt(fila + 1)\n            cols.remove(c); d1.remove(fila - c); d2.remove(fila + c)\n    bt(0)\n    return cont[0]\n\nresultado = (len(subsets([1])), nreinas(4))\nprint(resultado)\n",
+    next: Some("py-1775-greedy-degree"), show_type_chips: false, micro_step: 1774,
+};
+pub const PY1775_GREEDY_DEGREE: CodingStep = CodingStep {
+    id: "py-1775-greedy-degree", title: "Greedy · Orden por grado", objective: "Ordenar nodos por grado descendente.",
+    prompt_md: "**Orden por grado**\n\nUna heurística greedy colorea primero los nodos de mayor grado.\n\n**Micro-reto:**\n1. Definí `orden_grado(g)` → nodos sorted por (-grado, nombre)\n2. Usá estrella A-B,A-C,A-D\n3. Mostrá el orden",
+    starter_code: "# g = {'A': {'B', 'C', 'D'}, 'B': {'A'}, 'C': {'A'}, 'D': {'A'}}\n# def orden_grado(g):\n#     return sorted(g, key=lambda u: (-len(g[u]), u))\n# resultado = orden_grado(g)\n# print(resultado)\n",
+    pytest: "def test_greedy_degree(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B', 'C', 'D']\n    assert ns['orden_grado'](ns['g'])[0] == 'A'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "A tiene grado 3 y sale primero.",
+    solution_example: "g = {'A': {'B', 'C', 'D'}, 'B': {'A'}, 'C': {'A'}, 'D': {'A'}}\n\ndef orden_grado(g):\n    return sorted(g, key=lambda u: (-len(g[u]), u))\n\nresultado = orden_grado(g)\nprint(resultado)\n",
+    next: Some("py-1776-greedy-color"), show_type_chips: false, micro_step: 1775,
+};
+pub const PY1776_GREEDY_COLOR: CodingStep = CodingStep {
+    id: "py-1776-greedy-color", title: "Greedy · Coloreo básico", objective: "Asignar el menor color disponible a cada nodo.",
+    prompt_md: "**Coloreo greedy**\n\nPara cada nodo en orden, elegí el menor color no usado por vecinos ya coloreados.\n\n**Micro-reto:**\n1. Definí `coloreo(g, orden)`\n2. Coloreá el triángulo A-B-C en orden A,B,C\n3. Mostrá el dict de colores",
+    starter_code: "# def coloreo(g, orden):\n#     color = {}\n#     for u in orden:\n#         usados = {color[v] for v in g[u] if v in color}\n#         c = 0\n#         while c in usados:\n#             c += 1\n#         color[u] = c\n#     return color\n# g = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}\n# resultado = coloreo(g, ['A', 'B', 'C'])\n# print(resultado)\n",
+    pytest: "def test_greedy_color(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'A': 0, 'B': 1, 'C': 2}\n    assert len(set(ns['resultado'].values())) == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Un triángulo necesita 3 colores.",
+    solution_example: "def coloreo(g, orden):\n    color = {}\n    for u in orden:\n        usados = {color[v] for v in g[u] if v in color}\n        c = 0\n        while c in usados:\n            c += 1\n        color[u] = c\n    return color\n\ng = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}\nresultado = coloreo(g, ['A', 'B', 'C'])\nprint(resultado)\n",
+    next: Some("py-1777-greedy-chromatic"), show_type_chips: false, micro_step: 1776,
+};
+pub const PY1777_GREEDY_CHROMATIC: CodingStep = CodingStep {
+    id: "py-1777-greedy-chromatic", title: "Greedy · Número cromático aprox", objective: "Contar colores usados por el greedy.",
+    prompt_md: "**χ aproximado**\n\nEl greedy no garantiza el óptimo, pero `1 + max(colores)` acota el número cromático.\n\n**Micro-reto:**\n1. Coloreá un camino A-B-C\n2. Definí `num_colores = max(color.values())+1`\n3. Mostrá `(color, num)`",
+    starter_code: "# def coloreo(g, orden):\n#     color = {}\n#     for u in orden:\n#         usados = {color[v] for v in g[u] if v in color}\n#         c = 0\n#         while c in usados:\n#             c += 1\n#         color[u] = c\n#     return color\n# g = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B'}}\n# color = coloreo(g, ['A', 'B', 'C'])\n# resultado = (color, max(color.values()) + 1)\n# print(resultado)\n",
+    pytest: "def test_greedy_chromatic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ({'A': 0, 'B': 1, 'C': 0}, 2)\n    assert ns['resultado'][1] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Un camino es bipartito: 2 colores bastan.",
+    solution_example: "def coloreo(g, orden):\n    color = {}\n    for u in orden:\n        usados = {color[v] for v in g[u] if v in color}\n        c = 0\n        while c in usados:\n            c += 1\n        color[u] = c\n    return color\n\ng = {'A': {'B'}, 'B': {'A', 'C'}, 'C': {'B'}}\ncolor = coloreo(g, ['A', 'B', 'C'])\nresultado = (color, max(color.values()) + 1)\nprint(resultado)\n",
+    next: Some("py-1778-greedy-valid"), show_type_chips: false, micro_step: 1777,
+};
+pub const PY1778_GREEDY_VALID: CodingStep = CodingStep {
+    id: "py-1778-greedy-valid", title: "Greedy · Validar coloreo", objective: "Verificar que vecinos no compartan color.",
+    prompt_md: "**Validar**\n\nUn coloreo es válido si para toda arista u-v, `color[u] != color[v]`.\n\n**Micro-reto:**\n1. Definí `es_valido(g, color)`\n2. Probá un coloreo bueno y uno malo en A-B\n3. Mostrá el par",
+    starter_code: "# def es_valido(g, color):\n#     for u, vs in g.items():\n#         for v in vs:\n#             if color[u] == color[v]:\n#                 return False\n#     return True\n# g = {'A': {'B'}, 'B': {'A'}}\n# bueno = {'A': 0, 'B': 1}\n# malo = {'A': 0, 'B': 0}\n# resultado = (es_valido(g, bueno), es_valido(g, malo))\n# print(resultado)\n",
+    pytest: "def test_greedy_valid(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['es_valido'](ns['g'], ns['bueno']) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Misma color en arista ⇒ inválido.",
+    solution_example: "def es_valido(g, color):\n    for u, vs in g.items():\n        for v in vs:\n            if color[u] == color[v]:\n                return False\n    return True\n\ng = {'A': {'B'}, 'B': {'A'}}\nbueno = {'A': 0, 'B': 1}\nmalo = {'A': 0, 'B': 0}\nresultado = (es_valido(g, bueno), es_valido(g, malo))\nprint(resultado)\n",
+    next: Some("py-1779-greedy-welsh"), show_type_chips: false, micro_step: 1778,
+};
+pub const PY1779_GREEDY_WELSH: CodingStep = CodingStep {
+    id: "py-1779-greedy-welsh", title: "Greedy · Welsh-Powell", objective: "Coloreo Welsh-Powell: orden por grado + greedy.",
+    prompt_md: "**Welsh-Powell**\n\nOrdená por grado descendente y aplicá coloreo greedy; heurística clásica de grafos.\n\n**Micro-reto:**\n1. Combiná `orden_grado` + `coloreo`\n2. Aplicá al grafo A(centro)-B,C,D\n3. Mostrá el coloreo",
+    starter_code: "# def orden_grado(g):\n#     return sorted(g, key=lambda u: (-len(g[u]), u))\n# def coloreo(g, orden):\n#     color = {}\n#     for u in orden:\n#         usados = {color[v] for v in g[u] if v in color}\n#         c = 0\n#         while c in usados:\n#             c += 1\n#         color[u] = c\n#     return color\n# g = {'A': {'B', 'C', 'D'}, 'B': {'A'}, 'C': {'A'}, 'D': {'A'}}\n# resultado = coloreo(g, orden_grado(g))\n# print(resultado)\n",
+    pytest: "def test_greedy_welsh(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'A': 0, 'B': 1, 'C': 1, 'D': 1}\n    assert max(ns['resultado'].values()) + 1 == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "La estrella es bipartita: 2 colores.",
+    solution_example: "def orden_grado(g):\n    return sorted(g, key=lambda u: (-len(g[u]), u))\n\ndef coloreo(g, orden):\n    color = {}\n    for u in orden:\n        usados = {color[v] for v in g[u] if v in color}\n        c = 0\n        while c in usados:\n            c += 1\n        color[u] = c\n    return color\n\ng = {'A': {'B', 'C', 'D'}, 'B': {'A'}, 'C': {'A'}, 'D': {'A'}}\nresultado = coloreo(g, orden_grado(g))\nprint(resultado)\n",
+    next: Some("py-1780-greedy-check"), show_type_chips: false, micro_step: 1779,
+};
+pub const PY1780_GREEDY_CHECK: CodingStep = CodingStep {
+    id: "py-1780-greedy-check", title: "Greedy · Suite final", objective: "Integrar coloreo greedy y validación.",
+    prompt_md: "**Suite greedy**\n\nCierra la ola: Welsh-Powell + validación sobre un grafo de aplicación (mapa de regiones).\n\n**Micro-reto:**\n1. Coloreá regiones A-B-C en triángulo con Welsh-Powell\n2. Validá el coloreo\n3. Mostrá `(colores_usados, valido)`",
+    starter_code: "# def orden_grado(g):\n#     return sorted(g, key=lambda u: (-len(g[u]), u))\n# def coloreo(g, orden):\n#     color = {}\n#     for u in orden:\n#         usados = {color[v] for v in g[u] if v in color}\n#         c = 0\n#         while c in usados:\n#             c += 1\n#         color[u] = c\n#     return color\n# def es_valido(g, color):\n#     return all(color[u] != color[v] for u, vs in g.items() for v in vs)\n# g = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}\n# color = coloreo(g, orden_grado(g))\n# resultado = (max(color.values()) + 1, es_valido(g, color))\n# print(resultado)\n",
+    pytest: "def test_greedy_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, True)\n    assert ns['es_valido'](ns['g'], ns['color']) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Triángulo ⇒ 3 colores y válido.",
+    solution_example: "def orden_grado(g):\n    return sorted(g, key=lambda u: (-len(g[u]), u))\n\ndef coloreo(g, orden):\n    color = {}\n    for u in orden:\n        usados = {color[v] for v in g[u] if v in color}\n        c = 0\n        while c in usados:\n            c += 1\n        color[u] = c\n    return color\n\ndef es_valido(g, color):\n    return all(color[u] != color[v] for u, vs in g.items() for v in vs)\n\ng = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}\ncolor = coloreo(g, orden_grado(g))\nresultado = (max(color.values()) + 1, es_valido(g, color))\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 1780,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -51355,6 +51896,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1718_TEST_PROPERTY,
     &PY1719_TEST_ROUNDTRIP,
     &PY1720_TEST_SUITE,
+    &PY1721_GRAPH_ADJ_DICT,
+    &PY1722_GRAPH_ADD_EDGE,
+    &PY1723_GRAPH_DEGREE,
+    &PY1724_GRAPH_NEIGHBORS,
+    &PY1725_GRAPH_EDGE_COUNT,
+    &PY1726_GRAPH_VALIDATE,
+    &PY1727_BFS_QUEUE,
+    &PY1728_BFS_LEVELS,
+    &PY1729_BFS_PATH,
+    &PY1730_BFS_COMPONENTS,
+    &PY1731_BFS_BIPARTITE,
+    &PY1732_BFS_CHECK,
+    &PY1733_DFS_RECUR,
+    &PY1734_DFS_STACK,
+    &PY1735_TOPO_KAHN,
+    &PY1736_TOPO_DFS,
+    &PY1737_TOPO_DEPS,
+    &PY1738_TOPO_CHECK,
+    &PY1739_UF_PARENT,
+    &PY1740_UF_FIND,
+    &PY1741_UF_UNION,
+    &PY1742_UF_CONNECTED,
+    &PY1743_UF_COMPONENTS,
+    &PY1744_UF_EDGES,
+    &PY1745_CYCLE_COLORS,
+    &PY1746_CYCLE_DETECT,
+    &PY1747_CYCLE_PATH,
+    &PY1748_CYCLE_UNDIRECTED,
+    &PY1749_CYCLE_SELF,
+    &PY1750_CYCLE_CHECK,
+    &PY1751_PERM_BASIC,
+    &PY1752_PERM_R,
+    &PY1753_COMB_BASIC,
+    &PY1754_COMB_WITH_REP,
+    &PY1755_PRODUCT_GRID,
+    &PY1756_PERM_FILTER,
+    &PY1757_MATH_FACTORIAL,
+    &PY1758_MATH_COMB,
+    &PY1759_MATH_PERM,
+    &PY1760_COUNT_PATHS,
+    &PY1761_COUNT_TEAMS,
+    &PY1762_COUNT_IDENTITY,
+    &PY1763_LIS_LENGTH,
+    &PY1764_LIS_SEQ,
+    &PY1765_LCS_LEN,
+    &PY1766_LCS_STR,
+    &PY1767_DP_EDIT,
+    &PY1768_DP_CHECK,
+    &PY1769_BT_SUBSETS,
+    &PY1770_BT_PERMUTATIONS,
+    &PY1771_BT_NQUEENS,
+    &PY1772_BT_NQUEENS_BOARD,
+    &PY1773_BT_COMBINATION_SUM,
+    &PY1774_BT_CHECK,
+    &PY1775_GREEDY_DEGREE,
+    &PY1776_GREEDY_COLOR,
+    &PY1777_GREEDY_CHROMATIC,
+    &PY1778_GREEDY_VALID,
+    &PY1779_GREEDY_WELSH,
+    &PY1780_GREEDY_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -51522,7 +52123,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1720);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1780);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -54446,7 +55047,30 @@ mod tests {
                 "step {n} id '{}' should start with py-{n}-",
                 step.id
             );
-            if n < 1720 {
+            let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+            assert_eq!(
+                step.next,
+                Some(next_step.id),
+                "step {n} should chain to {}",
+                next_step.id
+            );
+        }
+    }
+
+    #[test]
+    fn py1721_to_py1780_graphs_combinatorics_chain() {
+        let bridge = coding_step_by_micro_step(1720).expect("py-1720");
+        assert_eq!(bridge.next, Some("py-1721-graph-adj-dict"));
+
+        for n in 1721..=1780 {
+            let step = coding_step_by_micro_step(n).expect("wave13 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 1780 {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
                 assert_eq!(
                     step.next,
@@ -54455,7 +55079,7 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1720 is the end of the rail");
+                assert_eq!(step.next, None, "step 1780 is the end of the rail");
             }
         }
     }
