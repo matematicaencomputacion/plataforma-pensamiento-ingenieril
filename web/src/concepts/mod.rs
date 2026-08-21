@@ -1570,6 +1570,66 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (1778, &[3, 5]),
     (1779, &[3, 5]),
     (1780, &[3, 5]),
+    (1781, &[1]),
+    (1782, &[1]),
+    (1783, &[1]),
+    (1784, &[1]),
+    (1785, &[1]),
+    (1786, &[1]),
+    (1787, &[1, 4]),
+    (1788, &[1, 4]),
+    (1789, &[1, 4]),
+    (1790, &[1, 4]),
+    (1791, &[1, 4]),
+    (1792, &[1, 4]),
+    (1793, &[4]),
+    (1794, &[4]),
+    (1795, &[4]),
+    (1796, &[4]),
+    (1797, &[4]),
+    (1798, &[4]),
+    (1799, &[3, 4]),
+    (1800, &[3, 4]),
+    (1801, &[3, 4]),
+    (1802, &[3, 4]),
+    (1803, &[3, 4]),
+    (1804, &[3, 4]),
+    (1805, &[3, 5]),
+    (1806, &[3, 5]),
+    (1807, &[3, 5]),
+    (1808, &[3, 5]),
+    (1809, &[3, 5]),
+    (1810, &[3, 5]),
+    (1811, &[3]),
+    (1812, &[3]),
+    (1813, &[3]),
+    (1814, &[3]),
+    (1815, &[3]),
+    (1816, &[3]),
+    (1817, &[2, 4]),
+    (1818, &[2, 4]),
+    (1819, &[2, 4]),
+    (1820, &[2, 4]),
+    (1821, &[2, 4]),
+    (1822, &[2, 4]),
+    (1823, &[3, 5]),
+    (1824, &[3, 5]),
+    (1825, &[3, 5]),
+    (1826, &[3, 5]),
+    (1827, &[3, 5]),
+    (1828, &[3, 5]),
+    (1829, &[1, 5]),
+    (1830, &[1, 5]),
+    (1831, &[1, 5]),
+    (1832, &[1, 5]),
+    (1833, &[1, 5]),
+    (1834, &[1, 5]),
+    (1835, &[1, 3]),
+    (1836, &[1, 3]),
+    (1837, &[1, 3]),
+    (1838, &[1, 3]),
+    (1839, &[1, 3]),
+    (1840, &[1, 3]),
 ];
 
 pub fn partition_by_id(id: u8) -> Option<&'static ConceptPartition> {
@@ -1676,7 +1736,13 @@ pub fn mastery_percent(partition_id: u8, completed_levels: &[i32]) -> u8 {
     if total == 0 {
         return 0;
     }
-    ((done * 100) / total) as u8
+    // Integer division floors tiny fractions to 0; keep partial progress visible.
+    let pct = ((done * 100) / total) as u8;
+    if done > 0 && pct == 0 {
+        1
+    } else {
+        pct
+    }
 }
 
 /// Value for `data-mastery` on compass controls (`"0"`..=`"100"`).
@@ -1883,7 +1949,8 @@ mod tests {
         assert_eq!(partitions_for_micro_step(1013), &[2]); // LEGB local (Wave 1)
         assert_eq!(partitions_for_micro_step(1661), &[1, 4]); // Wave 12: JSON = data-model + ecosystem
         assert_eq!(partitions_for_micro_step(1721), &[1]); // Wave 13: graph adj = data-model
-        assert!(partitions_for_micro_step(1781).is_empty()); // frontier beyond Wave 13
+        assert_eq!(partitions_for_micro_step(1781), &[1]); // Wave 14: strings = data-model
+        assert!(partitions_for_micro_step(1841).is_empty()); // frontier beyond Wave 14
     }
 
     #[test]
@@ -2363,8 +2430,8 @@ mod tests {
         (900, &[1]),
     ];
 
-    /// Frozen `(micro_step, tags)` pairs with `micro_step > 1780` (Wave 13 ceiling).
-    const WAVE13_FROZEN_BEYOND_1780: &[(i32, &[u8])] = &[];
+    /// Frozen `(micro_step, tags)` pairs with `micro_step > 1840` (Wave 14 ceiling).
+    const WAVE14_FROZEN_BEYOND_1840: &[(i32, &[u8])] = &[];
 
     #[test]
     fn wave_b_applied_floor_101_to_300() {
@@ -2689,16 +2756,16 @@ mod tests {
     }
 
     #[test]
-    fn wave13_freeze_rows_beyond_1780() {
+    fn wave14_freeze_rows_beyond_1840() {
         let current: Vec<(i32, &[u8])> = STEP_PARTITIONS
             .iter()
             .copied()
-            .filter(|(n, _)| *n > 1780)
+            .filter(|(n, _)| *n > 1840)
             .collect();
         assert_eq!(
             current.as_slice(),
-            WAVE13_FROZEN_BEYOND_1780,
-            "do not add or remove rows > 1780"
+            WAVE14_FROZEN_BEYOND_1840,
+            "do not add or remove rows > 1840"
         );
     }
 

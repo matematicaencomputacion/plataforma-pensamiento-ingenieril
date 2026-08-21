@@ -50172,7 +50172,548 @@ pub const PY1780_GREEDY_CHECK: CodingStep = CodingStep {
     pytest: "def test_greedy_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, True)\n    assert ns['es_valido'](ns['g'], ns['color']) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "Triángulo ⇒ 3 colores y válido.",
     solution_example: "def orden_grado(g):\n    return sorted(g, key=lambda u: (-len(g[u]), u))\n\ndef coloreo(g, orden):\n    color = {}\n    for u in orden:\n        usados = {color[v] for v in g[u] if v in color}\n        c = 0\n        while c in usados:\n            c += 1\n        color[u] = c\n    return color\n\ndef es_valido(g, color):\n    return all(color[u] != color[v] for u, vs in g.items() for v in vs)\n\ng = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}\ncolor = coloreo(g, orden_grado(g))\nresultado = (max(color.values()) + 1, es_valido(g, color))\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 1780,
+    next: Some("py-1781-str-split-join"), show_type_chips: false, micro_step: 1780,
+};
+
+pub const PY1781_STR_SPLIT_JOIN: CodingStep = CodingStep {
+    id: "py-1781-str-split-join", title: "Texto · split y join", objective: "Separar y reunir strings con split/join.",
+    prompt_md: "**split / join**\n\n`str.split(sep)` parte un texto; `sep.join(parts)` lo recompone. Son operaciones inversas cuando el separador es fijo.\n\n**Micro-reto:**\n1. Definí `partes = \"a-b-c\".split(\"-\")`\n2. Reuní con `\"-\".join(partes)` en `resultado`\n3. Mostrá `resultado`",
+    starter_code: "# partes = \"a-b-c\".split(\"-\")\n# resultado = \"-\".join(partes)\n# print(resultado)\n",
+    pytest: "def test_str_split_join(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['partes'] == ['a', 'b', 'c']\n    assert ns['resultado'] == 'a-b-c'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "join recibe un iterable de strings.",
+    solution_example: "partes = \"a-b-c\".split(\"-\")\nresultado = \"-\".join(partes)\nprint(resultado)\n",
+    next: Some("py-1782-str-partition"), show_type_chips: false, micro_step: 1781,
+};
+pub const PY1782_STR_PARTITION: CodingStep = CodingStep {
+    id: "py-1782-str-partition", title: "Texto · partition", objective: "Usar partition para cortar en cabeza, sep y cola.",
+    prompt_md: "**partition**\n\n`s.partition(sep)` devuelve `(antes, sep, despues)` en la primera aparición. Si no hay sep, la cola queda vacía y el medio es `\"\"`.\n\n**Micro-reto:**\n1. Particioná `\"user@host\"` por `\"@\"`\n2. Guardá la tupla en `resultado`\n3. Mostrá `resultado`",
+    starter_code: "# resultado = \"user@host\".partition(\"@\")\n# print(resultado)\n",
+    pytest: "def test_str_partition(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('user', '@', 'host')\n    assert \"user@host\".partition(\"#\") == ('user@host', '', '')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Siempre son 3 elementos.",
+    solution_example: "resultado = \"user@host\".partition(\"@\")\nprint(resultado)\n",
+    next: Some("py-1783-str-slicing"), show_type_chips: false, micro_step: 1782,
+};
+pub const PY1783_STR_SLICING: CodingStep = CodingStep {
+    id: "py-1783-str-slicing", title: "Texto · slicing avanzado", objective: "Extraer subcadenas con slices y paso negativo.",
+    prompt_md: "**Slicing**\n\n`s[i:j:k]` selecciona desde i hasta j con paso k. El paso `-1` invierte. Los índices negativos cuentan desde el final.\n\n**Micro-reto:**\n1. Tomá `\"abcdef\"`\n2. Armá `(s[1:4], s[::-1], s[-2:])` en `resultado`\n3. Mostrá `resultado`",
+    starter_code: "# s = \"abcdef\"\n# resultado = (s[1:4], s[::-1], s[-2:])\n# print(resultado)\n",
+    pytest: "def test_str_slicing(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('bcd', 'fedcba', 'ef')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "s[::-1] invierte el string.",
+    solution_example: "s = \"abcdef\"\nresultado = (s[1:4], s[::-1], s[-2:])\nprint(resultado)\n",
+    next: Some("py-1784-str-normalize-ws"), show_type_chips: false, micro_step: 1783,
+};
+pub const PY1784_STR_NORMALIZE_WS: CodingStep = CodingStep {
+    id: "py-1784-str-normalize-ws", title: "Texto · normalizar whitespace", objective: "Colapsar espacios con split/join sin argumentos.",
+    prompt_md: "**Whitespace**\n\n`s.split()` sin sep parte por cualquier whitespace y descarta vacíos. `\" \".join(s.split())` colapsa espacios, tabs y saltos.\n\n**Micro-reto:**\n1. Normalizá `\"  hola\\t  mundo  \\n\"`\n2. Guardá el string limpio en `resultado`\n3. Mostrá `resultado`",
+    starter_code: "# bruto = \"  hola\\t  mundo  \\n\"\n# resultado = \" \".join(bruto.split())\n# print(resultado)\n",
+    pytest: "def test_str_normalize_ws(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'hola mundo'\n    assert \" \".join(\"a\\n\\tb\".split()) == 'a b'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "split() sin args es la clave.",
+    solution_example: "bruto = \"  hola\\t  mundo  \\n\"\nresultado = \" \".join(bruto.split())\nprint(resultado)\n",
+    next: Some("py-1785-str-strip-cases"), show_type_chips: false, micro_step: 1784,
+};
+pub const PY1785_STR_STRIP_CASES: CodingStep = CodingStep {
+    id: "py-1785-str-strip-cases", title: "Texto · strip y cases", objective: "Limpiar bordes y normalizar mayúsculas.",
+    prompt_md: "**strip / case**\n\n`strip` quita whitespace (u chars) de los bordes; `lower`/`upper`/`title` normalizan casing para comparaciones deterministas.\n\n**Micro-reto:**\n1. Partí de `\"  PyThOn  \"`\n2. Armá `(s.strip(), s.strip().lower(), s.strip().title())`\n3. Mostrá `resultado`",
+    starter_code: "# s = \"  PyThOn  \"\n# resultado = (s.strip(), s.strip().lower(), s.strip().title())\n# print(resultado)\n",
+    pytest: "def test_str_strip_cases(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('PyThOn', 'python', 'Python')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "strip antes de lower/title.",
+    solution_example: "s = \"  PyThOn  \"\nresultado = (s.strip(), s.strip().lower(), s.strip().title())\nprint(resultado)\n",
+    next: Some("py-1786-str-check"), show_type_chips: false, micro_step: 1785,
+};
+pub const PY1786_STR_CHECK: CodingStep = CodingStep {
+    id: "py-1786-str-check", title: "Texto · Suite strings", objective: "Integrar split, partition y normalización.",
+    prompt_md: "**Suite strings**\n\nCierra la familia: parsear `\"nombre=Ada; edad=36\"` con partition/split y normalizar valores.\n\n**Micro-reto:**\n1. Parseá el texto en dict `datos`\n2. Claves lower; valores strip\n3. Mostrá `sorted(datos.items())`",
+    starter_code: "# raw = \"nombre=Ada; edad=36\"\n# datos = {}\n# for chunk in raw.split(\";\"):\n#     k, _, v = chunk.partition(\"=\")\n#     datos[k.strip().lower()] = v.strip()\n# resultado = sorted(datos.items())\n# print(resultado)\n",
+    pytest: "def test_str_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('edad', '36'), ('nombre', 'Ada')]\n    assert ns['datos']['nombre'] == 'Ada'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "partition(\"=\") por cada chunk.",
+    solution_example: "raw = \"nombre=Ada; edad=36\"\ndatos = {}\nfor chunk in raw.split(\";\"):\n    k, _, v = chunk.partition(\"=\")\n    datos[k.strip().lower()] = v.strip()\nresultado = sorted(datos.items())\nprint(resultado)\n",
+    next: Some("py-1787-uni-encode"), show_type_chips: false, micro_step: 1786,
+};
+pub const PY1787_UNI_ENCODE: CodingStep = CodingStep {
+    id: "py-1787-uni-encode", title: "Unicode · encode UTF-8", objective: "Convertir str a bytes con encode.",
+    prompt_md: "**encode**\n\nUn `str` es Unicode; `s.encode(\"utf-8\")` produce `bytes`. En UTF-8, ASCII cabe en 1 byte; letras con tilde usan más.\n\n**Micro-reto:**\n1. Codificá `\"café\"` a UTF-8\n2. Guardá `len(b)` y el hex de b en `resultado`\n3. Mostrá `resultado`",
+    starter_code: "# b = \"café\".encode(\"utf-8\")\n# resultado = (len(b), b.hex())\n# print(resultado)\n",
+    pytest: "def test_uni_encode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['b'] == \"café\".encode(\"utf-8\")\n    assert ns['resultado'] == (5, ns['b'].hex())\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "é ocupa 2 bytes en UTF-8.",
+    solution_example: "b = \"café\".encode(\"utf-8\")\nresultado = (len(b), b.hex())\nprint(resultado)\n",
+    next: Some("py-1788-uni-decode"), show_type_chips: false, micro_step: 1787,
+};
+pub const PY1788_UNI_DECODE: CodingStep = CodingStep {
+    id: "py-1788-uni-decode", title: "Unicode · decode UTF-8", objective: "Reconstruir str desde bytes.",
+    prompt_md: "**decode**\n\n`bytes.decode(\"utf-8\")` invierte `encode`. El mismo codec debe usarse en ambos extremos para no corromper el texto.\n\n**Micro-reto:**\n1. Decodificá `bytes.fromhex(\"63 61 66 c3 a9\")`\n2. Guardá el str en `resultado`\n3. Mostrá `resultado`",
+    starter_code: "# b = bytes.fromhex(\"63 61 66 c3 a9\")\n# resultado = b.decode(\"utf-8\")\n# print(resultado)\n",
+    pytest: "def test_uni_decode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'café'\n    assert ns['b'].decode('utf-8') == 'café'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "c3 a9 es é en UTF-8.",
+    solution_example: "b = bytes.fromhex(\"63 61 66 c3 a9\")\nresultado = b.decode(\"utf-8\")\nprint(resultado)\n",
+    next: Some("py-1789-uni-name"), show_type_chips: false, micro_step: 1788,
+};
+pub const PY1789_UNI_NAME: CodingStep = CodingStep {
+    id: "py-1789-uni-name", title: "Unicode · unicodedata.name", objective: "Inspeccionar el nombre oficial de un carácter.",
+    prompt_md: "**unicodedata**\n\n`unicodedata.name(ch)` devuelve el nombre Unicode canónico. Sirve para auditar caracteres invisibles o confusables.\n\n**Micro-reto:**\n1. Importá unicodedata\n2. Obtené name de `\"Ñ\"`\n3. Mostrá el nombre",
+    starter_code: "# import unicodedata\n# resultado = unicodedata.name(\"Ñ\")\n# print(resultado)\n",
+    pytest: "def test_uni_name(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'LATIN CAPITAL LETTER N WITH TILDE'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "name exige un carácter de longitud 1.",
+    solution_example: "import unicodedata\nresultado = unicodedata.name(\"Ñ\")\nprint(resultado)\n",
+    next: Some("py-1790-uni-nfc"), show_type_chips: false, micro_step: 1789,
+};
+pub const PY1790_UNI_NFC: CodingStep = CodingStep {
+    id: "py-1790-uni-nfc", title: "Unicode · normalización NFC", objective: "Componer caracteres con unicodedata.normalize.",
+    prompt_md: "**NFC**\n\nLa misma letra puede ser un codepoint o base+combinante. `normalize(\"NFC\", s)` compone a la forma canónica más corta.\n\n**Micro-reto:**\n1. Creá `s = \"e\\u0301\"` (e + combining acute)\n2. Normalizá a NFC\n3. Mostrá `(s, nfc, s==nfc, len(s), len(nfc))`",
+    starter_code: "# import unicodedata\n# s = \"e\\u0301\"\n# nfc = unicodedata.normalize(\"NFC\", s)\n# resultado = (s, nfc, s == nfc, len(s), len(nfc))\n# print(resultado)\n",
+    pytest: "def test_uni_nfc(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['nfc'] == 'é'\n    assert ns['resultado'][2] is False\n    assert ns['resultado'][3] == 2 and ns['resultado'][4] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "NFC de e+acute es é (1 char).",
+    solution_example: "import unicodedata\ns = \"e\\u0301\"\nnfc = unicodedata.normalize(\"NFC\", s)\nresultado = (s, nfc, s == nfc, len(s), len(nfc))\nprint(resultado)\n",
+    next: Some("py-1791-uni-nfd"), show_type_chips: false, micro_step: 1790,
+};
+pub const PY1791_UNI_NFD: CodingStep = CodingStep {
+    id: "py-1791-uni-nfd", title: "Unicode · normalización NFD", objective: "Descomponer a base + combinantes con NFD.",
+    prompt_md: "**NFD**\n\n`normalize(\"NFD\", s)` descompone: `\"é\"` pasa a `e` + acute. Útil para strip de diacríticos o búsquedas folding.\n\n**Micro-reto:**\n1. Descomponé `\"café\"` con NFD\n2. Filtrá combining marks (categoría Mn)\n3. Mostrá el ASCII folding",
+    starter_code: "# import unicodedata\n# nfd = unicodedata.normalize(\"NFD\", \"café\")\n# folded = \"\".join(ch for ch in nfd if unicodedata.category(ch) != \"Mn\")\n# resultado = folded\n# print(resultado)\n",
+    pytest: "def test_uni_nfd(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'cafe'\n    assert \"Mn\" not in {__import__('unicodedata').category(c) for c in ns['resultado']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Categoría Mn = Nonspacing Mark.",
+    solution_example: "import unicodedata\nnfd = unicodedata.normalize(\"NFD\", \"café\")\nfolded = \"\".join(ch for ch in nfd if unicodedata.category(ch) != \"Mn\")\nresultado = folded\nprint(resultado)\n",
+    next: Some("py-1792-uni-check"), show_type_chips: false, micro_step: 1791,
+};
+pub const PY1792_UNI_CHECK: CodingStep = CodingStep {
+    id: "py-1792-uni-check", title: "Unicode · Suite encode/NFC", objective: "Integrar encode, decode y NFC.",
+    prompt_md: "**Suite Unicode**\n\nRound-trip: NFD → NFC → UTF-8 → decode debe preservar el texto compuesto.\n\n**Micro-reto:**\n1. Partí de `\"e\\u0301`\" (NFD)\n2. Pasá a NFC, encode y decode\n3. Mostrá `(nfc, decoded, nfc==decoded)`",
+    starter_code: "# import unicodedata\n# raw = \"e\\u0301\"\n# nfc = unicodedata.normalize(\"NFC\", raw)\n# decoded = nfc.encode(\"utf-8\").decode(\"utf-8\")\n# resultado = (nfc, decoded, nfc == decoded)\n# print(resultado)\n",
+    pytest: "def test_uni_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('é', 'é', True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "NFC + UTF-8 round-trip es idempotente.",
+    solution_example: "import unicodedata\nraw = \"e\\u0301\"\nnfc = unicodedata.normalize(\"NFC\", raw)\ndecoded = nfc.encode(\"utf-8\").decode(\"utf-8\")\nresultado = (nfc, decoded, nfc == decoded)\nprint(resultado)\n",
+    next: Some("py-1793-re-match"), show_type_chips: false, micro_step: 1792,
+};
+pub const PY1793_RE_MATCH: CodingStep = CodingStep {
+    id: "py-1793-re-match", title: "Regex · re.match", objective: "Anclar un patrón al inicio con match.",
+    prompt_md: "**re.match**\n\n`re.match(pat, s)` solo intenta desde el inicio. Si hay match, el objeto tiene `.group()`; si no, retorna `None`.\n\n**Micro-reto:**\n1. Importá re\n2. Matcheá `r\"\\d+\"` contra `\"42px\"` y `\"px42\"`\n3. Mostrá `(m1.group() if m1 else None, m2.group() if m2 else None)`",
+    starter_code: "# import re\n# m1 = re.match(r\"\\d+\", \"42px\")\n# m2 = re.match(r\"\\d+\", \"px42\")\n# resultado = (m1.group() if m1 else None, m2.group() if m2 else None)\n# print(resultado)\n",
+    pytest: "def test_re_match(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('42', None)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "match exige ancla al inicio.",
+    solution_example: "import re\nm1 = re.match(r\"\\d+\", \"42px\")\nm2 = re.match(r\"\\d+\", \"px42\")\nresultado = (m1.group() if m1 else None, m2.group() if m2 else None)\nprint(resultado)\n",
+    next: Some("py-1794-re-search"), show_type_chips: false, micro_step: 1793,
+};
+pub const PY1794_RE_SEARCH: CodingStep = CodingStep {
+    id: "py-1794-re-search", title: "Regex · re.search", objective: "Buscar la primera ocurrencia en cualquier posición.",
+    prompt_md: "**re.search**\n\nA diferencia de match, `search` encuentra el patrón en cualquier offset. Ideal para extraer el primer token útil.\n\n**Micro-reto:**\n1. Buscá `r\"\\d+\"` en `\"id=7;ok\"`\n2. Guardá el group en `resultado`\n3. Mostrá `resultado`",
+    starter_code: "# import re\n# m = re.search(r\"\\d+\", \"id=7;ok\")\n# resultado = m.group()\n# print(resultado)\n",
+    pytest: "def test_re_search(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '7'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "search no exige inicio.",
+    solution_example: "import re\nm = re.search(r\"\\d+\", \"id=7;ok\")\nresultado = m.group()\nprint(resultado)\n",
+    next: Some("py-1795-re-findall"), show_type_chips: false, micro_step: 1794,
+};
+pub const PY1795_RE_FINDALL: CodingStep = CodingStep {
+    id: "py-1795-re-findall", title: "Regex · re.findall", objective: "Listar todas las coincidencias no solapadas.",
+    prompt_md: "**findall**\n\n`re.findall(pat, s)` devuelve una lista de strings (o tuplas si hay grupos). El motor avanza tras cada match.\n\n**Micro-reto:**\n1. Extraé todos los enteros de `\"a1b22c3\"`\n2. Mostrá la lista",
+    starter_code: "# import re\n# resultado = re.findall(r\"\\d+\", \"a1b22c3\")\n# print(resultado)\n",
+    pytest: "def test_re_findall(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['1', '22', '3']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "findall acumula todos los matches.",
+    solution_example: "import re\nresultado = re.findall(r\"\\d+\", \"a1b22c3\")\nprint(resultado)\n",
+    next: Some("py-1796-re-groups"), show_type_chips: false, micro_step: 1795,
+};
+pub const PY1796_RE_GROUPS: CodingStep = CodingStep {
+    id: "py-1796-re-groups", title: "Regex · grupos de captura", objective: "Capturar subpartes con paréntesis.",
+    prompt_md: "**Grupos**\n\nLos paréntesis crean grupos: `m.group(1)`, `m.group(2)`. `groups()` devuelve la tupla de capturas.\n\n**Micro-reto:**\n1. Compilá `r\"(\\w+)@(\\w+\\.\\w+)\"`\n2. Parseá `\"ada@ex.com\"`\n3. Mostrá `m.groups()`",
+    starter_code: "# import re\n# m = re.match(r\"(\\w+)@(\\w+\\.\\w+)\", \"ada@ex.com\")\n# resultado = m.groups()\n# print(resultado)\n",
+    pytest: "def test_re_groups(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ada', 'ex.com')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "group(1) es el usuario.",
+    solution_example: "import re\nm = re.match(r\"(\\w+)@(\\w+\\.\\w+)\", \"ada@ex.com\")\nresultado = m.groups()\nprint(resultado)\n",
+    next: Some("py-1797-re-named"), show_type_chips: false, micro_step: 1796,
+};
+pub const PY1797_RE_NAMED: CodingStep = CodingStep {
+    id: "py-1797-re-named", title: "Regex · grupos nombrados", objective: "Nombrar capturas con (?P<name>...).",
+    prompt_md: "**Grupos nombrados**\n\n`(?P<name>...)` permite `m.group(\"name\")` y `m.groupdict()`. Mejora la legibilidad frente a índices.\n\n**Micro-reto:**\n1. Usá `r\"(?P<user>\\w+)@(?P<host>[\\w.]+)\"`\n2. Parseá `\"ada@ex.com\"`\n3. Mostrá `groupdict()` ordenado",
+    starter_code: "# import re\n# m = re.match(r\"(?P<user>\\w+)@(?P<host>[\\w.]+)\", \"ada@ex.com\")\n# d = m.groupdict()\n# resultado = sorted(d.items())\n# print(resultado)\n",
+    pytest: "def test_re_named(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('host', 'ex.com'), ('user', 'ada')]\n    assert ns['d']['user'] == 'ada'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "groupdict() → dict de nombres.",
+    solution_example: "import re\nm = re.match(r\"(?P<user>\\w+)@(?P<host>[\\w.]+)\", \"ada@ex.com\")\nd = m.groupdict()\nresultado = sorted(d.items())\nprint(resultado)\n",
+    next: Some("py-1798-re-check"), show_type_chips: false, micro_step: 1797,
+};
+pub const PY1798_RE_CHECK: CodingStep = CodingStep {
+    id: "py-1798-re-check", title: "Regex · Suite básica", objective: "Integrar match, search y findall.",
+    prompt_md: "**Suite regex**\n\nChequeo final: match anclado, search libre y findall sobre el mismo texto.\n\n**Micro-reto:**\n1. Sobre `\"x=10;y=20\"`\n2. Calculá `(bool(match ^), search primer dígito, findall todos)`\n3. Mostrá la tupla",
+    starter_code: "# import re\n# s = \"x=10;y=20\"\n# resultado = (\n#     bool(re.match(r\"\\d+\", s)),\n#     re.search(r\"\\d+\", s).group(),\n#     re.findall(r\"\\d+\", s),\n# )\n# print(resultado)\n",
+    pytest: "def test_re_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (False, '10', ['10', '20'])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "match falla porque no empieza con dígito.",
+    solution_example: "import re\ns = \"x=10;y=20\"\nresultado = (\n    bool(re.match(r\"\\d+\", s)),\n    re.search(r\"\\d+\", s).group(),\n    re.findall(r\"\\d+\", s),\n)\nprint(resultado)\n",
+    next: Some("py-1799-re-lookahead"), show_type_chips: false, micro_step: 1798,
+};
+pub const PY1799_RE_LOOKAHEAD: CodingStep = CodingStep {
+    id: "py-1799-re-lookahead", title: "Regex · lookahead", objective: "Afirmar lo que sigue sin consumirlo.",
+    prompt_md: "**Lookahead**\n\n`(?=...)` exige que el patrón siga, pero no lo consume. Sirve para validar contexto sin meterlo en el match.\n\n**Micro-reto:**\n1. Buscá palabras seguidas de `:` con `r\"\\w+(?=:)\"`\n2. En `\"a:1 b=2 c:\"`\n3. Mostrá findall",
+    starter_code: "# import re\n# resultado = re.findall(r\"\\w+(?=:)\", \"a:1 b=2 c:\")\n# print(resultado)\n",
+    pytest: "def test_re_lookahead(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "b= no cumple (?=:).",
+    solution_example: "import re\nresultado = re.findall(r\"\\w+(?=:)\", \"a:1 b=2 c:\")\nprint(resultado)\n",
+    next: Some("py-1800-re-lookbehind"), show_type_chips: false, micro_step: 1799,
+};
+pub const PY1800_RE_LOOKBEHIND: CodingStep = CodingStep {
+    id: "py-1800-re-lookbehind", title: "Regex · lookbehind", objective: "Afirmar lo que precede sin consumirlo.",
+    prompt_md: "**Lookbehind**\n\n`(?<=...)` exige un prefijo fijo. En Python el lookbehind debe ser de ancho fijo.\n\n**Micro-reto:**\n1. Extraé precios con `r\"(?<=\\$)\\d+\"`\n2. En `\"a $12 b $3\"`\n3. Mostrá findall",
+    starter_code: "# import re\n# resultado = re.findall(r\"(?<=\\$)\\d+\", \"a $12 b $3\")\n# print(resultado)\n",
+    pytest: "def test_re_lookbehind(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['12', '3']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El $ no entra al match.",
+    solution_example: "import re\nresultado = re.findall(r\"(?<=\\$)\\d+\", \"a $12 b $3\")\nprint(resultado)\n",
+    next: Some("py-1801-re-verbose"), show_type_chips: false, micro_step: 1800,
+};
+pub const PY1801_RE_VERBOSE: CodingStep = CodingStep {
+    id: "py-1801-re-verbose", title: "Regex · re.VERBOSE", objective: "Escribir patrones legibles con VERBOSE.",
+    prompt_md: "**VERBOSE**\n\nCon `re.VERBOSE`, espacios y comentarios `#...` se ignoran en el patrón (salvo en clases). Facilita regex largas.\n\n**Micro-reto:**\n1. Compilá un email simple en VERBOSE\n2. Matcheá `\"ada@ex.com\"`\n3. Mostrá groups",
+    starter_code: "# import re\n# pat = re.compile(r\"\"\"\n#     ^(?P<user>\\w+)\n#     @\n#     (?P<host>[\\w.]+)\n#     $\n# \"\"\", re.VERBOSE)\n# m = pat.match(\"ada@ex.com\")\n# resultado = m.groups()\n# print(resultado)\n",
+    pytest: "def test_re_verbose(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ada', 'ex.com')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "VERBOSE permite saltos de línea en el patrón.",
+    solution_example: "import re\npat = re.compile(r\"\"\"\n    ^(?P<user>\\w+)\n    @\n    (?P<host>[\\w.]+)\n    $\n\"\"\", re.VERBOSE)\nm = pat.match(\"ada@ex.com\")\nresultado = m.groups()\nprint(resultado)\n",
+    next: Some("py-1802-re-flags"), show_type_chips: false, micro_step: 1801,
+};
+pub const PY1802_RE_FLAGS: CodingStep = CodingStep {
+    id: "py-1802-re-flags", title: "Regex · flags IGNORECASE", objective: "Combinar flags para matching flexible.",
+    prompt_md: "**Flags**\n\n`re.IGNORECASE` (o `re.I`) ignora mayúsculas. Se pueden combinar flags con `|` (p. ej. `re.I | re.M`).\n\n**Micro-reto:**\n1. Buscá `r\"error\"` con IGNORECASE en `\"OK Error ok\"`\n2. Mostrá findall",
+    starter_code: "# import re\n# resultado = re.findall(r\"error\", \"OK Error ok\", flags=re.IGNORECASE)\n# print(resultado)\n",
+    pytest: "def test_re_flags(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['Error']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Solo hay un \"error\" ignorando case.",
+    solution_example: "import re\nresultado = re.findall(r\"error\", \"OK Error ok\", flags=re.IGNORECASE)\nprint(resultado)\n",
+    next: Some("py-1803-re-sub"), show_type_chips: false, micro_step: 1802,
+};
+pub const PY1803_RE_SUB: CodingStep = CodingStep {
+    id: "py-1803-re-sub", title: "Regex · re.sub", objective: "Sustituir matches de forma determinista.",
+    prompt_md: "**re.sub**\n\n`re.sub(pat, repl, s)` reemplaza todas las ocurrencias. `repl` puede ser string con backrefs `\\1` o una función.\n\n**Micro-reto:**\n1. Ocultá dígitos de `\"id=42;n=7\"` con `X`\n2. Usá `r\"\\d+\"` → `\"X\"`\n3. Mostrá el resultado",
+    starter_code: "# import re\n# resultado = re.sub(r\"\\d+\", \"X\", \"id=42;n=7\")\n# print(resultado)\n",
+    pytest: "def test_re_sub(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'id=X;n=X'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "sub reemplaza todas las coincidencias.",
+    solution_example: "import re\nresultado = re.sub(r\"\\d+\", \"X\", \"id=42;n=7\")\nprint(resultado)\n",
+    next: Some("py-1804-re-adv-check"), show_type_chips: false, micro_step: 1803,
+};
+pub const PY1804_RE_ADV_CHECK: CodingStep = CodingStep {
+    id: "py-1804-re-adv-check", title: "Regex · Suite avanzada", objective: "Integrar lookaround, VERBOSE y sub.",
+    prompt_md: "**Suite avanzada**\n\nValidá lookahead + sub: extraé claves con `:` y reemplazá valores numéricos.\n\n**Micro-reto:**\n1. En `\"a:1 b:2\"`\n2. Claves con lookahead; valores con sub a `N`\n3. Mostrá `(claves, censurado)`",
+    starter_code: "# import re\n# s = \"a:1 b:2\"\n# claves = re.findall(r\"\\w+(?=:)\", s)\n# censurado = re.sub(r\"\\d+\", \"N\", s)\n# resultado = (claves, censurado)\n# print(resultado)\n",
+    pytest: "def test_re_adv_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (['a', 'b'], 'a:N b:N')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Lookahead no consume el `:`.",
+    solution_example: "import re\ns = \"a:1 b:2\"\nclaves = re.findall(r\"\\w+(?=:)\", s)\ncensurado = re.sub(r\"\\d+\", \"N\", s)\nresultado = (claves, censurado)\nprint(resultado)\n",
+    next: Some("py-1805-lex-token-tuple"), show_type_chips: false, micro_step: 1804,
+};
+pub const PY1805_LEX_TOKEN_TUPLE: CodingStep = CodingStep {
+    id: "py-1805-lex-token-tuple", title: "Lexer · token como tupla", objective: "Modelar un token (tipo, lexema).",
+    prompt_md: "**Token**\n\nUn lexer emite tokens `(tipo, lexema)`. El tipo es una etiqueta estable; el lexema es el texto crudo consumido.\n\n**Micro-reto:**\n1. Creá tokens NUMBER y ID\n2. Lista: (NUMBER, \"3\"), (ID, \"x\")\n3. Mostrá la lista",
+    starter_code: "# resultado = [(\"NUMBER\", \"3\"), (\"ID\", \"x\")]\n# print(resultado)\n",
+    pytest: "def test_lex_token_tuple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(\"NUMBER\", \"3\"), (\"ID\", \"x\")]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tuplas inmutables = tokens estables.",
+    solution_example: "resultado = [(\"NUMBER\", \"3\"), (\"ID\", \"x\")]\nprint(resultado)\n",
+    next: Some("py-1806-lex-regex-scan"), show_type_chips: false, micro_step: 1805,
+};
+pub const PY1806_LEX_REGEX_SCAN: CodingStep = CodingStep {
+    id: "py-1806-lex-regex-scan", title: "Lexer · scan con regex", objective: "Avanzar por el string con un patrón maestro.",
+    prompt_md: "**Scan**\n\nUn patrón con alternativas nombradas (`(?P<NUM>\\d+)|(?P<ID>[A-Za-z_]+)|...`) permite clasificar el siguiente token desde `pos`.\n\n**Micro-reto:**\n1. Tokenizá `\"3+x\"` con NUM/OP/ID\n2. Ignorá espacios\n3. Mostrá lista de (tipo, lexema)",
+    starter_code: "# import re\n# SPEC = re.compile(r\"(?P<NUM>\\d+)|(?P<OP>[+\\-*/])|(?P<ID>[A-Za-z_]+)|(?P<WS>\\s+)\")\n# def tokenize(s):\n#     out = []\n#     pos = 0\n#     while pos < len(s):\n#         m = SPEC.match(s, pos)\n#         assert m, f\"bad at {pos}\"\n#         kind = m.lastgroup\n#         if kind != \"WS\":\n#             out.append((kind, m.group()))\n#         pos = m.end()\n#     return out\n# resultado = tokenize(\"3+x\")\n# print(resultado)\n",
+    pytest: "def test_lex_regex_scan(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(\"NUM\", \"3\"), (\"OP\", \"+\"), (\"ID\", \"x\")]\n    assert ns['tokenize'](\"10\") == [(\"NUM\", \"10\")]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "match(s, pos) ancla en pos.",
+    solution_example: "import re\nSPEC = re.compile(r\"(?P<NUM>\\d+)|(?P<OP>[+\\-*/])|(?P<ID>[A-Za-z_]+)|(?P<WS>\\s+)\")\ndef tokenize(s):\n    out = []\n    pos = 0\n    while pos < len(s):\n        m = SPEC.match(s, pos)\n        assert m, f\"bad at {pos}\"\n        kind = m.lastgroup\n        if kind != \"WS\":\n            out.append((kind, m.group()))\n        pos = m.end()\n    return out\nresultado = tokenize(\"3+x\")\nprint(resultado)\n",
+    next: Some("py-1807-lex-skip-ws"), show_type_chips: false, micro_step: 1806,
+};
+pub const PY1807_LEX_SKIP_WS: CodingStep = CodingStep {
+    id: "py-1807-lex-skip-ws", title: "Lexer · saltar whitespace", objective: "Tratar WS como no-token.",
+    prompt_md: "**WS**\n\nEl lexer puede consumir whitespace sin emitirlo. Así el parser solo ve tokens semánticos.\n\n**Micro-reto:**\n1. Tokenizá `\"  2  * n \"`\n2. Confirmá que no hay WS en la salida\n3. Mostrá tokens",
+    starter_code: "# import re\n# SPEC = re.compile(r\"(?P<NUM>\\d+)|(?P<OP>[+\\-*/])|(?P<ID>[A-Za-z_]+)|(?P<WS>\\s+)\")\n# def tokenize(s):\n#     out, pos = [], 0\n#     while pos < len(s):\n#         m = SPEC.match(s, pos)\n#         assert m\n#         if m.lastgroup != \"WS\":\n#             out.append((m.lastgroup, m.group()))\n#         pos = m.end()\n#     return out\n# resultado = tokenize(\"  2  * n \")\n# print(resultado)\n",
+    pytest: "def test_lex_skip_ws(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(\"NUM\", \"2\"), (\"OP\", \"*\"), (\"ID\", \"n\")]\n    assert all(t[0] != \"WS\" for t in ns['resultado'])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Filtrá lastgroup == WS.",
+    solution_example: "import re\nSPEC = re.compile(r\"(?P<NUM>\\d+)|(?P<OP>[+\\-*/])|(?P<ID>[A-Za-z_]+)|(?P<WS>\\s+)\")\ndef tokenize(s):\n    out, pos = [], 0\n    while pos < len(s):\n        m = SPEC.match(s, pos)\n        assert m\n        if m.lastgroup != \"WS\":\n            out.append((m.lastgroup, m.group()))\n        pos = m.end()\n    return out\nresultado = tokenize(\"  2  * n \")\nprint(resultado)\n",
+    next: Some("py-1808-lex-state"), show_type_chips: false, micro_step: 1807,
+};
+pub const PY1808_LEX_STATE: CodingStep = CodingStep {
+    id: "py-1808-lex-state", title: "Lexer · estado string", objective: "Cambiar de modo al ver comillas.",
+    prompt_md: "**Estado**\n\nUn lexer con estados alterna entre NORMAL y STRING. Al ver `\"`, acumula hasta el cierre sin interpretar operadores.\n\n**Micro-reto:**\n1. Tokenizá `'say \"a+b\"'`\n2. Emití ID y STRING\n3. Mostrá tokens",
+    starter_code: "# def tokenize(s):\n#     out = []\n#     i = 0\n#     n = len(s)\n#     while i < n:\n#         if s[i].isspace():\n#             i += 1\n#             continue\n#         if s[i] == '\"':\n#             j = i + 1\n#             while j < n and s[j] != '\"':\n#                 j += 1\n#             out.append((\"STRING\", s[i+1:j]))\n#             i = j + 1\n#             continue\n#         if s[i].isalpha() or s[i] == '_':\n#             j = i + 1\n#             while j < n and (s[j].isalnum() or s[j] == '_'):\n#                 j += 1\n#             out.append((\"ID\", s[i:j]))\n#             i = j\n#             continue\n#         raise ValueError(s[i])\n#     return out\n# resultado = tokenize('say \"a+b\"')\n# print(resultado)\n",
+    pytest: "def test_lex_state(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(\"ID\", \"say\"), (\"STRING\", \"a+b\")]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Dentro de STRING el + no es OP.",
+    solution_example: "def tokenize(s):\n    out = []\n    i = 0\n    n = len(s)\n    while i < n:\n        if s[i].isspace():\n            i += 1\n            continue\n        if s[i] == '\"':\n            j = i + 1\n            while j < n and s[j] != '\"':\n                j += 1\n            out.append((\"STRING\", s[i+1:j]))\n            i = j + 1\n            continue\n        if s[i].isalpha() or s[i] == '_':\n            j = i + 1\n            while j < n and (s[j].isalnum() or s[j] == '_'):\n                j += 1\n            out.append((\"ID\", s[i:j]))\n            i = j\n            continue\n        raise ValueError(s[i])\n    return out\nresultado = tokenize('say \"a+b\"')\nprint(resultado)\n",
+    next: Some("py-1809-lex-errors"), show_type_chips: false, micro_step: 1808,
+};
+pub const PY1809_LEX_ERRORS: CodingStep = CodingStep {
+    id: "py-1809-lex-errors", title: "Lexer · error léxico", objective: "Fallar de forma explícita ante char inválido.",
+    prompt_md: "**Errores**\n\nSi ningún patrón matchea, el lexer debe fallar con posición. Un assert/raise claro evita tokens fantasmas.\n\n**Micro-reto:**\n1. Intentá tokenizar `\"3?\"`\n2. Capturá el error y devolvéd `(ok, msg)`\n3. Mostrá el par",
+    starter_code: "# import re\n# SPEC = re.compile(r\"(?P<NUM>\\d+)|(?P<OP>[+\\-*/])|(?P<WS>\\s+)\")\n# def try_tokenize(s):\n#     pos = 0\n#     while pos < len(s):\n#         m = SPEC.match(s, pos)\n#         if not m:\n#             return (False, f\"bad@{pos}\")\n#         pos = m.end()\n#     return (True, \"ok\")\n# resultado = (try_tokenize(\"3+1\"), try_tokenize(\"3?\"))\n# print(resultado)\n",
+    pytest: "def test_lex_errors(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ((True, 'ok'), (False, 'bad@1'))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "? no está en el alfabeto del lexer.",
+    solution_example: "import re\nSPEC = re.compile(r\"(?P<NUM>\\d+)|(?P<OP>[+\\-*/])|(?P<WS>\\s+)\")\ndef try_tokenize(s):\n    pos = 0\n    while pos < len(s):\n        m = SPEC.match(s, pos)\n        if not m:\n            return (False, f\"bad@{pos}\")\n        pos = m.end()\n    return (True, \"ok\")\nresultado = (try_tokenize(\"3+1\"), try_tokenize(\"3?\"))\nprint(resultado)\n",
+    next: Some("py-1810-lex-check"), show_type_chips: false, micro_step: 1809,
+};
+pub const PY1810_LEX_CHECK: CodingStep = CodingStep {
+    id: "py-1810-lex-check", title: "Lexer · Suite tokenización", objective: "Integrar scan, WS y strings.",
+    prompt_md: "**Suite lexer**\n\nTokenizá una mini sentencia con número, op e ID, saltando espacios.\n\n**Micro-reto:**\n1. Tokenizá `\"12 + area\"`\n2. Tipos NUM/OP/ID\n3. Mostrá tokens",
+    starter_code: "# import re\n# SPEC = re.compile(r\"(?P<NUM>\\d+)|(?P<OP>[+\\-*/])|(?P<ID>[A-Za-z_]+)|(?P<WS>\\s+)\")\n# def tokenize(s):\n#     out, pos = [], 0\n#     while pos < len(s):\n#         m = SPEC.match(s, pos)\n#         assert m\n#         if m.lastgroup != \"WS\":\n#             out.append((m.lastgroup, m.group()))\n#         pos = m.end()\n#     return out\n# resultado = tokenize(\"12 + area\")\n# print(resultado)\n",
+    pytest: "def test_lex_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(\"NUM\", \"12\"), (\"OP\", \"+\"), (\"ID\", \"area\")]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tres tokens semánticos.",
+    solution_example: "import re\nSPEC = re.compile(r\"(?P<NUM>\\d+)|(?P<OP>[+\\-*/])|(?P<ID>[A-Za-z_]+)|(?P<WS>\\s+)\")\ndef tokenize(s):\n    out, pos = [], 0\n    while pos < len(s):\n        m = SPEC.match(s, pos)\n        assert m\n        if m.lastgroup != \"WS\":\n            out.append((m.lastgroup, m.group()))\n        pos = m.end()\n    return out\nresultado = tokenize(\"12 + area\")\nprint(resultado)\n",
+    next: Some("py-1811-rd-tokens-cursor"), show_type_chips: false, micro_step: 1810,
+};
+pub const PY1811_RD_TOKENS_CURSOR: CodingStep = CodingStep {
+    id: "py-1811-rd-tokens-cursor", title: "RD · cursor de tokens", objective: "Consumir tokens con un índice mutable.",
+    prompt_md: "**Cursor**\n\nUn parser RD mantiene `i` sobre la lista de tokens. `peek()` mira; `bump()` avanza. El final se marca con EOF.\n\n**Micro-reto:**\n1. Implementá peek/bump sobre `[(\"NUM\",\"1\"),(\"OP\",\"+\"),(\"NUM\",\"2\")]`\n2. Consumí NUM, OP, NUM\n3. Mostrá tipos consumidos",
+    starter_code: "# tokens = [(\"NUM\", \"1\"), (\"OP\", \"+\"), (\"NUM\", \"2\")]\n# i = [0]\n# def peek():\n#     return tokens[i[0]] if i[0] < len(tokens) else (\"EOF\", \"\")\n# def bump():\n#     t = peek()\n#     i[0] += 1\n#     return t\n# resultado = [bump()[0], bump()[0], bump()[0], peek()[0]]\n# print(resultado)\n",
+    pytest: "def test_rd_tokens_cursor(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['NUM', 'OP', 'NUM', 'EOF']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "peek no avanza; bump sí.",
+    solution_example: "tokens = [(\"NUM\", \"1\"), (\"OP\", \"+\"), (\"NUM\", \"2\")]\ni = [0]\ndef peek():\n    return tokens[i[0]] if i[0] < len(tokens) else (\"EOF\", \"\")\ndef bump():\n    t = peek()\n    i[0] += 1\n    return t\nresultado = [bump()[0], bump()[0], bump()[0], peek()[0]]\nprint(resultado)\n",
+    next: Some("py-1812-rd-factor"), show_type_chips: false, micro_step: 1811,
+};
+pub const PY1812_RD_FACTOR: CodingStep = CodingStep {
+    id: "py-1812-rd-factor", title: "RD · parse factor", objective: "Parsear un número como factor AST.",
+    prompt_md: "**Factor**\n\nLa gramática mínima: `factor → NUM`. El AST es `(\"num\", int(lexema))`.\n\n**Micro-reto:**\n1. Definí `factor(tokens, i)`\n2. Parseá `[(\"NUM\",\"7\")]`\n3. Mostrá el AST",
+    starter_code: "# def factor(tokens, i):\n#     typ, lex = tokens[i[0]]\n#     assert typ == \"NUM\"\n#     i[0] += 1\n#     return (\"num\", int(lex))\n# i = [0]\n# resultado = factor([(\"NUM\", \"7\")], i)\n# print(resultado)\n",
+    pytest: "def test_rd_factor(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (\"num\", 7)\n    assert ns['i'][0] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "factor consume exactamente un NUM.",
+    solution_example: "def factor(tokens, i):\n    typ, lex = tokens[i[0]]\n    assert typ == \"NUM\"\n    i[0] += 1\n    return (\"num\", int(lex))\ni = [0]\nresultado = factor([(\"NUM\", \"7\")], i)\nprint(resultado)\n",
+    next: Some("py-1813-rd-term"), show_type_chips: false, micro_step: 1812,
+};
+pub const PY1813_RD_TERM: CodingStep = CodingStep {
+    id: "py-1813-rd-term", title: "RD · parse term (* /)", objective: "Extender a productos con * y /.",
+    prompt_md: "**Term**\n\n`term → factor ((\"*\"|\"/\") factor)*`. Se asocia a izquierda: `a*b/c` = `(a*b)/c`.\n\n**Micro-reto:**\n1. Implementá term sobre tokens de `2*3*4`\n2. AST binario anidado\n3. Mostrá el AST",
+    starter_code: "# def factor(tokens, i):\n#     typ, lex = tokens[i[0]]; i[0] += 1\n#     return (\"num\", int(lex))\n# def term(tokens, i):\n#     node = factor(tokens, i)\n#     while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"*/\":\n#         op = tokens[i[0]][1]; i[0] += 1\n#         rhs = factor(tokens, i)\n#         node = (\"binop\", op, node, rhs)\n#     return node\n# toks = [(\"NUM\",\"2\"),(\"OP\",\"*\"),(\"NUM\",\"3\"),(\"OP\",\"*\"),(\"NUM\",\"4\")]\n# resultado = term(toks, [0])\n# print(resultado)\n",
+    pytest: "def test_rd_term(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (\"binop\", \"*\", (\"binop\", \"*\", (\"num\", 2), (\"num\", 3)), (\"num\", 4))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Asociación a izquierda con while.",
+    solution_example: "def factor(tokens, i):\n    typ, lex = tokens[i[0]]; i[0] += 1\n    return (\"num\", int(lex))\ndef term(tokens, i):\n    node = factor(tokens, i)\n    while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"*/\":\n        op = tokens[i[0]][1]; i[0] += 1\n        rhs = factor(tokens, i)\n        node = (\"binop\", op, node, rhs)\n    return node\ntoks = [(\"NUM\",\"2\"),(\"OP\",\"*\"),(\"NUM\",\"3\"),(\"OP\",\"*\"),(\"NUM\",\"4\")]\nresultado = term(toks, [0])\nprint(resultado)\n",
+    next: Some("py-1814-rd-expr"), show_type_chips: false, micro_step: 1813,
+};
+pub const PY1814_RD_EXPR: CodingStep = CodingStep {
+    id: "py-1814-rd-expr", title: "RD · parse expr (+ -)", objective: "Sumar/restar con precedencia sobre term.",
+    prompt_md: "**Expr**\n\n`expr → term ((\"+\"|\"-\") term)*`. La precedencia surge de llamar a `term` (que ya resuelve * /).\n\n**Micro-reto:**\n1. Parseá `2+3*4`\n2. Verificá que * queda adentro\n3. Mostrá AST",
+    starter_code: "# def factor(tokens, i):\n#     typ, lex = tokens[i[0]]; i[0] += 1\n#     return (\"num\", int(lex))\n# def term(tokens, i):\n#     node = factor(tokens, i)\n#     while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"*/\":\n#         op = tokens[i[0]][1]; i[0] += 1\n#         node = (\"binop\", op, node, factor(tokens, i))\n#     return node\n# def expr(tokens, i):\n#     node = term(tokens, i)\n#     while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"+-\":\n#         op = tokens[i[0]][1]; i[0] += 1\n#         node = (\"binop\", op, node, term(tokens, i))\n#     return node\n# toks = [(\"NUM\",\"2\"),(\"OP\",\"+\"),(\"NUM\",\"3\"),(\"OP\",\"*\"),(\"NUM\",\"4\")]\n# resultado = expr(toks, [0])\n# print(resultado)\n",
+    pytest: "def test_rd_expr(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (\"binop\", \"+\", (\"num\", 2), (\"binop\", \"*\", (\"num\", 3), (\"num\", 4)))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "expr llama term: * gana precedencia.",
+    solution_example: "def factor(tokens, i):\n    typ, lex = tokens[i[0]]; i[0] += 1\n    return (\"num\", int(lex))\ndef term(tokens, i):\n    node = factor(tokens, i)\n    while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"*/\":\n        op = tokens[i[0]][1]; i[0] += 1\n        node = (\"binop\", op, node, factor(tokens, i))\n    return node\ndef expr(tokens, i):\n    node = term(tokens, i)\n    while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"+-\":\n        op = tokens[i[0]][1]; i[0] += 1\n        node = (\"binop\", op, node, term(tokens, i))\n    return node\ntoks = [(\"NUM\",\"2\"),(\"OP\",\"+\"),(\"NUM\",\"3\"),(\"OP\",\"*\"),(\"NUM\",\"4\")]\nresultado = expr(toks, [0])\nprint(resultado)\n",
+    next: Some("py-1815-rd-eval"), show_type_chips: false, micro_step: 1814,
+};
+pub const PY1815_RD_EVAL: CodingStep = CodingStep {
+    id: "py-1815-rd-eval", title: "RD · evaluar AST", objective: "Evaluar el árbol de forma recursiva.",
+    prompt_md: "**Eval**\n\n`eval_ast` es un match sobre el nodo: números son hojas; `binop` aplica el operador a los hijos.\n\n**Micro-reto:**\n1. Evaluá el AST de `2+3*4`\n2. Definí eval_ast\n3. Mostrá el valor",
+    starter_code: "# def eval_ast(node):\n#     if node[0] == \"num\":\n#         return node[1]\n#     _, op, left, right = node\n#     a, b = eval_ast(left), eval_ast(right)\n#     return {\"+\": a+b, \"-\": a-b, \"*\": a*b, \"/\": a//b}[op]\n# ast = (\"binop\", \"+\", (\"num\", 2), (\"binop\", \"*\", (\"num\", 3), (\"num\", 4)))\n# resultado = eval_ast(ast)\n# print(resultado)\n",
+    pytest: "def test_rd_eval(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 14\n    assert ns['eval_ast']((\"num\", 5)) == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2+(3*4)=14.",
+    solution_example: "def eval_ast(node):\n    if node[0] == \"num\":\n        return node[1]\n    _, op, left, right = node\n    a, b = eval_ast(left), eval_ast(right)\n    return {\"+\": a+b, \"-\": a-b, \"*\": a*b, \"/\": a//b}[op]\nast = (\"binop\", \"+\", (\"num\", 2), (\"binop\", \"*\", (\"num\", 3), (\"num\", 4)))\nresultado = eval_ast(ast)\nprint(resultado)\n",
+    next: Some("py-1816-rd-check"), show_type_chips: false, micro_step: 1815,
+};
+pub const PY1816_RD_CHECK: CodingStep = CodingStep {
+    id: "py-1816-rd-check", title: "RD · Suite parser", objective: "Pipeline lexer-free: tokens → AST → valor.",
+    prompt_md: "**Suite RD**\n\nDados tokens de `10-2*3`, parseá con expr y evaluá. Debe respetar precedencia.\n\n**Micro-reto:**\n1. Parseá y evaluá `10-2*3`\n2. Mostrá `(ast_op, valor)`\n3. ast_op = raíz del AST",
+    starter_code: "# def factor(tokens, i):\n#     typ, lex = tokens[i[0]]; i[0] += 1\n#     return (\"num\", int(lex))\n# def term(tokens, i):\n#     node = factor(tokens, i)\n#     while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"*/\":\n#         op = tokens[i[0]][1]; i[0] += 1\n#         node = (\"binop\", op, node, factor(tokens, i))\n#     return node\n# def expr(tokens, i):\n#     node = term(tokens, i)\n#     while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"+-\":\n#         op = tokens[i[0]][1]; i[0] += 1\n#         node = (\"binop\", op, node, term(tokens, i))\n#     return node\n# def eval_ast(node):\n#     if node[0] == \"num\":\n#         return node[1]\n#     _, op, left, right = node\n#     a, b = eval_ast(left), eval_ast(right)\n#     return {\"+\": a+b, \"-\": a-b, \"*\": a*b, \"/\": a//b}[op]\n# toks = [(\"NUM\",\"10\"),(\"OP\",\"-\"),(\"NUM\",\"2\"),(\"OP\",\"*\"),(\"NUM\",\"3\")]\n# ast = expr(toks, [0])\n# resultado = (ast[1], eval_ast(ast))\n# print(resultado)\n",
+    pytest: "def test_rd_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('-', 4)\n    assert ns['eval_ast'](ns['ast']) == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "10-(2*3)=4.",
+    solution_example: "def factor(tokens, i):\n    typ, lex = tokens[i[0]]; i[0] += 1\n    return (\"num\", int(lex))\ndef term(tokens, i):\n    node = factor(tokens, i)\n    while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"*/\":\n        op = tokens[i[0]][1]; i[0] += 1\n        node = (\"binop\", op, node, factor(tokens, i))\n    return node\ndef expr(tokens, i):\n    node = term(tokens, i)\n    while i[0] < len(tokens) and tokens[i[0]][0] == \"OP\" and tokens[i[0]][1] in \"+-\":\n        op = tokens[i[0]][1]; i[0] += 1\n        node = (\"binop\", op, node, term(tokens, i))\n    return node\ndef eval_ast(node):\n    if node[0] == \"num\":\n        return node[1]\n    _, op, left, right = node\n    a, b = eval_ast(left), eval_ast(right)\n    return {\"+\": a+b, \"-\": a-b, \"*\": a*b, \"/\": a//b}[op]\ntoks = [(\"NUM\",\"10\"),(\"OP\",\"-\"),(\"NUM\",\"2\"),(\"OP\",\"*\"),(\"NUM\",\"3\")]\nast = expr(toks, [0])\nresultado = (ast[1], eval_ast(ast))\nprint(resultado)\n",
+    next: Some("py-1817-fmt-format"), show_type_chips: false, micro_step: 1816,
+};
+pub const PY1817_FMT_FORMAT: CodingStep = CodingStep {
+    id: "py-1817-fmt-format", title: "Formato · str.format", objective: "Interpolar con str.format y campos nombrados.",
+    prompt_md: "**format**\n\n`\"{name}={value}\".format(name=\"x\", value=3)` sustituye campos. Los nombres resuelven en el scope del call (kwargs), no LEGB del template.\n\n**Micro-reto:**\n1. Formateá `\"hola {quien}\"` con quien=\"Ada\"\n2. Guardá en `resultado`\n3. Mostrá",
+    starter_code: "# resultado = \"hola {quien}\".format(quien=\"Ada\")\n# print(resultado)\n",
+    pytest: "def test_fmt_format(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'hola Ada'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "kwargs alimentan los campos.",
+    solution_example: "resultado = \"hola {quien}\".format(quien=\"Ada\")\nprint(resultado)\n",
+    next: Some("py-1818-fmt-fstring"), show_type_chips: false, micro_step: 1817,
+};
+pub const PY1818_FMT_FSTRING: CodingStep = CodingStep {
+    id: "py-1818-fmt-fstring", title: "Formato · f-string equivalente", objective: "Expresar el mismo formato con f-string.",
+    prompt_md: "**f-strings**\n\n`f\"hola {quien}\"` evalúa expresiones en el scope LEGB local. Es equivalente en resultado a `format`, con sintaxis más directa.\n\n**Micro-reto:**\n1. Con `quien = \"Ada\"`\n2. Armá f-string equivalente\n3. Mostrá `resultado`",
+    starter_code: "# quien = \"Ada\"\n# resultado = f\"hola {quien}\"\n# print(resultado)\n",
+    pytest: "def test_fmt_fstring(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'hola Ada'\n    assert ns['quien'] == 'Ada'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "quien se resuelve en scope local.",
+    solution_example: "quien = \"Ada\"\nresultado = f\"hola {quien}\"\nprint(resultado)\n",
+    next: Some("py-1819-fmt-spec"), show_type_chips: false, micro_step: 1818,
+};
+pub const PY1819_FMT_SPEC: CodingStep = CodingStep {
+    id: "py-1819-fmt-spec", title: "Formato · format spec", objective: "Controlar ancho y precisión con specs.",
+    prompt_md: "**Format spec**\n\n`{:>5}` alinea a derecha; `{:.2f}` fija decimales. El mini-lenguaje de formato es parte de `str.format` / f-strings.\n\n**Micro-reto:**\n1. Formateá `(3, 3.14159)` como `\">5\" y \".2f\"`\n2. Mostrá la tupla de strings",
+    starter_code: "# resultado = (format(3, \">5\"), format(3.14159, \".2f\"))\n# print(resultado)\n",
+    pytest: "def test_fmt_spec(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('    3', '3.14')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "format(valor, spec) aplica el mini-lenguaje.",
+    solution_example: "resultado = (format(3, \">5\"), format(3.14159, \".2f\"))\nprint(resultado)\n",
+    next: Some("py-1820-fmt-template"), show_type_chips: false, micro_step: 1819,
+};
+pub const PY1820_FMT_TEMPLATE: CodingStep = CodingStep {
+    id: "py-1820-fmt-template", title: "Formato · string.Template", objective: "Sustituir con $identificadores seguros.",
+    prompt_md: "**Template**\n\n`string.Template` usa `$nombre` / `${nombre}`. Es más seguro que `format` cuando el template es externo: no evalúa expresiones arbitrarias.\n\n**Micro-reto:**\n1. Creá Template `\"hola $quien\"`\n2. substitute(quien=\"Ada\")\n3. Mostrá resultado",
+    starter_code: "# from string import Template\n# resultado = Template(\"hola $quien\").substitute(quien=\"Ada\")\n# print(resultado)\n",
+    pytest: "def test_fmt_template(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'hola Ada'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "substitute exige todas las claves.",
+    solution_example: "from string import Template\nresultado = Template(\"hola $quien\").substitute(quien=\"Ada\")\nprint(resultado)\n",
+    next: Some("py-1821-fmt-safe"), show_type_chips: false, micro_step: 1820,
+};
+pub const PY1821_FMT_SAFE: CodingStep = CodingStep {
+    id: "py-1821-fmt-safe", title: "Formato · safe_substitute", objective: "Dejar placeholders faltantes intactos.",
+    prompt_md: "**safe_substitute**\n\nSi falta una clave, `safe_substitute` no lanza: deja `$faltante` en el texto. Útil para merges parciales.\n\n**Micro-reto:**\n1. Template `\"$a-$b\"` con solo a=1\n2. Compará substitute vs safe\n3. Mostrá `(safe, tipo_error)`",
+    starter_code: "# from string import Template\n# t = Template(\"$a-$b\")\n# safe = t.safe_substitute(a=1)\n# err = None\n# try:\n#     t.substitute(a=1)\n# except KeyError as e:\n#     err = type(e).__name__\n# resultado = (safe, err)\n# print(resultado)\n",
+    pytest: "def test_fmt_safe(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('1-$b', 'KeyError')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "safe deja $b; substitute lanza.",
+    solution_example: "from string import Template\nt = Template(\"$a-$b\")\nsafe = t.safe_substitute(a=1)\nerr = None\ntry:\n    t.substitute(a=1)\nexcept KeyError as e:\n    err = type(e).__name__\nresultado = (safe, err)\nprint(resultado)\n",
+    next: Some("py-1822-fmt-check"), show_type_chips: false, micro_step: 1821,
+};
+pub const PY1822_FMT_CHECK: CodingStep = CodingStep {
+    id: "py-1822-fmt-check", title: "Formato · Suite plantillas", objective: "Equivalencia format / f-string / Template.",
+    prompt_md: "**Suite formato**\n\nLas tres vías deben producir el mismo saludo con el mismo binding.\n\n**Micro-reto:**\n1. quien=\"Ada\"\n2. Compará format, f-string y Template\n3. Mostrá la tupla de tres iguales",
+    starter_code: "# from string import Template\n# quien = \"Ada\"\n# a = \"hola {quien}\".format(quien=quien)\n# b = f\"hola {quien}\"\n# c = Template(\"hola $quien\").substitute(quien=quien)\n# resultado = (a, b, c, a == b == c)\n# print(resultado)\n",
+    pytest: "def test_fmt_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('hola Ada', 'hola Ada', 'hola Ada', True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tres APIs, un mismo string.",
+    solution_example: "from string import Template\nquien = \"Ada\"\na = \"hola {quien}\".format(quien=quien)\nb = f\"hola {quien}\"\nc = Template(\"hola $quien\").substitute(quien=quien)\nresultado = (a, b, c, a == b == c)\nprint(resultado)\n",
+    next: Some("py-1823-diff-lcs-len"), show_type_chips: false, micro_step: 1822,
+};
+pub const PY1823_DIFF_LCS_LEN: CodingStep = CodingStep {
+    id: "py-1823-diff-lcs-len", title: "Diff · longitud LCS", objective: "Calcular longitud de la subsecuencia común máxima.",
+    prompt_md: "**LCS len**\n\nLa LCS de dos strings se resuelve con DP `dp[i][j]`. Si `a[i-1]==b[j-1]`, suma 1; si no, max de saltar.\n\n**Micro-reto:**\n1. Definí `lcs_len(a, b)`\n2. Calculá LCS de `\"ABCBDAB\"` y `\"BDCAB\"`\n3. Mostrá la longitud",
+    starter_code: "# def lcs_len(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0]*(n+1) for _ in range(m+1)]\n#     for i in range(1, m+1):\n#         for j in range(1, n+1):\n#             if a[i-1] == b[j-1]:\n#                 dp[i][j] = dp[i-1][j-1] + 1\n#             else:\n#                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n#     return dp[m][n]\n# resultado = lcs_len(\"ABCBDAB\", \"BDCAB\")\n# print(resultado)\n",
+    pytest: "def test_diff_lcs_len(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert ns['lcs_len'](\"abc\", \"abc\") == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "LCS clásica tiene longitud 4.",
+    solution_example: "def lcs_len(a, b):\n    m, n = len(a), len(b)\n    dp = [[0]*(n+1) for _ in range(m+1)]\n    for i in range(1, m+1):\n        for j in range(1, n+1):\n            if a[i-1] == b[j-1]:\n                dp[i][j] = dp[i-1][j-1] + 1\n            else:\n                dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n    return dp[m][n]\nresultado = lcs_len(\"ABCBDAB\", \"BDCAB\")\nprint(resultado)\n",
+    next: Some("py-1824-diff-lcs-str"), show_type_chips: false, micro_step: 1823,
+};
+pub const PY1824_DIFF_LCS_STR: CodingStep = CodingStep {
+    id: "py-1824-diff-lcs-str", title: "Diff · reconstruir LCS", objective: "Recuperar una LCS caminando la DP.",
+    prompt_md: "**LCS str**\n\nDesde `dp[m][n]` se retrocede: igualdad agrega el char; si no, se sigue al vecino mayor.\n\n**Micro-reto:**\n1. Reconstruí una LCS de `\"ABCBDAB\"` / `\"BDCAB\"`\n2. Mostrá el string\n3. Longitud 4",
+    starter_code: "# def lcs_str(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0]*(n+1) for _ in range(m+1)]\n#     for i in range(1, m+1):\n#         for j in range(1, n+1):\n#             if a[i-1] == b[j-1]:\n#                 dp[i][j] = dp[i-1][j-1] + 1\n#             else:\n#                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n#     i, j, out = m, n, []\n#     while i and j:\n#         if a[i-1] == b[j-1]:\n#             out.append(a[i-1]); i -= 1; j -= 1\n#         elif dp[i-1][j] >= dp[i][j-1]:\n#             i -= 1\n#         else:\n#             j -= 1\n#     return \"\".join(reversed(out))\n# resultado = lcs_str(\"ABCBDAB\", \"BDCAB\")\n# print(resultado)\n",
+    pytest: "def test_diff_lcs_str(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] in (\"BCAB\", \"BDAB\")\n    assert len(ns['resultado']) == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Hay varias LCS válidas de len 4.",
+    solution_example: "def lcs_str(a, b):\n    m, n = len(a), len(b)\n    dp = [[0]*(n+1) for _ in range(m+1)]\n    for i in range(1, m+1):\n        for j in range(1, n+1):\n            if a[i-1] == b[j-1]:\n                dp[i][j] = dp[i-1][j-1] + 1\n            else:\n                dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n    i, j, out = m, n, []\n    while i and j:\n        if a[i-1] == b[j-1]:\n            out.append(a[i-1]); i -= 1; j -= 1\n        elif dp[i-1][j] >= dp[i][j-1]:\n            i -= 1\n        else:\n            j -= 1\n    return \"\".join(reversed(out))\nresultado = lcs_str(\"ABCBDAB\", \"BDCAB\")\nprint(resultado)\n",
+    next: Some("py-1825-diff-edit-dist"), show_type_chips: false, micro_step: 1824,
+};
+pub const PY1825_DIFF_EDIT_DIST: CodingStep = CodingStep {
+    id: "py-1825-diff-edit-dist", title: "Diff · edit distance", objective: "Distancia de Levenshtein con DP.",
+    prompt_md: "**Edit distance**\n\n`dp[i][j]` = mínimo de insertar, borrar o sustituir para transformar `a[:i]` en `b[:j]`.\n\n**Micro-reto:**\n1. Definí `edit(a,b)`\n2. Distancia `\"kitten\"` → `\"sitting\"`\n3. Mostrá el entero",
+    starter_code: "# def edit(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0]*(n+1) for _ in range(m+1)]\n#     for i in range(m+1):\n#         dp[i][0] = i\n#     for j in range(n+1):\n#         dp[0][j] = j\n#     for i in range(1, m+1):\n#         for j in range(1, n+1):\n#             cost = 0 if a[i-1] == b[j-1] else 1\n#             dp[i][j] = min(dp[i-1][j] + 1, dp[i][j-1] + 1, dp[i-1][j-1] + cost)\n#     return dp[m][n]\n# resultado = edit(\"kitten\", \"sitting\")\n# print(resultado)\n",
+    pytest: "def test_diff_edit_dist(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['edit'](\"a\", \"a\") == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "kitten→sitting = 3.",
+    solution_example: "def edit(a, b):\n    m, n = len(a), len(b)\n    dp = [[0]*(n+1) for _ in range(m+1)]\n    for i in range(m+1):\n        dp[i][0] = i\n    for j in range(n+1):\n        dp[0][j] = j\n    for i in range(1, m+1):\n        for j in range(1, n+1):\n            cost = 0 if a[i-1] == b[j-1] else 1\n            dp[i][j] = min(dp[i-1][j] + 1, dp[i][j-1] + 1, dp[i-1][j-1] + cost)\n    return dp[m][n]\nresultado = edit(\"kitten\", \"sitting\")\nprint(resultado)\n",
+    next: Some("py-1826-diff-align"), show_type_chips: false, micro_step: 1825,
+};
+pub const PY1826_DIFF_ALIGN: CodingStep = CodingStep {
+    id: "py-1826-diff-align", title: "Diff · alineación simple", objective: "Alinear dos strings con gaps según LCS.",
+    prompt_md: "**Alineación**\n\nUsando la tabla LCS se pueden insertar `-` donde hay inserciones/borrados, produciendo dos filas alineadas.\n\n**Micro-reto:**\n1. Alineá `\"ABC\"` y `\"AC\"`\n2. Devolvé el par de strings alineados\n3. Mostrá `(a_aln, b_aln)`",
+    starter_code: "# def align(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0]*(n+1) for _ in range(m+1)]\n#     for i in range(1, m+1):\n#         for j in range(1, n+1):\n#             if a[i-1] == b[j-1]:\n#                 dp[i][j] = dp[i-1][j-1] + 1\n#             else:\n#                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n#     i, j, aa, bb = m, n, [], []\n#     while i or j:\n#         if i and j and a[i-1] == b[j-1]:\n#             aa.append(a[i-1]); bb.append(b[j-1]); i -= 1; j -= 1\n#         elif i and (not j or dp[i-1][j] >= (dp[i][j-1] if j else -1)):\n#             aa.append(a[i-1]); bb.append(\"-\"); i -= 1\n#         else:\n#             aa.append(\"-\"); bb.append(b[j-1]); j -= 1\n#     return (\"\".join(reversed(aa)), \"\".join(reversed(bb)))\n# resultado = align(\"ABC\", \"AC\")\n# print(resultado)\n",
+    pytest: "def test_diff_align(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ABC', 'A-C')\n    assert len(ns['resultado'][0]) == len(ns['resultado'][1])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "B se alinea con gap en la segunda.",
+    solution_example: "def align(a, b):\n    m, n = len(a), len(b)\n    dp = [[0]*(n+1) for _ in range(m+1)]\n    for i in range(1, m+1):\n        for j in range(1, n+1):\n            if a[i-1] == b[j-1]:\n                dp[i][j] = dp[i-1][j-1] + 1\n            else:\n                dp[i][j] = max(dp[i-1][j], dp[i][j-1])\n    i, j, aa, bb = m, n, [], []\n    while i or j:\n        if i and j and a[i-1] == b[j-1]:\n            aa.append(a[i-1]); bb.append(b[j-1]); i -= 1; j -= 1\n        elif i and (not j or dp[i-1][j] >= (dp[i][j-1] if j else -1)):\n            aa.append(a[i-1]); bb.append(\"-\"); i -= 1\n        else:\n            aa.append(\"-\"); bb.append(b[j-1]); j -= 1\n    return (\"\".join(reversed(aa)), \"\".join(reversed(bb)))\nresultado = align(\"ABC\", \"AC\")\nprint(resultado)\n",
+    next: Some("py-1827-diff-ops"), show_type_chips: false, micro_step: 1826,
+};
+pub const PY1827_DIFF_OPS: CodingStep = CodingStep {
+    id: "py-1827-diff-ops", title: "Diff · secuencia de edits", objective: "Listar operaciones insert/delete/keep.",
+    prompt_md: "**Ops**\n\nComparando alineaciones, cada columna es keep (igual), delete (gap abajo) o insert (gap arriba).\n\n**Micro-reto:**\n1. Alineá `\"AB\"` / `\"A\"`\n2. Emití ops keep/delete\n3. Mostrá la lista",
+    starter_code: "# def ops(a, b):\n#     # alineación mínima ad-hoc para AB vs A\n#     out = []\n#     i = j = 0\n#     # greedy: si iguales keep; si a sobra delete; si b sobra insert\n#     while i < len(a) or j < len(b):\n#         if i < len(a) and j < len(b) and a[i] == b[j]:\n#             out.append((\"keep\", a[i])); i += 1; j += 1\n#         elif i < len(a) and (j >= len(b) or a[i] != b[j]):\n#             # prefer delete when next of a matches current b\n#             if j < len(b) and i + 1 < len(a) and a[i+1] == b[j]:\n#                 out.append((\"delete\", a[i])); i += 1\n#             elif j < len(b) and (i >= len(a) or a[i] != b[j]):\n#                 if i < len(a) and (j + 1 < len(b) and a[i] == b[j+1]):\n#                     out.append((\"insert\", b[j])); j += 1\n#                 else:\n#                     out.append((\"delete\", a[i])); i += 1\n#             else:\n#                 out.append((\"delete\", a[i])); i += 1\n#         else:\n#             out.append((\"insert\", b[j])); j += 1\n#     return out\n# resultado = ops(\"AB\", \"A\")\n# print(resultado)\n",
+    pytest: "def test_diff_ops(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(\"keep\", \"A\"), (\"delete\", \"B\")]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "AB→A = keep A, delete B.",
+    solution_example: "def ops(a, b):\n    # alineación mínima ad-hoc para AB vs A\n    out = []\n    i = j = 0\n    # greedy: si iguales keep; si a sobra delete; si b sobra insert\n    while i < len(a) or j < len(b):\n        if i < len(a) and j < len(b) and a[i] == b[j]:\n            out.append((\"keep\", a[i])); i += 1; j += 1\n        elif i < len(a) and (j >= len(b) or a[i] != b[j]):\n            # prefer delete when next of a matches current b\n            if j < len(b) and i + 1 < len(a) and a[i+1] == b[j]:\n                out.append((\"delete\", a[i])); i += 1\n            elif j < len(b) and (i >= len(a) or a[i] != b[j]):\n                if i < len(a) and (j + 1 < len(b) and a[i] == b[j+1]):\n                    out.append((\"insert\", b[j])); j += 1\n                else:\n                    out.append((\"delete\", a[i])); i += 1\n            else:\n                out.append((\"delete\", a[i])); i += 1\n        else:\n            out.append((\"insert\", b[j])); j += 1\n    return out\nresultado = ops(\"AB\", \"A\")\nprint(resultado)\n",
+    next: Some("py-1828-diff-check"), show_type_chips: false, micro_step: 1827,
+};
+pub const PY1828_DIFF_CHECK: CodingStep = CodingStep {
+    id: "py-1828-diff-check", title: "Diff · Suite LCS/edit", objective: "Integrar LCS length y edit distance.",
+    prompt_md: "**Suite diff**\n\nPara `\"abc\"` / `\"axc\"`: LCS len y edit distance deben ser coherentes.\n\n**Micro-reto:**\n1. Calculá `(lcs_len, edit)`\n2. Mostrá la tupla\n3. Esperá (2, 1)",
+    starter_code: "# def lcs_len(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0]*(n+1) for _ in range(m+1)]\n#     for i in range(1, m+1):\n#         for j in range(1, n+1):\n#             dp[i][j] = dp[i-1][j-1]+1 if a[i-1]==b[j-1] else max(dp[i-1][j], dp[i][j-1])\n#     return dp[m][n]\n# def edit(a, b):\n#     m, n = len(a), len(b)\n#     dp = [[0]*(n+1) for _ in range(m+1)]\n#     for i in range(m+1): dp[i][0]=i\n#     for j in range(n+1): dp[0][j]=j\n#     for i in range(1, m+1):\n#         for j in range(1, n+1):\n#             c = 0 if a[i-1]==b[j-1] else 1\n#             dp[i][j] = min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+c)\n#     return dp[m][n]\n# resultado = (lcs_len(\"abc\", \"axc\"), edit(\"abc\", \"axc\"))\n# print(resultado)\n",
+    pytest: "def test_diff_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Una sustitución: edit=1, LCS=2.",
+    solution_example: "def lcs_len(a, b):\n    m, n = len(a), len(b)\n    dp = [[0]*(n+1) for _ in range(m+1)]\n    for i in range(1, m+1):\n        for j in range(1, n+1):\n            dp[i][j] = dp[i-1][j-1]+1 if a[i-1]==b[j-1] else max(dp[i-1][j], dp[i][j-1])\n    return dp[m][n]\ndef edit(a, b):\n    m, n = len(a), len(b)\n    dp = [[0]*(n+1) for _ in range(m+1)]\n    for i in range(m+1): dp[i][0]=i\n    for j in range(n+1): dp[0][j]=j\n    for i in range(1, m+1):\n        for j in range(1, n+1):\n            c = 0 if a[i-1]==b[j-1] else 1\n            dp[i][j] = min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+c)\n    return dp[m][n]\nresultado = (lcs_len(\"abc\", \"axc\"), edit(\"abc\", \"axc\"))\nprint(resultado)\n",
+    next: Some("py-1829-ext-kv-line"), show_type_chips: false, micro_step: 1828,
+};
+pub const PY1829_EXT_KV_LINE: CodingStep = CodingStep {
+    id: "py-1829-ext-kv-line", title: "Extract · línea clave=valor", objective: "Parsear una línea k=v a dict.",
+    prompt_md: "**KV line**\n\nMuchos logs usan `clave=valor`. `partition(\"=\")` + strip produce un par limpio sin regex.\n\n**Micro-reto:**\n1. Parseá `\"nivel=info\"`\n2. Dict con una clave\n3. Mostrá sorted items",
+    starter_code: "# line = \"nivel=info\"\n# k, _, v = line.partition(\"=\")\n# datos = {k.strip(): v.strip()}\n# resultado = sorted(datos.items())\n# print(resultado)\n",
+    pytest: "def test_ext_kv_line(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('nivel', 'info')]\n    assert ns['datos']['nivel'] == 'info'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "partition evita splits múltiples.",
+    solution_example: "line = \"nivel=info\"\nk, _, v = line.partition(\"=\")\ndatos = {k.strip(): v.strip()}\nresultado = sorted(datos.items())\nprint(resultado)\n",
+    next: Some("py-1830-ext-multi-kv"), show_type_chips: false, micro_step: 1829,
+};
+pub const PY1830_EXT_MULTI_KV: CodingStep = CodingStep {
+    id: "py-1830-ext-multi-kv", title: "Extract · varios KV", objective: "Parsear múltiples pares separados por espacio.",
+    prompt_md: "**Multi KV**\n\n`\"a=1 b=2\"` se parte por espacios; cada token es un KV. Ideal para líneas de métricas.\n\n**Micro-reto:**\n1. Parseá `\"a=1 b=2 c=3\"`\n2. Dict de ints\n3. Mostrá sorted items",
+    starter_code: "# raw = \"a=1 b=2 c=3\"\n# datos = {}\n# for tok in raw.split():\n#     k, _, v = tok.partition(\"=\")\n#     datos[k] = int(v)\n# resultado = sorted(datos.items())\n# print(resultado)\n",
+    pytest: "def test_ext_multi_kv(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', 1), ('b', 2), ('c', 3)]\n    assert ns['datos']['b'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "split() + partition por token.",
+    solution_example: "raw = \"a=1 b=2 c=3\"\ndatos = {}\nfor tok in raw.split():\n    k, _, v = tok.partition(\"=\")\n    datos[k] = int(v)\nresultado = sorted(datos.items())\nprint(resultado)\n",
+    next: Some("py-1831-ext-log-ts"), show_type_chips: false, micro_step: 1830,
+};
+pub const PY1831_EXT_LOG_TS: CodingStep = CodingStep {
+    id: "py-1831-ext-log-ts", title: "Extract · timestamp de log", objective: "Extraer prefijo temporal con regex.",
+    prompt_md: "**Timestamp**\n\nUn patrón `r\"^\\[(.+?)\\]\"` captura el reloj al inicio de la línea de log sin consumir el resto.\n\n**Micro-reto:**\n1. Extraé ts de `\"[12:01:02] ready\"`\n2. Mostrá el timestamp\n3. Usá re.match",
+    starter_code: "# import re\n# m = re.match(r\"^\\[(.+?)\\]\", \"[12:01:02] ready\")\n# resultado = m.group(1)\n# print(resultado)\n",
+    pytest: "def test_ext_log_ts(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '12:01:02'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "group(1) es el interior de [].",
+    solution_example: "import re\nm = re.match(r\"^\\[(.+?)\\]\", \"[12:01:02] ready\")\nresultado = m.group(1)\nprint(resultado)\n",
+    next: Some("py-1832-ext-log-level"), show_type_chips: false, micro_step: 1831,
+};
+pub const PY1832_EXT_LOG_LEVEL: CodingStep = CodingStep {
+    id: "py-1832-ext-log-level", title: "Extract · nivel de log", objective: "Clasificar INFO/WARN/ERROR en una línea.",
+    prompt_md: "**Nivel**\n\nBuscá un token de nivel con `re.search` y normalizá a mayúsculas para un enum estable.\n\n**Micro-reto:**\n1. En `\"ts WARN disk\"`\n2. Extraé el nivel\n3. Mostrá upper",
+    starter_code: "# import re\n# m = re.search(r\"\\b(INFO|WARN|ERROR)\\b\", \"ts WARN disk\", flags=re.I)\n# resultado = m.group(1).upper()\n# print(resultado)\n",
+    pytest: "def test_ext_log_level(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'WARN'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "\\b evita matches parciales.",
+    solution_example: "import re\nm = re.search(r\"\\b(INFO|WARN|ERROR)\\b\", \"ts WARN disk\", flags=re.I)\nresultado = m.group(1).upper()\nprint(resultado)\n",
+    next: Some("py-1833-ext-structured"), show_type_chips: false, micro_step: 1832,
+};
+pub const PY1833_EXT_STRUCTURED: CodingStep = CodingStep {
+    id: "py-1833-ext-structured", title: "Extract · log estructurado", objective: "Combinar ts, nivel y KV en un dict.",
+    prompt_md: "**Estructurado**\n\nUna línea `\"[t] LEVEL k=v\"` se descompone en campos fijos + mapa KV. El dict resultante es el contrato del parser.\n\n**Micro-reto:**\n1. Parseá `\"[01:00] INFO user=ada\"`\n2. Dict con ts, level, user\n3. Mostrá sorted items",
+    starter_code: "# import re\n# line = \"[01:00] INFO user=ada\"\n# m = re.match(r\"^\\[(?P<ts>[^\\]]+)\\]\\s+(?P<level>\\w+)\\s+(?P<body>.*)$\", line)\n# datos = {\"ts\": m.group(\"ts\"), \"level\": m.group(\"level\")}\n# for tok in m.group(\"body\").split():\n#     k, _, v = tok.partition(\"=\")\n#     if _:\n#         datos[k] = v\n# resultado = sorted(datos.items())\n# print(resultado)\n",
+    pytest: "def test_ext_structured(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('level', 'INFO'), ('ts', '01:00'), ('user', 'ada')]\n    assert ns['datos']['user'] == 'ada'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Named groups + partition en body.",
+    solution_example: "import re\nline = \"[01:00] INFO user=ada\"\nm = re.match(r\"^\\[(?P<ts>[^\\]]+)\\]\\s+(?P<level>\\w+)\\s+(?P<body>.*)$\", line)\ndatos = {\"ts\": m.group(\"ts\"), \"level\": m.group(\"level\")}\nfor tok in m.group(\"body\").split():\n    k, _, v = tok.partition(\"=\")\n    if _:\n        datos[k] = v\nresultado = sorted(datos.items())\nprint(resultado)\n",
+    next: Some("py-1834-ext-check"), show_type_chips: false, micro_step: 1833,
+};
+pub const PY1834_EXT_CHECK: CodingStep = CodingStep {
+    id: "py-1834-ext-check", title: "Extract · Suite logs", objective: "Validar parser de logs sobre dos líneas.",
+    prompt_md: "**Suite extract**\n\nParseá dos líneas y devolvé la lista de levels en orden.\n\n**Micro-reto:**\n1. Líneas INFO y ERROR\n2. Extraé levels\n3. Mostrá la lista",
+    starter_code: "# import re\n# lines = [\"[01] INFO ok\", \"[02] ERROR fail\"]\n# levels = []\n# for line in lines:\n#     m = re.search(r\"\\b(INFO|WARN|ERROR)\\b\", line)\n#     levels.append(m.group(1))\n# resultado = levels\n# print(resultado)\n",
+    pytest: "def test_ext_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['INFO', 'ERROR']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Orden de aparición se preserva.",
+    solution_example: "import re\nlines = [\"[01] INFO ok\", \"[02] ERROR fail\"]\nlevels = []\nfor line in lines:\n    m = re.search(r\"\\b(INFO|WARN|ERROR)\\b\", line)\n    levels.append(m.group(1))\nresultado = levels\nprint(resultado)\n",
+    next: Some("py-1835-val-format-assert"), show_type_chips: false, micro_step: 1834,
+};
+pub const PY1835_VAL_FORMAT_ASSERT: CodingStep = CodingStep {
+    id: "py-1835-val-format-assert", title: "Valid · assert de formato", objective: "Contratar shape con asserts puros.",
+    prompt_md: "**Assert formato**\n\nAntes de procesar, afirmá longitud, charset o patrón. Un assert fallido documenta el contrato mejor que un fix silencioso.\n\n**Micro-reto:**\n1. Validá que `\"ABC-12\"` matchea `r\"^[A-Z]{3}-\\d{2}$\"`\n2. Guardá bool en resultado\n3. Mostrá",
+    starter_code: "# import re\n# codigo = \"ABC-12\"\n# resultado = bool(re.fullmatch(r\"^[A-Z]{3}-\\d{2}$\", codigo))\n# print(resultado)\n",
+    pytest: "def test_val_format_assert(capsys):\n    import re\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert re.fullmatch(r\"^[A-Z]{3}-\\d{2}$\", \"AB-12\") is None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "fullmatch ancla inicio y fin.",
+    solution_example: "import re\ncodigo = \"ABC-12\"\nresultado = bool(re.fullmatch(r\"^[A-Z]{3}-\\d{2}$\", codigo))\nprint(resultado)\n",
+    next: Some("py-1836-val-sanitize"), show_type_chips: false, micro_step: 1835,
+};
+pub const PY1836_VAL_SANITIZE: CodingStep = CodingStep {
+    id: "py-1836-val-sanitize", title: "Valid · sanitizar entrada", objective: "Filtrar caracteres fuera de allowlist.",
+    prompt_md: "**Sanitize**\n\nUna allowlist (`isalnum` / set fijo) elimina lo no permitido. Preferible a denylist incompletas.\n\n**Micro-reto:**\n1. Sanitizá `\"Ada_42!\"` dejando alnum y `_`\n2. Mostrá el limpio",
+    starter_code: "# bruto = \"Ada_42!\"\n# resultado = \"\".join(ch for ch in bruto if ch.isalnum() or ch == \"_\")\n# print(resultado)\n",
+    pytest: "def test_val_sanitize(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'Ada_42'\n    assert \"!\" not in ns['resultado']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Allowlist: alnum + underscore.",
+    solution_example: "bruto = \"Ada_42!\"\nresultado = \"\".join(ch for ch in bruto if ch.isalnum() or ch == \"_\")\nprint(resultado)\n",
+    next: Some("py-1837-val-length"), show_type_chips: false, micro_step: 1836,
+};
+pub const PY1837_VAL_LENGTH: CodingStep = CodingStep {
+    id: "py-1837-val-length", title: "Valid · cotas de longitud", objective: "Rechazar textos fuera de rango.",
+    prompt_md: "**Longitud**\n\nContratos de API suelen exigir `min_len <= len(s) <= max_len`. Validar temprano evita payloads enormes.\n\n**Micro-reto:**\n1. Definí `ok(s, lo, hi)`\n2. Probá `\"ab\"` con (2,4) y `\"a\"`\n3. Mostrá el par",
+    starter_code: "# def ok(s, lo, hi):\n#     return lo <= len(s) <= hi\n# resultado = (ok(\"ab\", 2, 4), ok(\"a\", 2, 4))\n# print(resultado)\n",
+    pytest: "def test_val_length(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['ok'](\"abcd\", 2, 4) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Inclusive en ambos extremos.",
+    solution_example: "def ok(s, lo, hi):\n    return lo <= len(s) <= hi\nresultado = (ok(\"ab\", 2, 4), ok(\"a\", 2, 4))\nprint(resultado)\n",
+    next: Some("py-1838-val-charset"), show_type_chips: false, micro_step: 1837,
+};
+pub const PY1838_VAL_CHARSET: CodingStep = CodingStep {
+    id: "py-1838-val-charset", title: "Valid · charset permitido", objective: "Verificar que todo char esté en un set.",
+    prompt_md: "**Charset**\n\n`set(s) <= allowed` es un contrato claro: ningún carácter fuera del alfabeto.\n\n**Micro-reto:**\n1. allowed = set(\"abc123\")\n2. Validá `\"a1\"` y `\"a1x\"`\n3. Mostrá el par",
+    starter_code: "# allowed = set(\"abc123\")\n# def valid(s):\n#     return set(s) <= allowed\n# resultado = (valid(\"a1\"), valid(\"a1x\"))\n# print(resultado)\n",
+    pytest: "def test_val_charset(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['valid'](\"abc\") is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Subconjunto de sets.",
+    solution_example: "allowed = set(\"abc123\")\ndef valid(s):\n    return set(s) <= allowed\nresultado = (valid(\"a1\"), valid(\"a1x\"))\nprint(resultado)\n",
+    next: Some("py-1839-val-contract"), show_type_chips: false, micro_step: 1838,
+};
+pub const PY1839_VAL_CONTRACT: CodingStep = CodingStep {
+    id: "py-1839-val-contract", title: "Valid · contrato de dict", objective: "Exigir claves y tipos en un payload.",
+    prompt_md: "**Contrato**\n\nUn dict de entrada debe traer claves requeridas y tipos esperados. Fallar temprano con asserts mantiene el parser honest.\n\n**Micro-reto:**\n1. Requerido: name:str, age:int\n2. Validá un bueno y un malo\n3. Mostrá `(ok(bueno), ok(malo))`",
+    starter_code: "# def ok(d):\n#     return isinstance(d.get(\"name\"), str) and isinstance(d.get(\"age\"), int)\n# bueno = {\"name\": \"Ada\", \"age\": 36}\n# malo = {\"name\": \"Ada\", \"age\": \"36\"}\n# resultado = (ok(bueno), ok(malo))\n# print(resultado)\n",
+    pytest: "def test_val_contract(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert ns['ok'](ns['bueno']) is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "age como str viola el contrato.",
+    solution_example: "def ok(d):\n    return isinstance(d.get(\"name\"), str) and isinstance(d.get(\"age\"), int)\nbueno = {\"name\": \"Ada\", \"age\": 36}\nmalo = {\"name\": \"Ada\", \"age\": \"36\"}\nresultado = (ok(bueno), ok(malo))\nprint(resultado)\n",
+    next: Some("py-1840-val-check"), show_type_chips: false, micro_step: 1839,
+};
+pub const PY1840_VAL_CHECK: CodingStep = CodingStep {
+    id: "py-1840-val-check", title: "Valid · Suite contratos", objective: "Integrar formato, sanitize y contrato.",
+    prompt_md: "**Suite valid**\n\nPipeline: sanitizar id, validar patrón y armar dict contrato.\n\n**Micro-reto:**\n1. Bruto `\" Ada_1! \"`\n2. Sanitize+strip; fullmatch `r\"[A-Za-z_]+\\d\"`\n3. Mostrá `(clean, valid)`",
+    starter_code: "# import re\n# bruto = \" Ada_1! \"\n# clean = \"\".join(ch for ch in bruto.strip() if ch.isalnum() or ch == \"_\")\n# valid = bool(re.fullmatch(r\"[A-Za-z_]+\\d\", clean))\n# resultado = (clean, valid)\n# print(resultado)\n",
+    pytest: "def test_val_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('Ada_1', True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Sanitize primero, luego el patrón.",
+    solution_example: "import re\nbruto = \" Ada_1! \"\nclean = \"\".join(ch for ch in bruto.strip() if ch.isalnum() or ch == \"_\")\nvalid = bool(re.fullmatch(r\"[A-Za-z_]+\\d\", clean))\nresultado = (clean, valid)\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 1840,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -51956,6 +52497,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1778_GREEDY_VALID,
     &PY1779_GREEDY_WELSH,
     &PY1780_GREEDY_CHECK,
+    &PY1781_STR_SPLIT_JOIN,
+    &PY1782_STR_PARTITION,
+    &PY1783_STR_SLICING,
+    &PY1784_STR_NORMALIZE_WS,
+    &PY1785_STR_STRIP_CASES,
+    &PY1786_STR_CHECK,
+    &PY1787_UNI_ENCODE,
+    &PY1788_UNI_DECODE,
+    &PY1789_UNI_NAME,
+    &PY1790_UNI_NFC,
+    &PY1791_UNI_NFD,
+    &PY1792_UNI_CHECK,
+    &PY1793_RE_MATCH,
+    &PY1794_RE_SEARCH,
+    &PY1795_RE_FINDALL,
+    &PY1796_RE_GROUPS,
+    &PY1797_RE_NAMED,
+    &PY1798_RE_CHECK,
+    &PY1799_RE_LOOKAHEAD,
+    &PY1800_RE_LOOKBEHIND,
+    &PY1801_RE_VERBOSE,
+    &PY1802_RE_FLAGS,
+    &PY1803_RE_SUB,
+    &PY1804_RE_ADV_CHECK,
+    &PY1805_LEX_TOKEN_TUPLE,
+    &PY1806_LEX_REGEX_SCAN,
+    &PY1807_LEX_SKIP_WS,
+    &PY1808_LEX_STATE,
+    &PY1809_LEX_ERRORS,
+    &PY1810_LEX_CHECK,
+    &PY1811_RD_TOKENS_CURSOR,
+    &PY1812_RD_FACTOR,
+    &PY1813_RD_TERM,
+    &PY1814_RD_EXPR,
+    &PY1815_RD_EVAL,
+    &PY1816_RD_CHECK,
+    &PY1817_FMT_FORMAT,
+    &PY1818_FMT_FSTRING,
+    &PY1819_FMT_SPEC,
+    &PY1820_FMT_TEMPLATE,
+    &PY1821_FMT_SAFE,
+    &PY1822_FMT_CHECK,
+    &PY1823_DIFF_LCS_LEN,
+    &PY1824_DIFF_LCS_STR,
+    &PY1825_DIFF_EDIT_DIST,
+    &PY1826_DIFF_ALIGN,
+    &PY1827_DIFF_OPS,
+    &PY1828_DIFF_CHECK,
+    &PY1829_EXT_KV_LINE,
+    &PY1830_EXT_MULTI_KV,
+    &PY1831_EXT_LOG_TS,
+    &PY1832_EXT_LOG_LEVEL,
+    &PY1833_EXT_STRUCTURED,
+    &PY1834_EXT_CHECK,
+    &PY1835_VAL_FORMAT_ASSERT,
+    &PY1836_VAL_SANITIZE,
+    &PY1837_VAL_LENGTH,
+    &PY1838_VAL_CHARSET,
+    &PY1839_VAL_CONTRACT,
+    &PY1840_VAL_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -52123,7 +52724,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1780);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1840);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -55079,7 +55680,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1780 is the end of the rail");
+                assert_eq!(step.next, Some("py-1781-str-split-join"), "step 1780 chains to wave14");
+            }
+        }
+    }
+
+    #[test]
+    fn py1781_to_py1840_texto_parsers_chain() {
+        let bridge = coding_step_by_micro_step(1780).expect("py-1780");
+        assert_eq!(bridge.next, Some("py-1781-str-split-join"));
+
+        for n in 1781..=1840 {
+            let step = coding_step_by_micro_step(n).expect("wave14 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 1840 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 1840 is the end of the rail");
             }
         }
     }
