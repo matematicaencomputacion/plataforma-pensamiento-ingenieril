@@ -51253,7 +51253,548 @@ pub const PY1900_DOM_CHECK: CodingStep = CodingStep {
     pytest: "def test_dom_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'c'\n    assert ns['scored'] == [('a', 6), ('b', 10), ('c', 15)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "c=15 gana.",
     solution_example: "rows = [(\"a\", 2, 3), (\"b\", 1, 10), (\"c\", 5, 3)]\nscored = [(n, q * p) for n, q, p in rows]\ntop = sorted(scored, key=lambda t: t[1], reverse=True)[0][0]\nresultado = top\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 1900,
+    next: Some("py-1901-dt-date"), show_type_chips: false, micro_step: 1900,
+};
+
+pub const PY1901_DT_DATE: CodingStep = CodingStep {
+    id: "py-1901-dt-date", title: "datetime · date básico", objective: "Construir date con año, mes y día.",
+    prompt_md: "**date**\n\n`datetime.date(y, m, d)` es un valor de calendario sin hora. En PPI usamos fechas fijas: nunca `date.today()` en asserts.\n\n**Micro-reto:**\n1. `from datetime import date`\n2. Creá `date(2024, 3, 15)`\n3. Mostrá `(year, month, day)`",
+    starter_code: "# from datetime import date\n# d = date(2024, 3, 15)\n# resultado = (d.year, d.month, d.day)\n# print(resultado)\n",
+    pytest: "def test_dt_date(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2024, 3, 15)\n    assert ns['d'] == __import__('datetime').date(2024, 3, 15)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tupla year, month, day.",
+    solution_example: "from datetime import date\nd = date(2024, 3, 15)\nresultado = (d.year, d.month, d.day)\nprint(resultado)\n",
+    next: Some("py-1902-dt-time"), show_type_chips: false, micro_step: 1901,
+};
+pub const PY1902_DT_TIME: CodingStep = CodingStep {
+    id: "py-1902-dt-time", title: "datetime · time básico", objective: "Construir time con hora y minuto.",
+    prompt_md: "**time**\n\n`datetime.time(h, m, s)` modela un reloj del día sin fecha. También es un valor inmutable y comparable.\n\n**Micro-reto:**\n1. `from datetime import time`\n2. Creá `time(14, 30, 0)`\n3. Mostrá `(hour, minute, second)`",
+    starter_code: "# from datetime import time\n# t = time(14, 30, 0)\n# resultado = (t.hour, t.minute, t.second)\n# print(resultado)\n",
+    pytest: "def test_dt_time(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (14, 30, 0)\n    assert ns['t'] == __import__('datetime').time(14, 30, 0)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "hour, minute, second.",
+    solution_example: "from datetime import time\nt = time(14, 30, 0)\nresultado = (t.hour, t.minute, t.second)\nprint(resultado)\n",
+    next: Some("py-1903-dt-datetime"), show_type_chips: false, micro_step: 1902,
+};
+pub const PY1903_DT_DATETIME: CodingStep = CodingStep {
+    id: "py-1903-dt-datetime", title: "datetime · datetime", objective: "Combinar fecha y hora en datetime.",
+    prompt_md: "**datetime**\n\n`datetime(y,m,d,h,mi,s)` une calendario y reloj. Es el tipo central para scheduling determinístico.\n\n**Micro-reto:**\n1. `from datetime import datetime`\n2. Creá `datetime(2024, 3, 15, 9, 0, 0)`\n3. Mostrá `(date(), time())`",
+    starter_code: "# from datetime import datetime\n# dt = datetime(2024, 3, 15, 9, 0, 0)\n# resultado = (dt.date(), dt.time())\n# print(resultado)\n",
+    pytest: "def test_dt_datetime(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import date, time\n    assert ns['resultado'] == (date(2024, 3, 15), time(9, 0, 0))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "date() y time() del datetime.",
+    solution_example: "from datetime import datetime\ndt = datetime(2024, 3, 15, 9, 0, 0)\nresultado = (dt.date(), dt.time())\nprint(resultado)\n",
+    next: Some("py-1904-dt-attrs"), show_type_chips: false, micro_step: 1903,
+};
+pub const PY1904_DT_ATTRS: CodingStep = CodingStep {
+    id: "py-1904-dt-attrs", title: "datetime · atributos", objective: "Leer weekday y isoformat de un date fijo.",
+    prompt_md: "**Atributos**\n\n`date.weekday()` es 0=lunes…6=domingo. `isoformat()` da `YYYY-MM-DD`. Ambos son deterministas sobre literales.\n\n**Micro-reto:**\n1. `d = date(2024, 3, 15)` (viernes)\n2. Resultado `(weekday, isoformat)`\n3. Mostrá",
+    starter_code: "# from datetime import date\n# d = date(2024, 3, 15)\n# resultado = (d.weekday(), d.isoformat())\n# print(resultado)\n",
+    pytest: "def test_dt_attrs(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (4, '2024-03-15')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2024-03-15 es viernes → weekday 4.",
+    solution_example: "from datetime import date\nd = date(2024, 3, 15)\nresultado = (d.weekday(), d.isoformat())\nprint(resultado)\n",
+    next: Some("py-1905-dt-replace"), show_type_chips: false, micro_step: 1904,
+};
+pub const PY1905_DT_REPLACE: CodingStep = CodingStep {
+    id: "py-1905-dt-replace", title: "datetime · replace", objective: "Crear copia con replace sin mutar.",
+    prompt_md: "**replace**\n\n`dt.replace(...)` devuelve un datetime nuevo. El original no cambia: modelá tiempo como datos inmutables.\n\n**Micro-reto:**\n1. `dt = datetime(2024, 3, 15, 9, 0)`\n2. `dt2 = dt.replace(hour=17)`\n3. Mostrá `(dt.hour, dt2.hour)`",
+    starter_code: "# from datetime import datetime\n# dt = datetime(2024, 3, 15, 9, 0)\n# dt2 = dt.replace(hour=17)\n# resultado = (dt.hour, dt2.hour)\n# print(resultado)\n",
+    pytest: "def test_dt_replace(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (9, 17)\n    assert ns['dt'].hour == 9\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Original 9; copia 17.",
+    solution_example: "from datetime import datetime\ndt = datetime(2024, 3, 15, 9, 0)\ndt2 = dt.replace(hour=17)\nresultado = (dt.hour, dt2.hour)\nprint(resultado)\n",
+    next: Some("py-1906-dt-check"), show_type_chips: false, micro_step: 1905,
+};
+pub const PY1906_DT_CHECK: CodingStep = CodingStep {
+    id: "py-1906-dt-check", title: "datetime · Suite date/time", objective: "Integrar date, time y datetime.",
+    prompt_md: "**Suite datetime**\n\nCombiná `date` + `time` con `datetime.combine` y verificá el resultado fijo.\n\n**Micro-reto:**\n1. `d=date(2024,1,1)`, `t=time(12,0)`\n2. `dt = datetime.combine(d, t)`\n3. Mostrá `dt`",
+    starter_code: "# from datetime import date, time, datetime\n# d = date(2024, 1, 1)\n# t = time(12, 0)\n# resultado = datetime.combine(d, t)\n# print(resultado)\n",
+    pytest: "def test_dt_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import datetime\n    assert ns['resultado'] == datetime(2024, 1, 1, 12, 0)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "combine une date y time.",
+    solution_example: "from datetime import date, time, datetime\nd = date(2024, 1, 1)\nt = time(12, 0)\nresultado = datetime.combine(d, t)\nprint(resultado)\n",
+    next: Some("py-1907-td-days"), show_type_chips: false, micro_step: 1906,
+};
+pub const PY1907_TD_DAYS: CodingStep = CodingStep {
+    id: "py-1907-td-days", title: "timedelta · días", objective: "Crear timedelta en días.",
+    prompt_md: "**timedelta**\n\n`timedelta(days=n)` es una duración, no un instante. Se suma/resta a date/datetime.\n\n**Micro-reto:**\n1. `from datetime import timedelta`\n2. `delta = timedelta(days=7)`\n3. Mostrá `delta.days`",
+    starter_code: "# from datetime import timedelta\n# delta = timedelta(days=7)\n# resultado = delta.days\n# print(resultado)\n",
+    pytest: "def test_td_days(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert ns['delta'].days == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "days=7.",
+    solution_example: "from datetime import timedelta\ndelta = timedelta(days=7)\nresultado = delta.days\nprint(resultado)\n",
+    next: Some("py-1908-td-hms"), show_type_chips: false, micro_step: 1907,
+};
+pub const PY1908_TD_HMS: CodingStep = CodingStep {
+    id: "py-1908-td-hms", title: "timedelta · horas y minutos", objective: "Duración con hours y minutes.",
+    prompt_md: "**hours / minutes**\n\n`timedelta(hours=2, minutes=30)` normaliza a días/segundos internos. Leé con `total_seconds()` o campos.\n\n**Micro-reto:**\n1. `delta = timedelta(hours=2, minutes=30)`\n2. Resultado = int(total_seconds())\n3. Mostrá",
+    starter_code: "# from datetime import timedelta\n# delta = timedelta(hours=2, minutes=30)\n# resultado = int(delta.total_seconds())\n# print(resultado)\n",
+    pytest: "def test_td_hms(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9000\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2*3600+30*60=9000.",
+    solution_example: "from datetime import timedelta\ndelta = timedelta(hours=2, minutes=30)\nresultado = int(delta.total_seconds())\nprint(resultado)\n",
+    next: Some("py-1909-td-add"), show_type_chips: false, micro_step: 1908,
+};
+pub const PY1909_TD_ADD: CodingStep = CodingStep {
+    id: "py-1909-td-add", title: "timedelta · sumar a date", objective: "Avanzar una fecha con timedelta.",
+    prompt_md: "**date + timedelta**\n\nSumar duración a un `date` produce otro `date`. Ideal para deadlines fijos en tests.\n\n**Micro-reto:**\n1. `d = date(2024, 3, 15)`\n2. `d2 = d + timedelta(days=10)`\n3. Mostrá `d2`",
+    starter_code: "# from datetime import date, timedelta\n# d = date(2024, 3, 15)\n# resultado = d + timedelta(days=10)\n# print(resultado)\n",
+    pytest: "def test_td_add(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import date\n    assert ns['resultado'] == date(2024, 3, 25)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "15+10 → 25 marzo.",
+    solution_example: "from datetime import date, timedelta\nd = date(2024, 3, 15)\nresultado = d + timedelta(days=10)\nprint(resultado)\n",
+    next: Some("py-1910-td-sub"), show_type_chips: false, micro_step: 1909,
+};
+pub const PY1910_TD_SUB: CodingStep = CodingStep {
+    id: "py-1910-td-sub", title: "timedelta · restar dates", objective: "Obtener duración entre dos dates.",
+    prompt_md: "**date - date**\n\nRestar dos `date` da `timedelta`. Así medís intervalos sin reloj del sistema.\n\n**Micro-reto:**\n1. `a=date(2024,3,1)`, `b=date(2024,3,15)`\n2. `delta = b - a`\n3. Mostrá `delta.days`",
+    starter_code: "# from datetime import date\n# a = date(2024, 3, 1)\n# b = date(2024, 3, 15)\n# resultado = (b - a).days\n# print(resultado)\n",
+    pytest: "def test_td_sub(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 14\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "15-1 = 14 días.",
+    solution_example: "from datetime import date\na = date(2024, 3, 1)\nb = date(2024, 3, 15)\nresultado = (b - a).days\nprint(resultado)\n",
+    next: Some("py-1911-td-cmp"), show_type_chips: false, micro_step: 1910,
+};
+pub const PY1911_TD_CMP: CodingStep = CodingStep {
+    id: "py-1911-td-cmp", title: "timedelta · comparar duraciones", objective: "Comparar dos timedelta.",
+    prompt_md: "**Comparar**\n\nLos `timedelta` son ordenables: podés filtrar duraciones mayores a un umbral fijo.\n\n**Micro-reto:**\n1. `a=timedelta(hours=3)`, `b=timedelta(minutes=90)`\n2. Resultado `(a>b, a==timedelta(hours=3))`\n3. Mostrá",
+    starter_code: "# from datetime import timedelta\n# a = timedelta(hours=3)\n# b = timedelta(minutes=90)\n# resultado = (a > b, a == timedelta(hours=3))\n# print(resultado)\n",
+    pytest: "def test_td_cmp(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3h > 90min.",
+    solution_example: "from datetime import timedelta\na = timedelta(hours=3)\nb = timedelta(minutes=90)\nresultado = (a > b, a == timedelta(hours=3))\nprint(resultado)\n",
+    next: Some("py-1912-td-check"), show_type_chips: false, micro_step: 1911,
+};
+pub const PY1912_TD_CHECK: CodingStep = CodingStep {
+    id: "py-1912-td-check", title: "timedelta · Suite aritmética", objective: "Pipeline date + timedelta + diff.",
+    prompt_md: "**Suite timedelta**\n\nPartí de una fecha fija, sumá 5 días y verificá la diferencia.\n\n**Micro-reto:**\n1. `start=date(2024,6,1)`\n2. `end = start + timedelta(days=5)`\n3. Mostrá `(end, (end-start).days)`",
+    starter_code: "# from datetime import date, timedelta\n# start = date(2024, 6, 1)\n# end = start + timedelta(days=5)\n# resultado = (end, (end - start).days)\n# print(resultado)\n",
+    pytest: "def test_td_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import date\n    assert ns['resultado'] == (date(2024, 6, 6), 5)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1+5 → 6 junio; diff 5.",
+    solution_example: "from datetime import date, timedelta\nstart = date(2024, 6, 1)\nend = start + timedelta(days=5)\nresultado = (end, (end - start).days)\nprint(resultado)\n",
+    next: Some("py-1913-cal-weekday"), show_type_chips: false, micro_step: 1912,
+};
+pub const PY1913_CAL_WEEKDAY: CodingStep = CodingStep {
+    id: "py-1913-cal-weekday", title: "calendar · weekday", objective: "Obtener weekday con calendar.weekday.",
+    prompt_md: "**calendar.weekday**\n\n`calendar.weekday(y,m,d)` devuelve 0=lunes…6=domingo (igual que `date.weekday`).\n\n**Micro-reto:**\n1. `import calendar`\n2. `calendar.weekday(2024, 3, 15)`\n3. Mostrá el entero",
+    starter_code: "# import calendar\n# resultado = calendar.weekday(2024, 3, 15)\n# print(resultado)\n",
+    pytest: "def test_cal_weekday(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Viernes → 4.",
+    solution_example: "import calendar\nresultado = calendar.weekday(2024, 3, 15)\nprint(resultado)\n",
+    next: Some("py-1914-cal-monthcalendar"), show_type_chips: false, micro_step: 1913,
+};
+pub const PY1914_CAL_MONTHCALENDAR: CodingStep = CodingStep {
+    id: "py-1914-cal-monthcalendar", title: "calendar · monthcalendar", objective: "Matriz de semanas del mes.",
+    prompt_md: "**monthcalendar**\n\n`calendar.monthcalendar(y,m)` lista semanas; cada semana tiene 7 ints (0 = día fuera del mes).\n\n**Micro-reto:**\n1. Matriz de marzo 2024\n2. Contá cuántas semanas (filas)\n3. Mostrá el conteo",
+    starter_code: "# import calendar\n# weeks = calendar.monthcalendar(2024, 3)\n# resultado = len(weeks)\n# print(resultado)\n",
+    pytest: "def test_cal_monthcalendar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert len(ns['weeks'][0]) == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Marzo 2024 tiene 5 semanas en la matriz.",
+    solution_example: "import calendar\nweeks = calendar.monthcalendar(2024, 3)\nresultado = len(weeks)\nprint(resultado)\n",
+    next: Some("py-1915-cal-monthrange"), show_type_chips: false, micro_step: 1914,
+};
+pub const PY1915_CAL_MONTHRANGE: CodingStep = CodingStep {
+    id: "py-1915-cal-monthrange", title: "calendar · monthrange", objective: "Primer weekday y días del mes.",
+    prompt_md: "**monthrange**\n\n`calendar.monthrange(y,m)` → `(weekday_del_día_1, n_días)`. Útil para validar calendarios.\n\n**Micro-reto:**\n1. `calendar.monthrange(2024, 2)`\n2. Mostrá la tupla",
+    starter_code: "# import calendar\n# resultado = calendar.monthrange(2024, 2)\n# print(resultado)\n",
+    pytest: "def test_cal_monthrange(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, 29)  # Thu, leap Feb\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2024 bisiesto: feb 29; día 1 es jueves=3.",
+    solution_example: "import calendar\nresultado = calendar.monthrange(2024, 2)\nprint(resultado)\n",
+    next: Some("py-1916-cal-isleap"), show_type_chips: false, micro_step: 1915,
+};
+pub const PY1916_CAL_ISLEAP: CodingStep = CodingStep {
+    id: "py-1916-cal-isleap", title: "calendar · isleap", objective: "Detectar año bisiesto.",
+    prompt_md: "**isleap**\n\n`calendar.isleap(year)` es True si el año es bisiesto. Regla gregoriana encapsulada.\n\n**Micro-reto:**\n1. Evaluá 2024 y 2023\n2. Resultado `(isleap(2024), isleap(2023))`\n3. Mostrá",
+    starter_code: "# import calendar\n# resultado = (calendar.isleap(2024), calendar.isleap(2023))\n# print(resultado)\n",
+    pytest: "def test_cal_isleap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2024 sí; 2023 no.",
+    solution_example: "import calendar\nresultado = (calendar.isleap(2024), calendar.isleap(2023))\nprint(resultado)\n",
+    next: Some("py-1917-cal-days"), show_type_chips: false, micro_step: 1916,
+};
+pub const PY1917_CAL_DAYS: CodingStep = CodingStep {
+    id: "py-1917-cal-days", title: "calendar · días del mes en matriz", objective: "Contar días no-cero de monthcalendar.",
+    prompt_md: "**Días reales**\n\nEn `monthcalendar`, los `0` son padding. Contar `!= 0` da los días del mes.\n\n**Micro-reto:**\n1. Matriz abril 2024\n2. Contá celdas > 0\n3. Mostrá",
+    starter_code: "# import calendar\n# weeks = calendar.monthcalendar(2024, 4)\n# resultado = sum(1 for w in weeks for d in w if d != 0)\n# print(resultado)\n",
+    pytest: "def test_cal_days(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 30\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Abril tiene 30 días.",
+    solution_example: "import calendar\nweeks = calendar.monthcalendar(2024, 4)\nresultado = sum(1 for w in weeks for d in w if d != 0)\nprint(resultado)\n",
+    next: Some("py-1918-cal-check"), show_type_chips: false, micro_step: 1917,
+};
+pub const PY1918_CAL_CHECK: CodingStep = CodingStep {
+    id: "py-1918-cal-check", title: "calendar · Suite mes", objective: "Integrar monthrange e isleap.",
+    prompt_md: "**Suite calendar**\n\nPara un mes fijo: días vía monthrange y si el año es bisiesto.\n\n**Micro-reto:**\n1. Año 2024, mes 2\n2. `(monthrange[1], isleap(2024))`\n3. Mostrá",
+    starter_code: "# import calendar\n# resultado = (calendar.monthrange(2024, 2)[1], calendar.isleap(2024))\n# print(resultado)\n",
+    pytest: "def test_cal_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (29, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Feb 2024: 29 días; bisiesto.",
+    solution_example: "import calendar\nresultado = (calendar.monthrange(2024, 2)[1], calendar.isleap(2024))\nprint(resultado)\n",
+    next: Some("py-1919-fmt-strftime"), show_type_chips: false, micro_step: 1918,
+};
+pub const PY1919_FMT_STRFTIME: CodingStep = CodingStep {
+    id: "py-1919-fmt-strftime", title: "formato · strftime", objective: "Formatear date con strftime.",
+    prompt_md: "**strftime**\n\n`date.strftime(\"%Y-%m-%d\")` convierte a texto con plantilla. Dominio típico: logs y reportes.\n\n**Micro-reto:**\n1. `d=date(2024,3,15)`\n2. Formateá `%d/%m/%Y`\n3. Mostrá el string",
+    starter_code: "# from datetime import date\n# d = date(2024, 3, 15)\n# resultado = d.strftime(\"%d/%m/%Y\")\n# print(resultado)\n",
+    pytest: "def test_fmt_strftime(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '15/03/2024'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "%d/%m/%Y → 15/03/2024.",
+    solution_example: "from datetime import date\nd = date(2024, 3, 15)\nresultado = d.strftime(\"%d/%m/%Y\")\nprint(resultado)\n",
+    next: Some("py-1920-fmt-time"), show_type_chips: false, micro_step: 1919,
+};
+pub const PY1920_FMT_TIME: CodingStep = CodingStep {
+    id: "py-1920-fmt-time", title: "formato · strftime hora", objective: "Formatear datetime con hora.",
+    prompt_md: "**strftime + hora**\n\n`%H:%M` da reloj 24h. Combiná fecha y hora en un solo stamp legible.\n\n**Micro-reto:**\n1. `dt=datetime(2024,3,15,9,5)`\n2. Formato `%Y-%m-%d %H:%M`\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# dt = datetime(2024, 3, 15, 9, 5)\n# resultado = dt.strftime(\"%Y-%m-%d %H:%M\")\n# print(resultado)\n",
+    pytest: "def test_fmt_time(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '2024-03-15 09:05'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Cero a la izquierda en hora.",
+    solution_example: "from datetime import datetime\ndt = datetime(2024, 3, 15, 9, 5)\nresultado = dt.strftime(\"%Y-%m-%d %H:%M\")\nprint(resultado)\n",
+    next: Some("py-1921-fmt-strptime"), show_type_chips: false, micro_step: 1920,
+};
+pub const PY1921_FMT_STRPTIME: CodingStep = CodingStep {
+    id: "py-1921-fmt-strptime", title: "formato · strptime", objective: "Parsear string a datetime.",
+    prompt_md: "**strptime**\n\n`datetime.strptime(texto, fmt)` es el inverso de strftime. Fijá el formato; no uses parsers ambiguos.\n\n**Micro-reto:**\n1. Parseá `\"15/03/2024\"` con `%d/%m/%Y`\n2. Mostrá `.date()`",
+    starter_code: "# from datetime import datetime\n# dt = datetime.strptime(\"15/03/2024\", \"%d/%m/%Y\")\n# resultado = dt.date()\n# print(resultado)\n",
+    pytest: "def test_fmt_strptime(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import date\n    assert ns['resultado'] == date(2024, 3, 15)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "strptime → date(2024,3,15).",
+    solution_example: "from datetime import datetime\ndt = datetime.strptime(\"15/03/2024\", \"%d/%m/%Y\")\nresultado = dt.date()\nprint(resultado)\n",
+    next: Some("py-1922-fmt-iso"), show_type_chips: false, micro_step: 1921,
+};
+pub const PY1922_FMT_ISO: CodingStep = CodingStep {
+    id: "py-1922-fmt-iso", title: "formato · fromisoformat", objective: "Parsear ISO 8601 simple.",
+    prompt_md: "**fromisoformat**\n\n`datetime.fromisoformat(\"2024-03-15T09:00:00\")` parsea ISO sin red. Ideal para APIs/fixtures.\n\n**Micro-reto:**\n1. Parseá `\"2024-03-15T09:00:00\"`\n2. Mostrá `(year, hour)`",
+    starter_code: "# from datetime import datetime\n# dt = datetime.fromisoformat(\"2024-03-15T09:00:00\")\n# resultado = (dt.year, dt.hour)\n# print(resultado)\n",
+    pytest: "def test_fmt_iso(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2024, 9)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "year 2024, hour 9.",
+    solution_example: "from datetime import datetime\ndt = datetime.fromisoformat(\"2024-03-15T09:00:00\")\nresultado = (dt.year, dt.hour)\nprint(resultado)\n",
+    next: Some("py-1923-fmt-roundtrip"), show_type_chips: false, micro_step: 1922,
+};
+pub const PY1923_FMT_ROUNDTRIP: CodingStep = CodingStep {
+    id: "py-1923-fmt-roundtrip", title: "formato · roundtrip", objective: "strftime luego strptime sin pérdida.",
+    prompt_md: "**Roundtrip**\n\nFormatear y volver a parsear con el mismo fmt debe recuperar el instante (campos cubiertos).\n\n**Micro-reto:**\n1. `dt=datetime(2024,7,4,18,0)`\n2. Roundtrip con `%Y-%m-%d %H:%M`\n3. Mostrá igualdad booleana",
+    starter_code: "# from datetime import datetime\n# dt = datetime(2024, 7, 4, 18, 0)\n# s = dt.strftime(\"%Y-%m-%d %H:%M\")\n# back = datetime.strptime(s, \"%Y-%m-%d %H:%M\")\n# resultado = back == dt\n# print(resultado)\n",
+    pytest: "def test_fmt_roundtrip(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert ns['back'] == ns['dt']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Mismo fmt → igualdad True.",
+    solution_example: "from datetime import datetime\ndt = datetime(2024, 7, 4, 18, 0)\ns = dt.strftime(\"%Y-%m-%d %H:%M\")\nback = datetime.strptime(s, \"%Y-%m-%d %H:%M\")\nresultado = back == dt\nprint(resultado)\n",
+    next: Some("py-1924-fmt-check"), show_type_chips: false, micro_step: 1923,
+};
+pub const PY1924_FMT_CHECK: CodingStep = CodingStep {
+    id: "py-1924-fmt-check", title: "formato · Suite parse/format", objective: "Pipeline strptime → strftime.",
+    prompt_md: "**Suite formato**\n\nParseá un stamp de dominio y reformateá a ISO fecha.\n\n**Micro-reto:**\n1. Parseá `\"01-02-2024 08:30\"` con `%d-%m-%Y %H:%M`\n2. `strftime(\"%Y-%m-%d\")`\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# dt = datetime.strptime(\"01-02-2024 08:30\", \"%d-%m-%Y %H:%M\")\n# resultado = dt.strftime(\"%Y-%m-%d\")\n# print(resultado)\n",
+    pytest: "def test_fmt_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '2024-02-01'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "01-02-2024 → 2024-02-01.",
+    solution_example: "from datetime import datetime\ndt = datetime.strptime(\"01-02-2024 08:30\", \"%d-%m-%Y %H:%M\")\nresultado = dt.strftime(\"%Y-%m-%d\")\nprint(resultado)\n",
+    next: Some("py-1925-iv-tuple"), show_type_chips: false, micro_step: 1924,
+};
+pub const PY1925_IV_TUPLE: CodingStep = CodingStep {
+    id: "py-1925-iv-tuple", title: "intervalo · [start,end)", objective: "Modelar intervalo half-open como tupla.",
+    prompt_md: "**Intervalo half-open**\n\nUn rango `[start, end)` incluye start y excluye end. Tupla `(start, end)` de datetime fijos.\n\n**Micro-reto:**\n1. `start=datetime(2024,1,1,9)`, `end=datetime(2024,1,1,10)`\n2. `iv = (start, end)`\n3. Mostrá `(iv[0].hour, iv[1].hour)`",
+    starter_code: "# from datetime import datetime\n# start = datetime(2024, 1, 1, 9)\n# end = datetime(2024, 1, 1, 10)\n# iv = (start, end)\n# resultado = (iv[0].hour, iv[1].hour)\n# print(resultado)\n",
+    pytest: "def test_iv_tuple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (9, 10)\n    assert ns['iv'][0] < ns['iv'][1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "9 a 10.",
+    solution_example: "from datetime import datetime\nstart = datetime(2024, 1, 1, 9)\nend = datetime(2024, 1, 1, 10)\niv = (start, end)\nresultado = (iv[0].hour, iv[1].hour)\nprint(resultado)\n",
+    next: Some("py-1926-iv-contains"), show_type_chips: false, micro_step: 1925,
+};
+pub const PY1926_IV_CONTAINS: CodingStep = CodingStep {
+    id: "py-1926-iv-contains", title: "intervalo · contiene punto", objective: "Pertenencia half-open start <= t < end.",
+    prompt_md: "**contains**\n\n`start <= t < end` es la semántica half-open. El extremo derecho no pertenece.\n\n**Micro-reto:**\n1. iv 9:00–10:00; puntos 9:00, 9:30, 10:00\n2. Lista de bools de pertenencia\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# start = datetime(2024, 1, 1, 9)\n# end = datetime(2024, 1, 1, 10)\n# pts = [datetime(2024, 1, 1, 9), datetime(2024, 1, 1, 9, 30), datetime(2024, 1, 1, 10)]\n# resultado = [start <= t < end for t in pts]\n# print(resultado)\n",
+    pytest: "def test_iv_contains(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [True, True, False]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "10:00 excluido.",
+    solution_example: "from datetime import datetime\nstart = datetime(2024, 1, 1, 9)\nend = datetime(2024, 1, 1, 10)\npts = [datetime(2024, 1, 1, 9), datetime(2024, 1, 1, 9, 30), datetime(2024, 1, 1, 10)]\nresultado = [start <= t < end for t in pts]\nprint(resultado)\n",
+    next: Some("py-1927-iv-duration"), show_type_chips: false, micro_step: 1926,
+};
+pub const PY1927_IV_DURATION: CodingStep = CodingStep {
+    id: "py-1927-iv-duration", title: "intervalo · duración", objective: "Duración como end - start.",
+    prompt_md: "**Duración**\n\n`end - start` da `timedelta`. En half-open, esa duración es la longitud del slot.\n\n**Micro-reto:**\n1. 09:00–11:30 el mismo día\n2. minutos = int(total_seconds)//60\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# start = datetime(2024, 1, 1, 9, 0)\n# end = datetime(2024, 1, 1, 11, 30)\n# resultado = int((end - start).total_seconds()) // 60\n# print(resultado)\n",
+    pytest: "def test_iv_duration(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 150\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "150 minutos.",
+    solution_example: "from datetime import datetime\nstart = datetime(2024, 1, 1, 9, 0)\nend = datetime(2024, 1, 1, 11, 30)\nresultado = int((end - start).total_seconds()) // 60\nprint(resultado)\n",
+    next: Some("py-1928-iv-overlap"), show_type_chips: false, micro_step: 1927,
+};
+pub const PY1928_IV_OVERLAP: CodingStep = CodingStep {
+    id: "py-1928-iv-overlap", title: "intervalo · solapamiento", objective: "Detectar overlap de dos [s,e).",
+    prompt_md: "**Overlap**\n\nDos intervalos half-open se solapan sii `a_start < b_end and b_start < a_end`.\n\n**Micro-reto:**\n1. A=[9,11), B=[10,12), C=[11,13)\n2. `(overlap A-B, overlap A-C)`\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# def overlaps(a, b):\n#     return a[0] < b[1] and b[0] < a[1]\n# A = (datetime(2024,1,1,9), datetime(2024,1,1,11))\n# B = (datetime(2024,1,1,10), datetime(2024,1,1,12))\n# C = (datetime(2024,1,1,11), datetime(2024,1,1,13))\n# resultado = (overlaps(A, B), overlaps(A, C))\n# print(resultado)\n",
+    pytest: "def test_iv_overlap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "A-B sí; A-C tocan en 11 sin solapar.",
+    solution_example: "from datetime import datetime\ndef overlaps(a, b):\n    return a[0] < b[1] and b[0] < a[1]\nA = (datetime(2024,1,1,9), datetime(2024,1,1,11))\nB = (datetime(2024,1,1,10), datetime(2024,1,1,12))\nC = (datetime(2024,1,1,11), datetime(2024,1,1,13))\nresultado = (overlaps(A, B), overlaps(A, C))\nprint(resultado)\n",
+    next: Some("py-1929-iv-merge"), show_type_chips: false, micro_step: 1928,
+};
+pub const PY1929_IV_MERGE: CodingStep = CodingStep {
+    id: "py-1929-iv-merge", title: "intervalo · merge adyacentes", objective: "Fusionar si se tocan o solapan.",
+    prompt_md: "**Merge**\n\nSi `a_end >= b_start` (ordenados), el merge es `(a_start, max(a_end,b_end))`.\n\n**Micro-reto:**\n1. A=[9,11), B=[11,12) adyacentes\n2. Merge a un intervalo\n3. Mostrá horas `(start.hour, end.hour)`",
+    starter_code: "# from datetime import datetime\n# A = (datetime(2024,1,1,9), datetime(2024,1,1,11))\n# B = (datetime(2024,1,1,11), datetime(2024,1,1,12))\n# merged = (A[0], max(A[1], B[1]))\n# resultado = (merged[0].hour, merged[1].hour)\n# print(resultado)\n",
+    pytest: "def test_iv_merge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (9, 12)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "9–12.",
+    solution_example: "from datetime import datetime\nA = (datetime(2024,1,1,9), datetime(2024,1,1,11))\nB = (datetime(2024,1,1,11), datetime(2024,1,1,12))\nmerged = (A[0], max(A[1], B[1]))\nresultado = (merged[0].hour, merged[1].hour)\nprint(resultado)\n",
+    next: Some("py-1930-iv-check"), show_type_chips: false, micro_step: 1929,
+};
+pub const PY1930_IV_CHECK: CodingStep = CodingStep {
+    id: "py-1930-iv-check", title: "intervalo · Suite overlap/duración", objective: "Suite de intervalos half-open.",
+    prompt_md: "**Suite intervalos**\n\nDuración en minutos + overlap booleano con un busy fijo.\n\n**Micro-reto:**\n1. free=[9,12), busy=[10,11)\n2. `(minutos_free, overlaps)`\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# free = (datetime(2024,1,1,9), datetime(2024,1,1,12))\n# busy = (datetime(2024,1,1,10), datetime(2024,1,1,11))\n# mins = int((free[1]-free[0]).total_seconds()) // 60\n# overlaps = free[0] < busy[1] and busy[0] < free[1]\n# resultado = (mins, overlaps)\n# print(resultado)\n",
+    pytest: "def test_iv_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (180, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "180 min; sí overlap.",
+    solution_example: "from datetime import datetime\nfree = (datetime(2024,1,1,9), datetime(2024,1,1,12))\nbusy = (datetime(2024,1,1,10), datetime(2024,1,1,11))\nmins = int((free[1]-free[0]).total_seconds()) // 60\noverlaps = free[0] < busy[1] and busy[0] < free[1]\nresultado = (mins, overlaps)\nprint(resultado)\n",
+    next: Some("py-1931-sch-window"), show_type_chips: false, micro_step: 1930,
+};
+pub const PY1931_SCH_WINDOW: CodingStep = CodingStep {
+    id: "py-1931-sch-window", title: "scheduling · ventana laboral", objective: "Definir ventana de trabajo fija.",
+    prompt_md: "**Ventana**\n\nUna ventana laboral es un intervalo `[open, close)` del día. Base del scheduler.\n\n**Micro-reto:**\n1. open=9:00, close=17:00 el 2024-01-02\n2. horas = (close-open).seconds//3600  (o total_seconds)\n3. Mostrá horas enteras",
+    starter_code: "# from datetime import datetime\n# open_ = datetime(2024, 1, 2, 9)\n# close = datetime(2024, 1, 2, 17)\n# resultado = int((close - open_).total_seconds()) // 3600\n# print(resultado)\n",
+    pytest: "def test_sch_window(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 8\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "9→17 = 8 horas.",
+    solution_example: "from datetime import datetime\nopen_ = datetime(2024, 1, 2, 9)\nclose = datetime(2024, 1, 2, 17)\nresultado = int((close - open_).total_seconds()) // 3600\nprint(resultado)\n",
+    next: Some("py-1932-sch-subtract"), show_type_chips: false, micro_step: 1931,
+};
+pub const PY1932_SCH_SUBTRACT: CodingStep = CodingStep {
+    id: "py-1932-sch-subtract", title: "scheduling · restar busy", objective: "Huecos libres tras un busy interior.",
+    prompt_md: "**Restar busy**\n\nSi busy ⊆ window, quedan `[open, busy_start)` y `[busy_end, close)`.\n\n**Micro-reto:**\n1. window 9–17; busy 12–13\n2. Lista de horas de inicio de huecos libres\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# open_ = datetime(2024, 1, 2, 9)\n# close = datetime(2024, 1, 2, 17)\n# busy = (datetime(2024, 1, 2, 12), datetime(2024, 1, 2, 13))\n# gaps = [(open_, busy[0]), (busy[1], close)]\n# resultado = [g[0].hour for g in gaps]\n# print(resultado)\n",
+    pytest: "def test_sch_subtract(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [9, 13]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Huecos empiezan 9 y 13.",
+    solution_example: "from datetime import datetime\nopen_ = datetime(2024, 1, 2, 9)\nclose = datetime(2024, 1, 2, 17)\nbusy = (datetime(2024, 1, 2, 12), datetime(2024, 1, 2, 13))\ngaps = [(open_, busy[0]), (busy[1], close)]\nresultado = [g[0].hour for g in gaps]\nprint(resultado)\n",
+    next: Some("py-1933-sch-first"), show_type_chips: false, micro_step: 1932,
+};
+pub const PY1933_SCH_FIRST: CodingStep = CodingStep {
+    id: "py-1933-sch-first", title: "scheduling · primer slot", objective: "Elegir el primer hueco con duración mínima.",
+    prompt_md: "**Primer slot**\n\nDado gaps y `need` (timedelta), el primero con `end-start >= need` gana.\n\n**Micro-reto:**\n1. gaps: 9–10 (1h) y 13–17 (4h); need=2h\n2. Hora de inicio del primer apto\n3. Mostrá",
+    starter_code: "# from datetime import datetime, timedelta\n# gaps = [\n#     (datetime(2024,1,2,9), datetime(2024,1,2,10)),\n#     (datetime(2024,1,2,13), datetime(2024,1,2,17)),\n# ]\n# need = timedelta(hours=2)\n# pick = next(g for g in gaps if g[1] - g[0] >= need)\n# resultado = pick[0].hour\n# print(resultado)\n",
+    pytest: "def test_sch_first(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 13\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Solo el de 13:00 tiene ≥2h.",
+    solution_example: "from datetime import datetime, timedelta\ngaps = [\n    (datetime(2024,1,2,9), datetime(2024,1,2,10)),\n    (datetime(2024,1,2,13), datetime(2024,1,2,17)),\n]\nneed = timedelta(hours=2)\npick = next(g for g in gaps if g[1] - g[0] >= need)\nresultado = pick[0].hour\nprint(resultado)\n",
+    next: Some("py-1934-sch-filter"), show_type_chips: false, micro_step: 1933,
+};
+pub const PY1934_SCH_FILTER: CodingStep = CodingStep {
+    id: "py-1934-sch-filter", title: "scheduling · filtrar por duración", objective: "Filtrar slots según minutos mínimos.",
+    prompt_md: "**Filtro**\n\nComprensión: conservá gaps con duración >= umbral en minutos.\n\n**Micro-reto:**\n1. Tres gaps de 30, 60, 90 min\n2. Filtrá >= 60\n3. Mostrá lista de minutos",
+    starter_code: "# from datetime import datetime, timedelta\n# base = datetime(2024, 1, 2, 9)\n# gaps = [\n#     (base, base + timedelta(minutes=30)),\n#     (base, base + timedelta(minutes=60)),\n#     (base, base + timedelta(minutes=90)),\n# ]\n# resultado = [int((e-s).total_seconds())//60 for s,e in gaps if (e-s) >= timedelta(minutes=60)]\n# print(resultado)\n",
+    pytest: "def test_sch_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [60, 90]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Descartá 30.",
+    solution_example: "from datetime import datetime, timedelta\nbase = datetime(2024, 1, 2, 9)\ngaps = [\n    (base, base + timedelta(minutes=30)),\n    (base, base + timedelta(minutes=60)),\n    (base, base + timedelta(minutes=90)),\n]\nresultado = [int((e-s).total_seconds())//60 for s,e in gaps if (e-s) >= timedelta(minutes=60)]\nprint(resultado)\n",
+    next: Some("py-1935-sch-pack"), show_type_chips: false, micro_step: 1934,
+};
+pub const PY1935_SCH_PACK: CodingStep = CodingStep {
+    id: "py-1935-sch-pack", title: "scheduling · empaquetar reuniones", objective: "Colocar N reuniones de duración fija.",
+    prompt_md: "**Pack**\n\nDesde `start`, colocá n slots consecutivos de `dur` sin solapar: `[t, t+dur)`.\n\n**Micro-reto:**\n1. start 9:00; dur 1h; n=3\n2. Lista de horas de inicio\n3. Mostrá",
+    starter_code: "# from datetime import datetime, timedelta\n# start = datetime(2024, 1, 2, 9)\n# dur = timedelta(hours=1)\n# resultado = [(start + i * dur).hour for i in range(3)]\n# print(resultado)\n",
+    pytest: "def test_sch_pack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [9, 10, 11]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "9,10,11.",
+    solution_example: "from datetime import datetime, timedelta\nstart = datetime(2024, 1, 2, 9)\ndur = timedelta(hours=1)\nresultado = [(start + i * dur).hour for i in range(3)]\nprint(resultado)\n",
+    next: Some("py-1936-sch-check"), show_type_chips: false, micro_step: 1935,
+};
+pub const PY1936_SCH_CHECK: CodingStep = CodingStep {
+    id: "py-1936-sch-check", title: "scheduling · Suite slots", objective: "Ventana, busy y primer hueco apto.",
+    prompt_md: "**Suite scheduling**\n\nwindow 9–17, busy 9–11, need 2h → primer inicio libre.\n\n**Micro-reto:**\n1. Construí el hueco post-busy\n2. Verificá duración >= 2h\n3. Mostrá hora de inicio",
+    starter_code: "# from datetime import datetime, timedelta\n# busy_end = datetime(2024, 1, 2, 11)\n# close = datetime(2024, 1, 2, 17)\n# gap = (busy_end, close)\n# assert gap[1] - gap[0] >= timedelta(hours=2)\n# resultado = gap[0].hour\n# print(resultado)\n",
+    pytest: "def test_sch_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 11\n    assert ns['gap'][1].hour == 17\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Libre desde las 11.",
+    solution_example: "from datetime import datetime, timedelta\nbusy_end = datetime(2024, 1, 2, 11)\nclose = datetime(2024, 1, 2, 17)\ngap = (busy_end, close)\nassert gap[1] - gap[0] >= timedelta(hours=2)\nresultado = gap[0].hour\nprint(resultado)\n",
+    next: Some("py-1937-rec-days"), show_type_chips: false, micro_step: 1936,
+};
+pub const PY1937_REC_DAYS: CodingStep = CodingStep {
+    id: "py-1937-rec-days", title: "recurrencia · cada N días", objective: "Generar fechas cada N días.",
+    prompt_md: "**Cada N días**\n\nRecurrencia manual: `start + i*timedelta(days=n)` para i en rango. Sin libs de RRULE.\n\n**Micro-reto:**\n1. start=2024-01-01; cada 3 días; 4 ocurrencias\n2. Lista de days\n3. Mostrá",
+    starter_code: "# from datetime import date, timedelta\n# start = date(2024, 1, 1)\n# resultado = [(start + timedelta(days=3*i)).day for i in range(4)]\n# print(resultado)\n",
+    pytest: "def test_rec_days(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 4, 7, 10]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1,4,7,10.",
+    solution_example: "from datetime import date, timedelta\nstart = date(2024, 1, 1)\nresultado = [(start + timedelta(days=3*i)).day for i in range(4)]\nprint(resultado)\n",
+    next: Some("py-1938-rec-weeks"), show_type_chips: false, micro_step: 1937,
+};
+pub const PY1938_REC_WEEKS: CodingStep = CodingStep {
+    id: "py-1938-rec-weeks", title: "recurrencia · cada N semanas", objective: "Avanzar de a semanas.",
+    prompt_md: "**Cada N semanas**\n\n`timedelta(weeks=n)` equivale a `days=7*n`. Misma idea, otra escala.\n\n**Micro-reto:**\n1. start=2024-01-01; cada 2 semanas; 3 fechas\n2. Lista isoformat\n3. Mostrá",
+    starter_code: "# from datetime import date, timedelta\n# start = date(2024, 1, 1)\n# resultado = [(start + timedelta(weeks=2*i)).isoformat() for i in range(3)]\n# print(resultado)\n",
+    pytest: "def test_rec_weeks(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['2024-01-01', '2024-01-15', '2024-01-29']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "+14 días cada salto.",
+    solution_example: "from datetime import date, timedelta\nstart = date(2024, 1, 1)\nresultado = [(start + timedelta(weeks=2*i)).isoformat() for i in range(3)]\nprint(resultado)\n",
+    next: Some("py-1939-rec-until"), show_type_chips: false, micro_step: 1938,
+};
+pub const PY1939_REC_UNTIL: CodingStep = CodingStep {
+    id: "py-1939-rec-until", title: "recurrencia · hasta end", objective: "Generar mientras date < end.",
+    prompt_md: "**Until**\n\nBucle: `cur = start; while cur < end: yield; cur += step`. Half-open respecto de end.\n\n**Micro-reto:**\n1. start 2024-01-01; step 7d; end 2024-01-22\n2. Lista de dates\n3. Mostrá len",
+    starter_code: "# from datetime import date, timedelta\n# start, end = date(2024, 1, 1), date(2024, 1, 22)\n# step = timedelta(days=7)\n# cur, out = start, []\n# while cur < end:\n#     out.append(cur)\n#     cur += step\n# resultado = len(out)\n# print(resultado)\n",
+    pytest: "def test_rec_until(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['out'] == [__import__('datetime').date(2024,1,1), __import__('datetime').date(2024,1,8), __import__('datetime').date(2024,1,15)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1,8,15 — 22 excluido.",
+    solution_example: "from datetime import date, timedelta\nstart, end = date(2024, 1, 1), date(2024, 1, 22)\nstep = timedelta(days=7)\ncur, out = start, []\nwhile cur < end:\n    out.append(cur)\n    cur += step\nresultado = len(out)\nprint(resultado)\n",
+    next: Some("py-1940-rec-count"), show_type_chips: false, micro_step: 1939,
+};
+pub const PY1940_REC_COUNT: CodingStep = CodingStep {
+    id: "py-1940-rec-count", title: "recurrencia · contar ocurrencias", objective: "Contar cuántas caben en un rango.",
+    prompt_md: "**Count**\n\nMisma generación; el deliverable es el cardinal. Útil para cupos/capacidades.\n\n**Micro-reto:**\n1. Diario desde 2024-05-01 hasta < 2024-05-06\n2. Contá\n3. Mostrá",
+    starter_code: "# from datetime import date, timedelta\n# start, end = date(2024, 5, 1), date(2024, 5, 6)\n# n = 0\n# cur = start\n# while cur < end:\n#     n += 1\n#     cur += timedelta(days=1)\n# resultado = n\n# print(resultado)\n",
+    pytest: "def test_rec_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1..5 mayo = 5 días.",
+    solution_example: "from datetime import date, timedelta\nstart, end = date(2024, 5, 1), date(2024, 5, 6)\nn = 0\ncur = start\nwhile cur < end:\n    n += 1\n    cur += timedelta(days=1)\nresultado = n\nprint(resultado)\n",
+    next: Some("py-1941-rec-skip"), show_type_chips: false, micro_step: 1940,
+};
+pub const PY1941_REC_SKIP: CodingStep = CodingStep {
+    id: "py-1941-rec-skip", title: "recurrencia · saltar domingos", objective: "Filtrar weekday == 6.",
+    prompt_md: "**Skip**\n\nGenerá diarios y descartá domingos (`weekday()==6`). Recurrencia + predicado.\n\n**Micro-reto:**\n1. 2024-03-15 (vie) .. < 2024-03-19\n2. Lista weekday de días no domingo\n3. Mostrá",
+    starter_code: "# from datetime import date, timedelta\n# start, end = date(2024, 3, 15), date(2024, 3, 19)\n# out = []\n# cur = start\n# while cur < end:\n#     if cur.weekday() != 6:\n#         out.append(cur.weekday())\n#     cur += timedelta(days=1)\n# resultado = out\n# print(resultado)\n",
+    pytest: "def test_rec_skip(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [4, 5, 0]  # Fri Sat Mon; Sun skipped\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Vie,sáb,lun — dom saltado.",
+    solution_example: "from datetime import date, timedelta\nstart, end = date(2024, 3, 15), date(2024, 3, 19)\nout = []\ncur = start\nwhile cur < end:\n    if cur.weekday() != 6:\n        out.append(cur.weekday())\n    cur += timedelta(days=1)\nresultado = out\nprint(resultado)\n",
+    next: Some("py-1942-rec-check"), show_type_chips: false, micro_step: 1941,
+};
+pub const PY1942_REC_CHECK: CodingStep = CodingStep {
+    id: "py-1942-rec-check", title: "recurrencia · Suite cada N", objective: "Suite: cada 2 días hasta end.",
+    prompt_md: "**Suite recurrencia**\n\nCada 2 días desde 2024-06-01 hasta < 2024-06-10; lista de days.\n\n**Micro-reto:**\n1. Generá la serie\n2. Extraé `.day`\n3. Mostrá",
+    starter_code: "# from datetime import date, timedelta\n# start, end = date(2024, 6, 1), date(2024, 6, 10)\n# out = []\n# cur = start\n# while cur < end:\n#     out.append(cur.day)\n#     cur += timedelta(days=2)\n# resultado = out\n# print(resultado)\n",
+    pytest: "def test_rec_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 3, 5, 7, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Impares 1..9.",
+    solution_example: "from datetime import date, timedelta\nstart, end = date(2024, 6, 1), date(2024, 6, 10)\nout = []\ncur = start\nwhile cur < end:\n    out.append(cur.day)\n    cur += timedelta(days=2)\nresultado = out\nprint(resultado)\n",
+    next: Some("py-1943-tz-offset"), show_type_chips: false, micro_step: 1942,
+};
+pub const PY1943_TZ_OFFSET: CodingStep = CodingStep {
+    id: "py-1943-tz-offset", title: "timezone · offset fijo", objective: "Crear timezone con timedelta fijo.",
+    prompt_md: "**timezone**\n\n`timezone(timedelta(hours=-3))` es un tzinfo fijo (sin IANA/red). Determinista en Wasm.\n\n**Micro-reto:**\n1. `from datetime import timezone, timedelta`\n2. `tz = timezone(timedelta(hours=-3))`\n3. Mostrá utcoffset en horas (enteras)",
+    starter_code: "# from datetime import timezone, timedelta\n# tz = timezone(timedelta(hours=-3))\n# resultado = int(tz.utcoffset(None).total_seconds()) // 3600\n# print(resultado)\n",
+    pytest: "def test_tz_offset(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == -3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "UTC-3 → -3.",
+    solution_example: "from datetime import timezone, timedelta\ntz = timezone(timedelta(hours=-3))\nresultado = int(tz.utcoffset(None).total_seconds()) // 3600\nprint(resultado)\n",
+    next: Some("py-1944-tz-aware"), show_type_chips: false, micro_step: 1943,
+};
+pub const PY1944_TZ_AWARE: CodingStep = CodingStep {
+    id: "py-1944-tz-aware", title: "timezone · datetime aware", objective: "Construir datetime con tzinfo.",
+    prompt_md: "**Aware**\n\n`datetime(..., tzinfo=tz)` es aware. `dt.tzinfo` no es None. Seguimos con offsets fijos.\n\n**Micro-reto:**\n1. tz UTC-3; dt 2024-01-01 12:00 aware\n2. Resultado `(dt.hour, dt.tzinfo is not None)`\n3. Mostrá",
+    starter_code: "# from datetime import datetime, timezone, timedelta\n# tz = timezone(timedelta(hours=-3))\n# dt = datetime(2024, 1, 1, 12, 0, tzinfo=tz)\n# resultado = (dt.hour, dt.tzinfo is not None)\n# print(resultado)\n",
+    pytest: "def test_tz_aware(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (12, True)\n    assert ns['dt'].tzinfo is not None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Aware: tzinfo presente.",
+    solution_example: "from datetime import datetime, timezone, timedelta\ntz = timezone(timedelta(hours=-3))\ndt = datetime(2024, 1, 1, 12, 0, tzinfo=tz)\nresultado = (dt.hour, dt.tzinfo is not None)\nprint(resultado)\n",
+    next: Some("py-1945-tz-convert"), show_type_chips: false, micro_step: 1944,
+};
+pub const PY1945_TZ_CONVERT: CodingStep = CodingStep {
+    id: "py-1945-tz-convert", title: "timezone · astimezone fijo", objective: "Convertir entre dos offsets fijos.",
+    prompt_md: "**astimezone**\n\n`dt.astimezone(other_tz)` convierte entre offsets fijos sin red. El instante UTC subyacente se preserva.\n\n**Micro-reto:**\n1. dt 12:00 UTC-3 → astimezone UTC+0\n2. Mostrá hour del convertido",
+    starter_code: "# from datetime import datetime, timezone, timedelta\n# tz_m3 = timezone(timedelta(hours=-3))\n# tz_utc = timezone.utc\n# dt = datetime(2024, 1, 1, 12, 0, tzinfo=tz_m3)\n# resultado = dt.astimezone(tz_utc).hour\n# print(resultado)\n",
+    pytest: "def test_tz_convert(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 15\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "12 en -3 = 15 UTC.",
+    solution_example: "from datetime import datetime, timezone, timedelta\ntz_m3 = timezone(timedelta(hours=-3))\ntz_utc = timezone.utc\ndt = datetime(2024, 1, 1, 12, 0, tzinfo=tz_m3)\nresultado = dt.astimezone(tz_utc).hour\nprint(resultado)\n",
+    next: Some("py-1946-tz-utcoffset"), show_type_chips: false, micro_step: 1945,
+};
+pub const PY1946_TZ_UTCOFFSET: CodingStep = CodingStep {
+    id: "py-1946-tz-utcoffset", title: "timezone · utcoffset del dt", objective: "Leer utcoffset desde el datetime.",
+    prompt_md: "**utcoffset()**\n\n`dt.utcoffset()` delega en tzinfo. Para offset fijo es constante.\n\n**Micro-reto:**\n1. Aware con UTC+2\n2. Horas del utcoffset\n3. Mostrá",
+    starter_code: "# from datetime import datetime, timezone, timedelta\n# tz = timezone(timedelta(hours=2))\n# dt = datetime(2024, 6, 1, 8, 0, tzinfo=tz)\n# resultado = int(dt.utcoffset().total_seconds()) // 3600\n# print(resultado)\n",
+    pytest: "def test_tz_utcoffset(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "+2 horas.",
+    solution_example: "from datetime import datetime, timezone, timedelta\ntz = timezone(timedelta(hours=2))\ndt = datetime(2024, 6, 1, 8, 0, tzinfo=tz)\nresultado = int(dt.utcoffset().total_seconds()) // 3600\nprint(resultado)\n",
+    next: Some("py-1947-tz-cmp"), show_type_chips: false, micro_step: 1946,
+};
+pub const PY1947_TZ_CMP: CodingStep = CodingStep {
+    id: "py-1947-tz-cmp", title: "timezone · comparar aware", objective: "Comparar dos aware de distinto offset.",
+    prompt_md: "**Comparar aware**\n\nPython compara en UTC absoluto: mismo instante → igualdad aunque el wall-clock difiera.\n\n**Micro-reto:**\n1. a=12:00 UTC-3; b=15:00 UTC\n2. `a == b`\n3. Mostrá",
+    starter_code: "# from datetime import datetime, timezone, timedelta\n# a = datetime(2024, 1, 1, 12, 0, tzinfo=timezone(timedelta(hours=-3)))\n# b = datetime(2024, 1, 1, 15, 0, tzinfo=timezone.utc)\n# resultado = a == b\n# print(resultado)\n",
+    pytest: "def test_tz_cmp(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Mismo instante → True.",
+    solution_example: "from datetime import datetime, timezone, timedelta\na = datetime(2024, 1, 1, 12, 0, tzinfo=timezone(timedelta(hours=-3)))\nb = datetime(2024, 1, 1, 15, 0, tzinfo=timezone.utc)\nresultado = a == b\nprint(resultado)\n",
+    next: Some("py-1948-tz-check"), show_type_chips: false, micro_step: 1947,
+};
+pub const PY1948_TZ_CHECK: CodingStep = CodingStep {
+    id: "py-1948-tz-check", title: "timezone · Suite offsets", objective: "Suite: crear, convertir, comparar.",
+    prompt_md: "**Suite timezone**\n\nUTC-3 10:00 → UTC hour; y igualdad con 13:00 UTC.\n\n**Micro-reto:**\n1. Convertí a UTC; tomá hour\n2. Compará con datetime 13:00 UTC\n3. Mostrá `(hour, equal)`",
+    starter_code: "# from datetime import datetime, timezone, timedelta\n# local = datetime(2024, 1, 1, 10, 0, tzinfo=timezone(timedelta(hours=-3)))\n# utc = local.astimezone(timezone.utc)\n# other = datetime(2024, 1, 1, 13, 0, tzinfo=timezone.utc)\n# resultado = (utc.hour, utc == other)\n# print(resultado)\n",
+    pytest: "def test_tz_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (13, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "10-3 → 13 UTC.",
+    solution_example: "from datetime import datetime, timezone, timedelta\nlocal = datetime(2024, 1, 1, 10, 0, tzinfo=timezone(timedelta(hours=-3)))\nutc = local.astimezone(timezone.utc)\nother = datetime(2024, 1, 1, 13, 0, tzinfo=timezone.utc)\nresultado = (utc.hour, utc == other)\nprint(resultado)\n",
+    next: Some("py-1949-biz-weekend"), show_type_chips: false, micro_step: 1948,
+};
+pub const PY1949_BIZ_WEEKEND: CodingStep = CodingStep {
+    id: "py-1949-biz-weekend", title: "hábiles · detectar fin de semana", objective: "weekday >= 5 es finde.",
+    prompt_md: "**Fin de semana**\n\n`weekday() >= 5` → sábado/domingo. Base para días hábiles con fechas fijas.\n\n**Micro-reto:**\n1. 2024-03-15 (vie) y 2024-03-16 (sáb)\n2. Lista de bool is_weekend\n3. Mostrá",
+    starter_code: "# from datetime import date\n# def is_weekend(d):\n#     return d.weekday() >= 5\n# resultado = [is_weekend(date(2024, 3, 15)), is_weekend(date(2024, 3, 16))]\n# print(resultado)\n",
+    pytest: "def test_biz_weekend(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [False, True]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Vie no; sáb sí.",
+    solution_example: "from datetime import date\ndef is_weekend(d):\n    return d.weekday() >= 5\nresultado = [is_weekend(date(2024, 3, 15)), is_weekend(date(2024, 3, 16))]\nprint(resultado)\n",
+    next: Some("py-1950-biz-next"), show_type_chips: false, micro_step: 1949,
+};
+pub const PY1950_BIZ_NEXT: CodingStep = CodingStep {
+    id: "py-1950-biz-next", title: "hábiles · siguiente hábil", objective: "Avanzar al próximo día laboral.",
+    prompt_md: "**Next business day**\n\nSi cae en finde, sumá días hasta weekday < 5. Sin feriados aún.\n\n**Micro-reto:**\n1. Partí de 2024-03-15 (vie)\n2. next = +1 día; si finde, seguir\n3. Mostrá la date resultante (lunes 18)",
+    starter_code: "# from datetime import date, timedelta\n# d = date(2024, 3, 15) + timedelta(days=1)\n# while d.weekday() >= 5:\n#     d += timedelta(days=1)\n# resultado = d\n# print(resultado)\n",
+    pytest: "def test_biz_next(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import date\n    assert ns['resultado'] == date(2024, 3, 18)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Vie+1 → sáb → … → lun 18.",
+    solution_example: "from datetime import date, timedelta\nd = date(2024, 3, 15) + timedelta(days=1)\nwhile d.weekday() >= 5:\n    d += timedelta(days=1)\nresultado = d\nprint(resultado)\n",
+    next: Some("py-1951-biz-add"), show_type_chips: false, micro_step: 1950,
+};
+pub const PY1951_BIZ_ADD: CodingStep = CodingStep {
+    id: "py-1951-biz-add", title: "hábiles · sumar N hábiles", objective: "Avanzar N días laborales.",
+    prompt_md: "**Add N business days**\n\nRepetí: avanzar un día calendario y contar solo si weekday < 5.\n\n**Micro-reto:**\n1. Desde 2024-03-13 (mié), sumá 3 hábiles\n2. Mostrá la date",
+    starter_code: "# from datetime import date, timedelta\n# d = date(2024, 3, 13)\n# n = 0\n# while n < 3:\n#     d += timedelta(days=1)\n#     if d.weekday() < 5:\n#         n += 1\n# resultado = d\n# print(resultado)\n",
+    pytest: "def test_biz_add(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import date\n    assert ns['resultado'] == date(2024, 3, 18)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "mié→jue,vie,lun = 18.",
+    solution_example: "from datetime import date, timedelta\nd = date(2024, 3, 13)\nn = 0\nwhile n < 3:\n    d += timedelta(days=1)\n    if d.weekday() < 5:\n        n += 1\nresultado = d\nprint(resultado)\n",
+    next: Some("py-1952-biz-holiday"), show_type_chips: false, micro_step: 1951,
+};
+pub const PY1952_BIZ_HOLIDAY: CodingStep = CodingStep {
+    id: "py-1952-biz-holiday", title: "hábiles · excluir feriados", objective: "Feriados como set de date fijas.",
+    prompt_md: "**Feriados**\n\nUn `set` de `date` fijas + finde define no-hábiles. Determinista, sin calendarios online.\n\n**Micro-reto:**\n1. holidays={2024-03-18}; start 2024-03-15\n2. next day que no sea finde ni feriado\n3. Mostrá",
+    starter_code: "# from datetime import date, timedelta\n# holidays = {date(2024, 3, 18)}\n# d = date(2024, 3, 15) + timedelta(days=1)\n# while d.weekday() >= 5 or d in holidays:\n#     d += timedelta(days=1)\n# resultado = d\n# print(resultado)\n",
+    pytest: "def test_biz_holiday(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import date\n    assert ns['resultado'] == date(2024, 3, 19)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Salta finde y feriado 18 → 19.",
+    solution_example: "from datetime import date, timedelta\nholidays = {date(2024, 3, 18)}\nd = date(2024, 3, 15) + timedelta(days=1)\nwhile d.weekday() >= 5 or d in holidays:\n    d += timedelta(days=1)\nresultado = d\nprint(resultado)\n",
+    next: Some("py-1953-biz-count"), show_type_chips: false, micro_step: 1952,
+};
+pub const PY1953_BIZ_COUNT: CodingStep = CodingStep {
+    id: "py-1953-biz-count", title: "hábiles · contar en rango", objective: "Contar hábiles en [start,end).",
+    prompt_md: "**Count business days**\n\nIterá días en half-open y contá weekday < 5 (sin feriados).\n\n**Micro-reto:**\n1. 2024-03-11 (lun) .. < 2024-03-16 (sáb)\n2. Contá hábiles\n3. Mostrá",
+    starter_code: "# from datetime import date, timedelta\n# start, end = date(2024, 3, 11), date(2024, 3, 16)\n# n, cur = 0, start\n# while cur < end:\n#     if cur.weekday() < 5:\n#         n += 1\n#     cur += timedelta(days=1)\n# resultado = n\n# print(resultado)\n",
+    pytest: "def test_biz_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "lun–vie = 5.",
+    solution_example: "from datetime import date, timedelta\nstart, end = date(2024, 3, 11), date(2024, 3, 16)\nn, cur = 0, start\nwhile cur < end:\n    if cur.weekday() < 5:\n        n += 1\n    cur += timedelta(days=1)\nresultado = n\nprint(resultado)\n",
+    next: Some("py-1954-biz-check"), show_type_chips: false, micro_step: 1953,
+};
+pub const PY1954_BIZ_CHECK: CodingStep = CodingStep {
+    id: "py-1954-biz-check", title: "hábiles · Suite feriados", objective: "Suite: N hábiles con feriado fijo.",
+    prompt_md: "**Suite hábiles**\n\nDesde 2024-03-13 sumá 2 hábiles excluyendo feriado 2024-03-15.\n\n**Micro-reto:**\n1. holidays={15-mar}\n2. Avanzá 2 hábiles\n3. Mostrá date",
+    starter_code: "# from datetime import date, timedelta\n# holidays = {date(2024, 3, 15)}\n# d = date(2024, 3, 13)\n# n = 0\n# while n < 2:\n#     d += timedelta(days=1)\n#     if d.weekday() < 5 and d not in holidays:\n#         n += 1\n# resultado = d\n# print(resultado)\n",
+    pytest: "def test_biz_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    from datetime import date\n    assert ns['resultado'] == date(2024, 3, 18)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "14 (1), salta 15, 18 (2).",
+    solution_example: "from datetime import date, timedelta\nholidays = {date(2024, 3, 15)}\nd = date(2024, 3, 13)\nn = 0\nwhile n < 2:\n    d += timedelta(days=1)\n    if d.weekday() < 5 and d not in holidays:\n        n += 1\nresultado = d\nprint(resultado)\n",
+    next: Some("py-1955-agg-byday"), show_type_chips: false, micro_step: 1954,
+};
+pub const PY1955_AGG_BYDAY: CodingStep = CodingStep {
+    id: "py-1955-agg-byday", title: "agregación · agrupar por día", objective: "Agrupar eventos por date().",
+    prompt_md: "**Group by day**\n\nDe una lista de datetime, la clave es `dt.date()`. Dict date → lista.\n\n**Micro-reto:**\n1. Eventos 1-ene 9h, 1-ene 10h, 2-ene 9h\n2. Dict comprehension: fecha → count\n3. Mostrá dict ordenado por fecha como lista de (iso, count)",
+    starter_code: "# from datetime import datetime\n# events = [\n#     datetime(2024, 1, 1, 9),\n#     datetime(2024, 1, 1, 10),\n#     datetime(2024, 1, 2, 9),\n# ]\n# counts = {}\n# for e in events:\n#     counts[e.date()] = counts.get(e.date(), 0) + 1\n# resultado = [(d.isoformat(), counts[d]) for d in sorted(counts)]\n# print(resultado)\n",
+    pytest: "def test_agg_byday(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('2024-01-01', 2), ('2024-01-02', 1)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2 el día 1; 1 el día 2.",
+    solution_example: "from datetime import datetime\nevents = [\n    datetime(2024, 1, 1, 9),\n    datetime(2024, 1, 1, 10),\n    datetime(2024, 1, 2, 9),\n]\ncounts = {}\nfor e in events:\n    counts[e.date()] = counts.get(e.date(), 0) + 1\nresultado = [(d.isoformat(), counts[d]) for d in sorted(counts)]\nprint(resultado)\n",
+    next: Some("py-1956-agg-week"), show_type_chips: false, micro_step: 1955,
+};
+pub const PY1956_AGG_WEEK: CodingStep = CodingStep {
+    id: "py-1956-agg-week", title: "agregación · por semana ISO", objective: "Clave isocalendar week.",
+    prompt_md: "**ISO week**\n\n`date.isocalendar()` → (year, week, weekday). Agrupar por (year, week).\n\n**Micro-reto:**\n1. Fechas 2024-01-01 y 2024-01-08\n2. Lista de week numbers\n3. Mostrá",
+    starter_code: "# from datetime import date\n# days = [date(2024, 1, 1), date(2024, 1, 8)]\n# resultado = [d.isocalendar()[1] for d in days]\n# print(resultado)\n",
+    pytest: "def test_agg_week(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Semanas ISO 1 y 2.",
+    solution_example: "from datetime import date\ndays = [date(2024, 1, 1), date(2024, 1, 8)]\nresultado = [d.isocalendar()[1] for d in days]\nprint(resultado)\n",
+    next: Some("py-1957-agg-count"), show_type_chips: false, micro_step: 1956,
+};
+pub const PY1957_AGG_COUNT: CodingStep = CodingStep {
+    id: "py-1957-agg-count", title: "agregación · conteo diario", objective: "Contar eventos por día con get.",
+    prompt_md: "**Conteo**\n\nMismo patrón de dict: incrementar por `e.date()`. Deliverable: valores ordenados.\n\n**Micro-reto:**\n1. Tres eventos el mismo día, uno al siguiente\n2. Lista de counts ordenados por fecha\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# events = [\n#     datetime(2024, 2, 1, 8),\n#     datetime(2024, 2, 1, 9),\n#     datetime(2024, 2, 1, 10),\n#     datetime(2024, 2, 2, 8),\n# ]\n# counts = {}\n# for e in events:\n#     counts[e.date()] = counts.get(e.date(), 0) + 1\n# resultado = [counts[d] for d in sorted(counts)]\n# print(resultado)\n",
+    pytest: "def test_agg_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[3, 1].",
+    solution_example: "from datetime import datetime\nevents = [\n    datetime(2024, 2, 1, 8),\n    datetime(2024, 2, 1, 9),\n    datetime(2024, 2, 1, 10),\n    datetime(2024, 2, 2, 8),\n]\ncounts = {}\nfor e in events:\n    counts[e.date()] = counts.get(e.date(), 0) + 1\nresultado = [counts[d] for d in sorted(counts)]\nprint(resultado)\n",
+    next: Some("py-1958-agg-sum"), show_type_chips: false, micro_step: 1957,
+};
+pub const PY1958_AGG_SUM: CodingStep = CodingStep {
+    id: "py-1958-agg-sum", title: "agregación · suma por día", objective: "Sumar montos agrupados por fecha.",
+    prompt_md: "**Suma**\n\nEventos `(datetime, monto)` → suma por `date`. Dominio: caja diaria.\n\n**Micro-reto:**\n1. (1-ene,10), (1-ene,5), (2-ene,7)\n2. Lista de sumas ordenadas por día\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# rows = [\n#     (datetime(2024, 1, 1, 9), 10),\n#     (datetime(2024, 1, 1, 10), 5),\n#     (datetime(2024, 1, 2, 9), 7),\n# ]\n# sums = {}\n# for dt, amt in rows:\n#     sums[dt.date()] = sums.get(dt.date(), 0) + amt\n# resultado = [sums[d] for d in sorted(sums)]\n# print(resultado)\n",
+    pytest: "def test_agg_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [15, 7]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "15 y 7.",
+    solution_example: "from datetime import datetime\nrows = [\n    (datetime(2024, 1, 1, 9), 10),\n    (datetime(2024, 1, 1, 10), 5),\n    (datetime(2024, 1, 2, 9), 7),\n]\nsums = {}\nfor dt, amt in rows:\n    sums[dt.date()] = sums.get(dt.date(), 0) + amt\nresultado = [sums[d] for d in sorted(sums)]\nprint(resultado)\n",
+    next: Some("py-1959-agg-buckets"), show_type_chips: false, micro_step: 1958,
+};
+pub const PY1959_AGG_BUCKETS: CodingStep = CodingStep {
+    id: "py-1959-agg-buckets", title: "agregación · buckets ordenados", objective: "Materializar buckets día → eventos.",
+    prompt_md: "**Buckets**\n\nDict `date → [eventos]`; luego lista ordenada de (iso, len).\n\n**Micro-reto:**\n1. Tres datetimes en dos días\n2. Armá buckets\n3. Mostrá [(iso, len), ...]",
+    starter_code: "# from datetime import datetime\n# events = [\n#     datetime(2024, 5, 1, 9),\n#     datetime(2024, 5, 2, 9),\n#     datetime(2024, 5, 2, 11),\n# ]\n# buckets = {}\n# for e in events:\n#     buckets.setdefault(e.date(), []).append(e)\n# resultado = [(d.isoformat(), len(buckets[d])) for d in sorted(buckets)]\n# print(resultado)\n",
+    pytest: "def test_agg_buckets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('2024-05-01', 1), ('2024-05-02', 2)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1 luego 2.",
+    solution_example: "from datetime import datetime\nevents = [\n    datetime(2024, 5, 1, 9),\n    datetime(2024, 5, 2, 9),\n    datetime(2024, 5, 2, 11),\n]\nbuckets = {}\nfor e in events:\n    buckets.setdefault(e.date(), []).append(e)\nresultado = [(d.isoformat(), len(buckets[d])) for d in sorted(buckets)]\nprint(resultado)\n",
+    next: Some("py-1960-agg-check"), show_type_chips: false, micro_step: 1959,
+};
+pub const PY1960_AGG_CHECK: CodingStep = CodingStep {
+    id: "py-1960-agg-check", title: "agregación · Suite diaria/semanal", objective: "Cerrar ola: conteo diario + semana ISO.",
+    prompt_md: "**Suite agregación**\n\nUn evento 2024-01-03 10:00: count del día y week ISO.\n\n**Micro-reto:**\n1. `e=datetime(2024,1,3,10)`\n2. `(e.date().isoformat(), e.isocalendar()[1])`\n3. Mostrá",
+    starter_code: "# from datetime import datetime\n# e = datetime(2024, 1, 3, 10)\n# resultado = (e.date().isoformat(), e.isocalendar()[1])\n# print(resultado)\n",
+    pytest: "def test_agg_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('2024-01-03', 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3-ene 2024 es semana ISO 1.",
+    solution_example: "from datetime import datetime\ne = datetime(2024, 1, 3, 10)\nresultado = (e.date().isoformat(), e.isocalendar()[1])\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 1960,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -53157,6 +53698,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1898_DOM_AGG,
     &PY1899_DOM_REPORT,
     &PY1900_DOM_CHECK,
+    &PY1901_DT_DATE,
+    &PY1902_DT_TIME,
+    &PY1903_DT_DATETIME,
+    &PY1904_DT_ATTRS,
+    &PY1905_DT_REPLACE,
+    &PY1906_DT_CHECK,
+    &PY1907_TD_DAYS,
+    &PY1908_TD_HMS,
+    &PY1909_TD_ADD,
+    &PY1910_TD_SUB,
+    &PY1911_TD_CMP,
+    &PY1912_TD_CHECK,
+    &PY1913_CAL_WEEKDAY,
+    &PY1914_CAL_MONTHCALENDAR,
+    &PY1915_CAL_MONTHRANGE,
+    &PY1916_CAL_ISLEAP,
+    &PY1917_CAL_DAYS,
+    &PY1918_CAL_CHECK,
+    &PY1919_FMT_STRFTIME,
+    &PY1920_FMT_TIME,
+    &PY1921_FMT_STRPTIME,
+    &PY1922_FMT_ISO,
+    &PY1923_FMT_ROUNDTRIP,
+    &PY1924_FMT_CHECK,
+    &PY1925_IV_TUPLE,
+    &PY1926_IV_CONTAINS,
+    &PY1927_IV_DURATION,
+    &PY1928_IV_OVERLAP,
+    &PY1929_IV_MERGE,
+    &PY1930_IV_CHECK,
+    &PY1931_SCH_WINDOW,
+    &PY1932_SCH_SUBTRACT,
+    &PY1933_SCH_FIRST,
+    &PY1934_SCH_FILTER,
+    &PY1935_SCH_PACK,
+    &PY1936_SCH_CHECK,
+    &PY1937_REC_DAYS,
+    &PY1938_REC_WEEKS,
+    &PY1939_REC_UNTIL,
+    &PY1940_REC_COUNT,
+    &PY1941_REC_SKIP,
+    &PY1942_REC_CHECK,
+    &PY1943_TZ_OFFSET,
+    &PY1944_TZ_AWARE,
+    &PY1945_TZ_CONVERT,
+    &PY1946_TZ_UTCOFFSET,
+    &PY1947_TZ_CMP,
+    &PY1948_TZ_CHECK,
+    &PY1949_BIZ_WEEKEND,
+    &PY1950_BIZ_NEXT,
+    &PY1951_BIZ_ADD,
+    &PY1952_BIZ_HOLIDAY,
+    &PY1953_BIZ_COUNT,
+    &PY1954_BIZ_CHECK,
+    &PY1955_AGG_BYDAY,
+    &PY1956_AGG_WEEK,
+    &PY1957_AGG_COUNT,
+    &PY1958_AGG_SUM,
+    &PY1959_AGG_BUCKETS,
+    &PY1960_AGG_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -53324,7 +53925,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1900);
+            assert!(step.micro_step >= 1 && step.micro_step <= 1960);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -56334,7 +56935,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1900 is the end of the rail");
+                assert_eq!(step.next, Some("py-1901-dt-date"), "step 1900 chains to wave16");
+            }
+        }
+    }
+
+    #[test]
+    fn py1901_to_py1960_tiempo_scheduling_chain() {
+        let bridge = coding_step_by_micro_step(1900).expect("py-1900");
+        assert_eq!(bridge.next, Some("py-1901-dt-date"));
+
+        for n in 1901..=1960 {
+            let step = coding_step_by_micro_step(n).expect("wave16 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 1960 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 1960 is the end of the rail");
             }
         }
     }
