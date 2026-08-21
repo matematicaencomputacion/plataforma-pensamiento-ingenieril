@@ -1750,6 +1750,67 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (1958, &[1, 5]),
     (1959, &[1, 5]),
     (1960, &[1, 5]),
+    // Wave 17 — OOP avanzado (property / descriptors / slots)
+    (1961, &[1, 3]),
+    (1962, &[1, 3]),
+    (1963, &[1, 3]),
+    (1964, &[1, 3]),
+    (1965, &[1, 3]),
+    (1966, &[1, 3]),
+    (1967, &[1, 5]),
+    (1968, &[1, 5]),
+    (1969, &[1, 5]),
+    (1970, &[1, 5]),
+    (1971, &[1, 5]),
+    (1972, &[1, 5]),
+    (1973, &[2, 3]),
+    (1974, &[2, 3]),
+    (1975, &[2, 3]),
+    (1976, &[2, 3]),
+    (1977, &[2, 3]),
+    (1978, &[2, 3]),
+    (1979, &[1, 3]),
+    (1980, &[1, 3]),
+    (1981, &[1, 3]),
+    (1982, &[1, 3]),
+    (1983, &[1, 3]),
+    (1984, &[1, 3]),
+    (1985, &[1, 4]),
+    (1986, &[1, 4]),
+    (1987, &[1, 4]),
+    (1988, &[1, 4]),
+    (1989, &[1, 4]),
+    (1990, &[1, 4]),
+    (1991, &[3, 4]),
+    (1992, &[3, 4]),
+    (1993, &[3, 4]),
+    (1994, &[3, 4]),
+    (1995, &[3, 4]),
+    (1996, &[3, 4]),
+    (1997, &[3, 4]),
+    (1998, &[3, 4]),
+    (1999, &[3, 4]),
+    (2000, &[3, 4]),
+    (2001, &[3, 4]),
+    (2002, &[3, 4]),
+    (2003, &[3, 5]),
+    (2004, &[3, 5]),
+    (2005, &[3, 5]),
+    (2006, &[3, 5]),
+    (2007, &[3, 5]),
+    (2008, &[3, 5]),
+    (2009, &[2, 3]),
+    (2010, &[2, 3]),
+    (2011, &[2, 3]),
+    (2012, &[2, 3]),
+    (2013, &[2, 3]),
+    (2014, &[2, 3]),
+    (2015, &[1, 5]),
+    (2016, &[1, 5]),
+    (2017, &[1, 5]),
+    (2018, &[1, 5]),
+    (2019, &[1, 5]),
+    (2020, &[1, 5]),
 ];
 
 pub fn partition_by_id(id: u8) -> Option<&'static ConceptPartition> {
@@ -2072,7 +2133,8 @@ mod tests {
         assert_eq!(partitions_for_micro_step(1781), &[1]); // Wave 14: strings = data-model
         assert_eq!(partitions_for_micro_step(1841), &[3]); // Wave 15: HOF = paradigms
         assert_eq!(partitions_for_micro_step(1901), &[1, 4]); // Wave 16: datetime = data-model + ecosystem
-        assert!(partitions_for_micro_step(1961).is_empty()); // frontier beyond Wave 16
+        assert_eq!(partitions_for_micro_step(1961), &[1, 3]); // Wave 17: property = data-model + paradigms
+        assert!(partitions_for_micro_step(2021).is_empty()); // frontier beyond Wave 17
     }
 
     #[test]
@@ -2552,8 +2614,8 @@ mod tests {
         (900, &[1]),
     ];
 
-    /// Frozen `(micro_step, tags)` pairs with `micro_step > 1960` (Wave 16 ceiling).
-    const WAVE16_FROZEN_BEYOND_1960: &[(i32, &[u8])] = &[];
+    /// Frozen `(micro_step, tags)` pairs with `micro_step > 2020` (Wave 17 ceiling).
+    const WAVE17_FROZEN_BEYOND_2020: &[(i32, &[u8])] = &[];
 
     #[test]
     fn wave_b_applied_floor_101_to_300() {
@@ -2878,16 +2940,16 @@ mod tests {
     }
 
     #[test]
-    fn wave16_freeze_rows_beyond_1960() {
+    fn wave17_freeze_rows_beyond_2020() {
         let current: Vec<(i32, &[u8])> = STEP_PARTITIONS
             .iter()
             .copied()
-            .filter(|(n, _)| *n > 1960)
+            .filter(|(n, _)| *n > 2020)
             .collect();
         assert_eq!(
             current.as_slice(),
-            WAVE16_FROZEN_BEYOND_1960,
-            "do not add or remove rows > 1960"
+            WAVE17_FROZEN_BEYOND_2020,
+            "do not add or remove rows > 2020"
         );
     }
 

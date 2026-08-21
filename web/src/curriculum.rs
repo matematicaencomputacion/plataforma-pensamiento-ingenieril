@@ -51794,7 +51794,548 @@ pub const PY1960_AGG_CHECK: CodingStep = CodingStep {
     pytest: "def test_agg_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('2024-01-03', 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "3-ene 2024 es semana ISO 1.",
     solution_example: "from datetime import datetime\ne = datetime(2024, 1, 3, 10)\nresultado = (e.date().isoformat(), e.isocalendar()[1])\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 1960,
+    next: Some("py-1961-prop-getter"), show_type_chips: false, micro_step: 1960,
+};
+
+pub const PY1961_PROP_GETTER: CodingStep = CodingStep {
+    id: "py-1961-prop-getter", title: "property · getter", objective: "Exponer un valor calculado con @property.",
+    prompt_md: "**@property**\n\n`@property` convierte un método en atributo de solo lectura: se accede sin paréntesis. Encapsula el modelo de datos detrás de una interfaz estable.\n\n**Micro-reto:**\n1. Clase `Caja` con `_n`\n2. `@property size` → `_n`\n3. `resultado = Caja(3).size`; mostrá",
+    starter_code: "# class Caja:\n#     def __init__(self, n):\n#         self._n = n\n#     @property\n#     def size(self):\n#         return self._n\n# resultado = Caja(3).size\n# print(resultado)\n",
+    pytest: "def test_prop_getter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Decorá size con @property.",
+    solution_example: "class Caja:\n    def __init__(self, n):\n        self._n = n\n    @property\n    def size(self):\n        return self._n\nresultado = Caja(3).size\nprint(resultado)\n",
+    next: Some("py-1962-prop-setter"), show_type_chips: false, micro_step: 1961,
+};
+pub const PY1962_PROP_SETTER: CodingStep = CodingStep {
+    id: "py-1962-prop-setter", title: "property · setter", objective: "Asignar vía @x.setter manteniendo respaldo privado.",
+    prompt_md: "**@x.setter**\n\nEl setter emparejado a una property escribe el estado interno. El nombre público queda estable; el almacenamiento (`_x`) es detalle de implementación.\n\n**Micro-reto:**\n1. `Temp` con property `c` y setter\n2. Creá `t=Temp(0)`; `t.c=20`\n3. `resultado = t.c`; mostrá",
+    starter_code: "# class Temp:\n#     def __init__(self, c):\n#         self._c = c\n#     @property\n#     def c(self):\n#         return self._c\n#     @c.setter\n#     def c(self, v):\n#         self._c = v\n# t = Temp(0)\n# t.c = 20\n# resultado = t.c\n# print(resultado)\n",
+    pytest: "def test_prop_setter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 20\n    assert ns['t']._c == 20\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Usá @c.setter para escribir _c.",
+    solution_example: "class Temp:\n    def __init__(self, c):\n        self._c = c\n    @property\n    def c(self):\n        return self._c\n    @c.setter\n    def c(self, v):\n        self._c = v\nt = Temp(0)\nt.c = 20\nresultado = t.c\nprint(resultado)\n",
+    next: Some("py-1963-prop-deleter"), show_type_chips: false, micro_step: 1962,
+};
+pub const PY1963_PROP_DELETER: CodingStep = CodingStep {
+    id: "py-1963-prop-deleter", title: "property · deleter", objective: "Borrar el respaldo con @x.deleter.",
+    prompt_md: "**@x.deleter**\n\n`del obj.x` puede ejecutar lógica (limpiar caché o el privado). Completa el ciclo getter/setter/deleter del protocolo property.\n\n**Micro-reto:**\n1. `Slot` con property `val` + deleter que hace `_val=None`\n2. `s=Slot(5)`; `del s.val`\n3. `resultado = s._val`; mostrá",
+    starter_code: "# class Slot:\n#     def __init__(self, v):\n#         self._val = v\n#     @property\n#     def val(self):\n#         return self._val\n#     @val.deleter\n#     def val(self):\n#         self._val = None\n# s = Slot(5)\n# del s.val\n# resultado = s._val\n# print(resultado)\n",
+    pytest: "def test_prop_deleter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "del s.val dispara el deleter.",
+    solution_example: "class Slot:\n    def __init__(self, v):\n        self._val = v\n    @property\n    def val(self):\n        return self._val\n    @val.deleter\n    def val(self):\n        self._val = None\ns = Slot(5)\ndel s.val\nresultado = s._val\nprint(resultado)\n",
+    next: Some("py-1964-prop-computed"), show_type_chips: false, micro_step: 1963,
+};
+pub const PY1964_PROP_COMPUTED: CodingStep = CodingStep {
+    id: "py-1964-prop-computed", title: "property · calculada", objective: "Derivar un valor desde el estado interno.",
+    prompt_md: "**Calculada**\n\nUna property puede ser pura función del estado: área, total, etiqueta. No guardás lo derivado; lo calculás al leer.\n\n**Micro-reto:**\n1. `Rect(w,h)` con `@property area` → `w*h`\n2. `resultado = Rect(4, 5).area`\n3. Mostrá",
+    starter_code: "# class Rect:\n#     def __init__(self, w, h):\n#         self.w = w\n#         self.h = h\n#     @property\n#     def area(self):\n#         return self.w * self.h\n# resultado = Rect(4, 5).area\n# print(resultado)\n",
+    pytest: "def test_prop_computed(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 20\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "area = w * h.",
+    solution_example: "class Rect:\n    def __init__(self, w, h):\n        self.w = w\n        self.h = h\n    @property\n    def area(self):\n        return self.w * self.h\nresultado = Rect(4, 5).area\nprint(resultado)\n",
+    next: Some("py-1965-prop-rw"), show_type_chips: false, micro_step: 1964,
+};
+pub const PY1965_PROP_RW: CodingStep = CodingStep {
+    id: "py-1965-prop-rw", title: "property · lectura/escritura", objective: "Combinar getter y setter en un solo campo.",
+    prompt_md: "**R/W**\n\nProperty + setter forman un campo controlado: lectura y escritura pasan por métodos, pero la API se siente como atributo.\n\n**Micro-reto:**\n1. `Counter` con property `n` (get/set)\n2. `c=Counter(1)`; `c.n = c.n + 2`\n3. `resultado = c.n`; mostrá",
+    starter_code: "# class Counter:\n#     def __init__(self, n):\n#         self._n = n\n#     @property\n#     def n(self):\n#         return self._n\n#     @n.setter\n#     def n(self, v):\n#         self._n = v\n# c = Counter(1)\n# c.n = c.n + 2\n# resultado = c.n\n# print(resultado)\n",
+    pytest: "def test_prop_rw(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Leé y escribí vía property n.",
+    solution_example: "class Counter:\n    def __init__(self, n):\n        self._n = n\n    @property\n    def n(self):\n        return self._n\n    @n.setter\n    def n(self, v):\n        self._n = v\nc = Counter(1)\nc.n = c.n + 2\nresultado = c.n\nprint(resultado)\n",
+    next: Some("py-1966-prop-check"), show_type_chips: false, micro_step: 1965,
+};
+pub const PY1966_PROP_CHECK: CodingStep = CodingStep {
+    id: "py-1966-prop-check", title: "property · Suite getter/setter", objective: "Integrar property calculada y setter.",
+    prompt_md: "**Suite property**\n\nCerrá el bloque: estado privado, setter y valor derivado en una sola clase.\n\n**Micro-reto:**\n1. `Box` con setter `side` y `@property volume` → `side**3`\n2. `b=Box(2)`; `b.side=3`\n3. `resultado = (b.side, b.volume)`; mostrá",
+    starter_code: "# class Box:\n#     def __init__(self, side):\n#         self._side = side\n#     @property\n#     def side(self):\n#         return self._side\n#     @side.setter\n#     def side(self, v):\n#         self._side = v\n#     @property\n#     def volume(self):\n#         return self._side ** 3\n# b = Box(2)\n# b.side = 3\n# resultado = (b.side, b.volume)\n# print(resultado)\n",
+    pytest: "def test_prop_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, 27)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "side=3 → volume 27.",
+    solution_example: "class Box:\n    def __init__(self, side):\n        self._side = side\n    @property\n    def side(self):\n        return self._side\n    @side.setter\n    def side(self, v):\n        self._side = v\n    @property\n    def volume(self):\n        return self._side ** 3\nb = Box(2)\nb.side = 3\nresultado = (b.side, b.volume)\nprint(resultado)\n",
+    next: Some("py-1967-val-range"), show_type_chips: false, micro_step: 1966,
+};
+pub const PY1967_VAL_RANGE: CodingStep = CodingStep {
+    id: "py-1967-val-range", title: "validación · rango", objective: "Rechazar fuera de rango en el setter.",
+    prompt_md: "**Rango**\n\nInvariante de dominio: el setter solo acepta valores en un intervalo. Fuera de rango → `ValueError`. Así el objeto nunca queda inválido.\n\n**Micro-reto:**\n1. `Pct` con setter `v` en 0..100\n2. `p=Pct(50)`; `p.v=80`\n3. `resultado = p.v`; mostrá",
+    starter_code: "# class Pct:\n#     def __init__(self, v):\n#         self.v = v\n#     @property\n#     def v(self):\n#         return self._v\n#     @v.setter\n#     def v(self, x):\n#         if not 0 <= x <= 100:\n#             raise ValueError('rango')\n#         self._v = x\n# p = Pct(50)\n# p.v = 80\n# resultado = p.v\n# print(resultado)\n",
+    pytest: "def test_val_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 80\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Validá 0 <= x <= 100.",
+    solution_example: "class Pct:\n    def __init__(self, v):\n        self.v = v\n    @property\n    def v(self):\n        return self._v\n    @v.setter\n    def v(self, x):\n        if not 0 <= x <= 100:\n            raise ValueError('rango')\n        self._v = x\np = Pct(50)\np.v = 80\nresultado = p.v\nprint(resultado)\n",
+    next: Some("py-1968-val-reject"), show_type_chips: false, micro_step: 1967,
+};
+pub const PY1968_VAL_REJECT: CodingStep = CodingStep {
+    id: "py-1968-val-reject", title: "validación · rechazo", objective: "Capturar ValueError al violar el rango.",
+    prompt_md: "**Rechazo**\n\nEn dominio (notas, stock, edad) el fallo debe ser explícito. Probá el camino inválido y registrá el rechazo sin dejar estado a medias.\n\n**Micro-reto:**\n1. Misma `Pct` 0..100\n2. Intentá `p.v=-1` y capturá\n3. `resultado = (p.v, ok)`; mostrá",
+    starter_code: "# class Pct:\n#     def __init__(self, v):\n#         self.v = v\n#     @property\n#     def v(self):\n#         return self._v\n#     @v.setter\n#     def v(self, x):\n#         if not 0 <= x <= 100:\n#             raise ValueError('rango')\n#         self._v = x\n# p = Pct(10)\n# try:\n#     p.v = -1\n#     ok = True\n# except ValueError:\n#     ok = False\n# resultado = (p.v, ok)\n# print(resultado)\n",
+    pytest: "def test_val_reject(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (10, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Estado sigue 10; ok False.",
+    solution_example: "class Pct:\n    def __init__(self, v):\n        self.v = v\n    @property\n    def v(self):\n        return self._v\n    @v.setter\n    def v(self, x):\n        if not 0 <= x <= 100:\n            raise ValueError('rango')\n        self._v = x\np = Pct(10)\ntry:\n    p.v = -1\n    ok = True\nexcept ValueError:\n    ok = False\nresultado = (p.v, ok)\nprint(resultado)\n",
+    next: Some("py-1969-val-nonempty"), show_type_chips: false, micro_step: 1968,
+};
+pub const PY1969_VAL_NONEMPTY: CodingStep = CodingStep {
+    id: "py-1969-val-nonempty", title: "validación · no vacío", objective: "Exigir str no vacío en el setter.",
+    prompt_md: "**No vacío**\n\nCampos de dominio (SKU, nombre) suelen prohibir `''`. El setter es el borde donde se defiende el invariante.\n\n**Micro-reto:**\n1. `Tag` con setter `name` (str no vacío)\n2. `t=Tag('a')`; `t.name='ok'`\n3. `resultado = t.name`; mostrá",
+    starter_code: "# class Tag:\n#     def __init__(self, name):\n#         self.name = name\n#     @property\n#     def name(self):\n#         return self._name\n#     @name.setter\n#     def name(self, v):\n#         if not isinstance(v, str) or not v:\n#             raise ValueError('vacio')\n#         self._name = v\n# t = Tag('a')\n# t.name = 'ok'\n# resultado = t.name\n# print(resultado)\n",
+    pytest: "def test_val_nonempty(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Rechazá no-str o ''.",
+    solution_example: "class Tag:\n    def __init__(self, name):\n        self.name = name\n    @property\n    def name(self):\n        return self._name\n    @name.setter\n    def name(self, v):\n        if not isinstance(v, str) or not v:\n            raise ValueError('vacio')\n        self._name = v\nt = Tag('a')\nt.name = 'ok'\nresultado = t.name\nprint(resultado)\n",
+    next: Some("py-1970-val-cross"), show_type_chips: false, micro_step: 1969,
+};
+pub const PY1970_VAL_CROSS: CodingStep = CodingStep {
+    id: "py-1970-val-cross", title: "validación · cruzada", objective: "Validar relación entre dos campos.",
+    prompt_md: "**Cruzada**\n\nA veces el invariante cruza atributos: `lo <= hi`. Al setear uno, consultá el otro y rechazá si se rompe el orden.\n\n**Micro-reto:**\n1. `Span` con `_lo,_hi` y setter `hi` que exige `>= lo`\n2. `s=Span(1,5)`; `s.hi=8`\n3. `resultado = (s.lo, s.hi)`; mostrá",
+    starter_code: "# class Span:\n#     def __init__(self, lo, hi):\n#         self._lo = lo\n#         self._hi = hi\n#     @property\n#     def lo(self):\n#         return self._lo\n#     @property\n#     def hi(self):\n#         return self._hi\n#     @hi.setter\n#     def hi(self, v):\n#         if v < self._lo:\n#             raise ValueError('orden')\n#         self._hi = v\n# s = Span(1, 5)\n# s.hi = 8\n# resultado = (s.lo, s.hi)\n# print(resultado)\n",
+    pytest: "def test_val_cross(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 8)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "hi no puede ser < lo.",
+    solution_example: "class Span:\n    def __init__(self, lo, hi):\n        self._lo = lo\n        self._hi = hi\n    @property\n    def lo(self):\n        return self._lo\n    @property\n    def hi(self):\n        return self._hi\n    @hi.setter\n    def hi(self, v):\n        if v < self._lo:\n            raise ValueError('orden')\n        self._hi = v\ns = Span(1, 5)\ns.hi = 8\nresultado = (s.lo, s.hi)\nprint(resultado)\n",
+    next: Some("py-1971-val-age"), show_type_chips: false, micro_step: 1970,
+};
+pub const PY1971_VAL_AGE: CodingStep = CodingStep {
+    id: "py-1971-val-age", title: "validación · edad dominio", objective: "Modelar edad no negativa en un perfil.",
+    prompt_md: "**Edad**\n\nEn perfiles de usuario la edad es invariante de dominio: entero `>= 0`. El setter protege el agregado ante datos basura.\n\n**Micro-reto:**\n1. `Profile` con property `age`\n2. `p=Profile(0)`; `p.age=21`\n3. `resultado = p.age`; mostrá",
+    starter_code: "# class Profile:\n#     def __init__(self, age):\n#         self.age = age\n#     @property\n#     def age(self):\n#         return self._age\n#     @age.setter\n#     def age(self, v):\n#         if not isinstance(v, int) or v < 0:\n#             raise ValueError('edad')\n#         self._age = v\n# p = Profile(0)\n# p.age = 21\n# resultado = p.age\n# print(resultado)\n",
+    pytest: "def test_val_age(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 21\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Solo int >= 0.",
+    solution_example: "class Profile:\n    def __init__(self, age):\n        self.age = age\n    @property\n    def age(self):\n        return self._age\n    @age.setter\n    def age(self, v):\n        if not isinstance(v, int) or v < 0:\n            raise ValueError('edad')\n        self._age = v\np = Profile(0)\np.age = 21\nresultado = p.age\nprint(resultado)\n",
+    next: Some("py-1972-val-check"), show_type_chips: false, micro_step: 1971,
+};
+pub const PY1972_VAL_CHECK: CodingStep = CodingStep {
+    id: "py-1972-val-check", title: "validación · Suite invariantes", objective: "Cerrar: stock válido y rechazo de negativo.",
+    prompt_md: "**Suite validación**\n\nStock de inventario: aceptá positivo; al fallar, el valor previo permanece.\n\n**Micro-reto:**\n1. `Stock` setter `qty` exige `>=0`\n2. `s=Stock(5)`; intentá `-2`; luego `qty=7`\n3. `resultado = (s.qty, rejected)`; mostrá",
+    starter_code: "# class Stock:\n#     def __init__(self, qty):\n#         self.qty = qty\n#     @property\n#     def qty(self):\n#         return self._qty\n#     @qty.setter\n#     def qty(self, v):\n#         if v < 0:\n#             raise ValueError('neg')\n#         self._qty = v\n# s = Stock(5)\n# try:\n#     s.qty = -2\n#     rejected = False\n# except ValueError:\n#     rejected = True\n# s.qty = 7\n# resultado = (s.qty, rejected)\n# print(resultado)\n",
+    pytest: "def test_val_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (7, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tras rechazo, qty=7.",
+    solution_example: "class Stock:\n    def __init__(self, qty):\n        self.qty = qty\n    @property\n    def qty(self):\n        return self._qty\n    @qty.setter\n    def qty(self, v):\n        if v < 0:\n            raise ValueError('neg')\n        self._qty = v\ns = Stock(5)\ntry:\n    s.qty = -2\n    rejected = False\nexcept ValueError:\n    rejected = True\ns.qty = 7\nresultado = (s.qty, rejected)\nprint(resultado)\n",
+    next: Some("py-1973-desc-get"), show_type_chips: false, micro_step: 1972,
+};
+pub const PY1973_DESC_GET: CodingStep = CodingStep {
+    id: "py-1973-desc-get", title: "descriptor · __get__", objective: "Implementar un descriptor de solo lectura.",
+    prompt_md: "**__get__**\n\nUn descriptor es un objeto en el cuerpo de la clase con `__get__`. Intercepta el acceso al atributo: el nombre se resuelve en el namespace de la clase (LEGB de atributos).\n\n**Micro-reto:**\n1. `Const` con `__get__` → 42\n2. `class H: x = Const()`\n3. `resultado = H().x`; mostrá",
+    starter_code: "# class Const:\n#     def __get__(self, instance, owner):\n#         return 42\n# class H:\n#     x = Const()\n# resultado = H().x\n# print(resultado)\n",
+    pytest: "def test_desc_get(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 42\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "__get__ ignora instance aquí.",
+    solution_example: "class Const:\n    def __get__(self, instance, owner):\n        return 42\nclass H:\n    x = Const()\nresultado = H().x\nprint(resultado)\n",
+    next: Some("py-1974-desc-set"), show_type_chips: false, micro_step: 1973,
+};
+pub const PY1974_DESC_SET: CodingStep = CodingStep {
+    id: "py-1974-desc-set", title: "descriptor · __set__", objective: "Persistir valor vía __set__ en el dict de instancia.",
+    prompt_md: "**__set__**\n\nCon `__set__` el descriptor es de datos: controla escritura. Guardá en `instance.__dict__` bajo una clave privada para no recursar.\n\n**Micro-reto:**\n1. `Stored` con `__set__`/`__get__` usando clave `'_v'`\n2. `class Box: v = Stored()`\n3. `b=Box()`; `b.v=9`; `resultado=b.v`; mostrá",
+    starter_code: "# class Stored:\n#     def __get__(self, instance, owner):\n#         return instance.__dict__['_v']\n#     def __set__(self, instance, value):\n#         instance.__dict__['_v'] = value\n# class Box:\n#     v = Stored()\n# b = Box()\n# b.v = 9\n# resultado = b.v\n# print(resultado)\n",
+    pytest: "def test_desc_set(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Escribí en instance.__dict__.",
+    solution_example: "class Stored:\n    def __get__(self, instance, owner):\n        return instance.__dict__['_v']\n    def __set__(self, instance, value):\n        instance.__dict__['_v'] = value\nclass Box:\n    v = Stored()\nb = Box()\nb.v = 9\nresultado = b.v\nprint(resultado)\n",
+    next: Some("py-1975-desc-setname"), show_type_chips: false, micro_step: 1974,
+};
+pub const PY1975_DESC_SETNAME: CodingStep = CodingStep {
+    id: "py-1975-desc-setname", title: "descriptor · __set_name__", objective: "Capturar el nombre del atributo al definir la clase.",
+    prompt_md: "**__set_name__**\n\nAl crear la clase, Python llama `__set_name__(owner, name)`. Guardá el nombre para claves únicas por atributo — clave del protocolo de descriptores reutilizables.\n\n**Micro-reto:**\n1. `Field` guarda `'_'+name` en `__set_name__`\n2. `class P: a = Field()`\n3. `p=P()`; `p.a=3`; `resultado=(p.a, '_a' in p.__dict__)`; mostrá",
+    starter_code: "# class Field:\n#     def __set_name__(self, owner, name):\n#         self.key = '_' + name\n#     def __get__(self, instance, owner):\n#         return instance.__dict__[self.key]\n#     def __set__(self, instance, value):\n#         instance.__dict__[self.key] = value\n# class P:\n#     a = Field()\n# p = P()\n# p.a = 3\n# resultado = (p.a, '_a' in p.__dict__)\n# print(resultado)\n",
+    pytest: "def test_desc_setname(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "key = '_' + name.",
+    solution_example: "class Field:\n    def __set_name__(self, owner, name):\n        self.key = '_' + name\n    def __get__(self, instance, owner):\n        return instance.__dict__[self.key]\n    def __set__(self, instance, value):\n        instance.__dict__[self.key] = value\nclass P:\n    a = Field()\np = P()\np.a = 3\nresultado = (p.a, '_a' in p.__dict__)\nprint(resultado)\n",
+    next: Some("py-1976-desc-reuse"), show_type_chips: false, micro_step: 1975,
+};
+pub const PY1976_DESC_REUSE: CodingStep = CodingStep {
+    id: "py-1976-desc-reuse", title: "descriptor · reutilizable", objective: "Colgar el mismo descriptor en dos campos.",
+    prompt_md: "**Reuso**\n\n`__set_name__` permite una sola clase descriptor en varios atributos sin colisión de almacenamiento. Cada campo tiene su clave en el namespace de la instancia.\n\n**Micro-reto:**\n1. `Field` como antes\n2. `class Pair: x=Field(); y=Field()`\n3. Set x=1,y=2; `resultado=(p.x,p.y)`; mostrá",
+    starter_code: "# class Field:\n#     def __set_name__(self, owner, name):\n#         self.key = '_' + name\n#     def __get__(self, instance, owner):\n#         return instance.__dict__[self.key]\n#     def __set__(self, instance, value):\n#         instance.__dict__[self.key] = value\n# class Pair:\n#     x = Field()\n#     y = Field()\n# p = Pair()\n# p.x = 1\n# p.y = 2\n# resultado = (p.x, p.y)\n# print(resultado)\n",
+    pytest: "def test_desc_reuse(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Dos Field independientes.",
+    solution_example: "class Field:\n    def __set_name__(self, owner, name):\n        self.key = '_' + name\n    def __get__(self, instance, owner):\n        return instance.__dict__[self.key]\n    def __set__(self, instance, value):\n        instance.__dict__[self.key] = value\nclass Pair:\n    x = Field()\n    y = Field()\np = Pair()\np.x = 1\np.y = 2\nresultado = (p.x, p.y)\nprint(resultado)\n",
+    next: Some("py-1977-desc-owner"), show_type_chips: false, micro_step: 1976,
+};
+pub const PY1977_DESC_OWNER: CodingStep = CodingStep {
+    id: "py-1977-desc-owner", title: "descriptor · acceso en clase", objective: "Devolver el descriptor si instance es None.",
+    prompt_md: "**owner**\n\n`__get__(self, instance, owner)`: si `instance is None` (acceso desde la clase), devolvé `self`. Así no rompés introspección del atributo en el namespace de clase.\n\n**Micro-reto:**\n1. `Meta` `__get__`: None→self, else 7\n2. `class C: m = Meta()`\n3. `resultado = (C.m is C.__dict__['m'], C().m)`; mostrá",
+    starter_code: "# class Meta:\n#     def __get__(self, instance, owner):\n#         if instance is None:\n#             return self\n#         return 7\n# class C:\n#     m = Meta()\n# resultado = (C.m is C.__dict__['m'], C().m)\n# print(resultado)\n",
+    pytest: "def test_desc_owner(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, 7)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "instance is None → self.",
+    solution_example: "class Meta:\n    def __get__(self, instance, owner):\n        if instance is None:\n            return self\n        return 7\nclass C:\n    m = Meta()\nresultado = (C.m is C.__dict__['m'], C().m)\nprint(resultado)\n",
+    next: Some("py-1978-desc-check"), show_type_chips: false, micro_step: 1977,
+};
+pub const PY1978_DESC_CHECK: CodingStep = CodingStep {
+    id: "py-1978-desc-check", title: "descriptor · Suite get/set/name", objective: "Integrar Field con __set_name__ y lectura.",
+    prompt_md: "**Suite descriptores**\n\nUn campo tipado mínimo: set/get vía descriptor nombrado.\n\n**Micro-reto:**\n1. `Field` con set_name/get/set\n2. `class Item: qty = Field()`\n3. `i=Item()`; `i.qty=4`; `resultado=i.qty`; mostrá",
+    starter_code: "# class Field:\n#     def __set_name__(self, owner, name):\n#         self.key = '_' + name\n#     def __get__(self, instance, owner):\n#         return instance.__dict__[self.key]\n#     def __set__(self, instance, value):\n#         instance.__dict__[self.key] = value\n# class Item:\n#     qty = Field()\n# i = Item()\n# i.qty = 4\n# resultado = i.qty\n# print(resultado)\n",
+    pytest: "def test_desc_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "qty=4 vía descriptor.",
+    solution_example: "class Field:\n    def __set_name__(self, owner, name):\n        self.key = '_' + name\n    def __get__(self, instance, owner):\n        return instance.__dict__[self.key]\n    def __set__(self, instance, value):\n        instance.__dict__[self.key] = value\nclass Item:\n    qty = Field()\ni = Item()\ni.qty = 4\nresultado = i.qty\nprint(resultado)\n",
+    next: Some("py-1979-slots-basic"), show_type_chips: false, micro_step: 1978,
+};
+pub const PY1979_SLOTS_BASIC: CodingStep = CodingStep {
+    id: "py-1979-slots-basic", title: "slots · declaración", objective: "Fijar atributos con __slots__.",
+    prompt_md: "**__slots__**\n\n`__slots__ = ('x',)` reserva layout fijo de atributos. Menos `__dict__` dinámico: modelo de datos compacto y explícito.\n\n**Micro-reto:**\n1. `class P: __slots__=('x',)`; `__init__` setea x\n2. `resultado = P(5).x`\n3. Mostrá",
+    starter_code: "# class P:\n#     __slots__ = ('x',)\n#     def __init__(self, x):\n#         self.x = x\n# resultado = P(5).x\n# print(resultado)\n",
+    pytest: "def test_slots_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Declará __slots__ = ('x',).",
+    solution_example: "class P:\n    __slots__ = ('x',)\n    def __init__(self, x):\n        self.x = x\nresultado = P(5).x\nprint(resultado)\n",
+    next: Some("py-1980-slots-nodict"), show_type_chips: false, micro_step: 1979,
+};
+pub const PY1980_SLOTS_NODICT: CodingStep = CodingStep {
+    id: "py-1980-slots-nodict", title: "slots · sin __dict__", objective: "Verificar ausencia de __dict__ con slots.",
+    prompt_md: "**Sin __dict__**\n\nCon solo `__slots__`, la instancia no tiene `__dict__`. Eso fuerza el conjunto fijo de nombres y ahorra memoria por objeto.\n\n**Micro-reto:**\n1. `class Q: __slots__=('a',)`\n2. `q=Q()`; `q.a=1`\n3. `resultado = hasattr(q, '__dict__')`; mostrá",
+    starter_code: "# class Q:\n#     __slots__ = ('a',)\n#     def __init__(self):\n#         self.a = 0\n# q = Q()\n# q.a = 1\n# resultado = hasattr(q, '__dict__')\n# print(resultado)\n",
+    pytest: "def test_slots_nodict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "hasattr __dict__ → False.",
+    solution_example: "class Q:\n    __slots__ = ('a',)\n    def __init__(self):\n        self.a = 0\nq = Q()\nq.a = 1\nresultado = hasattr(q, '__dict__')\nprint(resultado)\n",
+    next: Some("py-1981-slots-reject"), show_type_chips: false, micro_step: 1980,
+};
+pub const PY1981_SLOTS_REJECT: CodingStep = CodingStep {
+    id: "py-1981-slots-reject", title: "slots · AttributeError", objective: "Rechazar atributo fuera de slots.",
+    prompt_md: "**Fijo**\n\nAsignar un nombre no listado en `__slots__` lanza `AttributeError`. El paradigma: esquema cerrado vs dict abierto.\n\n**Micro-reto:**\n1. `class R: __slots__=('x',)`\n2. Intentá `r.y=1`\n3. `resultado = ok` (False si AttributeError); mostrá",
+    starter_code: "# class R:\n#     __slots__ = ('x',)\n#     def __init__(self):\n#         self.x = 0\n# r = R()\n# try:\n#     r.y = 1\n#     ok = True\n# except AttributeError:\n#     ok = False\n# resultado = ok\n# print(resultado)\n",
+    pytest: "def test_slots_reject(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "y no está en slots.",
+    solution_example: "class R:\n    __slots__ = ('x',)\n    def __init__(self):\n        self.x = 0\nr = R()\ntry:\n    r.y = 1\n    ok = True\nexcept AttributeError:\n    ok = False\nresultado = ok\nprint(resultado)\n",
+    next: Some("py-1982-slots-tuple"), show_type_chips: false, micro_step: 1981,
+};
+pub const PY1982_SLOTS_TUPLE: CodingStep = CodingStep {
+    id: "py-1982-slots-tuple", title: "slots · varios campos", objective: "Declarar múltiples nombres en __slots__.",
+    prompt_md: "**Varios**\n\n`__slots__` acepta tupla de nombres. Cada campo es un slot; juntos definen el shape del objeto.\n\n**Micro-reto:**\n1. `class Pt: __slots__=('x','y')`\n2. `p=Pt(2,3)`\n3. `resultado=(p.x,p.y)`; mostrá",
+    starter_code: "# class Pt:\n#     __slots__ = ('x', 'y')\n#     def __init__(self, x, y):\n#         self.x = x\n#         self.y = y\n# resultado = (Pt(2, 3).x, Pt(2, 3).y)\n# print(resultado)\n",
+    pytest: "def test_slots_tuple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Dos slots: x e y.",
+    solution_example: "class Pt:\n    __slots__ = ('x', 'y')\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\nresultado = (Pt(2, 3).x, Pt(2, 3).y)\nprint(resultado)\n",
+    next: Some("py-1983-slots-inherit"), show_type_chips: false, micro_step: 1982,
+};
+pub const PY1983_SLOTS_INHERIT: CodingStep = CodingStep {
+    id: "py-1983-slots-inherit", title: "slots · herencia", objective: "Combinar slots en subclase.",
+    prompt_md: "**Herencia**\n\nLa subclase declara sus propios `__slots__` adicionales. El layout suma bases + propios; seguís sin `__dict__` si ninguna base lo aporta.\n\n**Micro-reto:**\n1. `Base` slots `a`; `Sub(Base)` slots `b`\n2. `s=Sub(1,2)`\n3. `resultado=(s.a,s.b)`; mostrá",
+    starter_code: "# class Base:\n#     __slots__ = ('a',)\n#     def __init__(self, a):\n#         self.a = a\n# class Sub(Base):\n#     __slots__ = ('b',)\n#     def __init__(self, a, b):\n#         super().__init__(a)\n#         self.b = b\n# s = Sub(1, 2)\n# resultado = (s.a, s.b)\n# print(resultado)\n",
+    pytest: "def test_slots_inherit(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Sub suma slot b.",
+    solution_example: "class Base:\n    __slots__ = ('a',)\n    def __init__(self, a):\n        self.a = a\nclass Sub(Base):\n    __slots__ = ('b',)\n    def __init__(self, a, b):\n        super().__init__(a)\n        self.b = b\ns = Sub(1, 2)\nresultado = (s.a, s.b)\nprint(resultado)\n",
+    next: Some("py-1984-slots-check"), show_type_chips: false, micro_step: 1983,
+};
+pub const PY1984_SLOTS_CHECK: CodingStep = CodingStep {
+    id: "py-1984-slots-check", title: "slots · Suite layout fijo", objective: "Cerrar: slots, lectura y rechazo extra.",
+    prompt_md: "**Suite slots**\n\nObjeto con un slot; leé el valor y confirmá que un extra falla.\n\n**Micro-reto:**\n1. `class Cell: __slots__=('v',)`\n2. `c=Cell(9)`; intentá `c.z=0`\n3. `resultado=(c.v, failed)`; mostrá",
+    starter_code: "# class Cell:\n#     __slots__ = ('v',)\n#     def __init__(self, v):\n#         self.v = v\n# c = Cell(9)\n# try:\n#     c.z = 0\n#     failed = False\n# except AttributeError:\n#     failed = True\n# resultado = (c.v, failed)\n# print(resultado)\n",
+    pytest: "def test_slots_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (9, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "v=9; z falla.",
+    solution_example: "class Cell:\n    __slots__ = ('v',)\n    def __init__(self, v):\n        self.v = v\nc = Cell(9)\ntry:\n    c.z = 0\n    failed = False\nexcept AttributeError:\n    failed = True\nresultado = (c.v, failed)\nprint(resultado)\n",
+    next: Some("py-1985-dc-basic"), show_type_chips: false, micro_step: 1984,
+};
+pub const PY1985_DC_BASIC: CodingStep = CodingStep {
+    id: "py-1985-dc-basic", title: "dataclass · básica", objective: "Generar __init__ con @dataclass.",
+    prompt_md: "**dataclass**\n\n`dataclasses.dataclass` (stdlib) genera `__init__`/`__repr__` desde anotaciones. Menos boilerplate para modelos de datos.\n\n**Micro-reto:**\n1. `@dataclass class Punto` con `x: int`, `y: int`\n2. `resultado = (Punto(1,2).x, Punto(1,2).y)`\n3. Mostrá",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Punto:\n#     x: int\n#     y: int\n# resultado = (Punto(1, 2).x, Punto(1, 2).y)\n# print(resultado)\n",
+    pytest: "def test_dc_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "from dataclasses import dataclass.",
+    solution_example: "from dataclasses import dataclass\n@dataclass\nclass Punto:\n    x: int\n    y: int\nresultado = (Punto(1, 2).x, Punto(1, 2).y)\nprint(resultado)\n",
+    next: Some("py-1986-dc-slots"), show_type_chips: false, micro_step: 1985,
+};
+pub const PY1986_DC_SLOTS: CodingStep = CodingStep {
+    id: "py-1986-dc-slots", title: "dataclass · slots=True", objective: "Dataclass compacta con slots=True.",
+    prompt_md: "**slots=True**\n\n`@dataclass(slots=True)` combina generación de campos con layout `__slots__`: modelos compactos del ecosistema stdlib 3.10+.\n\n**Micro-reto:**\n1. `@dataclass(slots=True) class N` con `v: int`\n2. `n=N(4)`\n3. `resultado=(n.v, hasattr(n,'__dict__'))`; mostrá",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(slots=True)\n# class N:\n#     v: int\n# n = N(4)\n# resultado = (n.v, hasattr(n, '__dict__'))\n# print(resultado)\n",
+    pytest: "def test_dc_slots(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (4, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "slots=True quita __dict__.",
+    solution_example: "from dataclasses import dataclass\n@dataclass(slots=True)\nclass N:\n    v: int\nn = N(4)\nresultado = (n.v, hasattr(n, '__dict__'))\nprint(resultado)\n",
+    next: Some("py-1987-dc-frozen"), show_type_chips: false, micro_step: 1986,
+};
+pub const PY1987_DC_FROZEN: CodingStep = CodingStep {
+    id: "py-1987-dc-frozen", title: "dataclass · frozen=True", objective: "Inmutabilidad con frozen=True.",
+    prompt_md: "**frozen=True**\n\n`@dataclass(frozen=True)` bloquea reasignación: value objects del modelo de datos. Ideal para claves y comparaciones.\n\n**Micro-reto:**\n1. `Punto` frozen x,y\n2. Intentá `p.x=9`\n3. `resultado=(p.x, ok)`; mostrá",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class Punto:\n#     x: int\n#     y: int\n# p = Punto(1, 2)\n# try:\n#     p.x = 9\n#     ok = True\n# except Exception:\n#     ok = False\n# resultado = (p.x, ok)\n# print(resultado)\n",
+    pytest: "def test_dc_frozen(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "frozen impide mutar.",
+    solution_example: "from dataclasses import dataclass\n@dataclass(frozen=True)\nclass Punto:\n    x: int\n    y: int\np = Punto(1, 2)\ntry:\n    p.x = 9\n    ok = True\nexcept Exception:\n    ok = False\nresultado = (p.x, ok)\nprint(resultado)\n",
+    next: Some("py-1988-dc-default"), show_type_chips: false, micro_step: 1987,
+};
+pub const PY1988_DC_DEFAULT: CodingStep = CodingStep {
+    id: "py-1988-dc-default", title: "dataclass · default", objective: "Campo con valor por defecto.",
+    prompt_md: "**default**\n\nPodés anotar `n: int = 0`. El ecosistema dataclass rellena defaults en `__init__` generado.\n\n**Micro-reto:**\n1. `@dataclass class Cfg` con `n: int = 0`\n2. `resultado = Cfg().n`\n3. Mostrá",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass\n# class Cfg:\n#     n: int = 0\n# resultado = Cfg().n\n# print(resultado)\n",
+    pytest: "def test_dc_default(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Default 0.",
+    solution_example: "from dataclasses import dataclass\n@dataclass\nclass Cfg:\n    n: int = 0\nresultado = Cfg().n\nprint(resultado)\n",
+    next: Some("py-1989-dc-combo"), show_type_chips: false, micro_step: 1988,
+};
+pub const PY1989_DC_COMBO: CodingStep = CodingStep {
+    id: "py-1989-dc-combo", title: "dataclass · slots+frozen", objective: "Combinar slots=True y frozen=True.",
+    prompt_md: "**Combo**\n\n`@dataclass(slots=True, frozen=True)`: value object compacto. Stdlib moderna para modelos inmutables y livianos.\n\n**Micro-reto:**\n1. `Vec` slots+frozen con `x: int`\n2. `resultado = Vec(3).x`\n3. Mostrá",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(slots=True, frozen=True)\n# class Vec:\n#     x: int\n# resultado = Vec(3).x\n# print(resultado)\n",
+    pytest: "def test_dc_combo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Ambos flags en el decorador.",
+    solution_example: "from dataclasses import dataclass\n@dataclass(slots=True, frozen=True)\nclass Vec:\n    x: int\nresultado = Vec(3).x\nprint(resultado)\n",
+    next: Some("py-1990-dc-check"), show_type_chips: false, micro_step: 1989,
+};
+pub const PY1990_DC_CHECK: CodingStep = CodingStep {
+    id: "py-1990-dc-check", title: "dataclass · Suite compacta", objective: "Cerrar: frozen slots y igualdad.",
+    prompt_md: "**Suite dataclass**\n\nDos instancias frozen iguales comparan por valor.\n\n**Micro-reto:**\n1. `@dataclass(slots=True, frozen=True) class ID` con `n: int`\n2. `resultado = (ID(1)==ID(1), ID(1)==ID(2))`\n3. Mostrá",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(slots=True, frozen=True)\n# class ID:\n#     n: int\n# resultado = (ID(1) == ID(1), ID(1) == ID(2))\n# print(resultado)\n",
+    pytest: "def test_dc_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Igualdad estructural.",
+    solution_example: "from dataclasses import dataclass\n@dataclass(slots=True, frozen=True)\nclass ID:\n    n: int\nresultado = (ID(1) == ID(1), ID(1) == ID(2))\nprint(resultado)\n",
+    next: Some("py-1991-abc-base"), show_type_chips: false, micro_step: 1990,
+};
+pub const PY1991_ABC_BASE: CodingStep = CodingStep {
+    id: "py-1991-abc-base", title: "ABC · abstractmethod", objective: "Definir contrato con abc.ABC.",
+    prompt_md: "**ABC**\n\n`abc.ABC` + `@abstractmethod` (stdlib) declara métodos obligatorios. Paradigma OOP: interfaz nominal en el ecosistema tipado/runtime.\n\n**Micro-reto:**\n1. `Shape(ABC)` con `area` abstracto\n2. `Square(Shape)` implementa area\n3. `resultado = Square(3).area()`; mostrá",
+    starter_code: "# from abc import ABC, abstractmethod\n# class Shape(ABC):\n#     @abstractmethod\n#     def area(self):\n#         ...\n# class Square(Shape):\n#     def __init__(self, side):\n#         self.side = side\n#     def area(self):\n#         return self.side * self.side\n# resultado = Square(3).area()\n# print(resultado)\n",
+    pytest: "def test_abc_base(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Implementá area en Square.",
+    solution_example: "from abc import ABC, abstractmethod\nclass Shape(ABC):\n    @abstractmethod\n    def area(self):\n        ...\nclass Square(Shape):\n    def __init__(self, side):\n        self.side = side\n    def area(self):\n        return self.side * self.side\nresultado = Square(3).area()\nprint(resultado)\n",
+    next: Some("py-1992-abc-block"), show_type_chips: false, micro_step: 1991,
+};
+pub const PY1992_ABC_BLOCK: CodingStep = CodingStep {
+    id: "py-1992-abc-block", title: "ABC · no instanciable", objective: "Comprobar que la ABC no se instancia.",
+    prompt_md: "**Bloqueo**\n\nInstanciar una ABC incompleta lanza `TypeError`. El contrato se impone en runtime.\n\n**Micro-reto:**\n1. `Base(ABC)` con método abstracto `run`\n2. Intentá `Base()`\n3. `resultado = ok` False si TypeError; mostrá",
+    starter_code: "# from abc import ABC, abstractmethod\n# class Base(ABC):\n#     @abstractmethod\n#     def run(self):\n#         ...\n# try:\n#     Base()\n#     ok = True\n# except TypeError:\n#     ok = False\n# resultado = ok\n# print(resultado)\n",
+    pytest: "def test_abc_block(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "TypeError al instanciar.",
+    solution_example: "from abc import ABC, abstractmethod\nclass Base(ABC):\n    @abstractmethod\n    def run(self):\n        ...\ntry:\n    Base()\n    ok = True\nexcept TypeError:\n    ok = False\nresultado = ok\nprint(resultado)\n",
+    next: Some("py-1993-abc-concrete"), show_type_chips: false, micro_step: 1992,
+};
+pub const PY1993_ABC_CONCRETE: CodingStep = CodingStep {
+    id: "py-1993-abc-concrete", title: "ABC · subclase concreta", objective: "Completar el contrato y usar la API.",
+    prompt_md: "**Concreta**\n\nSolo la subclase que implementa todos los abstractos es instanciable. Polimorfismo clásico del paradigma OOP.\n\n**Micro-reto:**\n1. `Animal(ABC)` con `speak`\n2. `Dog.speak` → `'guau'`\n3. `resultado = Dog().speak()`; mostrá",
+    starter_code: "# from abc import ABC, abstractmethod\n# class Animal(ABC):\n#     @abstractmethod\n#     def speak(self):\n#         ...\n# class Dog(Animal):\n#     def speak(self):\n#         return 'guau'\n# resultado = Dog().speak()\n# print(resultado)\n",
+    pytest: "def test_abc_concrete(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'guau'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Dog implementa speak.",
+    solution_example: "from abc import ABC, abstractmethod\nclass Animal(ABC):\n    @abstractmethod\n    def speak(self):\n        ...\nclass Dog(Animal):\n    def speak(self):\n        return 'guau'\nresultado = Dog().speak()\nprint(resultado)\n",
+    next: Some("py-1994-abc-multi"), show_type_chips: false, micro_step: 1993,
+};
+pub const PY1994_ABC_MULTI: CodingStep = CodingStep {
+    id: "py-1994-abc-multi", title: "ABC · varios abstractos", objective: "Implementar dos métodos abstractos.",
+    prompt_md: "**Varios**\n\nUna ABC puede exigir varios métodos. La subclase debe cubrir todos o sigue siendo abstracta.\n\n**Micro-reto:**\n1. `Ops(ABC)` con `inc` y `name`\n2. `A` implementa ambos\n3. `a=A()`; `resultado=(a.name(), a.inc(2))`; mostrá",
+    starter_code: "# from abc import ABC, abstractmethod\n# class Ops(ABC):\n#     @abstractmethod\n#     def inc(self, x):\n#         ...\n#     @abstractmethod\n#     def name(self):\n#         ...\n# class A(Ops):\n#     def inc(self, x):\n#         return x + 1\n#     def name(self):\n#         return 'A'\n# a = A()\n# resultado = (a.name(), a.inc(2))\n# print(resultado)\n",
+    pytest: "def test_abc_multi(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('A', 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Cubrí inc y name.",
+    solution_example: "from abc import ABC, abstractmethod\nclass Ops(ABC):\n    @abstractmethod\n    def inc(self, x):\n        ...\n    @abstractmethod\n    def name(self):\n        ...\nclass A(Ops):\n    def inc(self, x):\n        return x + 1\n    def name(self):\n        return 'A'\na = A()\nresultado = (a.name(), a.inc(2))\nprint(resultado)\n",
+    next: Some("py-1995-abc-isinstance"), show_type_chips: false, micro_step: 1994,
+};
+pub const PY1995_ABC_ISINSTANCE: CodingStep = CodingStep {
+    id: "py-1995-abc-isinstance", title: "ABC · isinstance", objective: "Usar isinstance con la ABC.",
+    prompt_md: "**isinstance**\n\nLas ABC participan en `isinstance`: útil para plugins del ecosistema que registran implementaciones concretas.\n\n**Micro-reto:**\n1. `Plugin(ABC)` + `P` concreta\n2. `resultado = isinstance(P(), Plugin)`\n3. Mostrá",
+    starter_code: "# from abc import ABC, abstractmethod\n# class Plugin(ABC):\n#     @abstractmethod\n#     def run(self):\n#         ...\n# class P(Plugin):\n#     def run(self):\n#         return 1\n# resultado = isinstance(P(), Plugin)\n# print(resultado)\n",
+    pytest: "def test_abc_isinstance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "isinstance True.",
+    solution_example: "from abc import ABC, abstractmethod\nclass Plugin(ABC):\n    @abstractmethod\n    def run(self):\n        ...\nclass P(Plugin):\n    def run(self):\n        return 1\nresultado = isinstance(P(), Plugin)\nprint(resultado)\n",
+    next: Some("py-1996-abc-check"), show_type_chips: false, micro_step: 1995,
+};
+pub const PY1996_ABC_CHECK: CodingStep = CodingStep {
+    id: "py-1996-abc-check", title: "ABC · Suite contrato", objective: "Cerrar ola ABC con área polimórfica.",
+    prompt_md: "**Suite ABC**\n\nFunción que acepta la ABC y delega en `area`.\n\n**Micro-reto:**\n1. `Shape` ABC + `Rect` con w,h\n2. `def total(s): return s.area()`\n3. `resultado = total(Rect(2, 4))`; mostrá",
+    starter_code: "# from abc import ABC, abstractmethod\n# class Shape(ABC):\n#     @abstractmethod\n#     def area(self):\n#         ...\n# class Rect(Shape):\n#     def __init__(self, w, h):\n#         self.w = w\n#         self.h = h\n#     def area(self):\n#         return self.w * self.h\n# def total(s):\n#     return s.area()\n# resultado = total(Rect(2, 4))\n# print(resultado)\n",
+    pytest: "def test_abc_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 8\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2*4=8.",
+    solution_example: "from abc import ABC, abstractmethod\nclass Shape(ABC):\n    @abstractmethod\n    def area(self):\n        ...\nclass Rect(Shape):\n    def __init__(self, w, h):\n        self.w = w\n        self.h = h\n    def area(self):\n        return self.w * self.h\ndef total(s):\n    return s.area()\nresultado = total(Rect(2, 4))\nprint(resultado)\n",
+    next: Some("py-1997-proto-def"), show_type_chips: false, micro_step: 1996,
+};
+pub const PY1997_PROTO_DEF: CodingStep = CodingStep {
+    id: "py-1997-proto-def", title: "Protocol · definición", objective: "Declarar typing.Protocol estructural.",
+    prompt_md: "**Protocol**\n\n`typing.Protocol` documenta duck typing: alcanza con tener los métodos, sin heredar. Ecosistema de tipado + paradigma estructural.\n\n**Micro-reto:**\n1. `class Reader(Protocol)` con `read(self)->str`\n2. `class File` con `read` → `'ok'`\n3. `resultado = File().read()`; mostrá",
+    starter_code: "# from typing import Protocol\n# class Reader(Protocol):\n#     def read(self) -> str: ...\n# class File:\n#     def read(self):\n#         return 'ok'\n# resultado = File().read()\n# print(resultado)\n",
+    pytest: "def test_proto_def(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Protocol solo declara.",
+    solution_example: "from typing import Protocol\nclass Reader(Protocol):\n    def read(self) -> str: ...\nclass File:\n    def read(self):\n        return 'ok'\nresultado = File().read()\nprint(resultado)\n",
+    next: Some("py-1998-proto-fn"), show_type_chips: false, micro_step: 1997,
+};
+pub const PY1998_PROTO_FN: CodingStep = CodingStep {
+    id: "py-1998-proto-fn", title: "Protocol · función", objective: "Aceptar cualquier objeto que cumpla el protocolo.",
+    prompt_md: "**Función**\n\nAnotá el parámetro como Protocol: en runtime es duck typing; el contrato es estructural, no nominal.\n\n**Micro-reto:**\n1. `Speaker(Protocol)` con `say`\n2. `def shout(s: Speaker): return s.say().upper()`\n3. Clase `H` con say→`'hi'`; `resultado=shout(H())`; mostrá",
+    starter_code: "# from typing import Protocol\n# class Speaker(Protocol):\n#     def say(self) -> str: ...\n# def shout(s: Speaker):\n#     return s.say().upper()\n# class H:\n#     def say(self):\n#         return 'hi'\n# resultado = shout(H())\n# print(resultado)\n",
+    pytest: "def test_proto_fn(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'HI'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "H no hereda Speaker.",
+    solution_example: "from typing import Protocol\nclass Speaker(Protocol):\n    def say(self) -> str: ...\ndef shout(s: Speaker):\n    return s.say().upper()\nclass H:\n    def say(self):\n        return 'hi'\nresultado = shout(H())\nprint(resultado)\n",
+    next: Some("py-1999-proto-two"), show_type_chips: false, micro_step: 1998,
+};
+pub const PY1999_PROTO_TWO: CodingStep = CodingStep {
+    id: "py-1999-proto-two", title: "Protocol · dos implementaciones", objective: "Dos clases no relacionadas satisfacen el mismo Protocol.",
+    prompt_md: "**Varias**\n\nSin herencia común: basta el método. Eso es tipado estructural explícito frente a ABC nominal.\n\n**Micro-reto:**\n1. `Sized(Protocol)` con `size(self)->int`\n2. `A.size→1`, `B.size→2`\n3. `resultado=(A().size(), B().size())`; mostrá",
+    starter_code: "# from typing import Protocol\n# class Sized(Protocol):\n#     def size(self) -> int: ...\n# class A:\n#     def size(self):\n#         return 1\n# class B:\n#     def size(self):\n#         return 2\n# resultado = (A().size(), B().size())\n# print(resultado)\n",
+    pytest: "def test_proto_two(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "A y B independientes.",
+    solution_example: "from typing import Protocol\nclass Sized(Protocol):\n    def size(self) -> int: ...\nclass A:\n    def size(self):\n        return 1\nclass B:\n    def size(self):\n        return 2\nresultado = (A().size(), B().size())\nprint(resultado)\n",
+    next: Some("py-2000-proto-runtime"), show_type_chips: false, micro_step: 1999,
+};
+pub const PY2000_PROTO_RUNTIME: CodingStep = CodingStep {
+    id: "py-2000-proto-runtime", title: "Protocol · runtime_checkable", objective: "Usar isinstance con Protocol chequeable.",
+    prompt_md: "**runtime_checkable**\n\n`@runtime_checkable` permite `isinstance` estructural en runtime (stdlib typing). Útil para guards livianos.\n\n**Micro-reto:**\n1. `@runtime_checkable class HasX(Protocol)` con `x: int`\n2. `class O: x=3`\n3. `resultado = isinstance(O(), HasX)`; mostrá",
+    starter_code: "# from typing import Protocol, runtime_checkable\n# @runtime_checkable\n# class HasX(Protocol):\n#     x: int\n# class O:\n#     x = 3\n# resultado = isinstance(O(), HasX)\n# print(resultado)\n",
+    pytest: "def test_proto_runtime(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Decorá con runtime_checkable.",
+    solution_example: "from typing import Protocol, runtime_checkable\n@runtime_checkable\nclass HasX(Protocol):\n    x: int\nclass O:\n    x = 3\nresultado = isinstance(O(), HasX)\nprint(resultado)\n",
+    next: Some("py-2001-proto-map"), show_type_chips: false, micro_step: 2000,
+};
+pub const PY2001_PROTO_MAP: CodingStep = CodingStep {
+    id: "py-2001-proto-map", title: "Protocol · map estructural", objective: "Mapear una lista de objetos del Protocol.",
+    prompt_md: "**Map**\n\nProcesá heterogéneos que solo comparten forma: paradigma funcional + contrato estructural.\n\n**Micro-reto:**\n1. `Val(Protocol)` con `value(self)->int`\n2. Dos clases con value 3 y 4\n3. `resultado = [o.value() for o in objs]`; mostrá",
+    starter_code: "# from typing import Protocol\n# class Val(Protocol):\n#     def value(self) -> int: ...\n# class A:\n#     def value(self):\n#         return 3\n# class B:\n#     def value(self):\n#         return 4\n# objs = [A(), B()]\n# resultado = [o.value() for o in objs]\n# print(resultado)\n",
+    pytest: "def test_proto_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Lista por comprensión.",
+    solution_example: "from typing import Protocol\nclass Val(Protocol):\n    def value(self) -> int: ...\nclass A:\n    def value(self):\n        return 3\nclass B:\n    def value(self):\n        return 4\nobjs = [A(), B()]\nresultado = [o.value() for o in objs]\nprint(resultado)\n",
+    next: Some("py-2002-proto-check"), show_type_chips: false, micro_step: 2001,
+};
+pub const PY2002_PROTO_CHECK: CodingStep = CodingStep {
+    id: "py-2002-proto-check", title: "Protocol · Suite estructural", objective: "Cerrar: Protocol + función polimórfica.",
+    prompt_md: "**Suite Protocol**\n\n`draw(p)` llama `p.paint()` sin herencia compartida.\n\n**Micro-reto:**\n1. `Paintable(Protocol)` con `paint`\n2. `Dot.paint` → `'*'`\n3. `resultado = draw(Dot())`; mostrá",
+    starter_code: "# from typing import Protocol\n# class Paintable(Protocol):\n#     def paint(self) -> str: ...\n# def draw(p: Paintable):\n#     return p.paint()\n# class Dot:\n#     def paint(self):\n#         return '*'\n# resultado = draw(Dot())\n# print(resultado)\n",
+    pytest: "def test_proto_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '*'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "paint → '*'.",
+    solution_example: "from typing import Protocol\nclass Paintable(Protocol):\n    def paint(self) -> str: ...\ndef draw(p: Paintable):\n    return p.paint()\nclass Dot:\n    def paint(self):\n        return '*'\nresultado = draw(Dot())\nprint(resultado)\n",
+    next: Some("py-2003-comp-hasa"), show_type_chips: false, micro_step: 2002,
+};
+pub const PY2003_COMP_HASA: CodingStep = CodingStep {
+    id: "py-2003-comp-hasa", title: "composición · has-a", objective: "Modelar has-a con un motor interno.",
+    prompt_md: "**has-a**\n\nComposición: un objeto posee otro. Preferible a herencia cuando el dominio dice «tiene un» (auto→motor), no «es un».\n\n**Micro-reto:**\n1. `Engine` con `power`\n2. `Car` guarda `engine`\n3. `resultado = Car(Engine(100)).engine.power`; mostrá",
+    starter_code: "# class Engine:\n#     def __init__(self, power):\n#         self.power = power\n# class Car:\n#     def __init__(self, engine):\n#         self.engine = engine\n# resultado = Car(Engine(100)).engine.power\n# print(resultado)\n",
+    pytest: "def test_comp_hasa(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 100\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Car tiene Engine.",
+    solution_example: "class Engine:\n    def __init__(self, power):\n        self.power = power\nclass Car:\n    def __init__(self, engine):\n        self.engine = engine\nresultado = Car(Engine(100)).engine.power\nprint(resultado)\n",
+    next: Some("py-2004-comp-delegate"), show_type_chips: false, micro_step: 2003,
+};
+pub const PY2004_COMP_DELEGATE: CodingStep = CodingStep {
+    id: "py-2004-comp-delegate", title: "composición · delegación", objective: "Delegar un método al componente.",
+    prompt_md: "**Delegación**\n\nLa fachada reenvía al componente. API estable del agregado; el detalle vive en la pieza composita.\n\n**Micro-reto:**\n1. `Motor.start` → `'on'`\n2. `Robot.start` delega\n3. `resultado = Robot(Motor()).start()`; mostrá",
+    starter_code: "# class Motor:\n#     def start(self):\n#         return 'on'\n# class Robot:\n#     def __init__(self, motor):\n#         self.motor = motor\n#     def start(self):\n#         return self.motor.start()\n# resultado = Robot(Motor()).start()\n# print(resultado)\n",
+    pytest: "def test_comp_delegate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'on'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Delegá a motor.start.",
+    solution_example: "class Motor:\n    def start(self):\n        return 'on'\nclass Robot:\n    def __init__(self, motor):\n        self.motor = motor\n    def start(self):\n        return self.motor.start()\nresultado = Robot(Motor()).start()\nprint(resultado)\n",
+    next: Some("py-2005-comp-vs-inh"), show_type_chips: false, micro_step: 2004,
+};
+pub const PY2005_COMP_VS_INH: CodingStep = CodingStep {
+    id: "py-2005-comp-vs-inh", title: "composición · vs herencia", objective: "Contrastar has-a frente a is-a en código.",
+    prompt_md: "**vs herencia**\n\nHerencia acopla jerarquía; composición ensambla roles. En dominio de apps, «usa Logger» suele ser mejor que «es Logger».\n\n**Micro-reto:**\n1. `Logger.log` → texto\n2. `Service` compone logger\n3. `resultado = Service(Logger()).run('x')`; mostrá",
+    starter_code: "# class Logger:\n#     def log(self, msg):\n#         return f'LOG:{msg}'\n# class Service:\n#     def __init__(self, logger):\n#         self.logger = logger\n#     def run(self, msg):\n#         return self.logger.log(msg)\n# resultado = Service(Logger()).run('x')\n# print(resultado)\n",
+    pytest: "def test_comp_vs_inh(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'LOG:x'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Service tiene Logger.",
+    solution_example: "class Logger:\n    def log(self, msg):\n        return f'LOG:{msg}'\nclass Service:\n    def __init__(self, logger):\n        self.logger = logger\n    def run(self, msg):\n        return self.logger.log(msg)\nresultado = Service(Logger()).run('x')\nprint(resultado)\n",
+    next: Some("py-2006-comp-nested"), show_type_chips: false, micro_step: 2005,
+};
+pub const PY2006_COMP_NESTED: CodingStep = CodingStep {
+    id: "py-2006-comp-nested", title: "composición · anidada", objective: "Anidar value objects en un agregado.",
+    prompt_md: "**Anidada**\n\nPedido→ítem→precio: composición en capas. El agregado navega has-a sin heredar tipos del dominio.\n\n**Micro-reto:**\n1. `Price(amount)`, `Item(price)`, `Order(item)`\n2. `resultado = Order(Item(Price(10))).item.price.amount`\n3. Mostrá",
+    starter_code: "# class Price:\n#     def __init__(self, amount):\n#         self.amount = amount\n# class Item:\n#     def __init__(self, price):\n#         self.price = price\n# class Order:\n#     def __init__(self, item):\n#         self.item = item\n# resultado = Order(Item(Price(10))).item.price.amount\n# print(resultado)\n",
+    pytest: "def test_comp_nested(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Cadena de has-a.",
+    solution_example: "class Price:\n    def __init__(self, amount):\n        self.amount = amount\nclass Item:\n    def __init__(self, price):\n        self.price = price\nclass Order:\n    def __init__(self, item):\n        self.item = item\nresultado = Order(Item(Price(10))).item.price.amount\nprint(resultado)\n",
+    next: Some("py-2007-comp-swap"), show_type_chips: false, micro_step: 2006,
+};
+pub const PY2007_COMP_SWAP: CodingStep = CodingStep {
+    id: "py-2007-comp-swap", title: "composición · reemplazo", objective: "Cambiar el componente en runtime.",
+    prompt_md: "**Reemplazo**\n\nComposición permite hot-swap del colaborador: mismo host, otra estrategia. Flexibilidad de dominio sin cambiar la clase base.\n\n**Micro-reto:**\n1. `Fast.speed→10`, `Slow.speed→1`\n2. `Kart` con `engine`; cambiá a Slow\n3. `resultado=(a,b)`; mostrá",
+    starter_code: "# class Fast:\n#     def speed(self):\n#         return 10\n# class Slow:\n#     def speed(self):\n#         return 1\n# class Kart:\n#     def __init__(self, engine):\n#         self.engine = engine\n#     def speed(self):\n#         return self.engine.speed()\n# k = Kart(Fast())\n# a = k.speed()\n# k.engine = Slow()\n# b = k.speed()\n# resultado = (a, b)\n# print(resultado)\n",
+    pytest: "def test_comp_swap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (10, 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Swap Fast→Slow.",
+    solution_example: "class Fast:\n    def speed(self):\n        return 10\nclass Slow:\n    def speed(self):\n        return 1\nclass Kart:\n    def __init__(self, engine):\n        self.engine = engine\n    def speed(self):\n        return self.engine.speed()\nk = Kart(Fast())\na = k.speed()\nk.engine = Slow()\nb = k.speed()\nresultado = (a, b)\nprint(resultado)\n",
+    next: Some("py-2008-comp-check"), show_type_chips: false, micro_step: 2007,
+};
+pub const PY2008_COMP_CHECK: CodingStep = CodingStep {
+    id: "py-2008-comp-check", title: "composición · Suite has-a", objective: "Cerrar: fachada que suma potencias.",
+    prompt_md: "**Suite composición**\n\n`Team` compone dos `Player` y suma `score`.\n\n**Micro-reto:**\n1. `Player(score)`, `Team(a,b)` con `total`\n2. `resultado = Team(Player(3), Player(4)).total()`\n3. Mostrá",
+    starter_code: "# class Player:\n#     def __init__(self, score):\n#         self.score = score\n# class Team:\n#     def __init__(self, a, b):\n#         self.a = a\n#         self.b = b\n#     def total(self):\n#         return self.a.score + self.b.score\n# resultado = Team(Player(3), Player(4)).total()\n# print(resultado)\n",
+    pytest: "def test_comp_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3+4=7.",
+    solution_example: "class Player:\n    def __init__(self, score):\n        self.score = score\nclass Team:\n    def __init__(self, a, b):\n        self.a = a\n        self.b = b\n    def total(self):\n        return self.a.score + self.b.score\nresultado = Team(Player(3), Player(4)).total()\nprint(resultado)\n",
+    next: Some("py-2009-mix-basic"), show_type_chips: false, micro_step: 2008,
+};
+pub const PY2009_MIX_BASIC: CodingStep = CodingStep {
+    id: "py-2009-mix-basic", title: "mixin · básico", objective: "Reutilizar comportamiento con un mixin.",
+    prompt_md: "**Mixin**\n\nUn mixin aporta métodos sin ser la base de dominio. Se combina por herencia múltiple: reuso horizontal de comportamiento (paradigma OOP).\n\n**Micro-reto:**\n1. `JsonMixin.to_json` usa `self.data`\n2. `class Row(JsonMixin)` con data\n3. `resultado = Row({'a':1}).to_json()`; mostrá",
+    starter_code: "# import json\n# class JsonMixin:\n#     def to_json(self):\n#         return json.dumps(self.data, sort_keys=True)\n# class Row(JsonMixin):\n#     def __init__(self, data):\n#         self.data = data\n# resultado = Row({'a': 1}).to_json()\n# print(resultado)\n",
+    pytest: "def test_mix_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '{\"a\": 1}'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Mixin usa self.data.",
+    solution_example: "import json\nclass JsonMixin:\n    def to_json(self):\n        return json.dumps(self.data, sort_keys=True)\nclass Row(JsonMixin):\n    def __init__(self, data):\n        self.data = data\nresultado = Row({'a': 1}).to_json()\nprint(resultado)\n",
+    next: Some("py-2010-mix-mro"), show_type_chips: false, micro_step: 2009,
+};
+pub const PY2010_MIX_MRO: CodingStep = CodingStep {
+    id: "py-2010-mix-mro", title: "mixin · MRO", objective: "Observar el orden de resolución de nombres.",
+    prompt_md: "**MRO**\n\nCon mixins, LEGB de atributos sigue el MRO (`Clase.__mro__`). El primer `ping` gana. Entender el orden evita sorpresas de shadowing.\n\n**Micro-reto:**\n1. `M.ping→'m'`, `B.ping→'b'`, `C(M,B)`\n2. `resultado = (C().ping(), C.__mro__[0].__name__)`\n3. Mostrá",
+    starter_code: "# class M:\n#     def ping(self):\n#         return 'm'\n# class B:\n#     def ping(self):\n#         return 'b'\n# class C(M, B):\n#     pass\n# resultado = (C().ping(), C.__mro__[0].__name__)\n# print(resultado)\n",
+    pytest: "def test_mix_mro(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('m', 'C')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "M antes que B.",
+    solution_example: "class M:\n    def ping(self):\n        return 'm'\nclass B:\n    def ping(self):\n        return 'b'\nclass C(M, B):\n    pass\nresultado = (C().ping(), C.__mro__[0].__name__)\nprint(resultado)\n",
+    next: Some("py-2011-mix-self"), show_type_chips: false, micro_step: 2010,
+};
+pub const PY2011_MIX_SELF: CodingStep = CodingStep {
+    id: "py-2011-mix-self", title: "mixin · usa self", objective: "Mixin que lee estado de la instancia.",
+    prompt_md: "**self**\n\nEl mixin no guarda el estado: opera sobre `self` de la clase concreta. El nombre se resuelve en el objeto compuesto (LEGB de instancia).\n\n**Micro-reto:**\n1. `DoubleMixin.double` → `self.n*2`\n2. `Num(n)` hereda el mixin\n3. `resultado = Num(5).double()`; mostrá",
+    starter_code: "# class DoubleMixin:\n#     def double(self):\n#         return self.n * 2\n# class Num(DoubleMixin):\n#     def __init__(self, n):\n#         self.n = n\n# resultado = Num(5).double()\n# print(resultado)\n",
+    pytest: "def test_mix_self(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "self.n del Num.",
+    solution_example: "class DoubleMixin:\n    def double(self):\n        return self.n * 2\nclass Num(DoubleMixin):\n    def __init__(self, n):\n        self.n = n\nresultado = Num(5).double()\nprint(resultado)\n",
+    next: Some("py-2012-mix-multi"), show_type_chips: false, micro_step: 2011,
+};
+pub const PY2012_MIX_MULTI: CodingStep = CodingStep {
+    id: "py-2012-mix-multi", title: "mixin · múltiples", objective: "Combinar dos mixins en una clase.",
+    prompt_md: "**Múltiples**\n\nVarios mixins apilan capacidades. Cada uno aporta un método; la clase concreta solo define estado.\n\n**Micro-reto:**\n1. `AddMixin.add`, `MulMixin.mul`\n2. `Calc(AddMixin, MulMixin)` con `n`\n3. `resultado=(c.add(2), c.mul(3))` con n=4; mostrá",
+    starter_code: "# class AddMixin:\n#     def add(self, x):\n#         return self.n + x\n# class MulMixin:\n#     def mul(self, x):\n#         return self.n * x\n# class Calc(AddMixin, MulMixin):\n#     def __init__(self, n):\n#         self.n = n\n# c = Calc(4)\n# resultado = (c.add(2), c.mul(3))\n# print(resultado)\n",
+    pytest: "def test_mix_multi(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (6, 12)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Dos mixins + estado.",
+    solution_example: "class AddMixin:\n    def add(self, x):\n        return self.n + x\nclass MulMixin:\n    def mul(self, x):\n        return self.n * x\nclass Calc(AddMixin, MulMixin):\n    def __init__(self, n):\n        self.n = n\nc = Calc(4)\nresultado = (c.add(2), c.mul(3))\nprint(resultado)\n",
+    next: Some("py-2013-mix-base"), show_type_chips: false, micro_step: 2012,
+};
+pub const PY2013_MIX_BASE: CodingStep = CodingStep {
+    id: "py-2013-mix-base", title: "mixin · con base", objective: "Mixin + clase base de dominio.",
+    prompt_md: "**Base+mixin**\n\nPatrón habitual: entidad de dominio + mixin transversal (serialización, logging). Separás ejes de cambio.\n\n**Micro-reto:**\n1. `Entity` con `id`\n2. `TagMixin.tag` → `f'id:{self.id}'`\n3. `class User(Entity, TagMixin)`; `resultado=User(7).tag()`; mostrá",
+    starter_code: "# class Entity:\n#     def __init__(self, id):\n#         self.id = id\n# class TagMixin:\n#     def tag(self):\n#         return f'id:{self.id}'\n# class User(Entity, TagMixin):\n#     pass\n# resultado = User(7).tag()\n# print(resultado)\n",
+    pytest: "def test_mix_base(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'id:7'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "User mezcla ambos.",
+    solution_example: "class Entity:\n    def __init__(self, id):\n        self.id = id\nclass TagMixin:\n    def tag(self):\n        return f'id:{self.id}'\nclass User(Entity, TagMixin):\n    pass\nresultado = User(7).tag()\nprint(resultado)\n",
+    next: Some("py-2014-mix-check"), show_type_chips: false, micro_step: 2013,
+};
+pub const PY2014_MIX_CHECK: CodingStep = CodingStep {
+    id: "py-2014-mix-check", title: "mixin · Suite reuso", objective: "Cerrar: mixin de resumen sobre lista.",
+    prompt_md: "**Suite mixin**\n\n`LenMixin` expone `size` desde `self.items`.\n\n**Micro-reto:**\n1. `LenMixin.size` → `len(self.items)`\n2. `Bag` con items\n3. `resultado = Bag([1,2,3]).size()`; mostrá",
+    starter_code: "# class LenMixin:\n#     def size(self):\n#         return len(self.items)\n# class Bag(LenMixin):\n#     def __init__(self, items):\n#         self.items = items\n# resultado = Bag([1, 2, 3]).size()\n# print(resultado)\n",
+    pytest: "def test_mix_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "len items.",
+    solution_example: "class LenMixin:\n    def size(self):\n        return len(self.items)\nclass Bag(LenMixin):\n    def __init__(self, items):\n        self.items = items\nresultado = Bag([1, 2, 3]).size()\nprint(resultado)\n",
+    next: Some("py-2015-dom-entity"), show_type_chips: false, micro_step: 2014,
+};
+pub const PY2015_DOM_ENTITY: CodingStep = CodingStep {
+    id: "py-2015-dom-entity", title: "dominio · entidad", objective: "Modelar entidad con identidad estable.",
+    prompt_md: "**Entidad**\n\nEn DDD liviano, la entidad se identifica por `id`, no por sus campos. Dos clientes distintos pueden compartir nombre; el id discrimina.\n\n**Micro-reto:**\n1. `Customer(id, name)`\n2. `a,b` mismo name distinto id\n3. `resultado=(a.id==b.id, a.name==b.name)`; mostrá",
+    starter_code: "# class Customer:\n#     def __init__(self, id, name):\n#         self.id = id\n#         self.name = name\n# a = Customer(1, 'Ana')\n# b = Customer(2, 'Ana')\n# resultado = (a.id == b.id, a.name == b.name)\n# print(resultado)\n",
+    pytest: "def test_dom_entity(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (False, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "id distinto; name igual.",
+    solution_example: "class Customer:\n    def __init__(self, id, name):\n        self.id = id\n        self.name = name\na = Customer(1, 'Ana')\nb = Customer(2, 'Ana')\nresultado = (a.id == b.id, a.name == b.name)\nprint(resultado)\n",
+    next: Some("py-2016-dom-vo"), show_type_chips: false, micro_step: 2015,
+};
+pub const PY2016_DOM_VO: CodingStep = CodingStep {
+    id: "py-2016-dom-vo", title: "dominio · value object", objective: "Igualdad por valor con frozen dataclass.",
+    prompt_md: "**Value object**\n\nVO se compara por valor e idealmente es inmutable. `dataclass(frozen=True)` encaja en el modelo de datos del dominio.\n\n**Micro-reto:**\n1. `Money(amount, currency)` frozen\n2. Dos con 10,'ARS'\n3. `resultado = (m1==m2, m1.amount)`; mostrá",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class Money:\n#     amount: int\n#     currency: str\n# m1 = Money(10, 'ARS')\n# m2 = Money(10, 'ARS')\n# resultado = (m1 == m2, m1.amount)\n# print(resultado)\n",
+    pytest: "def test_dom_vo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, 10)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Iguales por valor.",
+    solution_example: "from dataclasses import dataclass\n@dataclass(frozen=True)\nclass Money:\n    amount: int\n    currency: str\nm1 = Money(10, 'ARS')\nm2 = Money(10, 'ARS')\nresultado = (m1 == m2, m1.amount)\nprint(resultado)\n",
+    next: Some("py-2017-dom-money"), show_type_chips: false, micro_step: 2016,
+};
+pub const PY2017_DOM_MONEY: CodingStep = CodingStep {
+    id: "py-2017-dom-money", title: "dominio · dinero", objective: "Operar VO Money sin mutar.",
+    prompt_md: "**Dinero**\n\nSumar montos crea un VO nuevo. Invariante: misma currency. Patrón clásico de dominio financiero.\n\n**Micro-reto:**\n1. `Money.add` misma currency → nuevo Money\n2. `a=Money(3,'USD')`; `b=Money(4,'USD')`\n3. `resultado = a.add(b).amount`; mostrá",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class Money:\n#     amount: int\n#     currency: str\n#     def add(self, other):\n#         if other.currency != self.currency:\n#             raise ValueError('fx')\n#         return Money(self.amount + other.amount, self.currency)\n# a = Money(3, 'USD')\n# b = Money(4, 'USD')\n# resultado = a.add(b).amount\n# print(resultado)\n",
+    pytest: "def test_dom_money(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3+4 sin mutar a.",
+    solution_example: "from dataclasses import dataclass\n@dataclass(frozen=True)\nclass Money:\n    amount: int\n    currency: str\n    def add(self, other):\n        if other.currency != self.currency:\n            raise ValueError('fx')\n        return Money(self.amount + other.amount, self.currency)\na = Money(3, 'USD')\nb = Money(4, 'USD')\nresultado = a.add(b).amount\nprint(resultado)\n",
+    next: Some("py-2018-dom-agg"), show_type_chips: false, micro_step: 2017,
+};
+pub const PY2018_DOM_AGG: CodingStep = CodingStep {
+    id: "py-2018-dom-agg", title: "dominio · agregado", objective: "Agregar líneas bajo un Order raíz.",
+    prompt_md: "**Agregado**\n\nEl aggregate root (`Order`) posee líneas y expone totales. Frontera de consistencia del dominio de aplicación.\n\n**Micro-reto:**\n1. `Line(qty, price)`, `Order` con lines\n2. `total` = suma qty*price\n3. `resultado = Order([Line(2,5), Line(1,3)]).total()`; mostrá",
+    starter_code: "# class Line:\n#     def __init__(self, qty, price):\n#         self.qty = qty\n#         self.price = price\n# class Order:\n#     def __init__(self, lines):\n#         self.lines = lines\n#     def total(self):\n#         return sum(l.qty * l.price for l in self.lines)\n# resultado = Order([Line(2, 5), Line(1, 3)]).total()\n# print(resultado)\n",
+    pytest: "def test_dom_agg(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 13\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "10+3=13.",
+    solution_example: "class Line:\n    def __init__(self, qty, price):\n        self.qty = qty\n        self.price = price\nclass Order:\n    def __init__(self, lines):\n        self.lines = lines\n    def total(self):\n        return sum(l.qty * l.price for l in self.lines)\nresultado = Order([Line(2, 5), Line(1, 3)]).total()\nprint(resultado)\n",
+    next: Some("py-2019-dom-contrast"), show_type_chips: false, micro_step: 2018,
+};
+pub const PY2019_DOM_CONTRAST: CodingStep = CodingStep {
+    id: "py-2019-dom-contrast", title: "dominio · entidad vs VO", objective: "Contrastar identidad vs igualdad estructural.",
+    prompt_md: "**Contraste**\n\nEntidad: igualdad por id. VO: igualdad por campos. Elegir mal rompe invariantes de dominio (catálogo, precios, usuarios).\n\n**Micro-reto:**\n1. `Entity(id,v)` eq por id; `VO(v)` frozen eq por v\n2. Compará pares\n3. `resultado=(e1==e2, v1==v2)`; mostrá",
+    starter_code: "# from dataclasses import dataclass\n# class Entity:\n#     def __init__(self, id, v):\n#         self.id = id\n#         self.v = v\n#     def __eq__(self, other):\n#         return isinstance(other, Entity) and self.id == other.id\n# @dataclass(frozen=True)\n# class VO:\n#     v: int\n# e1 = Entity(1, 9)\n# e2 = Entity(1, 0)\n# v1 = VO(9)\n# v2 = VO(9)\n# resultado = (e1 == e2, v1 == v2)\n# print(resultado)\n",
+    pytest: "def test_dom_contrast(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Misma id / mismo v.",
+    solution_example: "from dataclasses import dataclass\nclass Entity:\n    def __init__(self, id, v):\n        self.id = id\n        self.v = v\n    def __eq__(self, other):\n        return isinstance(other, Entity) and self.id == other.id\n@dataclass(frozen=True)\nclass VO:\n    v: int\ne1 = Entity(1, 9)\ne2 = Entity(1, 0)\nv1 = VO(9)\nv2 = VO(9)\nresultado = (e1 == e2, v1 == v2)\nprint(resultado)\n",
+    next: Some("py-2020-dom-check"), show_type_chips: false, micro_step: 2019,
+};
+pub const PY2020_DOM_CHECK: CodingStep = CodingStep {
+    id: "py-2020-dom-check", title: "dominio · Suite entidad+VO", objective: "Cerrar ola: pedido con Money VO.",
+    prompt_md: "**Suite dominio**\n\n`Product` entidad + `Money` VO; el precio se lee del VO.\n\n**Micro-reto:**\n1. `Money` frozen; `Product(id, price)`\n2. `p=Product(1, Money(50,'ARS'))`\n3. `resultado=(p.id, p.price.amount)`; mostrá",
+    starter_code: "# from dataclasses import dataclass\n# @dataclass(frozen=True)\n# class Money:\n#     amount: int\n#     currency: str\n# class Product:\n#     def __init__(self, id, price):\n#         self.id = id\n#         self.price = price\n# p = Product(1, Money(50, 'ARS'))\n# resultado = (p.id, p.price.amount)\n# print(resultado)\n",
+    pytest: "def test_dom_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 50)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Entidad + VO precio.",
+    solution_example: "from dataclasses import dataclass\n@dataclass(frozen=True)\nclass Money:\n    amount: int\n    currency: str\nclass Product:\n    def __init__(self, id, price):\n        self.id = id\n        self.price = price\np = Product(1, Money(50, 'ARS'))\nresultado = (p.id, p.price.amount)\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 2020,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -53758,6 +54299,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY1958_AGG_SUM,
     &PY1959_AGG_BUCKETS,
     &PY1960_AGG_CHECK,
+    &PY1961_PROP_GETTER,
+    &PY1962_PROP_SETTER,
+    &PY1963_PROP_DELETER,
+    &PY1964_PROP_COMPUTED,
+    &PY1965_PROP_RW,
+    &PY1966_PROP_CHECK,
+    &PY1967_VAL_RANGE,
+    &PY1968_VAL_REJECT,
+    &PY1969_VAL_NONEMPTY,
+    &PY1970_VAL_CROSS,
+    &PY1971_VAL_AGE,
+    &PY1972_VAL_CHECK,
+    &PY1973_DESC_GET,
+    &PY1974_DESC_SET,
+    &PY1975_DESC_SETNAME,
+    &PY1976_DESC_REUSE,
+    &PY1977_DESC_OWNER,
+    &PY1978_DESC_CHECK,
+    &PY1979_SLOTS_BASIC,
+    &PY1980_SLOTS_NODICT,
+    &PY1981_SLOTS_REJECT,
+    &PY1982_SLOTS_TUPLE,
+    &PY1983_SLOTS_INHERIT,
+    &PY1984_SLOTS_CHECK,
+    &PY1985_DC_BASIC,
+    &PY1986_DC_SLOTS,
+    &PY1987_DC_FROZEN,
+    &PY1988_DC_DEFAULT,
+    &PY1989_DC_COMBO,
+    &PY1990_DC_CHECK,
+    &PY1991_ABC_BASE,
+    &PY1992_ABC_BLOCK,
+    &PY1993_ABC_CONCRETE,
+    &PY1994_ABC_MULTI,
+    &PY1995_ABC_ISINSTANCE,
+    &PY1996_ABC_CHECK,
+    &PY1997_PROTO_DEF,
+    &PY1998_PROTO_FN,
+    &PY1999_PROTO_TWO,
+    &PY2000_PROTO_RUNTIME,
+    &PY2001_PROTO_MAP,
+    &PY2002_PROTO_CHECK,
+    &PY2003_COMP_HASA,
+    &PY2004_COMP_DELEGATE,
+    &PY2005_COMP_VS_INH,
+    &PY2006_COMP_NESTED,
+    &PY2007_COMP_SWAP,
+    &PY2008_COMP_CHECK,
+    &PY2009_MIX_BASIC,
+    &PY2010_MIX_MRO,
+    &PY2011_MIX_SELF,
+    &PY2012_MIX_MULTI,
+    &PY2013_MIX_BASE,
+    &PY2014_MIX_CHECK,
+    &PY2015_DOM_ENTITY,
+    &PY2016_DOM_VO,
+    &PY2017_DOM_MONEY,
+    &PY2018_DOM_AGG,
+    &PY2019_DOM_CONTRAST,
+    &PY2020_DOM_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -53925,7 +54526,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 1960);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2020);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -56962,7 +57563,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 1960 is the end of the rail");
+                assert_eq!(step.next, Some("py-1961-prop-getter"), "step 1960 chains to wave17");
+            }
+        }
+    }
+
+    #[test]
+    fn py1961_to_py2020_oop_avanzado_chain() {
+        let bridge = coding_step_by_micro_step(1960).expect("py-1960");
+        assert_eq!(bridge.next, Some("py-1961-prop-getter"));
+
+        for n in 1961..=2020 {
+            let step = coding_step_by_micro_step(n).expect("wave17 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 2020 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 2020 is the end of the rail");
             }
         }
     }
