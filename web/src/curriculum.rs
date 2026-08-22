@@ -54136,7 +54136,607 @@ pub const PY2200_DOM_CHECK: CodingStep = CodingStep {
     pytest: "def test_dom_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 402\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "402",
     solution_example: "class FundsError(Exception):\n    def __init__(self, code):\n        self.code = code\ndef withdraw(bal, amt):\n    if amt > bal:\n        raise FundsError(402)\n    return bal - amt\ntry:\n    withdraw(1, 5)\nexcept FundsError as e:\n    resultado = e.code\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 2200,
+    next: Some("py-2201-log-get"), show_type_chips: false, micro_step: 2200,
+};
+
+pub const PY2201_LOG_GET: CodingStep = CodingStep {
+    id: "py-2201-log-get", title: "log · getLogger", objective: "Obtener logger por nombre.",
+    prompt_md: "**getLogger**\n\n`logging.getLogger(name)` devuelve un logger del ecosystem stdlib. Mismo nombre → misma instancia.\n\n**Micro-reto:**\n1. `log = logging.getLogger('w21.a')`\n2. `resultado = log.name`\n3. Mostrá\n",
+    starter_code: "# import logging\n# log = logging.getLogger('w21.a')\n# resultado = log.name\n# print(resultado)\n",
+    pytest: "def test_log_get(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'w21.a'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'w21.a'",
+    solution_example: "import logging\nlog = logging.getLogger('w21.a')\nresultado = log.name\nprint(resultado)\n",
+    next: Some("py-2202-log-info-level"), show_type_chips: false, micro_step: 2201,
+};
+
+pub const PY2202_LOG_INFO_LEVEL: CodingStep = CodingStep {
+    id: "py-2202-log-info-level", title: "log · nivel INFO", objective: "Constante numérica INFO.",
+    prompt_md: "**INFO**\n\nLos niveles son enteros. `logging.INFO` es el umbral típico de avance.\n\n**Micro-reto:**\n1. Importá logging\n2. `resultado = logging.INFO`\n3. Mostrá\n",
+    starter_code: "# import logging\n# resultado = logging.INFO\n# print(resultado)\n",
+    pytest: "def test_log_info_level(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import logging\n    assert ns['resultado'] == logging.INFO\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "20",
+    solution_example: "import logging\nresultado = logging.INFO\nprint(resultado)\n",
+    next: Some("py-2203-log-setlevel"), show_type_chips: false, micro_step: 2202,
+};
+
+pub const PY2203_LOG_SETLEVEL: CodingStep = CodingStep {
+    id: "py-2203-log-setlevel", title: "log · setLevel", objective: "Fijar umbral WARNING.",
+    prompt_md: "**setLevel**\n\n`log.setLevel(WARNING)` deja `log.level` en ese umbral.\n\n**Micro-reto:**\n1. getLogger('w21.b'); setLevel(WARNING)\n2. `resultado = log.level`\n3. Mostrá\n",
+    starter_code: "# import logging\n# log = logging.getLogger('w21.b')\n# log.setLevel(logging.WARNING)\n# resultado = log.level\n# print(resultado)\n",
+    pytest: "def test_log_setlevel(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import logging\n    assert ns['resultado'] == logging.WARNING\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "30",
+    solution_example: "import logging\nlog = logging.getLogger('w21.b')\nlog.setLevel(logging.WARNING)\nresultado = log.level\nprint(resultado)\n",
+    next: Some("py-2204-log-enabled"), show_type_chips: false, micro_step: 2203,
+};
+
+pub const PY2204_LOG_ENABLED: CodingStep = CodingStep {
+    id: "py-2204-log-enabled", title: "log · isEnabledFor", objective: "Consultar si INFO está habilitado.",
+    prompt_md: "**isEnabledFor**\n\nCon umbral WARNING, INFO no está habilitado.\n\n**Micro-reto:**\n1. setLevel(WARNING)\n2. `resultado = log.isEnabledFor(logging.INFO)`\n3. Mostrá\n",
+    starter_code: "# import logging\n# log = logging.getLogger('w21.c')\n# log.setLevel(logging.WARNING)\n# resultado = log.isEnabledFor(logging.INFO)\n# print(resultado)\n",
+    pytest: "def test_log_enabled(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "False",
+    solution_example: "import logging\nlog = logging.getLogger('w21.c')\nlog.setLevel(logging.WARNING)\nresultado = log.isEnabledFor(logging.INFO)\nprint(resultado)\n",
+    next: Some("py-2205-log-order"), show_type_chips: false, micro_step: 2204,
+};
+
+pub const PY2205_LOG_ORDER: CodingStep = CodingStep {
+    id: "py-2205-log-order", title: "log · orden niveles", objective: "DEBUG < INFO numéricamente.",
+    prompt_md: "**Orden**\n\nNiveles crecen: DEBUG < INFO < WARNING < ERROR.\n\n**Micro-reto:**\n1. `resultado = logging.DEBUG < logging.INFO`\n2. Mostrá\n",
+    starter_code: "# import logging\n# resultado = logging.DEBUG < logging.INFO\n# print(resultado)\n",
+    pytest: "def test_log_order(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "True",
+    solution_example: "import logging\nresultado = logging.DEBUG < logging.INFO\nprint(resultado)\n",
+    next: Some("py-2206-log-basic-check"), show_type_chips: false, micro_step: 2205,
+};
+
+pub const PY2206_LOG_BASIC_CHECK: CodingStep = CodingStep {
+    id: "py-2206-log-basic-check", title: "log · Suite básica", objective: "Suite: name + WARNING.",
+    prompt_md: "**Suite básica**\n\nLogger `w21.d` en WARNING. `resultado = (name, level)`.\n\n**Micro-reto:**\n1. getLogger + setLevel\n2. Tupla name y level\n3. Mostrá\n",
+    starter_code: "# import logging\n# log = logging.getLogger('w21.d')\n# log.setLevel(logging.WARNING)\n# resultado = (log.name, log.level)\n# print(resultado)\n",
+    pytest: "def test_log_basic_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import logging\n    assert ns['resultado'] == ('w21.d', logging.WARNING)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('w21.d', 30)",
+    solution_example: "import logging\nlog = logging.getLogger('w21.d')\nlog.setLevel(logging.WARNING)\nresultado = (log.name, log.level)\nprint(resultado)\n",
+    next: Some("py-2207-hnd-attach"), show_type_chips: false, micro_step: 2206,
+};
+
+pub const PY2207_HND_ATTACH: CodingStep = CodingStep {
+    id: "py-2207-hnd-attach", title: "hnd · StreamHandler", objective: "Adjuntar handler a StringIO.",
+    prompt_md: "**StreamHandler**\n\nHandler escribe a un stream. Con `io.StringIO` capturás in-memory (cero filesystem).\n\n**Micro-reto:**\n1. buf + StreamHandler(buf); addHandler; propagate=False\n2. info('hola'); `resultado = buf.getvalue().strip()`\n3. Mostrá (mensaje crudo incluye newline strip)\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.h1')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('hola')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_hnd_attach(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'hola'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'hola'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.h1')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('hola')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2208-hnd-capture"), show_type_chips: false, micro_step: 2207,
+};
+
+pub const PY2208_HND_CAPTURE: CodingStep = CodingStep {
+    id: "py-2208-hnd-capture", title: "hnd · captura", objective: "Capturar WARNING en buffer.",
+    prompt_md: "**Captura**\n\nModelo: el buffer es el sink. warning('ojo') → texto en getvalue.\n\n**Micro-reto:**\n1. Handler StringIO + propagate False\n2. `resultado = buf.getvalue().strip()`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.h2')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.WARNING)\n# log.propagate = False\n# log.warning('ojo')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_hnd_capture(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ojo'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'ojo'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.h2')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.WARNING)\nlog.propagate = False\nlog.warning('ojo')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2209-hnd-clear"), show_type_chips: false, micro_step: 2208,
+};
+
+pub const PY2209_HND_CLEAR: CodingStep = CodingStep {
+    id: "py-2209-hnd-clear", title: "hnd · clear handlers", objective: "Limpiar handlers previos.",
+    prompt_md: "**clear**\n\nLoggers son singletons: `handlers.clear()` evita duplicar líneas.\n\n**Micro-reto:**\n1. clear; un solo handler; info('x')\n2. `resultado = len(log.handlers)`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.h3')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('x')\n# resultado = len(log.handlers)\n# print(resultado)\n",
+    pytest: "def test_hnd_clear(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.h3')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('x')\nresultado = len(log.handlers)\nprint(resultado)\n",
+    next: Some("py-2210-hnd-multi"), show_type_chips: false, micro_step: 2209,
+};
+
+pub const PY2210_HND_MULTI: CodingStep = CodingStep {
+    id: "py-2210-hnd-multi", title: "hnd · multi línea", objective: "Dos mensajes en el buffer.",
+    prompt_md: "**Multi**\n\nDos info → dos líneas en StringIO. `splitlines()`.\n\n**Micro-reto:**\n1. info('a'); info('b')\n2. `resultado = buf.getvalue().strip().splitlines()`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.h4')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('a')\n# log.info('b')\n# resultado = buf.getvalue().strip().splitlines()\n# print(resultado)\n",
+    pytest: "def test_hnd_multi(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['a', 'b']",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.h4')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('a')\nlog.info('b')\nresultado = buf.getvalue().strip().splitlines()\nprint(resultado)\n",
+    next: Some("py-2211-hnd-noprop"), show_type_chips: false, micro_step: 2210,
+};
+
+pub const PY2211_HND_NOPROP: CodingStep = CodingStep {
+    id: "py-2211-hnd-noprop", title: "hnd · propagate False", objective: "Aislar del root logger.",
+    prompt_md: "**propagate**\n\n`propagate = False` evita subir al root (ruido no determinista).\n\n**Micro-reto:**\n1. Configurá logger aislado\n2. `resultado = log.propagate`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.h5')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.propagate = False\n# resultado = log.propagate\n# print(resultado)\n",
+    pytest: "def test_hnd_noprop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "False",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.h5')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.propagate = False\nresultado = log.propagate\nprint(resultado)\n",
+    next: Some("py-2212-hnd-check"), show_type_chips: false, micro_step: 2211,
+};
+
+pub const PY2212_HND_CHECK: CodingStep = CodingStep {
+    id: "py-2212-hnd-check", title: "hnd · Suite captura", objective: "Suite: capturar error.",
+    prompt_md: "**Suite hnd**\n\nCapturá `error('boom')` en StringIO.\n\n**Micro-reto:**\n1. Handler + ERROR level\n2. `resultado = buf.getvalue().strip()`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.h6')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.ERROR)\n# log.propagate = False\n# log.error('boom')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_hnd_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'boom'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'boom'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.h6')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.ERROR)\nlog.propagate = False\nlog.error('boom')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2213-fmt-level"), show_type_chips: false, micro_step: 2212,
+};
+
+pub const PY2213_FMT_LEVEL: CodingStep = CodingStep {
+    id: "py-2213-fmt-level", title: "fmt · levelname", objective: "Formato LEVEL:msg fijo.",
+    prompt_md: "**Formatter**\n\nFormato determinístico `%(levelname)s:%(message)s` (sin asctime).\n\n**Micro-reto:**\n1. Formatter + info('hola')\n2. `resultado = buf.getvalue().strip()`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\n# log = logging.getLogger('w21.f1')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('hola')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_fmt_level(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'INFO:hola'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'INFO:hola'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\nlog = logging.getLogger('w21.f1')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('hola')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2214-fmt-name"), show_type_chips: false, micro_step: 2213,
+};
+
+pub const PY2214_FMT_NAME: CodingStep = CodingStep {
+    id: "py-2214-fmt-name", title: "fmt · name", objective: "Incluir nombre del logger.",
+    prompt_md: "**name**\n\n`%(name)s|%(message)s` fija el origen del evento.\n\n**Micro-reto:**\n1. Logger w21.f2; formato name|msg\n2. info('ok'); resultado strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.setFormatter(logging.Formatter('%(name)s|%(message)s'))\n# log = logging.getLogger('w21.f2')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('ok')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_fmt_name(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'w21.f2|ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'w21.f2|ok'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setFormatter(logging.Formatter('%(name)s|%(message)s'))\nlog = logging.getLogger('w21.f2')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('ok')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2215-fmt-pipe"), show_type_chips: false, micro_step: 2214,
+};
+
+pub const PY2215_FMT_PIPE: CodingStep = CodingStep {
+    id: "py-2215-fmt-pipe", title: "fmt · pipe triple", objective: "name|LEVEL|msg.",
+    prompt_md: "**Triple**\n\nFormato fijo `%(name)s|%(levelname)s|%(message)s`.\n\n**Micro-reto:**\n1. warning('alerta') en w21.f3\n2. resultado strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.setFormatter(logging.Formatter('%(name)s|%(levelname)s|%(message)s'))\n# log = logging.getLogger('w21.f3')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.WARNING)\n# log.propagate = False\n# log.warning('alerta')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_fmt_pipe(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'w21.f3|WARNING|alerta'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'w21.f3|WARNING|alerta'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setFormatter(logging.Formatter('%(name)s|%(levelname)s|%(message)s'))\nlog = logging.getLogger('w21.f3')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.WARNING)\nlog.propagate = False\nlog.warning('alerta')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2216-fmt-msg"), show_type_chips: false, micro_step: 2215,
+};
+
+pub const PY2216_FMT_MSG: CodingStep = CodingStep {
+    id: "py-2216-fmt-msg", title: "fmt · solo message", objective: "Formatter solo %(message)s.",
+    prompt_md: "**Message**\n\nA veces solo querés el payload: `%(message)s`.\n\n**Micro-reto:**\n1. Formato solo message; info('payload')\n2. resultado\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.setFormatter(logging.Formatter('%(message)s'))\n# log = logging.getLogger('w21.f4')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('payload')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_fmt_msg(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'payload'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'payload'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setFormatter(logging.Formatter('%(message)s'))\nlog = logging.getLogger('w21.f4')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('payload')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2217-fmt-error"), show_type_chips: false, micro_step: 2216,
+};
+
+pub const PY2217_FMT_ERROR: CodingStep = CodingStep {
+    id: "py-2217-fmt-error", title: "fmt · ERROR line", objective: "Formato ERROR:msg.",
+    prompt_md: "**ERROR**\n\nMisma Formatter; método error.\n\n**Micro-reto:**\n1. LEVEL:msg; error('fail')\n2. resultado\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\n# log = logging.getLogger('w21.f5')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.ERROR)\n# log.propagate = False\n# log.error('fail')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_fmt_error(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ERROR:fail'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'ERROR:fail'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\nlog = logging.getLogger('w21.f5')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.ERROR)\nlog.propagate = False\nlog.error('fail')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2218-fmt-check"), show_type_chips: false, micro_step: 2217,
+};
+
+pub const PY2218_FMT_CHECK: CodingStep = CodingStep {
+    id: "py-2218-fmt-check", title: "fmt · Suite formato", objective: "Suite: DEBUG:detalle.",
+    prompt_md: "**Suite fmt**\n\nFormato LEVEL:msg; debug('detalle') con level DEBUG.\n\n**Micro-reto:**\n1. setLevel DEBUG\n2. resultado strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\n# log = logging.getLogger('w21.f6')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.DEBUG)\n# log.propagate = False\n# log.debug('detalle')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_fmt_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'DEBUG:detalle'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'DEBUG:detalle'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\nlog = logging.getLogger('w21.f6')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.DEBUG)\nlog.propagate = False\nlog.debug('detalle')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2219-hier-child"), show_type_chips: false, micro_step: 2218,
+};
+
+pub const PY2219_HIER_CHILD: CodingStep = CodingStep {
+    id: "py-2219-hier-child", title: "hier · hijo", objective: "Nombre padre.hijo.",
+    prompt_md: "**Jerarquía**\n\n`getLogger('w21.p.child')` → name con punto (scope de nombres).\n\n**Micro-reto:**\n1. child = getLogger('w21.p.child')\n2. `resultado = child.name`\n3. Mostrá\n",
+    starter_code: "# import logging\n# child = logging.getLogger('w21.p.child')\n# resultado = child.name\n# print(resultado)\n",
+    pytest: "def test_hier_child(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'w21.p.child'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'w21.p.child'",
+    solution_example: "import logging\nchild = logging.getLogger('w21.p.child')\nresultado = child.name\nprint(resultado)\n",
+    next: Some("py-2220-hier-prop"), show_type_chips: false, micro_step: 2219,
+};
+
+pub const PY2220_HIER_PROP: CodingStep = CodingStep {
+    id: "py-2220-hier-prop", title: "hier · propagate True", objective: "Hijo propaga al padre.",
+    prompt_md: "**propagate True**\n\nHandler en padre; hijo sin handler; propagate True → mensaje llega al padre.\n\n**Micro-reto:**\n1. Parent con StringIO; child.propagate=True; child.info('x')\n2. `resultado = buf.getvalue().strip()`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# parent = logging.getLogger('w21.q')\n# parent.handlers.clear()\n# parent.addHandler(logging.StreamHandler(buf))\n# parent.setLevel(logging.INFO)\n# parent.propagate = False\n# child = logging.getLogger('w21.q.kid')\n# child.handlers.clear()\n# child.setLevel(logging.INFO)\n# child.propagate = True\n# child.info('x')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_hier_prop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'x'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'x'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nparent = logging.getLogger('w21.q')\nparent.handlers.clear()\nparent.addHandler(logging.StreamHandler(buf))\nparent.setLevel(logging.INFO)\nparent.propagate = False\nchild = logging.getLogger('w21.q.kid')\nchild.handlers.clear()\nchild.setLevel(logging.INFO)\nchild.propagate = True\nchild.info('x')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2221-hier-stop"), show_type_chips: false, micro_step: 2220,
+};
+
+pub const PY2221_HIER_STOP: CodingStep = CodingStep {
+    id: "py-2221-hier-stop", title: "hier · propagate False", objective: "Cortar propagación.",
+    prompt_md: "**Stop**\n\nSi child.propagate=False, el padre no ve el mensaje.\n\n**Micro-reto:**\n1. Igual setup; propagate False; info('y')\n2. `resultado = buf.getvalue().strip()`\n3. Mostrá (vacío → '')\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# parent = logging.getLogger('w21.r')\n# parent.handlers.clear()\n# parent.addHandler(logging.StreamHandler(buf))\n# parent.setLevel(logging.INFO)\n# parent.propagate = False\n# child = logging.getLogger('w21.r.kid')\n# child.handlers.clear()\n# child.setLevel(logging.INFO)\n# child.propagate = False\n# child.info('y')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_hier_stop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ''\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "''",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nparent = logging.getLogger('w21.r')\nparent.handlers.clear()\nparent.addHandler(logging.StreamHandler(buf))\nparent.setLevel(logging.INFO)\nparent.propagate = False\nchild = logging.getLogger('w21.r.kid')\nchild.handlers.clear()\nchild.setLevel(logging.INFO)\nchild.propagate = False\nchild.info('y')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2222-hier-parent"), show_type_chips: false, micro_step: 2221,
+};
+
+pub const PY2222_HIER_PARENT: CodingStep = CodingStep {
+    id: "py-2222-hier-parent", title: "hier · parent attr", objective: "child.parent.name.",
+    prompt_md: "**parent**\n\nMaterializá el padre (`getLogger('w21.s')`) para que no quede PlaceHolder; luego el hijo ve `parent.name`.\n\n**Micro-reto:**\n1. getLogger('w21.s'); child=getLogger('w21.s.t')\n2. `resultado = child.parent.name`\n3. Mostrá\n",
+    starter_code: "# import logging\n# logging.getLogger('w21.s')\n# child = logging.getLogger('w21.s.t')\n# resultado = child.parent.name\n# print(resultado)\n",
+    pytest: "def test_hier_parent(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'w21.s'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'w21.s'",
+    solution_example: "import logging\nlogging.getLogger('w21.s')\nchild = logging.getLogger('w21.s.t')\nresultado = child.parent.name\nprint(resultado)\n",
+    next: Some("py-2223-hier-filter-level"), show_type_chips: false, micro_step: 2222,
+};
+
+pub const PY2223_HIER_FILTER_LEVEL: CodingStep = CodingStep {
+    id: "py-2223-hier-filter-level", title: "hier · umbral handler", objective: "Handler WARNING filtra INFO hijo.",
+    prompt_md: "**Handler level**\n\nEl nivel del padre no filtra propagación; `handler.setLevel(WARNING)` sí descarta INFO del hijo.\n\n**Micro-reto:**\n1. Handler WARNING en padre; child info('z') propagate True\n2. `resultado = buf.getvalue().strip()`\n3. Mostrá ''\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.setLevel(logging.WARNING)\n# parent = logging.getLogger('w21.u')\n# parent.handlers.clear()\n# parent.addHandler(h)\n# parent.setLevel(logging.DEBUG)\n# parent.propagate = False\n# child = logging.getLogger('w21.u.kid')\n# child.handlers.clear()\n# child.setLevel(logging.INFO)\n# child.propagate = True\n# child.info('z')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_hier_filter_level(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ''\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "''",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setLevel(logging.WARNING)\nparent = logging.getLogger('w21.u')\nparent.handlers.clear()\nparent.addHandler(h)\nparent.setLevel(logging.DEBUG)\nparent.propagate = False\nchild = logging.getLogger('w21.u.kid')\nchild.handlers.clear()\nchild.setLevel(logging.INFO)\nchild.propagate = True\nchild.info('z')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2224-hier-check"), show_type_chips: false, micro_step: 2223,
+};
+
+pub const PY2224_HIER_CHECK: CodingStep = CodingStep {
+    id: "py-2224-hier-check", title: "hier · Suite propagate", objective: "Suite: warning propaga.",
+    prompt_md: "**Suite hier**\n\nParent INFO; child warning('w') con propagate True.\n\n**Micro-reto:**\n1. Setup jerarquía\n2. resultado strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# parent = logging.getLogger('w21.v')\n# parent.handlers.clear()\n# parent.addHandler(logging.StreamHandler(buf))\n# parent.setLevel(logging.INFO)\n# parent.propagate = False\n# child = logging.getLogger('w21.v.kid')\n# child.handlers.clear()\n# child.setLevel(logging.INFO)\n# child.propagate = True\n# child.warning('w')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_hier_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'w'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'w'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nparent = logging.getLogger('w21.v')\nparent.handlers.clear()\nparent.addHandler(logging.StreamHandler(buf))\nparent.setLevel(logging.INFO)\nparent.propagate = False\nchild = logging.getLogger('w21.v.kid')\nchild.handlers.clear()\nchild.setLevel(logging.INFO)\nchild.propagate = True\nchild.warning('w')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2225-flt-level"), show_type_chips: false, micro_step: 2224,
+};
+
+pub const PY2225_FLT_LEVEL: CodingStep = CodingStep {
+    id: "py-2225-flt-level", title: "flt · Filter nivel", objective: "Filtrar por record.levelno.",
+    prompt_md: "**Filter**\n\nParadigma: objeto Filter decide True/False. Solo WARNING+.\n\n**Micro-reto:**\n1. class OnlyWarn: filter return levelno>=WARNING\n2. addFilter; info+warning; resultado=splitlines\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# class OnlyWarn(logging.Filter):\n#     def filter(self, record):\n#         return record.levelno >= logging.WARNING\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.addFilter(OnlyWarn())\n# log = logging.getLogger('w21.fl1')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.DEBUG)\n# log.propagate = False\n# log.info('i')\n# log.warning('w')\n# resultado = buf.getvalue().strip().splitlines()\n# print(resultado)\n",
+    pytest: "def test_flt_level(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['w']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['w']",
+    solution_example: "import logging, io\nclass OnlyWarn(logging.Filter):\n    def filter(self, record):\n        return record.levelno >= logging.WARNING\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.addFilter(OnlyWarn())\nlog = logging.getLogger('w21.fl1')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.DEBUG)\nlog.propagate = False\nlog.info('i')\nlog.warning('w')\nresultado = buf.getvalue().strip().splitlines()\nprint(resultado)\n",
+    next: Some("py-2226-flt-name"), show_type_chips: false, micro_step: 2225,
+};
+
+pub const PY2226_FLT_NAME: CodingStep = CodingStep {
+    id: "py-2226-flt-name", title: "flt · por nombre", objective: "Filter por record.name.",
+    prompt_md: "**name filter**\n\nFilter: `record.name.endswith('.api')`. Solo pasa el logger tipado.\n\n**Micro-reto:**\n1. class ApiOnly Filter\n2. Logger w21.x.api; info('ok')\n3. `resultado = buf.getvalue().strip()`; mostrá\n",
+    starter_code: "# import logging, io\n# class ApiOnly(logging.Filter):\n#     def filter(self, record):\n#         return record.name.endswith('.api')\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.addFilter(ApiOnly())\n# log = logging.getLogger('w21.x.api')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('ok')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_flt_name(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'ok'",
+    solution_example: "import logging, io\nclass ApiOnly(logging.Filter):\n    def filter(self, record):\n        return record.name.endswith('.api')\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.addFilter(ApiOnly())\nlog = logging.getLogger('w21.x.api')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('ok')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2227-flt-reject"), show_type_chips: false, micro_step: 2226,
+};
+
+pub const PY2227_FLT_REJECT: CodingStep = CodingStep {
+    id: "py-2227-flt-reject", title: "flt · reject DEBUG", objective: "Rechazar nivel DEBUG.",
+    prompt_md: "**Reject**\n\nFilter return levelno != DEBUG.\n\n**Micro-reto:**\n1. debug + info; solo info queda\n2. resultado=splitlines\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# class NoDebug(logging.Filter):\n#     def filter(self, record):\n#         return record.levelno != logging.DEBUG\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.addFilter(NoDebug())\n# log = logging.getLogger('w21.fl3')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.DEBUG)\n# log.propagate = False\n# log.debug('d')\n# log.info('i')\n# resultado = buf.getvalue().strip().splitlines()\n# print(resultado)\n",
+    pytest: "def test_flt_reject(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['i']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['i']",
+    solution_example: "import logging, io\nclass NoDebug(logging.Filter):\n    def filter(self, record):\n        return record.levelno != logging.DEBUG\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.addFilter(NoDebug())\nlog = logging.getLogger('w21.fl3')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.DEBUG)\nlog.propagate = False\nlog.debug('d')\nlog.info('i')\nresultado = buf.getvalue().strip().splitlines()\nprint(resultado)\n",
+    next: Some("py-2228-flt-error"), show_type_chips: false, micro_step: 2227,
+};
+
+pub const PY2228_FLT_ERROR: CodingStep = CodingStep {
+    id: "py-2228-flt-error", title: "flt · solo ERROR", objective: "Permitir solo ERROR.",
+    prompt_md: "**Solo ERROR**\n\nFilter levelno == ERROR.\n\n**Micro-reto:**\n1. warning + error; resultado líneas\n2. Mostrá\n",
+    starter_code: "# import logging, io\n# class ErrOnly(logging.Filter):\n#     def filter(self, record):\n#         return record.levelno == logging.ERROR\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.addFilter(ErrOnly())\n# log = logging.getLogger('w21.fl4')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.DEBUG)\n# log.propagate = False\n# log.warning('w')\n# log.error('e')\n# resultado = buf.getvalue().strip().splitlines()\n# print(resultado)\n",
+    pytest: "def test_flt_error(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['e']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['e']",
+    solution_example: "import logging, io\nclass ErrOnly(logging.Filter):\n    def filter(self, record):\n        return record.levelno == logging.ERROR\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.addFilter(ErrOnly())\nlog = logging.getLogger('w21.fl4')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.DEBUG)\nlog.propagate = False\nlog.warning('w')\nlog.error('e')\nresultado = buf.getvalue().strip().splitlines()\nprint(resultado)\n",
+    next: Some("py-2229-flt-msg"), show_type_chips: false, micro_step: 2228,
+};
+
+pub const PY2229_FLT_MSG: CodingStep = CodingStep {
+    id: "py-2229-flt-msg", title: "flt · substring msg", objective: "Filtrar por mensaje.",
+    prompt_md: "**msg**\n\nFilter: 'pay' in record.getMessage().\n\n**Micro-reto:**\n1. info('other'); info('payment')\n2. resultado splitlines\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# class Pay(logging.Filter):\n#     def filter(self, record):\n#         return 'pay' in record.getMessage()\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.addFilter(Pay())\n# log = logging.getLogger('w21.fl5')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('other')\n# log.info('payment')\n# resultado = buf.getvalue().strip().splitlines()\n# print(resultado)\n",
+    pytest: "def test_flt_msg(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['payment']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['payment']",
+    solution_example: "import logging, io\nclass Pay(logging.Filter):\n    def filter(self, record):\n        return 'pay' in record.getMessage()\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.addFilter(Pay())\nlog = logging.getLogger('w21.fl5')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('other')\nlog.info('payment')\nresultado = buf.getvalue().strip().splitlines()\nprint(resultado)\n",
+    next: Some("py-2230-flt-check"), show_type_chips: false, micro_step: 2229,
+};
+
+pub const PY2230_FLT_CHECK: CodingStep = CodingStep {
+    id: "py-2230-flt-check", title: "flt · Suite Filter", objective: "Suite: filtro WARNING+.",
+    prompt_md: "**Suite flt**\n\nOnlyWarn; info+error → solo error.\n\n**Micro-reto:**\n1. Reutilizá Filter >= WARNING\n2. resultado líneas\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# class OnlyWarn(logging.Filter):\n#     def filter(self, record):\n#         return record.levelno >= logging.WARNING\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.addFilter(OnlyWarn())\n# log = logging.getLogger('w21.fl6')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.DEBUG)\n# log.propagate = False\n# log.info('i')\n# log.error('e')\n# resultado = buf.getvalue().strip().splitlines()\n# print(resultado)\n",
+    pytest: "def test_flt_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['e']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['e']",
+    solution_example: "import logging, io\nclass OnlyWarn(logging.Filter):\n    def filter(self, record):\n        return record.levelno >= logging.WARNING\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.addFilter(OnlyWarn())\nlog = logging.getLogger('w21.fl6')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.DEBUG)\nlog.propagate = False\nlog.info('i')\nlog.error('e')\nresultado = buf.getvalue().strip().splitlines()\nprint(resultado)\n",
+    next: Some("py-2231-str-dict"), show_type_chips: false, micro_step: 2230,
+};
+
+pub const PY2231_STR_DICT: CodingStep = CodingStep {
+    id: "py-2231-str-dict", title: "str · dict message", objective: "Loguear str(dict).",
+    prompt_md: "**Dict msg**\n\nModelo: evento como dict serializado con `str(d)` en el message.\n\n**Micro-reto:**\n1. d={'event': 'login'}; info(str(d))\n2. resultado=buf strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.st1')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# d = {'event': 'login'}\n# log.info(str(d))\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_str_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == str({'event': 'login'})\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "str({'event': 'login'})",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.st1')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nd = {'event': 'login'}\nlog.info(str(d))\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2232-str-kv"), show_type_chips: false, micro_step: 2231,
+};
+
+pub const PY2232_STR_KV: CodingStep = CodingStep {
+    id: "py-2232-str-kv", title: "str · key=value", objective: "Campos k=v en el mensaje.",
+    prompt_md: "**k=v**\n\nDominio ops: `event=pay status=ok` sin JSON libs.\n\n**Micro-reto:**\n1. msg = 'event=pay status=ok'\n2. info(msg); resultado\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.st2')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('event=pay status=ok')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_str_kv(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'event=pay status=ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'event=pay status=ok'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.st2')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('event=pay status=ok')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2233-str-build"), show_type_chips: false, micro_step: 2232,
+};
+
+pub const PY2233_STR_BUILD: CodingStep = CodingStep {
+    id: "py-2233-str-build", title: "str · build desde dict", objective: "Armar k=v desde dict.",
+    prompt_md: "**Build**\n\n`' '.join(f'{k}={v}' for k,v in sorted(d.items()))`.\n\n**Micro-reto:**\n1. d={'b':2,'a':1}; msg=join sorted\n2. resultado=msg (sin logger necesario) — logueá y capturá\n3. Mostrá capturado\n",
+    starter_code: "# import logging, io\n# d = {'b': 2, 'a': 1}\n# msg = ' '.join(f'{k}={v}' for k, v in sorted(d.items()))\n# buf = io.StringIO()\n# log = logging.getLogger('w21.st3')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info(msg)\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_str_build(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'a=1 b=2'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'a=1 b=2'",
+    solution_example: "import logging, io\nd = {'b': 2, 'a': 1}\nmsg = ' '.join(f'{k}={v}' for k, v in sorted(d.items()))\nbuf = io.StringIO()\nlog = logging.getLogger('w21.st3')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info(msg)\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2234-str-parse"), show_type_chips: false, micro_step: 2233,
+};
+
+pub const PY2234_STR_PARSE: CodingStep = CodingStep {
+    id: "py-2234-str-parse", title: "str · parse k=v", objective: "Parsear campos del log.",
+    prompt_md: "**Parse**\n\nDe línea `a=1 b=2` armá dict. Modelo de datos del evento.\n\n**Micro-reto:**\n1. line='a=1 b=2'\n2. `resultado = dict(p.split('=') for p in line.split())` con int values\n3. Mostrá\n",
+    starter_code: "# line = 'a=1 b=2'\n# resultado = {k: int(v) for k, v in (p.split('=') for p in line.split())}\n# print(resultado)\n",
+    pytest: "def test_str_parse(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 1, 'b': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "{'a': 1, 'b': 2}",
+    solution_example: "line = 'a=1 b=2'\nresultado = {k: int(v) for k, v in (p.split('=') for p in line.split())}\nprint(resultado)\n",
+    next: Some("py-2235-str-roundtrip"), show_type_chips: false, micro_step: 2234,
+};
+
+pub const PY2235_STR_ROUNDTRIP: CodingStep = CodingStep {
+    id: "py-2235-str-roundtrip", title: "str · roundtrip", objective: "Dict → log → dict.",
+    prompt_md: "**Roundtrip**\n\nBuild + parse vía buffer de logging.\n\n**Micro-reto:**\n1. d={'user':7}; log k=v; parseá buffer\n2. `resultado = parsed`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# d = {'user': 7}\n# msg = ' '.join(f'{k}={v}' for k, v in sorted(d.items()))\n# buf = io.StringIO()\n# log = logging.getLogger('w21.st5')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info(msg)\n# line = buf.getvalue().strip()\n# resultado = {k: int(v) for k, v in (p.split('=') for p in line.split())}\n# print(resultado)\n",
+    pytest: "def test_str_roundtrip(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'user': 7}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "{'user': 7}",
+    solution_example: "import logging, io\nd = {'user': 7}\nmsg = ' '.join(f'{k}={v}' for k, v in sorted(d.items()))\nbuf = io.StringIO()\nlog = logging.getLogger('w21.st5')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info(msg)\nline = buf.getvalue().strip()\nresultado = {k: int(v) for k, v in (p.split('=') for p in line.split())}\nprint(resultado)\n",
+    next: Some("py-2236-str-check"), show_type_chips: false, micro_step: 2235,
+};
+
+pub const PY2236_STR_CHECK: CodingStep = CodingStep {
+    id: "py-2236-str-check", title: "str · Suite estructurado", objective: "Suite: event=buy.",
+    prompt_md: "**Suite str**\n\nLogueá `event=buy qty=2`; resultado el texto.\n\n**Micro-reto:**\n1. Capturá con StringIO\n2. resultado strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.st6')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('event=buy qty=2')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_str_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'event=buy qty=2'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'event=buy qty=2'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.st6')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('event=buy qty=2')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2237-cid-basic"), show_type_chips: false, micro_step: 2236,
+};
+
+pub const PY2237_CID_BASIC: CodingStep = CodingStep {
+    id: "py-2237-cid-basic", title: "cid · correlation id", objective: "Prefijar cid en el mensaje.",
+    prompt_md: "**cid**\n\nDominio request: `cid=abc msg` en cada línea.\n\n**Micro-reto:**\n1. cid='abc'; info(f'cid={cid} start')\n2. resultado strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# cid = 'abc'\n# buf = io.StringIO()\n# log = logging.getLogger('w21.cid1')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info(f'cid={cid} start')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_cid_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'cid=abc start'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'cid=abc start'",
+    solution_example: "import logging, io\ncid = 'abc'\nbuf = io.StringIO()\nlog = logging.getLogger('w21.cid1')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info(f'cid={cid} start')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2238-cid-helper"), show_type_chips: false, micro_step: 2237,
+};
+
+pub const PY2238_CID_HELPER: CodingStep = CodingStep {
+    id: "py-2238-cid-helper", title: "cid · helper", objective: "Función que cierra sobre cid.",
+    prompt_md: "**Helper**\n\nScope enclosing: `def emit(msg): log.info(f'cid={cid} {msg}')`.\n\n**Micro-reto:**\n1. cid='r1'; emit('ok')\n2. resultado strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# cid = 'r1'\n# buf = io.StringIO()\n# log = logging.getLogger('w21.cid2')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# def emit(msg):\n#     log.info(f'cid={cid} {msg}')\n# emit('ok')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_cid_helper(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'cid=r1 ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'cid=r1 ok'",
+    solution_example: "import logging, io\ncid = 'r1'\nbuf = io.StringIO()\nlog = logging.getLogger('w21.cid2')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\ndef emit(msg):\n    log.info(f'cid={cid} {msg}')\nemit('ok')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2239-cid-two"), show_type_chips: false, micro_step: 2238,
+};
+
+pub const PY2239_CID_TWO: CodingStep = CodingStep {
+    id: "py-2239-cid-two", title: "cid · dos requests", objective: "Dos cids en el buffer.",
+    prompt_md: "**Dos cids**\n\nRequest A y B: líneas distintas.\n\n**Micro-reto:**\n1. Logueá cid=a hi y cid=b hi\n2. resultado=splitlines\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.cid3')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('cid=a hi')\n# log.info('cid=b hi')\n# resultado = buf.getvalue().strip().splitlines()\n# print(resultado)\n",
+    pytest: "def test_cid_two(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['cid=a hi', 'cid=b hi']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['cid=a hi', 'cid=b hi']",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.cid3')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('cid=a hi')\nlog.info('cid=b hi')\nresultado = buf.getvalue().strip().splitlines()\nprint(resultado)\n",
+    next: Some("py-2240-cid-extract"), show_type_chips: false, micro_step: 2239,
+};
+
+pub const PY2240_CID_EXTRACT: CodingStep = CodingStep {
+    id: "py-2240-cid-extract", title: "cid · extraer", objective: "Parsear cid de la línea.",
+    prompt_md: "**Extract**\n\nDe `cid=xyz done` sacá el id.\n\n**Micro-reto:**\n1. line='cid=xyz done'\n2. `resultado = line.split()[0].split('=')[1]`\n3. Mostrá\n",
+    starter_code: "# line = 'cid=xyz done'\n# resultado = line.split()[0].split('=')[1]\n# print(resultado)\n",
+    pytest: "def test_cid_extract(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'xyz'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'xyz'",
+    solution_example: "line = 'cid=xyz done'\nresultado = line.split()[0].split('=')[1]\nprint(resultado)\n",
+    next: Some("py-2241-cid-ctx"), show_type_chips: false, micro_step: 2240,
+};
+
+pub const PY2241_CID_CTX: CodingStep = CodingStep {
+    id: "py-2241-cid-ctx", title: "cid · dict contexto", objective: "Contexto request con cid.",
+    prompt_md: "**Contexto**\n\n`ctx={'cid':'t9'}`; emit usa ctx['cid'] (scope).\n\n**Micro-reto:**\n1. emit('run') con ctx\n2. resultado strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# ctx = {'cid': 't9'}\n# buf = io.StringIO()\n# log = logging.getLogger('w21.cid5')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# def emit(msg):\n#     log.info(f\"cid={ctx['cid']} {msg}\")\n# emit('run')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_cid_ctx(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'cid=t9 run'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'cid=t9 run'",
+    solution_example: "import logging, io\nctx = {'cid': 't9'}\nbuf = io.StringIO()\nlog = logging.getLogger('w21.cid5')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\ndef emit(msg):\n    log.info(f\"cid={ctx['cid']} {msg}\")\nemit('run')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2242-cid-check"), show_type_chips: false, micro_step: 2241,
+};
+
+pub const PY2242_CID_CHECK: CodingStep = CodingStep {
+    id: "py-2242-cid-check", title: "cid · Suite correlación", objective: "Suite: cid en línea.",
+    prompt_md: "**Suite cid**\n\ncid='z'; mensaje end → `cid=z end`.\n\n**Micro-reto:**\n1. Capturá\n2. resultado\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# cid = 'z'\n# buf = io.StringIO()\n# log = logging.getLogger('w21.cid6')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info(f'cid={cid} end')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_cid_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'cid=z end'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'cid=z end'",
+    solution_example: "import logging, io\ncid = 'z'\nbuf = io.StringIO()\nlog = logging.getLogger('w21.cid6')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info(f'cid={cid} end')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2243-met-inc"), show_type_chips: false, micro_step: 2242,
+};
+
+pub const PY2243_MET_INC: CodingStep = CodingStep {
+    id: "py-2243-met-inc", title: "met · counter inc", objective: "Incrementar contador in-memory.",
+    prompt_md: "**Counter**\n\nDict métricas: `m['hits'] = m.get('hits', 0) + 1`.\n\n**Micro-reto:**\n1. m={}; inc hits dos veces\n2. `resultado = m['hits']`\n3. Mostrá\n",
+    starter_code: "# m = {}\n# m['hits'] = m.get('hits', 0) + 1\n# m['hits'] = m.get('hits', 0) + 1\n# resultado = m['hits']\n# print(resultado)\n",
+    pytest: "def test_met_inc(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2",
+    solution_example: "m = {}\nm['hits'] = m.get('hits', 0) + 1\nm['hits'] = m.get('hits', 0) + 1\nresultado = m['hits']\nprint(resultado)\n",
+    next: Some("py-2244-met-by-level"), show_type_chips: false, micro_step: 2243,
+};
+
+pub const PY2244_MET_BY_LEVEL: CodingStep = CodingStep {
+    id: "py-2244-met-by-level", title: "met · por nivel", objective: "Contar eventos por nivel.",
+    prompt_md: "**Por nivel**\n\nParadigma imperativo: al loguear, incrementá counters.\n\n**Micro-reto:**\n1. counts={}; para cada nivel en ['info','error','error']: counts[k]=...\n2. `resultado = counts`\n3. Mostrá\n",
+    starter_code: "# counts = {}\n# for lvl in ['info', 'error', 'error']:\n#     counts[lvl] = counts.get(lvl, 0) + 1\n# resultado = counts\n# print(resultado)\n",
+    pytest: "def test_met_by_level(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'info': 1, 'error': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "{'info': 1, 'error': 2}",
+    solution_example: "counts = {}\nfor lvl in ['info', 'error', 'error']:\n    counts[lvl] = counts.get(lvl, 0) + 1\nresultado = counts\nprint(resultado)\n",
+    next: Some("py-2245-met-class"), show_type_chips: false, micro_step: 2244,
+};
+
+pub const PY2245_MET_CLASS: CodingStep = CodingStep {
+    id: "py-2245-met-class", title: "met · Metrics class", objective: "Clase con método inc.",
+    prompt_md: "**Metrics**\n\nOOP liviano: `class Metrics` con dict interno e `inc(name)`.\n\n**Micro-reto:**\n1. m.inc('req'); m.inc('req')\n2. `resultado = m.data['req']`\n3. Mostrá\n",
+    starter_code: "# class Metrics:\n#     def __init__(self):\n#         self.data = {}\n#     def inc(self, name):\n#         self.data[name] = self.data.get(name, 0) + 1\n# m = Metrics()\n# m.inc('req')\n# m.inc('req')\n# resultado = m.data['req']\n# print(resultado)\n",
+    pytest: "def test_met_class(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2",
+    solution_example: "class Metrics:\n    def __init__(self):\n        self.data = {}\n    def inc(self, name):\n        self.data[name] = self.data.get(name, 0) + 1\nm = Metrics()\nm.inc('req')\nm.inc('req')\nresultado = m.data['req']\nprint(resultado)\n",
+    next: Some("py-2246-met-with-log"), show_type_chips: false, micro_step: 2245,
+};
+
+pub const PY2246_MET_WITH_LOG: CodingStep = CodingStep {
+    id: "py-2246-met-with-log", title: "met · log + counter", objective: "Al info, incrementar.",
+    prompt_md: "**Log+met**\n\nCada info incrementa `m['info']` y escribe al buffer.\n\n**Micro-reto:**\n1. Dos info; resultado=(m['info'], len(lines))\n2. Mostrá\n",
+    starter_code: "# import logging, io\n# m = {}\n# buf = io.StringIO()\n# log = logging.getLogger('w21.m4')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# for _ in range(2):\n#     log.info('x')\n#     m['info'] = m.get('info', 0) + 1\n# resultado = (m['info'], len(buf.getvalue().strip().splitlines()))\n# print(resultado)\n",
+    pytest: "def test_met_with_log(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(2, 2)",
+    solution_example: "import logging, io\nm = {}\nbuf = io.StringIO()\nlog = logging.getLogger('w21.m4')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nfor _ in range(2):\n    log.info('x')\n    m['info'] = m.get('info', 0) + 1\nresultado = (m['info'], len(buf.getvalue().strip().splitlines()))\nprint(resultado)\n",
+    next: Some("py-2247-met-reset"), show_type_chips: false, micro_step: 2246,
+};
+
+pub const PY2247_MET_RESET: CodingStep = CodingStep {
+    id: "py-2247-met-reset", title: "met · reset", objective: "Reiniciar contadores.",
+    prompt_md: "**Reset**\n\n`m.clear()` vuelve a cero el modelo.\n\n**Micro-reto:**\n1. m={'a':3}; m.clear()\n2. `resultado = len(m)`\n3. Mostrá\n",
+    starter_code: "# m = {'a': 3}\n# m.clear()\n# resultado = len(m)\n# print(resultado)\n",
+    pytest: "def test_met_reset(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "0",
+    solution_example: "m = {'a': 3}\nm.clear()\nresultado = len(m)\nprint(resultado)\n",
+    next: Some("py-2248-met-check"), show_type_chips: false, micro_step: 2247,
+};
+
+pub const PY2248_MET_CHECK: CodingStep = CodingStep {
+    id: "py-2248-met-check", title: "met · Suite métricas", objective: "Suite: Metrics err=1.",
+    prompt_md: "**Suite met**\n\nMetrics: inc('err'); resultado data.\n\n**Micro-reto:**\n1. class Metrics\n2. `resultado = m.data`\n3. Mostrá\n",
+    starter_code: "# class Metrics:\n#     def __init__(self):\n#         self.data = {}\n#     def inc(self, name):\n#         self.data[name] = self.data.get(name, 0) + 1\n# m = Metrics()\n# m.inc('err')\n# resultado = m.data\n# print(resultado)\n",
+    pytest: "def test_met_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'err': 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "{'err': 1}",
+    solution_example: "class Metrics:\n    def __init__(self):\n        self.data = {}\n    def inc(self, name):\n        self.data[name] = self.data.get(name, 0) + 1\nm = Metrics()\nm.inc('err')\nresultado = m.data\nprint(resultado)\n",
+    next: Some("py-2249-aud-append"), show_type_chips: false, micro_step: 2248,
+};
+
+pub const PY2249_AUD_APPEND: CodingStep = CodingStep {
+    id: "py-2249-aud-append", title: "aud · append-only", objective: "Lista de eventos append.",
+    prompt_md: "**Audit**\n\nTrail append-only: solo `.append`, nunca mutate in-place de eventos viejos.\n\n**Micro-reto:**\n1. trail=[]; append 'login'\n2. `resultado = trail`\n3. Mostrá\n",
+    starter_code: "# trail = []\n# trail.append('login')\n# resultado = trail\n# print(resultado)\n",
+    pytest: "def test_aud_append(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['login']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['login']",
+    solution_example: "trail = []\ntrail.append('login')\nresultado = trail\nprint(resultado)\n",
+    next: Some("py-2250-aud-tuple"), show_type_chips: false, micro_step: 2249,
+};
+
+pub const PY2250_AUD_TUPLE: CodingStep = CodingStep {
+    id: "py-2250-aud-tuple", title: "aud · tupla evento", objective: "(action, payload) inmutable.",
+    prompt_md: "**Tupla**\n\nEvento como tupla (action, payload). Modelo estable.\n\n**Micro-reto:**\n1. trail.append(('buy', 3))\n2. `resultado = trail[0]`\n3. Mostrá\n",
+    starter_code: "# trail = []\n# trail.append(('buy', 3))\n# resultado = trail[0]\n# print(resultado)\n",
+    pytest: "def test_aud_tuple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('buy', 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('buy', 3)",
+    solution_example: "trail = []\ntrail.append(('buy', 3))\nresultado = trail[0]\nprint(resultado)\n",
+    next: Some("py-2251-aud-len"), show_type_chips: false, micro_step: 2250,
+};
+
+pub const PY2251_AUD_LEN: CodingStep = CodingStep {
+    id: "py-2251-aud-len", title: "aud · longitud", objective: "Contar eventos del trail.",
+    prompt_md: "**len**\n\nDominio compliance: cuántos eventos hay.\n\n**Micro-reto:**\n1. Tres appends\n2. `resultado = len(trail)`\n3. Mostrá\n",
+    starter_code: "# trail = []\n# trail.append('a')\n# trail.append('b')\n# trail.append('c')\n# resultado = len(trail)\n# print(resultado)\n",
+    pytest: "def test_aud_len(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3",
+    solution_example: "trail = []\ntrail.append('a')\ntrail.append('b')\ntrail.append('c')\nresultado = len(trail)\nprint(resultado)\n",
+    next: Some("py-2252-aud-dict"), show_type_chips: false, micro_step: 2251,
+};
+
+pub const PY2252_AUD_DICT: CodingStep = CodingStep {
+    id: "py-2252-aud-dict", title: "aud · dict event", objective: "Evento como dict en el trail.",
+    prompt_md: "**Dict event**\n\n`{'action':'refund','amount':5}` append al trail.\n\n**Micro-reto:**\n1. Append dict\n2. `resultado = trail[0]['action']`\n3. Mostrá\n",
+    starter_code: "# trail = []\n# trail.append({'action': 'refund', 'amount': 5})\n# resultado = trail[0]['action']\n# print(resultado)\n",
+    pytest: "def test_aud_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'refund'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'refund'",
+    solution_example: "trail = []\ntrail.append({'action': 'refund', 'amount': 5})\nresultado = trail[0]['action']\nprint(resultado)\n",
+    next: Some("py-2253-aud-snapshot"), show_type_chips: false, micro_step: 2252,
+};
+
+pub const PY2253_AUD_SNAPSHOT: CodingStep = CodingStep {
+    id: "py-2253-aud-snapshot", title: "aud · snapshot", objective: "Copia del trail (slice).",
+    prompt_md: "**Snapshot**\n\n`snap = trail[:]` congela vista; append posterior no altera snap.\n\n**Micro-reto:**\n1. trail=['a']; snap=trail[:]; trail.append('b')\n2. `resultado = (snap, trail)`\n3. Mostrá\n",
+    starter_code: "# trail = ['a']\n# snap = trail[:]\n# trail.append('b')\n# resultado = (snap, trail)\n# print(resultado)\n",
+    pytest: "def test_aud_snapshot(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (['a'], ['a', 'b'])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(['a'], ['a', 'b'])",
+    solution_example: "trail = ['a']\nsnap = trail[:]\ntrail.append('b')\nresultado = (snap, trail)\nprint(resultado)\n",
+    next: Some("py-2254-aud-check"), show_type_chips: false, micro_step: 2253,
+};
+
+pub const PY2254_AUD_CHECK: CodingStep = CodingStep {
+    id: "py-2254-aud-check", title: "aud · Suite trail", objective: "Suite: dos acciones.",
+    prompt_md: "**Suite aud**\n\nAppend login y logout; resultado=trail.\n\n**Micro-reto:**\n1. Dos appends\n2. Mostrá trail\n",
+    starter_code: "# trail = []\n# trail.append('login')\n# trail.append('logout')\n# resultado = trail\n# print(resultado)\n",
+    pytest: "def test_aud_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['login', 'logout']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['login', 'logout']",
+    solution_example: "trail = []\ntrail.append('login')\ntrail.append('logout')\nresultado = trail\nprint(resultado)\n",
+    next: Some("py-2255-obs-contains"), show_type_chips: false, micro_step: 2254,
+};
+
+pub const PY2255_OBS_CONTAINS: CodingStep = CodingStep {
+    id: "py-2255-obs-contains", title: "obs · assert contains", objective: "Contrato: mensaje en buffer.",
+    prompt_md: "**Contains**\n\nParadigma test: assert sobre lo logueado. `'ready' in buf`.\n\n**Micro-reto:**\n1. info('ready'); `ok = 'ready' in buf.getvalue()`\n2. `resultado = ok`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.o1')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('ready')\n# resultado = 'ready' in buf.getvalue()\n# print(resultado)\n",
+    pytest: "def test_obs_contains(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "True",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.o1')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('ready')\nresultado = 'ready' in buf.getvalue()\nprint(resultado)\n",
+    next: Some("py-2256-obs-level-line"), show_type_chips: false, micro_step: 2255,
+};
+
+pub const PY2256_OBS_LEVEL_LINE: CodingStep = CodingStep {
+    id: "py-2256-obs-level-line", title: "obs · línea LEVEL", objective: "Contrato formato LEVEL:msg.",
+    prompt_md: "**LEVEL line**\n\nFormatter LEVEL:msg; contrato resultado == 'ERROR:down'.\n\n**Micro-reto:**\n1. error('down') con formatter\n2. resultado strip\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\n# log = logging.getLogger('w21.o2')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.ERROR)\n# log.propagate = False\n# log.error('down')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_obs_level_line(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ERROR:down'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'ERROR:down'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\nlog = logging.getLogger('w21.o2')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.ERROR)\nlog.propagate = False\nlog.error('down')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: Some("py-2257-obs-must-error"), show_type_chips: false, micro_step: 2256,
+};
+
+pub const PY2257_OBS_MUST_ERROR: CodingStep = CodingStep {
+    id: "py-2257-obs-must-error", title: "obs · must ERROR", objective: "Contrato: fallos loguean ERROR.",
+    prompt_md: "**Must ERROR**\n\nSi op falla, debe haber línea con 'fail' en buffer.\n\n**Micro-reto:**\n1. Simulá fallo: log.error('fail')\n2. `resultado = any('fail' in line for line in buf.getvalue().splitlines())`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.o3')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.ERROR)\n# log.propagate = False\n# ok = False\n# if not ok:\n#     log.error('fail')\n# resultado = any('fail' in line for line in buf.getvalue().splitlines())\n# print(resultado)\n",
+    pytest: "def test_obs_must_error(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "True",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.o3')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.ERROR)\nlog.propagate = False\nok = False\nif not ok:\n    log.error('fail')\nresultado = any('fail' in line for line in buf.getvalue().splitlines())\nprint(resultado)\n",
+    next: Some("py-2258-obs-count"), show_type_chips: false, micro_step: 2257,
+};
+
+pub const PY2258_OBS_COUNT: CodingStep = CodingStep {
+    id: "py-2258-obs-count", title: "obs · count lines", objective: "Contrato: N líneas exactas.",
+    prompt_md: "**Count**\n\nAssert de observabilidad: exactamente 2 líneas.\n\n**Micro-reto:**\n1. Dos info\n2. `resultado = len(splitlines)`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.o4')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('1')\n# log.info('2')\n# resultado = len(buf.getvalue().strip().splitlines())\n# print(resultado)\n",
+    pytest: "def test_obs_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.o4')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('1')\nlog.info('2')\nresultado = len(buf.getvalue().strip().splitlines())\nprint(resultado)\n",
+    next: Some("py-2259-obs-cid-req"), show_type_chips: false, micro_step: 2258,
+};
+
+pub const PY2259_OBS_CID_REQ: CodingStep = CodingStep {
+    id: "py-2259-obs-cid-req", title: "obs · cid requerido", objective: "Contrato: cid presente.",
+    prompt_md: "**cid req**\n\nToda línea de request debe incluir `cid=`.\n\n**Micro-reto:**\n1. Logueá cid=9 go\n2. `resultado = buf.getvalue().strip().startswith('cid=')`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# log = logging.getLogger('w21.o5')\n# log.handlers.clear()\n# log.addHandler(logging.StreamHandler(buf))\n# log.setLevel(logging.INFO)\n# log.propagate = False\n# log.info('cid=9 go')\n# resultado = buf.getvalue().strip().startswith('cid=')\n# print(resultado)\n",
+    pytest: "def test_obs_cid_req(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "True",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nlog = logging.getLogger('w21.o5')\nlog.handlers.clear()\nlog.addHandler(logging.StreamHandler(buf))\nlog.setLevel(logging.INFO)\nlog.propagate = False\nlog.info('cid=9 go')\nresultado = buf.getvalue().strip().startswith('cid=')\nprint(resultado)\n",
+    next: Some("py-2260-obs-check"), show_type_chips: false, micro_step: 2259,
+};
+
+pub const PY2260_OBS_CHECK: CodingStep = CodingStep {
+    id: "py-2260-obs-check", title: "obs · Suite contratos", objective: "Cerrar ola: ERROR:x en buffer.",
+    prompt_md: "**Suite obs**\n\nContrato final: formatter LEVEL:msg; error('x') → 'ERROR:x'.\n\n**Micro-reto:**\n1. Setup + error\n2. `resultado = buf.getvalue().strip()`\n3. Mostrá\n",
+    starter_code: "# import logging, io\n# buf = io.StringIO()\n# h = logging.StreamHandler(buf)\n# h.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\n# log = logging.getLogger('w21.o6')\n# log.handlers.clear()\n# log.addHandler(h)\n# log.setLevel(logging.ERROR)\n# log.propagate = False\n# log.error('x')\n# resultado = buf.getvalue().strip()\n# print(resultado)\n",
+    pytest: "def test_obs_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ERROR:x'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'ERROR:x'",
+    solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\nlog = logging.getLogger('w21.o6')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.ERROR)\nlog.propagate = False\nlog.error('x')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 2260,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -56340,6 +56940,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2198_DOM_MAP,
     &PY2199_DOM_SVC,
     &PY2200_DOM_CHECK,
+    &PY2201_LOG_GET,
+    &PY2202_LOG_INFO_LEVEL,
+    &PY2203_LOG_SETLEVEL,
+    &PY2204_LOG_ENABLED,
+    &PY2205_LOG_ORDER,
+    &PY2206_LOG_BASIC_CHECK,
+    &PY2207_HND_ATTACH,
+    &PY2208_HND_CAPTURE,
+    &PY2209_HND_CLEAR,
+    &PY2210_HND_MULTI,
+    &PY2211_HND_NOPROP,
+    &PY2212_HND_CHECK,
+    &PY2213_FMT_LEVEL,
+    &PY2214_FMT_NAME,
+    &PY2215_FMT_PIPE,
+    &PY2216_FMT_MSG,
+    &PY2217_FMT_ERROR,
+    &PY2218_FMT_CHECK,
+    &PY2219_HIER_CHILD,
+    &PY2220_HIER_PROP,
+    &PY2221_HIER_STOP,
+    &PY2222_HIER_PARENT,
+    &PY2223_HIER_FILTER_LEVEL,
+    &PY2224_HIER_CHECK,
+    &PY2225_FLT_LEVEL,
+    &PY2226_FLT_NAME,
+    &PY2227_FLT_REJECT,
+    &PY2228_FLT_ERROR,
+    &PY2229_FLT_MSG,
+    &PY2230_FLT_CHECK,
+    &PY2231_STR_DICT,
+    &PY2232_STR_KV,
+    &PY2233_STR_BUILD,
+    &PY2234_STR_PARSE,
+    &PY2235_STR_ROUNDTRIP,
+    &PY2236_STR_CHECK,
+    &PY2237_CID_BASIC,
+    &PY2238_CID_HELPER,
+    &PY2239_CID_TWO,
+    &PY2240_CID_EXTRACT,
+    &PY2241_CID_CTX,
+    &PY2242_CID_CHECK,
+    &PY2243_MET_INC,
+    &PY2244_MET_BY_LEVEL,
+    &PY2245_MET_CLASS,
+    &PY2246_MET_WITH_LOG,
+    &PY2247_MET_RESET,
+    &PY2248_MET_CHECK,
+    &PY2249_AUD_APPEND,
+    &PY2250_AUD_TUPLE,
+    &PY2251_AUD_LEN,
+    &PY2252_AUD_DICT,
+    &PY2253_AUD_SNAPSHOT,
+    &PY2254_AUD_CHECK,
+    &PY2255_OBS_CONTAINS,
+    &PY2256_OBS_LEVEL_LINE,
+    &PY2257_OBS_MUST_ERROR,
+    &PY2258_OBS_COUNT,
+    &PY2259_OBS_CID_REQ,
+    &PY2260_OBS_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -56507,7 +57167,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 2200);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2260);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -59652,7 +60312,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 2200 is the end of the rail");
+                assert_eq!(step.next, Some("py-2201-log-get"), "step 2200 chains to wave21");
+            }
+        }
+    }
+
+    #[test]
+    fn py2201_to_py2260_logging_observabilidad_chain() {
+        let bridge = coding_step_by_micro_step(2200).expect("py-2200");
+        assert_eq!(bridge.next, Some("py-2201-log-get"));
+
+        for n in 2201..=2260 {
+            let step = coding_step_by_micro_step(n).expect("wave21 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 2260 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 2260 is the end of the rail");
             }
         }
     }

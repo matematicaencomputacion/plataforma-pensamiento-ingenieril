@@ -1994,6 +1994,66 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (2198, &[1, 5]),
     (2199, &[1, 5]),
     (2200, &[1, 5]),
+    (2201, &[4]),
+    (2202, &[4]),
+    (2203, &[4]),
+    (2204, &[4]),
+    (2205, &[4]),
+    (2206, &[4]),
+    (2207, &[1, 4]),
+    (2208, &[1, 4]),
+    (2209, &[1, 4]),
+    (2210, &[1, 4]),
+    (2211, &[1, 4]),
+    (2212, &[1, 4]),
+    (2213, &[4]),
+    (2214, &[4]),
+    (2215, &[4]),
+    (2216, &[4]),
+    (2217, &[4]),
+    (2218, &[4]),
+    (2219, &[2, 4]),
+    (2220, &[2, 4]),
+    (2221, &[2, 4]),
+    (2222, &[2, 4]),
+    (2223, &[2, 4]),
+    (2224, &[2, 4]),
+    (2225, &[3, 4]),
+    (2226, &[3, 4]),
+    (2227, &[3, 4]),
+    (2228, &[3, 4]),
+    (2229, &[3, 4]),
+    (2230, &[3, 4]),
+    (2231, &[1, 5]),
+    (2232, &[1, 5]),
+    (2233, &[1, 5]),
+    (2234, &[1, 5]),
+    (2235, &[1, 5]),
+    (2236, &[1, 5]),
+    (2237, &[2, 5]),
+    (2238, &[2, 5]),
+    (2239, &[2, 5]),
+    (2240, &[2, 5]),
+    (2241, &[2, 5]),
+    (2242, &[2, 5]),
+    (2243, &[1, 3]),
+    (2244, &[1, 3]),
+    (2245, &[1, 3]),
+    (2246, &[1, 3]),
+    (2247, &[1, 3]),
+    (2248, &[1, 3]),
+    (2249, &[1, 5]),
+    (2250, &[1, 5]),
+    (2251, &[1, 5]),
+    (2252, &[1, 5]),
+    (2253, &[1, 5]),
+    (2254, &[1, 5]),
+    (2255, &[3, 5]),
+    (2256, &[3, 5]),
+    (2257, &[3, 5]),
+    (2258, &[3, 5]),
+    (2259, &[3, 5]),
+    (2260, &[3, 5]),
 ];
 
 pub fn partition_by_id(id: u8) -> Option<&'static ConceptPartition> {
@@ -2322,7 +2382,10 @@ mod tests {
         assert_eq!(partitions_for_micro_step(2099), &[1, 4]); // Wave 19: StringIO = data-model + ecosystem
         assert_eq!(partitions_for_micro_step(2141), &[3]); // Wave 20: try/except = paradigms
         assert_eq!(partitions_for_micro_step(2171), &[1, 3]); // Wave 20: Result = data-model + paradigms
-        assert!(partitions_for_micro_step(2201).is_empty()); // frontier beyond Wave 20
+        assert_eq!(partitions_for_micro_step(2201), &[4]); // Wave 21: getLogger = ecosystem
+        assert_eq!(partitions_for_micro_step(2207), &[1, 4]); // Wave 21: StringIO handler = data-model + ecosystem
+        assert_eq!(partitions_for_micro_step(2231), &[1, 5]); // Wave 21: structured = data-model + domains
+        assert!(partitions_for_micro_step(2261).is_empty()); // frontier beyond Wave 21
     }
 
     #[test]
@@ -2802,8 +2865,8 @@ mod tests {
         (900, &[1]),
     ];
 
-    /// Frozen `(micro_step, tags)` pairs with `micro_step > 2200` (Wave 20 ceiling).
-    const WAVE20_FROZEN_BEYOND_2200: &[(i32, &[u8])] = &[];
+    /// Frozen `(micro_step, tags)` pairs with `micro_step > 2260` (Wave 21 ceiling).
+    const WAVE21_FROZEN_BEYOND_2260: &[(i32, &[u8])] = &[];
 
     #[test]
     fn wave_b_applied_floor_101_to_300() {
@@ -3128,16 +3191,16 @@ mod tests {
     }
 
     #[test]
-    fn wave20_freeze_rows_beyond_2200() {
+    fn wave21_freeze_rows_beyond_2260() {
         let current: Vec<(i32, &[u8])> = STEP_PARTITIONS
             .iter()
             .copied()
-            .filter(|(n, _)| *n > 2200)
+            .filter(|(n, _)| *n > 2260)
             .collect();
         assert_eq!(
             current.as_slice(),
-            WAVE20_FROZEN_BEYOND_2200,
-            "do not add or remove rows > 2200"
+            WAVE21_FROZEN_BEYOND_2260,
+            "do not add or remove rows > 2260"
         );
     }
 
