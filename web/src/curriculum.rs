@@ -55336,9 +55336,1940 @@ pub const PY2320_ETL_CHECK: CodingStep = CodingStep {
     pytest: "def test_etl_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "3",
     solution_example: "data = [2, -1, 1]\nresultado = sum(sorted(x for x in data if x > 0))\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 2320,
+    next: Some("py-2321-ctr-basic"), show_type_chips: false, micro_step: 2320,
 };
 
+
+pub const PY2321_CTR_BASIC: CodingStep = CodingStep {
+    id: "py-2321-ctr-basic", title: "Counter · básico", objective: "Contar ocurrencias con collections.Counter.",
+    prompt_md: "**Counter**
+
+`Counter(iterable)` cuenta elementos como dict de frecuencias.
+
+**Micro-reto:**
+1. `from collections import Counter`
+2. `resultado = Counter('aba')`
+3. Mostrá
+",
+    starter_code: "# from collections import Counter
+# resultado = Counter('aba')
+# print(resultado)
+",
+    pytest: "def test_ctr_basic(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    from collections import Counter
+    assert ns['resultado'] == Counter('aba')
+    assert capsys.readouterr().out.strip() == str(dict(ns['resultado']))
+",
+    hint: "Counter({'a': 2, 'b': 1})",
+    solution_example: "from collections import Counter
+resultado = Counter('aba')
+print(resultado)
+",
+    next: Some("py-2322-ctr-update"), show_type_chips: false, micro_step: 2321,
+};
+pub const PY2322_CTR_UPDATE: CodingStep = CodingStep {
+    id: "py-2322-ctr-update", title: "Counter · update", objective: "Sumar conteos con update.",
+    prompt_md: "**update**
+
+Modelo: Counter es multiset mutable.
+
+**Micro-reto:**
+1. c=Counter('a'); c.update('aa')
+2. `resultado = dict(c)`
+3. Mostrá
+",
+    starter_code: "# from collections import Counter
+# c = Counter('a')
+# c.update('aa')
+# resultado = dict(c)
+# print(resultado)
+",
+    pytest: "def test_ctr_update(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == {'a': 3}
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "{'a': 3}",
+    solution_example: "from collections import Counter
+c = Counter('a')
+c.update('aa')
+resultado = dict(c)
+print(resultado)
+",
+    next: Some("py-2323-ctr-common"), show_type_chips: false, micro_step: 2322,
+};
+pub const PY2323_CTR_COMMON: CodingStep = CodingStep {
+    id: "py-2323-ctr-common", title: "Counter · most_common", objective: "Top frecuencias con most_common.",
+    prompt_md: "**most_common**
+
+Stdlib: ranking sin ordenar todo.
+
+**Micro-reto:**
+1. `resultado = Counter([1,1,2]).most_common(1)`
+2. Mostrá
+",
+    starter_code: "# from collections import Counter
+# resultado = Counter([1, 1, 2]).most_common(1)
+# print(resultado)
+",
+    pytest: "def test_ctr_common(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [(1, 2)]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[(1, 2)]",
+    solution_example: "from collections import Counter
+resultado = Counter([1, 1, 2]).most_common(1)
+print(resultado)
+",
+    next: Some("py-2324-ctr-elements"), show_type_chips: false, micro_step: 2323,
+};
+pub const PY2324_CTR_ELEMENTS: CodingStep = CodingStep {
+    id: "py-2324-ctr-elements", title: "Counter · elements", objective: "Expandir multiset con elements().",
+    prompt_md: "**elements**
+
+Itera cada unidad según su conteo.
+
+**Micro-reto:**
+1. `resultado = list(Counter(a=2, b=1).elements())`
+2. Mostrá ordenado: `sorted(...)`
+",
+    starter_code: "# from collections import Counter
+# resultado = sorted(Counter(a=2, b=1).elements())
+# print(resultado)
+",
+    pytest: "def test_ctr_elements(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ['a', 'a', 'b']
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "['a', 'a', 'b']",
+    solution_example: "from collections import Counter
+resultado = sorted(Counter(a=2, b=1).elements())
+print(resultado)
+",
+    next: Some("py-2325-ctr-subtract"), show_type_chips: false, micro_step: 2324,
+};
+pub const PY2325_CTR_SUBTRACT: CodingStep = CodingStep {
+    id: "py-2325-ctr-subtract", title: "Counter · subtract", objective: "Restar conteos con subtract.",
+    prompt_md: "**subtract**
+
+Multiset: restar otro Counter in-place.
+
+**Micro-reto:**
+1. c=Counter(a=3); c.subtract({'a':1})
+2. `resultado = c['a']`
+3. Mostrá
+",
+    starter_code: "# from collections import Counter
+# c = Counter(a=3)
+# c.subtract({'a': 1})
+# resultado = c['a']
+# print(resultado)
+",
+    pytest: "def test_ctr_subtract(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 2
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "2",
+    solution_example: "from collections import Counter
+c = Counter(a=3)
+c.subtract({'a': 1})
+resultado = c['a']
+print(resultado)
+",
+    next: Some("py-2326-ctr-check"), show_type_chips: false, micro_step: 2325,
+};
+pub const PY2326_CTR_CHECK: CodingStep = CodingStep {
+    id: "py-2326-ctr-check", title: "Counter · Suite", objective: "Suite Counter: conteo y top.",
+    prompt_md: "**Suite Counter**
+
+Contar 'aba'; most_common(1).
+
+**Micro-reto:**
+1. `resultado = (Counter('aba')['a'], Counter([1,1,2]).most_common(1)[0][0])`
+2. Mostrá
+",
+    starter_code: "# from collections import Counter
+# resultado = (Counter('aba')['a'], Counter([1, 1, 2]).most_common(1)[0][0])
+# print(resultado)
+",
+    pytest: "def test_ctr_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == (2, 1)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "(2, 1)",
+    solution_example: "from collections import Counter
+resultado = (Counter('aba')['a'], Counter([1, 1, 2]).most_common(1)[0][0])
+print(resultado)
+",
+    next: Some("py-2327-dd-int"), show_type_chips: false, micro_step: 2326,
+};
+pub const PY2327_DD_INT: CodingStep = CodingStep {
+    id: "py-2327-dd-int", title: "defaultdict · int", objective: "Agrupar conteos con defaultdict(int).",
+    prompt_md: "**defaultdict(int)**
+
+Claves nuevas arrancan en 0; ideal para contar.
+
+**Micro-reto:**
+1. d=defaultdict(int); d['x']+=1 twice
+2. `resultado = d['x']`
+3. Mostrá
+",
+    starter_code: "# from collections import defaultdict
+# d = defaultdict(int)
+# d['x'] += 1
+# d['x'] += 1
+# resultado = d['x']
+# print(resultado)
+",
+    pytest: "def test_dd_int(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 2
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "2",
+    solution_example: "from collections import defaultdict
+d = defaultdict(int)
+d['x'] += 1
+d['x'] += 1
+resultado = d['x']
+print(resultado)
+",
+    next: Some("py-2328-dd-list"), show_type_chips: false, micro_step: 2327,
+};
+pub const PY2328_DD_LIST: CodingStep = CodingStep {
+    id: "py-2328-dd-list", title: "defaultdict · list", objective: "Agrupar listas con defaultdict(list).",
+    prompt_md: "**defaultdict(list)**
+
+Patrón one-liner de agrupación.
+
+**Micro-reto:**
+1. d=defaultdict(list); append 'a'→k1, 'b'→k1
+2. `resultado = d['k1']`
+3. Mostrá
+",
+    starter_code: "# from collections import defaultdict
+# d = defaultdict(list)
+# d['k1'].append('a')
+# d['k1'].append('b')
+# resultado = d['k1']
+# print(resultado)
+",
+    pytest: "def test_dd_list(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ['a', 'b']
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "['a', 'b']",
+    solution_example: "from collections import defaultdict
+d = defaultdict(list)
+d['k1'].append('a')
+d['k1'].append('b')
+resultado = d['k1']
+print(resultado)
+",
+    next: Some("py-2329-dd-group"), show_type_chips: false, micro_step: 2328,
+};
+pub const PY2329_DD_GROUP: CodingStep = CodingStep {
+    id: "py-2329-dd-group", title: "defaultdict · group", objective: "Agrupar registros por clave.",
+    prompt_md: "**Group by key**
+
+ETL: `(cat, val)` → dict de listas.
+
+**Micro-reto:**
+1. rows=[('a',1),('a',2),('b',3)]
+2. Agrupá con defaultdict(list)
+3. `resultado = dict(d)`
+",
+    starter_code: "# from collections import defaultdict
+# rows = [('a', 1), ('a', 2), ('b', 3)]
+# d = defaultdict(list)
+# for k, v in rows:
+#     d[k].append(v)
+# resultado = dict(d)
+# print(resultado)
+",
+    pytest: "def test_dd_group(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == {'a': [1, 2], 'b': [3]}
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "{'a': [1, 2], 'b': [3]}",
+    solution_example: "from collections import defaultdict
+rows = [('a', 1), ('a', 2), ('b', 3)]
+d = defaultdict(list)
+for k, v in rows:
+    d[k].append(v)
+resultado = dict(d)
+print(resultado)
+",
+    next: Some("py-2330-dd-set"), show_type_chips: false, micro_step: 2329,
+};
+pub const PY2330_DD_SET: CodingStep = CodingStep {
+    id: "py-2330-dd-set", title: "defaultdict · set", objective: "Conjuntos por clave con defaultdict(set).",
+    prompt_md: "**defaultdict(set)**
+
+Tags únicos por categoría.
+
+**Micro-reto:**
+1. d=defaultdict(set); add tags
+2. `resultado = sorted(d['x'])`
+3. Mostrá
+",
+    starter_code: "# from collections import defaultdict
+# d = defaultdict(set)
+# d['x'].add('a')
+# d['x'].add('b')
+# d['x'].add('a')
+# resultado = sorted(d['x'])
+# print(resultado)
+",
+    pytest: "def test_dd_set(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ['a', 'b']
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "['a', 'b']",
+    solution_example: "from collections import defaultdict
+d = defaultdict(set)
+d['x'].add('a')
+d['x'].add('b')
+d['x'].add('a')
+resultado = sorted(d['x'])
+print(resultado)
+",
+    next: Some("py-2331-dd-missing"), show_type_chips: false, micro_step: 2330,
+};
+pub const PY2331_DD_MISSING: CodingStep = CodingStep {
+    id: "py-2331-dd-missing", title: "defaultdict · missing", objective: "Evitar KeyError con factory.",
+    prompt_md: "**Sin KeyError**
+
+`d['nueva']` crea valor default automático.
+
+**Micro-reto:**
+1. d=defaultdict(int)
+2. `resultado = d['z']`
+3. Mostrá
+",
+    starter_code: "# from collections import defaultdict
+# d = defaultdict(int)
+# resultado = d['z']
+# print(resultado)
+",
+    pytest: "def test_dd_missing(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 0
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "0",
+    solution_example: "from collections import defaultdict
+d = defaultdict(int)
+resultado = d['z']
+print(resultado)
+",
+    next: Some("py-2332-dd-check"), show_type_chips: false, micro_step: 2331,
+};
+pub const PY2332_DD_CHECK: CodingStep = CodingStep {
+    id: "py-2332-dd-check", title: "defaultdict · Suite", objective: "Suite agrupación defaultdict.",
+    prompt_md: "**Suite dd**
+
+Contar 'aba'; agrupar [('a',1),('a',2)].
+
+**Micro-reto:**
+1. `resultado = (dict(defaultdict(int, {'a':2})), dict(defaultdict(list, {'a':[1,2]})))`
+2. Mostrá
+",
+    starter_code: "# from collections import defaultdict
+# resultado = (dict(defaultdict(int, {'a': 2})), dict(defaultdict(list, {'a': [1, 2]})))
+# print(resultado)
+",
+    pytest: "def test_dd_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ({'a': 2}, {'a': [1, 2]})
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "({'a': 2}, {'a': [1, 2]})",
+    solution_example: "from collections import defaultdict
+resultado = (dict(defaultdict(int, {'a': 2})), dict(defaultdict(list, {'a': [1, 2]})))
+print(resultado)
+",
+    next: Some("py-2333-dq-queue"), show_type_chips: false, micro_step: 2332,
+};
+pub const PY2333_DQ_QUEUE: CodingStep = CodingStep {
+    id: "py-2333-dq-queue", title: "deque · cola", objective: "FIFO con append y popleft.",
+    prompt_md: "**Cola FIFO**
+
+`deque` permite popleft O(1).
+
+**Micro-reto:**
+1. q=deque([1,2]); append 3; popleft
+2. `resultado = list(q)`
+3. Mostrá
+",
+    starter_code: "# from collections import deque
+# q = deque([1, 2])
+# q.append(3)
+# q.popleft()
+# resultado = list(q)
+# print(resultado)
+",
+    pytest: "def test_dq_queue(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [2, 3]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[2, 3]",
+    solution_example: "from collections import deque
+q = deque([1, 2])
+q.append(3)
+q.popleft()
+resultado = list(q)
+print(resultado)
+",
+    next: Some("py-2334-dq-rotate"), show_type_chips: false, micro_step: 2333,
+};
+pub const PY2334_DQ_ROTATE: CodingStep = CodingStep {
+    id: "py-2334-dq-rotate", title: "deque · rotate", objective: "Rotar elementos con rotate.",
+    prompt_md: "**rotate**
+
+Ventana circular: rotate(1) mueve el último al frente.
+
+**Micro-reto:**
+1. d=deque([1,2,3]); d.rotate(1)
+2. `resultado = list(d)`
+3. Mostrá
+",
+    starter_code: "# from collections import deque
+# d = deque([1, 2, 3])
+# d.rotate(1)
+# resultado = list(d)
+# print(resultado)
+",
+    pytest: "def test_dq_rotate(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [3, 1, 2]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[3, 1, 2]",
+    solution_example: "from collections import deque
+d = deque([1, 2, 3])
+d.rotate(1)
+resultado = list(d)
+print(resultado)
+",
+    next: Some("py-2335-dq-maxlen"), show_type_chips: false, micro_step: 2334,
+};
+pub const PY2335_DQ_MAXLEN: CodingStep = CodingStep {
+    id: "py-2335-dq-maxlen", title: "deque · maxlen", objective: "Ventana acotada con maxlen.",
+    prompt_md: "**maxlen**
+
+Buffer deslizante: descarta el más viejo.
+
+**Micro-reto:**
+1. d=deque(maxlen=2); extend [1,2,3]
+2. `resultado = list(d)`
+3. Mostrá
+",
+    starter_code: "# from collections import deque
+# d = deque(maxlen=2)
+# d.extend([1, 2, 3])
+# resultado = list(d)
+# print(resultado)
+",
+    pytest: "def test_dq_maxlen(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [2, 3]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[2, 3]",
+    solution_example: "from collections import deque
+d = deque(maxlen=2)
+d.extend([1, 2, 3])
+resultado = list(d)
+print(resultado)
+",
+    next: Some("py-2336-dq-bfs"), show_type_chips: false, micro_step: 2335,
+};
+pub const PY2336_DQ_BFS: CodingStep = CodingStep {
+    id: "py-2336-dq-bfs", title: "deque · BFS", objective: "BFS mínimo con deque.",
+    prompt_md: "**BFS**
+
+Paradigma: cola para explorar niveles.
+
+**Micro-reto:**
+1. graph={0:[1],1:[2],2:[]}; BFS desde 0
+2. `resultado = visitados`
+3. Mostrá
+",
+    starter_code: "# from collections import deque
+# graph = {0: [1], 1: [2], 2: []}
+# q = deque([0])
+# visitados = []
+# while q:
+#     n = q.popleft()
+#     visitados.append(n)
+#     q.extend(graph[n])
+# resultado = visitados
+# print(resultado)
+",
+    pytest: "def test_dq_bfs(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [0, 1, 2]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[0, 1, 2]",
+    solution_example: "from collections import deque
+graph = {0: [1], 1: [2], 2: []}
+q = deque([0])
+visitados = []
+while q:
+    n = q.popleft()
+    visitados.append(n)
+    q.extend(graph[n])
+resultado = visitados
+print(resultado)
+",
+    next: Some("py-2337-dq-stack"), show_type_chips: false, micro_step: 2336,
+};
+pub const PY2337_DQ_STACK: CodingStep = CodingStep {
+    id: "py-2337-dq-stack", title: "deque · stack", objective: "LIFO con append y pop.",
+    prompt_md: "**Stack con deque**
+
+append/pop desde el mismo extremo.
+
+**Micro-reto:**
+1. s=deque(); append 1,2; pop
+2. `resultado = list(s)`
+3. Mostrá
+",
+    starter_code: "# from collections import deque
+# s = deque()
+# s.append(1)
+# s.append(2)
+# s.pop()
+# resultado = list(s)
+# print(resultado)
+",
+    pytest: "def test_dq_stack(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [1]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[1]",
+    solution_example: "from collections import deque
+s = deque()
+s.append(1)
+s.append(2)
+s.pop()
+resultado = list(s)
+print(resultado)
+",
+    next: Some("py-2338-dq-check"), show_type_chips: false, micro_step: 2337,
+};
+pub const PY2338_DQ_CHECK: CodingStep = CodingStep {
+    id: "py-2338-dq-check", title: "deque · Suite", objective: "Suite cola + rotate.",
+    prompt_md: "**Suite deque**
+
+FIFO popleft; rotate [1,2,3].
+
+**Micro-reto:**
+1. q=deque([1]); q.append(2); q.popleft()
+2. d=deque([1,2,3]); d.rotate(-1)
+3. `resultado = (list(q), list(d))`
+",
+    starter_code: "# from collections import deque
+# q = deque([1])
+# q.append(2)
+# q.popleft()
+# d = deque([1, 2, 3])
+# d.rotate(-1)
+# resultado = (list(q), list(d))
+# print(resultado)
+",
+    pytest: "def test_dq_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ([2], [2, 3, 1])
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "([2], [2, 3, 1])",
+    solution_example: "from collections import deque
+q = deque([1])
+q.append(2)
+q.popleft()
+d = deque([1, 2, 3])
+d.rotate(-1)
+resultado = (list(q), list(d))
+print(resultado)
+",
+    next: Some("py-2339-nt-point"), show_type_chips: false, micro_step: 2338,
+};
+pub const PY2339_NT_POINT: CodingStep = CodingStep {
+    id: "py-2339-nt-point", title: "namedtuple · Point", objective: "Registro inmutable con namedtuple.",
+    prompt_md: "**namedtuple**
+
+Tupla con campos nombrados e inmutables.
+
+**Micro-reto:**
+1. `Point = namedtuple('Point', 'x y')`
+2. `resultado = Point(1, 2)`
+3. Mostrá
+",
+    starter_code: "# from collections import namedtuple
+# Point = namedtuple('Point', 'x y')
+# resultado = Point(1, 2)
+# print(resultado)
+",
+    pytest: "def test_nt_point(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    from collections import namedtuple
+    Point = namedtuple('Point', 'x y')
+    assert ns['resultado'] == Point(1, 2)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "Point(x=1, y=2)",
+    solution_example: "from collections import namedtuple
+Point = namedtuple('Point', 'x y')
+resultado = Point(1, 2)
+print(resultado)
+",
+    next: Some("py-2340-nt-replace"), show_type_chips: false, micro_step: 2339,
+};
+pub const PY2340_NT_REPLACE: CodingStep = CodingStep {
+    id: "py-2340-nt-replace", title: "namedtuple · _replace", objective: "Copia con cambios via _replace.",
+    prompt_md: "**_replace**
+
+Inmutable: nuevo registro, no mutación.
+
+**Micro-reto:**
+1. p=Point(1,2); `resultado = p._replace(y=5)`
+2. Mostrá
+",
+    starter_code: "# from collections import namedtuple
+# Point = namedtuple('Point', 'x y')
+# p = Point(1, 2)
+# resultado = p._replace(y=5)
+# print(resultado)
+",
+    pytest: "def test_nt_replace(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    from collections import namedtuple
+    Point = namedtuple('Point', 'x y')
+    assert ns['resultado'] == Point(1, 5)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "Point(x=1, y=5)",
+    solution_example: "from collections import namedtuple
+Point = namedtuple('Point', 'x y')
+p = Point(1, 2)
+resultado = p._replace(y=5)
+print(resultado)
+",
+    next: Some("py-2341-nt-asdict"), show_type_chips: false, micro_step: 2340,
+};
+pub const PY2341_NT_ASDICT: CodingStep = CodingStep {
+    id: "py-2341-nt-asdict", title: "namedtuple · _asdict", objective: "Serializar registro a dict.",
+    prompt_md: "**_asdict**
+
+Modelo: registro → dict ordenado.
+
+**Micro-reto:**
+1. p=Point(3,4)
+2. `resultado = p._asdict()`
+3. Mostrá
+",
+    starter_code: "# from collections import namedtuple
+# Point = namedtuple('Point', 'x y')
+# p = Point(3, 4)
+# resultado = p._asdict()
+# print(resultado)
+",
+    pytest: "def test_nt_asdict(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == {'x': 3, 'y': 4}
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "{'x': 3, 'y': 4}",
+    solution_example: "from collections import namedtuple
+Point = namedtuple('Point', 'x y')
+p = Point(3, 4)
+resultado = p._asdict()
+print(resultado)
+",
+    next: Some("py-2342-nt-fields"), show_type_chips: false, micro_step: 2341,
+};
+pub const PY2342_NT_FIELDS: CodingStep = CodingStep {
+    id: "py-2342-nt-fields", title: "namedtuple · _fields", objective: "Metadatos de campos.",
+    prompt_md: "**_fields**
+
+Contrato de columnas del registro.
+
+**Micro-reto:**
+1. `resultado = Point._fields`
+2. Mostrá
+",
+    starter_code: "# from collections import namedtuple
+# Point = namedtuple('Point', 'x y')
+# resultado = Point._fields
+# print(resultado)
+",
+    pytest: "def test_nt_fields(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ('x', 'y')
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "('x', 'y')",
+    solution_example: "from collections import namedtuple
+Point = namedtuple('Point', 'x y')
+resultado = Point._fields
+print(resultado)
+",
+    next: Some("py-2343-nt-unpack"), show_type_chips: false, micro_step: 2342,
+};
+pub const PY2343_NT_UNPACK: CodingStep = CodingStep {
+    id: "py-2343-nt-unpack", title: "namedtuple · unpack", objective: "Desempaquetar campos nombrados.",
+    prompt_md: "**Unpack**
+
+Paradigma funcional: tupla con nombres.
+
+**Micro-reto:**
+1. p=Point(2,3); x,y = p
+2. `resultado = x + y`
+3. Mostrá
+",
+    starter_code: "# from collections import namedtuple
+# Point = namedtuple('Point', 'x y')
+# p = Point(2, 3)
+# x, y = p
+# resultado = x + y
+# print(resultado)
+",
+    pytest: "def test_nt_unpack(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 5
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "5",
+    solution_example: "from collections import namedtuple
+Point = namedtuple('Point', 'x y')
+p = Point(2, 3)
+x, y = p
+resultado = x + y
+print(resultado)
+",
+    next: Some("py-2344-nt-check"), show_type_chips: false, micro_step: 2343,
+};
+pub const PY2344_NT_CHECK: CodingStep = CodingStep {
+    id: "py-2344-nt-check", title: "namedtuple · Suite", objective: "Suite Point + _asdict.",
+    prompt_md: "**Suite nt**
+
+Point(1,2)._asdict(); sum unpack.
+
+**Micro-reto:**
+1. `resultado = (Point(1,2)._asdict(), sum(Point(1,2)))`
+2. Mostrá
+",
+    starter_code: "# from collections import namedtuple
+# Point = namedtuple('Point', 'x y')
+# resultado = (Point(1, 2)._asdict(), sum(Point(1, 2)))
+# print(resultado)
+",
+    pytest: "def test_nt_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ({'x': 1, 'y': 2}, 3)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "({'x': 1, 'y': 2}, 3)",
+    solution_example: "from collections import namedtuple
+Point = namedtuple('Point', 'x y')
+resultado = (Point(1, 2)._asdict(), sum(Point(1, 2)))
+print(resultado)
+",
+    next: Some("py-2345-cm-lookup"), show_type_chips: false, micro_step: 2344,
+};
+pub const PY2345_CM_LOOKUP: CodingStep = CodingStep {
+    id: "py-2345-cm-lookup", title: "ChainMap · lookup", objective: "Buscar en scopes anidados.",
+    prompt_md: "**ChainMap**
+
+LEGB: local dict primero, luego global.
+
+**Micro-reto:**
+1. local={'x':1}; global_={'x':2}
+2. `resultado = ChainMap(local, global_)['x']`
+3. Mostrá
+",
+    starter_code: "# from collections import ChainMap
+# local = {'x': 1}
+# global_ = {'x': 2}
+# resultado = ChainMap(local, global_)['x']
+# print(resultado)
+",
+    pytest: "def test_cm_lookup(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 1
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "1",
+    solution_example: "from collections import ChainMap
+local = {'x': 1}
+global_ = {'x': 2}
+resultado = ChainMap(local, global_)['x']
+print(resultado)
+",
+    next: Some("py-2346-cm-fallback"), show_type_chips: false, micro_step: 2345,
+};
+pub const PY2346_CM_FALLBACK: CodingStep = CodingStep {
+    id: "py-2346-cm-fallback", title: "ChainMap · fallback", objective: "Fallback al scope externo.",
+    prompt_md: "**Fallback**
+
+Si la clave no está en local, busca en global.
+
+**Micro-reto:**
+1. local={}; global_={'y':9}
+2. `resultado = ChainMap(local, global_)['y']`
+3. Mostrá
+",
+    starter_code: "# from collections import ChainMap
+# local = {}
+# global_ = {'y': 9}
+# resultado = ChainMap(local, global_)['y']
+# print(resultado)
+",
+    pytest: "def test_cm_fallback(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 9
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "9",
+    solution_example: "from collections import ChainMap
+local = {}
+global_ = {'y': 9}
+resultado = ChainMap(local, global_)['y']
+print(resultado)
+",
+    next: Some("py-2347-cm-child"), show_type_chips: false, micro_step: 2346,
+};
+pub const PY2347_CM_CHILD: CodingStep = CodingStep {
+    id: "py-2347-cm-child", title: "ChainMap · new_child", objective: "Nuevo scope con new_child.",
+    prompt_md: "**new_child**
+
+Push de scope: dict vacío al frente.
+
+**Micro-reto:**
+1. cm=ChainMap({'a':1}); child=cm.new_child()
+2. child['b']=2
+3. `resultado = child['a']`
+",
+    starter_code: "# from collections import ChainMap
+# cm = ChainMap({'a': 1})
+# child = cm.new_child()
+# child['b'] = 2
+# resultado = child['a']
+# print(resultado)
+",
+    pytest: "def test_cm_child(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 1
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "1",
+    solution_example: "from collections import ChainMap
+cm = ChainMap({'a': 1})
+child = cm.new_child()
+child['b'] = 2
+resultado = child['a']
+print(resultado)
+",
+    next: Some("py-2348-cm-maps"), show_type_chips: false, micro_step: 2347,
+};
+pub const PY2348_CM_MAPS: CodingStep = CodingStep {
+    id: "py-2348-cm-maps", title: "ChainMap · maps", objective: "Inspeccionar cadena de dicts.",
+    prompt_md: "**maps**
+
+Tupla de dicts de adentro hacia afuera.
+
+**Micro-reto:**
+1. cm=ChainMap({'a':1},{'b':2})
+2. `resultado = len(cm.maps)`
+3. Mostrá
+",
+    starter_code: "# from collections import ChainMap
+# cm = ChainMap({'a': 1}, {'b': 2})
+# resultado = len(cm.maps)
+# print(resultado)
+",
+    pytest: "def test_cm_maps(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 2
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "2",
+    solution_example: "from collections import ChainMap
+cm = ChainMap({'a': 1}, {'b': 2})
+resultado = len(cm.maps)
+print(resultado)
+",
+    next: Some("py-2349-cm-shadow"), show_type_chips: false, micro_step: 2348,
+};
+pub const PY2349_CM_SHADOW: CodingStep = CodingStep {
+    id: "py-2349-cm-shadow", title: "ChainMap · shadow", objective: "Shadowing de claves externas.",
+    prompt_md: "**Shadow**
+
+Escribir en local oculta global sin borrarlo.
+
+**Micro-reto:**
+1. g={'x':0}; l={'x':1}; cm=ChainMap(l,g)
+2. `resultado = (cm['x'], g['x'])`
+3. Mostrá
+",
+    starter_code: "# from collections import ChainMap
+# g = {'x': 0}
+# l = {'x': 1}
+# cm = ChainMap(l, g)
+# resultado = (cm['x'], g['x'])
+# print(resultado)
+",
+    pytest: "def test_cm_shadow(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == (1, 0)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "(1, 0)",
+    solution_example: "from collections import ChainMap
+g = {'x': 0}
+l = {'x': 1}
+cm = ChainMap(l, g)
+resultado = (cm['x'], g['x'])
+print(resultado)
+",
+    next: Some("py-2350-cm-check"), show_type_chips: false, micro_step: 2349,
+};
+pub const PY2350_CM_CHECK: CodingStep = CodingStep {
+    id: "py-2350-cm-check", title: "ChainMap · Suite", objective: "Suite lookup + fallback.",
+    prompt_md: "**Suite ChainMap**
+
+Local gana; fallback a global.
+
+**Micro-reto:**
+1. `resultado = (ChainMap({'k':1},{'k':2})['k'], ChainMap({},{'z':3})['z'])`
+2. Mostrá
+",
+    starter_code: "# from collections import ChainMap
+# resultado = (ChainMap({'k': 1}, {'k': 2})['k'], ChainMap({}, {'z': 3})['z'])
+# print(resultado)
+",
+    pytest: "def test_cm_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == (1, 3)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "(1, 3)",
+    solution_example: "from collections import ChainMap
+resultado = (ChainMap({'k': 1}, {'k': 2})['k'], ChainMap({}, {'z': 3})['z'])
+print(resultado)
+",
+    next: Some("py-2351-ud-subclass"), show_type_chips: false, micro_step: 2350,
+};
+pub const PY2351_UD_SUBCLASS: CodingStep = CodingStep {
+    id: "py-2351-ud-subclass", title: "UserDict · subclass", objective: "Extender dict con UserDict.",
+    prompt_md: "**UserDict**
+
+Wrapper para heredar sin colisiones con dict.
+
+**Micro-reto:**
+1. class D(UserDict): pass
+2. d=D({'a':1}); `resultado = d['a']`
+3. Mostrá
+",
+    starter_code: "# from collections import UserDict
+# class D(UserDict):
+#     pass
+# d = D({'a': 1})
+# resultado = d['a']
+# print(resultado)
+",
+    pytest: "def test_ud_subclass(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 1
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "1",
+    solution_example: "from collections import UserDict
+class D(UserDict):
+    pass
+d = D({'a': 1})
+resultado = d['a']
+print(resultado)
+",
+    next: Some("py-2352-ud-default"), show_type_chips: false, micro_step: 2351,
+};
+pub const PY2352_UD_DEFAULT: CodingStep = CodingStep {
+    id: "py-2352-ud-default", title: "UserDict · default", objective: "Factory default en UserDict.",
+    prompt_md: "**default factory**
+
+Paradigma: delegar en self.data.
+
+**Micro-reto:**
+1. class D(UserDict):
+    def __missing__(self, k): return 0
+2. `resultado = D()['x']`
+3. Mostrá
+",
+    starter_code: "# from collections import UserDict
+# class D(UserDict):
+#     def __missing__(self, k):
+#         return 0
+# resultado = D()['x']
+# print(resultado)
+",
+    pytest: "def test_ud_default(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 0
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "0",
+    solution_example: "from collections import UserDict
+class D(UserDict):
+    def __missing__(self, k):
+        return 0
+resultado = D()['x']
+print(resultado)
+",
+    next: Some("py-2353-ul-extend"), show_type_chips: false, micro_step: 2352,
+};
+pub const PY2353_UL_EXTEND: CodingStep = CodingStep {
+    id: "py-2353-ul-extend", title: "UserList · extend", objective: "Lista wrapper con UserList.",
+    prompt_md: "**UserList**
+
+Mutación via self.data interno.
+
+**Micro-reto:**
+1. ul=UserList([1]); ul.extend([2])
+2. `resultado = list(ul)`
+3. Mostrá
+",
+    starter_code: "# from collections import UserList
+# ul = UserList([1])
+# ul.extend([2])
+# resultado = list(ul)
+# print(resultado)
+",
+    pytest: "def test_ul_extend(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [1, 2]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[1, 2]",
+    solution_example: "from collections import UserList
+ul = UserList([1])
+ul.extend([2])
+resultado = list(ul)
+print(resultado)
+",
+    next: Some("py-2354-ul-append"), show_type_chips: false, micro_step: 2353,
+};
+pub const PY2354_UL_APPEND: CodingStep = CodingStep {
+    id: "py-2354-ul-append", title: "UserList · append", objective: "Hook personalizado en append.",
+    prompt_md: "**Custom append**
+
+Subclass: validar antes de append.
+
+**Micro-reto:**
+1. class L(UserList):
+    def append(self, x):
+        if x >= 0: super().append(x)
+2. L append -1,1; `resultado = list(L())` → use inst
+",
+    starter_code: "# from collections import UserList
+# class L(UserList):
+#     def append(self, x):
+#         if x >= 0:
+#             super().append(x)
+# ul = L()
+# ul.append(-1)
+# ul.append(1)
+# resultado = list(ul)
+# print(resultado)
+",
+    pytest: "def test_ul_append(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [1]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[1]",
+    solution_example: "from collections import UserList
+class L(UserList):
+    def append(self, x):
+        if x >= 0:
+            super().append(x)
+ul = L()
+ul.append(-1)
+ul.append(1)
+resultado = list(ul)
+print(resultado)
+",
+    next: Some("py-2355-ud-wrap"), show_type_chips: false, micro_step: 2354,
+};
+pub const PY2355_UD_WRAP: CodingStep = CodingStep {
+    id: "py-2355-ud-wrap", title: "UserDict · wrap", objective: "Normalizar claves en wrapper.",
+    prompt_md: "**Normalize keys**
+
+Modelo: lower-case al guardar.
+
+**Micro-reto:**
+1. class D(UserDict):
+    def __setitem__(self, k, v): super().__setitem__(k.lower(), v)
+2. D()['Ab']=1; `resultado = d['ab']`
+",
+    starter_code: "# from collections import UserDict
+# class D(UserDict):
+#     def __setitem__(self, k, v):
+#         super().__setitem__(k.lower(), v)
+# d = D()
+# d['Ab'] = 1
+# resultado = d['ab']
+# print(resultado)
+",
+    pytest: "def test_ud_wrap(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 1
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "1",
+    solution_example: "from collections import UserDict
+class D(UserDict):
+    def __setitem__(self, k, v):
+        super().__setitem__(k.lower(), v)
+d = D()
+d['Ab'] = 1
+resultado = d['ab']
+print(resultado)
+",
+    next: Some("py-2356-ud-check"), show_type_chips: false, micro_step: 2355,
+};
+pub const PY2356_UD_CHECK: CodingStep = CodingStep {
+    id: "py-2356-ud-check", title: "UserDict · Suite", objective: "Suite UserDict + UserList.",
+    prompt_md: "**Suite wrappers**
+
+UserDict con data; UserList len.
+
+**Micro-reto:**
+1. d=UserDict({'a':1}); ul=UserList([1,2])
+2. `resultado = (d['a'], len(ul))`
+3. Mostrá
+",
+    starter_code: "# from collections import UserDict, UserList
+# d = UserDict({'a': 1})
+# ul = UserList([1, 2])
+# resultado = (d['a'], len(ul))
+# print(resultado)
+",
+    pytest: "def test_ud_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == (1, 2)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "(1, 2)",
+    solution_example: "from collections import UserDict, UserList
+d = UserDict({'a': 1})
+ul = UserList([1, 2])
+resultado = (d['a'], len(ul))
+print(resultado)
+",
+    next: Some("py-2357-agg-group"), show_type_chips: false, micro_step: 2356,
+};
+pub const PY2357_AGG_GROUP: CodingStep = CodingStep {
+    id: "py-2357-agg-group", title: "agg · group", objective: "Agrupar filas por un campo.",
+    prompt_md: "**Group field**
+
+Dominio datos: pivot manual sin pandas.
+
+**Micro-reto:**
+1. rows=[('A',10),('A',5),('B',3)]
+2. Sumar qty por cat
+3. `resultado = totals`
+",
+    starter_code: "# rows = [('A', 10), ('A', 5), ('B', 3)]
+# totals = {}
+# for cat, qty in rows:
+#     totals[cat] = totals.get(cat, 0) + qty
+# resultado = totals
+# print(resultado)
+",
+    pytest: "def test_agg_group(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == {'A': 15, 'B': 3}
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "{'A': 15, 'B': 3}",
+    solution_example: "rows = [('A', 10), ('A', 5), ('B', 3)]
+totals = {}
+for cat, qty in rows:
+    totals[cat] = totals.get(cat, 0) + qty
+resultado = totals
+print(resultado)
+",
+    next: Some("py-2358-agg-sum"), show_type_chips: false, micro_step: 2357,
+};
+pub const PY2358_AGG_SUM: CodingStep = CodingStep {
+    id: "py-2358-agg-sum", title: "agg · sum", objective: "Sumar múltiples campos numéricos.",
+    prompt_md: "**Multi sum**
+
+Agregar price*qty por SKU.
+
+**Micro-reto:**
+1. items=[('x',2,3),('x',1,4)]
+2. `resultado = sum(p*q for _,p,q in items)`
+3. Mostrá
+",
+    starter_code: "# items = [('x', 2, 3), ('x', 1, 4)]
+# resultado = sum(p * q for _, p, q in items)
+# print(resultado)
+",
+    pytest: "def test_agg_sum(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 10
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "10",
+    solution_example: "items = [('x', 2, 3), ('x', 1, 4)]
+resultado = sum(p * q for _, p, q in items)
+print(resultado)
+",
+    next: Some("py-2359-agg-pivot"), show_type_chips: false, micro_step: 2358,
+};
+pub const PY2359_AGG_PIVOT: CodingStep = CodingStep {
+    id: "py-2359-agg-pivot", title: "agg · pivot", objective: "Tabla pivot manual 2D.",
+    prompt_md: "**Pivot 2D**
+
+Filas por (region, product) → total.
+
+**Micro-reto:**
+1. data=[('N','a',1),('N','a',2),('S','b',3)]
+2. Nested dict pivot
+3. `resultado = pivot['N']['a']`
+",
+    starter_code: "# data = [('N', 'a', 1), ('N', 'a', 2), ('S', 'b', 3)]
+# pivot = {}
+# for reg, prod, val in data:
+#     pivot.setdefault(reg, {}).setdefault(prod, 0)
+#     pivot[reg][prod] += val
+# resultado = pivot['N']['a']
+# print(resultado)
+",
+    pytest: "def test_agg_pivot(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 3
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "3",
+    solution_example: "data = [('N', 'a', 1), ('N', 'a', 2), ('S', 'b', 3)]
+pivot = {}
+for reg, prod, val in data:
+    pivot.setdefault(reg, {}).setdefault(prod, 0)
+    pivot[reg][prod] += val
+resultado = pivot['N']['a']
+print(resultado)
+",
+    next: Some("py-2360-agg-count"), show_type_chips: false, micro_step: 2359,
+};
+pub const PY2360_AGG_COUNT: CodingStep = CodingStep {
+    id: "py-2360-agg-count", title: "agg · count", objective: "Contar ocurrencias por campo.",
+    prompt_md: "**Count by field**
+
+Frecuencia de status en logs.
+
+**Micro-reto:**
+1. logs=['ok','err','ok']
+2. Counter o dict manual
+3. `resultado = counts['ok']`
+",
+    starter_code: "# from collections import Counter
+# logs = ['ok', 'err', 'ok']
+# counts = Counter(logs)
+# resultado = counts['ok']
+# print(resultado)
+",
+    pytest: "def test_agg_count(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 2
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "2",
+    solution_example: "from collections import Counter
+logs = ['ok', 'err', 'ok']
+counts = Counter(logs)
+resultado = counts['ok']
+print(resultado)
+",
+    next: Some("py-2361-agg-avg"), show_type_chips: false, micro_step: 2360,
+};
+pub const PY2361_AGG_AVG: CodingStep = CodingStep {
+    id: "py-2361-agg-avg", title: "agg · avg", objective: "Promedio por grupo.",
+    prompt_md: "**Avg group**
+
+Acumular sum y count por clave.
+
+**Micro-reto:**
+1. rows=[('a',10),('a',20),('b',5)]
+2. avg por clave; `resultado = avg['a']`
+3. Mostrá
+",
+    starter_code: "# rows = [('a', 10), ('a', 20), ('b', 5)]
+# sums = {}
+# counts = {}
+# for k, v in rows:
+#     sums[k] = sums.get(k, 0) + v
+#     counts[k] = counts.get(k, 0) + 1
+# avg = {k: sums[k] // counts[k] for k in sums}
+# resultado = avg['a']
+# print(resultado)
+",
+    pytest: "def test_agg_avg(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 15
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "15",
+    solution_example: "rows = [('a', 10), ('a', 20), ('b', 5)]
+sums = {}
+counts = {}
+for k, v in rows:
+    sums[k] = sums.get(k, 0) + v
+    counts[k] = counts.get(k, 0) + 1
+avg = {k: sums[k] // counts[k] for k in sums}
+resultado = avg['a']
+print(resultado)
+",
+    next: Some("py-2362-agg-check"), show_type_chips: false, micro_step: 2361,
+};
+pub const PY2362_AGG_CHECK: CodingStep = CodingStep {
+    id: "py-2362-agg-check", title: "agg · Suite", objective: "Suite pivot + sum.",
+    prompt_md: "**Suite agg**
+
+Sum qty por cat; pivot N/a.
+
+**Micro-reto:**
+1. totals A=15 from rows
+2. pivot N/a=3
+3. `resultado = (15, 3)`
+",
+    starter_code: "# rows = [('A', 10), ('A', 5)]
+# totals = {}
+# for cat, qty in rows:
+#     totals[cat] = totals.get(cat, 0) + qty
+# data = [('N', 'a', 1), ('N', 'a', 2)]
+# pivot = {}
+# for reg, prod, val in data:
+#     pivot.setdefault(reg, {}).setdefault(prod, 0)
+#     pivot[reg][prod] += val
+# resultado = (totals['A'], pivot['N']['a'])
+# print(resultado)
+",
+    pytest: "def test_agg_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == (15, 3)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "(15, 3)",
+    solution_example: "rows = [('A', 10), ('A', 5)]
+totals = {}
+for cat, qty in rows:
+    totals[cat] = totals.get(cat, 0) + qty
+data = [('N', 'a', 1), ('N', 'a', 2)]
+pivot = {}
+for reg, prod, val in data:
+    pivot.setdefault(reg, {}).setdefault(prod, 0)
+    pivot[reg][prod] += val
+resultado = (totals['A'], pivot['N']['a'])
+print(resultado)
+",
+    next: Some("py-2363-inv-levels"), show_type_chips: false, micro_step: 2362,
+};
+pub const PY2363_INV_LEVELS: CodingStep = CodingStep {
+    id: "py-2363-inv-levels", title: "inv · levels", objective: "Niveles de stock por SKU.",
+    prompt_md: "**Stock levels**
+
+Dominio inventario: dict sku→qty.
+
+**Micro-reto:**
+1. stock={'A':10,'B':2}
+2. `resultado = stock['A']`
+3. Mostrá
+",
+    starter_code: "# stock = {'A': 10, 'B': 2}
+# resultado = stock['A']
+# print(resultado)
+",
+    pytest: "def test_inv_levels(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 10
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "10",
+    solution_example: "stock = {'A': 10, 'B': 2}
+resultado = stock['A']
+print(resultado)
+",
+    next: Some("py-2364-inv-low"), show_type_chips: false, micro_step: 2363,
+};
+pub const PY2364_INV_LOW: CodingStep = CodingStep {
+    id: "py-2364-inv-low", title: "inv · low stock", objective: "Filtrar SKUs bajo mínimo.",
+    prompt_md: "**Low stock**
+
+Alertas: qty < threshold.
+
+**Micro-reto:**
+1. stock={'A':10,'B':2}; min=5
+2. `resultado = [k for k,v in stock.items() if v<min]`
+3. Mostrá sorted
+",
+    starter_code: "# stock = {'A': 10, 'B': 2}
+# minimo = 5
+# resultado = sorted(k for k, v in stock.items() if v < minimo)
+# print(resultado)
+",
+    pytest: "def test_inv_low(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ['B']
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "['B']",
+    solution_example: "stock = {'A': 10, 'B': 2}
+minimo = 5
+resultado = sorted(k for k, v in stock.items() if v < minimo)
+print(resultado)
+",
+    next: Some("py-2365-inv-reorder"), show_type_chips: false, micro_step: 2364,
+};
+pub const PY2365_INV_REORDER: CodingStep = CodingStep {
+    id: "py-2365-inv-reorder", title: "inv · reorder", objective: "Calcular cantidad de reorden.",
+    prompt_md: "**Reorder qty**
+
+max(0, target - current).
+
+**Micro-reto:**
+1. target=20; current=7
+2. `resultado = max(0, target - current)`
+3. Mostrá
+",
+    starter_code: "# target = 20
+# current = 7
+# resultado = max(0, target - current)
+# print(resultado)
+",
+    pytest: "def test_inv_reorder(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 13
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "13",
+    solution_example: "target = 20
+current = 7
+resultado = max(0, target - current)
+print(resultado)
+",
+    next: Some("py-2366-inv-value"), show_type_chips: false, micro_step: 2365,
+};
+pub const PY2366_INV_VALUE: CodingStep = CodingStep {
+    id: "py-2366-inv-value", title: "inv · value", objective: "Valor total del inventario.",
+    prompt_md: "**Inventory value**
+
+Sum sku qty * unit price.
+
+**Micro-reto:**
+1. stock={'A':2,'B':1}; price={'A':5,'B':10}
+2. `resultado = sum(stock[k]*price[k] for k in stock)`
+3. Mostrá
+",
+    starter_code: "# stock = {'A': 2, 'B': 1}
+# price = {'A': 5, 'B': 10}
+# resultado = sum(stock[k] * price[k] for k in stock)
+# print(resultado)
+",
+    pytest: "def test_inv_value(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 20
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "20",
+    solution_example: "stock = {'A': 2, 'B': 1}
+price = {'A': 5, 'B': 10}
+resultado = sum(stock[k] * price[k] for k in stock)
+print(resultado)
+",
+    next: Some("py-2367-inv-lookup"), show_type_chips: false, micro_step: 2366,
+};
+pub const PY2367_INV_LOOKUP: CodingStep = CodingStep {
+    id: "py-2367-inv-lookup", title: "inv · lookup", objective: "Consulta segura de SKU.",
+    prompt_md: "**SKU lookup**
+
+get con default 0 evita KeyError.
+
+**Micro-reto:**
+1. stock={'A':5}
+2. `resultado = (stock.get('A',0), stock.get('Z',0))`
+3. Mostrá
+",
+    starter_code: "# stock = {'A': 5}
+# resultado = (stock.get('A', 0), stock.get('Z', 0))
+# print(resultado)
+",
+    pytest: "def test_inv_lookup(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == (5, 0)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "(5, 0)",
+    solution_example: "stock = {'A': 5}
+resultado = (stock.get('A', 0), stock.get('Z', 0))
+print(resultado)
+",
+    next: Some("py-2368-inv-check"), show_type_chips: false, micro_step: 2367,
+};
+pub const PY2368_INV_CHECK: CodingStep = CodingStep {
+    id: "py-2368-inv-check", title: "inv · Suite", objective: "Suite inventario: low + value.",
+    prompt_md: "**Suite inv**
+
+Low stock B; valor total 20.
+
+**Micro-reto:**
+1. stock={'A':2,'B':1}; price={'A':5,'B':10}; min=5
+2. `resultado = (sorted(k for k,v in stock.items() if v<min), sum(stock[k]*price[k] for k in stock))`
+3. Mostrá
+",
+    starter_code: "# stock = {'A': 2, 'B': 1}
+# price = {'A': 5, 'B': 10}
+# minimo = 5
+# resultado = (sorted(k for k, v in stock.items() if v < minimo), sum(stock[k] * price[k] for k in stock))
+# print(resultado)
+",
+    pytest: "def test_inv_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == (['A', 'B'], 20)
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "(['A', 'B'], 20)",
+    solution_example: "stock = {'A': 2, 'B': 1}
+price = {'A': 5, 'B': 10}
+minimo = 5
+resultado = (sorted(k for k, v in stock.items() if v < minimo), sum(stock[k] * price[k] for k in stock))
+print(resultado)
+",
+    next: Some("py-2369-topk-common"), show_type_chips: false, micro_step: 2368,
+};
+pub const PY2369_TOPK_COMMON: CodingStep = CodingStep {
+    id: "py-2369-topk-common", title: "topk · most_common", objective: "Top-K con Counter.most_common.",
+    prompt_md: "**Top-K**
+
+Ranking de frecuencias sin sort global.
+
+**Micro-reto:**
+1. `resultado = [k for k,_ in Counter('aabbc').most_common(2)]`
+2. Mostrá
+",
+    starter_code: "# from collections import Counter
+# resultado = [k for k, _ in Counter('aabbc').most_common(2)]
+# print(resultado)
+",
+    pytest: "def test_topk_common(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ['a', 'b']
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "['a', 'b']",
+    solution_example: "from collections import Counter
+resultado = [k for k, _ in Counter('aabbc').most_common(2)]
+print(resultado)
+",
+    next: Some("py-2370-topk-words"), show_type_chips: false, micro_step: 2369,
+};
+pub const PY2370_TOPK_WORDS: CodingStep = CodingStep {
+    id: "py-2370-topk-words", title: "topk · words", objective: "Top palabras en texto.",
+    prompt_md: "**Top words**
+
+Dominio: tokenizar y contar.
+
+**Micro-reto:**
+1. text='a b a'; words split
+2. `resultado = Counter(words).most_common(1)[0][0]`
+3. Mostrá
+",
+    starter_code: "# from collections import Counter
+# words = 'a b a'.split()
+# resultado = Counter(words).most_common(1)[0][0]
+# print(resultado)
+",
+    pytest: "def test_topk_words(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 'a'
+    assert capsys.readouterr().out.strip() == repr(ns['resultado'])
+",
+    hint: "'a'",
+    solution_example: "from collections import Counter
+words = 'a b a'.split()
+resultado = Counter(words).most_common(1)[0][0]
+print(resultado)
+",
+    next: Some("py-2371-topk-tie"), show_type_chips: false, micro_step: 2370,
+};
+pub const PY2371_TOPK_TIE: CodingStep = CodingStep {
+    id: "py-2371-topk-tie", title: "topk · ties", objective: "Empates en ranking por freq.",
+    prompt_md: "**Ties**
+
+most_common ordena por freq desc, luego key.
+
+**Micro-reto:**
+1. c=Counter(a=2,b=2,c=1)
+2. `resultado = c.most_common(2)`
+3. Mostrá
+",
+    starter_code: "# from collections import Counter
+# c = Counter(a=2, b=2, c=1)
+# resultado = c.most_common(2)
+# print(resultado)
+",
+    pytest: "def test_topk_tie(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [('a', 2), ('b', 2)]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[('a', 2), ('b', 2)]",
+    solution_example: "from collections import Counter
+c = Counter(a=2, b=2, c=1)
+resultado = c.most_common(2)
+print(resultado)
+",
+    next: Some("py-2372-topk-filter"), show_type_chips: false, micro_step: 2371,
+};
+pub const PY2372_TOPK_FILTER: CodingStep = CodingStep {
+    id: "py-2372-topk-filter", title: "topk · filter", objective: "Filtrar mínimo antes de top-K.",
+    prompt_md: "**Min count filter**
+
+Solo items con freq>=2.
+
+**Micro-reto:**
+1. c=Counter('aabbcc')
+2. `resultado = [k for k,v in c.items() if v>=2]`
+3. Mostrá sorted
+",
+    starter_code: "# from collections import Counter
+# c = Counter('aabbcc')
+# resultado = sorted(k for k, v in c.items() if v >= 2)
+# print(resultado)
+",
+    pytest: "def test_topk_filter(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == ['a', 'b', 'c']
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "['a', 'b', 'c']",
+    solution_example: "from collections import Counter
+c = Counter('aabbcc')
+resultado = sorted(k for k, v in c.items() if v >= 2)
+print(resultado)
+",
+    next: Some("py-2373-topk-k"), show_type_chips: false, micro_step: 2372,
+};
+pub const PY2373_TOPK_K: CodingStep = CodingStep {
+    id: "py-2373-topk-k", title: "topk · k param", objective: "Función top_k reutilizable.",
+    prompt_md: "**top_k(k)**
+
+Paradigma: función pura sobre Counter.
+
+**Micro-reto:**
+1. def top_k(items,k): return Counter(items).most_common(k)
+2. `resultado = top_k([1,1,2],1)`
+3. Mostrá
+",
+    starter_code: "# from collections import Counter
+# def top_k(items, k):
+#     return Counter(items).most_common(k)
+# resultado = top_k([1, 1, 2], 1)
+# print(resultado)
+",
+    pytest: "def test_topk_k(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == [(1, 2)]
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "[(1, 2)]",
+    solution_example: "from collections import Counter
+def top_k(items, k):
+    return Counter(items).most_common(k)
+resultado = top_k([1, 1, 2], 1)
+print(resultado)
+",
+    next: Some("py-2374-topk-check"), show_type_chips: false, micro_step: 2373,
+};
+pub const PY2374_TOPK_CHECK: CodingStep = CodingStep {
+    id: "py-2374-topk-check", title: "topk · Suite", objective: "Suite top-K ranking.",
+    prompt_md: "**Suite topk**
+
+Top 2 de 'aabbc'; top_k fn.
+
+**Micro-reto:**
+1. `resultado = ([k for k,_ in Counter('aabbc').most_common(2)], top_k([1,1,2],1))`
+2. Mostrá
+",
+    starter_code: "# from collections import Counter
+# def top_k(items, k):
+#     return Counter(items).most_common(k)
+# resultado = ([k for k, _ in Counter('aabbc').most_common(2)], top_k([1, 1, 2], 1))
+# print(resultado)
+",
+    pytest: "def test_topk_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == (['a', 'b'], [(1, 2)])
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "(['a', 'b'], [(1, 2)])",
+    solution_example: "from collections import Counter
+def top_k(items, k):
+    return Counter(items).most_common(k)
+resultado = ([k for k, _ in Counter('aabbc').most_common(2)], top_k([1, 1, 2], 1))
+print(resultado)
+",
+    next: Some("py-2375-pipe-load"), show_type_chips: false, micro_step: 2374,
+};
+pub const PY2375_PIPE_LOAD: CodingStep = CodingStep {
+    id: "py-2375-pipe-load", title: "pipe · load", objective: "Cargar registros en memoria.",
+    prompt_md: "**Load**
+
+ETL in-memory: lista de dicts.
+
+**Micro-reto:**
+1. `resultado = [{'id':1,'v':10},{'id':2,'v':-1}]`
+2. Mostrá len
+",
+    starter_code: "# resultado = len([{'id': 1, 'v': 10}, {'id': 2, 'v': -1}])
+# print(resultado)
+",
+    pytest: "def test_pipe_load(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 2
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "2",
+    solution_example: "resultado = len([{'id': 1, 'v': 10}, {'id': 2, 'v': -1}])
+print(resultado)
+",
+    next: Some("py-2376-pipe-filter"), show_type_chips: false, micro_step: 2375,
+};
+pub const PY2376_PIPE_FILTER: CodingStep = CodingStep {
+    id: "py-2376-pipe-filter", title: "pipe · filter", objective: "Filtrar registros válidos.",
+    prompt_md: "**Filter rows**
+
+Descartar v<=0 en pipeline.
+
+**Micro-reto:**
+1. rows=[{'v':1},{'v':-1},{'v':2}]
+2. `resultado = [r for r in rows if r['v']>0]`
+3. Mostrá len
+",
+    starter_code: "# rows = [{'v': 1}, {'v': -1}, {'v': 2}]
+# resultado = len([r for r in rows if r['v'] > 0])
+# print(resultado)
+",
+    pytest: "def test_pipe_filter(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 2
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "2",
+    solution_example: "rows = [{'v': 1}, {'v': -1}, {'v': 2}]
+resultado = len([r for r in rows if r['v'] > 0])
+print(resultado)
+",
+    next: Some("py-2377-pipe-group"), show_type_chips: false, micro_step: 2376,
+};
+pub const PY2377_PIPE_GROUP: CodingStep = CodingStep {
+    id: "py-2377-pipe-group", title: "pipe · group", objective: "Agregar por clave en pipeline.",
+    prompt_md: "**Group aggregate**
+
+Counter suma valores por cat.
+
+**Micro-reto:**
+1. rows=[('a',1),('a',2),('b',3)]
+2. d=defaultdict(int); acumular
+3. `resultado = dict(d)`
+",
+    starter_code: "# from collections import defaultdict
+# rows = [('a', 1), ('a', 2), ('b', 3)]
+# d = defaultdict(int)
+# for k, v in rows:
+#     d[k] += v
+# resultado = dict(d)
+# print(resultado)
+",
+    pytest: "def test_pipe_group(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == {'a': 3, 'b': 3}
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "{'a': 3, 'b': 3}",
+    solution_example: "from collections import defaultdict
+rows = [('a', 1), ('a', 2), ('b', 3)]
+d = defaultdict(int)
+for k, v in rows:
+    d[k] += v
+resultado = dict(d)
+print(resultado)
+",
+    next: Some("py-2378-pipe-map"), show_type_chips: false, micro_step: 2377,
+};
+pub const PY2378_PIPE_MAP: CodingStep = CodingStep {
+    id: "py-2378-pipe-map", title: "pipe · map", objective: "Transformar valores agregados.",
+    prompt_md: "**Map transform**
+
+Double tras aggregate.
+
+**Micro-reto:**
+1. totals={'a':3,'b':1}
+2. `resultado = {k: v*2 for k,v in totals.items()}`
+3. Mostrá
+",
+    starter_code: "# totals = {'a': 3, 'b': 1}
+# resultado = {k: v * 2 for k, v in totals.items()}
+# print(resultado)
+",
+    pytest: "def test_pipe_map(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == {'a': 6, 'b': 2}
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "{'a': 6, 'b': 2}",
+    solution_example: "totals = {'a': 3, 'b': 1}
+resultado = {k: v * 2 for k, v in totals.items()}
+print(resultado)
+",
+    next: Some("py-2379-pipe-chain"), show_type_chips: false, micro_step: 2378,
+};
+pub const PY2379_PIPE_CHAIN: CodingStep = CodingStep {
+    id: "py-2379-pipe-chain", title: "pipe · chain", objective: "Encadenar etapas ETL.",
+    prompt_md: "**Chain pipeline**
+
+filter→group→map en memoria.
+
+**Micro-reto:**
+1. rows=[('a',1),('a',-1),('b',2)]
+2. Positivos, sum, double
+3. `resultado = {k:v*2 for k,v in totals}`
+",
+    starter_code: "# rows = [('a', 1), ('a', -1), ('b', 2)]
+# pos = [(k, v) for k, v in rows if v > 0]
+# totals = {}
+# for k, v in pos:
+#     totals[k] = totals.get(k, 0) + v
+# resultado = {k: v * 2 for k, v in totals.items()}
+# print(resultado)
+",
+    pytest: "def test_pipe_chain(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == {'a': 2, 'b': 4}
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "{'a': 2, 'b': 4}",
+    solution_example: "rows = [('a', 1), ('a', -1), ('b', 2)]
+pos = [(k, v) for k, v in rows if v > 0]
+totals = {}
+for k, v in pos:
+    totals[k] = totals.get(k, 0) + v
+resultado = {k: v * 2 for k, v in totals.items()}
+print(resultado)
+",
+    next: Some("py-2380-pipe-check"), show_type_chips: false, micro_step: 2379,
+};
+pub const PY2380_PIPE_CHECK: CodingStep = CodingStep {
+    id: "py-2380-pipe-check", title: "pipe · Suite", objective: "Cerrar ola: pipeline agregación completo.",
+    prompt_md: "**Suite pipe**
+
+ETL: filter v>0, sum, total.
+
+**Micro-reto:**
+1. rows=[2,-1,1,3]
+2. `resultado = sum(x for x in rows if x>0)`
+3. Mostrá
+",
+    starter_code: "# rows = [2, -1, 1, 3]
+# resultado = sum(x for x in rows if x > 0)
+# print(resultado)
+",
+    pytest: "def test_pipe_check(capsys):
+    ns = {}
+    exec(open('solution.py', encoding='utf-8').read(), ns)
+    assert ns['resultado'] == 6
+    assert capsys.readouterr().out.strip() == str(ns['resultado'])
+",
+    hint: "6",
+    solution_example: "rows = [2, -1, 1, 3]
+resultado = sum(x for x in rows if x > 0)
+print(resultado)
+",
+    next: None, show_type_chips: false, micro_step: 2380,
+};
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
     &PY02_INTRO,
@@ -57660,6 +59591,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2318_ETL_GROUP,
     &PY2319_ETL_CHAIN,
     &PY2320_ETL_CHECK,
+    &PY2321_CTR_BASIC,
+    &PY2322_CTR_UPDATE,
+    &PY2323_CTR_COMMON,
+    &PY2324_CTR_ELEMENTS,
+    &PY2325_CTR_SUBTRACT,
+    &PY2326_CTR_CHECK,
+    &PY2327_DD_INT,
+    &PY2328_DD_LIST,
+    &PY2329_DD_GROUP,
+    &PY2330_DD_SET,
+    &PY2331_DD_MISSING,
+    &PY2332_DD_CHECK,
+    &PY2333_DQ_QUEUE,
+    &PY2334_DQ_ROTATE,
+    &PY2335_DQ_MAXLEN,
+    &PY2336_DQ_BFS,
+    &PY2337_DQ_STACK,
+    &PY2338_DQ_CHECK,
+    &PY2339_NT_POINT,
+    &PY2340_NT_REPLACE,
+    &PY2341_NT_ASDICT,
+    &PY2342_NT_FIELDS,
+    &PY2343_NT_UNPACK,
+    &PY2344_NT_CHECK,
+    &PY2345_CM_LOOKUP,
+    &PY2346_CM_FALLBACK,
+    &PY2347_CM_CHILD,
+    &PY2348_CM_MAPS,
+    &PY2349_CM_SHADOW,
+    &PY2350_CM_CHECK,
+    &PY2351_UD_SUBCLASS,
+    &PY2352_UD_DEFAULT,
+    &PY2353_UL_EXTEND,
+    &PY2354_UL_APPEND,
+    &PY2355_UD_WRAP,
+    &PY2356_UD_CHECK,
+    &PY2357_AGG_GROUP,
+    &PY2358_AGG_SUM,
+    &PY2359_AGG_PIVOT,
+    &PY2360_AGG_COUNT,
+    &PY2361_AGG_AVG,
+    &PY2362_AGG_CHECK,
+    &PY2363_INV_LEVELS,
+    &PY2364_INV_LOW,
+    &PY2365_INV_REORDER,
+    &PY2366_INV_VALUE,
+    &PY2367_INV_LOOKUP,
+    &PY2368_INV_CHECK,
+    &PY2369_TOPK_COMMON,
+    &PY2370_TOPK_WORDS,
+    &PY2371_TOPK_TIE,
+    &PY2372_TOPK_FILTER,
+    &PY2373_TOPK_K,
+    &PY2374_TOPK_CHECK,
+    &PY2375_PIPE_LOAD,
+    &PY2376_PIPE_FILTER,
+    &PY2377_PIPE_GROUP,
+    &PY2378_PIPE_MAP,
+    &PY2379_PIPE_CHAIN,
+    &PY2380_PIPE_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -57827,7 +59818,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 2320);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2380);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -61027,7 +63018,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 2320 is the end of the rail");
+                assert_eq!(step.next, Some("py-2321-ctr-basic"), "step 2320 chains to wave23");
+            }
+        }
+    }
+
+    #[test]
+    fn py2321_to_py2380_collections_chain() {
+        let bridge = coding_step_by_micro_step(2320).expect("py-2320");
+        assert_eq!(bridge.next, Some("py-2321-ctr-basic"));
+
+        for n in 2321..=2380 {
+            let step = coding_step_by_micro_step(n).expect("wave23 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 2380 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 2380 is the end of the rail");
             }
         }
     }
