@@ -53535,9 +53535,609 @@ pub const PY2140_CL_CHECK: CodingStep = CodingStep {
     pytest: "def test_cl_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "(True, 1)",
     solution_example: "class Gate:\n    def __init__(self):\n        self.closed = False\n        self.closes = 0\n    def close(self):\n        if not self.closed:\n            self.closed = True\n            self.closes += 1\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.close()\n        return False\ng = Gate()\nwith g:\n    pass\ng.close()\nresultado = (g.closed, g.closes)\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 2140,
+    next: Some("py-2141-try-basic"), show_type_chips: false, micro_step: 2140,
 };
 
+
+pub const PY2141_TRY_BASIC: CodingStep = CodingStep {
+    id: "py-2141-try-basic", title: "try · except básico", objective: "Capturar ZeroDivisionError.",
+    prompt_md: "**try/except**\n\n`try` ejecuta; si falla, `except` captura y continúa. Flujo de control, no magia.\n\n**Micro-reto:**\n1. `try: x = 1/0` excepto `ZeroDivisionError: x = -1`\n2. `resultado = x`\n3. Mostrá\n",
+    starter_code: "# try:\n#     x = 1 / 0\n# except ZeroDivisionError:\n#     x = -1\n# resultado = x\n# print(resultado)\n",
+    pytest: "def test_try_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == -1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "except → -1",
+    solution_example: "try:\n    x = 1 / 0\nexcept ZeroDivisionError:\n    x = -1\nresultado = x\nprint(resultado)\n",
+    next: Some("py-2142-try-as"), show_type_chips: false, micro_step: 2141,
+};
+
+pub const PY2142_TRY_AS: CodingStep = CodingStep {
+    id: "py-2142-try-as", title: "try · except as", objective: "Leer el mensaje de la excepción.",
+    prompt_md: "**except as**\n\n`except Exc as e` enlaza la instancia. El mensaje vive en `str(e)` o `e.args`.\n\n**Micro-reto:**\n1. `raise ValueError('bad')` en try\n2. Capturá `as e`; `resultado = str(e)`\n3. Mostrá\n",
+    starter_code: "# try:\n#     raise ValueError('bad')\n# except ValueError as e:\n#     resultado = str(e)\n# print(resultado)\n",
+    pytest: "def test_try_as(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'bad'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "str(e) == 'bad'",
+    solution_example: "try:\n    raise ValueError('bad')\nexcept ValueError as e:\n    resultado = str(e)\nprint(resultado)\n",
+    next: Some("py-2143-try-else"), show_type_chips: false, micro_step: 2142,
+};
+
+pub const PY2143_TRY_ELSE: CodingStep = CodingStep {
+    id: "py-2143-try-else", title: "try · else", objective: "else corre si no hubo excepción.",
+    prompt_md: "**else**\n\n`else` del try solo corre si el bloque no lanzó. Útil para el camino feliz limpio.\n\n**Micro-reto:**\n1. try `n = int('7')` excepto ValueError `n = 0` else `tag = 'ok'`\n2. `resultado = (n, tag)`\n3. Mostrá\n",
+    starter_code: "# try:\n#     n = int('7')\n# except ValueError:\n#     n = 0\n#     tag = 'err'\n# else:\n#     tag = 'ok'\n# resultado = (n, tag)\n# print(resultado)\n",
+    pytest: "def test_try_else(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (7, 'ok')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(7, 'ok')",
+    solution_example: "try:\n    n = int('7')\nexcept ValueError:\n    n = 0\n    tag = 'err'\nelse:\n    tag = 'ok'\nresultado = (n, tag)\nprint(resultado)\n",
+    next: Some("py-2144-try-finally"), show_type_chips: false, micro_step: 2143,
+};
+
+pub const PY2144_TRY_FINALLY: CodingStep = CodingStep {
+    id: "py-2144-try-finally", title: "try · finally", objective: "finally siempre ejecuta.",
+    prompt_md: "**finally**\n\n`finally` corre con o sin error: cleanup garantizado del bloque.\n\n**Micro-reto:**\n1. `log = []`; try append `'t'` finally append `'f'`\n2. `resultado = log`\n3. Mostrá\n",
+    starter_code: "# log = []\n# try:\n#     log.append('t')\n# finally:\n#     log.append('f')\n# resultado = log\n# print(resultado)\n",
+    pytest: "def test_try_finally(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['t', 'f']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['t', 'f']",
+    solution_example: "log = []\ntry:\n    log.append('t')\nfinally:\n    log.append('f')\nresultado = log\nprint(resultado)\n",
+    next: Some("py-2145-try-order"), show_type_chips: false, micro_step: 2144,
+};
+
+pub const PY2145_TRY_ORDER: CodingStep = CodingStep {
+    id: "py-2145-try-order", title: "try · orden completo", objective: "Trazar try/except/else/finally.",
+    prompt_md: "**Orden**\n\nCon error: try → except → finally (sin else). El orden define el contrato.\n\n**Micro-reto:**\n1. log en try (raise), except, else, finally\n2. `resultado = log`\n3. Mostrá\n",
+    starter_code: "# log = []\n# try:\n#     log.append('t')\n#     raise RuntimeError\n# except RuntimeError:\n#     log.append('e')\n# else:\n#     log.append('ok')\n# finally:\n#     log.append('f')\n# resultado = log\n# print(resultado)\n",
+    pytest: "def test_try_order(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['t', 'e', 'f']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "t e f — sin else",
+    solution_example: "log = []\ntry:\n    log.append('t')\n    raise RuntimeError\nexcept RuntimeError:\n    log.append('e')\nelse:\n    log.append('ok')\nfinally:\n    log.append('f')\nresultado = log\nprint(resultado)\n",
+    next: Some("py-2146-try-check"), show_type_chips: false, micro_step: 2145,
+};
+
+pub const PY2146_TRY_CHECK: CodingStep = CodingStep {
+    id: "py-2146-try-check", title: "try · Suite flujo", objective: "Integrar else + finally sin error.",
+    prompt_md: "**Suite try**\n\nCamino feliz: try → else → finally.\n\n**Micro-reto:**\n1. log try/else/finally sin raise\n2. `resultado = log`\n3. Mostrá\n",
+    starter_code: "# log = []\n# try:\n#     log.append('t')\n# except Exception:\n#     log.append('e')\n# else:\n#     log.append('ok')\n# finally:\n#     log.append('f')\n# resultado = log\n# print(resultado)\n",
+    pytest: "def test_try_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['t', 'ok', 'f']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "t ok f",
+    solution_example: "log = []\ntry:\n    log.append('t')\nexcept Exception:\n    log.append('e')\nelse:\n    log.append('ok')\nfinally:\n    log.append('f')\nresultado = log\nprint(resultado)\n",
+    next: Some("py-2147-hier-base"), show_type_chips: false, micro_step: 2146,
+};
+
+pub const PY2147_HIER_BASE: CodingStep = CodingStep {
+    id: "py-2147-hier-base", title: "jerarquía · Exception", objective: "Subclase custom de Exception.",
+    prompt_md: "**Custom**\n\nLas excepciones de dominio heredan de `Exception`. Tipan el fallo.\n\n**Micro-reto:**\n1. `class AppError(Exception): pass`\n2. `resultado = issubclass(AppError, Exception)`\n3. Mostrá\n",
+    starter_code: "# class AppError(Exception):\n#     pass\n# resultado = issubclass(AppError, Exception)\n# print(resultado)\n",
+    pytest: "def test_hier_base(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "issubclass True",
+    solution_example: "class AppError(Exception):\n    pass\nresultado = issubclass(AppError, Exception)\nprint(resultado)\n",
+    next: Some("py-2148-hier-sub"), show_type_chips: false, micro_step: 2147,
+};
+
+pub const PY2148_HIER_SUB: CodingStep = CodingStep {
+    id: "py-2148-hier-sub", title: "jerarquía · subclase", objective: "Derivar de error de dominio.",
+    prompt_md: "**Subclase**\n\n`NotFound` hereda de `AppError`. La jerarquía modela taxonomía de fallos.\n\n**Micro-reto:**\n1. AppError + `class NotFound(AppError): pass`\n2. `resultado = issubclass(NotFound, AppError)`\n3. Mostrá\n",
+    starter_code: "# class AppError(Exception):\n#     pass\n# class NotFound(AppError):\n#     pass\n# resultado = issubclass(NotFound, AppError)\n# print(resultado)\n",
+    pytest: "def test_hier_sub(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "NotFound ⊂ AppError",
+    solution_example: "class AppError(Exception):\n    pass\nclass NotFound(AppError):\n    pass\nresultado = issubclass(NotFound, AppError)\nprint(resultado)\n",
+    next: Some("py-2149-hier-catch"), show_type_chips: false, micro_step: 2148,
+};
+
+pub const PY2149_HIER_CATCH: CodingStep = CodingStep {
+    id: "py-2149-hier-catch", title: "jerarquía · catch base", objective: "Capturar base atrapa derivadas.",
+    prompt_md: "**Catch base**\n\n`except AppError` captura `NotFound`. Polimorfismo de error.\n\n**Micro-reto:**\n1. raise NotFound('x'); except AppError as e\n2. `resultado = type(e).__name__`\n3. Mostrá\n",
+    starter_code: "# class AppError(Exception):\n#     pass\n# class NotFound(AppError):\n#     pass\n# try:\n#     raise NotFound('x')\n# except AppError as e:\n#     resultado = type(e).__name__\n# print(resultado)\n",
+    pytest: "def test_hier_catch(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'NotFound'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'NotFound'",
+    solution_example: "class AppError(Exception):\n    pass\nclass NotFound(AppError):\n    pass\ntry:\n    raise NotFound('x')\nexcept AppError as e:\n    resultado = type(e).__name__\nprint(resultado)\n",
+    next: Some("py-2150-hier-args"), show_type_chips: false, micro_step: 2149,
+};
+
+pub const PY2150_HIER_ARGS: CodingStep = CodingStep {
+    id: "py-2150-hier-args", title: "jerarquía · args", objective: "Usar e.args en custom.",
+    prompt_md: "**args**\n\n`Exception('a', 1)` guarda tupla en `.args`. Contrato de payload.\n\n**Micro-reto:**\n1. `raise AppError('miss', 404)`\n2. except AppError as e; `resultado = e.args`\n3. Mostrá\n",
+    starter_code: "# class AppError(Exception):\n#     pass\n# try:\n#     raise AppError('miss', 404)\n# except AppError as e:\n#     resultado = e.args\n# print(resultado)\n",
+    pytest: "def test_hier_args(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('miss', 404)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('miss', 404)",
+    solution_example: "class AppError(Exception):\n    pass\ntry:\n    raise AppError('miss', 404)\nexcept AppError as e:\n    resultado = e.args\nprint(resultado)\n",
+    next: Some("py-2151-hier-isinstance"), show_type_chips: false, micro_step: 2150,
+};
+
+pub const PY2151_HIER_ISINSTANCE: CodingStep = CodingStep {
+    id: "py-2151-hier-isinstance", title: "jerarquía · isinstance", objective: "Clasificar error con isinstance.",
+    prompt_md: "**isinstance**\n\nTras capturar `Exception`, discriminá con `isinstance(e, NotFound)`.\n\n**Micro-reto:**\n1. raise NotFound; except Exception as e\n2. `resultado = isinstance(e, NotFound)`\n3. Mostrá\n",
+    starter_code: "# class AppError(Exception):\n#     pass\n# class NotFound(AppError):\n#     pass\n# try:\n#     raise NotFound()\n# except Exception as e:\n#     resultado = isinstance(e, NotFound)\n# print(resultado)\n",
+    pytest: "def test_hier_isinstance(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "True",
+    solution_example: "class AppError(Exception):\n    pass\nclass NotFound(AppError):\n    pass\ntry:\n    raise NotFound()\nexcept Exception as e:\n    resultado = isinstance(e, NotFound)\nprint(resultado)\n",
+    next: Some("py-2152-hier-check"), show_type_chips: false, micro_step: 2151,
+};
+
+pub const PY2152_HIER_CHECK: CodingStep = CodingStep {
+    id: "py-2152-hier-check", title: "jerarquía · Suite", objective: "Cerrar: catch base + args.",
+    prompt_md: "**Suite jerarquía**\n\nRaise NotFound('gone'); catch AppError; devolver args.\n\n**Micro-reto:**\n1. Jerarquía AppError/NotFound\n2. `resultado = e.args`\n3. Mostrá\n",
+    starter_code: "# class AppError(Exception):\n#     pass\n# class NotFound(AppError):\n#     pass\n# try:\n#     raise NotFound('gone')\n# except AppError as e:\n#     resultado = e.args\n# print(resultado)\n",
+    pytest: "def test_hier_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('gone',)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('gone',)",
+    solution_example: "class AppError(Exception):\n    pass\nclass NotFound(AppError):\n    pass\ntry:\n    raise NotFound('gone')\nexcept AppError as e:\n    resultado = e.args\nprint(resultado)\n",
+    next: Some("py-2153-eafp-lbyl-key"), show_type_chips: false, micro_step: 2152,
+};
+
+pub const PY2153_EAFP_LBYL_KEY: CodingStep = CodingStep {
+    id: "py-2153-eafp-lbyl-key", title: "LBYL · clave", objective: "Chequear clave antes de acceder.",
+    prompt_md: "**LBYL**\n\nLook Before You Leap: `if k in d` antes de indexar. Explícito y defensivo.\n\n**Micro-reto:**\n1. `d = {'a': 1}`; `k = 'a'`\n2. `resultado = d[k] if k in d else 0`\n3. Mostrá\n",
+    starter_code: "# d = {'a': 1}\n# k = 'a'\n# resultado = d[k] if k in d else 0\n# print(resultado)\n",
+    pytest: "def test_eafp_lbyl_key(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1",
+    solution_example: "d = {'a': 1}\nk = 'a'\nresultado = d[k] if k in d else 0\nprint(resultado)\n",
+    next: Some("py-2154-eafp-key"), show_type_chips: false, micro_step: 2153,
+};
+
+pub const PY2154_EAFP_KEY: CodingStep = CodingStep {
+    id: "py-2154-eafp-key", title: "EAFP · KeyError", objective: "Pedir perdón: try KeyError.",
+    prompt_md: "**EAFP**\n\nEasier to Ask Forgiveness: intentá `d[k]` y capturá `KeyError`. Idiomático en Python.\n\n**Micro-reto:**\n1. `d={}`; try `d['a']` excepto KeyError → 0\n2. `resultado = v`\n3. Mostrá\n",
+    starter_code: "# d = {}\n# try:\n#     v = d['a']\n# except KeyError:\n#     v = 0\n# resultado = v\n# print(resultado)\n",
+    pytest: "def test_eafp_key(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "0",
+    solution_example: "d = {}\ntry:\n    v = d['a']\nexcept KeyError:\n    v = 0\nresultado = v\nprint(resultado)\n",
+    next: Some("py-2155-eafp-lbyl-attr"), show_type_chips: false, micro_step: 2154,
+};
+
+pub const PY2155_EAFP_LBYL_ATTR: CodingStep = CodingStep {
+    id: "py-2155-eafp-lbyl-attr", title: "LBYL · hasattr", objective: "Probar atributo con hasattr.",
+    prompt_md: "**hasattr**\n\nLBYL sobre objetos: `hasattr(obj, 'x')` antes de leer.\n\n**Micro-reto:**\n1. `o = type('O', (), {'x': 3})()`\n2. `resultado = o.x if hasattr(o, 'x') else 0`\n3. Mostrá\n",
+    starter_code: "# o = type('O', (), {'x': 3})()\n# resultado = o.x if hasattr(o, 'x') else 0\n# print(resultado)\n",
+    pytest: "def test_eafp_lbyl_attr(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3",
+    solution_example: "o = type('O', (), {'x': 3})()\nresultado = o.x if hasattr(o, 'x') else 0\nprint(resultado)\n",
+    next: Some("py-2156-eafp-attr"), show_type_chips: false, micro_step: 2155,
+};
+
+pub const PY2156_EAFP_ATTR: CodingStep = CodingStep {
+    id: "py-2156-eafp-attr", title: "EAFP · AttributeError", objective: "getattr vía try/except.",
+    prompt_md: "**AttributeError**\n\nEAFP: leé `obj.y` y capturá AttributeError → default.\n\n**Micro-reto:**\n1. `o = object()`\n2. try `o.y` excepto AttributeError → -1\n3. `resultado = v`; mostrá\n",
+    starter_code: "# o = object()\n# try:\n#     v = o.y\n# except AttributeError:\n#     v = -1\n# resultado = v\n# print(resultado)\n",
+    pytest: "def test_eafp_attr(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == -1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "-1",
+    solution_example: "o = object()\ntry:\n    v = o.y\nexcept AttributeError:\n    v = -1\nresultado = v\nprint(resultado)\n",
+    next: Some("py-2157-eafp-parse"), show_type_chips: false, micro_step: 2156,
+};
+
+pub const PY2157_EAFP_PARSE: CodingStep = CodingStep {
+    id: "py-2157-eafp-parse", title: "EAFP · parse int", objective: "Parsear con try ValueError.",
+    prompt_md: "**Parse**\n\nDominio típico: `int(s)` con EAFP; inválido → None.\n\n**Micro-reto:**\n1. `def parse(s):` try int excepto ValueError None\n2. `resultado = (parse('9'), parse('x'))`\n3. Mostrá\n",
+    starter_code: "# def parse(s):\n#     try:\n#         return int(s)\n#     except ValueError:\n#         return None\n# resultado = (parse('9'), parse('x'))\n# print(resultado)\n",
+    pytest: "def test_eafp_parse(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (9, None)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(9, None)",
+    solution_example: "def parse(s):\n    try:\n        return int(s)\n    except ValueError:\n        return None\nresultado = (parse('9'), parse('x'))\nprint(resultado)\n",
+    next: Some("py-2158-eafp-check"), show_type_chips: false, micro_step: 2157,
+};
+
+pub const PY2158_EAFP_CHECK: CodingStep = CodingStep {
+    id: "py-2158-eafp-check", title: "EAFP · Suite estilos", objective: "Comparar LBYL vs EAFP mismo dict.",
+    prompt_md: "**Suite EAFP**\n\nMisma lectura: LBYL `in` y EAFP KeyError → mismos valores.\n\n**Micro-reto:**\n1. `d={'k':2}`; LBYL y EAFP para 'k' y 'z'\n2. `resultado = (lbyl_k, eafp_z)`\n3. Mostrá\n",
+    starter_code: "# d = {'k': 2}\n# lbyl_k = d['k'] if 'k' in d else 0\n# try:\n#     eafp_z = d['z']\n# except KeyError:\n#     eafp_z = 0\n# resultado = (lbyl_k, eafp_z)\n# print(resultado)\n",
+    pytest: "def test_eafp_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 0)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(2, 0)",
+    solution_example: "d = {'k': 2}\nlbyl_k = d['k'] if 'k' in d else 0\ntry:\n    eafp_z = d['z']\nexcept KeyError:\n    eafp_z = 0\nresultado = (lbyl_k, eafp_z)\nprint(resultado)\n",
+    next: Some("py-2159-multi-tuple"), show_type_chips: false, micro_step: 2158,
+};
+
+pub const PY2159_MULTI_TUPLE: CodingStep = CodingStep {
+    id: "py-2159-multi-tuple", title: "multi · tupla except", objective: "Un except con varias clases.",
+    prompt_md: "**Tupla**\n\n`except (TypeError, ValueError)` agrupa handlers equivalentes.\n\n**Micro-reto:**\n1. try `int(None)` excepto (TypeError, ValueError) → 'x'\n2. `resultado = tag`\n3. Mostrá\n",
+    starter_code: "# try:\n#     int(None)\n#     tag = 'ok'\n# except (TypeError, ValueError):\n#     tag = 'x'\n# resultado = tag\n# print(resultado)\n",
+    pytest: "def test_multi_tuple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'x'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'x'",
+    solution_example: "try:\n    int(None)\n    tag = 'ok'\nexcept (TypeError, ValueError):\n    tag = 'x'\nresultado = tag\nprint(resultado)\n",
+    next: Some("py-2160-multi-handlers"), show_type_chips: false, micro_step: 2159,
+};
+
+pub const PY2160_MULTI_HANDLERS: CodingStep = CodingStep {
+    id: "py-2160-multi-handlers", title: "multi · handlers", objective: "Dos except distintos.",
+    prompt_md: "**Handlers**\n\nOrden importa: el primer match gana. Tipá caminos separados.\n\n**Micro-reto:**\n1. raise ValueError; except TypeError 't' except ValueError 'v'\n2. `resultado = tag`\n3. Mostrá\n",
+    starter_code: "# try:\n#     raise ValueError\n# except TypeError:\n#     tag = 't'\n# except ValueError:\n#     tag = 'v'\n# resultado = tag\n# print(resultado)\n",
+    pytest: "def test_multi_handlers(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'v'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'v'",
+    solution_example: "try:\n    raise ValueError\nexcept TypeError:\n    tag = 't'\nexcept ValueError:\n    tag = 'v'\nresultado = tag\nprint(resultado)\n",
+    next: Some("py-2161-multi-from"), show_type_chips: false, micro_step: 2160,
+};
+
+pub const PY2161_MULTI_FROM: CodingStep = CodingStep {
+    id: "py-2161-multi-from", title: "multi · raise from", objective: "Encadenar causa con raise from.",
+    prompt_md: "**raise from**\n\n`raise New from e` preserva `__cause__`. Trazabilidad LEGB-local del handler.\n\n**Micro-reto:**\n1. except ValueError as e: raise RuntimeError('wrap') from e\n2. Capturá RuntimeError; `resultado = type(err.__cause__).__name__`\n3. Mostrá\n",
+    starter_code: "# try:\n#     try:\n#         raise ValueError('src')\n#     except ValueError as e:\n#         raise RuntimeError('wrap') from e\n# except RuntimeError as err:\n#     resultado = type(err.__cause__).__name__\n# print(resultado)\n",
+    pytest: "def test_multi_from(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ValueError'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'ValueError'",
+    solution_example: "try:\n    try:\n        raise ValueError('src')\n    except ValueError as e:\n        raise RuntimeError('wrap') from e\nexcept RuntimeError as err:\n    resultado = type(err.__cause__).__name__\nprint(resultado)\n",
+    next: Some("py-2162-multi-reraise"), show_type_chips: false, micro_step: 2161,
+};
+
+pub const PY2162_MULTI_RERAISE: CodingStep = CodingStep {
+    id: "py-2162-multi-reraise", title: "multi · bare raise", objective: "Re-lanzar con raise solo.",
+    prompt_md: "**bare raise**\n\nTras loguear, `raise` sin args re-lanza la excepción activa del except (scope local).\n\n**Micro-reto:**\n1. except ValueError: flags.append('seen'); raise\n2. Capturá afuera; `resultado = (flags, type(e).__name__)`\n3. Mostrá\n",
+    starter_code: "# flags = []\n# try:\n#     try:\n#         raise ValueError('z')\n#     except ValueError:\n#         flags.append('seen')\n#         raise\n# except ValueError as e:\n#     resultado = (flags, type(e).__name__)\n# print(resultado)\n",
+    pytest: "def test_multi_reraise(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (['seen'], 'ValueError')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(['seen'], 'ValueError')",
+    solution_example: "flags = []\ntry:\n    try:\n        raise ValueError('z')\n    except ValueError:\n        flags.append('seen')\n        raise\nexcept ValueError as e:\n    resultado = (flags, type(e).__name__)\nprint(resultado)\n",
+    next: Some("py-2163-multi-scope"), show_type_chips: false, micro_step: 2162,
+};
+
+pub const PY2163_MULTI_SCOPE: CodingStep = CodingStep {
+    id: "py-2163-multi-scope", title: "multi · scope e", objective: "e no sobrevive fuera del except.",
+    prompt_md: "**Scope e**\n\nEl nombre `e` del except es local al handler (LEGB). Fuera no existe (o quedó unbound).\n\n**Micro-reto:**\n1. except ValueError as e: msg = str(e)\n2. `resultado = msg` (no uses e afuera)\n3. Mostrá\n",
+    starter_code: "# try:\n#     raise ValueError('in')\n# except ValueError as e:\n#     msg = str(e)\n# resultado = msg\n# print(resultado)\n",
+    pytest: "def test_multi_scope(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'in'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'in'",
+    solution_example: "try:\n    raise ValueError('in')\nexcept ValueError as e:\n    msg = str(e)\nresultado = msg\nprint(resultado)\n",
+    next: Some("py-2164-multi-check"), show_type_chips: false, micro_step: 2163,
+};
+
+pub const PY2164_MULTI_CHECK: CodingStep = CodingStep {
+    id: "py-2164-multi-check", title: "multi · Suite from", objective: "Suite: wrap + __cause__.",
+    prompt_md: "**Suite multi**\n\nValueError → RuntimeError from e; devolver (name, cause).\n\n**Micro-reto:**\n1. Encadená con raise from\n2. `resultado = (type(err).__name__, type(err.__cause__).__name__)`\n3. Mostrá\n",
+    starter_code: "# try:\n#     try:\n#         raise ValueError('a')\n#     except ValueError as e:\n#         raise RuntimeError('b') from e\n# except RuntimeError as err:\n#     resultado = (type(err).__name__, type(err.__cause__).__name__)\n# print(resultado)\n",
+    pytest: "def test_multi_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('RuntimeError', 'ValueError')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('RuntimeError', 'ValueError')",
+    solution_example: "try:\n    try:\n        raise ValueError('a')\n    except ValueError as e:\n        raise RuntimeError('b') from e\nexcept RuntimeError as err:\n    resultado = (type(err).__name__, type(err.__cause__).__name__)\nprint(resultado)\n",
+    next: Some("py-2165-ctx-exit"), show_type_chips: false, micro_step: 2164,
+};
+
+pub const PY2165_CTX_EXIT: CodingStep = CodingStep {
+    id: "py-2165-ctx-exit", title: "ctx · exit en fallo", objective: "Cleanup aunque falle el body.",
+    prompt_md: "**Cleanup**\n\n`with` llama `__exit__` aunque el body lance. Contrato de recurso.\n\n**Micro-reto:**\n1. Box open True/False; raise dentro; capturá\n2. `resultado = b.open`\n3. Mostrá\n",
+    starter_code: "# class Box:\n#     def __init__(self):\n#         self.open = False\n#     def __enter__(self):\n#         self.open = True\n#         return self\n#     def __exit__(self, *a):\n#         self.open = False\n#         return False\n# b = Box()\n# try:\n#     with b:\n#         raise RuntimeError\n# except RuntimeError:\n#     pass\n# resultado = b.open\n# print(resultado)\n",
+    pytest: "def test_ctx_exit(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "False",
+    solution_example: "class Box:\n    def __init__(self):\n        self.open = False\n    def __enter__(self):\n        self.open = True\n        return self\n    def __exit__(self, *a):\n        self.open = False\n        return False\nb = Box()\ntry:\n    with b:\n        raise RuntimeError\nexcept RuntimeError:\n    pass\nresultado = b.open\nprint(resultado)\n",
+    next: Some("py-2166-ctx-exc-type"), show_type_chips: false, micro_step: 2165,
+};
+
+pub const PY2166_CTX_EXC_TYPE: CodingStep = CodingStep {
+    id: "py-2166-ctx-exc-type", title: "ctx · exc_type", objective: "Ver el tipo en __exit__.",
+    prompt_md: "**exc_type**\n\n`__exit__(self, exc_type, ...)` recibe la clase si hubo error. Ecosystem del protocolo CM.\n\n**Micro-reto:**\n1. Log.__exit__ guarda exc_type.__name__ si hay\n2. raise ValueError en with; capturá\n3. `resultado = log.seen`; mostrá\n",
+    starter_code: "# class Log:\n#     def __init__(self):\n#         self.seen = None\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, exc_type, *a):\n#         self.seen = exc_type.__name__ if exc_type else None\n#         return False\n# log = Log()\n# try:\n#     with log:\n#         raise ValueError\n# except ValueError:\n#     pass\n# resultado = log.seen\n# print(resultado)\n",
+    pytest: "def test_ctx_exc_type(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ValueError'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'ValueError'",
+    solution_example: "class Log:\n    def __init__(self):\n        self.seen = None\n    def __enter__(self):\n        return self\n    def __exit__(self, exc_type, *a):\n        self.seen = exc_type.__name__ if exc_type else None\n        return False\nlog = Log()\ntry:\n    with log:\n        raise ValueError\nexcept ValueError:\n    pass\nresultado = log.seen\nprint(resultado)\n",
+    next: Some("py-2167-ctx-suppress"), show_type_chips: false, micro_step: 2166,
+};
+
+pub const PY2167_CTX_SUPPRESS: CodingStep = CodingStep {
+    id: "py-2167-ctx-suppress", title: "ctx · suppress", objective: "Tragar error con suppress.",
+    prompt_md: "**suppress**\n\n`contextlib.suppress(ValueError)` traga esa excepción. Best-effort del ecosystem stdlib.\n\n**Micro-reto:**\n1. `n=0`; with suppress(ValueError): n=int('x')\n2. `resultado = n`\n3. Mostrá\n",
+    starter_code: "# from contextlib import suppress\n# n = 0\n# with suppress(ValueError):\n#     n = int('x')\n# resultado = n\n# print(resultado)\n",
+    pytest: "def test_ctx_suppress(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "0",
+    solution_example: "from contextlib import suppress\nn = 0\nwith suppress(ValueError):\n    n = int('x')\nresultado = n\nprint(resultado)\n",
+    next: Some("py-2168-ctx-swallow"), show_type_chips: false, micro_step: 2167,
+};
+
+pub const PY2168_CTX_SWALLOW: CodingStep = CodingStep {
+    id: "py-2168-ctx-swallow", title: "ctx · swallow True", objective: "__exit__ True suprime el error.",
+    prompt_md: "**return True**\n\nSi `__exit__` retorna True, la excepción no propaga. Usar con cuidado.\n\n**Micro-reto:**\n1. Guard.__exit__ return True\n2. with raise RuntimeError (sin except afuera)\n3. `resultado = 'ok'`; mostrá\n",
+    starter_code: "# class Guard:\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         return True\n# with Guard():\n#     raise RuntimeError('x')\n# resultado = 'ok'\n# print(resultado)\n",
+    pytest: "def test_ctx_swallow(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'ok'",
+    solution_example: "class Guard:\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        return True\nwith Guard():\n    raise RuntimeError('x')\nresultado = 'ok'\nprint(resultado)\n",
+    next: Some("py-2169-ctx-closing"), show_type_chips: false, micro_step: 2168,
+};
+
+pub const PY2169_CTX_CLOSING: CodingStep = CodingStep {
+    id: "py-2169-ctx-closing", title: "ctx · flag closed", objective: "Cerrar recurso tras error.",
+    prompt_md: "**closed**\n\nPatrón ecosystem: flag `closed` tras exit aunque falle el body.\n\n**Micro-reto:**\n1. R.close en exit; raise en with; capturá\n2. `resultado = r.closed`\n3. Mostrá\n",
+    starter_code: "# class R:\n#     def __init__(self):\n#         self.closed = False\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         self.closed = True\n#         return False\n# r = R()\n# try:\n#     with r:\n#         raise ValueError\n# except ValueError:\n#     pass\n# resultado = r.closed\n# print(resultado)\n",
+    pytest: "def test_ctx_closing(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "True",
+    solution_example: "class R:\n    def __init__(self):\n        self.closed = False\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.closed = True\n        return False\nr = R()\ntry:\n    with r:\n        raise ValueError\nexcept ValueError:\n    pass\nresultado = r.closed\nprint(resultado)\n",
+    next: Some("py-2170-ctx-check"), show_type_chips: false, micro_step: 2169,
+};
+
+pub const PY2170_CTX_CHECK: CodingStep = CodingStep {
+    id: "py-2170-ctx-check", title: "ctx · Suite cleanup", objective: "Suite: exc_type + closed.",
+    prompt_md: "**Suite ctx**\n\nRegistrar exc_type y cerrar. `resultado = (seen, closed)`.\n\n**Micro-reto:**\n1. CM guarda name + closed\n2. raise TypeError; capturá\n3. Mostrá tupla\n",
+    starter_code: "# class CM:\n#     def __init__(self):\n#         self.seen = None\n#         self.closed = False\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, exc_type, *a):\n#         self.seen = exc_type.__name__ if exc_type else None\n#         self.closed = True\n#         return False\n# cm = CM()\n# try:\n#     with cm:\n#         raise TypeError\n# except TypeError:\n#     pass\n# resultado = (cm.seen, cm.closed)\n# print(resultado)\n",
+    pytest: "def test_ctx_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('TypeError', True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('TypeError', True)",
+    solution_example: "class CM:\n    def __init__(self):\n        self.seen = None\n        self.closed = False\n    def __enter__(self):\n        return self\n    def __exit__(self, exc_type, *a):\n        self.seen = exc_type.__name__ if exc_type else None\n        self.closed = True\n        return False\ncm = CM()\ntry:\n    with cm:\n        raise TypeError\nexcept TypeError:\n    pass\nresultado = (cm.seen, cm.closed)\nprint(resultado)\n",
+    next: Some("py-2171-res-ok"), show_type_chips: false, micro_step: 2170,
+};
+
+pub const PY2171_RES_OK: CodingStep = CodingStep {
+    id: "py-2171-res-ok", title: "Result · Ok", objective: "Tupla ('ok', valor).",
+    prompt_md: "**Ok**\n\nResult manual: `('ok', v)` sin libs. Modelo de datos explícito.\n\n**Micro-reto:**\n1. `def ok(v): return ('ok', v)`\n2. `resultado = ok(5)`\n3. Mostrá\n",
+    starter_code: "# def ok(v):\n#     return ('ok', v)\n# resultado = ok(5)\n# print(resultado)\n",
+    pytest: "def test_res_ok(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ok', 5)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('ok', 5)",
+    solution_example: "def ok(v):\n    return ('ok', v)\nresultado = ok(5)\nprint(resultado)\n",
+    next: Some("py-2172-res-err"), show_type_chips: false, micro_step: 2171,
+};
+
+pub const PY2172_RES_ERR: CodingStep = CodingStep {
+    id: "py-2172-res-err", title: "Result · Err", objective: "Tupla ('err', motivo).",
+    prompt_md: "**Err**\n\n`('err', msg)` representa fallo sin excepción. Paradigmas de retorno tipado.\n\n**Micro-reto:**\n1. `def err(m): return ('err', m)`\n2. `resultado = err('no')`\n3. Mostrá\n",
+    starter_code: "# def err(m):\n#     return ('err', m)\n# resultado = err('no')\n# print(resultado)\n",
+    pytest: "def test_res_err(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('err', 'no')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('err', 'no')",
+    solution_example: "def err(m):\n    return ('err', m)\nresultado = err('no')\nprint(resultado)\n",
+    next: Some("py-2173-res-map"), show_type_chips: false, micro_step: 2172,
+};
+
+pub const PY2173_RES_MAP: CodingStep = CodingStep {
+    id: "py-2173-res-map", title: "Result · map", objective: "Mapear solo si Ok.",
+    prompt_md: "**map**\n\nSi tag ok, transformá valor; si err, propagá igual.\n\n**Micro-reto:**\n1. `def rmap(r, f):` ...\n2. `resultado = (rmap(('ok', 2), lambda x: x*3), rmap(('err', 'e'), lambda x: x))`\n3. Mostrá\n",
+    starter_code: "# def rmap(r, f):\n#     tag, v = r\n#     return (tag, f(v)) if tag == 'ok' else r\n# resultado = (rmap(('ok', 2), lambda x: x * 3), rmap(('err', 'e'), lambda x: x))\n# print(resultado)\n",
+    pytest: "def test_res_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (('ok', 6), ('err', 'e'))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(('ok', 6), ('err', 'e'))",
+    solution_example: "def rmap(r, f):\n    tag, v = r\n    return (tag, f(v)) if tag == 'ok' else r\nresultado = (rmap(('ok', 2), lambda x: x * 3), rmap(('err', 'e'), lambda x: x))\nprint(resultado)\n",
+    next: Some("py-2174-res-unwrap"), show_type_chips: false, micro_step: 2173,
+};
+
+pub const PY2174_RES_UNWRAP: CodingStep = CodingStep {
+    id: "py-2174-res-unwrap", title: "Result · unwrap_or", objective: "Default si Err.",
+    prompt_md: "**unwrap_or**\n\nExtraé valor Ok o usá default. API de Result sin panics.\n\n**Micro-reto:**\n1. `def unwrap_or(r, d):`\n2. `resultado = (unwrap_or(('ok', 1), 0), unwrap_or(('err', 'x'), 0))`\n3. Mostrá\n",
+    starter_code: "# def unwrap_or(r, d):\n#     return r[1] if r[0] == 'ok' else d\n# resultado = (unwrap_or(('ok', 1), 0), unwrap_or(('err', 'x'), 0))\n# print(resultado)\n",
+    pytest: "def test_res_unwrap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 0)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(1, 0)",
+    solution_example: "def unwrap_or(r, d):\n    return r[1] if r[0] == 'ok' else d\nresultado = (unwrap_or(('ok', 1), 0), unwrap_or(('err', 'x'), 0))\nprint(resultado)\n",
+    next: Some("py-2175-res-andthen"), show_type_chips: false, micro_step: 2174,
+};
+
+pub const PY2175_RES_ANDTHEN: CodingStep = CodingStep {
+    id: "py-2175-res-andthen", title: "Result · and_then", objective: "Encadenar funciones que devuelven Result.",
+    prompt_md: "**and_then**\n\nSi Ok, aplicá `f(v)` que devuelve Result; si Err, corto.\n\n**Micro-reto:**\n1. `def and_then(r, f):`\n2. half solo pares; `resultado = (and_then(('ok', 4), half), and_then(('ok', 3), half))`\n3. Mostrá\n",
+    starter_code: "# def and_then(r, f):\n#     return f(r[1]) if r[0] == 'ok' else r\n# def half(n):\n#     return ('ok', n // 2) if n % 2 == 0 else ('err', 'odd')\n# resultado = (and_then(('ok', 4), half), and_then(('ok', 3), half))\n# print(resultado)\n",
+    pytest: "def test_res_andthen(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (('ok', 2), ('err', 'odd'))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(('ok', 2), ('err', 'odd'))",
+    solution_example: "def and_then(r, f):\n    return f(r[1]) if r[0] == 'ok' else r\ndef half(n):\n    return ('ok', n // 2) if n % 2 == 0 else ('err', 'odd')\nresultado = (and_then(('ok', 4), half), and_then(('ok', 3), half))\nprint(resultado)\n",
+    next: Some("py-2176-res-check"), show_type_chips: false, micro_step: 2175,
+};
+
+pub const PY2176_RES_CHECK: CodingStep = CodingStep {
+    id: "py-2176-res-check", title: "Result · Suite", objective: "Suite Ok/Err/unwrap_or.",
+    prompt_md: "**Suite Result**\n\nparse: dígitos → ok int; else err. unwrap_or 0.\n\n**Micro-reto:**\n1. `parse` + unwrap_or\n2. `resultado = (unwrap_or(parse('8'), 0), unwrap_or(parse('z'), 0))`\n3. Mostrá\n",
+    starter_code: "# def parse(s):\n#     return ('ok', int(s)) if s.isdigit() else ('err', 'bad')\n# def unwrap_or(r, d):\n#     return r[1] if r[0] == 'ok' else d\n# resultado = (unwrap_or(parse('8'), 0), unwrap_or(parse('z'), 0))\n# print(resultado)\n",
+    pytest: "def test_res_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (8, 0)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(8, 0)",
+    solution_example: "def parse(s):\n    return ('ok', int(s)) if s.isdigit() else ('err', 'bad')\ndef unwrap_or(r, d):\n    return r[1] if r[0] == 'ok' else d\nresultado = (unwrap_or(parse('8'), 0), unwrap_or(parse('z'), 0))\nprint(resultado)\n",
+    next: Some("py-2177-val-pos"), show_type_chips: false, micro_step: 2176,
+};
+
+pub const PY2177_VAL_POS: CodingStep = CodingStep {
+    id: "py-2177-val-pos", title: "valid · positivo", objective: "Exigir n > 0 con ValueError.",
+    prompt_md: "**Positivo**\n\nContrato de entrada: `n > 0` o ValueError. Dominio + modelo.\n\n**Micro-reto:**\n1. `def pos(n):` raise si n<=0; return n\n2. `resultado = pos(3)`\n3. Mostrá\n",
+    starter_code: "# def pos(n):\n#     if n <= 0:\n#         raise ValueError('n')\n#     return n\n# resultado = pos(3)\n# print(resultado)\n",
+    pytest: "def test_val_pos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3",
+    solution_example: "def pos(n):\n    if n <= 0:\n        raise ValueError('n')\n    return n\nresultado = pos(3)\nprint(resultado)\n",
+    next: Some("py-2178-val-empty"), show_type_chips: false, micro_step: 2177,
+};
+
+pub const PY2178_VAL_EMPTY: CodingStep = CodingStep {
+    id: "py-2178-val-empty", title: "valid · no vacío", objective: "Rechazar string vacío.",
+    prompt_md: "**No vacío**\n\n`s` strip no vacío; si no, ValueError('empty').\n\n**Micro-reto:**\n1. `def need(s):` ...\n2. try need('  '); except ValueError as e: resultado=str(e)\n3. Mostrá\n",
+    starter_code: "# def need(s):\n#     if not s.strip():\n#         raise ValueError('empty')\n#     return s\n# try:\n#     need('  ')\n# except ValueError as e:\n#     resultado = str(e)\n# print(resultado)\n",
+    pytest: "def test_val_empty(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'empty'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'empty'",
+    solution_example: "def need(s):\n    if not s.strip():\n        raise ValueError('empty')\n    return s\ntry:\n    need('  ')\nexcept ValueError as e:\n    resultado = str(e)\nprint(resultado)\n",
+    next: Some("py-2179-val-range"), show_type_chips: false, micro_step: 2178,
+};
+
+pub const PY2179_VAL_RANGE: CodingStep = CodingStep {
+    id: "py-2179-val-range", title: "valid · rango", objective: "Acotar a 0..100.",
+    prompt_md: "**Rango**\n\nNota en 0..=100. Fuera → ValueError('range').\n\n**Micro-reto:**\n1. `def nota(n):` ...\n2. try nota(150); except → str(e)\n3. `resultado`; mostrá\n",
+    starter_code: "# def nota(n):\n#     if not 0 <= n <= 100:\n#         raise ValueError('range')\n#     return n\n# try:\n#     nota(150)\n# except ValueError as e:\n#     resultado = str(e)\n# print(resultado)\n",
+    pytest: "def test_val_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'range'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'range'",
+    solution_example: "def nota(n):\n    if not 0 <= n <= 100:\n        raise ValueError('range')\n    return n\ntry:\n    nota(150)\nexcept ValueError as e:\n    resultado = str(e)\nprint(resultado)\n",
+    next: Some("py-2180-val-parse"), show_type_chips: false, micro_step: 2179,
+};
+
+pub const PY2180_VAL_PARSE: CodingStep = CodingStep {
+    id: "py-2180-val-parse", title: "valid · parse estricto", objective: "int + rango en un contrato.",
+    prompt_md: "**Parse estricto**\n\nDominio: string dígitos y valor en 1..10.\n\n**Micro-reto:**\n1. `def level(s):` int; si no 1..10 ValueError\n2. `resultado = level('4')`\n3. Mostrá\n",
+    starter_code: "# def level(s):\n#     n = int(s)\n#     if not 1 <= n <= 10:\n#         raise ValueError('level')\n#     return n\n# resultado = level('4')\n# print(resultado)\n",
+    pytest: "def test_val_parse(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "4",
+    solution_example: "def level(s):\n    n = int(s)\n    if not 1 <= n <= 10:\n        raise ValueError('level')\n    return n\nresultado = level('4')\nprint(resultado)\n",
+    next: Some("py-2181-val-age"), show_type_chips: false, micro_step: 2180,
+};
+
+pub const PY2181_VAL_AGE: CodingStep = CodingStep {
+    id: "py-2181-val-age", title: "valid · edad", objective: "Contrato edad >= 0.",
+    prompt_md: "**Edad**\n\nModelo de usuario: edad negativa es inválida.\n\n**Micro-reto:**\n1. `def age(n):` raise ValueError('age') si n<0\n2. try age(-1); resultado=str(e)\n3. Mostrá\n",
+    starter_code: "# def age(n):\n#     if n < 0:\n#         raise ValueError('age')\n#     return n\n# try:\n#     age(-1)\n# except ValueError as e:\n#     resultado = str(e)\n# print(resultado)\n",
+    pytest: "def test_val_age(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'age'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'age'",
+    solution_example: "def age(n):\n    if n < 0:\n        raise ValueError('age')\n    return n\ntry:\n    age(-1)\nexcept ValueError as e:\n    resultado = str(e)\nprint(resultado)\n",
+    next: Some("py-2182-val-check"), show_type_chips: false, micro_step: 2181,
+};
+
+pub const PY2182_VAL_CHECK: CodingStep = CodingStep {
+    id: "py-2182-val-check", title: "valid · Suite contratos", objective: "Suite: pos + nota válidos.",
+    prompt_md: "**Suite valid**\n\n`pos(2)` y `nota(80)` OK → tupla.\n\n**Micro-reto:**\n1. Reutilizá pos y nota (0..100)\n2. `resultado = (pos(2), nota(80))`\n3. Mostrá\n",
+    starter_code: "# def pos(n):\n#     if n <= 0:\n#         raise ValueError('n')\n#     return n\n# def nota(n):\n#     if not 0 <= n <= 100:\n#         raise ValueError('range')\n#     return n\n# resultado = (pos(2), nota(80))\n# print(resultado)\n",
+    pytest: "def test_val_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 80)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(2, 80)",
+    solution_example: "def pos(n):\n    if n <= 0:\n        raise ValueError('n')\n    return n\ndef nota(n):\n    if not 0 <= n <= 100:\n        raise ValueError('range')\n    return n\nresultado = (pos(2), nota(80))\nprint(resultado)\n",
+    next: Some("py-2183-agg-fast"), show_type_chips: false, micro_step: 2182,
+};
+
+pub const PY2183_AGG_FAST: CodingStep = CodingStep {
+    id: "py-2183-agg-fast", title: "agg · fail-fast", objective: "Abortar en el primer error.",
+    prompt_md: "**Fail-fast**\n\nAl primer inválido, raise. No seguís procesando.\n\n**Micro-reto:**\n1. `def first(xs):` for x: si x<0 raise ValueError(x); return sum\n2. try first([1,-2,3]); resultado=str(e)\n3. Mostrá\n",
+    starter_code: "# def first(xs):\n#     total = 0\n#     for x in xs:\n#         if x < 0:\n#             raise ValueError(x)\n#         total += x\n#     return total\n# try:\n#     first([1, -2, 3])\n# except ValueError as e:\n#     resultado = str(e)\n# print(resultado)\n",
+    pytest: "def test_agg_fast(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '-2'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'-2'",
+    solution_example: "def first(xs):\n    total = 0\n    for x in xs:\n        if x < 0:\n            raise ValueError(x)\n        total += x\n    return total\ntry:\n    first([1, -2, 3])\nexcept ValueError as e:\n    resultado = str(e)\nprint(resultado)\n",
+    next: Some("py-2184-agg-collect"), show_type_chips: false, micro_step: 2183,
+};
+
+pub const PY2184_AGG_COLLECT: CodingStep = CodingStep {
+    id: "py-2184-agg-collect", title: "agg · colectar", objective: "Acumular todos los errores.",
+    prompt_md: "**Colectar**\n\nNo fallés al primero: juntá mensajes y reportá al final.\n\n**Micro-reto:**\n1. `errs=[];` for x in [1,-2,-3]: if x<0: errs.append(str(x))\n2. `resultado = errs`\n3. Mostrá\n",
+    starter_code: "# errs = []\n# for x in [1, -2, -3]:\n#     if x < 0:\n#         errs.append(str(x))\n# resultado = errs\n# print(resultado)\n",
+    pytest: "def test_agg_collect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['-2', '-3']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['-2', '-3']",
+    solution_example: "errs = []\nfor x in [1, -2, -3]:\n    if x < 0:\n        errs.append(str(x))\nresultado = errs\nprint(resultado)\n",
+    next: Some("py-2185-agg-partial"), show_type_chips: false, micro_step: 2184,
+};
+
+pub const PY2185_AGG_PARTIAL: CodingStep = CodingStep {
+    id: "py-2185-agg-partial", title: "agg · parcial", objective: "Separar válidos e inválidos.",
+    prompt_md: "**Parcial**\n\nDominio batch: ok_list + err_list en paralelo.\n\n**Micro-reto:**\n1. ok=[], err=[] sobre [2,-1,4]\n2. `resultado = (ok, err)`\n3. Mostrá\n",
+    starter_code: "# ok, err = [], []\n# for x in [2, -1, 4]:\n#     (ok if x >= 0 else err).append(x)\n# resultado = (ok, err)\n# print(resultado)\n",
+    pytest: "def test_agg_partial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([2, 4], [-1])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "([2, 4], [-1])",
+    solution_example: "ok, err = [], []\nfor x in [2, -1, 4]:\n    (ok if x >= 0 else err).append(x)\nresultado = (ok, err)\nprint(resultado)\n",
+    next: Some("py-2186-agg-join"), show_type_chips: false, micro_step: 2185,
+};
+
+pub const PY2186_AGG_JOIN: CodingStep = CodingStep {
+    id: "py-2186-agg-join", title: "agg · join errores", objective: "Unir mensajes con ';'.",
+    prompt_md: "**Join**\n\nReporte de validación: `';join(errs)` si hay fallos.\n\n**Micro-reto:**\n1. errs=['a','b']; `resultado = ';'.join(errs)`\n2. Mostrá\n",
+    starter_code: "# errs = ['a', 'b']\n# resultado = ';'.join(errs)\n# print(resultado)\n",
+    pytest: "def test_agg_join(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'a;b'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'a;b'",
+    solution_example: "errs = ['a', 'b']\nresultado = ';'.join(errs)\nprint(resultado)\n",
+    next: Some("py-2187-agg-batch"), show_type_chips: false, micro_step: 2186,
+};
+
+pub const PY2187_AGG_BATCH: CodingStep = CodingStep {
+    id: "py-2187-agg-batch", title: "agg · batch validate", objective: "validate_all o raise agregado.",
+    prompt_md: "**Batch**\n\nSi errs: raise ValueError(join). Si no: return valores.\n\n**Micro-reto:**\n1. `def validate(xs):` colectá <0; raise o return xs\n2. try validate([1,-1,-2]); resultado=str(e)\n3. Mostrá\n",
+    starter_code: "# def validate(xs):\n#     errs = [str(x) for x in xs if x < 0]\n#     if errs:\n#         raise ValueError(';'.join(errs))\n#     return xs\n# try:\n#     validate([1, -1, -2])\n# except ValueError as e:\n#     resultado = str(e)\n# print(resultado)\n",
+    pytest: "def test_agg_batch(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '-1;-2'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'-1;-2'",
+    solution_example: "def validate(xs):\n    errs = [str(x) for x in xs if x < 0]\n    if errs:\n        raise ValueError(';'.join(errs))\n    return xs\ntry:\n    validate([1, -1, -2])\nexcept ValueError as e:\n    resultado = str(e)\nprint(resultado)\n",
+    next: Some("py-2188-agg-check"), show_type_chips: false, micro_step: 2187,
+};
+
+pub const PY2188_AGG_CHECK: CodingStep = CodingStep {
+    id: "py-2188-agg-check", title: "agg · Suite colectar", objective: "Suite: batch OK vs fail.",
+    prompt_md: "**Suite agg**\n\nvalidate([1,2]) OK; validate([-1]) mensaje.\n\n**Micro-reto:**\n1. Misma validate\n2. `resultado = (validate([1, 2]),)` + catch de [-1]\n3. Mostrá (ok_list, err_msg)\n",
+    starter_code: "# def validate(xs):\n#     errs = [str(x) for x in xs if x < 0]\n#     if errs:\n#         raise ValueError(';'.join(errs))\n#     return xs\n# ok = validate([1, 2])\n# try:\n#     validate([-1])\n#     msg = None\n# except ValueError as e:\n#     msg = str(e)\n# resultado = (ok, msg)\n# print(resultado)\n",
+    pytest: "def test_agg_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([1, 2], '-1')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "([1, 2], '-1')",
+    solution_example: "def validate(xs):\n    errs = [str(x) for x in xs if x < 0]\n    if errs:\n        raise ValueError(';'.join(errs))\n    return xs\nok = validate([1, 2])\ntry:\n    validate([-1])\n    msg = None\nexcept ValueError as e:\n    msg = str(e)\nresultado = (ok, msg)\nprint(resultado)\n",
+    next: Some("py-2189-retry-count"), show_type_chips: false, micro_step: 2188,
+};
+
+pub const PY2189_RETRY_COUNT: CodingStep = CodingStep {
+    id: "py-2189-retry-count", title: "retry · contador", objective: "Reintentar N veces sin sleep.",
+    prompt_md: "**Contador**\n\nRetry determinista: loop con intentos, cero `time.sleep`. Ecosystem de resiliencia simple.\n\n**Micro-reto:**\n1. `attempts=0`; while attempts<3: attempts+=1\n2. `resultado = attempts`\n3. Mostrá\n",
+    starter_code: "# attempts = 0\n# while attempts < 3:\n#     attempts += 1\n# resultado = attempts\n# print(resultado)\n",
+    pytest: "def test_retry_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3",
+    solution_example: "attempts = 0\nwhile attempts < 3:\n    attempts += 1\nresultado = attempts\nprint(resultado)\n",
+    next: Some("py-2190-retry-nth"), show_type_chips: false, micro_step: 2189,
+};
+
+pub const PY2190_RETRY_NTH: CodingStep = CodingStep {
+    id: "py-2190-retry-nth", title: "retry · éxito en N", objective: "Fallar hasta el intento 3.",
+    prompt_md: "**Éxito en N**\n\nFlaky simulado: raise si attempt < 3; luego 'ok'.\n\n**Micro-reto:**\n1. for attempt in 1..5: try...\n2. `resultado = (value, attempt)`\n3. Mostrá\n",
+    starter_code: "# value = None\n# for attempt in range(1, 6):\n#     try:\n#         if attempt < 3:\n#             raise RuntimeError('flaky')\n#         value = 'ok'\n#         break\n#     except RuntimeError:\n#         pass\n# resultado = (value, attempt)\n# print(resultado)\n",
+    pytest: "def test_retry_nth(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ok', 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('ok', 3)",
+    solution_example: "value = None\nfor attempt in range(1, 6):\n    try:\n        if attempt < 3:\n            raise RuntimeError('flaky')\n        value = 'ok'\n        break\n    except RuntimeError:\n        pass\nresultado = (value, attempt)\nprint(resultado)\n",
+    next: Some("py-2191-retry-max"), show_type_chips: false, micro_step: 2190,
+};
+
+pub const PY2191_RETRY_MAX: CodingStep = CodingStep {
+    id: "py-2191-retry-max", title: "retry · agotar", objective: "Agotar max y propagar.",
+    prompt_md: "**Max**\n\nSi nunca OK, re-lanzá el último error tras max intentos.\n\n**Micro-reto:**\n1. max_attempts=2; siempre raise\n2. except final: resultado=str(e)\n3. Mostrá\n",
+    starter_code: "# last = None\n# for attempt in range(2):\n#     try:\n#         raise RuntimeError('fail')\n#     except RuntimeError as e:\n#         last = e\n# try:\n#     raise last\n# except RuntimeError as e:\n#     resultado = str(e)\n# print(resultado)\n",
+    pytest: "def test_retry_max(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'fail'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'fail'",
+    solution_example: "last = None\nfor attempt in range(2):\n    try:\n        raise RuntimeError('fail')\n    except RuntimeError as e:\n        last = e\ntry:\n    raise last\nexcept RuntimeError as e:\n    resultado = str(e)\nprint(resultado)\n",
+    next: Some("py-2192-retry-log"), show_type_chips: false, micro_step: 2191,
+};
+
+pub const PY2192_RETRY_LOG: CodingStep = CodingStep {
+    id: "py-2192-retry-log", title: "retry · log intentos", objective: "Registrar cada intento.",
+    prompt_md: "**Log**\n\nLista `tries` append attempt number en cada fallo/éxito.\n\n**Micro-reto:**\n1. tries=[]; éxito en attempt==2\n2. `resultado = tries`\n3. Mostrá\n",
+    starter_code: "# tries = []\n# for attempt in range(1, 4):\n#     tries.append(attempt)\n#     if attempt == 2:\n#         break\n# resultado = tries\n# print(resultado)\n",
+    pytest: "def test_retry_log(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2]",
+    solution_example: "tries = []\nfor attempt in range(1, 4):\n    tries.append(attempt)\n    if attempt == 2:\n        break\nresultado = tries\nprint(resultado)\n",
+    next: Some("py-2193-retry-filter"), show_type_chips: false, micro_step: 2192,
+};
+
+pub const PY2193_RETRY_FILTER: CodingStep = CodingStep {
+    id: "py-2193-retry-filter", title: "retry · filtro exc", objective: "Reintentar solo RuntimeError.",
+    prompt_md: "**Filtro**\n\nValueError no se reintenta; RuntimeError sí. Política de ecosystem.\n\n**Micro-reto:**\n1. ops=[RuntimeError, ValueError]; contá retries solo RuntimeError\n2. `resultado = n`\n3. Mostrá\n",
+    starter_code: "# n = 0\n# for exc in (RuntimeError('a'), ValueError('b')):\n#     try:\n#         raise exc\n#     except RuntimeError:\n#         n += 1\n#     except ValueError:\n#         pass\n# resultado = n\n# print(resultado)\n",
+    pytest: "def test_retry_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1",
+    solution_example: "n = 0\nfor exc in (RuntimeError('a'), ValueError('b')):\n    try:\n        raise exc\n    except RuntimeError:\n        n += 1\n    except ValueError:\n        pass\nresultado = n\nprint(resultado)\n",
+    next: Some("py-2194-retry-check"), show_type_chips: false, micro_step: 2193,
+};
+
+pub const PY2194_RETRY_CHECK: CodingStep = CodingStep {
+    id: "py-2194-retry-check", title: "retry · Suite", objective: "Suite: flaky hasta 2.",
+    prompt_md: "**Suite retry**\n\nFunción `call(i)` falla si i<2. Loop 1..3 → ('ok', 2).\n\n**Micro-reto:**\n1. Implementá el loop\n2. `resultado = (value, attempt)`\n3. Mostrá\n",
+    starter_code: "# value = None\n# for attempt in range(1, 4):\n#     try:\n#         if attempt < 2:\n#             raise RuntimeError('x')\n#         value = 'ok'\n#         break\n#     except RuntimeError:\n#         continue\n# resultado = (value, attempt)\n# print(resultado)\n",
+    pytest: "def test_retry_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ok', 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('ok', 2)",
+    solution_example: "value = None\nfor attempt in range(1, 4):\n    try:\n        if attempt < 2:\n            raise RuntimeError('x')\n        value = 'ok'\n        break\n    except RuntimeError:\n        continue\nresultado = (value, attempt)\nprint(resultado)\n",
+    next: Some("py-2195-dom-stock"), show_type_chips: false, micro_step: 2194,
+};
+
+pub const PY2195_DOM_STOCK: CodingStep = CodingStep {
+    id: "py-2195-dom-stock", title: "dominio · StockError", objective: "Error tipado de stock.",
+    prompt_md: "**StockError**\n\nExcepción de negocio: stock insuficiente. Dominio + modelo.\n\n**Micro-reto:**\n1. `class StockError(Exception): pass`\n2. raise StockError('sku'); resultado=str(e)\n3. Mostrá\n",
+    starter_code: "# class StockError(Exception):\n#     pass\n# try:\n#     raise StockError('sku')\n# except StockError as e:\n#     resultado = str(e)\n# print(resultado)\n",
+    pytest: "def test_dom_stock(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'sku'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'sku'",
+    solution_example: "class StockError(Exception):\n    pass\ntry:\n    raise StockError('sku')\nexcept StockError as e:\n    resultado = str(e)\nprint(resultado)\n",
+    next: Some("py-2196-dom-funds"), show_type_chips: false, micro_step: 2195,
+};
+
+pub const PY2196_DOM_FUNDS: CodingStep = CodingStep {
+    id: "py-2196-dom-funds", title: "dominio · FundsError", objective: "Saldo insuficiente tipado.",
+    prompt_md: "**FundsError**\n\n`withdraw` lanza si amount > balance.\n\n**Micro-reto:**\n1. class FundsError; def withdraw(bal, amt)\n2. try withdraw(10, 20); resultado=type(e).__name__\n3. Mostrá\n",
+    starter_code: "# class FundsError(Exception):\n#     pass\n# def withdraw(bal, amt):\n#     if amt > bal:\n#         raise FundsError('nsf')\n#     return bal - amt\n# try:\n#     withdraw(10, 20)\n# except FundsError as e:\n#     resultado = type(e).__name__\n# print(resultado)\n",
+    pytest: "def test_dom_funds(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'FundsError'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'FundsError'",
+    solution_example: "class FundsError(Exception):\n    pass\ndef withdraw(bal, amt):\n    if amt > bal:\n        raise FundsError('nsf')\n    return bal - amt\ntry:\n    withdraw(10, 20)\nexcept FundsError as e:\n    resultado = type(e).__name__\nprint(resultado)\n",
+    next: Some("py-2197-dom-code"), show_type_chips: false, micro_step: 2196,
+};
+
+pub const PY2197_DOM_CODE: CodingStep = CodingStep {
+    id: "py-2197-dom-code", title: "dominio · code attr", objective: "Atributo code en el error.",
+    prompt_md: "**code**\n\nErrores tipados llevan `code` para APIs. Modelo de datos del fallo.\n\n**Micro-reto:**\n1. `class DomError(Exception):` def __init__(self, code): self.code=code\n2. raise DomError(409); resultado=e.code\n3. Mostrá\n",
+    starter_code: "# class DomError(Exception):\n#     def __init__(self, code):\n#         self.code = code\n# try:\n#     raise DomError(409)\n# except DomError as e:\n#     resultado = e.code\n# print(resultado)\n",
+    pytest: "def test_dom_code(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 409\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "409",
+    solution_example: "class DomError(Exception):\n    def __init__(self, code):\n        self.code = code\ntry:\n    raise DomError(409)\nexcept DomError as e:\n    resultado = e.code\nprint(resultado)\n",
+    next: Some("py-2198-dom-map"), show_type_chips: false, micro_step: 2197,
+};
+
+pub const PY2198_DOM_MAP: CodingStep = CodingStep {
+    id: "py-2198-dom-map", title: "dominio · map mensaje", objective: "Mapear error a mensaje UX.",
+    prompt_md: "**Map**\n\n`StockError` → `'sin stock'`. Capa de presentación del dominio.\n\n**Micro-reto:**\n1. try raise StockError; except → msg\n2. `resultado = msg`\n3. Mostrá\n",
+    starter_code: "# class StockError(Exception):\n#     pass\n# try:\n#     raise StockError()\n# except StockError:\n#     msg = 'sin stock'\n# resultado = msg\n# print(resultado)\n",
+    pytest: "def test_dom_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'sin stock'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'sin stock'",
+    solution_example: "class StockError(Exception):\n    pass\ntry:\n    raise StockError()\nexcept StockError:\n    msg = 'sin stock'\nresultado = msg\nprint(resultado)\n",
+    next: Some("py-2199-dom-svc"), show_type_chips: false, micro_step: 2198,
+};
+
+pub const PY2199_DOM_SVC: CodingStep = CodingStep {
+    id: "py-2199-dom-svc", title: "dominio · service", objective: "Servicio captura y traduce.",
+    prompt_md: "**Service**\n\n`buy(stock, n)` lanza StockError; caller devuelve ('err', code) o ('ok', left).\n\n**Micro-reto:**\n1. Implementá buy + handler\n2. `resultado = (buy_safe(0, 1), buy_safe(5, 2))`\n3. Mostrá\n",
+    starter_code: "# class StockError(Exception):\n#     pass\n# def buy(stock, n):\n#     if n > stock:\n#         raise StockError('stock')\n#     return stock - n\n# def buy_safe(stock, n):\n#     try:\n#         return ('ok', buy(stock, n))\n#     except StockError as e:\n#         return ('err', str(e))\n# resultado = (buy_safe(0, 1), buy_safe(5, 2))\n# print(resultado)\n",
+    pytest: "def test_dom_svc(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (('err', 'stock'), ('ok', 3))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(('err', 'stock'), ('ok', 3))",
+    solution_example: "class StockError(Exception):\n    pass\ndef buy(stock, n):\n    if n > stock:\n        raise StockError('stock')\n    return stock - n\ndef buy_safe(stock, n):\n    try:\n        return ('ok', buy(stock, n))\n    except StockError as e:\n        return ('err', str(e))\nresultado = (buy_safe(0, 1), buy_safe(5, 2))\nprint(resultado)\n",
+    next: Some("py-2200-dom-check"), show_type_chips: false, micro_step: 2199,
+};
+
+pub const PY2200_DOM_CHECK: CodingStep = CodingStep {
+    id: "py-2200-dom-check", title: "dominio · Suite contratos", objective: "Cerrar ola: FundsError code.",
+    prompt_md: "**Suite dominio**\n\nFundsError con code 402; withdraw falla → code.\n\n**Micro-reto:**\n1. class FundsError con code\n2. withdraw insuficiente\n3. `resultado = e.code`; mostrá\n",
+    starter_code: "# class FundsError(Exception):\n#     def __init__(self, code):\n#         self.code = code\n# def withdraw(bal, amt):\n#     if amt > bal:\n#         raise FundsError(402)\n#     return bal - amt\n# try:\n#     withdraw(1, 5)\n# except FundsError as e:\n#     resultado = e.code\n# print(resultado)\n",
+    pytest: "def test_dom_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 402\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "402",
+    solution_example: "class FundsError(Exception):\n    def __init__(self, code):\n        self.code = code\ndef withdraw(bal, amt):\n    if amt > bal:\n        raise FundsError(402)\n    return bal - amt\ntry:\n    withdraw(1, 5)\nexcept FundsError as e:\n    resultado = e.code\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 2200,
+};
 
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -55680,6 +56280,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2138_CL_EXC,
     &PY2139_CL_STATE,
     &PY2140_CL_CHECK,
+    &PY2141_TRY_BASIC,
+    &PY2142_TRY_AS,
+    &PY2143_TRY_ELSE,
+    &PY2144_TRY_FINALLY,
+    &PY2145_TRY_ORDER,
+    &PY2146_TRY_CHECK,
+    &PY2147_HIER_BASE,
+    &PY2148_HIER_SUB,
+    &PY2149_HIER_CATCH,
+    &PY2150_HIER_ARGS,
+    &PY2151_HIER_ISINSTANCE,
+    &PY2152_HIER_CHECK,
+    &PY2153_EAFP_LBYL_KEY,
+    &PY2154_EAFP_KEY,
+    &PY2155_EAFP_LBYL_ATTR,
+    &PY2156_EAFP_ATTR,
+    &PY2157_EAFP_PARSE,
+    &PY2158_EAFP_CHECK,
+    &PY2159_MULTI_TUPLE,
+    &PY2160_MULTI_HANDLERS,
+    &PY2161_MULTI_FROM,
+    &PY2162_MULTI_RERAISE,
+    &PY2163_MULTI_SCOPE,
+    &PY2164_MULTI_CHECK,
+    &PY2165_CTX_EXIT,
+    &PY2166_CTX_EXC_TYPE,
+    &PY2167_CTX_SUPPRESS,
+    &PY2168_CTX_SWALLOW,
+    &PY2169_CTX_CLOSING,
+    &PY2170_CTX_CHECK,
+    &PY2171_RES_OK,
+    &PY2172_RES_ERR,
+    &PY2173_RES_MAP,
+    &PY2174_RES_UNWRAP,
+    &PY2175_RES_ANDTHEN,
+    &PY2176_RES_CHECK,
+    &PY2177_VAL_POS,
+    &PY2178_VAL_EMPTY,
+    &PY2179_VAL_RANGE,
+    &PY2180_VAL_PARSE,
+    &PY2181_VAL_AGE,
+    &PY2182_VAL_CHECK,
+    &PY2183_AGG_FAST,
+    &PY2184_AGG_COLLECT,
+    &PY2185_AGG_PARTIAL,
+    &PY2186_AGG_JOIN,
+    &PY2187_AGG_BATCH,
+    &PY2188_AGG_CHECK,
+    &PY2189_RETRY_COUNT,
+    &PY2190_RETRY_NTH,
+    &PY2191_RETRY_MAX,
+    &PY2192_RETRY_LOG,
+    &PY2193_RETRY_FILTER,
+    &PY2194_RETRY_CHECK,
+    &PY2195_DOM_STOCK,
+    &PY2196_DOM_FUNDS,
+    &PY2197_DOM_CODE,
+    &PY2198_DOM_MAP,
+    &PY2199_DOM_SVC,
+    &PY2200_DOM_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -55847,7 +56507,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 2140);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2200);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -58965,7 +59625,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 2140 is the end of the rail");
+                assert_eq!(step.next, Some("py-2141-try-basic"), "step 2140 chains to wave20");
+            }
+        }
+    }
+
+    #[test]
+    fn py2141_to_py2200_excepciones_result_chain() {
+        let bridge = coding_step_by_micro_step(2140).expect("py-2140");
+        assert_eq!(bridge.next, Some("py-2141-try-basic"));
+
+        for n in 2141..=2200 {
+            let step = coding_step_by_micro_step(n).expect("wave20 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 2200 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 2200 is the end of the rail");
             }
         }
     }
