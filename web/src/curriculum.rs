@@ -52935,8 +52935,609 @@ pub const PY2080_AUD_CHECK: CodingStep = CodingStep {
     pytest: "def test_aud_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('done', True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "pack + audit_ok",
     solution_example: "import hmac, hashlib\ndef pack(body):\n    return {'body': body, 'sig': hmac.new(b'clave-fija', body.encode(), hashlib.sha256).hexdigest()}\ndef audit_ok(env):\n    expected = hmac.new(b'clave-fija', env['body'].encode(), hashlib.sha256).hexdigest()\n    return hmac.compare_digest(expected, env['sig'])\nenv = pack('done')\nresultado = (env['body'], audit_ok(env))\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 2080,
+    next: Some("py-2081-with-enter"), show_type_chips: false, micro_step: 2080,
 };
+
+pub const PY2081_WITH_ENTER: CodingStep = CodingStep {
+    id: "py-2081-with-enter", title: "with · acquire", objective: "Adquirir recurso con __enter__.",
+    prompt_md: "**with básico**\n\n`with` llama `__enter__` al entrar y `__exit__` al salir. Garantiza release del recurso aunque el cuerpo termine normal.\n\n**Micro-reto:**\n1. Clase `Box` con `open` True en enter y False en exit\n2. Dentro del with leé `inside = b.open`\n3. `resultado = (inside, b.open)`; mostrá\n",
+    starter_code: "# class Box:\n#     def __init__(self):\n#         self.open = False\n#     def __enter__(self):\n#         self.open = True\n#         return self\n#     def __exit__(self, *a):\n#         self.open = False\n#         return False\n# with Box() as b:\n#     inside = b.open\n# resultado = (inside, b.open)\n# print(resultado)\n",
+    pytest: "def test_with_enter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Dentro True, fuera False",
+    solution_example: "class Box:\n    def __init__(self):\n        self.open = False\n    def __enter__(self):\n        self.open = True\n        return self\n    def __exit__(self, *a):\n        self.open = False\n        return False\nwith Box() as b:\n    inside = b.open\nresultado = (inside, b.open)\nprint(resultado)\n",
+    next: Some("py-2082-with-as"), show_type_chips: false, micro_step: 2081,
+};
+
+pub const PY2082_WITH_AS: CodingStep = CodingStep {
+    id: "py-2082-with-as", title: "with · valor as", objective: "Usar el valor retornado por __enter__.",
+    prompt_md: "**as**\n\n`__enter__` puede devolver un token; `with X() as t` lo enlaza. El protocolo queda explícito.\n\n**Micro-reto:**\n1. `Token.__enter__` retorna `'ok'`\n2. `with Token() as t: resultado = t`\n3. Mostrá\n",
+    starter_code: "# class Token:\n#     def __enter__(self):\n#         return 'ok'\n#     def __exit__(self, *a):\n#         return False\n# with Token() as t:\n#     resultado = t\n# print(resultado)\n",
+    pytest: "def test_with_as(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "return 'ok' en __enter__",
+    solution_example: "class Token:\n    def __enter__(self):\n        return 'ok'\n    def __exit__(self, *a):\n        return False\nwith Token() as t:\n    resultado = t\nprint(resultado)\n",
+    next: Some("py-2083-with-release"), show_type_chips: false, micro_step: 2082,
+};
+
+pub const PY2083_WITH_RELEASE: CodingStep = CodingStep {
+    id: "py-2083-with-release", title: "with · release en error", objective: "Liberar aunque el cuerpo lance.",
+    prompt_md: "**Release**\n\nSi `__exit__` retorna True, suprime la excepción tras limpiar. El recurso queda cerrado.\n\n**Micro-reto:**\n1. `Res` marca `closed=True` en `__exit__` y retorna True\n2. `with r: raise RuntimeError('boom')`\n3. `resultado = r.closed`; mostrá\n",
+    starter_code: "# class Res:\n#     def __init__(self):\n#         self.closed = False\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         self.closed = True\n#         return True\n# r = Res()\n# with r:\n#     raise RuntimeError('boom')\n# resultado = r.closed\n# print(resultado)\n",
+    pytest: "def test_with_release(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "__exit__ limpia y retorna True",
+    solution_example: "class Res:\n    def __init__(self):\n        self.closed = False\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.closed = True\n        return True\nr = Res()\nwith r:\n    raise RuntimeError('boom')\nresultado = r.closed\nprint(resultado)\n",
+    next: Some("py-2084-with-seq"), show_type_chips: false, micro_step: 2083,
+};
+
+pub const PY2084_WITH_SEQ: CodingStep = CodingStep {
+    id: "py-2084-with-seq", title: "with · secuencial", objective: "Encadenar dos with uno tras otro.",
+    prompt_md: "**Secuencial**\n\nDos `with` seguidos: cada uno completa acquire/release antes del siguiente.\n\n**Micro-reto:**\n1. Clases `A`/`B` que append `a+`/`a-` y `b+`/`b-`\n2. `with A(): pass` luego `with B(): pass`\n3. `resultado = order`; mostrá\n",
+    starter_code: "# order = []\n# class A:\n#     def __enter__(self):\n#         order.append('a+')\n#         return self\n#     def __exit__(self, *a):\n#         order.append('a-')\n#         return False\n# class B:\n#     def __enter__(self):\n#         order.append('b+')\n#         return self\n#     def __exit__(self, *a):\n#         order.append('b-')\n#         return False\n# with A():\n#     pass\n# with B():\n#     pass\n# resultado = order\n# print(resultado)\n",
+    pytest: "def test_with_seq(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a+', 'a-', 'b+', 'b-']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "a+ a- b+ b-",
+    solution_example: "order = []\nclass A:\n    def __enter__(self):\n        order.append('a+')\n        return self\n    def __exit__(self, *a):\n        order.append('a-')\n        return False\nclass B:\n    def __enter__(self):\n        order.append('b+')\n        return self\n    def __exit__(self, *a):\n        order.append('b-')\n        return False\nwith A():\n    pass\nwith B():\n    pass\nresultado = order\nprint(resultado)\n",
+    next: Some("py-2085-with-bind"), show_type_chips: false, micro_step: 2084,
+};
+
+pub const PY2085_WITH_BIND: CodingStep = CodingStep {
+    id: "py-2085-with-bind", title: "with · binding útil", objective: "Operar con el objeto del as.",
+    prompt_md: "**Binding**\n\nEl nombre del `as` vive en el bloque. Usalo para calcular el resultado.\n\n**Micro-reto:**\n1. `Holder.__enter__` retorna 42\n2. `resultado = n * 2` dentro del with\n3. Mostrá\n",
+    starter_code: "# class Holder:\n#     def __enter__(self):\n#         return 42\n#     def __exit__(self, *a):\n#         return False\n# with Holder() as n:\n#     resultado = n * 2\n# print(resultado)\n",
+    pytest: "def test_with_bind(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 84\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "42 * 2",
+    solution_example: "class Holder:\n    def __enter__(self):\n        return 42\n    def __exit__(self, *a):\n        return False\nwith Holder() as n:\n    resultado = n * 2\nprint(resultado)\n",
+    next: Some("py-2086-with-check"), show_type_chips: false, micro_step: 2085,
+};
+
+pub const PY2086_WITH_CHECK: CodingStep = CodingStep {
+    id: "py-2086-with-check", title: "with · Suite acquire/release", objective: "Cerrar bloque with con Lock fake.",
+    prompt_md: "**Suite with**\n\nIntegrá acquire/release: held True adentro, False afuera.\n\n**Micro-reto:**\n1. `Lock` con `held` en enter/exit\n2. `mid = L.held` dentro\n3. `resultado = (mid, lk.held)`; mostrá\n",
+    starter_code: "# class Lock:\n#     def __init__(self):\n#         self.held = False\n#     def __enter__(self):\n#         self.held = True\n#         return self\n#     def __exit__(self, *a):\n#         self.held = False\n#         return False\n# lk = Lock()\n# with lk as L:\n#     mid = L.held\n# resultado = (mid, lk.held)\n# print(resultado)\n",
+    pytest: "def test_with_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(True, False)",
+    solution_example: "class Lock:\n    def __init__(self):\n        self.held = False\n    def __enter__(self):\n        self.held = True\n        return self\n    def __exit__(self, *a):\n        self.held = False\n        return False\nlk = Lock()\nwith lk as L:\n    mid = L.held\nresultado = (mid, lk.held)\nprint(resultado)\n",
+    next: Some("py-2087-cm-basic"), show_type_chips: false, micro_step: 2086,
+};
+
+pub const PY2087_CM_BASIC: CodingStep = CodingStep {
+    id: "py-2087-cm-basic", title: "contextmanager · yield", objective: "Crear CM con @contextmanager.",
+    prompt_md: "**@contextmanager**\n\nUn generador con un `yield` actúa de context manager: antes=setup, yield=valor, después=teardown.\n\n**Micro-reto:**\n1. `@contextmanager def tag(name): yield f'<{name}>'`\n2. `with tag('p') as t: resultado = t`\n3. Mostrá\n",
+    starter_code: "# from contextlib import contextmanager\n# @contextmanager\n# def tag(name):\n#     yield f'<{name}>'\n# with tag('p') as t:\n#     resultado = t\n# print(resultado)\n",
+    pytest: "def test_cm_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '<p>'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "yield f'<{name}>'",
+    solution_example: "from contextlib import contextmanager\n@contextmanager\ndef tag(name):\n    yield f'<{name}>'\nwith tag('p') as t:\n    resultado = t\nprint(resultado)\n",
+    next: Some("py-2088-cm-events"), show_type_chips: false, micro_step: 2087,
+};
+
+pub const PY2088_CM_EVENTS: CodingStep = CodingStep {
+    id: "py-2088-cm-events", title: "contextmanager · setup/teardown", objective: "Registrar start/body/end con generator CM.",
+    prompt_md: "**Setup/teardown**\n\nCódigo antes del yield es setup; después, teardown. Patrón stdlib sin clase.\n\n**Micro-reto:**\n1. `span(label)` append start/end alrededor del yield\n2. En el body append `'body'`\n3. `resultado = events`; mostrá\n",
+    starter_code: "# from contextlib import contextmanager\n# events = []\n# @contextmanager\n# def span(label):\n#     events.append(f'start:{label}')\n#     yield label\n#     events.append(f'end:{label}')\n# with span('x'):\n#     events.append('body')\n# resultado = events\n# print(resultado)\n",
+    pytest: "def test_cm_events(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['start:x', 'body', 'end:x']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "start, body, end",
+    solution_example: "from contextlib import contextmanager\nevents = []\n@contextmanager\ndef span(label):\n    events.append(f'start:{label}')\n    yield label\n    events.append(f'end:{label}')\nwith span('x'):\n    events.append('body')\nresultado = events\nprint(resultado)\n",
+    next: Some("py-2089-cm-yield"), show_type_chips: false, micro_step: 2088,
+};
+
+pub const PY2089_CM_YIELD: CodingStep = CodingStep {
+    id: "py-2089-cm-yield", title: "contextmanager · valor", objective: "Exponer valor calculado vía yield.",
+    prompt_md: "**Valor yield**\n\nEl valor del yield es el del `as`. Podés transformar inputs al exponer el recurso.\n\n**Micro-reto:**\n1. `counter(n)` hace `yield n + 1`\n2. `with counter(3) as v: resultado = v`\n3. Mostrá\n",
+    starter_code: "# from contextlib import contextmanager\n# @contextmanager\n# def counter(n):\n#     yield n + 1\n# with counter(3) as v:\n#     resultado = v\n# print(resultado)\n",
+    pytest: "def test_cm_yield(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3+1=4",
+    solution_example: "from contextlib import contextmanager\n@contextmanager\ndef counter(n):\n    yield n + 1\nwith counter(3) as v:\n    resultado = v\nprint(resultado)\n",
+    next: Some("py-2090-cm-finally"), show_type_chips: false, micro_step: 2089,
+};
+
+pub const PY2090_CM_FINALLY: CodingStep = CodingStep {
+    id: "py-2090-cm-finally", title: "contextmanager · finally", objective: "Garantizar teardown con try/finally.",
+    prompt_md: "**finally**\n\nEnvolvé el yield en `try/finally` para teardown aunque el body falle.\n\n**Micro-reto:**\n1. `safe()` yield + finally append `'done'`\n2. Levantá ValueError dentro (capturado fuera)\n3. `resultado = flags`; mostrá\n",
+    starter_code: "# from contextlib import contextmanager\n# flags = []\n# @contextmanager\n# def safe():\n#     try:\n#         yield\n#     finally:\n#         flags.append('done')\n# try:\n#     with safe():\n#         raise ValueError\n# except ValueError:\n#     pass\n# resultado = flags\n# print(resultado)\n",
+    pytest: "def test_cm_finally(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['done']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "finally siempre corre",
+    solution_example: "from contextlib import contextmanager\nflags = []\n@contextmanager\ndef safe():\n    try:\n        yield\n    finally:\n        flags.append('done')\ntry:\n    with safe():\n        raise ValueError\nexcept ValueError:\n    pass\nresultado = flags\nprint(resultado)\n",
+    next: Some("py-2091-cm-nest"), show_type_chips: false, micro_step: 2090,
+};
+
+pub const PY2091_CM_NEST: CodingStep = CodingStep {
+    id: "py-2091-cm-nest", title: "contextmanager · anidados", objective: "Anidar dos generator CMs (push/pop).",
+    prompt_md: "**Anidados**\n\nDos `@contextmanager` anidados: LIFO en el teardown (pop).\n\n**Micro-reto:**\n1. `push(lst, x)` append / yield / pop\n2. Anidá push 1 y 2; `mid = lst[:]`\n3. `resultado = (mid, lst)`; mostrá\n",
+    starter_code: "# from contextlib import contextmanager\n# @contextmanager\n# def push(lst, x):\n#     lst.append(x)\n#     yield lst\n#     lst.pop()\n# lst = []\n# with push(lst, 1):\n#     with push(lst, 2):\n#         mid = lst[:]\n# resultado = (mid, lst)\n# print(resultado)\n",
+    pytest: "def test_cm_nest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([1, 2], [])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "([1,2], [])",
+    solution_example: "from contextlib import contextmanager\n@contextmanager\ndef push(lst, x):\n    lst.append(x)\n    yield lst\n    lst.pop()\nlst = []\nwith push(lst, 1):\n    with push(lst, 2):\n        mid = lst[:]\nresultado = (mid, lst)\nprint(resultado)\n",
+    next: Some("py-2092-cm-check"), show_type_chips: false, micro_step: 2091,
+};
+
+pub const PY2092_CM_CHECK: CodingStep = CodingStep {
+    id: "py-2092-cm-check", title: "contextmanager · Suite gen", objective: "Cerrar bloque @contextmanager con state dict.",
+    prompt_md: "**Suite CM**\n\nGenerator CM que abre/cierra un dict de estado.\n\n**Micro-reto:**\n1. `resource()` yield `{'open': True}` y luego `open=False`\n2. `during` adentro; afuera leé `s['open']`\n3. `resultado = (during, s['open'])`; mostrá\n",
+    starter_code: "# from contextlib import contextmanager\n# @contextmanager\n# def resource():\n#     state = {'open': True}\n#     yield state\n#     state['open'] = False\n# with resource() as s:\n#     during = s['open']\n# resultado = (during, s['open'])\n# print(resultado)\n",
+    pytest: "def test_cm_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(True, False)",
+    solution_example: "from contextlib import contextmanager\n@contextmanager\ndef resource():\n    state = {'open': True}\n    yield state\n    state['open'] = False\nwith resource() as s:\n    during = s['open']\nresultado = (during, s['open'])\nprint(resultado)\n",
+    next: Some("py-2093-es-enter"), show_type_chips: false, micro_step: 2092,
+};
+
+pub const PY2093_ES_ENTER: CodingStep = CodingStep {
+    id: "py-2093-es-enter", title: "ExitStack · enter_context", objective: "Apilar dos StringIO con ExitStack.",
+    prompt_md: "**ExitStack**\n\n`ExitStack.enter_context` apila CMs dinámicamente y los cierra en LIFO al salir.\n\n**Micro-reto:**\n1. `with ExitStack() as stack:`\n2. Entrá dos `StringIO('hi')` y `StringIO('yo')`\n3. `resultado = (a.read(), b.read())`; mostrá\n",
+    starter_code: "# from contextlib import ExitStack\n# from io import StringIO\n# with ExitStack() as stack:\n#     a = stack.enter_context(StringIO('hi'))\n#     b = stack.enter_context(StringIO('yo'))\n#     resultado = (a.read(), b.read())\n# print(resultado)\n",
+    pytest: "def test_es_enter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('hi', 'yo')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('hi', 'yo')",
+    solution_example: "from contextlib import ExitStack\nfrom io import StringIO\nwith ExitStack() as stack:\n    a = stack.enter_context(StringIO('hi'))\n    b = stack.enter_context(StringIO('yo'))\n    resultado = (a.read(), b.read())\nprint(resultado)\n",
+    next: Some("py-2094-es-cb"), show_type_chips: false, micro_step: 2093,
+};
+
+pub const PY2094_ES_CB: CodingStep = CodingStep {
+    id: "py-2094-es-cb", title: "ExitStack · callback", objective: "Registrar cleanup con callback.",
+    prompt_md: "**callback**\n\n`stack.callback(fn, *args)` corre al salir (LIFO). Útil sin CM formal.\n\n**Micro-reto:**\n1. callback `log.append, 'bye'`\n2. Dentro `log.append('hi')`\n3. `resultado = log`; mostrá\n",
+    starter_code: "# from contextlib import ExitStack\n# log = []\n# with ExitStack() as stack:\n#     stack.callback(log.append, 'bye')\n#     log.append('hi')\n# resultado = log\n# print(resultado)\n",
+    pytest: "def test_es_cb(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['hi', 'bye']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['hi', 'bye']",
+    solution_example: "from contextlib import ExitStack\nlog = []\nwith ExitStack() as stack:\n    stack.callback(log.append, 'bye')\n    log.append('hi')\nresultado = log\nprint(resultado)\n",
+    next: Some("py-2095-es-dyn"), show_type_chips: false, micro_step: 2094,
+};
+
+pub const PY2095_ES_DYN: CodingStep = CodingStep {
+    id: "py-2095-es-dyn", title: "ExitStack · N recursos", objective: "Entrar N buffers dinámicos.",
+    prompt_md: "**Dinámico**\n\nLoop + `enter_context` escala a N recursos sin anidar with fijos.\n\n**Micro-reto:**\n1. Entrá `StringIO(str(i))` para i en 0..2\n2. `resultado = ''.join(x.read() for x in ios)`\n3. Mostrá\n",
+    starter_code: "# from contextlib import ExitStack\n# from io import StringIO\n# with ExitStack() as stack:\n#     ios = [stack.enter_context(StringIO(str(i))) for i in range(3)]\n#     resultado = ''.join(x.read() for x in ios)\n# print(resultado)\n",
+    pytest: "def test_es_dyn(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '012'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'012'",
+    solution_example: "from contextlib import ExitStack\nfrom io import StringIO\nwith ExitStack() as stack:\n    ios = [stack.enter_context(StringIO(str(i))) for i in range(3)]\n    resultado = ''.join(x.read() for x in ios)\nprint(resultado)\n",
+    next: Some("py-2096-es-pop"), show_type_chips: false, micro_step: 2095,
+};
+
+pub const PY2096_ES_POP: CodingStep = CodingStep {
+    id: "py-2096-es-pop", title: "ExitStack · pop_all", objective: "Transferir stack sin cerrar aún.",
+    prompt_md: "**pop_all**\n\n`pop_all()` transfiere callbacks/CMs: el stack original ya no los cierra al salir.\n\n**Micro-reto:**\n1. `Track` append 1 en `__exit__`\n2. `enter_context(Track())` luego `pop_all()`\n3. `resultado = len(closed)`; mostrá\n",
+    starter_code: "# from contextlib import ExitStack\n# closed = []\n# class Track:\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         closed.append(1)\n#         return False\n# with ExitStack() as stack:\n#     stack.enter_context(Track())\n#     stack.pop_all()\n# resultado = len(closed)\n# print(resultado)\n",
+    pytest: "def test_es_pop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "pop_all evita close aquí → 0",
+    solution_example: "from contextlib import ExitStack\nclosed = []\nclass Track:\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        closed.append(1)\n        return False\nwith ExitStack() as stack:\n    stack.enter_context(Track())\n    stack.pop_all()\nresultado = len(closed)\nprint(resultado)\n",
+    next: Some("py-2097-es-lifo"), show_type_chips: false, micro_step: 2096,
+};
+
+pub const PY2097_ES_LIFO: CodingStep = CodingStep {
+    id: "py-2097-es-lifo", title: "ExitStack · LIFO callbacks", objective: "Ver orden LIFO de callbacks.",
+    prompt_md: "**LIFO**\n\nLos callbacks de ExitStack se ejecutan en orden inverso al registro.\n\n**Micro-reto:**\n1. callback append 1 y luego 2\n2. `resultado = order` tras el with\n3. Mostrá\n",
+    starter_code: "# from contextlib import ExitStack\n# order = []\n# with ExitStack() as stack:\n#     stack.callback(order.append, 1)\n#     stack.callback(order.append, 2)\n# resultado = order\n# print(resultado)\n",
+    pytest: "def test_es_lifo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 1]",
+    solution_example: "from contextlib import ExitStack\norder = []\nwith ExitStack() as stack:\n    stack.callback(order.append, 1)\n    stack.callback(order.append, 2)\nresultado = order\nprint(resultado)\n",
+    next: Some("py-2098-es-check"), show_type_chips: false, micro_step: 2097,
+};
+
+pub const PY2098_ES_CHECK: CodingStep = CodingStep {
+    id: "py-2098-es-check", title: "ExitStack · Suite stack", objective: "Integrar enter_context + write.",
+    prompt_md: "**Suite ExitStack**\n\nStringIO vía stack, escribí y leé getvalue.\n\n**Micro-reto:**\n1. `s = stack.enter_context(StringIO())`\n2. `s.write('ok')`\n3. `resultado = s.getvalue()`; mostrá\n",
+    starter_code: "# from contextlib import ExitStack\n# from io import StringIO\n# with ExitStack() as stack:\n#     s = stack.enter_context(StringIO())\n#     s.write('ok')\n#     resultado = s.getvalue()\n# print(resultado)\n",
+    pytest: "def test_es_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ok'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "getvalue() == 'ok'",
+    solution_example: "from contextlib import ExitStack\nfrom io import StringIO\nwith ExitStack() as stack:\n    s = stack.enter_context(StringIO())\n    s.write('ok')\n    resultado = s.getvalue()\nprint(resultado)\n",
+    next: Some("py-2099-sio-write"), show_type_chips: false, micro_step: 2098,
+};
+
+pub const PY2099_SIO_WRITE: CodingStep = CodingStep {
+    id: "py-2099-sio-write", title: "StringIO · write", objective: "Escribir texto en buffer in-memory.",
+    prompt_md: "**StringIO write**\n\n`io.StringIO` es un archivo de texto en memoria. `write` + `getvalue` sin disco.\n\n**Micro-reto:**\n1. `buf = StringIO()`; `buf.write('hola')`\n2. `resultado = buf.getvalue()`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# buf = StringIO()\n# buf.write('hola')\n# resultado = buf.getvalue()\n# print(resultado)\n",
+    pytest: "def test_sio_write(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'hola'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "getvalue()",
+    solution_example: "from io import StringIO\nbuf = StringIO()\nbuf.write('hola')\nresultado = buf.getvalue()\nprint(resultado)\n",
+    next: Some("py-2100-sio-read"), show_type_chips: false, micro_step: 2099,
+};
+
+pub const PY2100_SIO_READ: CodingStep = CodingStep {
+    id: "py-2100-sio-read", title: "StringIO · read", objective: "Leer contenido inicial del buffer.",
+    prompt_md: "**read**\n\nPodés sembrar el buffer en el constructor y leerlo como stream de texto.\n\n**Micro-reto:**\n1. `StringIO('abc')`\n2. `resultado = buf.read()`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# buf = StringIO('abc')\n# resultado = buf.read()\n# print(resultado)\n",
+    pytest: "def test_sio_read(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'abc'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "read() → 'abc'",
+    solution_example: "from io import StringIO\nbuf = StringIO('abc')\nresultado = buf.read()\nprint(resultado)\n",
+    next: Some("py-2101-sio-seek"), show_type_chips: false, micro_step: 2100,
+};
+
+pub const PY2101_SIO_SEEK: CodingStep = CodingStep {
+    id: "py-2101-sio-seek", title: "StringIO · seek", objective: "Reposicionar el cursor del buffer.",
+    prompt_md: "**seek**\n\nTras leer, el cursor avanza. `seek(0)` vuelve al inicio.\n\n**Micro-reto:**\n1. Leé 1 char de `'xyz'`\n2. `seek(0)` y `read()` completo\n3. `resultado`; mostrá\n",
+    starter_code: "# from io import StringIO\n# buf = StringIO('xyz')\n# buf.read(1)\n# buf.seek(0)\n# resultado = buf.read()\n# print(resultado)\n",
+    pytest: "def test_sio_seek(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'xyz'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "seek(0) luego read",
+    solution_example: "from io import StringIO\nbuf = StringIO('xyz')\nbuf.read(1)\nbuf.seek(0)\nresultado = buf.read()\nprint(resultado)\n",
+    next: Some("py-2102-sio-over"), show_type_chips: false, micro_step: 2101,
+};
+
+pub const PY2102_SIO_OVER: CodingStep = CodingStep {
+    id: "py-2102-sio-over", title: "StringIO · overwrite", objective: "Sobrescribir desde el inicio.",
+    prompt_md: "**Overwrite**\n\n`seek(0)` + `write` pisa el inicio; el resto del buffer puede quedar.\n\n**Micro-reto:**\n1. Escribí `'12'`, `seek(0)`, escribí `'A'`\n2. `resultado = buf.getvalue()`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# buf = StringIO()\n# buf.write('12')\n# buf.seek(0)\n# buf.write('A')\n# resultado = buf.getvalue()\n# print(resultado)\n",
+    pytest: "def test_sio_over(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'A2'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'A2'",
+    solution_example: "from io import StringIO\nbuf = StringIO()\nbuf.write('12')\nbuf.seek(0)\nbuf.write('A')\nresultado = buf.getvalue()\nprint(resultado)\n",
+    next: Some("py-2103-sio-lines"), show_type_chips: false, micro_step: 2102,
+};
+
+pub const PY2103_SIO_LINES: CodingStep = CodingStep {
+    id: "py-2103-sio-lines", title: "StringIO · readlines", objective: "Leer líneas desde el buffer.",
+    prompt_md: "**readlines**\n\n`StringIO` se comporta como archivo de texto: `readlines()` conserva `\\n`.\n\n**Micro-reto:**\n1. `StringIO('a\\nb\\n')`\n2. `resultado = buf.readlines()`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# buf = StringIO('a\\nb\\n')\n# resultado = buf.readlines()\n# print(resultado)\n",
+    pytest: "def test_sio_lines(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a\\n', 'b\\n']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['a\\n', 'b\\n']",
+    solution_example: "from io import StringIO\nbuf = StringIO('a\\nb\\n')\nresultado = buf.readlines()\nprint(resultado)\n",
+    next: Some("py-2104-sio-check"), show_type_chips: false, micro_step: 2103,
+};
+
+pub const PY2104_SIO_CHECK: CodingStep = CodingStep {
+    id: "py-2104-sio-check", title: "StringIO · Suite texto", objective: "Integrar write, seek y read.",
+    prompt_md: "**Suite StringIO**\n\nEscribí, reposicioná y contrastá read vs getvalue.\n\n**Micro-reto:**\n1. write `'ppi'`; seek(0)\n2. `resultado = (buf.read(), buf.getvalue())`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# buf = StringIO()\n# buf.write('ppi')\n# buf.seek(0)\n# resultado = (buf.read(), buf.getvalue())\n# print(resultado)\n",
+    pytest: "def test_sio_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ppi', 'ppi')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('ppi', 'ppi')",
+    solution_example: "from io import StringIO\nbuf = StringIO()\nbuf.write('ppi')\nbuf.seek(0)\nresultado = (buf.read(), buf.getvalue())\nprint(resultado)\n",
+    next: Some("py-2105-bio-write"), show_type_chips: false, micro_step: 2104,
+};
+
+pub const PY2105_BIO_WRITE: CodingStep = CodingStep {
+    id: "py-2105-bio-write", title: "BytesIO · write", objective: "Escribir bytes en buffer binario.",
+    prompt_md: "**BytesIO write**\n\n`io.BytesIO` es el análogo binario in-memory. Operá con `bytes`, no str.\n\n**Micro-reto:**\n1. `buf.write(b'hi')`\n2. `resultado = buf.getvalue()`\n3. Mostrá\n",
+    starter_code: "# from io import BytesIO\n# buf = BytesIO()\n# buf.write(b'hi')\n# resultado = buf.getvalue()\n# print(resultado)\n",
+    pytest: "def test_bio_write(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == b'hi'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "b'hi'",
+    solution_example: "from io import BytesIO\nbuf = BytesIO()\nbuf.write(b'hi')\nresultado = buf.getvalue()\nprint(resultado)\n",
+    next: Some("py-2106-bio-read"), show_type_chips: false, micro_step: 2105,
+};
+
+pub const PY2106_BIO_READ: CodingStep = CodingStep {
+    id: "py-2106-bio-read", title: "BytesIO · read", objective: "Leer bytes sembrados.",
+    prompt_md: "**read binario**\n\nConstructor con bytes iniciales + `read()`.\n\n**Micro-reto:**\n1. `BytesIO(b'abc')`\n2. `resultado = buf.read()`\n3. Mostrá\n",
+    starter_code: "# from io import BytesIO\n# buf = BytesIO(b'abc')\n# resultado = buf.read()\n# print(resultado)\n",
+    pytest: "def test_bio_read(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == b'abc'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "b'abc'",
+    solution_example: "from io import BytesIO\nbuf = BytesIO(b'abc')\nresultado = buf.read()\nprint(resultado)\n",
+    next: Some("py-2107-bio-enc"), show_type_chips: false, micro_step: 2106,
+};
+
+pub const PY2107_BIO_ENC: CodingStep = CodingStep {
+    id: "py-2107-bio-enc", title: "BytesIO · encode utf-8", objective: "Cargar texto encoded en BytesIO.",
+    prompt_md: "**encode**\n\nTexto → bytes con `.encode('utf-8')` antes del buffer binario.\n\n**Micro-reto:**\n1. `BytesIO('ño'.encode('utf-8'))`\n2. `resultado = buf.getvalue()`\n3. Mostrá\n",
+    starter_code: "# from io import BytesIO\n# buf = BytesIO('ño'.encode('utf-8'))\n# resultado = buf.getvalue()\n# print(resultado)\n",
+    pytest: "def test_bio_enc(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ño'.encode('utf-8')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "encode utf-8",
+    solution_example: "from io import BytesIO\nbuf = BytesIO('ño'.encode('utf-8'))\nresultado = buf.getvalue()\nprint(resultado)\n",
+    next: Some("py-2108-bio-seek"), show_type_chips: false, micro_step: 2107,
+};
+
+pub const PY2108_BIO_SEEK: CodingStep = CodingStep {
+    id: "py-2108-bio-seek", title: "BytesIO · seek", objective: "Reposicionar cursor binario.",
+    prompt_md: "**seek binario**\n\nIgual que texto: leé un byte, `seek(0)`, releé todo.\n\n**Micro-reto:**\n1. `BytesIO(b'xyz')`; read(1); seek(0)\n2. `resultado = buf.read()`\n3. Mostrá\n",
+    starter_code: "# from io import BytesIO\n# buf = BytesIO(b'xyz')\n# buf.read(1)\n# buf.seek(0)\n# resultado = buf.read()\n# print(resultado)\n",
+    pytest: "def test_bio_seek(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == b'xyz'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "b'xyz'",
+    solution_example: "from io import BytesIO\nbuf = BytesIO(b'xyz')\nbuf.read(1)\nbuf.seek(0)\nresultado = buf.read()\nprint(resultado)\n",
+    next: Some("py-2109-bio-len"), show_type_chips: false, micro_step: 2108,
+};
+
+pub const PY2109_BIO_LEN: CodingStep = CodingStep {
+    id: "py-2109-bio-len", title: "BytesIO · longitud", objective: "Medir bytes del buffer.",
+    prompt_md: "**len**\n\n`len(getvalue())` da el tamaño en bytes del payload.\n\n**Micro-reto:**\n1. `BytesIO(b'hola')`\n2. `resultado = len(buf.getvalue())`\n3. Mostrá\n",
+    starter_code: "# from io import BytesIO\n# buf = BytesIO(b'hola')\n# resultado = len(buf.getvalue())\n# print(resultado)\n",
+    pytest: "def test_bio_len(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "len == 4",
+    solution_example: "from io import BytesIO\nbuf = BytesIO(b'hola')\nresultado = len(buf.getvalue())\nprint(resultado)\n",
+    next: Some("py-2110-bio-check"), show_type_chips: false, micro_step: 2109,
+};
+
+pub const PY2110_BIO_CHECK: CodingStep = CodingStep {
+    id: "py-2110-bio-check", title: "BytesIO · Suite binaria", objective: "Integrar write + getvalue + len.",
+    prompt_md: "**Suite BytesIO**\n\nEscribí `b'ok'` y devolvés payload y longitud.\n\n**Micro-reto:**\n1. write `b'ok'`\n2. `resultado = (getvalue(), len(...))`\n3. Mostrá\n",
+    starter_code: "# from io import BytesIO\n# buf = BytesIO()\n# buf.write(b'ok')\n# resultado = (buf.getvalue(), len(buf.getvalue()))\n# print(resultado)\n",
+    pytest: "def test_bio_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (b'ok', 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(b'ok', 2)",
+    solution_example: "from io import BytesIO\nbuf = BytesIO()\nbuf.write(b'ok')\nresultado = (buf.getvalue(), len(buf.getvalue()))\nprint(resultado)\n",
+    next: Some("py-2111-sup-basic"), show_type_chips: false, micro_step: 2110,
+};
+
+pub const PY2111_SUP_BASIC: CodingStep = CodingStep {
+    id: "py-2111-sup-basic", title: "suppress · ValueError", objective: "Ignorar ValueError con suppress.",
+    prompt_md: "**suppress**\n\n`contextlib.suppress(Exc)` traga excepciones listadas. Ideal para best-effort.\n\n**Micro-reto:**\n1. `n = 0`; `with suppress(ValueError): n = int('x')`\n2. `resultado = n`\n3. Mostrá\n",
+    starter_code: "# from contextlib import suppress\n# n = 0\n# with suppress(ValueError):\n#     n = int('x')\n# resultado = n\n# print(resultado)\n",
+    pytest: "def test_sup_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "n queda 0",
+    solution_example: "from contextlib import suppress\nn = 0\nwith suppress(ValueError):\n    n = int('x')\nresultado = n\nprint(resultado)\n",
+    next: Some("py-2112-sup-key"), show_type_chips: false, micro_step: 2111,
+};
+
+pub const PY2112_SUP_KEY: CodingStep = CodingStep {
+    id: "py-2112-sup-key", title: "suppress · KeyError", objective: "Marcar ok pese a KeyError.",
+    prompt_md: "**KeyError**\n\nsuppress solo la excepción nombrada; el resto del bloque puede haber corrido.\n\n**Micro-reto:**\n1. `ok = False`; dentro suppress KeyError: `ok=True` y `{}['a']`\n2. `resultado = ok`\n3. Mostrá\n",
+    starter_code: "# from contextlib import suppress\n# ok = False\n# with suppress(KeyError):\n#     ok = True\n#     {}['a']\n# resultado = ok\n# print(resultado)\n",
+    pytest: "def test_sup_key(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "ok True antes del KeyError",
+    solution_example: "from contextlib import suppress\nok = False\nwith suppress(KeyError):\n    ok = True\n    {}['a']\nresultado = ok\nprint(resultado)\n",
+    next: Some("py-2113-red-out"), show_type_chips: false, micro_step: 2112,
+};
+
+pub const PY2113_RED_OUT: CodingStep = CodingStep {
+    id: "py-2113-red-out", title: "redirect_stdout · captura", objective: "Redirigir print a StringIO.",
+    prompt_md: "**redirect_stdout**\n\nCapturá `print` hacia un `StringIO` sin tocar filesystem.\n\n**Micro-reto:**\n1. `with redirect_stdout(buf): print('hola', end='')`\n2. `resultado = buf.getvalue()`\n3. Mostrá\n",
+    starter_code: "# from contextlib import redirect_stdout\n# from io import StringIO\n# buf = StringIO()\n# with redirect_stdout(buf):\n#     print('hola', end='')\n# resultado = buf.getvalue()\n# print(resultado)\n",
+    pytest: "def test_red_out(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'hola'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "getvalue() == 'hola'",
+    solution_example: "from contextlib import redirect_stdout\nfrom io import StringIO\nbuf = StringIO()\nwith redirect_stdout(buf):\n    print('hola', end='')\nresultado = buf.getvalue()\nprint(resultado)\n",
+    next: Some("py-2114-red-multi"), show_type_chips: false, micro_step: 2113,
+};
+
+pub const PY2114_RED_MULTI: CodingStep = CodingStep {
+    id: "py-2114-red-multi", title: "redirect_stdout · multi", objective: "Capturar varias líneas.",
+    prompt_md: "**Multi print**\n\nVarios `print` acumulan en el mismo buffer redirigido.\n\n**Micro-reto:**\n1. print 1 y 2 bajo redirect\n2. `resultado = buf.getvalue().strip().splitlines()`\n3. Mostrá\n",
+    starter_code: "# from contextlib import redirect_stdout\n# from io import StringIO\n# buf = StringIO()\n# with redirect_stdout(buf):\n#     print(1)\n#     print(2)\n# resultado = buf.getvalue().strip().splitlines()\n# print(resultado)\n",
+    pytest: "def test_red_multi(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['1', '2']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['1', '2']",
+    solution_example: "from contextlib import redirect_stdout\nfrom io import StringIO\nbuf = StringIO()\nwith redirect_stdout(buf):\n    print(1)\n    print(2)\nresultado = buf.getvalue().strip().splitlines()\nprint(resultado)\n",
+    next: Some("py-2115-sup-zero"), show_type_chips: false, micro_step: 2114,
+};
+
+pub const PY2115_SUP_ZERO: CodingStep = CodingStep {
+    id: "py-2115-sup-zero", title: "suppress · ZeroDivision", objective: "Ignorar división por cero.",
+    prompt_md: "**ZeroDivision**\n\n`suppress(ZeroDivisionError)` deja el valor previo intacto.\n\n**Micro-reto:**\n1. `val = 0`; suppress ZeroDivision: `val = 1 // 0`\n2. `resultado = val`\n3. Mostrá\n",
+    starter_code: "# from contextlib import suppress\n# val = 0\n# with suppress(ZeroDivisionError):\n#     val = 1 // 0\n# resultado = val\n# print(resultado)\n",
+    pytest: "def test_sup_zero(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "val permanece 0",
+    solution_example: "from contextlib import suppress\nval = 0\nwith suppress(ZeroDivisionError):\n    val = 1 // 0\nresultado = val\nprint(resultado)\n",
+    next: Some("py-2116-sup-check"), show_type_chips: false, micro_step: 2115,
+};
+
+pub const PY2116_SUP_CHECK: CodingStep = CodingStep {
+    id: "py-2116-sup-check", title: "suppress+redirect · Suite", objective: "Combinar suppress y redirect_stdout.",
+    prompt_md: "**Suite suppress/redirect**\n\nCapturá print y tragá ValueError en el mismo with múltiple.\n\n**Micro-reto:**\n1. `with suppress(ValueError), redirect_stdout(buf):`\n2. print `'x'` end=''; `int('no')`\n3. `resultado = buf.getvalue()`; mostrá\n",
+    starter_code: "# from contextlib import suppress, redirect_stdout\n# from io import StringIO\n# buf = StringIO()\n# with suppress(ValueError), redirect_stdout(buf):\n#     print('x', end='')\n#     int('no')\n# resultado = buf.getvalue()\n# print(resultado)\n",
+    pytest: "def test_sup_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'x'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'x' capturado",
+    solution_example: "from contextlib import suppress, redirect_stdout\nfrom io import StringIO\nbuf = StringIO()\nwith suppress(ValueError), redirect_stdout(buf):\n    print('x', end='')\n    int('no')\nresultado = buf.getvalue()\nprint(resultado)\n",
+    next: Some("py-2117-nest-lifo"), show_type_chips: false, micro_step: 2116,
+};
+
+pub const PY2117_NEST_LIFO: CodingStep = CodingStep {
+    id: "py-2117-nest-lifo", title: "anidados · orden LIFO", objective: "Observar enter/exit LIFO.",
+    prompt_md: "**LIFO anidado**\n\nEl with interno sale antes que el externo: +1 +2 -2 -1.\n\n**Micro-reto:**\n1. `Mark(n)` registra `+n` / `-n`\n2. Anidá Mark(1) y Mark(2)\n3. `resultado = order`; mostrá\n",
+    starter_code: "# order = []\n# class Mark:\n#     def __init__(self, n):\n#         self.n = n\n#     def __enter__(self):\n#         order.append(f'+{self.n}')\n#         return self\n#     def __exit__(self, *a):\n#         order.append(f'-{self.n}')\n#         return False\n# with Mark(1):\n#     with Mark(2):\n#         pass\n# resultado = order\n# print(resultado)\n",
+    pytest: "def test_nest_lifo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['+1', '+2', '-2', '-1']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "+1 +2 -2 -1",
+    solution_example: "order = []\nclass Mark:\n    def __init__(self, n):\n        self.n = n\n    def __enter__(self):\n        order.append(f'+{self.n}')\n        return self\n    def __exit__(self, *a):\n        order.append(f'-{self.n}')\n        return False\nwith Mark(1):\n    with Mark(2):\n        pass\nresultado = order\nprint(resultado)\n",
+    next: Some("py-2118-nest-io"), show_type_chips: false, micro_step: 2117,
+};
+
+pub const PY2118_NEST_IO: CodingStep = CodingStep {
+    id: "py-2118-nest-io", title: "anidados · dos StringIO", objective: "Leer dos buffers anidados.",
+    prompt_md: "**Dos buffers**\n\nAnidar `StringIO` como CM (cierran al salir) y leer ambos.\n\n**Micro-reto:**\n1. `with StringIO('a') as a:` anidá `'b'`\n2. `resultado = (a.read(), b.read())`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# with StringIO('a') as a:\n#     with StringIO('b') as b:\n#         resultado = (a.read(), b.read())\n# print(resultado)\n",
+    pytest: "def test_nest_io(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('a', 'b')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('a', 'b')",
+    solution_example: "from io import StringIO\nwith StringIO('a') as a:\n    with StringIO('b') as b:\n        resultado = (a.read(), b.read())\nprint(resultado)\n",
+    next: Some("py-2119-nest-scope"), show_type_chips: false, micro_step: 2118,
+};
+
+pub const PY2119_NEST_SCOPE: CodingStep = CodingStep {
+    id: "py-2119-nest-scope", title: "anidados · scope limpio", objective: "Ver cleanup del inner sin romper outer mid.",
+    prompt_md: "**Scope**\n\nCada CM limpia su propio recurso. El outer aún ve sus datos hasta su exit.\n\n**Micro-reto:**\n1. `Bag` clear items en exit\n2. mid = (items[:], inner[:]) dentro del inner\n3. `resultado = (mid, bag.items)`; mostrá\n",
+    starter_code: "# class Bag:\n#     def __init__(self):\n#         self.items = []\n#     def __enter__(self):\n#         return self.items\n#     def __exit__(self, *a):\n#         self.items.clear()\n#         return False\n# bag = Bag()\n# with bag as items:\n#     items.append(1)\n#     with Bag() as inner:\n#         inner.append(2)\n#         mid = (items[:], inner[:])\n# resultado = (mid, bag.items)\n# print(resultado)\n",
+    pytest: "def test_nest_scope(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (([1], [2]), [])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(([1],[2]), [])",
+    solution_example: "class Bag:\n    def __init__(self):\n        self.items = []\n    def __enter__(self):\n        return self.items\n    def __exit__(self, *a):\n        self.items.clear()\n        return False\nbag = Bag()\nwith bag as items:\n    items.append(1)\n    with Bag() as inner:\n        inner.append(2)\n        mid = (items[:], inner[:])\nresultado = (mid, bag.items)\nprint(resultado)\n",
+    next: Some("py-2120-nest-three"), show_type_chips: false, micro_step: 2119,
+};
+
+pub const PY2120_NEST_THREE: CodingStep = CodingStep {
+    id: "py-2120-nest-three", title: "anidados · tres niveles", objective: "Trazar tres niveles LIFO.",
+    prompt_md: "**Tres niveles**\n\nEnter 1,2,3 luego exit -3,-2,-1. Orden estricto LIFO.\n\n**Micro-reto:**\n1. `M(n)` append n / -n\n2. Tres with anidados\n3. `resultado = order`; mostrá\n",
+    starter_code: "# order = []\n# class M:\n#     def __init__(self, n):\n#         self.n = n\n#     def __enter__(self):\n#         order.append(self.n)\n#         return self\n#     def __exit__(self, *a):\n#         order.append(-self.n)\n#         return False\n# with M(1):\n#     with M(2):\n#         with M(3):\n#             pass\n# resultado = order\n# print(resultado)\n",
+    pytest: "def test_nest_three(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, -3, -2, -1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1,2,3,-3,-2,-1]",
+    solution_example: "order = []\nclass M:\n    def __init__(self, n):\n        self.n = n\n    def __enter__(self):\n        order.append(self.n)\n        return self\n    def __exit__(self, *a):\n        order.append(-self.n)\n        return False\nwith M(1):\n    with M(2):\n        with M(3):\n            pass\nresultado = order\nprint(resultado)\n",
+    next: Some("py-2121-nest-ret"), show_type_chips: false, micro_step: 2120,
+};
+
+pub const PY2121_NEST_RET: CodingStep = CodingStep {
+    id: "py-2121-nest-ret", title: "anidados · return desde with", objective: "Retornar valor leído dentro del with.",
+    prompt_md: "**return**\n\nPodés retornar desde dentro del with: `__exit__` igual corre antes del return efectivo.\n\n**Micro-reto:**\n1. `make()` con `StringIO('z')` y return getvalue\n2. `resultado = make()`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# def make():\n#     with StringIO('z') as buf:\n#         return buf.getvalue()\n# resultado = make()\n# print(resultado)\n",
+    pytest: "def test_nest_ret(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'z'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'z'",
+    solution_example: "from io import StringIO\ndef make():\n    with StringIO('z') as buf:\n        return buf.getvalue()\nresultado = make()\nprint(resultado)\n",
+    next: Some("py-2122-nest-check"), show_type_chips: false, micro_step: 2121,
+};
+
+pub const PY2122_NEST_CHECK: CodingStep = CodingStep {
+    id: "py-2122-nest-check", title: "anidados · Suite LIFO", objective: "Integrar body entre dos exits.",
+    prompt_md: "**Suite anidados**\n\nRegistrá in1/in2/body/out2/out1.\n\n**Micro-reto:**\n1. `T(n)` append inN / outN\n2. Body append `'body'`\n3. `resultado = order`; mostrá\n",
+    starter_code: "# order = []\n# class T:\n#     def __init__(self, n):\n#         self.n = n\n#     def __enter__(self):\n#         order.append(f'in{self.n}')\n#         return self\n#     def __exit__(self, *a):\n#         order.append(f'out{self.n}')\n#         return False\n# with T(1):\n#     with T(2):\n#         order.append('body')\n# resultado = order\n# print(resultado)\n",
+    pytest: "def test_nest_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['in1', 'in2', 'body', 'out2', 'out1']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "in1 in2 body out2 out1",
+    solution_example: "order = []\nclass T:\n    def __init__(self, n):\n        self.n = n\n    def __enter__(self):\n        order.append(f'in{self.n}')\n        return self\n    def __exit__(self, *a):\n        order.append(f'out{self.n}')\n        return False\nwith T(1):\n    with T(2):\n        order.append('body')\nresultado = order\nprint(resultado)\n",
+    next: Some("py-2123-dom-conn"), show_type_chips: false, micro_step: 2122,
+};
+
+pub const PY2123_DOM_CONN: CodingStep = CodingStep {
+    id: "py-2123-dom-conn", title: "dominio · connection", objective: "Fake connection con with + query.",
+    prompt_md: "**Connection**\n\nModelo de dominio: conexión que se cierra al salir del with.\n\n**Micro-reto:**\n1. `Conn.query()` → 1; `closed` en exit\n2. `q` adentro; afuera `c.closed`\n3. `resultado = (q, c.closed)`; mostrá\n",
+    starter_code: "# class Conn:\n#     def __init__(self):\n#         self.closed = False\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         self.closed = True\n#         return False\n#     def query(self):\n#         return 1\n# with Conn() as c:\n#     q = c.query()\n# resultado = (q, c.closed)\n# print(resultado)\n",
+    pytest: "def test_dom_conn(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(1, True)",
+    solution_example: "class Conn:\n    def __init__(self):\n        self.closed = False\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.closed = True\n        return False\n    def query(self):\n        return 1\nwith Conn() as c:\n    q = c.query()\nresultado = (q, c.closed)\nprint(resultado)\n",
+    next: Some("py-2124-dom-tx"), show_type_chips: false, micro_step: 2123,
+};
+
+pub const PY2124_DOM_TX: CodingStep = CodingStep {
+    id: "py-2124-dom-tx", title: "dominio · commit", objective: "Transacción fake con commit.",
+    prompt_md: "**Commit**\n\n`__exit__` sin excepción → commit. Patrón unit-of-work liviano.\n\n**Micro-reto:**\n1. `Tx` begin/add/commit en ops\n2. `with tx: t.add('ins')`\n3. `resultado = tx.ops`; mostrá\n",
+    starter_code: "# class Tx:\n#     def __init__(self):\n#         self.ops = []\n#     def __enter__(self):\n#         self.ops.append('begin')\n#         return self\n#     def __exit__(self, exc_type, *a):\n#         self.ops.append('rollback' if exc_type else 'commit')\n#         return False\n#     def add(self, x):\n#         self.ops.append(x)\n# tx = Tx()\n# with tx as t:\n#     t.add('ins')\n# resultado = tx.ops\n# print(resultado)\n",
+    pytest: "def test_dom_tx(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['begin', 'ins', 'commit']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "begin ins commit",
+    solution_example: "class Tx:\n    def __init__(self):\n        self.ops = []\n    def __enter__(self):\n        self.ops.append('begin')\n        return self\n    def __exit__(self, exc_type, *a):\n        self.ops.append('rollback' if exc_type else 'commit')\n        return False\n    def add(self, x):\n        self.ops.append(x)\ntx = Tx()\nwith tx as t:\n    t.add('ins')\nresultado = tx.ops\nprint(resultado)\n",
+    next: Some("py-2125-dom-rb"), show_type_chips: false, micro_step: 2124,
+};
+
+pub const PY2125_DOM_RB: CodingStep = CodingStep {
+    id: "py-2125-dom-rb", title: "dominio · rollback", objective: "Rollback si el body falla.",
+    prompt_md: "**Rollback**\n\nSi hay excepción, `__exit__` registra rollback (y deja propagar).\n\n**Micro-reto:**\n1. Misma `Tx`; raise RuntimeError tras add\n2. Capturá afuera\n3. `resultado = tx.ops`; mostrá\n",
+    starter_code: "# class Tx:\n#     def __init__(self):\n#         self.ops = []\n#     def __enter__(self):\n#         self.ops.append('begin')\n#         return self\n#     def __exit__(self, exc_type, *a):\n#         self.ops.append('rollback' if exc_type else 'commit')\n#         return False\n#     def add(self, x):\n#         self.ops.append(x)\n# tx = Tx()\n# try:\n#     with tx as t:\n#         t.add('ins')\n#         raise RuntimeError('x')\n# except RuntimeError:\n#     pass\n# resultado = tx.ops\n# print(resultado)\n",
+    pytest: "def test_dom_rb(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['begin', 'ins', 'rollback']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "begin ins rollback",
+    solution_example: "class Tx:\n    def __init__(self):\n        self.ops = []\n    def __enter__(self):\n        self.ops.append('begin')\n        return self\n    def __exit__(self, exc_type, *a):\n        self.ops.append('rollback' if exc_type else 'commit')\n        return False\n    def add(self, x):\n        self.ops.append(x)\ntx = Tx()\ntry:\n    with tx as t:\n        t.add('ins')\n        raise RuntimeError('x')\nexcept RuntimeError:\n    pass\nresultado = tx.ops\nprint(resultado)\n",
+    next: Some("py-2126-dom-sess"), show_type_chips: false, micro_step: 2125,
+};
+
+pub const PY2126_DOM_SESS: CodingStep = CodingStep {
+    id: "py-2126-dom-sess", title: "dominio · session", objective: "Sesión de usuario con active flag.",
+    prompt_md: "**Session**\n\nSesión de dominio: `active` True solo dentro del with.\n\n**Micro-reto:**\n1. `Session(7)` con active enter/exit\n2. `mid` adentro\n3. `resultado = (s.uid, mid, s.active)`; mostrá\n",
+    starter_code: "# class Session:\n#     def __init__(self, uid):\n#         self.uid = uid\n#         self.active = False\n#     def __enter__(self):\n#         self.active = True\n#         return self\n#     def __exit__(self, *a):\n#         self.active = False\n#         return False\n# s = Session(7)\n# with s:\n#     mid = s.active\n# resultado = (s.uid, mid, s.active)\n# print(resultado)\n",
+    pytest: "def test_dom_sess(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (7, True, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(7, True, False)",
+    solution_example: "class Session:\n    def __init__(self, uid):\n        self.uid = uid\n        self.active = False\n    def __enter__(self):\n        self.active = True\n        return self\n    def __exit__(self, *a):\n        self.active = False\n        return False\ns = Session(7)\nwith s:\n    mid = s.active\nresultado = (s.uid, mid, s.active)\nprint(resultado)\n",
+    next: Some("py-2127-dom-uow"), show_type_chips: false, micro_step: 2126,
+};
+
+pub const PY2127_DOM_UOW: CodingStep = CodingStep {
+    id: "py-2127-dom-uow", title: "dominio · unit of work", objective: "Staging buffer que se limpia al salir.",
+    prompt_md: "**Unit of work**\n\nBuffer de staging: se limpia en exit (commit/discard simplificado).\n\n**Micro-reto:**\n1. `UoW.stage`; clear en exit\n2. mid adentro tras stage `'a'`\n3. `resultado = (mid, u.buf)`; mostrá\n",
+    starter_code: "# class UoW:\n#     def __init__(self):\n#         self.buf = []\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         self.buf.clear()\n#         return False\n#     def stage(self, x):\n#         self.buf.append(x)\n# u = UoW()\n# with u as w:\n#     w.stage('a')\n#     mid = w.buf[:]\n# resultado = (mid, u.buf)\n# print(resultado)\n",
+    pytest: "def test_dom_uow(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (['a'], [])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(['a'], [])",
+    solution_example: "class UoW:\n    def __init__(self):\n        self.buf = []\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.buf.clear()\n        return False\n    def stage(self, x):\n        self.buf.append(x)\nu = UoW()\nwith u as w:\n    w.stage('a')\n    mid = w.buf[:]\nresultado = (mid, u.buf)\nprint(resultado)\n",
+    next: Some("py-2128-dom-check"), show_type_chips: false, micro_step: 2127,
+};
+
+pub const PY2128_DOM_CHECK: CodingStep = CodingStep {
+    id: "py-2128-dom-check", title: "dominio · Suite recurso", objective: "Cerrar bloque con DB.ping + close.",
+    prompt_md: "**Suite dominio**\n\nDB fake: ping dentro, open False fuera.\n\n**Micro-reto:**\n1. `DB.ping()` → `'pong'`; open en enter/exit\n2. `p` adentro\n3. `resultado = (p, db.open)`; mostrá\n",
+    starter_code: "# class DB:\n#     def __init__(self):\n#         self.open = False\n#     def __enter__(self):\n#         self.open = True\n#         return self\n#     def __exit__(self, *a):\n#         self.open = False\n#         return False\n#     def ping(self):\n#         return 'pong'\n# db = DB()\n# with db as d:\n#     p = d.ping()\n# resultado = (p, db.open)\n# print(resultado)\n",
+    pytest: "def test_dom_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('pong', False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('pong', False)",
+    solution_example: "class DB:\n    def __init__(self):\n        self.open = False\n    def __enter__(self):\n        self.open = True\n        return self\n    def __exit__(self, *a):\n        self.open = False\n        return False\n    def ping(self):\n        return 'pong'\ndb = DB()\nwith db as d:\n    p = d.ping()\nresultado = (p, db.open)\nprint(resultado)\n",
+    next: Some("py-2129-pipe-up"), show_type_chips: false, micro_step: 2128,
+};
+
+pub const PY2129_PIPE_UP: CodingStep = CodingStep {
+    id: "py-2129-pipe-up", title: "pipeline · upper", objective: "Transformar texto vía StringIO.",
+    prompt_md: "**Pipeline upper**\n\nLeé de un buffer, transformá, escribí en otro. IO in-memory puro.\n\n**Micro-reto:**\n1. src `'hola'` → dst upper\n2. `resultado = dst.getvalue()`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# src = StringIO('hola')\n# dst = StringIO()\n# dst.write(src.read().upper())\n# resultado = dst.getvalue()\n# print(resultado)\n",
+    pytest: "def test_pipe_up(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'HOLA'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'HOLA'",
+    solution_example: "from io import StringIO\nsrc = StringIO('hola')\ndst = StringIO()\ndst.write(src.read().upper())\nresultado = dst.getvalue()\nprint(resultado)\n",
+    next: Some("py-2130-pipe-lines"), show_type_chips: false, micro_step: 2129,
+};
+
+pub const PY2130_PIPE_LINES: CodingStep = CodingStep {
+    id: "py-2130-pipe-lines", title: "pipeline · líneas", objective: "Mapear líneas a tokens.",
+    prompt_md: "**Líneas**\n\nIterá el StringIO línea a línea y acumulá transformado.\n\n**Micro-reto:**\n1. src `'a\\nb\\n'`; upper + `;`\n2. `resultado = dst.getvalue()`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# src = StringIO('a\\nb\\n')\n# dst = StringIO()\n# for line in src:\n#     dst.write(line.strip().upper() + ';')\n# resultado = dst.getvalue()\n# print(resultado)\n",
+    pytest: "def test_pipe_lines(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'A;B;'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'A;B;'",
+    solution_example: "from io import StringIO\nsrc = StringIO('a\\nb\\n')\ndst = StringIO()\nfor line in src:\n    dst.write(line.strip().upper() + ';')\nresultado = dst.getvalue()\nprint(resultado)\n",
+    next: Some("py-2131-pipe-filt"), show_type_chips: false, micro_step: 2130,
+};
+
+pub const PY2131_PIPE_FILT: CodingStep = CodingStep {
+    id: "py-2131-pipe-filt", title: "pipeline · filtro", objective: "Filtrar líneas impares.",
+    prompt_md: "**Filtro**\n\nPipeline: leer, filtrar, escribir solo impares.\n\n**Micro-reto:**\n1. src `'1\\n2\\n3\\n'`; keep int%2\n2. `resultado = dst.getvalue().splitlines()`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# src = StringIO('1\\n2\\n3\\n')\n# dst = StringIO()\n# for line in src:\n#     if int(line) % 2:\n#         dst.write(line)\n# resultado = dst.getvalue().splitlines()\n# print(resultado)\n",
+    pytest: "def test_pipe_filt(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['1', '3']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['1', '3']",
+    solution_example: "from io import StringIO\nsrc = StringIO('1\\n2\\n3\\n')\ndst = StringIO()\nfor line in src:\n    if int(line) % 2:\n        dst.write(line)\nresultado = dst.getvalue().splitlines()\nprint(resultado)\n",
+    next: Some("py-2132-pipe-fn"), show_type_chips: false, micro_step: 2131,
+};
+
+pub const PY2132_PIPE_FN: CodingStep = CodingStep {
+    id: "py-2132-pipe-fn", title: "pipeline · función", objective: "Encapsular transform en función.",
+    prompt_md: "**Función pipe**\n\nEncapsulá src→dst en `pipe(text)` con replace espacios.\n\n**Micro-reto:**\n1. `pipe` replace `' '` → `'-'`\n2. `resultado = pipe('a b')`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# def pipe(text):\n#     buf = StringIO(text)\n#     out = StringIO()\n#     out.write(buf.read().replace(' ', '-'))\n#     return out.getvalue()\n# resultado = pipe('a b')\n# print(resultado)\n",
+    pytest: "def test_pipe_fn(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'a-b'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'a-b'",
+    solution_example: "from io import StringIO\ndef pipe(text):\n    buf = StringIO(text)\n    out = StringIO()\n    out.write(buf.read().replace(' ', '-'))\n    return out.getvalue()\nresultado = pipe('a b')\nprint(resultado)\n",
+    next: Some("py-2133-pipe-count"), show_type_chips: false, micro_step: 2132,
+};
+
+pub const PY2133_PIPE_COUNT: CodingStep = CodingStep {
+    id: "py-2133-pipe-count", title: "pipeline · conteo", objective: "Contar chars desde buffer.",
+    prompt_md: "**Conteo**\n\nLeé el buffer y contá ocurrencias — análisis liviano in-memory.\n\n**Micro-reto:**\n1. `StringIO('aba')`\n2. `resultado = buf.getvalue().count('a')`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# buf = StringIO('aba')\n# resultado = buf.getvalue().count('a')\n# print(resultado)\n",
+    pytest: "def test_pipe_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "count a → 2",
+    solution_example: "from io import StringIO\nbuf = StringIO('aba')\nresultado = buf.getvalue().count('a')\nprint(resultado)\n",
+    next: Some("py-2134-pipe-check"), show_type_chips: false, micro_step: 2133,
+};
+
+pub const PY2134_PIPE_CHECK: CodingStep = CodingStep {
+    id: "py-2134-pipe-check", title: "pipeline · Suite reverse", objective: "Cerrar con transform reverse.",
+    prompt_md: "**Suite pipeline**\n\n`transform(s)`: StringIO in → reverse → out.\n\n**Micro-reto:**\n1. Definí `transform`\n2. `resultado = transform('ab')`\n3. Mostrá\n",
+    starter_code: "# from io import StringIO\n# def transform(s):\n#     inn = StringIO(s)\n#     out = StringIO()\n#     out.write(inn.read()[::-1])\n#     return out.getvalue()\n# resultado = transform('ab')\n# print(resultado)\n",
+    pytest: "def test_pipe_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ba'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'ba'",
+    solution_example: "from io import StringIO\ndef transform(s):\n    inn = StringIO(s)\n    out = StringIO()\n    out.write(inn.read()[::-1])\n    return out.getvalue()\nresultado = transform('ab')\nprint(resultado)\n",
+    next: Some("py-2135-cl-close"), show_type_chips: false, micro_step: 2134,
+};
+
+pub const PY2135_CL_CLOSE: CodingStep = CodingStep {
+    id: "py-2135-cl-close", title: "cleanup · close flag", objective: "Assert closed tras with.",
+    prompt_md: "**Close flag**\n\nContrato: tras el with, `closed` es True. `__exit__` llama `close()`.\n\n**Micro-reto:**\n1. `R.close` setea closed; exit llama close\n2. with vacío\n3. `resultado = r.closed`; mostrá\n",
+    starter_code: "# class R:\n#     def __init__(self):\n#         self.closed = False\n#     def close(self):\n#         self.closed = True\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         self.close()\n#         return False\n# r = R()\n# with r:\n#     pass\n# resultado = r.closed\n# print(resultado)\n",
+    pytest: "def test_cl_close(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "closed True",
+    solution_example: "class R:\n    def __init__(self):\n        self.closed = False\n    def close(self):\n        self.closed = True\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.close()\n        return False\nr = R()\nwith r:\n    pass\nresultado = r.closed\nprint(resultado)\n",
+    next: Some("py-2136-cl-idem"), show_type_chips: false, micro_step: 2135,
+};
+
+pub const PY2136_CL_IDEM: CodingStep = CodingStep {
+    id: "py-2136-cl-idem", title: "cleanup · idempotente", objective: "close() solo cuenta una vez.",
+    prompt_md: "**Idempotencia**\n\n`close` guardado: segundo close no incrementa. Contrato de cleanup seguro.\n\n**Micro-reto:**\n1. `close` if not closed: n+=1\n2. with + close extra\n3. `resultado = r.n`; mostrá\n",
+    starter_code: "# class R:\n#     def __init__(self):\n#         self.closed = False\n#         self.n = 0\n#     def close(self):\n#         if not self.closed:\n#             self.closed = True\n#             self.n += 1\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         self.close()\n#         return False\n# r = R()\n# with r:\n#     pass\n# r.close()\n# resultado = r.n\n# print(resultado)\n",
+    pytest: "def test_cl_idem(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "n == 1",
+    solution_example: "class R:\n    def __init__(self):\n        self.closed = False\n        self.n = 0\n    def close(self):\n        if not self.closed:\n            self.closed = True\n            self.n += 1\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.close()\n        return False\nr = R()\nwith r:\n    pass\nr.close()\nresultado = r.n\nprint(resultado)\n",
+    next: Some("py-2137-cl-dbl"), show_type_chips: false, micro_step: 2136,
+};
+
+pub const PY2137_CL_DBL: CodingStep = CodingStep {
+    id: "py-2137-cl-dbl", title: "cleanup · doble with", objective: "Re-entrar recurso ya cerrado (idempotente).",
+    prompt_md: "**Doble with**\n\nSegundo with sobre el mismo handle: close sigue idempotente (n=1).\n\n**Micro-reto:**\n1. Misma clase R idempotente\n2. Dos with seguidos\n3. `resultado = (r.closed, r.n)`; mostrá\n",
+    starter_code: "# class R:\n#     def __init__(self):\n#         self.closed = False\n#         self.n = 0\n#     def close(self):\n#         if not self.closed:\n#             self.closed = True\n#             self.n += 1\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         self.close()\n#         return False\n# r = R()\n# with r:\n#     pass\n# with r:\n#     pass\n# resultado = (r.closed, r.n)\n# print(resultado)\n",
+    pytest: "def test_cl_dbl(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(True, 1)",
+    solution_example: "class R:\n    def __init__(self):\n        self.closed = False\n        self.n = 0\n    def close(self):\n        if not self.closed:\n            self.closed = True\n            self.n += 1\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.close()\n        return False\nr = R()\nwith r:\n    pass\nwith r:\n    pass\nresultado = (r.closed, r.n)\nprint(resultado)\n",
+    next: Some("py-2138-cl-exc"), show_type_chips: false, micro_step: 2137,
+};
+
+pub const PY2138_CL_EXC: CodingStep = CodingStep {
+    id: "py-2138-cl-exc", title: "cleanup · bajo excepción", objective: "Cerrar aunque el body falle.",
+    prompt_md: "**Bajo error**\n\nEl contrato de cleanup exige closed=True tras excepción propagada.\n\n**Micro-reto:**\n1. R idempotente; raise ValueError en with\n2. Capturá afuera\n3. `resultado = r.closed`; mostrá\n",
+    starter_code: "# class R:\n#     def __init__(self):\n#         self.closed = False\n#         self.n = 0\n#     def close(self):\n#         if not self.closed:\n#             self.closed = True\n#             self.n += 1\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         self.close()\n#         return False\n# r = R()\n# try:\n#     with r:\n#         raise ValueError\n# except ValueError:\n#     pass\n# resultado = r.closed\n# print(resultado)\n",
+    pytest: "def test_cl_exc(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "closed True tras error",
+    solution_example: "class R:\n    def __init__(self):\n        self.closed = False\n        self.n = 0\n    def close(self):\n        if not self.closed:\n            self.closed = True\n            self.n += 1\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.close()\n        return False\nr = R()\ntry:\n    with r:\n        raise ValueError\nexcept ValueError:\n    pass\nresultado = r.closed\nprint(resultado)\n",
+    next: Some("py-2139-cl-state"), show_type_chips: false, micro_step: 2138,
+};
+
+pub const PY2139_CL_STATE: CodingStep = CodingStep {
+    id: "py-2139-cl-state", title: "cleanup · estados", objective: "Contrato new→open→closed.",
+    prompt_md: "**Estados**\n\nMáquina simple: open dentro, closed después. Modelo de datos del ciclo.\n\n**Micro-reto:**\n1. `Handle.state` open/closed\n2. `mid` adentro\n3. `resultado = (mid, h.state)`; mostrá\n",
+    starter_code: "# class Handle:\n#     def __init__(self):\n#         self.state = 'new'\n#     def __enter__(self):\n#         self.state = 'open'\n#         return self\n#     def __exit__(self, *a):\n#         self.state = 'closed'\n#         return False\n# h = Handle()\n# with h:\n#     mid = h.state\n# resultado = (mid, h.state)\n# print(resultado)\n",
+    pytest: "def test_cl_state(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('open', 'closed')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "('open', 'closed')",
+    solution_example: "class Handle:\n    def __init__(self):\n        self.state = 'new'\n    def __enter__(self):\n        self.state = 'open'\n        return self\n    def __exit__(self, *a):\n        self.state = 'closed'\n        return False\nh = Handle()\nwith h:\n    mid = h.state\nresultado = (mid, h.state)\nprint(resultado)\n",
+    next: Some("py-2140-cl-check"), show_type_chips: false, micro_step: 2139,
+};
+
+pub const PY2140_CL_CHECK: CodingStep = CodingStep {
+    id: "py-2140-cl-check", title: "cleanup · Suite contrato", objective: "Cerrar ola: closed + closes==1.",
+    prompt_md: "**Suite cleanup**\n\nGate idempotente: with + close extra → closed True, closes 1.\n\n**Micro-reto:**\n1. `Gate` con close idempotente\n2. with + `g.close()`\n3. `resultado = (g.closed, g.closes)`; mostrá\n",
+    starter_code: "# class Gate:\n#     def __init__(self):\n#         self.closed = False\n#         self.closes = 0\n#     def close(self):\n#         if not self.closed:\n#             self.closed = True\n#             self.closes += 1\n#     def __enter__(self):\n#         return self\n#     def __exit__(self, *a):\n#         self.close()\n#         return False\n# g = Gate()\n# with g:\n#     pass\n# g.close()\n# resultado = (g.closed, g.closes)\n# print(resultado)\n",
+    pytest: "def test_cl_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(True, 1)",
+    solution_example: "class Gate:\n    def __init__(self):\n        self.closed = False\n        self.closes = 0\n    def close(self):\n        if not self.closed:\n            self.closed = True\n            self.closes += 1\n    def __enter__(self):\n        return self\n    def __exit__(self, *a):\n        self.close()\n        return False\ng = Gate()\nwith g:\n    pass\ng.close()\nresultado = (g.closed, g.closes)\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 2140,
+};
+
 
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -55019,6 +55620,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2078_AUD_CANON,
     &PY2079_AUD_CHAIN,
     &PY2080_AUD_CHECK,
+    &PY2081_WITH_ENTER,
+    &PY2082_WITH_AS,
+    &PY2083_WITH_RELEASE,
+    &PY2084_WITH_SEQ,
+    &PY2085_WITH_BIND,
+    &PY2086_WITH_CHECK,
+    &PY2087_CM_BASIC,
+    &PY2088_CM_EVENTS,
+    &PY2089_CM_YIELD,
+    &PY2090_CM_FINALLY,
+    &PY2091_CM_NEST,
+    &PY2092_CM_CHECK,
+    &PY2093_ES_ENTER,
+    &PY2094_ES_CB,
+    &PY2095_ES_DYN,
+    &PY2096_ES_POP,
+    &PY2097_ES_LIFO,
+    &PY2098_ES_CHECK,
+    &PY2099_SIO_WRITE,
+    &PY2100_SIO_READ,
+    &PY2101_SIO_SEEK,
+    &PY2102_SIO_OVER,
+    &PY2103_SIO_LINES,
+    &PY2104_SIO_CHECK,
+    &PY2105_BIO_WRITE,
+    &PY2106_BIO_READ,
+    &PY2107_BIO_ENC,
+    &PY2108_BIO_SEEK,
+    &PY2109_BIO_LEN,
+    &PY2110_BIO_CHECK,
+    &PY2111_SUP_BASIC,
+    &PY2112_SUP_KEY,
+    &PY2113_RED_OUT,
+    &PY2114_RED_MULTI,
+    &PY2115_SUP_ZERO,
+    &PY2116_SUP_CHECK,
+    &PY2117_NEST_LIFO,
+    &PY2118_NEST_IO,
+    &PY2119_NEST_SCOPE,
+    &PY2120_NEST_THREE,
+    &PY2121_NEST_RET,
+    &PY2122_NEST_CHECK,
+    &PY2123_DOM_CONN,
+    &PY2124_DOM_TX,
+    &PY2125_DOM_RB,
+    &PY2126_DOM_SESS,
+    &PY2127_DOM_UOW,
+    &PY2128_DOM_CHECK,
+    &PY2129_PIPE_UP,
+    &PY2130_PIPE_LINES,
+    &PY2131_PIPE_FILT,
+    &PY2132_PIPE_FN,
+    &PY2133_PIPE_COUNT,
+    &PY2134_PIPE_CHECK,
+    &PY2135_CL_CLOSE,
+    &PY2136_CL_IDEM,
+    &PY2137_CL_DBL,
+    &PY2138_CL_EXC,
+    &PY2139_CL_STATE,
+    &PY2140_CL_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -55186,7 +55847,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 2080);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2140);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -58277,7 +58938,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 2080 is the end of the rail");
+                assert_eq!(step.next, Some("py-2081-with-enter"), "step 2080 chains to wave19");
+            }
+        }
+    }
+
+    #[test]
+    fn py2081_to_py2140_context_io_chain() {
+        let bridge = coding_step_by_micro_step(2080).expect("py-2080");
+        assert_eq!(bridge.next, Some("py-2081-with-enter"));
+
+        for n in 2081..=2140 {
+            let step = coding_step_by_micro_step(n).expect("wave19 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 2140 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 2140 is the end of the rail");
             }
         }
     }
