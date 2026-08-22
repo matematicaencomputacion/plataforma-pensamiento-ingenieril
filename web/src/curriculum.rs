@@ -54736,7 +54736,607 @@ pub const PY2260_OBS_CHECK: CodingStep = CodingStep {
     pytest: "def test_obs_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ERROR:x'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "'ERROR:x'",
     solution_example: "import logging, io\nbuf = io.StringIO()\nh = logging.StreamHandler(buf)\nh.setFormatter(logging.Formatter('%(levelname)s:%(message)s'))\nlog = logging.getLogger('w21.o6')\nlog.handlers.clear()\nlog.addHandler(h)\nlog.setLevel(logging.ERROR)\nlog.propagate = False\nlog.error('x')\nresultado = buf.getvalue().strip()\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 2260,
+    next: Some("py-2261-chain-basic"), show_type_chips: false, micro_step: 2260,
+};
+
+pub const PY2261_CHAIN_BASIC: CodingStep = CodingStep {
+    id: "py-2261-chain-basic", title: "chain · básico", objective: "Unir iterables con itertools.chain",
+    prompt_md: "**chain**\n\n`itertools.chain(a, b)` concatena sin copiar listas.\n\n**Micro-reto:**\n1. `from itertools import chain`\n2. `resultado = list(chain([1, 2], [3]))`\n3. Mostrá\n",
+    starter_code: "# from itertools import chain\n# resultado = list(chain([1, 2], [3]))\n# print(resultado)\n",
+    pytest: "def test_chain_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3]",
+    solution_example: "from itertools import chain\nresultado = list(chain([1, 2], [3]))\nprint(resultado)\n",
+    next: Some("py-2262-chain-from"), show_type_chips: false, micro_step: 2261,
+};
+
+pub const PY2262_CHAIN_FROM: CodingStep = CodingStep {
+    id: "py-2262-chain-from", title: "chain · from_iterable", objective: "Aplanar lista de listas.",
+    prompt_md: "**from_iterable**\n\n`chain.from_iterable` evita anidar bucles.\n\n**Micro-reto:**\n1. `resultado = list(chain.from_iterable([[1], [2, 3]]))`\n2. Mostrá\n",
+    starter_code: "# from itertools import chain\n# resultado = list(chain.from_iterable([[1], [2, 3]]))\n# print(resultado)\n",
+    pytest: "def test_chain_from(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3]",
+    solution_example: "from itertools import chain\nresultado = list(chain.from_iterable([[1], [2, 3]]))\nprint(resultado)\n",
+    next: Some("py-2263-zip-pair"), show_type_chips: false, micro_step: 2262,
+};
+
+pub const PY2263_ZIP_PAIR: CodingStep = CodingStep {
+    id: "py-2263-zip-pair", title: "zip · pares", objective: "Emparejar secuencias con zip.",
+    prompt_md: "**zip**\n\nParadigma funcional: recorrer dos listas en lockstep.\n\n**Micro-reto:**\n1. `resultado = list(zip(['a', 'b'], [1, 2]))`\n2. Mostrá\n",
+    starter_code: "# resultado = list(zip(['a', 'b'], [1, 2]))\n# print(resultado)\n",
+    pytest: "def test_zip_pair(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', 1), ('b', 2)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[('a', 1), ('b', 2)]",
+    solution_example: "resultado = list(zip(['a', 'b'], [1, 2]))\nprint(resultado)\n",
+    next: Some("py-2264-zip-len"), show_type_chips: false, micro_step: 2263,
+};
+
+pub const PY2264_ZIP_LEN: CodingStep = CodingStep {
+    id: "py-2264-zip-len", title: "zip · longitudes", objective: "zip trunca al iterable más corto.",
+    prompt_md: "**zip corto**\n\nModelo: zip para al menor N elementos.\n\n**Micro-reto:**\n1. `resultado = len(list(zip([1, 2, 3], [10])))`\n2. Mostrá\n",
+    starter_code: "# resultado = len(list(zip([1, 2, 3], [10])))\n# print(resultado)\n",
+    pytest: "def test_zip_len(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1",
+    solution_example: "resultado = len(list(zip([1, 2, 3], [10])))\nprint(resultado)\n",
+    next: Some("py-2265-zip-dict"), show_type_chips: false, micro_step: 2264,
+};
+
+pub const PY2265_ZIP_DICT: CodingStep = CodingStep {
+    id: "py-2265-zip-dict", title: "zip · dict", objective: "Construir dict con zip de claves y valores.",
+    prompt_md: "**zip → dict**\n\nPatrón stdlib: `dict(zip(keys, vals))`.\n\n**Micro-reto:**\n1. `resultado = dict(zip(['x', 'y'], [1, 2]))`\n2. Mostrá\n",
+    starter_code: "# resultado = dict(zip(['x', 'y'], [1, 2]))\n# print(resultado)\n",
+    pytest: "def test_zip_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'x': 1, 'y': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "{'x': 1, 'y': 2}",
+    solution_example: "resultado = dict(zip(['x', 'y'], [1, 2]))\nprint(resultado)\n",
+    next: Some("py-2266-chain-check"), show_type_chips: false, micro_step: 2265,
+};
+
+pub const PY2266_CHAIN_CHECK: CodingStep = CodingStep {
+    id: "py-2266-chain-check", title: "chain · Suite", objective: "Suite chain + zip.",
+    prompt_md: "**Suite chain/zip**\n\nUnir [1] y [2]; zip con ['a'].\n\n**Micro-reto:**\n1. `resultado = (list(chain([1], [2])), list(zip(['a'], [1])))`\n2. Mostrá\n",
+    starter_code: "# from itertools import chain\n# resultado = (list(chain([1], [2])), list(zip(['a'], [1])))\n# print(resultado)\n",
+    pytest: "def test_chain_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([1, 2], [('a', 1)])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "([1, 2], [('a', 1)])",
+    solution_example: "from itertools import chain\nresultado = (list(chain([1], [2])), list(zip(['a'], [1])))\nprint(resultado)\n",
+    next: Some("py-2267-grp-sorted"), show_type_chips: false, micro_step: 2266,
+};
+
+pub const PY2267_GRP_SORTED: CodingStep = CodingStep {
+    id: "py-2267-grp-sorted", title: "groupby · ordenado", objective: "groupby exige datos ordenados por clave.",
+    prompt_md: "**groupby**\n\n`itertools.groupby` agrupa runs contiguos; la lista debe estar ordenada.\n\n**Micro-reto:**\n1. Agrupá `[('a', 1), ('a', 2), ('b', 3)]` por clave\n2. `resultado = [k for k, _ in groupby(data, key=lambda x: x[0])]`\n3. Mostrá\n",
+    starter_code: "# from itertools import groupby\n# data = [('a', 1), ('a', 2), ('b', 3)]\n# resultado = [k for k, _ in groupby(data, key=lambda x: x[0])]\n# print(resultado)\n",
+    pytest: "def test_grp_sorted(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['a', 'b']",
+    solution_example: "from itertools import groupby\ndata = [('a', 1), ('a', 2), ('b', 3)]\nresultado = [k for k, _ in groupby(data, key=lambda x: x[0])]\nprint(resultado)\n",
+    next: Some("py-2268-grp-count"), show_type_chips: false, micro_step: 2267,
+};
+
+pub const PY2268_GRP_COUNT: CodingStep = CodingStep {
+    id: "py-2268-grp-count", title: "groupby · contar", objective: "Contar elementos por grupo.",
+    prompt_md: "**Contar grupo**\n\nModelo: longitud de cada run.\n\n**Micro-reto:**\n1. data=[1,1,2,2,2]; `resultado = [len(list(g)) for _, g in groupby(data)]`\n2. Mostrá\n",
+    starter_code: "# from itertools import groupby\n# data = [1, 1, 2, 2, 2]\n# resultado = [len(list(g)) for _, g in groupby(data)]\n# print(resultado)\n",
+    pytest: "def test_grp_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 3]",
+    solution_example: "from itertools import groupby\ndata = [1, 1, 2, 2, 2]\nresultado = [len(list(g)) for _, g in groupby(data)]\nprint(resultado)\n",
+    next: Some("py-2269-isl-head"), show_type_chips: false, micro_step: 2268,
+};
+
+pub const PY2269_ISL_HEAD: CodingStep = CodingStep {
+    id: "py-2269-isl-head", title: "islice · cabeza", objective: "Tomar los primeros N sin materializar todo.",
+    prompt_md: "**islice**\n\nVentana lazy sobre un iterable infinito o grande.\n\n**Micro-reto:**\n1. `resultado = list(islice(range(100), 3))`\n2. Mostrá\n",
+    starter_code: "# from itertools import islice\n# resultado = list(islice(range(100), 3))\n# print(resultado)\n",
+    pytest: "def test_isl_head(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[0, 1, 2]",
+    solution_example: "from itertools import islice\nresultado = list(islice(range(100), 3))\nprint(resultado)\n",
+    next: Some("py-2270-isl-skip"), show_type_chips: false, micro_step: 2269,
+};
+
+pub const PY2270_ISL_SKIP: CodingStep = CodingStep {
+    id: "py-2270-isl-skip", title: "islice · skip", objective: "Saltar offset con islice.",
+    prompt_md: "**Skip**\n\n`islice(it, start, stop)` modela paginación.\n\n**Micro-reto:**\n1. `resultado = list(islice(range(10), 2, 5))`\n2. Mostrá\n",
+    starter_code: "# from itertools import islice\n# resultado = list(islice(range(10), 2, 5))\n# print(resultado)\n",
+    pytest: "def test_isl_skip(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 3, 4]",
+    solution_example: "from itertools import islice\nresultado = list(islice(range(10), 2, 5))\nprint(resultado)\n",
+    next: Some("py-2271-isl-step"), show_type_chips: false, micro_step: 2270,
+};
+
+pub const PY2271_ISL_STEP: CodingStep = CodingStep {
+    id: "py-2271-isl-step", title: "islice · step", objective: "Muestreo con step en islice.",
+    prompt_md: "**Step**\n\nCada tercer elemento: islice con step 3.\n\n**Micro-reto:**\n1. `resultado = list(islice(range(10), 0, 10, 3))`\n2. Mostrá\n",
+    starter_code: "# from itertools import islice\n# resultado = list(islice(range(10), 0, 10, 3))\n# print(resultado)\n",
+    pytest: "def test_isl_step(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 3, 6, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[0, 3, 6, 9]",
+    solution_example: "from itertools import islice\nresultado = list(islice(range(10), 0, 10, 3))\nprint(resultado)\n",
+    next: Some("py-2272-grp-check"), show_type_chips: false, micro_step: 2271,
+};
+
+pub const PY2272_GRP_CHECK: CodingStep = CodingStep {
+    id: "py-2272-grp-check", title: "groupby · Suite", objective: "Suite groupby + islice.",
+    prompt_md: "**Suite grp/islice**\n\nRuns en [0,0,1]; head 2 de range(5).\n\n**Micro-reto:**\n1. `resultado = ([len(list(g)) for _, g in groupby([0,0,1])], list(islice(range(5), 2)))`\n2. Mostrá\n",
+    starter_code: "# from itertools import groupby, islice\n# resultado = ([len(list(g)) for _, g in groupby([0, 0, 1])], list(islice(range(5), 2)))\n# print(resultado)\n",
+    pytest: "def test_grp_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([2, 1], [0, 1])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "([2, 1], [0, 1])",
+    solution_example: "from itertools import groupby, islice\nresultado = ([len(list(g)) for _, g in groupby([0, 0, 1])], list(islice(range(5), 2)))\nprint(resultado)\n",
+    next: Some("py-2273-prod-cart"), show_type_chips: false, micro_step: 2272,
+};
+
+pub const PY2273_PROD_CART: CodingStep = CodingStep {
+    id: "py-2273-prod-cart", title: "product · cartesiano", objective: "Producto cartesiano con product.",
+    prompt_md: "**product**\n\nTodas las parejas de dos listas finitas.\n\n**Micro-reto:**\n1. `resultado = list(product([1, 2], ['a']))`\n2. Mostrá\n",
+    starter_code: "# from itertools import product\n# resultado = list(product([1, 2], ['a']))\n# print(resultado)\n",
+    pytest: "def test_prod_cart(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 'a'), (2, 'a')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[(1, 'a'), (2, 'a')]",
+    solution_example: "from itertools import product\nresultado = list(product([1, 2], ['a']))\nprint(resultado)\n",
+    next: Some("py-2274-prod-repeat"), show_type_chips: false, micro_step: 2273,
+};
+
+pub const PY2274_PROD_REPEAT: CodingStep = CodingStep {
+    id: "py-2274-prod-repeat", title: "product · repeat", objective: "product con repeat para tuplas.",
+    prompt_md: "**repeat**\n\n`product([0,1], repeat=2)` → bits de 2 posiciones.\n\n**Micro-reto:**\n1. `resultado = len(list(product([0, 1], repeat=2)))`\n2. Mostrá\n",
+    starter_code: "# from itertools import product\n# resultado = len(list(product([0, 1], repeat=2)))\n# print(resultado)\n",
+    pytest: "def test_prod_repeat(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "4",
+    solution_example: "from itertools import product\nresultado = len(list(product([0, 1], repeat=2)))\nprint(resultado)\n",
+    next: Some("py-2275-perm-basic"), show_type_chips: false, micro_step: 2274,
+};
+
+pub const PY2275_PERM_BASIC: CodingStep = CodingStep {
+    id: "py-2275-perm-basic", title: "perm · básico", objective: "Permutaciones de longitud r.",
+    prompt_md: "**permutations**\n\nOrden importa; sin repetición en la tupla.\n\n**Micro-reto:**\n1. `resultado = list(permutations([1, 2], 2))`\n2. Mostrá\n",
+    starter_code: "# from itertools import permutations\n# resultado = list(permutations([1, 2], 2))\n# print(resultado)\n",
+    pytest: "def test_perm_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 2), (2, 1)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[(1, 2), (2, 1)]",
+    solution_example: "from itertools import permutations\nresultado = list(permutations([1, 2], 2))\nprint(resultado)\n",
+    next: Some("py-2276-comb-basic"), show_type_chips: false, micro_step: 2275,
+};
+
+pub const PY2276_COMB_BASIC: CodingStep = CodingStep {
+    id: "py-2276-comb-basic", title: "comb · básico", objective: "Combinaciones sin orden.",
+    prompt_md: "**combinations**\n\nSubconjuntos de tamaño r; (1,2) ≡ (2,1).\n\n**Micro-reto:**\n1. `resultado = list(combinations([1, 2, 3], 2))`\n2. Mostrá\n",
+    starter_code: "# from itertools import combinations\n# resultado = list(combinations([1, 2, 3], 2))\n# print(resultado)\n",
+    pytest: "def test_comb_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 2), (1, 3), (2, 3)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[(1, 2), (1, 3), (2, 3)]",
+    solution_example: "from itertools import combinations\nresultado = list(combinations([1, 2, 3], 2))\nprint(resultado)\n",
+    next: Some("py-2277-comb-rep"), show_type_chips: false, micro_step: 2276,
+};
+
+pub const PY2277_COMB_REP: CodingStep = CodingStep {
+    id: "py-2277-comb-rep", title: "comb · con repetición", objective: "combinations_with_replacement.",
+    prompt_md: "**comb con rep**\n\nMulticonjuntos: elementos pueden repetirse.\n\n**Micro-reto:**\n1. `resultado = list(combinations_with_replacement([1, 2], 2))`\n2. Mostrá\n",
+    starter_code: "# from itertools import combinations_with_replacement\n# resultado = list(combinations_with_replacement([1, 2], 2))\n# print(resultado)\n",
+    pytest: "def test_comb_rep(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 1), (1, 2), (2, 2)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[(1, 1), (1, 2), (2, 2)]",
+    solution_example: "from itertools import combinations_with_replacement\nresultado = list(combinations_with_replacement([1, 2], 2))\nprint(resultado)\n",
+    next: Some("py-2278-prod-check"), show_type_chips: false, micro_step: 2277,
+};
+
+pub const PY2278_PROD_CHECK: CodingStep = CodingStep {
+    id: "py-2278-prod-check", title: "product · Suite", objective: "Suite product + combinations.",
+    prompt_md: "**Suite product**\n\nproduct de [1]×[2]; comb(2,1).\n\n**Micro-reto:**\n1. `resultado = (list(product([1], [2])), list(combinations([2], 1)))`\n2. Mostrá\n",
+    starter_code: "# from itertools import product, combinations\n# resultado = (list(product([1], [2])), list(combinations([2], 1)))\n# print(resultado)\n",
+    pytest: "def test_prod_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([(1, 2)], [(2,)])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "([(1, 2)], [(2,)])",
+    solution_example: "from itertools import product, combinations\nresultado = (list(product([1], [2])), list(combinations([2], 1)))\nprint(resultado)\n",
+    next: Some("py-2279-bis-left"), show_type_chips: false, micro_step: 2278,
+};
+
+pub const PY2279_BIS_LEFT: CodingStep = CodingStep {
+    id: "py-2279-bis-left", title: "bisect · left", objective: "bisect_left: insertar a la izquierda de iguales.",
+    prompt_md: "**bisect_left**\n\nLista ordenada: índice de inserción a la izquierda.\n\n**Micro-reto:**\n1. a=[1,2,2,3]; `resultado = bisect_left(a, 2)`\n2. Mostrá\n",
+    starter_code: "# from bisect import bisect_left\n# a = [1, 2, 2, 3]\n# resultado = bisect_left(a, 2)\n# print(resultado)\n",
+    pytest: "def test_bis_left(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1",
+    solution_example: "from bisect import bisect_left\na = [1, 2, 2, 3]\nresultado = bisect_left(a, 2)\nprint(resultado)\n",
+    next: Some("py-2280-bis-right"), show_type_chips: false, micro_step: 2279,
+};
+
+pub const PY2280_BIS_RIGHT: CodingStep = CodingStep {
+    id: "py-2280-bis-right", title: "bisect · right", objective: "bisect_right: después de iguales.",
+    prompt_md: "**bisect_right**\n\nModelo: rango de iguales = [left, right).\n\n**Micro-reto:**\n1. a=[1,2,2,3]; `resultado = bisect_right(a, 2)`\n2. Mostrá\n",
+    starter_code: "# from bisect import bisect_right\n# a = [1, 2, 2, 3]\n# resultado = bisect_right(a, 2)\n# print(resultado)\n",
+    pytest: "def test_bis_right(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3",
+    solution_example: "from bisect import bisect_right\na = [1, 2, 2, 3]\nresultado = bisect_right(a, 2)\nprint(resultado)\n",
+    next: Some("py-2281-bis-insort"), show_type_chips: false, micro_step: 2280,
+};
+
+pub const PY2281_BIS_INSORT: CodingStep = CodingStep {
+    id: "py-2281-bis-insort", title: "bisect · insort", objective: "Mantener lista ordenada con insort.",
+    prompt_md: "**insort**\n\nInsert in-place O(n) pero simple y determinista.\n\n**Micro-reto:**\n1. a=[1,3]; insort(a,2); `resultado = a`\n2. Mostrá\n",
+    starter_code: "# from bisect import insort\n# a = [1, 3]\n# insort(a, 2)\n# resultado = a\n# print(resultado)\n",
+    pytest: "def test_bis_insort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3]",
+    solution_example: "from bisect import insort\na = [1, 3]\ninsort(a, 2)\nresultado = a\nprint(resultado)\n",
+    next: Some("py-2282-bis-find"), show_type_chips: false, micro_step: 2281,
+};
+
+pub const PY2282_BIS_FIND: CodingStep = CodingStep {
+    id: "py-2282-bis-find", title: "bisect · búsqueda", objective: "Encontrar posición en lista ordenada.",
+    prompt_md: "**Búsqueda binaria**\n\n`i = bisect_left(a, x); a[i]==x` confirma presencia.\n\n**Micro-reto:**\n1. a=[10,20,30]; x=20; `resultado = (bisect_left(a,x), a[bisect_left(a,x)]==x)`\n2. Mostrá\n",
+    starter_code: "# from bisect import bisect_left\n# a = [10, 20, 30]\n# x = 20\n# i = bisect_left(a, x)\n# resultado = (i, a[i] == x)\n# print(resultado)\n",
+    pytest: "def test_bis_find(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(1, True)",
+    solution_example: "from bisect import bisect_left\na = [10, 20, 30]\nx = 20\ni = bisect_left(a, x)\nresultado = (i, a[i] == x)\nprint(resultado)\n",
+    next: Some("py-2283-bis-range"), show_type_chips: false, micro_step: 2282,
+};
+
+pub const PY2283_BIS_RANGE: CodingStep = CodingStep {
+    id: "py-2283-bis-range", title: "bisect · rango", objective: "Contar ocurrencias con left/right.",
+    prompt_md: "**Rango iguales**\n\n`right - left` cuenta repeticiones.\n\n**Micro-reto:**\n1. a=[1,2,2,2,3]; `resultado = bisect_right(a,2) - bisect_left(a,2)`\n2. Mostrá\n",
+    starter_code: "# from bisect import bisect_left, bisect_right\n# a = [1, 2, 2, 2, 3]\n# resultado = bisect_right(a, 2) - bisect_left(a, 2)\n# print(resultado)\n",
+    pytest: "def test_bis_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3",
+    solution_example: "from bisect import bisect_left, bisect_right\na = [1, 2, 2, 2, 3]\nresultado = bisect_right(a, 2) - bisect_left(a, 2)\nprint(resultado)\n",
+    next: Some("py-2284-bis-check"), show_type_chips: false, micro_step: 2283,
+};
+
+pub const PY2284_BIS_CHECK: CodingStep = CodingStep {
+    id: "py-2284-bis-check", title: "bisect · Suite", objective: "Suite insort + count.",
+    prompt_md: "**Suite bisect**\n\ninsort 5 en [1,10]; count de 2 en [2,2].\n\n**Micro-reto:**\n1. a=[1,10]; insort(a,5); b=[2,2]\n2. `resultado = (a, bisect_right(b,2)-bisect_left(b,2))`\n3. Mostrá\n",
+    starter_code: "# from bisect import insort, bisect_left, bisect_right\n# a = [1, 10]\n# insort(a, 5)\n# b = [2, 2]\n# resultado = (a, bisect_right(b, 2) - bisect_left(b, 2))\n# print(resultado)\n",
+    pytest: "def test_bis_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([1, 5, 10], 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "([1, 5, 10], 2)",
+    solution_example: "from bisect import insort, bisect_left, bisect_right\na = [1, 10]\ninsort(a, 5)\nb = [2, 2]\nresultado = (a, bisect_right(b, 2) - bisect_left(b, 2))\nprint(resultado)\n",
+    next: Some("py-2285-heap-nlargest"), show_type_chips: false, micro_step: 2284,
+};
+
+pub const PY2285_HEAP_NLARGEST: CodingStep = CodingStep {
+    id: "py-2285-heap-nlargest", title: "heap · nlargest", objective: "Top-k sin ordenar todo.",
+    prompt_md: "**nlargest**\n\n`heapq.nlargest(k, seq)` usa stdlib eficiente.\n\n**Micro-reto:**\n1. `resultado = nlargest(2, [3, 1, 4, 1, 5])`\n2. Mostrá\n",
+    starter_code: "# from heapq import nlargest\n# resultado = nlargest(2, [3, 1, 4, 1, 5])\n# print(resultado)\n",
+    pytest: "def test_heap_nlargest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [5, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[5, 4]",
+    solution_example: "from heapq import nlargest\nresultado = nlargest(2, [3, 1, 4, 1, 5])\nprint(resultado)\n",
+    next: Some("py-2286-heap-nsmallest"), show_type_chips: false, micro_step: 2285,
+};
+
+pub const PY2286_HEAP_NSMALLEST: CodingStep = CodingStep {
+    id: "py-2286-heap-nsmallest", title: "heap · nsmallest", objective: "Bottom-k con nsmallest.",
+    prompt_md: "**nsmallest**\n\nParadigma: selección parcial sobre stream.\n\n**Micro-reto:**\n1. `resultado = nsmallest(2, [3, 1, 4, 1, 5])`\n2. Mostrá\n",
+    starter_code: "# from heapq import nsmallest\n# resultado = nsmallest(2, [3, 1, 4, 1, 5])\n# print(resultado)\n",
+    pytest: "def test_heap_nsmallest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 1]",
+    solution_example: "from heapq import nsmallest\nresultado = nsmallest(2, [3, 1, 4, 1, 5])\nprint(resultado)\n",
+    next: Some("py-2287-heap-merge"), show_type_chips: false, micro_step: 2286,
+};
+
+pub const PY2287_HEAP_MERGE: CodingStep = CodingStep {
+    id: "py-2287-heap-merge", title: "heap · merge", objective: "Fusionar iterables ordenados lazy.",
+    prompt_md: "**merge**\n\n`heapq.merge` como k-way merge de 2 fuentes.\n\n**Micro-reto:**\n1. `resultado = list(merge([1, 3], [2, 4]))`\n2. Mostrá\n",
+    starter_code: "# from heapq import merge\n# resultado = list(merge([1, 3], [2, 4]))\n# print(resultado)\n",
+    pytest: "def test_heap_merge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3, 4]",
+    solution_example: "from heapq import merge\nresultado = list(merge([1, 3], [2, 4]))\nprint(resultado)\n",
+    next: Some("py-2288-heap-pushpop"), show_type_chips: false, micro_step: 2287,
+};
+
+pub const PY2288_HEAP_PUSHPOP: CodingStep = CodingStep {
+    id: "py-2288-heap-pushpop", title: "heap · pushpop", objective: "heappushpop mantiene tamaño fijo.",
+    prompt_md: "**pushpop**\n\nMin-heap de 1 elemento: pushpop devuelve el menor.\n\n**Micro-reto:**\n1. h=[2]; `resultado = heappushpop(h, 1)`\n2. Mostrá\n",
+    starter_code: "# from heapq import heappushpop\n# h = [2]\n# resultado = heappushpop(h, 1)\n# print(resultado)\n",
+    pytest: "def test_heap_pushpop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1",
+    solution_example: "from heapq import heappushpop\nh = [2]\nresultado = heappushpop(h, 1)\nprint(resultado)\n",
+    next: Some("py-2289-heap-ify"), show_type_chips: false, micro_step: 2288,
+};
+
+pub const PY2289_HEAP_IFY: CodingStep = CodingStep {
+    id: "py-2289-heap-ify", title: "heap · heapify", objective: "heapify convierte lista en heap in-place.",
+    prompt_md: "**heapify**\n\nModelo: lista satisface propiedad heap tras heapify.\n\n**Micro-reto:**\n1. h=[3,1,2]; heapify(h); `resultado = h[0]`\n2. Mostrá\n",
+    starter_code: "# from heapq import heapify\n# h = [3, 1, 2]\n# heapify(h)\n# resultado = h[0]\n# print(resultado)\n",
+    pytest: "def test_heap_ify(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "1",
+    solution_example: "from heapq import heapify\nh = [3, 1, 2]\nheapify(h)\nresultado = h[0]\nprint(resultado)\n",
+    next: Some("py-2290-heap-check"), show_type_chips: false, micro_step: 2289,
+};
+
+pub const PY2290_HEAP_CHECK: CodingStep = CodingStep {
+    id: "py-2290-heap-check", title: "heap · Suite", objective: "Suite nlargest + merge.",
+    prompt_md: "**Suite heapq**\n\nTop 1 de [5,2]; merge [1],[2].\n\n**Micro-reto:**\n1. `resultado = (nlargest(1,[5,2]), list(merge([1],[2])))`\n2. Mostrá\n",
+    starter_code: "# from heapq import nlargest, merge\n# resultado = (nlargest(1, [5, 2]), list(merge([1], [2])))\n# print(resultado)\n",
+    pytest: "def test_heap_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([5], [1, 2])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "([5], [1, 2])",
+    solution_example: "from heapq import nlargest, merge\nresultado = (nlargest(1, [5, 2]), list(merge([1], [2])))\nprint(resultado)\n",
+    next: Some("py-2291-tp-two-sum"), show_type_chips: false, micro_step: 2290,
+};
+
+pub const PY2291_TP_TWO_SUM: CodingStep = CodingStep {
+    id: "py-2291-tp-two-sum", title: "2ptr · two sum", objective: "Two sum en array ordenado.",
+    prompt_md: "**Two sum ordenado**\n\nDos punteros desde extremos; O(n) sin hash.\n\n**Micro-reto:**\n1. `def two_sum(a, t):` con l,r\n2. `resultado = two_sum([1,2,3,4], 5)`\n3. Mostrá\n",
+    starter_code: "# def two_sum(a, t):\n#     l, r = 0, len(a) - 1\n#     while l < r:\n#         s = a[l] + a[r]\n#         if s == t:\n#             return (a[l], a[r])\n#         if s < t:\n#             l += 1\n#         else:\n#             r -= 1\n#     return None\n# resultado = two_sum([1, 2, 3, 4], 5)\n# print(resultado)\n",
+    pytest: "def test_tp_two_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 4)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(1, 4)",
+    solution_example: "def two_sum(a, t):\n    l, r = 0, len(a) - 1\n    while l < r:\n        s = a[l] + a[r]\n        if s == t:\n            return (a[l], a[r])\n        if s < t:\n            l += 1\n        else:\n            r -= 1\n    return None\nresultado = two_sum([1, 2, 3, 4], 5)\nprint(resultado)\n",
+    next: Some("py-2292-tp-dedup"), show_type_chips: false, micro_step: 2291,
+};
+
+pub const PY2292_TP_DEDUP: CodingStep = CodingStep {
+    id: "py-2292-tp-dedup", title: "2ptr · dedup", objective: "Eliminar duplicados in-place sorted.",
+    prompt_md: "**Dedup sorted**\n\nSlow/fast: copiar único al frente.\n\n**Micro-reto:**\n1. `def dedup(a):` return nueva longitud\n2. nums=[1,1,2]; k=dedup(nums); `resultado = nums[:k]`\n3. Mostrá\n",
+    starter_code: "# def dedup(a):\n#     if not a:\n#         return 0\n#     w = 1\n#     for i in range(1, len(a)):\n#         if a[i] != a[w - 1]:\n#             a[w] = a[i]\n#             w += 1\n#     return w\n# nums = [1, 1, 2]\n# k = dedup(nums)\n# resultado = nums[:k]\n# print(resultado)\n",
+    pytest: "def test_tp_dedup(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2]",
+    solution_example: "def dedup(a):\n    if not a:\n        return 0\n    w = 1\n    for i in range(1, len(a)):\n        if a[i] != a[w - 1]:\n            a[w] = a[i]\n            w += 1\n    return w\nnums = [1, 1, 2]\nk = dedup(nums)\nresultado = nums[:k]\nprint(resultado)\n",
+    next: Some("py-2293-tp-merge"), show_type_chips: false, micro_step: 2292,
+};
+
+pub const PY2293_TP_MERGE: CodingStep = CodingStep {
+    id: "py-2293-tp-merge", title: "2ptr · merge", objective: "Merge dos sorted arrays.",
+    prompt_md: "**Merge 2 arrays**\n\nDominio ETL: unir streams ordenados.\n\n**Micro-reto:**\n1. `def merge2(a,b):` two pointers\n2. `resultado = merge2([1,3], [2])`\n3. Mostrá\n",
+    starter_code: "# def merge2(a, b):\n#     i = j = 0\n#     out = []\n#     while i < len(a) and j < len(b):\n#         if a[i] <= b[j]:\n#             out.append(a[i]); i += 1\n#         else:\n#             out.append(b[j]); j += 1\n#     out.extend(a[i:]); out.extend(b[j:])\n#     return out\n# resultado = merge2([1, 3], [2])\n# print(resultado)\n",
+    pytest: "def test_tp_merge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3]",
+    solution_example: "def merge2(a, b):\n    i = j = 0\n    out = []\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            out.append(a[i]); i += 1\n        else:\n            out.append(b[j]); j += 1\n    out.extend(a[i:]); out.extend(b[j:])\n    return out\nresultado = merge2([1, 3], [2])\nprint(resultado)\n",
+    next: Some("py-2294-tp-palindrome"), show_type_chips: false, micro_step: 2293,
+};
+
+pub const PY2294_TP_PALINDROME: CodingStep = CodingStep {
+    id: "py-2294-tp-palindrome", title: "2ptr · palíndromo", objective: "Palíndromo con punteros.",
+    prompt_md: "**Palíndromo**\n\nl/r avanzan al centro comparando chars.\n\n**Micro-reto:**\n1. `def is_pal(s):` ignorando case\n2. `resultado = is_pal('aba')`\n3. Mostrá\n",
+    starter_code: "# def is_pal(s):\n#     l, r = 0, len(s) - 1\n#     while l < r:\n#         if s[l] != s[r]:\n#             return False\n#         l += 1; r -= 1\n#     return True\n# resultado = is_pal('aba')\n# print(resultado)\n",
+    pytest: "def test_tp_palindrome(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "True",
+    solution_example: "def is_pal(s):\n    l, r = 0, len(s) - 1\n    while l < r:\n        if s[l] != s[r]:\n            return False\n        l += 1; r -= 1\n    return True\nresultado = is_pal('aba')\nprint(resultado)\n",
+    next: Some("py-2295-tp-squares"), show_type_chips: false, micro_step: 2294,
+};
+
+pub const PY2295_TP_SQUARES: CodingStep = CodingStep {
+    id: "py-2295-tp-squares", title: "2ptr · squares", objective: "Merge squares de dos sorted.",
+    prompt_md: "**Squares merge**\n\nNegativos al cuadrado: two pointers desde extremos.\n\n**Micro-reto:**\n1. a=[-2,0,1,2]; squares sorted desc con 2ptr\n2. `resultado = [x*x for x in sorted(a)]`\n3. Mostrá\n",
+    starter_code: "# a = [-2, 0, 1, 2]\n# resultado = [x * x for x in sorted(a)]\n# print(resultado)\n",
+    pytest: "def test_tp_squares(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 4, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[0, 1, 4, 4]",
+    solution_example: "a = [-2, 0, 1, 2]\nresultado = [x * x for x in sorted(a)]\nprint(resultado)\n",
+    next: Some("py-2296-tp-check"), show_type_chips: false, micro_step: 2295,
+};
+
+pub const PY2296_TP_CHECK: CodingStep = CodingStep {
+    id: "py-2296-tp-check", title: "2ptr · Suite", objective: "Suite two pointers.",
+    prompt_md: "**Suite 2ptr**\n\ntwo_sum(3) y merge2 vacío.\n\n**Micro-reto:**\n1. Reutilizá merge2 y two_sum\n2. `resultado = (two_sum([1,2,3],3), merge2([], [1]))`\n3. Mostrá\n",
+    starter_code: "# def two_sum(a, t):\n#     l, r = 0, len(a) - 1\n#     while l < r:\n#         s = a[l] + a[r]\n#         if s == t:\n#             return (a[l], a[r])\n#         if s < t:\n#             l += 1\n#         else:\n#             r -= 1\n#     return None\n# def merge2(a, b):\n#     i = j = 0\n#     out = []\n#     while i < len(a) and j < len(b):\n#         if a[i] <= b[j]:\n#             out.append(a[i]); i += 1\n#         else:\n#             out.append(b[j]); j += 1\n#     out.extend(a[i:]); out.extend(b[j:])\n#     return out\n# resultado = (two_sum([1, 2, 3], 3), merge2([], [1]))\n# print(resultado)\n",
+    pytest: "def test_tp_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ((1, 2), [1])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "((1, 2), [1])",
+    solution_example: "def two_sum(a, t):\n    l, r = 0, len(a) - 1\n    while l < r:\n        s = a[l] + a[r]\n        if s == t:\n            return (a[l], a[r])\n        if s < t:\n            l += 1\n        else:\n            r -= 1\n    return None\ndef merge2(a, b):\n    i = j = 0\n    out = []\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            out.append(a[i]); i += 1\n        else:\n            out.append(b[j]); j += 1\n    out.extend(a[i:]); out.extend(b[j:])\n    return out\nresultado = (two_sum([1, 2, 3], 3), merge2([], [1]))\nprint(resultado)\n",
+    next: Some("py-2297-sw-max-k"), show_type_chips: false, micro_step: 2296,
+};
+
+pub const PY2297_SW_MAX_K: CodingStep = CodingStep {
+    id: "py-2297-sw-max-k", title: "window · max k", objective: "Suma máxima ventana tamaño k.",
+    prompt_md: "**Ventana fija**\n\nDeslizar suma en O(n): restar saliente, sumar entrante.\n\n**Micro-reto:**\n1. `def max_sum_k(a,k):`\n2. `resultado = max_sum_k([1,2,3,4], 2)`\n3. Mostrá\n",
+    starter_code: "# def max_sum_k(a, k):\n#     if len(a) < k:\n#         return 0\n#     s = sum(a[:k])\n#     best = s\n#     for i in range(k, len(a)):\n#         s += a[i] - a[i - k]\n#         best = max(best, s)\n#     return best\n# resultado = max_sum_k([1, 2, 3, 4], 2)\n# print(resultado)\n",
+    pytest: "def test_sw_max_k(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "7",
+    solution_example: "def max_sum_k(a, k):\n    if len(a) < k:\n        return 0\n    s = sum(a[:k])\n    best = s\n    for i in range(k, len(a)):\n        s += a[i] - a[i - k]\n        best = max(best, s)\n    return best\nresultado = max_sum_k([1, 2, 3, 4], 2)\nprint(resultado)\n",
+    next: Some("py-2298-sw-distinct"), show_type_chips: false, micro_step: 2297,
+};
+
+pub const PY2298_SW_DISTINCT: CodingStep = CodingStep {
+    id: "py-2298-sw-distinct", title: "window · distinct", objective: "Longest substring k distinct (k=2).",
+    prompt_md: "**Distinct k**\n\nMapa de frecuencias + shrink cuando >k.\n\n**Micro-reto:**\n1. `def longest_k_dist(s,k=2):`\n2. `resultado = longest_k_dist('aabac', 2)`\n3. Mostrá\n",
+    starter_code: "# def longest_k_dist(s, k=2):\n#     from collections import defaultdict\n#     freq = defaultdict(int)\n#     l = best = 0\n#     for r, ch in enumerate(s):\n#         freq[ch] += 1\n#         while len(freq) > k:\n#             freq[s[l]] -= 1\n#             if freq[s[l]] == 0:\n#                 del freq[s[l]]\n#             l += 1\n#         best = max(best, r - l + 1)\n#     return best\n# resultado = longest_k_dist('aabac', 2)\n# print(resultado)\n",
+    pytest: "def test_sw_distinct(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "4",
+    solution_example: "def longest_k_dist(s, k=2):\n    from collections import defaultdict\n    freq = defaultdict(int)\n    l = best = 0\n    for r, ch in enumerate(s):\n        freq[ch] += 1\n        while len(freq) > k:\n            freq[s[l]] -= 1\n            if freq[s[l]] == 0:\n                del freq[s[l]]\n            l += 1\n        best = max(best, r - l + 1)\n    return best\nresultado = longest_k_dist('aabac', 2)\nprint(resultado)\n",
+    next: Some("py-2299-sw-min-len"), show_type_chips: false, micro_step: 2298,
+};
+
+pub const PY2299_SW_MIN_LEN: CodingStep = CodingStep {
+    id: "py-2299-sw-min-len", title: "window · mínima", objective: "Subarray mínima con suma >= target.",
+    prompt_md: "**Min length**\n\nExpand/shrink: ventana mínima que cumple suma.\n\n**Micro-reto:**\n1. `def min_len(a, t):`\n2. `resultado = min_len([2,3,1,2,4,3], 7)`\n3. Mostrá\n",
+    starter_code: "# def min_len(a, t):\n#     l = s = 0\n#     best = len(a) + 1\n#     for r, v in enumerate(a):\n#         s += v\n#         while s >= t:\n#             best = min(best, r - l + 1)\n#             s -= a[l]\n#             l += 1\n#     return best if best <= len(a) else 0\n# resultado = min_len([2, 3, 1, 2, 4, 3], 7)\n# print(resultado)\n",
+    pytest: "def test_sw_min_len(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2",
+    solution_example: "def min_len(a, t):\n    l = s = 0\n    best = len(a) + 1\n    for r, v in enumerate(a):\n        s += v\n        while s >= t:\n            best = min(best, r - l + 1)\n            s -= a[l]\n            l += 1\n    return best if best <= len(a) else 0\nresultado = min_len([2, 3, 1, 2, 4, 3], 7)\nprint(resultado)\n",
+    next: Some("py-2300-sw-avg"), show_type_chips: false, micro_step: 2299,
+};
+
+pub const PY2300_SW_AVG: CodingStep = CodingStep {
+    id: "py-2300-sw-avg", title: "window · promedio", objective: "Promedio móvil tamaño k.",
+    prompt_md: "**Promedio móvil**\n\nDominio series temporales: media de ventana.\n\n**Micro-reto:**\n1. `def moving_avg(a,k):` return lista medias\n2. `resultado = moving_avg([1,2,3], 2)`\n3. Mostrá\n",
+    starter_code: "# def moving_avg(a, k):\n#     if len(a) < k:\n#         return []\n#     s = sum(a[:k])\n#     out = [s / k]\n#     for i in range(k, len(a)):\n#         s += a[i] - a[i - k]\n#         out.append(s / k)\n#     return out\n# resultado = moving_avg([1, 2, 3], 2)\n# print(resultado)\n",
+    pytest: "def test_sw_avg(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1.5, 2.5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1.5, 2.5]",
+    solution_example: "def moving_avg(a, k):\n    if len(a) < k:\n        return []\n    s = sum(a[:k])\n    out = [s / k]\n    for i in range(k, len(a)):\n        s += a[i] - a[i - k]\n        out.append(s / k)\n    return out\nresultado = moving_avg([1, 2, 3], 2)\nprint(resultado)\n",
+    next: Some("py-2301-sw-count-ones"), show_type_chips: false, micro_step: 2300,
+};
+
+pub const PY2301_SW_COUNT_ONES: CodingStep = CodingStep {
+    id: "py-2301-sw-count-ones", title: "window · contar", objective: "Máximo de 1s en ventana k.",
+    prompt_md: "**Contar en ventana**\n\nVentana binaria: máximo de unos.\n\n**Micro-reto:**\n1. a=[1,0,1,1,0]; k=3\n2. `resultado = max(sum(a[i:i+k]) for i in range(len(a)-k+1))`\n3. Mostrá\n",
+    starter_code: "# a = [1, 0, 1, 1, 0]\n# k = 3\n# resultado = max(sum(a[i:i + k]) for i in range(len(a) - k + 1))\n# print(resultado)\n",
+    pytest: "def test_sw_count_ones(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2",
+    solution_example: "a = [1, 0, 1, 1, 0]\nk = 3\nresultado = max(sum(a[i:i + k]) for i in range(len(a) - k + 1))\nprint(resultado)\n",
+    next: Some("py-2302-sw-check"), show_type_chips: false, micro_step: 2301,
+};
+
+pub const PY2302_SW_CHECK: CodingStep = CodingStep {
+    id: "py-2302-sw-check", title: "window · Suite", objective: "Suite sliding window.",
+    prompt_md: "**Suite window**\n\nmax_sum_k y moving_avg k=2.\n\n**Micro-reto:**\n1. `resultado = (max_sum_k([1,2,3],2), moving_avg([1,2,3],2))`\n2. Mostrá\n",
+    starter_code: "# def max_sum_k(a, k):\n#     s = sum(a[:k]); best = s\n#     for i in range(k, len(a)):\n#         s += a[i] - a[i - k]\n#         best = max(best, s)\n#     return best\n# def moving_avg(a, k):\n#     s = sum(a[:k]); out = [s / k]\n#     for i in range(k, len(a)):\n#         s += a[i] - a[i - k]\n#         out.append(s / k)\n#     return out\n# resultado = (max_sum_k([1, 2, 3], 2), moving_avg([1, 2, 3], 2))\n# print(resultado)\n",
+    pytest: "def test_sw_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (5, [1.5, 2.5])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(5, [1.5, 2.5])",
+    solution_example: "def max_sum_k(a, k):\n    s = sum(a[:k]); best = s\n    for i in range(k, len(a)):\n        s += a[i] - a[i - k]\n        best = max(best, s)\n    return best\ndef moving_avg(a, k):\n    s = sum(a[:k]); out = [s / k]\n    for i in range(k, len(a)):\n        s += a[i] - a[i - k]\n        out.append(s / k)\n    return out\nresultado = (max_sum_k([1, 2, 3], 2), moving_avg([1, 2, 3], 2))\nprint(resultado)\n",
+    next: Some("py-2303-pfx-build"), show_type_chips: false, micro_step: 2302,
+};
+
+pub const PY2303_PFX_BUILD: CodingStep = CodingStep {
+    id: "py-2303-pfx-build", title: "prefix · build", objective: "Construir array de prefijos.",
+    prompt_md: "**Prefix build**\n\n`pref[i+1] = pref[i] + a[i]`; pref[0]=0.\n\n**Micro-reto:**\n1. a=[1,2,3]; build prefix\n2. `resultado = pref`\n3. Mostrá\n",
+    starter_code: "# a = [1, 2, 3]\n# pref = [0]\n# for x in a:\n#     pref.append(pref[-1] + x)\n# resultado = pref\n# print(resultado)\n",
+    pytest: "def test_pfx_build(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 3, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[0, 1, 3, 6]",
+    solution_example: "a = [1, 2, 3]\npref = [0]\nfor x in a:\n    pref.append(pref[-1] + x)\nresultado = pref\nprint(resultado)\n",
+    next: Some("py-2304-pfx-range"), show_type_chips: false, micro_step: 2303,
+};
+
+pub const PY2304_PFX_RANGE: CodingStep = CodingStep {
+    id: "py-2304-pfx-range", title: "prefix · rango", objective: "Suma [l,r] en O(1) con prefix.",
+    prompt_md: "**Range sum**\n\nModelo: `pref[r+1]-pref[l]`.\n\n**Micro-reto:**\n1. pref=[0,1,3,6]; `resultado = pref[3]-pref[1]`\n2. Mostrá\n",
+    starter_code: "# pref = [0, 1, 3, 6]\n# resultado = pref[3] - pref[1]\n# print(resultado)\n",
+    pytest: "def test_pfx_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "5",
+    solution_example: "pref = [0, 1, 3, 6]\nresultado = pref[3] - pref[1]\nprint(resultado)\n",
+    next: Some("py-2305-pfx-diff"), show_type_chips: false, micro_step: 2304,
+};
+
+pub const PY2305_PFX_DIFF: CodingStep = CodingStep {
+    id: "py-2305-pfx-diff", title: "prefix · diff", objective: "Diferencia para updates de rango.",
+    prompt_md: "**Diff array**\n\n+1 en [l,r]: diff[l]+=1, diff[r+1]-=1.\n\n**Micro-reto:**\n1. diff=[0]*4; l,r=1,2; diff[l]+=1; diff[r+1]-=1\n2. `resultado = diff`\n3. Mostrá\n",
+    starter_code: "# diff = [0] * 4\n# l, r = 1, 2\n# diff[l] += 1\n# diff[r + 1] -= 1\n# resultado = diff\n# print(resultado)\n",
+    pytest: "def test_pfx_diff(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 0, -1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[0, 1, 0, -1]",
+    solution_example: "diff = [0] * 4\nl, r = 1, 2\ndiff[l] += 1\ndiff[r + 1] -= 1\nresultado = diff\nprint(resultado)\n",
+    next: Some("py-2306-pfx-subarray"), show_type_chips: false, micro_step: 2305,
+};
+
+pub const PY2306_PFX_SUBARRAY: CodingStep = CodingStep {
+    id: "py-2306-pfx-subarray", title: "prefix · subarray", objective: "Contar subarrays suma k (simple).",
+    prompt_md: "**Subarray sum k**\n\nPrefijos + mapa de frecuencias.\n\n**Micro-reto:**\n1. `def count_sub(a,k):`\n2. `resultado = count_sub([1,1,1], 2)`\n3. Mostrá\n",
+    starter_code: "# def count_sub(a, k):\n#     pref = 0\n#     seen = {0: 1}\n#     count = 0\n#     for x in a:\n#         pref += x\n#         count += seen.get(pref - k, 0)\n#         seen[pref] = seen.get(pref, 0) + 1\n#     return count\n# resultado = count_sub([1, 1, 1], 2)\n# print(resultado)\n",
+    pytest: "def test_pfx_subarray(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2",
+    solution_example: "def count_sub(a, k):\n    pref = 0\n    seen = {0: 1}\n    count = 0\n    for x in a:\n        pref += x\n        count += seen.get(pref - k, 0)\n        seen[pref] = seen.get(pref, 0) + 1\n    return count\nresultado = count_sub([1, 1, 1], 2)\nprint(resultado)\n",
+    next: Some("py-2307-pfx-2d-row"), show_type_chips: false, micro_step: 2306,
+};
+
+pub const PY2307_PFX_2D_ROW: CodingStep = CodingStep {
+    id: "py-2307-pfx-2d-row", title: "prefix · 2D fila", objective: "Prefix sum por fila en matriz.",
+    prompt_md: "**2D row prefix**\n\nAcumular cada fila por separado.\n\n**Micro-reto:**\n1. row=[1,2,3]; pref row\n2. `resultado = pref[-1]`\n3. Mostrá\n",
+    starter_code: "# row = [1, 2, 3]\n# pref = [0]\n# for x in row:\n#     pref.append(pref[-1] + x)\n# resultado = pref[-1]\n# print(resultado)\n",
+    pytest: "def test_pfx_2d_row(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "6",
+    solution_example: "row = [1, 2, 3]\npref = [0]\nfor x in row:\n    pref.append(pref[-1] + x)\nresultado = pref[-1]\nprint(resultado)\n",
+    next: Some("py-2308-pfx-check"), show_type_chips: false, micro_step: 2307,
+};
+
+pub const PY2308_PFX_CHECK: CodingStep = CodingStep {
+    id: "py-2308-pfx-check", title: "prefix · Suite", objective: "Suite prefix sums.",
+    prompt_md: "**Suite prefix**\n\nSuma rango y count_sub k=2.\n\n**Micro-reto:**\n1. pref de [2,2]; range [0,1]; count_sub\n2. `resultado = (pref[2]-pref[0], count_sub([1,1],2))`\n3. Mostrá\n",
+    starter_code: "# def count_sub(a, k):\n#     pref = 0; seen = {0: 1}; count = 0\n#     for x in a:\n#         pref += x\n#         count += seen.get(pref - k, 0)\n#         seen[pref] = seen.get(pref, 0) + 1\n#     return count\n# a = [2, 2]\n# pref = [0]\n# for x in a:\n#     pref.append(pref[-1] + x)\n# resultado = (pref[2] - pref[0], count_sub([1, 1], 2))\n# print(resultado)\n",
+    pytest: "def test_pfx_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (4, 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "(4, 1)",
+    solution_example: "def count_sub(a, k):\n    pref = 0; seen = {0: 1}; count = 0\n    for x in a:\n        pref += x\n        count += seen.get(pref - k, 0)\n        seen[pref] = seen.get(pref, 0) + 1\n    return count\na = [2, 2]\npref = [0]\nfor x in a:\n    pref.append(pref[-1] + x)\nresultado = (pref[2] - pref[0], count_sub([1, 1], 2))\nprint(resultado)\n",
+    next: Some("py-2309-kway-two"), show_type_chips: false, micro_step: 2308,
+};
+
+pub const PY2309_KWAY_TWO: CodingStep = CodingStep {
+    id: "py-2309-kway-two", title: "kway · dos listas", objective: "Merge clásico sin heap.",
+    prompt_md: "**Merge 2-way**\n\nParadigma: comparar cabezas de cada lista.\n\n**Micro-reto:**\n1. `def merge(a,b):` two pointers\n2. `resultado = merge([1,4],[2,3])`\n3. Mostrá\n",
+    starter_code: "# def merge(a, b):\n#     i = j = 0\n#     out = []\n#     while i < len(a) and j < len(b):\n#         if a[i] <= b[j]:\n#             out.append(a[i]); i += 1\n#         else:\n#             out.append(b[j]); j += 1\n#     out.extend(a[i:]); out.extend(b[j:])\n#     return out\n# resultado = merge([1, 4], [2, 3])\n# print(resultado)\n",
+    pytest: "def test_kway_two(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3, 4]",
+    solution_example: "def merge(a, b):\n    i = j = 0\n    out = []\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            out.append(a[i]); i += 1\n        else:\n            out.append(b[j]); j += 1\n    out.extend(a[i:]); out.extend(b[j:])\n    return out\nresultado = merge([1, 4], [2, 3])\nprint(resultado)\n",
+    next: Some("py-2310-kway-heap"), show_type_chips: false, micro_step: 2309,
+};
+
+pub const PY2310_KWAY_HEAP: CodingStep = CodingStep {
+    id: "py-2310-kway-heap", title: "kway · heap", objective: "K-way merge con heapq.",
+    prompt_md: "**Heap k-way**\n\nMin-heap de (valor, lista_idx, pos).\n\n**Micro-reto:**\n1. `def merge_k(lists):` con heapq\n2. `resultado = merge_k([[1,3],[2]])`\n3. Mostrá\n",
+    starter_code: "# import heapq\n# def merge_k(lists):\n#     heap = []\n#     for i, lst in enumerate(lists):\n#         if lst:\n#             heapq.heappush(heap, (lst[0], i, 0))\n#     out = []\n#     while heap:\n#         v, li, j = heapq.heappop(heap)\n#         out.append(v)\n#         if j + 1 < len(lists[li]):\n#             heapq.heappush(heap, (lists[li][j + 1], li, j + 1))\n#     return out\n# resultado = merge_k([[1, 3], [2]])\n# print(resultado)\n",
+    pytest: "def test_kway_heap(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3]",
+    solution_example: "import heapq\ndef merge_k(lists):\n    heap = []\n    for i, lst in enumerate(lists):\n        if lst:\n            heapq.heappush(heap, (lst[0], i, 0))\n    out = []\n    while heap:\n        v, li, j = heapq.heappop(heap)\n        out.append(v)\n        if j + 1 < len(lists[li]):\n            heapq.heappush(heap, (lists[li][j + 1], li, j + 1))\n    return out\nresultado = merge_k([[1, 3], [2]])\nprint(resultado)\n",
+    next: Some("py-2311-kway-three"), show_type_chips: false, micro_step: 2310,
+};
+
+pub const PY2311_KWAY_THREE: CodingStep = CodingStep {
+    id: "py-2311-kway-three", title: "kway · tres listas", objective: "Merge tres streams ordenados.",
+    prompt_md: "**3-way merge**\n\nDominio logs: unir particiones por timestamp.\n\n**Micro-reto:**\n1. merge_k tres listas\n2. `resultado = merge_k([[1],[2],[3]])`\n3. Mostrá\n",
+    starter_code: "# import heapq\n# def merge_k(lists):\n#     heap = []\n#     for i, lst in enumerate(lists):\n#         if lst:\n#             heapq.heappush(heap, (lst[0], i, 0))\n#     out = []\n#     while heap:\n#         v, li, j = heapq.heappop(heap)\n#         out.append(v)\n#         if j + 1 < len(lists[li]):\n#             heapq.heappush(heap, (lists[li][j + 1], li, j + 1))\n#     return out\n# resultado = merge_k([[1], [2], [3]])\n# print(resultado)\n",
+    pytest: "def test_kway_three(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3]",
+    solution_example: "import heapq\ndef merge_k(lists):\n    heap = []\n    for i, lst in enumerate(lists):\n        if lst:\n            heapq.heappush(heap, (lst[0], i, 0))\n    out = []\n    while heap:\n        v, li, j = heapq.heappop(heap)\n        out.append(v)\n        if j + 1 < len(lists[li]):\n            heapq.heappush(heap, (lists[li][j + 1], li, j + 1))\n    return out\nresultado = merge_k([[1], [2], [3]])\nprint(resultado)\n",
+    next: Some("py-2312-kway-iter"), show_type_chips: false, micro_step: 2311,
+};
+
+pub const PY2312_KWAY_ITER: CodingStep = CodingStep {
+    id: "py-2312-kway-iter", title: "kway · iterators", objective: "heapq.merge sobre iteradores.",
+    prompt_md: "**merge iterators**\n\nLazy merge de generadores ordenados.\n\n**Micro-reto:**\n1. `from heapq import merge`\n2. `resultado = list(merge([1,3], iter([2])))`\n3. Mostrá\n",
+    starter_code: "# from heapq import merge\n# resultado = list(merge([1, 3], iter([2])))\n# print(resultado)\n",
+    pytest: "def test_kway_iter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3]",
+    solution_example: "from heapq import merge\nresultado = list(merge([1, 3], iter([2])))\nprint(resultado)\n",
+    next: Some("py-2313-kway-dedup"), show_type_chips: false, micro_step: 2312,
+};
+
+pub const PY2313_KWAY_DEDUP: CodingStep = CodingStep {
+    id: "py-2313-kway-dedup", title: "kway · dedup", objective: "Merge ordenado con dedup consecutivo.",
+    prompt_md: "**Dedup merge**\n\nETL: omitir duplicados adyacentes post-merge.\n\n**Micro-reto:**\n1. merged=[1,1,2]; dedup consecutivo\n2. `resultado = [merged[0]] + [x for i,x in enumerate(merged[1:],1) if x!=merged[i-1]]`\n3. Mostrá\n",
+    starter_code: "# merged = [1, 1, 2]\n# resultado = [merged[0]] + [x for i, x in enumerate(merged[1:], 1) if x != merged[i - 1]]\n# print(resultado)\n",
+    pytest: "def test_kway_dedup(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2]",
+    solution_example: "merged = [1, 1, 2]\nresultado = [merged[0]] + [x for i, x in enumerate(merged[1:], 1) if x != merged[i - 1]]\nprint(resultado)\n",
+    next: Some("py-2314-kway-check"), show_type_chips: false, micro_step: 2313,
+};
+
+pub const PY2314_KWAY_CHECK: CodingStep = CodingStep {
+    id: "py-2314-kway-check", title: "kway · Suite", objective: "Suite k-way merge.",
+    prompt_md: "**Suite kway**\n\nmerge_k dos listas; dedup [1,1,2].\n\n**Micro-reto:**\n1. `resultado = (merge_k([[1],[2]]), [1,2])`\n2. Mostrá\n",
+    starter_code: "# import heapq\n# def merge_k(lists):\n#     heap = []\n#     for i, lst in enumerate(lists):\n#         if lst:\n#             heapq.heappush(heap, (lst[0], i, 0))\n#     out = []\n#     while heap:\n#         v, li, j = heapq.heappop(heap)\n#         out.append(v)\n#         if j + 1 < len(lists[li]):\n#             heapq.heappush(heap, (lists[li][j + 1], li, j + 1))\n#     return out\n# resultado = (merge_k([[1], [2]]), [1, 2])\n# print(resultado)\n",
+    pytest: "def test_kway_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([1, 2], [1, 2])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "([1, 2], [1, 2])",
+    solution_example: "import heapq\ndef merge_k(lists):\n    heap = []\n    for i, lst in enumerate(lists):\n        if lst:\n            heapq.heappush(heap, (lst[0], i, 0))\n    out = []\n    while heap:\n        v, li, j = heapq.heappop(heap)\n        out.append(v)\n        if j + 1 < len(lists[li]):\n            heapq.heappush(heap, (lists[li][j + 1], li, j + 1))\n    return out\nresultado = (merge_k([[1], [2]]), [1, 2])\nprint(resultado)\n",
+    next: Some("py-2315-etl-sort"), show_type_chips: false, micro_step: 2314,
+};
+
+pub const PY2315_ETL_SORT: CodingStep = CodingStep {
+    id: "py-2315-etl-sort", title: "etl · sort", objective: "Ordenar registros por clave.",
+    prompt_md: "**Sort ETL**\n\nPipeline: ordenar antes de merge/join.\n\n**Micro-reto:**\n1. rows=[('b',2),('a',1)]; sort by key\n2. `resultado = sorted(rows, key=lambda x: x[0])`\n3. Mostrá\n",
+    starter_code: "# rows = [('b', 2), ('a', 1)]\n# resultado = sorted(rows, key=lambda x: x[0])\n# print(resultado)\n",
+    pytest: "def test_etl_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', 1), ('b', 2)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[('a', 1), ('b', 2)]",
+    solution_example: "rows = [('b', 2), ('a', 1)]\nresultado = sorted(rows, key=lambda x: x[0])\nprint(resultado)\n",
+    next: Some("py-2316-etl-filter"), show_type_chips: false, micro_step: 2315,
+};
+
+pub const PY2316_ETL_FILTER: CodingStep = CodingStep {
+    id: "py-2316-etl-filter", title: "etl · filter", objective: "Filtrar filas válidas.",
+    prompt_md: "**Filter**\n\nDominio: descartar registros con amount<=0.\n\n**Micro-reto:**\n1. data=[1,-1,2]; `resultado = [x for x in data if x>0]`\n2. Mostrá\n",
+    starter_code: "# data = [1, -1, 2]\n# resultado = [x for x in data if x > 0]\n# print(resultado)\n",
+    pytest: "def test_etl_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2]",
+    solution_example: "data = [1, -1, 2]\nresultado = [x for x in data if x > 0]\nprint(resultado)\n",
+    next: Some("py-2317-etl-map"), show_type_chips: false, micro_step: 2316,
+};
+
+pub const PY2317_ETL_MAP: CodingStep = CodingStep {
+    id: "py-2317-etl-map", title: "etl · map", objective: "Transformar valores en pipeline.",
+    prompt_md: "**Map transform**\n\nNormalizar: str.strip().upper() en nombres.\n\n**Micro-reto:**\n1. names=[' a ','b ']; map strip+upper\n2. `resultado = [n.strip().upper() for n in names]`\n3. Mostrá\n",
+    starter_code: "# names = [' a ', ' b ']\n# resultado = [n.strip().upper() for n in names]\n# print(resultado)\n",
+    pytest: "def test_etl_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['A', 'B']",
+    solution_example: "names = [' a ', ' b ']\nresultado = [n.strip().upper() for n in names]\nprint(resultado)\n",
+    next: Some("py-2318-etl-group"), show_type_chips: false, micro_step: 2317,
+};
+
+pub const PY2318_ETL_GROUP: CodingStep = CodingStep {
+    id: "py-2318-etl-group", title: "etl · group", objective: "Agregar por clave ordenada.",
+    prompt_md: "**Group aggregate**\n\nTras sort: groupby y sumar valores por clave.\n\n**Micro-reto:**\n1. data=sorted([('a',1),('a',2)])\n2. `resultado = {k: sum(v for _, v in g) for k, g in groupby(data, key=lambda x: x[0])}`\n3. Mostrá\n",
+    starter_code: "# from itertools import groupby\n# data = sorted([('a', 1), ('a', 2)])\n# resultado = {k: sum(v for _, v in g) for k, g in groupby(data, key=lambda x: x[0])}\n# print(resultado)\n",
+    pytest: "def test_etl_group(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "{'a': 3}",
+    solution_example: "from itertools import groupby\ndata = sorted([('a', 1), ('a', 2)])\nresultado = {k: sum(v for _, v in g) for k, g in groupby(data, key=lambda x: x[0])}\nprint(resultado)\n",
+    next: Some("py-2319-etl-chain"), show_type_chips: false, micro_step: 2318,
+};
+
+pub const PY2319_ETL_CHAIN: CodingStep = CodingStep {
+    id: "py-2319-etl-chain", title: "etl · chain", objective: "Encadenar etapas sort→filter→map.",
+    prompt_md: "**Chain stages**\n\nPipeline funcional en memoria.\n\n**Micro-reto:**\n1. nums=[3,1,2,-1]; sort, filter>0, double\n2. `resultado = [x*2 for x in sorted(nums) if x>0]`\n3. Mostrá\n",
+    starter_code: "# nums = [3, 1, 2, -1]\n# resultado = [x * 2 for x in sorted(nums) if x > 0]\n# print(resultado)\n",
+    pytest: "def test_etl_chain(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 4, 6]",
+    solution_example: "nums = [3, 1, 2, -1]\nresultado = [x * 2 for x in sorted(nums) if x > 0]\nprint(resultado)\n",
+    next: Some("py-2320-etl-check"), show_type_chips: false, micro_step: 2319,
+};
+
+pub const PY2320_ETL_CHECK: CodingStep = CodingStep {
+    id: "py-2320-etl-check", title: "etl · Suite", objective: "Cerrar ola: pipeline ETL completo.",
+    prompt_md: "**Suite ETL**\n\nSort+filter+sum: total positivos ordenados.\n\n**Micro-reto:**\n1. data=[2,-1,1]; pipeline\n2. `resultado = sum(sorted(x for x in data if x>0))`\n3. Mostrá\n",
+    starter_code: "# data = [2, -1, 1]\n# resultado = sum(sorted(x for x in data if x > 0))\n# print(resultado)\n",
+    pytest: "def test_etl_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3",
+    solution_example: "data = [2, -1, 1]\nresultado = sum(sorted(x for x in data if x > 0))\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 2320,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -57000,6 +57600,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2258_OBS_COUNT,
     &PY2259_OBS_CID_REQ,
     &PY2260_OBS_CHECK,
+    &PY2261_CHAIN_BASIC,
+    &PY2262_CHAIN_FROM,
+    &PY2263_ZIP_PAIR,
+    &PY2264_ZIP_LEN,
+    &PY2265_ZIP_DICT,
+    &PY2266_CHAIN_CHECK,
+    &PY2267_GRP_SORTED,
+    &PY2268_GRP_COUNT,
+    &PY2269_ISL_HEAD,
+    &PY2270_ISL_SKIP,
+    &PY2271_ISL_STEP,
+    &PY2272_GRP_CHECK,
+    &PY2273_PROD_CART,
+    &PY2274_PROD_REPEAT,
+    &PY2275_PERM_BASIC,
+    &PY2276_COMB_BASIC,
+    &PY2277_COMB_REP,
+    &PY2278_PROD_CHECK,
+    &PY2279_BIS_LEFT,
+    &PY2280_BIS_RIGHT,
+    &PY2281_BIS_INSORT,
+    &PY2282_BIS_FIND,
+    &PY2283_BIS_RANGE,
+    &PY2284_BIS_CHECK,
+    &PY2285_HEAP_NLARGEST,
+    &PY2286_HEAP_NSMALLEST,
+    &PY2287_HEAP_MERGE,
+    &PY2288_HEAP_PUSHPOP,
+    &PY2289_HEAP_IFY,
+    &PY2290_HEAP_CHECK,
+    &PY2291_TP_TWO_SUM,
+    &PY2292_TP_DEDUP,
+    &PY2293_TP_MERGE,
+    &PY2294_TP_PALINDROME,
+    &PY2295_TP_SQUARES,
+    &PY2296_TP_CHECK,
+    &PY2297_SW_MAX_K,
+    &PY2298_SW_DISTINCT,
+    &PY2299_SW_MIN_LEN,
+    &PY2300_SW_AVG,
+    &PY2301_SW_COUNT_ONES,
+    &PY2302_SW_CHECK,
+    &PY2303_PFX_BUILD,
+    &PY2304_PFX_RANGE,
+    &PY2305_PFX_DIFF,
+    &PY2306_PFX_SUBARRAY,
+    &PY2307_PFX_2D_ROW,
+    &PY2308_PFX_CHECK,
+    &PY2309_KWAY_TWO,
+    &PY2310_KWAY_HEAP,
+    &PY2311_KWAY_THREE,
+    &PY2312_KWAY_ITER,
+    &PY2313_KWAY_DEDUP,
+    &PY2314_KWAY_CHECK,
+    &PY2315_ETL_SORT,
+    &PY2316_ETL_FILTER,
+    &PY2317_ETL_MAP,
+    &PY2318_ETL_GROUP,
+    &PY2319_ETL_CHAIN,
+    &PY2320_ETL_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -57167,7 +57827,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 2260);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2320);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -60339,7 +60999,35 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 2260 is the end of the rail");
+                assert_eq!(step.next, Some("py-2261-chain-basic"), "step 2260 chains to wave22");
+            }
+        }
+    }
+
+
+    #[test]
+    fn py2261_to_py2320_itertools_bisect_chain() {
+        let bridge = coding_step_by_micro_step(2260).expect("py-2260");
+        assert_eq!(bridge.next, Some("py-2261-chain-basic"));
+
+        for n in 2261..=2320 {
+            let step = coding_step_by_micro_step(n).expect("wave22 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 2320 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 2320 is the end of the rail");
             }
         }
     }
