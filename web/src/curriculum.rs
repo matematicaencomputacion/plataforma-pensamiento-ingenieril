@@ -52335,7 +52335,607 @@ pub const PY2020_DOM_CHECK: CodingStep = CodingStep {
     pytest: "def test_dom_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 50)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "Entidad + VO precio.",
     solution_example: "from dataclasses import dataclass\n@dataclass(frozen=True)\nclass Money:\n    amount: int\n    currency: str\nclass Product:\n    def __init__(self, id, price):\n        self.id = id\n        self.price = price\np = Product(1, Money(50, 'ARS'))\nresultado = (p.id, p.price.amount)\nprint(resultado)\n",
-    next: None, show_type_chips: false, micro_step: 2020,
+    next: Some("py-2021-hash-sha256"), show_type_chips: false, micro_step: 2020,
+};
+
+pub const PY2021_HASH_SHA256: CodingStep = CodingStep {
+    id: "py-2021-hash-sha256", title: "hashlib · sha256", objective: "Calcular SHA-256 hex de un texto.",
+    prompt_md: "**SHA-256**\n\n`hashlib.sha256` produce un digesto determinista (64 hex) de bytes. Misma entrada → mismo hash.\n\n**Micro-reto:**\n1. `import hashlib`\n2. `resultado = hashlib.sha256(b'hola').hexdigest()`\n3. Mostrá",
+    starter_code: "# import hashlib\n# resultado = hashlib.sha256(b'hola').hexdigest()\n# print(resultado)\n",
+    pytest: "def test_hash_sha256(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'b221d9dbb083a7f33428d7c2a3c3198ae925614d70210e28716ccaa7cd4ddb79'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "sha256(...).hexdigest()",
+    solution_example: "import hashlib\nresultado = hashlib.sha256(b'hola').hexdigest()\nprint(resultado)\n",
+    next: Some("py-2022-hash-md5"), show_type_chips: false, micro_step: 2021,
+};
+
+pub const PY2022_HASH_MD5: CodingStep = CodingStep {
+    id: "py-2022-hash-md5", title: "hashlib · md5 demo", objective: "Calcular MD5 hex (demo, no seguridad).",
+    prompt_md: "**MD5 (demo)**\n\nMD5 sigue disponible para checksums legacy/demo. No lo uses como secreto criptográfico moderno.\n\n**Micro-reto:**\n1. `import hashlib`\n2. `resultado = hashlib.md5(b'hola').hexdigest()`\n3. Mostrá",
+    starter_code: "# import hashlib\n# resultado = hashlib.md5(b'hola').hexdigest()\n# print(resultado)\n",
+    pytest: "def test_hash_md5(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '4d186321c1a7f0f354b297e8914ab240'\n    assert len(ns['resultado']) == 32\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "md5(...).hexdigest()",
+    solution_example: "import hashlib\nresultado = hashlib.md5(b'hola').hexdigest()\nprint(resultado)\n",
+    next: Some("py-2023-hash-encode"), show_type_chips: false, micro_step: 2022,
+};
+
+pub const PY2023_HASH_ENCODE: CodingStep = CodingStep {
+    id: "py-2023-hash-encode", title: "hashlib · encode utf-8", objective: "Hashear str vía encode utf-8.",
+    prompt_md: "**encode**\n\nLos digestos operan sobre bytes. Convertí texto con `.encode('utf-8')` antes de hashear.\n\n**Micro-reto:**\n1. `texto = 'ppi'`\n2. `resultado = hashlib.sha256(texto.encode('utf-8')).hexdigest()`\n3. Mostrá",
+    starter_code: "# import hashlib\n# texto = 'ppi'\n# resultado = hashlib.sha256(texto.encode('utf-8')).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_hash_encode(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '0fef65463b6dcae47253ec56684caa3cc9c3d04f5cc714d2858fa55f25adeafe'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "texto.encode('utf-8')",
+    solution_example: "import hashlib\ntexto = 'ppi'\nresultado = hashlib.sha256(texto.encode('utf-8')).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2024-hash-update"), show_type_chips: false, micro_step: 2023,
+};
+
+pub const PY2024_HASH_UPDATE: CodingStep = CodingStep {
+    id: "py-2024-hash-update", title: "hashlib · update", objective: "Acumular bytes con update().",
+    prompt_md: "**update**\n\nPodés alimentar el hasher en partes: `h.update(a); h.update(b)` ≡ hashear `a+b`.\n\n**Micro-reto:**\n1. `h = hashlib.sha256()`; `h.update(b'ho')`; `h.update(b'la')`\n2. `resultado = h.hexdigest()`\n3. Mostrá",
+    starter_code: "# import hashlib\n# h = hashlib.sha256()\n# h.update(b'ho')\n# h.update(b'la')\n# resultado = h.hexdigest()\n# print(resultado)\n",
+    pytest: "def test_hash_update(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'b221d9dbb083a7f33428d7c2a3c3198ae925614d70210e28716ccaa7cd4ddb79'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "update en partes = mismo digest",
+    solution_example: "import hashlib\nh = hashlib.sha256()\nh.update(b'ho')\nh.update(b'la')\nresultado = h.hexdigest()\nprint(resultado)\n",
+    next: Some("py-2025-hash-digest"), show_type_chips: false, micro_step: 2024,
+};
+
+pub const PY2025_HASH_DIGEST: CodingStep = CodingStep {
+    id: "py-2025-hash-digest", title: "hashlib · digest vs hex", objective: "Contrastar digest() bytes y hexdigest().",
+    prompt_md: "**digest vs hex**\n\n`digest()` → bytes crudos; `hexdigest()` → str hex. Misma info, distinta forma.\n\n**Micro-reto:**\n1. `h = hashlib.sha256(b'abc')`\n2. `resultado = (len(h.digest()), len(h.hexdigest()))`\n3. Mostrá",
+    starter_code: "# import hashlib\n# h = hashlib.sha256(b'abc')\n# resultado = (len(h.digest()), len(h.hexdigest()))\n# print(resultado)\n",
+    pytest: "def test_hash_digest(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (32, 64)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "SHA-256: 32 bytes / 64 hex",
+    solution_example: "import hashlib\nh = hashlib.sha256(b'abc')\nresultado = (len(h.digest()), len(h.hexdigest()))\nprint(resultado)\n",
+    next: Some("py-2026-hash-check"), show_type_chips: false, micro_step: 2025,
+};
+
+pub const PY2026_HASH_CHECK: CodingStep = CodingStep {
+    id: "py-2026-hash-check", title: "hashlib · Suite digests", objective: "Integrar sha256 y md5 sobre el mismo input.",
+    prompt_md: "**Suite hashlib**\n\nCerrá el bloque: mismo payload, dos algoritmos.\n\n**Micro-reto:**\n1. Payload `b'hola'`\n2. `resultado = (sha256_hex, md5_hex)`\n3. Mostrá",
+    starter_code: "# import hashlib\n# p = b'hola'\n# resultado = (hashlib.sha256(p).hexdigest(), hashlib.md5(p).hexdigest())\n# print(resultado)\n",
+    pytest: "def test_hash_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('b221d9dbb083a7f33428d7c2a3c3198ae925614d70210e28716ccaa7cd4ddb79', '4d186321c1a7f0f354b297e8914ab240')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tupla (sha256, md5)",
+    solution_example: "import hashlib\np = b'hola'\nresultado = (hashlib.sha256(p).hexdigest(), hashlib.md5(p).hexdigest())\nprint(resultado)\n",
+    next: Some("py-2027-hmac-basic"), show_type_chips: false, micro_step: 2026,
+};
+
+pub const PY2027_HMAC_BASIC: CodingStep = CodingStep {
+    id: "py-2027-hmac-basic", title: "hmac · firma básica", objective: "Firmar mensaje con HMAC-SHA256 y clave fija.",
+    prompt_md: "**HMAC**\n\n`hmac.new(key, msg, hashlib.sha256)` autentica el mensaje con clave. En tests usamos clave fija.\n\n**Micro-reto:**\n1. `import hmac, hashlib`\n2. `resultado = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# resultado = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_hmac_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '22d75a1658ffaa22420735c77a0422d13389fecda2f5a16b8199cc4e80d69440'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "hmac.new(key, msg, sha256)",
+    solution_example: "import hmac, hashlib\nresultado = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2028-hmac-key"), show_type_chips: false, micro_step: 2027,
+};
+
+pub const PY2028_HMAC_KEY: CodingStep = CodingStep {
+    id: "py-2028-hmac-key", title: "hmac · sensibilidad a clave", objective: "Verificar que otra clave cambia la firma.",
+    prompt_md: "**Clave**\n\nMisma msg + clave distinta → firma distinta. La clave fija el contexto de autenticación.\n\n**Micro-reto:**\n1. Firmá `b'msg'` con `clave-fija` y `otra`\n2. `resultado = (f1 == f2)`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# f1 = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\n# f2 = hmac.new(b'otra', b'msg', hashlib.sha256).hexdigest()\n# resultado = (f1 == f2)\n# print(resultado)\n",
+    pytest: "def test_hmac_key(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Claves distintas → False",
+    solution_example: "import hmac, hashlib\nf1 = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\nf2 = hmac.new(b'otra', b'msg', hashlib.sha256).hexdigest()\nresultado = (f1 == f2)\nprint(resultado)\n",
+    next: Some("py-2029-hmac-msg"), show_type_chips: false, micro_step: 2028,
+};
+
+pub const PY2029_HMAC_MSG: CodingStep = CodingStep {
+    id: "py-2029-hmac-msg", title: "hmac · sensibilidad a mensaje", objective: "Detectar cambio de payload en la firma.",
+    prompt_md: "**Mensaje**\n\nAlterar un byte del mensaje invalida el HMAC. Así se detecta manipulación.\n\n**Micro-reto:**\n1. Firmá `orden-1` y `orden-2` con `clave-fija`\n2. `resultado = (f1 == f2)`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# f1 = hmac.new(b'clave-fija', b'orden-1', hashlib.sha256).hexdigest()\n# f2 = hmac.new(b'clave-fija', b'orden-2', hashlib.sha256).hexdigest()\n# resultado = (f1 == f2)\n# print(resultado)\n",
+    pytest: "def test_hmac_msg(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Mensajes distintos → False",
+    solution_example: "import hmac, hashlib\nf1 = hmac.new(b'clave-fija', b'orden-1', hashlib.sha256).hexdigest()\nf2 = hmac.new(b'clave-fija', b'orden-2', hashlib.sha256).hexdigest()\nresultado = (f1 == f2)\nprint(resultado)\n",
+    next: Some("py-2030-hmac-helper"), show_type_chips: false, micro_step: 2029,
+};
+
+pub const PY2030_HMAC_HELPER: CodingStep = CodingStep {
+    id: "py-2030-hmac-helper", title: "hmac · función firmar", objective: "Encapsular firma en una función.",
+    prompt_md: "**firmar()**\n\nEncapsulá HMAC en `firmar(mensaje, clave)` con encode utf-8.\n\n**Micro-reto:**\n1. Definí `firmar`\n2. `resultado = firmar('orden-1', 'clave-fija')`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# def firmar(mensaje, clave):\n#     return hmac.new(clave.encode(), mensaje.encode(), hashlib.sha256).hexdigest()\n# resultado = firmar('orden-1', 'clave-fija')\n# print(resultado)\n",
+    pytest: "def test_hmac_helper(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '0beb76e9a0d5e27c3b4427c18946a3dd407f93860b6894b5aab61eb6d75f19a5'\n    assert ns['firmar']('orden-1', 'clave-fija') == '0beb76e9a0d5e27c3b4427c18946a3dd407f93860b6894b5aab61eb6d75f19a5'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "encode clave y mensaje",
+    solution_example: "import hmac, hashlib\ndef firmar(mensaje, clave):\n    return hmac.new(clave.encode(), mensaje.encode(), hashlib.sha256).hexdigest()\nresultado = firmar('orden-1', 'clave-fija')\nprint(resultado)\n",
+    next: Some("py-2031-hmac-empty"), show_type_chips: false, micro_step: 2030,
+};
+
+pub const PY2031_HMAC_EMPTY: CodingStep = CodingStep {
+    id: "py-2031-hmac-empty", title: "hmac · mensaje vacío", objective: "Firmar payload vacío de forma determinista.",
+    prompt_md: "**Vacío**\n\nUn mensaje vacío también tiene HMAC válido y estable con clave fija.\n\n**Micro-reto:**\n1. Firmá `b''` con `clave-fija`\n2. `resultado = hexdigest`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# resultado = hmac.new(b'clave-fija', b'', hashlib.sha256).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_hmac_empty(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '0a6f63dbbdaf5aa79099f0171e65e072b80957ec956db5b9f30893304033500a'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "msg = b''",
+    solution_example: "import hmac, hashlib\nresultado = hmac.new(b'clave-fija', b'', hashlib.sha256).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2032-hmac-check"), show_type_chips: false, micro_step: 2031,
+};
+
+pub const PY2032_HMAC_CHECK: CodingStep = CodingStep {
+    id: "py-2032-hmac-check", title: "hmac · Suite firma", objective: "Integrar firma y verificación por igualdad.",
+    prompt_md: "**Suite HMAC**\n\nFirmá y verificá recalculando el digest esperado.\n\n**Micro-reto:**\n1. `sig = firmar('msg', 'clave-fija')`\n2. `ok = sig == firmar('msg', 'clave-fija')`\n3. `resultado = (sig, ok)`; mostrá",
+    starter_code: "# import hmac, hashlib\n# def firmar(m, k):\n#     return hmac.new(k.encode(), m.encode(), hashlib.sha256).hexdigest()\n# sig = firmar('msg', 'clave-fija')\n# ok = sig == firmar('msg', 'clave-fija')\n# resultado = (sig, ok)\n# print(resultado)\n",
+    pytest: "def test_hmac_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('22d75a1658ffaa22420735c77a0422d13389fecda2f5a16b8199cc4e80d69440', True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Recalcular y comparar",
+    solution_example: "import hmac, hashlib\ndef firmar(m, k):\n    return hmac.new(k.encode(), m.encode(), hashlib.sha256).hexdigest()\nsig = firmar('msg', 'clave-fija')\nok = sig == firmar('msg', 'clave-fija')\nresultado = (sig, ok)\nprint(resultado)\n",
+    next: Some("py-2033-crc-basic"), show_type_chips: false, micro_step: 2032,
+};
+
+pub const PY2033_CRC_BASIC: CodingStep = CodingStep {
+    id: "py-2033-crc-basic", title: "zlib · crc32", objective: "Calcular CRC32 de bytes.",
+    prompt_md: "**crc32**\n\n`zlib.crc32` es un checksum rápido (no criptográfico). Enmascará con `& 0xffffffff` para unsigned.\n\n**Micro-reto:**\n1. `import zlib`\n2. `resultado = zlib.crc32(b'abc') & 0xffffffff`\n3. Mostrá",
+    starter_code: "# import zlib\n# resultado = zlib.crc32(b'abc') & 0xffffffff\n# print(resultado)\n",
+    pytest: "def test_crc_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 891568578\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "& 0xffffffff",
+    solution_example: "import zlib\nresultado = zlib.crc32(b'abc') & 0xffffffff\nprint(resultado)\n",
+    next: Some("py-2034-adler-basic"), show_type_chips: false, micro_step: 2033,
+};
+
+pub const PY2034_ADLER_BASIC: CodingStep = CodingStep {
+    id: "py-2034-adler-basic", title: "zlib · adler32", objective: "Calcular Adler-32 de bytes.",
+    prompt_md: "**adler32**\n\n`zlib.adler32` es otro checksum rápido usado en zlib. También usá máscara unsigned.\n\n**Micro-reto:**\n1. `resultado = zlib.adler32(b'abc') & 0xffffffff`\n2. Mostrá",
+    starter_code: "# import zlib\n# resultado = zlib.adler32(b'abc') & 0xffffffff\n# print(resultado)\n",
+    pytest: "def test_adler_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 38600999\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "adler32 & mask",
+    solution_example: "import zlib\nresultado = zlib.adler32(b'abc') & 0xffffffff\nprint(resultado)\n",
+    next: Some("py-2035-crc-accum"), show_type_chips: false, micro_step: 2034,
+};
+
+pub const PY2035_CRC_ACCUM: CodingStep = CodingStep {
+    id: "py-2035-crc-accum", title: "zlib · crc32 acumulado", objective: "Encadenar crc32 con valor previo.",
+    prompt_md: "**Acumulado**\n\n`crc32(data, value)` continúa un checksum previo. Útil para streams.\n\n**Micro-reto:**\n1. `v = zlib.crc32(b'ho')`\n2. `resultado = zlib.crc32(b'la', v) & 0xffffffff`\n3. Mostrá",
+    starter_code: "# import zlib\n# v = zlib.crc32(b'ho')\n# resultado = zlib.crc32(b'la', v) & 0xffffffff\n# print(resultado)\n",
+    pytest: "def test_crc_accum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1872820616\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "crc32(parte2, prev)",
+    solution_example: "import zlib\nv = zlib.crc32(b'ho')\nresultado = zlib.crc32(b'la', v) & 0xffffffff\nprint(resultado)\n",
+    next: Some("py-2036-crc-vs-adler"), show_type_chips: false, micro_step: 2035,
+};
+
+pub const PY2036_CRC_VS_ADLER: CodingStep = CodingStep {
+    id: "py-2036-crc-vs-adler", title: "zlib · crc vs adler", objective: "Contrastar dos checksums del mismo input.",
+    prompt_md: "**Contraste**\n\nMismo input → CRC32 y Adler-32 distintos. Ambos detectan cambios, no son criptográficos.\n\n**Micro-reto:**\n1. Calculá ambos sobre `b'abc'`\n2. `resultado = (crc, adler, crc == adler)`\n3. Mostrá",
+    starter_code: "# import zlib\n# c = zlib.crc32(b'abc') & 0xffffffff\n# a = zlib.adler32(b'abc') & 0xffffffff\n# resultado = (c, a, c == a)\n# print(resultado)\n",
+    pytest: "def test_crc_vs_adler(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (891568578, 38600999, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Valores distintos",
+    solution_example: "import zlib\nc = zlib.crc32(b'abc') & 0xffffffff\na = zlib.adler32(b'abc') & 0xffffffff\nresultado = (c, a, c == a)\nprint(resultado)\n",
+    next: Some("py-2037-crc-detect"), show_type_chips: false, micro_step: 2036,
+};
+
+pub const PY2037_CRC_DETECT: CodingStep = CodingStep {
+    id: "py-2037-crc-detect", title: "zlib · detección de cambio", objective: "Detectar alteración vía CRC32.",
+    prompt_md: "**Detección**\n\nUn bit distinto cambia el CRC. Compará checksums de dos payloads.\n\n**Micro-reto:**\n1. CRC de `hola` y `holA`\n2. `resultado = (c1 == c2)`\n3. Mostrá",
+    starter_code: "# import zlib\n# c1 = zlib.crc32(b'hola') & 0xffffffff\n# c2 = zlib.crc32(b'holA') & 0xffffffff\n# resultado = (c1 == c2)\n# print(resultado)\n",
+    pytest: "def test_crc_detect(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Case-sensitive",
+    solution_example: "import zlib\nc1 = zlib.crc32(b'hola') & 0xffffffff\nc2 = zlib.crc32(b'holA') & 0xffffffff\nresultado = (c1 == c2)\nprint(resultado)\n",
+    next: Some("py-2038-crc-check"), show_type_chips: false, micro_step: 2037,
+};
+
+pub const PY2038_CRC_CHECK: CodingStep = CodingStep {
+    id: "py-2038-crc-check", title: "zlib · Suite checksums", objective: "Integrar CRC32 y Adler-32 en tupla.",
+    prompt_md: "**Suite checksum**\n\nCerrá el bloque con ambos checksums de `hola`.\n\n**Micro-reto:**\n1. `resultado = (crc32(hola), adler32(hola))`\n2. Mostrá",
+    starter_code: "# import zlib\n# p = b'hola'\n# resultado = (zlib.crc32(p) & 0xffffffff, zlib.adler32(p) & 0xffffffff)\n# print(resultado)\n",
+    pytest: "def test_crc_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import zlib as _z\n    assert ns['resultado'] == (_z.crc32(b'hola') & 0xffffffff, _z.adler32(b'hola') & 0xffffffff)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tupla (crc, adler)",
+    solution_example: "import zlib\np = b'hola'\nresultado = (zlib.crc32(p) & 0xffffffff, zlib.adler32(p) & 0xffffffff)\nprint(resultado)\n",
+    next: Some("py-2039-json-canon"), show_type_chips: false, micro_step: 2038,
+};
+
+pub const PY2039_JSON_CANON: CodingStep = CodingStep {
+    id: "py-2039-json-canon", title: "json · canónico sort_keys", objective: "Serializar JSON con claves ordenadas.",
+    prompt_md: "**sort_keys**\n\nAntes de hashear un dict, canonicá con `json.dumps(..., sort_keys=True)`.\n\n**Micro-reto:**\n1. `obj = {'b': 2, 'a': 1}`\n2. `resultado = json.dumps(obj, sort_keys=True, separators=(',', ':'))`\n3. Mostrá",
+    starter_code: "# import json\n# obj = {'b': 2, 'a': 1}\n# resultado = json.dumps(obj, sort_keys=True, separators=(',', ':'))\n# print(resultado)\n",
+    pytest: "def test_json_canon(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '{\"a\":1,\"b\":2}'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "sort_keys=True, separators=(',', ':')",
+    solution_example: "import json\nobj = {'b': 2, 'a': 1}\nresultado = json.dumps(obj, sort_keys=True, separators=(',', ':'))\nprint(resultado)\n",
+    next: Some("py-2040-json-hash"), show_type_chips: false, micro_step: 2039,
+};
+
+pub const PY2040_JSON_HASH: CodingStep = CodingStep {
+    id: "py-2040-json-hash", title: "json · hash canónico", objective: "Hashear el JSON canónico.",
+    prompt_md: "**Hash canónico**\n\nHash del dumps ordenado: dos dicts equivalentes producen el mismo digesto.\n\n**Micro-reto:**\n1. Canonicá `{'b':2,'a':1}`\n2. `resultado = sha256(canon.encode()).hexdigest()`\n3. Mostrá",
+    starter_code: "# import json, hashlib\n# canon = json.dumps({'b': 2, 'a': 1}, sort_keys=True, separators=(',', ':'))\n# resultado = hashlib.sha256(canon.encode()).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_json_hash(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "dumps → encode → sha256",
+    solution_example: "import json, hashlib\ncanon = json.dumps({'b': 2, 'a': 1}, sort_keys=True, separators=(',', ':'))\nresultado = hashlib.sha256(canon.encode()).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2041-json-stable"), show_type_chips: false, micro_step: 2040,
+};
+
+pub const PY2041_JSON_STABLE: CodingStep = CodingStep {
+    id: "py-2041-json-stable", title: "json · estabilidad de orden", objective: "Verificar igualdad de hash pese a orden distinto.",
+    prompt_md: "**Estabilidad**\n\n`{'a':1,'b':2}` y `{'b':2,'a':1}` deben hashear igual si canonicás.\n\n**Micro-reto:**\n1. Hasheá ambos dicts con sort_keys\n2. `resultado = (h1 == h2)`\n3. Mostrá",
+    starter_code: "# import json, hashlib\n# def h(o):\n#     c = json.dumps(o, sort_keys=True, separators=(',', ':'))\n#     return hashlib.sha256(c.encode()).hexdigest()\n# resultado = (h({'a': 1, 'b': 2}) == h({'b': 2, 'a': 1}))\n# print(resultado)\n",
+    pytest: "def test_json_stable(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "sort_keys iguala",
+    solution_example: "import json, hashlib\ndef h(o):\n    c = json.dumps(o, sort_keys=True, separators=(',', ':'))\n    return hashlib.sha256(c.encode()).hexdigest()\nresultado = (h({'a': 1, 'b': 2}) == h({'b': 2, 'a': 1}))\nprint(resultado)\n",
+    next: Some("py-2042-json-sep"), show_type_chips: false, micro_step: 2041,
+};
+
+pub const PY2042_JSON_SEP: CodingStep = CodingStep {
+    id: "py-2042-json-sep", title: "json · separators fijos", objective: "Fijar separators para canonicidad total.",
+    prompt_md: "**separators**\n\nEspacios por defecto rompen canonicidad. Usá `separators=(',', ':')`.\n\n**Micro-reto:**\n1. Compará dumps default vs compacto del mismo obj\n2. `resultado = (d1 == d2)`\n3. Mostrá",
+    starter_code: "# import json\n# o = {'a': 1}\n# d1 = json.dumps(o, sort_keys=True)\n# d2 = json.dumps(o, sort_keys=True, separators=(',', ':'))\n# resultado = (d1 == d2)\n# print(resultado)\n",
+    pytest: "def test_json_sep(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Default incluye espacios",
+    solution_example: "import json\no = {'a': 1}\nd1 = json.dumps(o, sort_keys=True)\nd2 = json.dumps(o, sort_keys=True, separators=(',', ':'))\nresultado = (d1 == d2)\nprint(resultado)\n",
+    next: Some("py-2043-json-nested"), show_type_chips: false, micro_step: 2042,
+};
+
+pub const PY2043_JSON_NESTED: CodingStep = CodingStep {
+    id: "py-2043-json-nested", title: "json · nested canon", objective: "Canonicar estructuras anidadas.",
+    prompt_md: "**Anidado**\n\nsort_keys aplica en cada nivel del árbol JSON.\n\n**Micro-reto:**\n1. `obj = {'z': {'b': 2, 'a': 1}, 'y': 0}`\n2. `resultado = json.dumps(obj, sort_keys=True, separators=(',', ':'))`\n3. Mostrá",
+    starter_code: "# import json\n# obj = {'z': {'b': 2, 'a': 1}, 'y': 0}\n# resultado = json.dumps(obj, sort_keys=True, separators=(',', ':'))\n# print(resultado)\n",
+    pytest: "def test_json_nested(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '{\"y\":0,\"z\":{\"a\":1,\"b\":2}'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Claves ordenadas en cada nivel",
+    solution_example: "import json\nobj = {'z': {'b': 2, 'a': 1}, 'y': 0}\nresultado = json.dumps(obj, sort_keys=True, separators=(',', ':'))\nprint(resultado)\n",
+    next: Some("py-2044-json-check"), show_type_chips: false, micro_step: 2043,
+};
+
+pub const PY2044_JSON_CHECK: CodingStep = CodingStep {
+    id: "py-2044-json-check", title: "json · Suite canon+hash", objective: "Integrar canonicación y hash.",
+    prompt_md: "**Suite JSON**\n\nDevolvé `(canon, hash)` del objeto `{'b':2,'a':1}`.\n\n**Micro-reto:**\n1. Canonicá y hasheá\n2. `resultado = (canon, digest)`\n3. Mostrá",
+    starter_code: "# import json, hashlib\n# canon = json.dumps({'b': 2, 'a': 1}, sort_keys=True, separators=(',', ':'))\n# digest = hashlib.sha256(canon.encode()).hexdigest()\n# resultado = (canon, digest)\n# print(resultado)\n",
+    pytest: "def test_json_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('{\"a\":1,\"b\":2}', '43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tupla (canon, hash)",
+    solution_example: "import json, hashlib\ncanon = json.dumps({'b': 2, 'a': 1}, sort_keys=True, separators=(',', ':'))\ndigest = hashlib.sha256(canon.encode()).hexdigest()\nresultado = (canon, digest)\nprint(resultado)\n",
+    next: Some("py-2045-pay-pack"), show_type_chips: false, micro_step: 2044,
+};
+
+pub const PY2045_PAY_PACK: CodingStep = CodingStep {
+    id: "py-2045-pay-pack", title: "payload · empaquetar", objective: "Empaquetar body + hash en un sobre.",
+    prompt_md: "**Sobre**\n\nUn payload íntegro lleva `body` y `hash` del body.\n\n**Micro-reto:**\n1. `body = 'ok'`; `h = sha256(body.encode()).hexdigest()`\n2. `resultado = {'body': body, 'hash': h}`\n3. Mostrá `resultado['hash']` vía print del dict? → print resultado",
+    starter_code: "# import hashlib\n# body = 'ok'\n# h = hashlib.sha256(body.encode()).hexdigest()\n# resultado = {'body': body, 'hash': h}\n# print(resultado)\n",
+    pytest: "def test_pay_pack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hashlib as _h\n    assert ns['resultado'] == {'body': 'ok', 'hash': _h.sha256(b'ok').hexdigest()}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "dict con body y hash",
+    solution_example: "import hashlib\nbody = 'ok'\nh = hashlib.sha256(body.encode()).hexdigest()\nresultado = {'body': body, 'hash': h}\nprint(resultado)\n",
+    next: Some("py-2046-pay-verify"), show_type_chips: false, micro_step: 2045,
+};
+
+pub const PY2046_PAY_VERIFY: CodingStep = CodingStep {
+    id: "py-2046-pay-verify", title: "payload · verificar", objective: "Verificar integridad recalculando el hash.",
+    prompt_md: "**Verificar**\n\n`verify(envelope)` compara hash declarado vs recalculado del body.\n\n**Micro-reto:**\n1. Definí `verify(env)`\n2. `resultado = verify({'body':'ok','hash': sha256(b'ok').hexdigest()})`\n3. Mostrá",
+    starter_code: "# import hashlib\n# def verify(env):\n#     return hashlib.sha256(env['body'].encode()).hexdigest() == env['hash']\n# resultado = verify({'body': 'ok', 'hash': hashlib.sha256(b'ok').hexdigest()})\n# print(resultado)\n",
+    pytest: "def test_pay_verify(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Recalcular y ==",
+    solution_example: "import hashlib\ndef verify(env):\n    return hashlib.sha256(env['body'].encode()).hexdigest() == env['hash']\nresultado = verify({'body': 'ok', 'hash': hashlib.sha256(b'ok').hexdigest()})\nprint(resultado)\n",
+    next: Some("py-2047-pay-tamper"), show_type_chips: false, micro_step: 2046,
+};
+
+pub const PY2047_PAY_TAMPER: CodingStep = CodingStep {
+    id: "py-2047-pay-tamper", title: "payload · detectar tamper", objective: "Fallar verificación si el body cambia.",
+    prompt_md: "**Tamper**\n\nSi el body se altera y el hash no, verify → False.\n\n**Micro-reto:**\n1. Envelope con hash de `ok` pero body `KO`\n2. `resultado = verify(env)`\n3. Mostrá",
+    starter_code: "# import hashlib\n# def verify(env):\n#     return hashlib.sha256(env['body'].encode()).hexdigest() == env['hash']\n# env = {'body': 'KO', 'hash': hashlib.sha256(b'ok').hexdigest()}\n# resultado = verify(env)\n# print(resultado)\n",
+    pytest: "def test_pay_tamper(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Body ≠ hash → False",
+    solution_example: "import hashlib\ndef verify(env):\n    return hashlib.sha256(env['body'].encode()).hexdigest() == env['hash']\nenv = {'body': 'KO', 'hash': hashlib.sha256(b'ok').hexdigest()}\nresultado = verify(env)\nprint(resultado)\n",
+    next: Some("py-2048-pay-bytes"), show_type_chips: false, micro_step: 2047,
+};
+
+pub const PY2048_PAY_BYTES: CodingStep = CodingStep {
+    id: "py-2048-pay-bytes", title: "payload · body bytes", objective: "Integridad sobre bytes crudos.",
+    prompt_md: "**Bytes**\n\nHasheá body ya en bytes sin re-encode ambiguo.\n\n**Micro-reto:**\n1. `body = b'raw'`; `h = sha256(body).hexdigest()`\n2. `resultado = (body, h)`\n3. Mostrá `resultado` (repr de bytes aparece)",
+    starter_code: "# import hashlib\n# body = b'raw'\n# h = hashlib.sha256(body).hexdigest()\n# resultado = (body, h)\n# print(resultado)\n",
+    pytest: "def test_pay_bytes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hashlib as _h\n    assert ns['resultado'] == (b'raw', _h.sha256(b'raw').hexdigest())\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Tupla (bytes, hex)",
+    solution_example: "import hashlib\nbody = b'raw'\nh = hashlib.sha256(body).hexdigest()\nresultado = (body, h)\nprint(resultado)\n",
+    next: Some("py-2049-pay-multi"), show_type_chips: false, micro_step: 2048,
+};
+
+pub const PY2049_PAY_MULTI: CodingStep = CodingStep {
+    id: "py-2049-pay-multi", title: "payload · campos + hash", objective: "Hashear concatenación de campos.",
+    prompt_md: "**Campos**\n\nIntegridad de varios campos: uní con `|` y hasheá.\n\n**Micro-reto:**\n1. `id_, v = '1', 'x'`\n2. `resultado = sha256(f'{id_}|{v}'.encode()).hexdigest()`\n3. Mostrá",
+    starter_code: "# import hashlib\n# id_, v = '1', 'x'\n# resultado = hashlib.sha256(f'{id_}|{v}'.encode()).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_pay_multi(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hashlib as _h\n    assert ns['resultado'] == _h.sha256(b'1|x').hexdigest()\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "f\"{id}|{v}\"",
+    solution_example: "import hashlib\nid_, v = '1', 'x'\nresultado = hashlib.sha256(f'{id_}|{v}'.encode()).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2050-pay-check"), show_type_chips: false, micro_step: 2049,
+};
+
+pub const PY2050_PAY_CHECK: CodingStep = CodingStep {
+    id: "py-2050-pay-check", title: "payload · Suite integridad", objective: "Pack + verify en un flujo.",
+    prompt_md: "**Suite payload**\n\nEmpaquetá y verificá en la misma suite.\n\n**Micro-reto:**\n1. Pack body `hola`\n2. `resultado = (env['body'], verify(env))`\n3. Mostrá",
+    starter_code: "# import hashlib\n# def pack(body):\n#     return {'body': body, 'hash': hashlib.sha256(body.encode()).hexdigest()}\n# def verify(env):\n#     return hashlib.sha256(env['body'].encode()).hexdigest() == env['hash']\n# env = pack('hola')\n# resultado = (env['body'], verify(env))\n# print(resultado)\n",
+    pytest: "def test_pay_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('hola', True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "pack luego verify",
+    solution_example: "import hashlib\ndef pack(body):\n    return {'body': body, 'hash': hashlib.sha256(body.encode()).hexdigest()}\ndef verify(env):\n    return hashlib.sha256(env['body'].encode()).hexdigest() == env['hash']\nenv = pack('hola')\nresultado = (env['body'], verify(env))\nprint(resultado)\n",
+    next: Some("py-2051-ct-basic"), show_type_chips: false, micro_step: 2050,
+};
+
+pub const PY2051_CT_BASIC: CodingStep = CodingStep {
+    id: "py-2051-ct-basic", title: "hmac · compare_digest", objective: "Comparar digests en tiempo constante.",
+    prompt_md: "**compare_digest**\n\n`hmac.compare_digest(a, b)` evita leaks por timing en comparaciones de secretos/hashes.\n\n**Micro-reto:**\n1. `resultado = hmac.compare_digest('aa', 'aa')`\n2. Mostrá",
+    starter_code: "# import hmac\n# resultado = hmac.compare_digest('aa', 'aa')\n# print(resultado)\n",
+    pytest: "def test_ct_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "compare_digest iguales",
+    solution_example: "import hmac\nresultado = hmac.compare_digest('aa', 'aa')\nprint(resultado)\n",
+    next: Some("py-2052-ct-mismatch"), show_type_chips: false, micro_step: 2051,
+};
+
+pub const PY2052_CT_MISMATCH: CodingStep = CodingStep {
+    id: "py-2052-ct-mismatch", title: "hmac · mismatch", objective: "Detectar digests distintos.",
+    prompt_md: "**Mismatch**\n\nSi difieren, compare_digest → False.\n\n**Micro-reto:**\n1. `resultado = hmac.compare_digest('aa', 'ab')`\n2. Mostrá",
+    starter_code: "# import hmac\n# resultado = hmac.compare_digest('aa', 'ab')\n# print(resultado)\n",
+    pytest: "def test_ct_mismatch(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "False si difieren",
+    solution_example: "import hmac\nresultado = hmac.compare_digest('aa', 'ab')\nprint(resultado)\n",
+    next: Some("py-2053-ct-verify"), show_type_chips: false, micro_step: 2052,
+};
+
+pub const PY2053_CT_VERIFY: CodingStep = CodingStep {
+    id: "py-2053-ct-verify", title: "hmac · verify seguro", objective: "Verificar firma con compare_digest.",
+    prompt_md: "**Verify seguro**\n\nCombiná HMAC + compare_digest para validar firmas.\n\n**Micro-reto:**\n1. Calculá expected de `msg`/`clave-fija`\n2. `resultado = hmac.compare_digest(expected, expected)`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# expected = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\n# resultado = hmac.compare_digest(expected, expected)\n# print(resultado)\n",
+    pytest: "def test_ct_verify(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "compare_digest(expected, expected)",
+    solution_example: "import hmac, hashlib\nexpected = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\nresultado = hmac.compare_digest(expected, expected)\nprint(resultado)\n",
+    next: Some("py-2054-ct-reject"), show_type_chips: false, micro_step: 2053,
+};
+
+pub const PY2054_CT_REJECT: CodingStep = CodingStep {
+    id: "py-2054-ct-reject", title: "hmac · rechazo seguro", objective: "Rechazar firma incorrecta sin ==.",
+    prompt_md: "**Rechazo**\n\ncompare_digest entre firma correcta e incorrecta → False.\n\n**Micro-reto:**\n1. `good` = HMAC(msg); `bad = '0'*64`\n2. `resultado = hmac.compare_digest(good, bad)`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# good = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\n# bad = '0' * 64\n# resultado = hmac.compare_digest(good, bad)\n# print(resultado)\n",
+    pytest: "def test_ct_reject(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "good vs zeros",
+    solution_example: "import hmac, hashlib\ngood = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\nbad = '0' * 64\nresultado = hmac.compare_digest(good, bad)\nprint(resultado)\n",
+    next: Some("py-2055-ct-bytes"), show_type_chips: false, micro_step: 2054,
+};
+
+pub const PY2055_CT_BYTES: CodingStep = CodingStep {
+    id: "py-2055-ct-bytes", title: "hmac · compare bytes", objective: "compare_digest también sobre bytes.",
+    prompt_md: "**Bytes**\n\ncompare_digest acepta str o bytes homogéneos.\n\n**Micro-reto:**\n1. `resultado = hmac.compare_digest(b'xy', b'xy')`\n2. Mostrá",
+    starter_code: "# import hmac\n# resultado = hmac.compare_digest(b'xy', b'xy')\n# print(resultado)\n",
+    pytest: "def test_ct_bytes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "bytes vs bytes",
+    solution_example: "import hmac\nresultado = hmac.compare_digest(b'xy', b'xy')\nprint(resultado)\n",
+    next: Some("py-2056-ct-check"), show_type_chips: false, micro_step: 2055,
+};
+
+pub const PY2056_CT_CHECK: CodingStep = CodingStep {
+    id: "py-2056-ct-check", title: "hmac · Suite compare_digest", objective: "Integrar firma HMAC + compare_digest.",
+    prompt_md: "**Suite CT**\n\nFirmá y validá con compare_digest.\n\n**Micro-reto:**\n1. `sig = HMAC(msg)`\n2. `resultado = (sig == HMAC_MSG_FIXED, hmac.compare_digest(sig, sig))` — usá sig consigo\n3. `resultado = hmac.compare_digest(sig, hmac.new(...).hexdigest())`",
+    starter_code: "# import hmac, hashlib\n# sig = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\n# again = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\n# resultado = hmac.compare_digest(sig, again)\n# print(resultado)\n",
+    pytest: "def test_ct_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Recalcular y compare_digest",
+    solution_example: "import hmac, hashlib\nsig = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\nagain = hmac.new(b'clave-fija', b'msg', hashlib.sha256).hexdigest()\nresultado = hmac.compare_digest(sig, again)\nprint(resultado)\n",
+    next: Some("py-2057-salt-basic"), show_type_chips: false, micro_step: 2056,
+};
+
+pub const PY2057_SALT_BASIC: CodingStep = CodingStep {
+    id: "py-2057-salt-basic", title: "salt · concatenar", objective: "Hashear salt fijo + dato.",
+    prompt_md: "**Salt fijo**\n\nEn demos/tests usamos salt constante. Producción: salt aleatorio por ítem (no aquí).\n\n**Micro-reto:**\n1. `salt, dato = 'sal-fija', 'dato'`\n2. `resultado = sha256((salt+dato).encode()).hexdigest()`\n3. Mostrá",
+    starter_code: "# import hashlib\n# salt, dato = 'sal-fija', 'dato'\n# resultado = hashlib.sha256((salt + dato).encode()).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_salt_basic(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'c6d17ed69a3654e23bc1dec3a7259c9cf27b55d41c1b7d04a1a2de3aec9fa690'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "salt + dato",
+    solution_example: "import hashlib\nsalt, dato = 'sal-fija', 'dato'\nresultado = hashlib.sha256((salt + dato).encode()).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2058-salt-diff"), show_type_chips: false, micro_step: 2057,
+};
+
+pub const PY2058_SALT_DIFF: CodingStep = CodingStep {
+    id: "py-2058-salt-diff", title: "salt · distinto dato", objective: "Mismo salt, distinto dato → distinto hash.",
+    prompt_md: "**Dato**\n\nSalt fijo no colapsa hashes de datos distintos.\n\n**Micro-reto:**\n1. Hasheá `sal-fija`+`a` y `sal-fija`+`b`\n2. `resultado = (h1 == h2)`\n3. Mostrá",
+    starter_code: "# import hashlib\n# def hs(d):\n#     return hashlib.sha256(('sal-fija' + d).encode()).hexdigest()\n# resultado = (hs('a') == hs('b'))\n# print(resultado)\n",
+    pytest: "def test_salt_diff(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Datos distintos",
+    solution_example: "import hashlib\ndef hs(d):\n    return hashlib.sha256(('sal-fija' + d).encode()).hexdigest()\nresultado = (hs('a') == hs('b'))\nprint(resultado)\n",
+    next: Some("py-2059-salt-prefix"), show_type_chips: false, micro_step: 2058,
+};
+
+pub const PY2059_SALT_PREFIX: CodingStep = CodingStep {
+    id: "py-2059-salt-prefix", title: "salt · prefijo explícito", objective: "Usar separador salt|dato.",
+    prompt_md: "**Prefijo**\n\n`salt|dato` evita ambigüedad de concatenación pura.\n\n**Micro-reto:**\n1. `resultado = sha256(b'sal-fija|x')` hex\n2. Mostrá",
+    starter_code: "# import hashlib\n# resultado = hashlib.sha256(b'sal-fija|x').hexdigest()\n# print(resultado)\n",
+    pytest: "def test_salt_prefix(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hashlib as _h\n    assert ns['resultado'] == _h.sha256(b'sal-fija|x').hexdigest()\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "salt|dato",
+    solution_example: "import hashlib\nresultado = hashlib.sha256(b'sal-fija|x').hexdigest()\nprint(resultado)\n",
+    next: Some("py-2060-salt-verify"), show_type_chips: false, micro_step: 2059,
+};
+
+pub const PY2060_SALT_VERIFY: CodingStep = CodingStep {
+    id: "py-2060-salt-verify", title: "salt · verificar", objective: "Verificar hash salteado recalculando.",
+    prompt_md: "**Verificar salt**\n\nRecalculá `sha256(salt+dato)` y compará.\n\n**Micro-reto:**\n1. `esperado` de `sal-fija`+`dato`\n2. `resultado = (calc == esperado)`\n3. Mostrá",
+    starter_code: "# import hashlib\n# esperado = hashlib.sha256(b'sal-fijadato').hexdigest()\n# calc = hashlib.sha256(('sal-fija' + 'dato').encode()).hexdigest()\n# resultado = (calc == esperado)\n# print(resultado)\n",
+    pytest: "def test_salt_verify(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Recalcular",
+    solution_example: "import hashlib\nesperado = hashlib.sha256(b'sal-fijadato').hexdigest()\ncalc = hashlib.sha256(('sal-fija' + 'dato').encode()).hexdigest()\nresultado = (calc == esperado)\nprint(resultado)\n",
+    next: Some("py-2061-salt-table"), show_type_chips: false, micro_step: 2060,
+};
+
+pub const PY2061_SALT_TABLE: CodingStep = CodingStep {
+    id: "py-2061-salt-table", title: "salt · tabla determinista", objective: "Hashear lista con mismo salt.",
+    prompt_md: "**Tabla**\n\nMapear datos con salt fijo produce digests estables.\n\n**Micro-reto:**\n1. `datos = ['a', 'b']`\n2. `resultado = [sha256(('sal-fija'+d).encode()).hexdigest() for d in datos]`\n3. Mostrá",
+    starter_code: "# import hashlib\n# datos = ['a', 'b']\n# resultado = [hashlib.sha256(('sal-fija' + d).encode()).hexdigest() for d in datos]\n# print(resultado)\n",
+    pytest: "def test_salt_table(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hashlib as _h\n    exp = [_h.sha256(('sal-fija' + d).encode()).hexdigest() for d in ['a', 'b']]\n    assert ns['resultado'] == exp\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "list comprehension",
+    solution_example: "import hashlib\ndatos = ['a', 'b']\nresultado = [hashlib.sha256(('sal-fija' + d).encode()).hexdigest() for d in datos]\nprint(resultado)\n",
+    next: Some("py-2062-salt-check"), show_type_chips: false, micro_step: 2061,
+};
+
+pub const PY2062_SALT_CHECK: CodingStep = CodingStep {
+    id: "py-2062-salt-check", title: "salt · Suite salteado", objective: "Integrar hash salteado de x.",
+    prompt_md: "**Suite salt**\n\nCerrá con digest de `sal-fija`+`x`.\n\n**Micro-reto:**\n1. `resultado = sha256(('sal-fija'+'x').encode()).hexdigest()`\n2. Mostrá",
+    starter_code: "# import hashlib\n# resultado = hashlib.sha256(('sal-fija' + 'x').encode()).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_salt_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'd90cf2ebddf8f23ff9fa70f11304a78e2703ce0c3cf4ca56842d066354004b03'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "sal-fija + x",
+    solution_example: "import hashlib\nresultado = hashlib.sha256(('sal-fija' + 'x').encode()).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2063-merkle-leaf"), show_type_chips: false, micro_step: 2062,
+};
+
+pub const PY2063_MERKLE_LEAF: CodingStep = CodingStep {
+    id: "py-2063-merkle-leaf", title: "merkle · hoja", objective: "Hashear una hoja del árbol.",
+    prompt_md: "**Hoja**\n\nEn un Merkle simple, cada valor se hashea a una hoja.\n\n**Micro-reto:**\n1. `resultado = sha256(b'a').hexdigest()`\n2. Mostrá",
+    starter_code: "# import hashlib\n# resultado = hashlib.sha256(b'a').hexdigest()\n# print(resultado)\n",
+    pytest: "def test_merkle_leaf(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "sha256 de la hoja",
+    solution_example: "import hashlib\nresultado = hashlib.sha256(b'a').hexdigest()\nprint(resultado)\n",
+    next: Some("py-2064-merkle-parent"), show_type_chips: false, micro_step: 2063,
+};
+
+pub const PY2064_MERKLE_PARENT: CodingStep = CodingStep {
+    id: "py-2064-merkle-parent", title: "merkle · nodo padre", objective: "Combinar dos hojas en un padre.",
+    prompt_md: "**Padre**\n\nPadre = sha256(hex_izq + hex_der) (concat de hexdigests).\n\n**Micro-reto:**\n1. Hojas de `a` y `b`\n2. `resultado = sha256((ha+hb).encode()).hexdigest()`\n3. Mostrá",
+    starter_code: "# import hashlib\n# ha = hashlib.sha256(b'a').hexdigest()\n# hb = hashlib.sha256(b'b').hexdigest()\n# resultado = hashlib.sha256((ha + hb).encode()).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_merkle_parent(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '62af5c3cb8da3e4f25061e829ebeea5c7513c54949115b1acc225930a90154da'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "hash(ha+hb)",
+    solution_example: "import hashlib\nha = hashlib.sha256(b'a').hexdigest()\nhb = hashlib.sha256(b'b').hexdigest()\nresultado = hashlib.sha256((ha + hb).encode()).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2065-merkle-root2"), show_type_chips: false, micro_step: 2064,
+};
+
+pub const PY2065_MERKLE_ROOT2: CodingStep = CodingStep {
+    id: "py-2065-merkle-root2", title: "merkle · root de 2", objective: "Función merkle_root para 2 hojas.",
+    prompt_md: "**Root×2**\n\nImplementá `merkle_root(['a','b'])` con el esquema de padres.\n\n**Micro-reto:**\n1. Definí `merkle_root`\n2. `resultado = merkle_root(['a', 'b'])`\n3. Mostrá",
+    starter_code: "# import hashlib\n# def merkle_root(vals):\n#     nodes = [hashlib.sha256(v.encode()).hexdigest() for v in vals]\n#     while len(nodes) > 1:\n#         nxt = []\n#         for i in range(0, len(nodes), 2):\n#             if i + 1 < len(nodes):\n#                 nxt.append(hashlib.sha256((nodes[i] + nodes[i+1]).encode()).hexdigest())\n#             else:\n#                 nxt.append(nodes[i])\n#         nodes = nxt\n#     return nodes[0]\n# resultado = merkle_root(['a', 'b'])\n# print(resultado)\n",
+    pytest: "def test_merkle_root2(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '62af5c3cb8da3e4f25061e829ebeea5c7513c54949115b1acc225930a90154da'\n    assert ns['merkle_root'](['a', 'b']) == '62af5c3cb8da3e4f25061e829ebeea5c7513c54949115b1acc225930a90154da'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Parear hojas",
+    solution_example: "import hashlib\ndef merkle_root(vals):\n    nodes = [hashlib.sha256(v.encode()).hexdigest() for v in vals]\n    while len(nodes) > 1:\n        nxt = []\n        for i in range(0, len(nodes), 2):\n            if i + 1 < len(nodes):\n                nxt.append(hashlib.sha256((nodes[i] + nodes[i+1]).encode()).hexdigest())\n            else:\n                nxt.append(nodes[i])\n        nodes = nxt\n    return nodes[0]\nresultado = merkle_root(['a', 'b'])\nprint(resultado)\n",
+    next: Some("py-2066-merkle-odd"), show_type_chips: false, micro_step: 2065,
+};
+
+pub const PY2066_MERKLE_ODD: CodingStep = CodingStep {
+    id: "py-2066-merkle-odd", title: "merkle · impar", objective: "Subir hoja impar sin pareja.",
+    prompt_md: "**Impar**\n\nSi queda un nodo solo, sube sin pareja.\n\n**Micro-reto:**\n1. `resultado = merkle_root(['a', 'b', 'c'])`\n2. Mostrá",
+    starter_code: "# import hashlib\n# def merkle_root(vals):\n#     nodes = [hashlib.sha256(v.encode()).hexdigest() for v in vals]\n#     while len(nodes) > 1:\n#         nxt = []\n#         for i in range(0, len(nodes), 2):\n#             if i + 1 < len(nodes):\n#                 nxt.append(hashlib.sha256((nodes[i] + nodes[i+1]).encode()).hexdigest())\n#             else:\n#                 nxt.append(nodes[i])\n#         nodes = nxt\n#     return nodes[0]\n# resultado = merkle_root(['a', 'b', 'c'])\n# print(resultado)\n",
+    pytest: "def test_merkle_odd(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'd71dc32fa2cd95be60b32dbb3e63009fa8064407ee19f457c92a09a5ff841a8a'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Nodo impar sube",
+    solution_example: "import hashlib\ndef merkle_root(vals):\n    nodes = [hashlib.sha256(v.encode()).hexdigest() for v in vals]\n    while len(nodes) > 1:\n        nxt = []\n        for i in range(0, len(nodes), 2):\n            if i + 1 < len(nodes):\n                nxt.append(hashlib.sha256((nodes[i] + nodes[i+1]).encode()).hexdigest())\n            else:\n                nxt.append(nodes[i])\n        nodes = nxt\n    return nodes[0]\nresultado = merkle_root(['a', 'b', 'c'])\nprint(resultado)\n",
+    next: Some("py-2067-merkle-four"), show_type_chips: false, micro_step: 2066,
+};
+
+pub const PY2067_MERKLE_FOUR: CodingStep = CodingStep {
+    id: "py-2067-merkle-four", title: "merkle · 4 hojas", objective: "Root de cuatro valores.",
+    prompt_md: "**×4**\n\nCon potencia de 2 el árbol es perfecto.\n\n**Micro-reto:**\n1. `resultado = merkle_root(['w','x','y','z'])`\n2. Mostrá",
+    starter_code: "# import hashlib\n# def merkle_root(vals):\n#     nodes = [hashlib.sha256(v.encode()).hexdigest() for v in vals]\n#     while len(nodes) > 1:\n#         nxt = []\n#         for i in range(0, len(nodes), 2):\n#             if i + 1 < len(nodes):\n#                 nxt.append(hashlib.sha256((nodes[i] + nodes[i+1]).encode()).hexdigest())\n#             else:\n#                 nxt.append(nodes[i])\n#         nodes = nxt\n#     return nodes[0]\n# resultado = merkle_root(['w', 'x', 'y', 'z'])\n# print(resultado)\n",
+    pytest: "def test_merkle_four(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'b512d943052098cfd73b165e0b03eb5c78a4806a8674a656153800015446e7e4'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Árbol balanceado",
+    solution_example: "import hashlib\ndef merkle_root(vals):\n    nodes = [hashlib.sha256(v.encode()).hexdigest() for v in vals]\n    while len(nodes) > 1:\n        nxt = []\n        for i in range(0, len(nodes), 2):\n            if i + 1 < len(nodes):\n                nxt.append(hashlib.sha256((nodes[i] + nodes[i+1]).encode()).hexdigest())\n            else:\n                nxt.append(nodes[i])\n        nodes = nxt\n    return nodes[0]\nresultado = merkle_root(['w', 'x', 'y', 'z'])\nprint(resultado)\n",
+    next: Some("py-2068-merkle-check"), show_type_chips: false, micro_step: 2067,
+};
+
+pub const PY2068_MERKLE_CHECK: CodingStep = CodingStep {
+    id: "py-2068-merkle-check", title: "merkle · Suite root", objective: "Integrar sensibilidad del root al orden.",
+    prompt_md: "**Suite Merkle**\n\nOrden distinto → root distinto.\n\n**Micro-reto:**\n1. Compará root(['a','b']) vs root(['b','a'])\n2. `resultado = (r1 == r2)`\n3. Mostrá",
+    starter_code: "# import hashlib\n# def merkle_root(vals):\n#     nodes = [hashlib.sha256(v.encode()).hexdigest() for v in vals]\n#     while len(nodes) > 1:\n#         nxt = []\n#         for i in range(0, len(nodes), 2):\n#             if i + 1 < len(nodes):\n#                 nxt.append(hashlib.sha256((nodes[i] + nodes[i+1]).encode()).hexdigest())\n#             else:\n#                 nxt.append(nodes[i])\n#         nodes = nxt\n#     return nodes[0]\n# resultado = (merkle_root(['a', 'b']) == merkle_root(['b', 'a']))\n# print(resultado)\n",
+    pytest: "def test_merkle_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Orden importa",
+    solution_example: "import hashlib\ndef merkle_root(vals):\n    nodes = [hashlib.sha256(v.encode()).hexdigest() for v in vals]\n    while len(nodes) > 1:\n        nxt = []\n        for i in range(0, len(nodes), 2):\n            if i + 1 < len(nodes):\n                nxt.append(hashlib.sha256((nodes[i] + nodes[i+1]).encode()).hexdigest())\n            else:\n                nxt.append(nodes[i])\n        nodes = nxt\n    return nodes[0]\nresultado = (merkle_root(['a', 'b']) == merkle_root(['b', 'a']))\nprint(resultado)\n",
+    next: Some("py-2069-ver-schema"), show_type_chips: false, micro_step: 2068,
+};
+
+pub const PY2069_VER_SCHEMA: CodingStep = CodingStep {
+    id: "py-2069-ver-schema", title: "contrato · hash schema", objective: "Hashear un schema JSON canónico.",
+    prompt_md: "**Schema hash**\n\nEl contrato de datos se fija hasheando el schema canónico.\n\n**Micro-reto:**\n1. `schema = {'type':'obj','fields':['id','v']}`\n2. Canonicá y hasheá\n3. `resultado = digest`; mostrá",
+    starter_code: "# import json, hashlib\n# schema = {'type': 'obj', 'fields': ['id', 'v']}\n# canon = json.dumps(schema, sort_keys=True, separators=(',', ':'))\n# resultado = hashlib.sha256(canon.encode()).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_ver_schema(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'a147ccce78913b95e3ed28b60309995edef15c801a3fc56a832de5119a2866b1'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "dumps sort_keys + sha256",
+    solution_example: "import json, hashlib\nschema = {'type': 'obj', 'fields': ['id', 'v']}\ncanon = json.dumps(schema, sort_keys=True, separators=(',', ':'))\nresultado = hashlib.sha256(canon.encode()).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2070-ver-tag"), show_type_chips: false, micro_step: 2069,
+};
+
+pub const PY2070_VER_TAG: CodingStep = CodingStep {
+    id: "py-2070-ver-tag", title: "contrato · version tag", objective: "Empaquetar versión + schema_hash.",
+    prompt_md: "**Version tag**\n\nUn contrato versionado: `{version, schema_hash}`.\n\n**Micro-reto:**\n1. `version = 1`; `schema_hash` del schema fijo\n2. `resultado = {'version': 1, 'schema_hash': schema_hash}`\n3. Mostrá",
+    starter_code: "# import json, hashlib\n# schema = {'type': 'obj', 'fields': ['id', 'v']}\n# schema_hash = hashlib.sha256(json.dumps(schema, sort_keys=True, separators=(',', ':')).encode()).hexdigest()\n# resultado = {'version': 1, 'schema_hash': schema_hash}\n# print(resultado)\n",
+    pytest: "def test_ver_tag(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'version': 1, 'schema_hash': 'a147ccce78913b95e3ed28b60309995edef15c801a3fc56a832de5119a2866b1'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "dict version + schema_hash",
+    solution_example: "import json, hashlib\nschema = {'type': 'obj', 'fields': ['id', 'v']}\nschema_hash = hashlib.sha256(json.dumps(schema, sort_keys=True, separators=(',', ':')).encode()).hexdigest()\nresultado = {'version': 1, 'schema_hash': schema_hash}\nprint(resultado)\n",
+    next: Some("py-2071-ver-match"), show_type_chips: false, micro_step: 2070,
+};
+
+pub const PY2071_VER_MATCH: CodingStep = CodingStep {
+    id: "py-2071-ver-match", title: "contrato · match", objective: "Validar que schema_hash coincide.",
+    prompt_md: "**Match**\n\n`accept(contract, expected_hash)` exige igualdad de schema_hash.\n\n**Micro-reto:**\n1. Definí `accept`\n2. `resultado = accept({'version':1,'schema_hash':H}, H)`\n3. Mostrá",
+    starter_code: "# H = 'abc'\n# def accept(contract, expected):\n#     return contract['schema_hash'] == expected\n# resultado = accept({'version': 1, 'schema_hash': H}, H)\n# print(resultado)\n",
+    pytest: "def test_ver_match(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Comparar schema_hash",
+    solution_example: "H = 'abc'\ndef accept(contract, expected):\n    return contract['schema_hash'] == expected\nresultado = accept({'version': 1, 'schema_hash': H}, H)\nprint(resultado)\n",
+    next: Some("py-2072-ver-reject"), show_type_chips: false, micro_step: 2071,
+};
+
+pub const PY2072_VER_REJECT: CodingStep = CodingStep {
+    id: "py-2072-ver-reject", title: "contrato · rechazo", objective: "Rechazar schema_hash incorrecto.",
+    prompt_md: "**Rechazo**\n\nHash distinto → contrato inválido.\n\n**Micro-reto:**\n1. `resultado = accept({'schema_hash':'a'}, 'b')`\n2. Mostrá",
+    starter_code: "# def accept(contract, expected):\n#     return contract['schema_hash'] == expected\n# resultado = accept({'schema_hash': 'a'}, 'b')\n# print(resultado)\n",
+    pytest: "def test_ver_reject(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "False si difiere",
+    solution_example: "def accept(contract, expected):\n    return contract['schema_hash'] == expected\nresultado = accept({'schema_hash': 'a'}, 'b')\nprint(resultado)\n",
+    next: Some("py-2073-ver-bump"), show_type_chips: false, micro_step: 2072,
+};
+
+pub const PY2073_VER_BUMP: CodingStep = CodingStep {
+    id: "py-2073-ver-bump", title: "contrato · bump versión", objective: "Incrementar versión al cambiar schema.",
+    prompt_md: "**Bump**\n\nSi cambia el schema, subís version y recalculás hash.\n\n**Micro-reto:**\n1. schema v1 fields [id]; v2 fields [id,v]\n2. `resultado = (1, 2, h1 == h2)`\n3. Mostrá",
+    starter_code: "# import json, hashlib\n# def sh(fields):\n#     s = {'type': 'obj', 'fields': fields}\n#     return hashlib.sha256(json.dumps(s, sort_keys=True, separators=(',', ':')).encode()).hexdigest()\n# h1, h2 = sh(['id']), sh(['id', 'v'])\n# resultado = (1, 2, h1 == h2)\n# print(resultado)\n",
+    pytest: "def test_ver_bump(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 2, False)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "Schemas distintos",
+    solution_example: "import json, hashlib\ndef sh(fields):\n    s = {'type': 'obj', 'fields': fields}\n    return hashlib.sha256(json.dumps(s, sort_keys=True, separators=(',', ':')).encode()).hexdigest()\nh1, h2 = sh(['id']), sh(['id', 'v'])\nresultado = (1, 2, h1 == h2)\nprint(resultado)\n",
+    next: Some("py-2074-ver-check"), show_type_chips: false, micro_step: 2073,
+};
+
+pub const PY2074_VER_CHECK: CodingStep = CodingStep {
+    id: "py-2074-ver-check", title: "contrato · Suite versión", objective: "Integrar version tag real.",
+    prompt_md: "**Suite contrato**\n\nDevolvé `(version, len(schema_hash))` del contrato del schema fijo.\n\n**Micro-reto:**\n1. Armá contrato version=1\n2. `resultado = (1, len(schema_hash))`\n3. Mostrá",
+    starter_code: "# import json, hashlib\n# schema = {'type': 'obj', 'fields': ['id', 'v']}\n# schema_hash = hashlib.sha256(json.dumps(schema, sort_keys=True, separators=(',', ':')).encode()).hexdigest()\n# resultado = (1, len(schema_hash))\n# print(resultado)\n",
+    pytest: "def test_ver_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 64)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "len hex = 64",
+    solution_example: "import json, hashlib\nschema = {'type': 'obj', 'fields': ['id', 'v']}\nschema_hash = hashlib.sha256(json.dumps(schema, sort_keys=True, separators=(',', ':')).encode()).hexdigest()\nresultado = (1, len(schema_hash))\nprint(resultado)\n",
+    next: Some("py-2075-aud-pack"), show_type_chips: false, micro_step: 2074,
+};
+
+pub const PY2075_AUD_PACK: CodingStep = CodingStep {
+    id: "py-2075-aud-pack", title: "auditoría · pack firmado", objective: "Empaquetar body + hmac con clave fija.",
+    prompt_md: "**Pack firmado**\n\nAuditoría e2e: body + firma HMAC(clave-fija).\n\n**Micro-reto:**\n1. `body='evt'`; firmá con clave-fija\n2. `resultado = {'body': body, 'sig': sig}`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# body = 'evt'\n# sig = hmac.new(b'clave-fija', body.encode(), hashlib.sha256).hexdigest()\n# resultado = {'body': body, 'sig': sig}\n# print(resultado)\n",
+    pytest: "def test_aud_pack(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hmac, hashlib\n    sig = hmac.new(b'clave-fija', b'evt', hashlib.sha256).hexdigest()\n    assert ns['resultado'] == {'body': 'evt', 'sig': sig}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "body + sig",
+    solution_example: "import hmac, hashlib\nbody = 'evt'\nsig = hmac.new(b'clave-fija', body.encode(), hashlib.sha256).hexdigest()\nresultado = {'body': body, 'sig': sig}\nprint(resultado)\n",
+    next: Some("py-2076-aud-verify"), show_type_chips: false, micro_step: 2075,
+};
+
+pub const PY2076_AUD_VERIFY: CodingStep = CodingStep {
+    id: "py-2076-aud-verify", title: "auditoría · verify e2e", objective: "Verificar sobre con compare_digest.",
+    prompt_md: "**Verify e2e**\n\nRecalculá HMAC y usá compare_digest.\n\n**Micro-reto:**\n1. Definí `audit_ok(env)`\n2. Pack de `evt` y verificá\n3. `resultado = audit_ok(env)`; mostrá",
+    starter_code: "# import hmac, hashlib\n# def audit_ok(env):\n#     expected = hmac.new(b'clave-fija', env['body'].encode(), hashlib.sha256).hexdigest()\n#     return hmac.compare_digest(expected, env['sig'])\n# env = {'body': 'evt', 'sig': hmac.new(b'clave-fija', b'evt', hashlib.sha256).hexdigest()}\n# resultado = audit_ok(env)\n# print(resultado)\n",
+    pytest: "def test_aud_verify(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "compare_digest expected vs sig",
+    solution_example: "import hmac, hashlib\ndef audit_ok(env):\n    expected = hmac.new(b'clave-fija', env['body'].encode(), hashlib.sha256).hexdigest()\n    return hmac.compare_digest(expected, env['sig'])\nenv = {'body': 'evt', 'sig': hmac.new(b'clave-fija', b'evt', hashlib.sha256).hexdigest()}\nresultado = audit_ok(env)\nprint(resultado)\n",
+    next: Some("py-2077-aud-tamper"), show_type_chips: false, micro_step: 2076,
+};
+
+pub const PY2077_AUD_TAMPER: CodingStep = CodingStep {
+    id: "py-2077-aud-tamper", title: "auditoría · tamper e2e", objective: "Detectar body alterado en auditoría.",
+    prompt_md: "**Tamper e2e**\n\nBody distinto invalida la firma.\n\n**Micro-reto:**\n1. env con sig de `evt` pero body `EVI`\n2. `resultado = audit_ok(env)`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# def audit_ok(env):\n#     expected = hmac.new(b'clave-fija', env['body'].encode(), hashlib.sha256).hexdigest()\n#     return hmac.compare_digest(expected, env['sig'])\n# env = {'body': 'EVI', 'sig': hmac.new(b'clave-fija', b'evt', hashlib.sha256).hexdigest()}\n# resultado = audit_ok(env)\n# print(resultado)\n",
+    pytest: "def test_aud_tamper(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "False si tamper",
+    solution_example: "import hmac, hashlib\ndef audit_ok(env):\n    expected = hmac.new(b'clave-fija', env['body'].encode(), hashlib.sha256).hexdigest()\n    return hmac.compare_digest(expected, env['sig'])\nenv = {'body': 'EVI', 'sig': hmac.new(b'clave-fija', b'evt', hashlib.sha256).hexdigest()}\nresultado = audit_ok(env)\nprint(resultado)\n",
+    next: Some("py-2078-aud-canon"), show_type_chips: false, micro_step: 2077,
+};
+
+pub const PY2078_AUD_CANON: CodingStep = CodingStep {
+    id: "py-2078-aud-canon", title: "auditoría · evento canónico", objective: "Firmar JSON canónico del evento.",
+    prompt_md: "**Evento canónico**\n\nSerializá el evento con sort_keys y firmalo.\n\n**Micro-reto:**\n1. `ev = {'t':'x','n':1}` → canon\n2. `resultado = hmac(clave-fija, canon)`\n3. Mostrá",
+    starter_code: "# import json, hmac, hashlib\n# ev = {'t': 'x', 'n': 1}\n# canon = json.dumps(ev, sort_keys=True, separators=(',', ':'))\n# resultado = hmac.new(b'clave-fija', canon.encode(), hashlib.sha256).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_aud_canon(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import json, hmac, hashlib\n    canon = json.dumps({'t': 'x', 'n': 1}, sort_keys=True, separators=(',', ':'))\n    exp = hmac.new(b'clave-fija', canon.encode(), hashlib.sha256).hexdigest()\n    assert ns['resultado'] == exp\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "dumps + hmac",
+    solution_example: "import json, hmac, hashlib\nev = {'t': 'x', 'n': 1}\ncanon = json.dumps(ev, sort_keys=True, separators=(',', ':'))\nresultado = hmac.new(b'clave-fija', canon.encode(), hashlib.sha256).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2079-aud-chain"), show_type_chips: false, micro_step: 2078,
+};
+
+pub const PY2079_AUD_CHAIN: CodingStep = CodingStep {
+    id: "py-2079-aud-chain", title: "auditoría · cadena hashes", objective: "Encadenar hash(prev|body).",
+    prompt_md: "**Cadena**\n\nAuditoría encadenada: cada ítem hashea `prev|body`.\n\n**Micro-reto:**\n1. `prev='0'*64`; `body='a'`\n2. `resultado = sha256((prev+'|'+body).encode()).hexdigest()`\n3. Mostrá",
+    starter_code: "# import hashlib\n# prev = '0' * 64\n# body = 'a'\n# resultado = hashlib.sha256((prev + '|' + body).encode()).hexdigest()\n# print(resultado)\n",
+    pytest: "def test_aud_chain(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    import hashlib as _h\n    assert ns['resultado'] == _h.sha256((('0' * 64) + '|a').encode()).hexdigest()\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "prev|body",
+    solution_example: "import hashlib\nprev = '0' * 64\nbody = 'a'\nresultado = hashlib.sha256((prev + '|' + body).encode()).hexdigest()\nprint(resultado)\n",
+    next: Some("py-2080-aud-check"), show_type_chips: false, micro_step: 2079,
+};
+
+pub const PY2080_AUD_CHECK: CodingStep = CodingStep {
+    id: "py-2080-aud-check", title: "auditoría · Suite e2e", objective: "Cerrar ola: pack + verify + ok.",
+    prompt_md: "**Suite auditoría**\n\nFlujo completo: pack firmado y verify con compare_digest.\n\n**Micro-reto:**\n1. Pack `done` con HMAC clave-fija\n2. `resultado = (env['body'], audit_ok(env))`\n3. Mostrá",
+    starter_code: "# import hmac, hashlib\n# def pack(body):\n#     return {'body': body, 'sig': hmac.new(b'clave-fija', body.encode(), hashlib.sha256).hexdigest()}\n# def audit_ok(env):\n#     expected = hmac.new(b'clave-fija', env['body'].encode(), hashlib.sha256).hexdigest()\n#     return hmac.compare_digest(expected, env['sig'])\n# env = pack('done')\n# resultado = (env['body'], audit_ok(env))\n# print(resultado)\n",
+    pytest: "def test_aud_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('done', True)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "pack + audit_ok",
+    solution_example: "import hmac, hashlib\ndef pack(body):\n    return {'body': body, 'sig': hmac.new(b'clave-fija', body.encode(), hashlib.sha256).hexdigest()}\ndef audit_ok(env):\n    expected = hmac.new(b'clave-fija', env['body'].encode(), hashlib.sha256).hexdigest()\n    return hmac.compare_digest(expected, env['sig'])\nenv = pack('done')\nresultado = (env['body'], audit_ok(env))\nprint(resultado)\n",
+    next: None, show_type_chips: false, micro_step: 2080,
 };
 
 pub const CODING_STEPS: &[&CodingStep] = &[
@@ -54359,6 +54959,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2018_DOM_AGG,
     &PY2019_DOM_CONTRAST,
     &PY2020_DOM_CHECK,
+    &PY2021_HASH_SHA256,
+    &PY2022_HASH_MD5,
+    &PY2023_HASH_ENCODE,
+    &PY2024_HASH_UPDATE,
+    &PY2025_HASH_DIGEST,
+    &PY2026_HASH_CHECK,
+    &PY2027_HMAC_BASIC,
+    &PY2028_HMAC_KEY,
+    &PY2029_HMAC_MSG,
+    &PY2030_HMAC_HELPER,
+    &PY2031_HMAC_EMPTY,
+    &PY2032_HMAC_CHECK,
+    &PY2033_CRC_BASIC,
+    &PY2034_ADLER_BASIC,
+    &PY2035_CRC_ACCUM,
+    &PY2036_CRC_VS_ADLER,
+    &PY2037_CRC_DETECT,
+    &PY2038_CRC_CHECK,
+    &PY2039_JSON_CANON,
+    &PY2040_JSON_HASH,
+    &PY2041_JSON_STABLE,
+    &PY2042_JSON_SEP,
+    &PY2043_JSON_NESTED,
+    &PY2044_JSON_CHECK,
+    &PY2045_PAY_PACK,
+    &PY2046_PAY_VERIFY,
+    &PY2047_PAY_TAMPER,
+    &PY2048_PAY_BYTES,
+    &PY2049_PAY_MULTI,
+    &PY2050_PAY_CHECK,
+    &PY2051_CT_BASIC,
+    &PY2052_CT_MISMATCH,
+    &PY2053_CT_VERIFY,
+    &PY2054_CT_REJECT,
+    &PY2055_CT_BYTES,
+    &PY2056_CT_CHECK,
+    &PY2057_SALT_BASIC,
+    &PY2058_SALT_DIFF,
+    &PY2059_SALT_PREFIX,
+    &PY2060_SALT_VERIFY,
+    &PY2061_SALT_TABLE,
+    &PY2062_SALT_CHECK,
+    &PY2063_MERKLE_LEAF,
+    &PY2064_MERKLE_PARENT,
+    &PY2065_MERKLE_ROOT2,
+    &PY2066_MERKLE_ODD,
+    &PY2067_MERKLE_FOUR,
+    &PY2068_MERKLE_CHECK,
+    &PY2069_VER_SCHEMA,
+    &PY2070_VER_TAG,
+    &PY2071_VER_MATCH,
+    &PY2072_VER_REJECT,
+    &PY2073_VER_BUMP,
+    &PY2074_VER_CHECK,
+    &PY2075_AUD_PACK,
+    &PY2076_AUD_VERIFY,
+    &PY2077_AUD_TAMPER,
+    &PY2078_AUD_CANON,
+    &PY2079_AUD_CHAIN,
+    &PY2080_AUD_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -54526,7 +55186,7 @@ mod tests {
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
         for step in CODING_STEPS {
-            assert!(step.micro_step >= 1 && step.micro_step <= 2020);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2080);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -57590,7 +58250,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 2020 is the end of the rail");
+                assert_eq!(step.next, Some("py-2021-hash-sha256"), "step 2020 chains to wave18");
+            }
+        }
+    }
+
+    #[test]
+    fn py2021_to_py2080_integridad_hashing_chain() {
+        let bridge = coding_step_by_micro_step(2020).expect("py-2020");
+        assert_eq!(bridge.next, Some("py-2021-hash-sha256"));
+
+        for n in 2021..=2080 {
+            let step = coding_step_by_micro_step(n).expect("wave18 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 2080 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 2080 is the end of the rail");
             }
         }
     }
