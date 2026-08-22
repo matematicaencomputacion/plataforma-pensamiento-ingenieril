@@ -2054,7 +2054,7 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (2258, &[3, 5]),
     (2259, &[3, 5]),
     (2260, &[3, 5]),
-(2261, &[3, 4]),
+    (2261, &[3, 4]),
     (2262, &[3, 4]),
     (2263, &[3, 4]),
     (2264, &[3, 4]),
@@ -2449,6 +2449,7 @@ mod tests {
         assert_eq!(partitions_for_micro_step(2279), &[1, 4]); // Wave 22: bisect = data-model + ecosystem
         assert_eq!(partitions_for_micro_step(2291), &[3, 5]); // Wave 22: two pointers = paradigms + domains
         assert_eq!(partitions_for_micro_step(2320), &[4, 5]); // Wave 22: ETL = domains + ecosystem
+        assert!(partitions_for_micro_step(2321).is_empty()); // frontier beyond Wave 22
     }
 
     #[test]
