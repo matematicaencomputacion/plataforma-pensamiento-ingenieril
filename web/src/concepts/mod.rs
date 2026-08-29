@@ -2174,6 +2174,66 @@ const STEP_PARTITIONS: &[(i32, &[u8])] = &[
     (2378, &[5, 4]),
     (2379, &[5, 4]),
     (2380, &[5, 4]),
+    (2381, &[3]),
+    (2382, &[3]),
+    (2383, &[3]),
+    (2384, &[3]),
+    (2385, &[3]),
+    (2386, &[3]),
+    (2387, &[3, 2]),
+    (2388, &[3, 2]),
+    (2389, &[3, 2]),
+    (2390, &[3, 2]),
+    (2391, &[3, 2]),
+    (2392, &[3, 2]),
+    (2393, &[3, 4]),
+    (2394, &[3, 4]),
+    (2395, &[3, 4]),
+    (2396, &[3, 4]),
+    (2397, &[3, 4]),
+    (2398, &[3, 4]),
+    (2399, &[3, 1]),
+    (2400, &[3, 1]),
+    (2401, &[3, 1]),
+    (2402, &[3, 1]),
+    (2403, &[3, 1]),
+    (2404, &[3, 1]),
+    (2405, &[5, 1]),
+    (2406, &[5, 1]),
+    (2407, &[5, 1]),
+    (2408, &[5, 1]),
+    (2409, &[5, 1]),
+    (2410, &[5, 1]),
+    (2411, &[3, 2]),
+    (2412, &[3, 2]),
+    (2413, &[3, 2]),
+    (2414, &[3, 2]),
+    (2415, &[3, 2]),
+    (2416, &[3, 2]),
+    (2417, &[5, 3]),
+    (2418, &[5, 3]),
+    (2419, &[5, 3]),
+    (2420, &[5, 3]),
+    (2421, &[5, 3]),
+    (2422, &[5, 3]),
+    (2423, &[3, 4]),
+    (2424, &[3, 4]),
+    (2425, &[3, 4]),
+    (2426, &[3, 4]),
+    (2427, &[3, 4]),
+    (2428, &[3, 4]),
+    (2429, &[3, 1]),
+    (2430, &[3, 1]),
+    (2431, &[3, 1]),
+    (2432, &[3, 1]),
+    (2433, &[3, 1]),
+    (2434, &[3, 1]),
+    (2435, &[5, 3]),
+    (2436, &[5, 3]),
+    (2437, &[5, 3]),
+    (2438, &[5, 3]),
+    (2439, &[5, 3]),
+    (2440, &[5, 3]),
 ];
 
 pub fn partition_by_id(id: u8) -> Option<&'static ConceptPartition> {
@@ -2515,6 +2575,15 @@ mod tests {
         assert_eq!(partitions_for_micro_step(2345), &[2, 4]); // Wave 23: ChainMap
         assert_eq!(partitions_for_micro_step(2363), &[5]); // Wave 23: inventario
         assert_eq!(partitions_for_micro_step(2380), &[5, 4]); // Wave 23: pipeline
+        assert_eq!(partitions_for_micro_step(2381), &[3]); // Wave 24: map/filter = paradigms
+        assert_eq!(partitions_for_micro_step(2387), &[3, 2]); // Wave 24: callbacks = paradigms + scope-legb
+        assert_eq!(partitions_for_micro_step(2393), &[3, 4]); // Wave 24: generadores = paradigms + ecosystem
+        assert_eq!(partitions_for_micro_step(2399), &[3, 1]); // Wave 24: reduce = paradigms + data-model
+        assert_eq!(partitions_for_micro_step(2405), &[5, 1]); // Wave 24: logs = domains + data-model
+        assert_eq!(partitions_for_micro_step(2423), &[3, 4]); // Wave 24: early = paradigms + ecosystem
+        assert_eq!(partitions_for_micro_step(2435), &[5, 3]); // Wave 24: scoring = domains + paradigms
+        assert_eq!(partitions_for_micro_step(2440), &[5, 3]); // Wave 24: ranking
+        assert!(partitions_for_micro_step(2441).is_empty()); // frontier beyond Wave 24
         assert!(partitions_for_micro_step(2381).is_empty()); // frontier beyond Wave 23
     }
 
@@ -2995,8 +3064,8 @@ mod tests {
         (900, &[1]),
     ];
 
-    /// Frozen `(micro_step, tags)` pairs with `micro_step > 2380` (Wave 23 ceiling).
-    const WAVE23_FROZEN_BEYOND_2380: &[(i32, &[u8])] = &[];
+    /// Frozen `(micro_step, tags)` pairs with `micro_step > 2440` (Wave 24 ceiling).
+    const WAVE24_FROZEN_BEYOND_2440: &[(i32, &[u8])] = &[];
 
     #[test]
     fn wave_b_applied_floor_101_to_300() {
@@ -3321,16 +3390,16 @@ mod tests {
     }
 
     #[test]
-    fn wave23_freeze_rows_beyond_2380() {
+    fn wave24_freeze_rows_beyond_2440() {
         let current: Vec<(i32, &[u8])> = STEP_PARTITIONS
             .iter()
             .copied()
-            .filter(|(n, _)| *n > 2380)
+            .filter(|(n, _)| *n > 2440)
             .collect();
         assert_eq!(
             current.as_slice(),
-            WAVE23_FROZEN_BEYOND_2380,
-            "do not add or remove rows > 2380"
+            WAVE24_FROZEN_BEYOND_2440,
+            "do not add or remove rows > 2440"
         );
     }
 
