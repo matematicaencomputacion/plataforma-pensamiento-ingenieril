@@ -66,7 +66,7 @@ test.describe("journey auth + hub (P1→P3)", () => {
     ).toBeVisible({
       timeout: e2eTimeout,
     });
-    await expect(page.locator("#workspace-microsteps li")).toHaveCount(2500);
+    await expect(page.locator("#workspace-microsteps li")).toHaveCount(2560);
     await expect(page.getByRole("link", { name: "Portada" }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "Workspace" }).first()).toBeVisible();
 
