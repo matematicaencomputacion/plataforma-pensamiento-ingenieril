@@ -57268,7 +57268,547 @@ ETL: filter v>0, sum, total.
 resultado = sum(x for x in rows if x > 0)
 print(resultado)
 ",
-    next: None, show_type_chips: false, micro_step: 2380,
+    next: Some("py-2381-map-lambda"), show_type_chips: false, micro_step: 2380,
+};
+pub const PY2381_MAP_LAMBDA: CodingStep = CodingStep {
+    id: "py-2381-map-lambda", title: "map · lambda", objective: "Aplicar map(lambda, ...) a una lista.",
+    prompt_md: "**map(lambda, iterable)**\n\n`map` aplica una función a cada elemento sin escribir un `for`.\n\n**Micro-reto:**\n1. `resultado = list(map(lambda x: x * 2, [1, 2, 3]))`\n2. Mostrá",
+    starter_code: "# resultado = list(map(lambda x: x * 2, [1, 2, 3]))\n# print(resultado)\n",
+    pytest: "def test_map_lambda(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 4, 6]",
+    solution_example: "resultado = list(map(lambda x: x * 2, [1, 2, 3]))\nprint(resultado)",
+    next: Some("py-2382-filter-lambda"), show_type_chips: false, micro_step: 2381,
+};
+pub const PY2382_FILTER_LAMBDA: CodingStep = CodingStep {
+    id: "py-2382-filter-lambda", title: "filter · lambda", objective: "Filtrar con filter(lambda, ...).",
+    prompt_md: "**filter(lambda, iterable)**\n\n`filter` conserva solo los elementos que cumplen el predicado.\n\n**Micro-reto:**\n1. `resultado = list(filter(lambda x: x > 2, [1, 2, 3]))`\n2. Mostrá",
+    starter_code: "# resultado = list(filter(lambda x: x > 2, [1, 2, 3]))\n# print(resultado)\n",
+    pytest: "def test_filter_lambda(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[3]",
+    solution_example: "resultado = list(filter(lambda x: x > 2, [1, 2, 3]))\nprint(resultado)",
+    next: Some("py-2383-mapfilter-combo"), show_type_chips: false, micro_step: 2382,
+};
+pub const PY2383_MAPFILTER_COMBO: CodingStep = CodingStep {
+    id: "py-2383-mapfilter-combo", title: "map · filter combinado", objective: "Encadenar filter y map.",
+    prompt_md: "**Combo funcional**\n\nPodés filtrar y transformar en cadena: primer `filter`, luego `map`.\n\n**Micro-reto:**\n1. De [1, 2, 3, 4] filtrá pares\n2. Elevá al cuadrado con `map`\n3. `resultado = list(...)`",
+    starter_code: "# paso = filter(lambda x: x % 2 == 0, [1, 2, 3, 4])\n# resultado = list(map(lambda x: x * x, paso))\n# print(resultado)\n",
+    pytest: "def test_mapfilter_combo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [4, 16]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[4, 16]",
+    solution_example: "pares = filter(lambda x: x % 2 == 0, [1, 2, 3, 4])\nresultado = list(map(lambda x: x * x, pares))\nprint(resultado)",
+    next: Some("py-2384-lambda-sorted"), show_type_chips: false, micro_step: 2383,
+};
+pub const PY2384_LAMBDA_SORTED: CodingStep = CodingStep {
+    id: "py-2384-lambda-sorted", title: "lambda · sorted", objective: "Usar lambda como clave de orden.",
+    prompt_md: "**sorted(key=lambda)**\n\n`key=` define el criterio sin cambiar los valores.\n\n**Micro-reto:**\n1. `datos = [(1, 'b'), (3, 'a')]`\n2. `resultado = sorted(datos, key=lambda t: t[1])`\n3. Mostrá",
+    starter_code: "# datos = [(1, 'b'), (3, 'a')]\n# resultado = sorted(datos, key=lambda t: t[1])\n# print(resultado)\n",
+    pytest: "def test_lambda_sorted(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(3, 'a'), (1, 'b')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[(3, 'a'), (1, 'b')]",
+    solution_example: "datos = [(1, 'b'), (3, 'a')]\nresultado = sorted(datos, key=lambda t: t[1])\nprint(resultado)",
+    next: Some("py-2385-map-multi"), show_type_chips: false, micro_step: 2384,
+};
+pub const PY2385_MAP_MULTI: CodingStep = CodingStep {
+    id: "py-2385-map-multi", title: "map · varios iterables", objective: "Aplicar map con dos listas.",
+    prompt_md: "**map multi-iterable**\n\n`map` acepta varios iterables: combina por posición.\n\n**Micro-reto:**\n1. `a = [1, 2]; b = [10, 20]`\n2. `resultado = list(map(lambda x, y: x + y, a, b))`\n3. Mostrá",
+    starter_code: "# a = [1, 2]; b = [10, 20]\n# resultado = list(map(lambda x, y: x + y, a, b))\n# print(resultado)\n",
+    pytest: "def test_map_multi(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [11, 22]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[11, 22]",
+    solution_example: "a = [1, 2]; b = [10, 20]\nresultado = list(map(lambda x, y: x + y, a, b))\nprint(resultado)",
+    next: Some("py-2386-mapfilter-check"), show_type_chips: false, micro_step: 2385,
+};
+pub const PY2386_MAPFILTER_CHECK: CodingStep = CodingStep {
+    id: "py-2386-mapfilter-check", title: "map/filter · Suite", objective: "Cerrar grupo: map + filter.",
+    prompt_md: "**Suite funcional**\n\nFiltrá negativos y duplicá.\n\n**Micro-reto:**\n1. `datos = [1, -2, 3]`\n2. Filtrá los positivos\n3. `map` para duplicar; `resultado = list(...)`",
+    starter_code: "# datos = [1, -2, 3]\n# positivos = filter(lambda x: x > 0, datos)\n# resultado = list(map(lambda x: x * 2, positivos))\n# print(resultado)\n",
+    pytest: "def test_mapfilter_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 6]",
+    solution_example: "datos = [1, -2, 3]\npositivos = filter(lambda x: x > 0, datos)\nresultado = list(map(lambda x: x * 2, positivos))\nprint(resultado)",
+    next: Some("py-2387-fun-dato"), show_type_chips: false, micro_step: 2386,
+};
+pub const PY2387_FUN_DATO: CodingStep = CodingStep {
+    id: "py-2387-fun-dato", title: "funciones · como datos", objective: "Guardar una función en una variable.",
+    prompt_md: "**funciones como valores**\n\nEn Python las funciones son objetos: se asignan y llaman con `()`.\n\n**Micro-reto:**\n1. `def doble(x): return x * 2`\n2. `f = doble`\n3. `resultado = f(5)`",
+    starter_code: "# def doble(x): return x * 2\n# f = doble\n# resultado = f(5)\n# print(resultado)\n",
+    pytest: "def test_fun_dato(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "10",
+    solution_example: "def doble(x): return x * 2\nf = doble\nresultado = f(5)\nprint(resultado)",
+    next: Some("py-2388-sort-callback"), show_type_chips: false, micro_step: 2387,
+};
+pub const PY2388_SORT_CALLBACK: CodingStep = CodingStep {
+    id: "py-2388-sort-callback", title: "callback · sorted", objective: "Usar una función como callback.",
+    prompt_md: "**callback**\n\n`key=` puede ser una función definida, no solo lambda.\n\n**Micro-reto:**\n1. `def largo(s): return len(s)`\n2. `resultado = sorted(['aa', 'b'], key=largo)`\n3. Mostrá",
+    starter_code: "# def largo(s): return len(s)\n# resultado = sorted(['aa', 'b'], key=largo)\n# print(resultado)\n",
+    pytest: "def test_sort_callback(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['b', 'aa']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['b', 'aa']",
+    solution_example: "def largo(s): return len(s)\nresultado = sorted(['aa', 'b'], key=largo)\nprint(resultado)",
+    next: Some("py-2389-callback-filter"), show_type_chips: false, micro_step: 2388,
+};
+pub const PY2389_CALLBACK_FILTER: CodingStep = CodingStep {
+    id: "py-2389-callback-filter", title: "callback · filter", objective: "Pasar una función definida a filter.",
+    prompt_md: "**callback nombrado**\n\nUna función nombrada funciona igual que una lambda en `filter`.\n\n**Micro-reto:**\n1. `def es_par(x): return x % 2 == 0`\n2. `resultado = list(filter(es_par, [1, 2, 3, 4]))`\n3. Mostrá",
+    starter_code: "# def es_par(x): return x % 2 == 0\n# resultado = list(filter(es_par, [1, 2, 3, 4]))\n# print(resultado)\n",
+    pytest: "def test_callback_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 4]",
+    solution_example: "def es_par(x): return x % 2 == 0\nresultado = list(filter(es_par, [1, 2, 3, 4]))\nprint(resultado)",
+    next: Some("py-2390-higher-order"), show_type_chips: false, micro_step: 2389,
+};
+pub const PY2390_HIGHER_ORDER: CodingStep = CodingStep {
+    id: "py-2390-higher-order", title: "orden · superior", objective: "Escribir una función que reciba función.",
+    prompt_md: "**función de orden superior**\n\nUna función que recibe otra se llama de orden superior.\n\n**Micro-reto:**\n1. `def aplicar(f, n): return f(n)`\n2. `resultado = aplicar(lambda x: x + 1, 4)`\n3. Mostrá",
+    starter_code: "# def aplicar(f, n): return f(n)\n# resultado = aplicar(lambda x: x + 1, 4)\n# print(resultado)\n",
+    pytest: "def test_higher_order(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "5",
+    solution_example: "def aplicar(f, n): return f(n)\nresultado = aplicar(lambda x: x + 1, 4)\nprint(resultado)",
+    next: Some("py-2391-callback-inline"), show_type_chips: false, micro_step: 2390,
+};
+pub const PY2391_CALLBACK_INLINE: CodingStep = CodingStep {
+    id: "py-2391-callback-inline", title: "callback · inline", objective: "Usar lambda como argumento.",
+    prompt_md: "**lambda como argumento**\n\nPasar una lambda directo a `sorted`/`filter`.\n\n**Micro-reto:**\n1. `resultado = sorted([3, 1, 2], key=lambda x: -x)`\n2. Mostrá",
+    starter_code: "# resultado = sorted([3, 1, 2], key=lambda x: -x)\n# print(resultado)\n",
+    pytest: "def test_callback_inline(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 2, 1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[3, 2, 1]",
+    solution_example: "resultado = sorted([3, 1, 2], key=lambda x: -x)\nprint(resultado)",
+    next: Some("py-2392-callback-check"), show_type_chips: false, micro_step: 2391,
+};
+pub const PY2392_CALLBACK_CHECK: CodingStep = CodingStep {
+    id: "py-2392-callback-check", title: "callback · Suite", objective: "Cerrar grupo: callbacks.",
+    prompt_md: "**Suite callbacks**\n\nCada palabra por longitud, descendente.\n\n**Micro-reto:**\n1. `palabras = ['hola', 'y', 'mundo']`\n2. `sorted(palabras, key=len, reverse=True)`\n3. `resultado = ...`",
+    starter_code: "# palabras = ['hola', 'y', 'mundo']\n# resultado = sorted(palabras, key=len, reverse=True)\n# print(resultado)\n",
+    pytest: "def test_callback_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['mundo', 'hola', 'y']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['mundo', 'hola', 'y']",
+    solution_example: "palabras = ['hola', 'y', 'mundo']\nresultado = sorted(palabras, key=len, reverse=True)\nprint(resultado)",
+    next: Some("py-2393-gen-yield"), show_type_chips: false, micro_step: 2392,
+};
+pub const PY2393_GEN_YIELD: CodingStep = CodingStep {
+    id: "py-2393-gen-yield", title: "generador · yield", objective: "Crear una función generadora.",
+    prompt_md: "**yield**\n\nUna función con `yield` es un generador: produce valores uno a uno.\n\n**Micro-reto:**\n1. `def pares(): yield 2; yield 4`\n2. `resultado = list(pares())`\n3. Mostrá",
+    starter_code: "# def pares():\n#     yield 2\n#     yield 4\n# resultado = list(pares())\n# print(resultado)\n",
+    pytest: "def test_gen_yield(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 4]",
+    solution_example: "def pares():\n    yield 2\n    yield 4\nresultado = list(pares())\nprint(resultado)",
+    next: Some("py-2394-gen-lazy"), show_type_chips: false, micro_step: 2393,
+};
+pub const PY2394_GEN_LAZY: CodingStep = CodingStep {
+    id: "py-2394-gen-lazy", title: "generador · lazy", objective: "Entender la pereza de un generador.",
+    prompt_md: "**pereza**\n\nUn generador consume de a uno; no materializa toda la lista\n\n**Micro-reto:**\n1. `g = (x for x in range(3))`\n2. `resultado = list(g)`\n3. Mostrá",
+    starter_code: "# g = (x for x in range(3))\n# resultado = list(g)\n# print(resultado)\n",
+    pytest: "def test_gen_lazy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[0, 1, 2]",
+    solution_example: "g = (x for x in range(3))\nresultado = list(g)\nprint(resultado)",
+    next: Some("py-2395-gen-chain"), show_type_chips: false, micro_step: 2394,
+};
+pub const PY2395_GEN_CHAIN: CodingStep = CodingStep {
+    id: "py-2395-gen-chain", title: "encadenar · generadores", objective: "Encadenar dos generadores.",
+    prompt_md: "**encadenar generadores**\n\nUsar el output de un generador como entrada de otro.\n\n**Micro-reto:**\n1. `a = (x for x in range(3))`\n2. `b = (x * 10 for x in a)`\n3. `resultado = list(b)`",
+    starter_code: "# a = (x for x in range(3))\n# b = (x * 10 for x in a)\n# resultado = list(b)\n# print(resultado)\n",
+    pytest: "def test_gen_chain(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 10, 20]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[0, 10, 20]",
+    solution_example: "a = (x for x in range(3))\nb = (x * 10 for x in a)\nresultado = list(b)\nprint(resultado)",
+    next: Some("py-2396-gen-expr"), show_type_chips: false, micro_step: 2395,
+};
+pub const PY2396_GEN_EXPR: CodingStep = CodingStep {
+    id: "py-2396-gen-expr", title: "generador · expresión", objective: "Usar una generator expression.",
+    prompt_md: "**generator expression**\n\nEntre paréntesis crea un iterable perezoso (no una lista).\n\n**Micro-reto:**\n1. `rango = range(4)`\n2. `resultado = list(x * x for x in rango if x % 2)`\n3. Mostrá",
+    starter_code: "# rango = range(4)\n# resultado = list(x * x for x in rango if x % 2)\n# print(resultado)\n",
+    pytest: "def test_gen_expr(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 9]",
+    solution_example: "rango = range(4)\nresultado = list(x * x for x in rango if x % 2)\nprint(resultado)",
+    next: Some("py-2397-gen-infinite"), show_type_chips: false, micro_step: 2396,
+};
+pub const PY2397_GEN_INFINITE: CodingStep = CodingStep {
+    id: "py-2397-gen-infinite", title: "generador · infinito", objective: "Iterar un generador infinito con tope.",
+    prompt_md: "**generador infinito**\n\nProduce indefinidamente; cortá con `next()` o `islice`.\n\n**Micro-reto:**\n1. `g = iter(range(1, 100))`\n2. `resultado = [next(g) for _ in range(3)]`\n3. Mostrá",
+    starter_code: "# g = iter(range(1, 100))\n# resultado = [next(g) for _ in range(3)]\n# print(resultado)\n",
+    pytest: "def test_gen_infinite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2, 3]",
+    solution_example: "g = iter(range(1, 100))\nresultado = [next(g) for _ in range(3)]\nprint(resultado)",
+    next: Some("py-2398-gen-check"), show_type_chips: false, micro_step: 2397,
+};
+pub const PY2398_GEN_CHECK: CodingStep = CodingStep {
+    id: "py-2398-gen-check", title: "generador · Suite", objective: "Cerrar grupo: lazy pipelines.",
+    prompt_md: "**Suite lazy**\n\nSumá sobre un generador con `filter`.\n\n**Micro-reto:**\n1. `datos = range(5)`\n2. `resultado = sum(x for x in datos if x % 2 == 0)`\n3. Mostrá",
+    starter_code: "# datos = range(5)\n# resultado = sum(x for x in datos if x % 2 == 0)\n# print(resultado)\n",
+    pytest: "def test_gen_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "6",
+    solution_example: "datos = range(5)\nresultado = sum(x for x in datos if x % 2 == 0)\nprint(resultado)",
+    next: Some("py-2399-accum-manual"), show_type_chips: false, micro_step: 2398,
+};
+pub const PY2399_ACCUM_MANUAL: CodingStep = CodingStep {
+    id: "py-2399-accum-manual", title: "acumulador · manual", objective: "Sumar con acumulador manual.",
+    prompt_md: "**acumulador**\n\nRecorrer y plegar: guardás el resultado parcial en una variable.\n\n**Micro-reto:**\n1. `total = 0`\n2. `for x in [1, 2, 3]: total += x`\n3. `resultado = total`",
+    starter_code: "# total = 0\n# for x in [1, 2, 3]:\n#     total += x\n# resultado = total\n# print(resultado)\n",
+    pytest: "def test_accum_manual(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "6",
+    solution_example: "total = 0\nfor x in [1, 2, 3]:\n    total += x\nresultado = total\nprint(resultado)",
+    next: Some("py-2400-fold-left"), show_type_chips: false, micro_step: 2399,
+};
+pub const PY2400_FOLD_LEFT: CodingStep = CodingStep {
+    id: "py-2400-fold-left", title: "pliegue · izquierda", objective: "Plegar por la izquierda acumulando.",
+    prompt_md: "**pliegue**\n\nReducís una secuencia a un valor aplicando una operación repetida.\n\n**Micro-reto:**\n1. `acc = 1`\n2. `for x in [2, 3]: acc *= x`\n3. `resultado = acc`",
+    starter_code: "# acc = 1\n# for x in [2, 3]:\n#     acc *= x\n# resultado = acc\n# print(resultado)\n",
+    pytest: "def test_fold_left(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "6",
+    solution_example: "acc = 1\nfor x in [2, 3]:\n    acc *= x\nresultado = acc\nprint(resultado)",
+    next: Some("py-2401-reduce-import"), show_type_chips: false, micro_step: 2400,
+};
+pub const PY2401_REDUCE_IMPORT: CodingStep = CodingStep {
+    id: "py-2401-reduce-import", title: "reduce · import", objective: "Usar functools.reduce.",
+    prompt_md: "**functools.reduce**\n\n`reduce(func, iterable)` pliega de izquierda. Importalo de `functools`.\n\n**Micro-reto:**\n1. `from functools import reduce`\n2. `resultado = reduce(lambda a, b: a + b, [1, 2, 3])`\n3. Mostrá",
+    starter_code: "# from functools import reduce\n# resultado = reduce(lambda a, b: a + b, [1, 2, 3])\n# print(resultado)\n",
+    pytest: "def test_reduce_import(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "6",
+    solution_example: "from functools import reduce\nresultado = reduce(lambda a, b: a + b, [1, 2, 3])\nprint(resultado)",
+    next: Some("py-2402-reduce-init"), show_type_chips: false, micro_step: 2401,
+};
+pub const PY2402_REDUCE_INIT: CodingStep = CodingStep {
+    id: "py-2402-reduce-init", title: "reduce · initial", objective: "Reduce con valor inicial.",
+    prompt_md: "**initializer**\n\n`reduce(func, iterable, inicial)` arranca con un valor base.\n\n**Micro-reto:**\n1. `from functools import reduce`\n2. `resultado = reduce(lambda a, b: a * b, [2, 3], 10)`\n3. Mostrá",
+    starter_code: "# from functools import reduce\n# resultado = reduce(lambda a, b: a * b, [2, 3], 10)\n# print(resultado)\n",
+    pytest: "def test_reduce_init(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 60\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "60",
+    solution_example: "from functools import reduce\nresultado = reduce(lambda a, b: a * b, [2, 3], 10)\nprint(resultado)",
+    next: Some("py-2403-reduce-op"), show_type_chips: false, micro_step: 2402,
+};
+pub const PY2403_REDUCE_OP: CodingStep = CodingStep {
+    id: "py-2403-reduce-op", title: "reduce · operación", objective: "Reduce con operador combinado.",
+    prompt_md: "**operaciones en reduce**\n\nPodés plegar strings, listas o máximos.\n\n**Micro-reto:**\n1. `from functools import reduce`\n2. `resultado = reduce(lambda a, b: a + '-' + b, ['a', 'b'])`\n3. Mostrá",
+    starter_code: "# from functools import reduce\n# resultado = reduce(lambda a, b: a + '-' + b, ['a', 'b'])\n# print(resultado)\n",
+    pytest: "def test_reduce_op(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'a-b'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "'a-b'",
+    solution_example: "from functools import reduce\nresultado = reduce(lambda a, b: a + '-' + b, ['a', 'b'])\nprint(resultado)",
+    next: Some("py-2404-fold-check"), show_type_chips: false, micro_step: 2403,
+};
+pub const PY2404_FOLD_CHECK: CodingStep = CodingStep {
+    id: "py-2404-fold-check", title: "reduce · Suite", objective: "Cerrar grupo: folding.",
+    prompt_md: "**Suite folding**\n\nMáximo con `reduce`.\n\n**Micro-reto:**\n1. `from functools import reduce`\n2. `resultado = reduce(max, [3, 7, 1])`\n3. Mostrá",
+    starter_code: "# from functools import reduce\n# resultado = reduce(max, [3, 7, 1])\n# print(resultado)\n",
+    pytest: "def test_fold_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "7",
+    solution_example: "from functools import reduce\nresultado = reduce(max, [3, 7, 1])\nprint(resultado)",
+    next: Some("py-2405-log-split"), show_type_chips: false, micro_step: 2404,
+};
+pub const PY2405_LOG_SPLIT: CodingStep = CodingStep {
+    id: "py-2405-log-split", title: "log · split", objective: "Dividir líneas de un log.",
+    prompt_md: "**pipelines de logs**\n\nLos logs son texto; `split` separa en líneas y campos.\n\n**Micro-reto:**\n1. `texto = 'INFO ok\\nERROR bad'`\n2. `resultado = texto.split('\\n')`\n3. Mostrá",
+    starter_code: "# texto = 'INFO ok\\nERROR bad'\n# resultado = texto.split('\\n')\n# print(resultado)\n",
+    pytest: "def test_log_split(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['INFO ok', 'ERROR bad']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['INFO ok', 'ERROR bad']",
+    solution_example: "texto = 'INFO ok\\nERROR bad'\nresultado = texto.split('\\n')\nprint(resultado)",
+    next: Some("py-2406-log-filter"), show_type_chips: false, micro_step: 2405,
+};
+pub const PY2406_LOG_FILTER: CodingStep = CodingStep {
+    id: "py-2406-log-filter", title: "log · filter", objective: "Filtrar log por nivel.",
+    prompt_md: "**filtrar niveles**\n\n`filter` selecciona las líneas de un nivel dado.\n\n**Micro-reto:**\n1. `lineas = ['INFO ok', 'ERROR bad']`\n2. `resultado = list(filter(lambda l: l.startswith('ERROR'), lineas))`\n3. Mostrá",
+    starter_code: "# lineas = ['INFO ok', 'ERROR bad']\n# resultado = list(filter(lambda l: l.startswith('ERROR'), lineas))\n# print(resultado)\n",
+    pytest: "def test_log_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['ERROR bad']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['ERROR bad']",
+    solution_example: "lineas = ['INFO ok', 'ERROR bad']\nresultado = list(filter(lambda l: l.startswith('ERROR'), lineas))\nprint(resultado)",
+    next: Some("py-2407-log-map"), show_type_chips: false, micro_step: 2406,
+};
+pub const PY2407_LOG_MAP: CodingStep = CodingStep {
+    id: "py-2407-log-map", title: "log · map", objective: "Extraer un campo de cada línea.",
+    prompt_md: "**extraer campo**\n\n`map` + `split(' ', 1)[0]` toma el nivel de cada registro.\n\n**Micro-reto:**\n1. `lineas = ['INFO ok', 'ERROR bad']`\n2. `resultado = list(map(lambda l: l.split(' ', 1)[0], lineas))`\n3. Mostrá",
+    starter_code: "# lineas = ['INFO ok', 'ERROR bad']\n# resultado = list(map(lambda l: l.split(' ', 1)[0], lineas))\n# print(resultado)\n",
+    pytest: "def test_log_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['INFO', 'ERROR']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['INFO', 'ERROR']",
+    solution_example: "lineas = ['INFO ok', 'ERROR bad']\nresultado = list(map(lambda l: l.split(' ', 1)[0], lineas))\nprint(resultado)",
+    next: Some("py-2408-log-pipeline"), show_type_chips: false, micro_step: 2407,
+};
+pub const PY2408_LOG_PIPELINE: CodingStep = CodingStep {
+    id: "py-2408-log-pipeline", title: "log · pipeline", objective: "Encadenar filter y map en logs.",
+    prompt_md: "**pipeline de líneas**\n\nPrimero filtrá, luego transformá en cadena.\n\n**Micro-reto:**\n1. `lineas = ['INFO ok', 'ERROR bad']`\n2. Filtrá `ERROR`\n3. `resultado = list(map(lambda l: l.title(), ...))`",
+    starter_code: "# lineas = ['INFO ok', 'ERROR bad']\n# errores = filter(lambda l: l.startswith('ERROR'), lineas)\n# resultado = list(map(lambda l: l.title(), errores))\n# print(resultado)\n",
+    pytest: "def test_log_pipeline(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['Error Bad']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['Error Bad']",
+    solution_example: "lineas = ['INFO ok', 'ERROR bad']\nerrores = filter(lambda l: l.startswith('ERROR'), lineas)\nresultado = list(map(lambda l: l.title(), errores))\nprint(resultado)",
+    next: Some("py-2409-log-count"), show_type_chips: false, micro_step: 2408,
+};
+pub const PY2409_LOG_COUNT: CodingStep = CodingStep {
+    id: "py-2409-log-count", title: "log · count", objective: "Contar líneas por nivel.",
+    prompt_md: "**conteo por nivel**\n\nSumá booleanos: `list.count` o `sum(gen)`.\n\n**Micro-reto:**\n1. `niveles = ['INFO', 'ERROR', 'INFO']`\n2. `resultado = niveles.count('INFO')`\n3. Mostrá",
+    starter_code: "# niveles = ['INFO', 'ERROR', 'INFO']\n# resultado = niveles.count('INFO')\n# print(resultado)\n",
+    pytest: "def test_log_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2",
+    solution_example: "niveles = ['INFO', 'ERROR', 'INFO']\nresultado = niveles.count('INFO')\nprint(resultado)",
+    next: Some("py-2410-log-check"), show_type_chips: false, micro_step: 2409,
+};
+pub const PY2410_LOG_CHECK: CodingStep = CodingStep {
+    id: "py-2410-log-check", title: "log · Suite", objective: "Cerrar grupo: pipelines logs.",
+    prompt_md: "**Suite logs**\n\nContá líneas que empiecen con `ERROR`.\n\n**Micro-reto:**\n1. `lineas = ['ERROR a', 'INFO b', 'ERROR c']`\n2. `resultado = sum(1 for l in lineas if l.startswith('ERROR'))`\n3. Mostrá",
+    starter_code: "# lineas = ['ERROR a', 'INFO b', 'ERROR c']\n# resultado = sum(1 for l in lineas if l.startswith('ERROR'))\n# print(resultado)\n",
+    pytest: "def test_log_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2",
+    solution_example: "lineas = ['ERROR a', 'INFO b', 'ERROR c']\nresultado = sum(1 for l in lineas if l.startswith('ERROR'))\nprint(resultado)",
+    next: Some("py-2411-pred-range"), show_type_chips: false, micro_step: 2410,
+};
+pub const PY2411_PRED_RANGE: CodingStep = CodingStep {
+    id: "py-2411-pred-range", title: "predicado · rango", objective: "Filtrar por rango.",
+    prompt_md: "**predicado de rango**\n\nLa condición puede combinar comparaciones.\n\n**Micro-reto:**\n1. `resultado = list(filter(lambda x: 1 <= x <= 3, [0, 2, 5]))`\n2. Mostrá",
+    starter_code: "# resultado = list(filter(lambda x: 1 <= x <= 3, [0, 2, 5]))\n# print(resultado)\n",
+    pytest: "def test_pred_range(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2]",
+    solution_example: "resultado = list(filter(lambda x: 1 <= x <= 3, [0, 2, 5]))\nprint(resultado)",
+    next: Some("py-2412-pred-and"), show_type_chips: false, micro_step: 2411,
+};
+pub const PY2412_PRED_AND: CodingStep = CodingStep {
+    id: "py-2412-pred-and", title: "predicado · and", objective: "Combinar condiciones con and.",
+    prompt_md: "**and**\n\nUn predicado con `and` exige que ambas condiciones se cumplan.\n\n**Micro-reto:**\n1. `datos = [2, 8, 5]`\n2. `resultado = list(filter(lambda x: x > 1 and x < 7, datos))`\n3. Mostrá",
+    starter_code: "# datos = [2, 8, 5]\n# resultado = list(filter(lambda x: x > 1 and x < 7, datos))\n# print(resultado)\n",
+    pytest: "def test_pred_and(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 5]",
+    solution_example: "datos = [2, 8, 5]\nresultado = list(filter(lambda x: x > 1 and x < 7, datos))\nprint(resultado)",
+    next: Some("py-2413-pred-or"), show_type_chips: false, micro_step: 2412,
+};
+pub const PY2413_PRED_OR: CodingStep = CodingStep {
+    id: "py-2413-pred-or", title: "predicado · or", objective: "Combinar condiciones con or.",
+    prompt_md: "**or**\n\nUn predicado con `or` acepta si alguna condición se cumple.\n\n**Micro-reto:**\n1. `datos = [1, 3, 4]`\n2. `resultado = list(filter(lambda x: x == 1 or x == 3, datos))`\n3. Mostrá",
+    starter_code: "# datos = [1, 3, 4]\n# resultado = list(filter(lambda x: x == 1 or x == 3, datos))\n# print(resultado)\n",
+    pytest: "def test_pred_or(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 3]",
+    solution_example: "datos = [1, 3, 4]\nresultado = list(filter(lambda x: x == 1 or x == 3, datos))\nprint(resultado)",
+    next: Some("py-2414-pred-def"), show_type_chips: false, micro_step: 2413,
+};
+pub const PY2414_PRED_DEF: CodingStep = CodingStep {
+    id: "py-2414-pred-def", title: "predicado · def", objective: "Predicado como función definida.",
+    prompt_md: "**def como predicado**\n\nClaro para condiciones largas: escribí `def f(x): ...`.\n\n**Micro-reto:**\n1. `def es_vocal(c): return c in 'aeiou'`\n2. `resultado = list(filter(es_vocal, 'hola'))`\n3. Mostrá",
+    starter_code: "# def es_vocal(c): return c in 'aeiou'\n# resultado = list(filter(es_vocal, 'hola'))\n# print(resultado)\n",
+    pytest: "def test_pred_def(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['o', 'a']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['o', 'a']",
+    solution_example: "def es_vocal(c): return c in 'aeiou'\nresultado = list(filter(es_vocal, 'hola'))\nprint(resultado)",
+    next: Some("py-2415-pred-callable"), show_type_chips: false, micro_step: 2414,
+};
+pub const PY2415_PRED_CALLABLE: CodingStep = CodingStep {
+    id: "py-2415-pred-callable", title: "predicado · callable", objective: "Filtrar con función callable.",
+    prompt_md: "**truthiness**\n\n`filter` conserva los elementos donde el callable devuelve verdadero.\n\n**Micro-reto:**\n1. `resultado = list(filter(lambda s: len(s) > 1, ['a', 'ab']))`\n2. Mostrá",
+    starter_code: "# resultado = list(filter(lambda s: len(s) > 1, ['a', 'ab']))\n# print(resultado)\n",
+    pytest: "def test_pred_callable(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['ab']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "['ab']",
+    solution_example: "resultado = list(filter(lambda s: len(s) > 1, ['a', 'ab']))\nprint(resultado)",
+    next: Some("py-2416-pred-check"), show_type_chips: false, micro_step: 2415,
+};
+pub const PY2416_PRED_CHECK: CodingStep = CodingStep {
+    id: "py-2416-pred-check", title: "predicado · Suite", objective: "Cerrar grupo: predicados.",
+    prompt_md: "**Suite predicados**\n\nFiltrá números terminados en 0.\n\n**Micro-reto:**\n1. `datos = [10, 3, 20]`\n2. `resultado = list(filter(lambda x: x % 10 == 0, datos))`\n3. Mostrá",
+    starter_code: "# datos = [10, 3, 20]\n# resultado = list(filter(lambda x: x % 10 == 0, datos))\n# print(resultado)\n",
+    pytest: "def test_pred_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [10, 20]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[10, 20]",
+    solution_example: "datos = [10, 3, 20]\nresultado = list(filter(lambda x: x % 10 == 0, datos))\nprint(resultado)",
+    next: Some("py-2417-etl-mapper"), show_type_chips: false, micro_step: 2416,
+};
+pub const PY2417_ETL_MAPPER: CodingStep = CodingStep {
+    id: "py-2417-etl-mapper", title: "ETL · mapper", objective: "Definir una función de mapeo.",
+    prompt_md: "**ETL en memoria**\n\nExtraer, transformar, cargar: la transformación es mapear filas.\n\n**Micro-reto:**\n1. `def limpio(x): return int(x)`\n2. `resultado = list(map(limpio, ['1', '2']))`\n3. Mostrá",
+    starter_code: "# def limpio(x): return int(x)\n# resultado = list(map(limpio, ['1', '2']))\n# print(resultado)\n",
+    pytest: "def test_etl_mapper(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2]",
+    solution_example: "def limpio(x): return int(x)\nresultado = list(map(limpio, ['1', '2']))\nprint(resultado)",
+    next: Some("py-2418-etl-map"), show_type_chips: false, micro_step: 2417,
+};
+pub const PY2418_ETL_MAP: CodingStep = CodingStep {
+    id: "py-2418-etl-map", title: "ETL · map", objective: "Aplicar transformación a filas.",
+    prompt_md: "**map en ETL**\n\nNormalizá cada fila con `map` y una lambda.\n\n**Micro-reto:**\n1. `filas = [1, 2, 3]`\n2. `resultado = list(map(lambda x: x + 1, filas))`\n3. Mostrá",
+    starter_code: "# filas = [1, 2, 3]\n# resultado = list(map(lambda x: x + 1, filas))\n# print(resultado)\n",
+    pytest: "def test_etl_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[2, 3, 4]",
+    solution_example: "filas = [1, 2, 3]\nresultado = list(map(lambda x: x + 1, filas))\nprint(resultado)",
+    next: Some("py-2419-etl-filter"), show_type_chips: false, micro_step: 2418,
+};
+pub const PY2419_ETL_FILTER: CodingStep = CodingStep {
+    id: "py-2419-etl-filter", title: "ETL · filter", objective: "Limpiar datos inválidos.",
+    prompt_md: "**filtrar inválidos**\n\n`filter` descarta filas que no cumplen el negocio.\n\n**Micro-reto:**\n1. `filas = [0, 5, -1]`\n2. `resultado = list(filter(lambda x: x > 0, filas))`\n3. Mostrá",
+    starter_code: "# filas = [0, 5, -1]\n# resultado = list(filter(lambda x: x > 0, filas))\n# print(resultado)\n",
+    pytest: "def test_etl_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[5]",
+    solution_example: "filas = [0, 5, -1]\nresultado = list(filter(lambda x: x > 0, filas))\nprint(resultado)",
+    next: Some("py-2420-etl-tuple"), show_type_chips: false, micro_step: 2419,
+};
+pub const PY2420_ETL_TUPLE: CodingStep = CodingStep {
+    id: "py-2420-etl-tuple", title: "ETL · tuplas", objective: "Normalizar a tuplas.",
+    prompt_md: "**tuplas normalizadas**\n\nConvertí entradas crudas en tuplas con `map`.\n\n**Micro-reto:**\n1. `filas = ['a:1', 'b:2']`\n2. `resultado = list(map(lambda s: tuple(s.split(':')), filas))`\n3. Mostrá",
+    starter_code: "# filas = ['a:1', 'b:2']\n# resultado = list(map(lambda s: tuple(s.split(':')), filas))\n# print(resultado)\n",
+    pytest: "def test_etl_tuple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', '1'), ('b', '2')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[('a', '1'), ('b', '2')]",
+    solution_example: "filas = ['a:1', 'b:2']\nresultado = list(map(lambda s: tuple(s.split(':')), filas))\nprint(resultado)",
+    next: Some("py-2421-etl-serial"), show_type_chips: false, micro_step: 2420,
+};
+pub const PY2421_ETL_SERIAL: CodingStep = CodingStep {
+    id: "py-2421-etl-serial", title: "ETL · serial", objective: "ETL completo en memoria.",
+    prompt_md: "**ETL serial**\n\nExtraer -> limpiar -> transformar en secuencia.\n\n**Micro-reto:**\n1. `crudo = [1, -2, 3, -4]`\n2. Filtrá positivos, luego elevá al cuadrado\n3. `resultado = list(...)`",
+    starter_code: "# crudo = [1, -2, 3, -4]\n# positivos = filter(lambda x: x > 0, crudo)\n# resultado = list(map(lambda x: x ** 2, positivos))\n# print(resultado)\n",
+    pytest: "def test_etl_serial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 9]",
+    solution_example: "crudo = [1, -2, 3, -4]\npositivos = filter(lambda x: x > 0, crudo)\nresultado = list(map(lambda x: x ** 2, positivos))\nprint(resultado)",
+    next: Some("py-2422-etl-check"), show_type_chips: false, micro_step: 2421,
+};
+pub const PY2422_ETL_CHECK: CodingStep = CodingStep {
+    id: "py-2422-etl-check", title: "ETL · Suite", objective: "Cerrar grupo: ETL serial.",
+    prompt_md: "**Suite ETL**\n\nSumá los cuadrados de los pares.\n\n**Micro-reto:**\n1. `datos = [1, 2, 3]`\n2. `resultado = sum(x * x for x in datos if x % 2 == 0)`\n3. Mostrá",
+    starter_code: "# datos = [1, 2, 3]\n# resultado = sum(x * x for x in datos if x % 2 == 0)\n# print(resultado)\n",
+    pytest: "def test_etl_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "4",
+    solution_example: "datos = [1, 2, 3]\nresultado = sum(x * x for x in datos if x % 2 == 0)\nprint(resultado)",
+    next: Some("py-2423-any-find"), show_type_chips: false, micro_step: 2422,
+};
+pub const PY2423_ANY_FIND: CodingStep = CodingStep {
+    id: "py-2423-any-find", title: "any() · early", objective: "Usar any() para corte temprano.",
+    prompt_md: "**any()**\n\nDevuelve `True` al primer elemento verdadero; corta la iteración.\n\n**Micro-reto:**\n1. `resultado = any(x > 5 for x in [1, 9, 2])`\n2. Mostrá",
+    starter_code: "# resultado = any(x > 5 for x in [1, 9, 2])\n# print(resultado)\n",
+    pytest: "def test_any_find(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "True",
+    solution_example: "resultado = any(x > 5 for x in [1, 9, 2])\nprint(resultado)",
+    next: Some("py-2424-all-check"), show_type_chips: false, micro_step: 2423,
+};
+pub const PY2424_ALL_CHECK: CodingStep = CodingStep {
+    id: "py-2424-all-check", title: "all() · check", objective: "Usar all() en un stream.",
+    prompt_md: "**all()**\n\nDevuelve `False` al primer falso: corte temprano.\n\n**Micro-reto:**\n1. `resultado = all(x > 0 for x in [1, 2, -1])`\n2. Mostrá",
+    starter_code: "# resultado = all(x > 0 for x in [1, 2, -1])\n# print(resultado)\n",
+    pytest: "def test_all_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "False",
+    solution_example: "resultado = all(x > 0 for x in [1, 2, -1])\nprint(resultado)",
+    next: Some("py-2425-first-next"), show_type_chips: false, micro_step: 2424,
+};
+pub const PY2425_FIRST_NEXT: CodingStep = CodingStep {
+    id: "py-2425-first-next", title: "first · next", objective: "Tomar el primer match con next.",
+    prompt_md: "**primer match**\n\n`next(gen)` consume solo lo necesario hasta hallar el elemento.\n\n**Micro-reto:**\n1. `datos = [1, 4, 7]`\n2. `resultado = next(x for x in datos if x % 2 == 0)`\n3. Mostrá",
+    starter_code: "# datos = [1, 4, 7]\n# resultado = next(x for x in datos if x % 2 == 0)\n# print(resultado)\n",
+    pytest: "def test_first_next(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "4",
+    solution_example: "datos = [1, 4, 7]\nresultado = next(x for x in datos if x % 2 == 0)\nprint(resultado)",
+    next: Some("py-2426-takewhile"), show_type_chips: false, micro_step: 2425,
+};
+pub const PY2426_TAKEWHILE: CodingStep = CodingStep {
+    id: "py-2426-takewhile", title: "takewhile", objective: "Cortar al inicio con itertools.takewhile.",
+    prompt_md: "**takewhile**\n\n`itertools.takewhile(pred, it)` toma mientras el predicado sea verdadero.\n\n**Micro-reto:**\n1. `from itertools import takewhile`\n2. `resultado = list(takewhile(lambda x: x < 3, [1, 2, 3, 1]))`\n3. Mostrá",
+    starter_code: "# from itertools import takewhile\n# resultado = list(takewhile(lambda x: x < 3, [1, 2, 3, 1]))\n# print(resultado)\n",
+    pytest: "def test_takewhile(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[1, 2]",
+    solution_example: "from itertools import takewhile\nresultado = list(takewhile(lambda x: x < 3, [1, 2, 3, 1]))\nprint(resultado)",
+    next: Some("py-2427-dropwhile"), show_type_chips: false, micro_step: 2426,
+};
+pub const PY2427_DROPWHILE: CodingStep = CodingStep {
+    id: "py-2427-dropwhile", title: "dropwhile", objective: "Saltar cabecera con itertools.dropwhile.",
+    prompt_md: "**dropwhile**\n\nDescarta mientras el predicado sea verdadero; luego emite el resto.\n\n**Micro-reto:**\n1. `from itertools import dropwhile`\n2. `resultado = list(dropwhile(lambda x: x < 3, [1, 5, 2]))`\n3. Mostrá",
+    starter_code: "# from itertools import dropwhile\n# resultado = list(dropwhile(lambda x: x < 3, [1, 5, 2]))\n# print(resultado)\n",
+    pytest: "def test_dropwhile(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [5, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[5, 2]",
+    solution_example: "from itertools import dropwhile\nresultado = list(dropwhile(lambda x: x < 3, [1, 5, 2]))\nprint(resultado)",
+    next: Some("py-2428-early-check"), show_type_chips: false, micro_step: 2427,
+};
+pub const PY2428_EARLY_CHECK: CodingStep = CodingStep {
+    id: "py-2428-early-check", title: "early · Suite", objective: "Cerrar grupo: early termination.",
+    prompt_md: "**Suite early**\n\n¿Hay un múltiplo de 7?\n\n**Micro-reto:**\n1. `datos = [1, 2, 14, 3]`\n2. `resultado = any(x % 7 == 0 for x in datos)`\n3. Mostrá",
+    starter_code: "# datos = [1, 2, 14, 3]\n# resultado = any(x % 7 == 0 for x in datos)\n# print(resultado)\n",
+    pytest: "def test_early_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] is True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "True",
+    solution_example: "datos = [1, 2, 14, 3]\nresultado = any(x % 7 == 0 for x in datos)\nprint(resultado)",
+    next: Some("py-2429-stream-sum"), show_type_chips: false, micro_step: 2428,
+};
+pub const PY2429_STREAM_SUM: CodingStep = CodingStep {
+    id: "py-2429-stream-sum", title: "stream · sum", objective: "Sumar elementos al vuelo.",
+    prompt_md: "**sum en streaming**\n\n`sum(gen)` consume de a uno; no arma lista intermedia.\n\n**Micro-reto:**\n1. `resultado = sum(x * 2 for x in range(3))`\n2. Mostrá",
+    starter_code: "# resultado = sum(x * 2 for x in range(3))\n# print(resultado)\n",
+    pytest: "def test_stream_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "6",
+    solution_example: "resultado = sum(x * 2 for x in range(3))\nprint(resultado)",
+    next: Some("py-2430-stream-max"), show_type_chips: false, micro_step: 2429,
+};
+pub const PY2430_STREAM_MAX: CodingStep = CodingStep {
+    id: "py-2430-stream-max", title: "stream · max", objective: "Calcular máximo sin lista.",
+    prompt_md: "**renumeración**\n\n`max(gen)` recuerda el mayor visto sin guardar todo.\n\n**Micro-reto:**\n1. `datos = [3, 9, 1]`\n2. `resultado = max(x for x in datos if x < 9)`\n3. Mostrá",
+    starter_code: "# datos = [3, 9, 1]\n# resultado = max(x for x in datos if x < 9)\n# print(resultado)\n",
+    pytest: "def test_stream_max(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "3",
+    solution_example: "datos = [3, 9, 1]\nresultado = max(x for x in datos if x < 9)\nprint(resultado)",
+    next: Some("py-2431-window-sum"), show_type_chips: false, micro_step: 2430,
+};
+pub const PY2431_WINDOW_SUM: CodingStep = CodingStep {
+    id: "py-2431-window-sum", title: "window · sum", objective: "Sumar ventana deslizante.",
+    prompt_md: "**ventana deslizante**\n\nSumá un bloque contiguo de tamaño fijo.\n\n**Micro-reto:**\n1. `datos = [1, 2, 3, 4]`\n2. `resultado = sum(datos[1:3])`\n3. Mostrá",
+    starter_code: "# datos = [1, 2, 3, 4]\n# resultado = sum(datos[1:3])\n# print(resultado)\n",
+    pytest: "def test_window_sum(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "5",
+    solution_example: "datos = [1, 2, 3, 4]\nresultado = sum(datos[1:3])\nprint(resultado)",
+    next: Some("py-2432-stream-avg"), show_type_chips: false, micro_step: 2431,
+};
+pub const PY2432_STREAM_AVG: CodingStep = CodingStep {
+    id: "py-2432-stream-avg", title: "stream · avg", objective: "Promedio en un paso.",
+    prompt_md: "**promedio streaming**\n\n`sum` y `len` combinados dan el promedio.\n\n**Micro-reto:**\n1. `datos = [2, 4, 6]`\n2. `resultado = sum(datos) / len(datos)`\n3. Mostrá",
+    starter_code: "# datos = [2, 4, 6]\n# resultado = sum(datos) / len(datos)\n# print(resultado)\n",
+    pytest: "def test_stream_avg(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4.0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "4.0",
+    solution_example: "datos = [2, 4, 6]\nresultado = sum(datos) / len(datos)\nprint(resultado)",
+    next: Some("py-2433-stream-count"), show_type_chips: false, micro_step: 2432,
+};
+pub const PY2433_STREAM_COUNT: CodingStep = CodingStep {
+    id: "py-2433-stream-count", title: "stream · count", objective: "Contar cumple-criterios.",
+    prompt_md: "**conteo**\n\n`sum(1 for ... if ...)` cuenta sin materializar.\n\n**Micro-reto:**\n1. `datos = [1, 2, 3]`\n2. `resultado = sum(1 for x in datos if x % 2)`\n3. Mostrá",
+    starter_code: "# datos = [1, 2, 3]\n# resultado = sum(1 for x in datos if x % 2)\n# print(resultado)\n",
+    pytest: "def test_stream_count(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "2",
+    solution_example: "datos = [1, 2, 3]\nresultado = sum(1 for x in datos if x % 2)\nprint(resultado)",
+    next: Some("py-2434-stream-check"), show_type_chips: false, micro_step: 2433,
+};
+pub const PY2434_STREAM_CHECK: CodingStep = CodingStep {
+    id: "py-2434-stream-check", title: "stream · Suite", objective: "Cerrar grupo: agregación streaming.",
+    prompt_md: "**Suite streaming**\n\nSumá los valores mayores a 2, sin lista.\n\n**Micro-reto:**\n1. `datos = [1, 3, 2, 4]`\n2. `resultado = sum(x for x in datos if x > 2)`\n3. Mostrá",
+    starter_code: "# datos = [1, 3, 2, 4]\n# resultado = sum(x for x in datos if x > 2)\n# print(resultado)\n",
+    pytest: "def test_stream_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "7",
+    solution_example: "datos = [1, 3, 2, 4]\nresultado = sum(x for x in datos if x > 2)\nprint(resultado)",
+    next: Some("py-2435-score-rows"), show_type_chips: false, micro_step: 2434,
+};
+pub const PY2435_SCORE_ROWS: CodingStep = CodingStep {
+    id: "py-2435-score-rows", title: "scoring · filas", objective: "Preparar filas de datos.",
+    prompt_md: "**scoring**\n\nLos pipelines puntúan registros: primero ordená las filas.\n\n**Micro-reto:**\n1. `filas = [('a', 3), ('b', 1)]`\n2. `resultado = sorted(filas, key=lambda t: t[1])`\n3. Mostrá",
+    starter_code: "# filas = [('a', 3), ('b', 1)]\n# resultado = sorted(filas, key=lambda t: t[1])\n# print(resultado)\n",
+    pytest: "def test_score_rows(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('b', 1), ('a', 3)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[('b', 1), ('a', 3)]",
+    solution_example: "filas = [('a', 3), ('b', 1)]\nresultado = sorted(filas, key=lambda t: t[1])\nprint(resultado)",
+    next: Some("py-2436-score-map"), show_type_chips: false, micro_step: 2435,
+};
+pub const PY2436_SCORE_MAP: CodingStep = CodingStep {
+    id: "py-2436-score-map", title: "scoring · map", objective: "Calcular puntaje con map.",
+    prompt_md: "**calcular puntaje**\n\n`map` transforma cada fila en su valor de score.\n\n**Micro-reto:**\n1. `datos = [1, 2]`\n2. `resultado = list(map(lambda x: x * 10, datos))`\n3. Mostrá",
+    starter_code: "# datos = [1, 2]\n# resultado = list(map(lambda x: x * 10, datos))\n# print(resultado)\n",
+    pytest: "def test_score_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [10, 20]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[10, 20]",
+    solution_example: "datos = [1, 2]\nresultado = list(map(lambda x: x * 10, datos))\nprint(resultado)",
+    next: Some("py-2437-score-filter"), show_type_chips: false, micro_step: 2436,
+};
+pub const PY2437_SCORE_FILTER: CodingStep = CodingStep {
+    id: "py-2437-score-filter", title: "scoring · filter", objective: "Filtrar por umbral del score.",
+    prompt_md: "**umbral**\n\n`filter` descarta registros bajo un puntaje mínimo.\n\n**Micro-reto:**\n1. `scores = [5, 8, 3]`\n2. `resultado = list(filter(lambda s: s >= 5, scores))`\n3. Mostrá",
+    starter_code: "# scores = [5, 8, 3]\n# resultado = list(filter(lambda s: s >= 5, scores))\n# print(resultado)\n",
+    pytest: "def test_score_filter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [5, 8]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[5, 8]",
+    solution_example: "scores = [5, 8, 3]\nresultado = list(filter(lambda s: s >= 5, scores))\nprint(resultado)",
+    next: Some("py-2438-score-sort"), show_type_chips: false, micro_step: 2437,
+};
+pub const PY2438_SCORE_SORT: CodingStep = CodingStep {
+    id: "py-2438-score-sort", title: "scoring · sort", objective: "Ranking ordenado de scores.",
+    prompt_md: "**ranking**\n\n`sorted(..., reverse=True)` ordena de mayor a menor.\n\n**Micro-reto:**\n1. `scores = [3, 9, 5]`\n2. `resultado = sorted(scores, reverse=True)`\n3. Mostrá",
+    starter_code: "# scores = [3, 9, 5]\n# resultado = sorted(scores, reverse=True)\n# print(resultado)\n",
+    pytest: "def test_score_sort(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [9, 5, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[9, 5, 3]",
+    solution_example: "scores = [3, 9, 5]\nresultado = sorted(scores, reverse=True)\nprint(resultado)",
+    next: Some("py-2439-score-top"), show_type_chips: false, micro_step: 2438,
+};
+pub const PY2439_SCORE_TOP: CodingStep = CodingStep {
+    id: "py-2439-score-top", title: "scoring · top", objective: "Ranking con top N.",
+    prompt_md: "**top N**\n\nOrdená y cortá con slicing para el podio.\n\n**Micro-reto:**\n1. `scores = [4, 1, 9, 2]`\n2. `resultado = sorted(scores, reverse=True)[:3]`\n3. Mostrá",
+    starter_code: "# scores = [4, 1, 9, 2]\n# resultado = sorted(scores, reverse=True)[:3]\n# print(resultado)\n",
+    pytest: "def test_score_top(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [9, 4, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[9, 4, 2]",
+    solution_example: "scores = [4, 1, 9, 2]\nresultado = sorted(scores, reverse=True)[:3]\nprint(resultado)",
+    next: Some("py-2440-score-check"), show_type_chips: false, micro_step: 2439,
+};
+pub const PY2440_SCORE_CHECK: CodingStep = CodingStep {
+    id: "py-2440-score-check", title: "scoring · Suite", objective: "Cerrar ola: pipeline de ranking.",
+    prompt_md: "**Suite scoring**\n\nTop 2 de los mayores a 3.\n\n**Micro-reto:**\n1. `scores = [2, 9, 4, 1]`\n2. Filtrá `> 3`, ordená desc, tomá top 2\n3. `resultado = ...`",
+    starter_code: "# scores = [2, 9, 4, 1]\n# aptos = filter(lambda s: s > 3, scores)\n# resultado = sorted(aptos, reverse=True)[:2]\n# print(resultado)\n",
+    pytest: "def test_score_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [9, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "[9, 4]",
+    solution_example: "scores = [2, 9, 4, 1]\naptos = filter(lambda s: s > 3, scores)\nresultado = sorted(aptos, reverse=True)[:2]\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 2440,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -59651,6 +60191,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2378_PIPE_MAP,
     &PY2379_PIPE_CHAIN,
     &PY2380_PIPE_CHECK,
+    &PY2381_MAP_LAMBDA,
+    &PY2382_FILTER_LAMBDA,
+    &PY2383_MAPFILTER_COMBO,
+    &PY2384_LAMBDA_SORTED,
+    &PY2385_MAP_MULTI,
+    &PY2386_MAPFILTER_CHECK,
+    &PY2387_FUN_DATO,
+    &PY2388_SORT_CALLBACK,
+    &PY2389_CALLBACK_FILTER,
+    &PY2390_HIGHER_ORDER,
+    &PY2391_CALLBACK_INLINE,
+    &PY2392_CALLBACK_CHECK,
+    &PY2393_GEN_YIELD,
+    &PY2394_GEN_LAZY,
+    &PY2395_GEN_CHAIN,
+    &PY2396_GEN_EXPR,
+    &PY2397_GEN_INFINITE,
+    &PY2398_GEN_CHECK,
+    &PY2399_ACCUM_MANUAL,
+    &PY2400_FOLD_LEFT,
+    &PY2401_REDUCE_IMPORT,
+    &PY2402_REDUCE_INIT,
+    &PY2403_REDUCE_OP,
+    &PY2404_FOLD_CHECK,
+    &PY2405_LOG_SPLIT,
+    &PY2406_LOG_FILTER,
+    &PY2407_LOG_MAP,
+    &PY2408_LOG_PIPELINE,
+    &PY2409_LOG_COUNT,
+    &PY2410_LOG_CHECK,
+    &PY2411_PRED_RANGE,
+    &PY2412_PRED_AND,
+    &PY2413_PRED_OR,
+    &PY2414_PRED_DEF,
+    &PY2415_PRED_CALLABLE,
+    &PY2416_PRED_CHECK,
+    &PY2417_ETL_MAPPER,
+    &PY2418_ETL_MAP,
+    &PY2419_ETL_FILTER,
+    &PY2420_ETL_TUPLE,
+    &PY2421_ETL_SERIAL,
+    &PY2422_ETL_CHECK,
+    &PY2423_ANY_FIND,
+    &PY2424_ALL_CHECK,
+    &PY2425_FIRST_NEXT,
+    &PY2426_TAKEWHILE,
+    &PY2427_DROPWHILE,
+    &PY2428_EARLY_CHECK,
+    &PY2429_STREAM_SUM,
+    &PY2430_STREAM_MAX,
+    &PY2431_WINDOW_SUM,
+    &PY2432_STREAM_AVG,
+    &PY2433_STREAM_COUNT,
+    &PY2434_STREAM_CHECK,
+    &PY2435_SCORE_ROWS,
+    &PY2436_SCORE_MAP,
+    &PY2437_SCORE_FILTER,
+    &PY2438_SCORE_SORT,
+    &PY2439_SCORE_TOP,
+    &PY2440_SCORE_CHECK,
 ];
 
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
@@ -63045,7 +63645,34 @@ mod tests {
                     next_step.id
                 );
             } else {
-                assert_eq!(step.next, None, "step 2380 is the end of the rail");
+                assert_eq!(step.next, Some("py-2381-map-lambda"), "step 2380 chains to wave24");
+            }
+        }
+    }
+
+    #[test]
+    fn py2381_to_py2440_pipeline_chain() {
+        let bridge = coding_step_by_micro_step(2380).expect("py-2380");
+        assert_eq!(bridge.next, Some("py-2381-map-lambda"));
+
+        for n in 2381..=2440 {
+            let step = coding_step_by_micro_step(n).expect("wave24 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(
+                step.id.starts_with(&format!("py-{n}-")),
+                "step {n} id '{}' should start with py-{n}-",
+                step.id
+            );
+            if n < 2440 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next chain step");
+                assert_eq!(
+                    step.next,
+                    Some(next_step.id),
+                    "step {n} should chain to {}",
+                    next_step.id
+                );
+            } else {
+                assert_eq!(step.next, None, "step 2440 is the end of the rail");
             }
         }
     }
