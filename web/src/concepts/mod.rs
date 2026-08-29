@@ -3064,7 +3064,7 @@ mod tests {
     ];
 
     /// Frozen `(micro_step, tags)` pairs with `micro_step > 2440` (Wave 24 ceiling).
-    const WAVE24_FROZEN_BEYOND_2440: &[(i32, &[u8])] = &[];
+    const WAVE25_FROZEN_BEYOND_2500: &[(i32, &[u8])] = &[];
 
     #[test]
     fn wave_b_applied_floor_101_to_300() {
@@ -3397,7 +3397,7 @@ mod tests {
             .collect();
         assert_eq!(
             current.as_slice(),
-            WAVE24_FROZEN_BEYOND_2440,
+            WAVE25_FROZEN_BEYOND_2500,
             "do not add or remove rows > 2440"
         );
     }
