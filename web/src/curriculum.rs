@@ -60253,6 +60253,306 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2440_SCORE_CHECK,
 ];
 
+pub const PY2801_STEP: CodingStep = CodingStep {
+    id: "py-2801-step", title: "Step 2801", objective: "Objective for step 2801",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2801,
+};
+pub const PY2802_STEP: CodingStep = CodingStep {
+    id: "py-2802-step", title: "Step 2802", objective: "Objective for step 2802",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2802,
+};
+pub const PY2803_STEP: CodingStep = CodingStep {
+    id: "py-2803-step", title: "Step 2803", objective: "Objective for step 2803",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2803,
+};
+pub const PY2804_STEP: CodingStep = CodingStep {
+    id: "py-2804-step", title: "Step 2804", objective: "Objective for step 2804",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2804,
+};
+pub const PY2805_STEP: CodingStep = CodingStep {
+    id: "py-2805-step", title: "Step 2805", objective: "Objective for step 2805",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2805,
+};
+pub const PY2806_STEP: CodingStep = CodingStep {
+    id: "py-2806-step", title: "Step 2806", objective: "Objective for step 2806",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2806,
+};
+pub const PY2807_STEP: CodingStep = CodingStep {
+    id: "py-2807-step", title: "Step 2807", objective: "Objective for step 2807",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2807,
+};
+pub const PY2808_STEP: CodingStep = CodingStep {
+    id: "py-2808-step", title: "Step 2808", objective: "Objective for step 2808",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2808,
+};
+pub const PY2809_STEP: CodingStep = CodingStep {
+    id: "py-2809-step", title: "Step 2809", objective: "Objective for step 2809",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2809,
+};
+pub const PY2810_STEP: CodingStep = CodingStep {
+    id: "py-2810-step", title: "Step 2810", objective: "Objective for step 2810",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2810,
+};
+pub const PY2811_STEP: CodingStep = CodingStep {
+    id: "py-2811-step", title: "Step 2811", objective: "Objective for step 2811",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2811,
+};
+pub const PY2812_STEP: CodingStep = CodingStep {
+    id: "py-2812-step", title: "Step 2812", objective: "Objective for step 2812",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2812,
+};
+pub const PY2813_STEP: CodingStep = CodingStep {
+    id: "py-2813-step", title: "Step 2813", objective: "Objective for step 2813",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2813,
+};
+pub const PY2814_STEP: CodingStep = CodingStep {
+    id: "py-2814-step", title: "Step 2814", objective: "Objective for step 2814",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2814,
+};
+pub const PY2815_STEP: CodingStep = CodingStep {
+    id: "py-2815-step", title: "Step 2815", objective: "Objective for step 2815",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2815,
+};
+pub const PY2816_STEP: CodingStep = CodingStep {
+    id: "py-2816-step", title: "Step 2816", objective: "Objective for step 2816",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2816,
+};
+pub const PY2817_STEP: CodingStep = CodingStep {
+    id: "py-2817-step", title: "Step 2817", objective: "Objective for step 2817",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2817,
+};
+pub const PY2818_STEP: CodingStep = CodingStep {
+    id: "py-2818-step", title: "Step 2818", objective: "Objective for step 2818",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2818,
+};
+pub const PY2819_STEP: CodingStep = CodingStep {
+    id: "py-2819-step", title: "Step 2819", objective: "Objective for step 2819",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2819,
+};
+pub const PY2820_STEP: CodingStep = CodingStep {
+    id: "py-2820-step", title: "Step 2820", objective: "Objective for step 2820",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2820,
+};
+pub const PY2821_STEP: CodingStep = CodingStep {
+    id: "py-2821-step", title: "Step 2821", objective: "Objective for step 2821",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2821,
+};
+pub const PY2822_STEP: CodingStep = CodingStep {
+    id: "py-2822-step", title: "Step 2822", objective: "Objective for step 2822",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2822,
+};
+pub const PY2823_STEP: CodingStep = CodingStep {
+    id: "py-2823-step", title: "Step 2823", objective: "Objective for step 2823",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2823,
+};
+pub const PY2824_STEP: CodingStep = CodingStep {
+    id: "py-2824-step", title: "Step 2824", objective: "Objective for step 2824",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2824,
+};
+pub const PY2825_STEP: CodingStep = CodingStep {
+    id: "py-2825-step", title: "Step 2825", objective: "Objective for step 2825",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2825,
+};
+pub const PY2826_STEP: CodingStep = CodingStep {
+    id: "py-2826-step", title: "Step 2826", objective: "Objective for step 2826",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2826,
+};
+pub const PY2827_STEP: CodingStep = CodingStep {
+    id: "py-2827-step", title: "Step 2827", objective: "Objective for step 2827",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2827,
+};
+pub const PY2828_STEP: CodingStep = CodingStep {
+    id: "py-2828-step", title: "Step 2828", objective: "Objective for step 2828",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2828,
+};
+pub const PY2829_STEP: CodingStep = CodingStep {
+    id: "py-2829-step", title: "Step 2829", objective: "Objective for step 2829",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2829,
+};
+pub const PY2830_STEP: CodingStep = CodingStep {
+    id: "py-2830-step", title: "Step 2830", objective: "Objective for step 2830",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2830,
+};
+pub const PY2831_STEP: CodingStep = CodingStep {
+    id: "py-2831-step", title: "Step 2831", objective: "Objective for step 2831",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2831,
+};
+pub const PY2832_STEP: CodingStep = CodingStep {
+    id: "py-2832-step", title: "Step 2832", objective: "Objective for step 2832",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2832,
+};
+pub const PY2833_STEP: CodingStep = CodingStep {
+    id: "py-2833-step", title: "Step 2833", objective: "Objective for step 2833",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2833,
+};
+pub const PY2834_STEP: CodingStep = CodingStep {
+    id: "py-2834-step", title: "Step 2834", objective: "Objective for step 2834",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2834,
+};
+pub const PY2835_STEP: CodingStep = CodingStep {
+    id: "py-2835-step", title: "Step 2835", objective: "Objective for step 2835",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2835,
+};
+pub const PY2836_STEP: CodingStep = CodingStep {
+    id: "py-2836-step", title: "Step 2836", objective: "Objective for step 2836",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2836,
+};
+pub const PY2837_STEP: CodingStep = CodingStep {
+    id: "py-2837-step", title: "Step 2837", objective: "Objective for step 2837",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2837,
+};
+pub const PY2838_STEP: CodingStep = CodingStep {
+    id: "py-2838-step", title: "Step 2838", objective: "Objective for step 2838",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2838,
+};
+pub const PY2839_STEP: CodingStep = CodingStep {
+    id: "py-2839-step", title: "Step 2839", objective: "Objective for step 2839",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2839,
+};
+pub const PY2840_STEP: CodingStep = CodingStep {
+    id: "py-2840-step", title: "Step 2840", objective: "Objective for step 2840",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2840,
+};
+pub const PY2841_STEP: CodingStep = CodingStep {
+    id: "py-2841-step", title: "Step 2841", objective: "Objective for step 2841",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2841,
+};
+pub const PY2842_STEP: CodingStep = CodingStep {
+    id: "py-2842-step", title: "Step 2842", objective: "Objective for step 2842",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2842,
+};
+pub const PY2843_STEP: CodingStep = CodingStep {
+    id: "py-2843-step", title: "Step 2843", objective: "Objective for step 2843",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2843,
+};
+pub const PY2844_STEP: CodingStep = CodingStep {
+    id: "py-2844-step", title: "Step 2844", objective: "Objective for step 2844",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2844,
+};
+pub const PY2845_STEP: CodingStep = CodingStep {
+    id: "py-2845-step", title: "Step 2845", objective: "Objective for step 2845",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2845,
+};
+pub const PY2846_STEP: CodingStep = CodingStep {
+    id: "py-2846-step", title: "Step 2846", objective: "Objective for step 2846",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2846,
+};
+pub const PY2847_STEP: CodingStep = CodingStep {
+    id: "py-2847-step", title: "Step 2847", objective: "Objective for step 2847",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2847,
+};
+pub const PY2848_STEP: CodingStep = CodingStep {
+    id: "py-2848-step", title: "Step 2848", objective: "Objective for step 2848",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2848,
+};
+pub const PY2849_STEP: CodingStep = CodingStep {
+    id: "py-2849-step", title: "Step 2849", objective: "Objective for step 2849",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2849,
+};
+pub const PY2850_STEP: CodingStep = CodingStep {
+    id: "py-2850-step", title: "Step 2850", objective: "Objective for step 2850",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2850,
+};
+pub const PY2851_STEP: CodingStep = CodingStep {
+    id: "py-2851-step", title: "Step 2851", objective: "Objective for step 2851",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2851,
+};
+pub const PY2852_STEP: CodingStep = CodingStep {
+    id: "py-2852-step", title: "Step 2852", objective: "Objective for step 2852",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2852,
+};
+pub const PY2853_STEP: CodingStep = CodingStep {
+    id: "py-2853-step", title: "Step 2853", objective: "Objective for step 2853",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2853,
+};
+pub const PY2854_STEP: CodingStep = CodingStep {
+    id: "py-2854-step", title: "Step 2854", objective: "Objective for step 2854",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2854,
+};
+pub const PY2855_STEP: CodingStep = CodingStep {
+    id: "py-2855-step", title: "Step 2855", objective: "Objective for step 2855",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2855,
+};
+pub const PY2856_STEP: CodingStep = CodingStep {
+    id: "py-2856-step", title: "Step 2856", objective: "Objective for step 2856",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2856,
+};
+pub const PY2857_STEP: CodingStep = CodingStep {
+    id: "py-2857-step", title: "Step 2857", objective: "Objective for step 2857",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2857,
+};
+pub const PY2858_STEP: CodingStep = CodingStep {
+    id: "py-2858-step", title: "Step 2858", objective: "Objective for step 2858",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2858,
+};
+pub const PY2859_STEP: CodingStep = CodingStep {
+    id: "py-2859-step", title: "Step 2859", objective: "Objective for step 2859",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2859,
+};
+pub const PY2860_STEP: CodingStep = CodingStep {
+    id: "py-2860-step", title: "Step 2860", objective: "Objective for step 2860",
+    prompt_md: "...", starter_code: "...", pytest: "...", hint: "...", 
+    solution_example: "...", next: None, show_type_chips: false, micro_step: 2860,
+};
 pub const DEFAULT_CODING_STEP_ID: &str = "py-02-variables";
 
 pub fn coding_step_by_id(id: &str) -> Option<&'static CodingStep> {
