@@ -2584,7 +2584,6 @@ mod tests {
         assert_eq!(partitions_for_micro_step(2435), &[5, 3]); // Wave 24: scoring = domains + paradigms
         assert_eq!(partitions_for_micro_step(2440), &[5, 3]); // Wave 24: ranking
         assert!(partitions_for_micro_step(2441).is_empty()); // frontier beyond Wave 24
-        assert!(partitions_for_micro_step(2381).is_empty()); // frontier beyond Wave 23
     }
 
     #[test]
@@ -3065,7 +3064,7 @@ mod tests {
     ];
 
     /// Frozen `(micro_step, tags)` pairs with `micro_step > 2440` (Wave 24 ceiling).
-    const WAVE25_FROZEN_BEYOND_2500: &[(i32, &[u8])] = &[];
+    const WAVE24_FROZEN_BEYOND_2440: &[(i32, &[u8])] = &[];
 
     #[test]
     fn wave_b_applied_floor_101_to_300() {
@@ -3398,7 +3397,7 @@ mod tests {
             .collect();
         assert_eq!(
             current.as_slice(),
-            WAVE25_FROZEN_BEYOND_2500,
+            WAVE24_FROZEN_BEYOND_2440,
             "do not add or remove rows > 2440"
         );
     }
