@@ -59968,7 +59968,547 @@ pub const PY2680_OLA28_SUITE: CodingStep = CodingStep {
     pytest: "def test_ola28_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 56\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "El resultado esperado es 56.",
     solution_example: "datos = [1, 2, 3, 4, 5, 6]\nchunks = [datos[:3], datos[3:]]\nparciales = [sum(x * x for x in chunk if x % 2 == 0) for chunk in chunks]\nresultado = sum(parciales)\ndirecto = sum(x * x for x in datos if x % 2 == 0)\nprint(resultado)",
-    next: None, show_type_chips: false, micro_step: 2680,
+    next: Some("py-2681-hof-normalizar"), show_type_chips: false, micro_step: 2680,
+};
+pub const PY2681_HOF_NORMALIZAR: CodingStep = CodingStep {
+    id: "py-2681-hof-normalizar", title: "orden superior · normalizar", objective: "Aplicar una función nombrada a cada registro.",
+    prompt_md: "**orden superior · normalizar**\n\nAplicar una función nombrada a cada registro.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# registros = ['  API ', ' Web']\n# def normalizar(s):\n#     return s.strip().lower()\n# resultado = list(map(normalizar, registros))\n# print(resultado)\n",
+    pytest: "def test_hof_normalizar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['api', 'web']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['api', 'web'].",
+    solution_example: "registros = ['  API ', ' Web']\ndef normalizar(s):\n    return s.strip().lower()\nresultado = list(map(normalizar, registros))\nprint(resultado)",
+    next: Some("py-2682-hof-proyectar"), show_type_chips: false, micro_step: 2681,
+};
+pub const PY2682_HOF_PROYECTAR: CodingStep = CodingStep {
+    id: "py-2682-hof-proyectar", title: "orden superior · proyectar", objective: "Proyectar un campo con una función recibida.",
+    prompt_md: "**orden superior · proyectar**\n\nProyectar un campo con una función recibida.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [{'id': 3}, {'id': 7}]\n# def proyectar(f, datos):\n#     return [f(x) for x in datos]\n# resultado = proyectar(lambda fila: fila['id'], filas)\n# print(resultado)\n",
+    pytest: "def test_hof_proyectar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 7]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [3, 7].",
+    solution_example: "filas = [{'id': 3}, {'id': 7}]\ndef proyectar(f, datos):\n    return [f(x) for x in datos]\nresultado = proyectar(lambda fila: fila['id'], filas)\nprint(resultado)",
+    next: Some("py-2683-hof-componer"), show_type_chips: false, micro_step: 2682,
+};
+pub const PY2683_HOF_COMPONER: CodingStep = CodingStep {
+    id: "py-2683-hof-componer", title: "orden superior · componer", objective: "Componer dos transformaciones puras.",
+    prompt_md: "**orden superior · componer**\n\nComponer dos transformaciones puras.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def componer(f, g):\n#     return lambda x: f(g(x))\n# limpiar_largo = componer(len, str.strip)\n# resultado = [limpiar_largo(s) for s in [' sol ', 'mar  ']]\n# print(resultado)\n",
+    pytest: "def test_hof_componer(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [3, 3].",
+    solution_example: "def componer(f, g):\n    return lambda x: f(g(x))\nlimpiar_largo = componer(len, str.strip)\nresultado = [limpiar_largo(s) for s in [' sol ', 'mar  ']]\nprint(resultado)",
+    next: Some("py-2684-hof-despachar"), show_type_chips: false, micro_step: 2683,
+};
+pub const PY2684_HOF_DESPACHAR: CodingStep = CodingStep {
+    id: "py-2684-hof-despachar", title: "orden superior · despachar", objective: "Elegir una transformación desde una tabla de funciones.",
+    prompt_md: "**orden superior · despachar**\n\nElegir una transformación desde una tabla de funciones.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# operaciones = {'doble': lambda x: x * 2, 'cubo': lambda x: x ** 3}\n# resultado = operaciones['cubo'](3)\n# print(resultado)\n",
+    pytest: "def test_hof_despachar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 27\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 27.",
+    solution_example: "operaciones = {'doble': lambda x: x * 2, 'cubo': lambda x: x ** 3}\nresultado = operaciones['cubo'](3)\nprint(resultado)",
+    next: Some("py-2685-hof-clave-compuesta"), show_type_chips: false, micro_step: 2684,
+};
+pub const PY2685_HOF_CLAVE_COMPUESTA: CodingStep = CodingStep {
+    id: "py-2685-hof-clave-compuesta", title: "orden superior · clave compuesta", objective: "Ordenar con una clave que resuelve empates.",
+    prompt_md: "**orden superior · clave compuesta**\n\nOrdenar con una clave que resuelve empates.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('b', 2), ('a', 2), ('c', 1)]\n# resultado = sorted(filas, key=lambda fila: (fila[1], fila[0]))\n# print(resultado)\n",
+    pytest: "def test_hof_clave_compuesta(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('c', 1), ('a', 2), ('b', 2)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('c', 1), ('a', 2), ('b', 2)].",
+    solution_example: "filas = [('b', 2), ('a', 2), ('c', 1)]\nresultado = sorted(filas, key=lambda fila: (fila[1], fila[0]))\nprint(resultado)",
+    next: Some("py-2686-hof-suite"), show_type_chips: false, micro_step: 2685,
+};
+pub const PY2686_HOF_SUITE: CodingStep = CodingStep {
+    id: "py-2686-hof-suite", title: "orden superior · suite", objective: "Filtrar y transformar con callbacks nombrados.",
+    prompt_md: "**orden superior · suite**\n\nFiltrar y transformar con callbacks nombrados.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [-3, 2, 5, -1]\n# def positivo(x):\n#     return x > 0\n# def etiqueta(x):\n#     return f'v={x * 10}'\n# resultado = list(map(etiqueta, filter(positivo, datos)))\n# print(resultado)\n",
+    pytest: "def test_hof_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['v=20', 'v=50']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['v=20', 'v=50'].",
+    solution_example: "datos = [-3, 2, 5, -1]\ndef positivo(x):\n    return x > 0\ndef etiqueta(x):\n    return f'v={x * 10}'\nresultado = list(map(etiqueta, filter(positivo, datos)))\nprint(resultado)",
+    next: Some("py-2687-gen-estados"), show_type_chips: false, micro_step: 2686,
+};
+pub const PY2687_GEN_ESTADOS: CodingStep = CodingStep {
+    id: "py-2687-gen-estados", title: "generador · estados", objective: "Emitir estados acumulados sin materializar la fuente.",
+    prompt_md: "**generador · estados**\n\nEmitir estados acumulados sin materializar la fuente.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def acumulados(datos):\n#     total = 0\n#     for valor in datos:\n#         total += valor\n#         yield total\n# resultado = list(acumulados([2, 5, -1]))\n# print(resultado)\n",
+    pytest: "def test_gen_estados(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 7, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 7, 6].",
+    solution_example: "def acumulados(datos):\n    total = 0\n    for valor in datos:\n        total += valor\n        yield total\nresultado = list(acumulados([2, 5, -1]))\nprint(resultado)",
+    next: Some("py-2688-gen-pares-indice"), show_type_chips: false, micro_step: 2687,
+};
+pub const PY2688_GEN_PARES_INDICE: CodingStep = CodingStep {
+    id: "py-2688-gen-pares-indice", title: "generador · índice", objective: "Emitir índice y valor transformado de manera incremental.",
+    prompt_md: "**generador · índice**\n\nEmitir índice y valor transformado de manera incremental.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def enumerar_cuadrados(datos):\n#     for indice, valor in enumerate(datos):\n#         yield indice, valor * valor\n# resultado = list(enumerar_cuadrados([3, 1, 4]))\n# print(resultado)\n",
+    pytest: "def test_gen_pares_indice(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, 9), (1, 1), (2, 16)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(0, 9), (1, 1), (2, 16)].",
+    solution_example: "def enumerar_cuadrados(datos):\n    for indice, valor in enumerate(datos):\n        yield indice, valor * valor\nresultado = list(enumerar_cuadrados([3, 1, 4]))\nprint(resultado)",
+    next: Some("py-2689-gen-sentinela"), show_type_chips: false, micro_step: 2688,
+};
+pub const PY2689_GEN_SENTINELA: CodingStep = CodingStep {
+    id: "py-2689-gen-sentinela", title: "generador · sentinela", objective: "Detener la emisión ante un marcador explícito.",
+    prompt_md: "**generador · sentinela**\n\nDetener la emisión ante un marcador explícito.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def hasta_fin(datos):\n#     for valor in datos:\n#         if valor == 'FIN':\n#             return\n#         yield valor.lower()\n# resultado = list(hasta_fin(['A', 'B', 'FIN', 'C']))\n# print(resultado)\n",
+    pytest: "def test_gen_sentinela(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'b'].",
+    solution_example: "def hasta_fin(datos):\n    for valor in datos:\n        if valor == 'FIN':\n            return\n        yield valor.lower()\nresultado = list(hasta_fin(['A', 'B', 'FIN', 'C']))\nprint(resultado)",
+    next: Some("py-2690-gen-aplanar"), show_type_chips: false, micro_step: 2689,
+};
+pub const PY2690_GEN_APLANAR: CodingStep = CodingStep {
+    id: "py-2690-gen-aplanar", title: "generador · aplanar", objective: "Aplanar lotes conservando consumo incremental.",
+    prompt_md: "**generador · aplanar**\n\nAplanar lotes conservando consumo incremental.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def aplanar(lotes):\n#     for lote in lotes:\n#         yield from lote\n# resultado = list(aplanar([[1, 2], [], [3]]))\n# print(resultado)\n",
+    pytest: "def test_gen_aplanar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3].",
+    solution_example: "def aplanar(lotes):\n    for lote in lotes:\n        yield from lote\nresultado = list(aplanar([[1, 2], [], [3]]))\nprint(resultado)",
+    next: Some("py-2691-gen-retorno"), show_type_chips: false, micro_step: 2690,
+};
+pub const PY2691_GEN_RETORNO: CodingStep = CodingStep {
+    id: "py-2691-gen-retorno", title: "generador · transformación", objective: "Transformar solo los valores aceptados por el pipeline.",
+    prompt_md: "**generador · transformación**\n\nTransformar solo los valores aceptados por el pipeline.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def codigos(datos):\n#     for texto in datos:\n#         limpio = texto.strip()\n#         if limpio:\n#             yield limpio.upper()\n# resultado = list(codigos([' api ', ' ', 'db']))\n# print(resultado)\n",
+    pytest: "def test_gen_retorno(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['API', 'DB']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['API', 'DB'].",
+    solution_example: "def codigos(datos):\n    for texto in datos:\n        limpio = texto.strip()\n        if limpio:\n            yield limpio.upper()\nresultado = list(codigos([' api ', ' ', 'db']))\nprint(resultado)",
+    next: Some("py-2692-gen-suite"), show_type_chips: false, micro_step: 2691,
+};
+pub const PY2692_GEN_SUITE: CodingStep = CodingStep {
+    id: "py-2692-gen-suite", title: "generador · suite", objective: "Encadenar dos generadores sin listas intermedias.",
+    prompt_md: "**generador · suite**\n\nEncadenar dos generadores sin listas intermedias.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def enteros(textos):\n#     for texto in textos:\n#         yield int(texto)\n# def pares(datos):\n#     for valor in datos:\n#         if valor % 2 == 0:\n#             yield valor\n# resultado = list(pares(enteros(['3', '4', '8'])))\n# print(resultado)\n",
+    pytest: "def test_gen_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [4, 8]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [4, 8].",
+    solution_example: "def enteros(textos):\n    for texto in textos:\n        yield int(texto)\ndef pares(datos):\n    for valor in datos:\n        if valor % 2 == 0:\n            yield valor\nresultado = list(pares(enteros(['3', '4', '8'])))\nprint(resultado)",
+    next: Some("py-2693-lazy-islice"), show_type_chips: false, micro_step: 2692,
+};
+pub const PY2693_LAZY_ISLICE: CodingStep = CodingStep {
+    id: "py-2693-lazy-islice", title: "lazy · islice", objective: "Consumir solo una ventana inicial de una fuente extensa.",
+    prompt_md: "**lazy · islice**\n\nConsumir solo una ventana inicial de una fuente extensa.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from itertools import islice\n# fuente = (n * n for n in range(1000))\n# resultado = list(islice(fuente, 4))\n# print(resultado)\n",
+    pytest: "def test_lazy_islice(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 4, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [0, 1, 4, 9].",
+    solution_example: "from itertools import islice\nfuente = (n * n for n in range(1000))\nresultado = list(islice(fuente, 4))\nprint(resultado)",
+    next: Some("py-2694-lazy-next-default"), show_type_chips: false, micro_step: 2693,
+};
+pub const PY2694_LAZY_NEXT_DEFAULT: CodingStep = CodingStep {
+    id: "py-2694-lazy-next-default", title: "lazy · next default", objective: "Buscar el primer valor con un default explícito.",
+    prompt_md: "**lazy · next default**\n\nBuscar el primer valor con un default explícito.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fuente = (n for n in [1, 3, 5] if n % 2 == 0)\n# resultado = next(fuente, 'sin-par')\n# print(resultado)\n",
+    pytest: "def test_lazy_next_default(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'sin-par'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'sin-par'.",
+    solution_example: "fuente = (n for n in [1, 3, 5] if n % 2 == 0)\nresultado = next(fuente, 'sin-par')\nprint(resultado)",
+    next: Some("py-2695-lazy-contador"), show_type_chips: false, micro_step: 2694,
+};
+pub const PY2695_LAZY_CONTADOR: CodingStep = CodingStep {
+    id: "py-2695-lazy-contador", title: "lazy · consumo observable", objective: "Contar cuántos elementos exige el consumidor.",
+    prompt_md: "**lazy · consumo observable**\n\nContar cuántos elementos exige el consumidor.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {'vistos': 0}\n# def fuente():\n#     for n in range(10):\n#         estado['vistos'] += 1\n#         yield n\n# g = fuente()\n# primeros = [next(g), next(g), next(g)]\n# resultado = (primeros, estado['vistos'])\n# print(resultado)\n",
+    pytest: "def test_lazy_contador(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([0, 1, 2], 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ([0, 1, 2], 3).",
+    solution_example: "estado = {'vistos': 0}\ndef fuente():\n    for n in range(10):\n        estado['vistos'] += 1\n        yield n\ng = fuente()\nprimeros = [next(g), next(g), next(g)]\nresultado = (primeros, estado['vistos'])\nprint(resultado)",
+    next: Some("py-2696-lazy-skip-take"), show_type_chips: false, micro_step: 2695,
+};
+pub const PY2696_LAZY_SKIP_TAKE: CodingStep = CodingStep {
+    id: "py-2696-lazy-skip-take", title: "lazy · saltar y tomar", objective: "Saltar un prefijo y consumir una ventana acotada.",
+    prompt_md: "**lazy · saltar y tomar**\n\nSaltar un prefijo y consumir una ventana acotada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from itertools import islice\n# fuente = (chr(65 + n) for n in range(10))\n# resultado = list(islice(fuente, 2, 5))\n# print(resultado)\n",
+    pytest: "def test_lazy_skip_take(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['C', 'D', 'E']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['C', 'D', 'E'].",
+    solution_example: "from itertools import islice\nfuente = (chr(65 + n) for n in range(10))\nresultado = list(islice(fuente, 2, 5))\nprint(resultado)",
+    next: Some("py-2697-lazy-cadena"), show_type_chips: false, micro_step: 2696,
+};
+pub const PY2697_LAZY_CADENA: CodingStep = CodingStep {
+    id: "py-2697-lazy-cadena", title: "lazy · cadena", objective: "Componer filtro y mapeo antes de materializar.",
+    prompt_md: "**lazy · cadena**\n\nComponer filtro y mapeo antes de materializar.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fuente = (n for n in range(12))\n# filtrados = filter(lambda n: n % 3 == 0, fuente)\n# transformados = map(lambda n: f'id-{n}', filtrados)\n# resultado = list(transformados)\n# print(resultado)\n",
+    pytest: "def test_lazy_cadena(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['id-0', 'id-3', 'id-6', 'id-9']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['id-0', 'id-3', 'id-6', 'id-9'].",
+    solution_example: "fuente = (n for n in range(12))\nfiltrados = filter(lambda n: n % 3 == 0, fuente)\ntransformados = map(lambda n: f'id-{n}', filtrados)\nresultado = list(transformados)\nprint(resultado)",
+    next: Some("py-2698-lazy-suite"), show_type_chips: false, micro_step: 2697,
+};
+pub const PY2698_LAZY_SUITE: CodingStep = CodingStep {
+    id: "py-2698-lazy-suite", title: "lazy · suite", objective: "Combinar islice, filter y map con una única materialización.",
+    prompt_md: "**lazy · suite**\n\nCombinar islice, filter y map con una única materialización.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from itertools import islice\n# fuente = (n for n in range(50))\n# pipeline = map(lambda n: n + 100, filter(lambda n: n % 5 == 0, fuente))\n# resultado = list(islice(pipeline, 3))\n# print(resultado)\n",
+    pytest: "def test_lazy_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [100, 105, 110]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [100, 105, 110].",
+    solution_example: "from itertools import islice\nfuente = (n for n in range(50))\npipeline = map(lambda n: n + 100, filter(lambda n: n % 5 == 0, fuente))\nresultado = list(islice(pipeline, 3))\nprint(resultado)",
+    next: Some("py-2699-iter-agotamiento"), show_type_chips: false, micro_step: 2698,
+};
+pub const PY2699_ITER_AGOTAMIENTO: CodingStep = CodingStep {
+    id: "py-2699-iter-agotamiento", title: "iterador · agotamiento", objective: "Observar que un iterador consumido no se reinicia.",
+    prompt_md: "**iterador · agotamiento**\n\nObservar que un iterador consumido no se reinicia.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fuente = iter([4, 5, 6])\n# primera = list(fuente)\n# segunda = list(fuente)\n# resultado = (primera, segunda)\n# print(resultado)\n",
+    pytest: "def test_iter_agotamiento(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([4, 5, 6], [])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ([4, 5, 6], []).",
+    solution_example: "fuente = iter([4, 5, 6])\nprimera = list(fuente)\nsegunda = list(fuente)\nresultado = (primera, segunda)\nprint(resultado)",
+    next: Some("py-2700-iter-parcial"), show_type_chips: false, micro_step: 2699,
+};
+pub const PY2700_ITER_PARCIAL: CodingStep = CodingStep {
+    id: "py-2700-iter-parcial", title: "iterador · consumo parcial", objective: "Continuar desde la posición posterior a next.",
+    prompt_md: "**iterador · consumo parcial**\n\nContinuar desde la posición posterior a next.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fuente = iter(['a', 'b', 'c'])\n# primero = next(fuente)\n# resto = list(fuente)\n# resultado = (primero, resto)\n# print(resultado)\n",
+    pytest: "def test_iter_parcial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('a', ['b', 'c'])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('a', ['b', 'c']).",
+    solution_example: "fuente = iter(['a', 'b', 'c'])\nprimero = next(fuente)\nresto = list(fuente)\nresultado = (primero, resto)\nprint(resultado)",
+    next: Some("py-2701-iter-tee"), show_type_chips: false, micro_step: 2700,
+};
+pub const PY2701_ITER_TEE: CodingStep = CodingStep {
+    id: "py-2701-iter-tee", title: "iterador · tee", objective: "Duplicar una fuente cuando se necesitan dos consumidores.",
+    prompt_md: "**iterador · tee**\n\nDuplicar una fuente cuando se necesitan dos consumidores.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from itertools import tee\n# base = (n * 2 for n in range(4))\n# a, b = tee(base)\n# resultado = (list(a), sum(b))\n# print(resultado)\n",
+    pytest: "def test_iter_tee(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([0, 2, 4, 6], 12)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ([0, 2, 4, 6], 12).",
+    solution_example: "from itertools import tee\nbase = (n * 2 for n in range(4))\na, b = tee(base)\nresultado = (list(a), sum(b))\nprint(resultado)",
+    next: Some("py-2702-iter-materializar"), show_type_chips: false, micro_step: 2701,
+};
+pub const PY2702_ITER_MATERIALIZAR: CodingStep = CodingStep {
+    id: "py-2702-iter-materializar", title: "iterador · materialización", objective: "Materializar una vez para reutilizar resultados.",
+    prompt_md: "**iterador · materialización**\n\nMaterializar una vez para reutilizar resultados.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fuente = (palabra.upper() for palabra in ['sol', 'mar'])\n# cache = tuple(fuente)\n# resultado = (cache, '-'.join(cache))\n# print(resultado)\n",
+    pytest: "def test_iter_materializar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (('SOL', 'MAR'), 'SOL-MAR')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (('SOL', 'MAR'), 'SOL-MAR').",
+    solution_example: "fuente = (palabra.upper() for palabra in ['sol', 'mar'])\ncache = tuple(fuente)\nresultado = (cache, '-'.join(cache))\nprint(resultado)",
+    next: Some("py-2703-iter-reversed"), show_type_chips: false, micro_step: 2702,
+};
+pub const PY2703_ITER_REVERSED: CodingStep = CodingStep {
+    id: "py-2703-iter-reversed", title: "iterador · reversa acotada", objective: "Materializar antes de recorrer en orden inverso.",
+    prompt_md: "**iterador · reversa acotada**\n\nMaterializar antes de recorrer en orden inverso.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fuente = (n + 1 for n in range(4))\n# cache = list(fuente)\n# resultado = list(reversed(cache))\n# print(resultado)\n",
+    pytest: "def test_iter_reversed(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [4, 3, 2, 1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [4, 3, 2, 1].",
+    solution_example: "fuente = (n + 1 for n in range(4))\ncache = list(fuente)\nresultado = list(reversed(cache))\nprint(resultado)",
+    next: Some("py-2704-iter-suite"), show_type_chips: false, micro_step: 2703,
+};
+pub const PY2704_ITER_SUITE: CodingStep = CodingStep {
+    id: "py-2704-iter-suite", title: "iterador · suite", objective: "Compartir una captura estable entre varios agregadores.",
+    prompt_md: "**iterador · suite**\n\nCompartir una captura estable entre varios agregadores.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fuente = (n for n in [7, 2, 9, 4])\n# cache = tuple(fuente)\n# resultado = {'total': sum(cache), 'max': max(cache), 'n': len(cache)}\n# print(resultado)\n",
+    pytest: "def test_iter_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'total': 22, 'max': 9, 'n': 4}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'total': 22, 'max': 9, 'n': 4}.",
+    solution_example: "fuente = (n for n in [7, 2, 9, 4])\ncache = tuple(fuente)\nresultado = {'total': sum(cache), 'max': max(cache), 'n': len(cache)}\nprint(resultado)",
+    next: Some("py-2705-fold-suma-inicial"), show_type_chips: false, micro_step: 2704,
+};
+pub const PY2705_FOLD_SUMA_INICIAL: CodingStep = CodingStep {
+    id: "py-2705-fold-suma-inicial", title: "fold · identidad suma", objective: "Plegar con identidad cero explícita.",
+    prompt_md: "**fold · identidad suma**\n\nPlegar con identidad cero explícita.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from functools import reduce\n# resultado = reduce(lambda acc, n: acc + n, [4, 1, 3], 0)\n# print(resultado)\n",
+    pytest: "def test_fold_suma_inicial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 8\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 8.",
+    solution_example: "from functools import reduce\nresultado = reduce(lambda acc, n: acc + n, [4, 1, 3], 0)\nprint(resultado)",
+    next: Some("py-2706-fold-producto-inicial"), show_type_chips: false, micro_step: 2705,
+};
+pub const PY2706_FOLD_PRODUCTO_INICIAL: CodingStep = CodingStep {
+    id: "py-2706-fold-producto-inicial", title: "fold · identidad producto", objective: "Plegar con identidad uno, incluso con entrada vacía.",
+    prompt_md: "**fold · identidad producto**\n\nPlegar con identidad uno, incluso con entrada vacía.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from functools import reduce\n# resultado = reduce(lambda acc, n: acc * n, [], 1)\n# print(resultado)\n",
+    pytest: "def test_fold_producto_inicial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 1.",
+    solution_example: "from functools import reduce\nresultado = reduce(lambda acc, n: acc * n, [], 1)\nprint(resultado)",
+    next: Some("py-2707-fold-texto-orden"), show_type_chips: false, micro_step: 2706,
+};
+pub const PY2707_FOLD_TEXTO_ORDEN: CodingStep = CodingStep {
+    id: "py-2707-fold-texto-orden", title: "fold · orden textual", objective: "Concatenar tokens preservando el orden de llegada.",
+    prompt_md: "**fold · orden textual**\n\nConcatenar tokens preservando el orden de llegada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from functools import reduce\n# tokens = ['api', 'v2', 'users']\n# resultado = reduce(lambda ruta, token: f'{ruta}/{token}', tokens, '')\n# print(resultado)\n",
+    pytest: "def test_fold_texto_orden(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '/api/v2/users'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es '/api/v2/users'.",
+    solution_example: "from functools import reduce\ntokens = ['api', 'v2', 'users']\nresultado = reduce(lambda ruta, token: f'{ruta}/{token}', tokens, '')\nprint(resultado)",
+    next: Some("py-2708-fold-registro"), show_type_chips: false, micro_step: 2707,
+};
+pub const PY2708_FOLD_REGISTRO: CodingStep = CodingStep {
+    id: "py-2708-fold-registro", title: "fold · registro", objective: "Acumular suma y cantidad en un único estado.",
+    prompt_md: "**fold · registro**\n\nAcumular suma y cantidad en un único estado.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from functools import reduce\n# datos = [3, 8, 4]\n# resultado = reduce(lambda acc, n: (acc[0] + n, acc[1] + 1), datos, (0, 0))\n# print(resultado)\n",
+    pytest: "def test_fold_registro(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (15, 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (15, 3).",
+    solution_example: "from functools import reduce\ndatos = [3, 8, 4]\nresultado = reduce(lambda acc, n: (acc[0] + n, acc[1] + 1), datos, (0, 0))\nprint(resultado)",
+    next: Some("py-2709-fold-deduplicar"), show_type_chips: false, micro_step: 2708,
+};
+pub const PY2709_FOLD_DEDUPLICAR: CodingStep = CodingStep {
+    id: "py-2709-fold-deduplicar", title: "fold · deduplicar estable", objective: "Eliminar repetidos sin perder el primer orden.",
+    prompt_md: "**fold · deduplicar estable**\n\nEliminar repetidos sin perder el primer orden.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from functools import reduce\n# def agregar(acc, valor):\n#     return acc if valor in acc else acc + [valor]\n# resultado = reduce(agregar, ['b', 'a', 'b', 'c'], [])\n# print(resultado)\n",
+    pytest: "def test_fold_deduplicar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['b', 'a', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['b', 'a', 'c'].",
+    solution_example: "from functools import reduce\ndef agregar(acc, valor):\n    return acc if valor in acc else acc + [valor]\nresultado = reduce(agregar, ['b', 'a', 'b', 'c'], [])\nprint(resultado)",
+    next: Some("py-2710-fold-suite"), show_type_chips: false, micro_step: 2709,
+};
+pub const PY2710_FOLD_SUITE: CodingStep = CodingStep {
+    id: "py-2710-fold-suite", title: "fold · suite", objective: "Construir un histograma mediante un estado acumulado.",
+    prompt_md: "**fold · suite**\n\nConstruir un histograma mediante un estado acumulado.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from functools import reduce\n# def contar(acc, clave):\n#     acc[clave] = acc.get(clave, 0) + 1\n#     return acc\n# resultado = reduce(contar, ['ok', 'err', 'ok', 'ok'], {})\n# print(resultado)\n",
+    pytest: "def test_fold_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'ok': 3, 'err': 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'ok': 3, 'err': 1}.",
+    solution_example: "from functools import reduce\ndef contar(acc, clave):\n    acc[clave] = acc.get(clave, 0) + 1\n    return acc\nresultado = reduce(contar, ['ok', 'err', 'ok', 'ok'], {})\nprint(resultado)",
+    next: Some("py-2711-log-parsear"), show_type_chips: false, micro_step: 2710,
+};
+pub const PY2711_LOG_PARSEAR: CodingStep = CodingStep {
+    id: "py-2711-log-parsear", title: "logs · parsear", objective: "Convertir líneas válidas en registros tipados.",
+    prompt_md: "**logs · parsear**\n\nConvertir líneas válidas en registros tipados.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lineas = ['INFO|200|/home', 'WARN|429|/api']\n# resultado = [dict(nivel=n, codigo=int(c), ruta=r) for n, c, r in (linea.split('|') for linea in lineas)]\n# print(resultado)\n",
+    pytest: "def test_log_parsear(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'nivel': 'INFO', 'codigo': 200, 'ruta': '/home'}, {'nivel': 'WARN', 'codigo': 429, 'ruta': '/api'}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'nivel': 'INFO', 'codigo': 200, 'ruta': '/home'}, {'nivel': 'WARN', 'codigo': 429, 'ruta': '/api'}].",
+    solution_example: "lineas = ['INFO|200|/home', 'WARN|429|/api']\nresultado = [dict(nivel=n, codigo=int(c), ruta=r) for n, c, r in (linea.split('|') for linea in lineas)]\nprint(resultado)",
+    next: Some("py-2712-log-descartar"), show_type_chips: false, micro_step: 2711,
+};
+pub const PY2712_LOG_DESCARTAR: CodingStep = CodingStep {
+    id: "py-2712-log-descartar", title: "logs · descartar ruido", objective: "Excluir líneas de depuración antes de transformar.",
+    prompt_md: "**logs · descartar ruido**\n\nExcluir líneas de depuración antes de transformar.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lineas = ['DEBUG cache', 'INFO inicio', 'ERROR timeout']\n# resultado = [linea for linea in lineas if not linea.startswith('DEBUG') ]\n# print(resultado)\n",
+    pytest: "def test_log_descartar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['INFO inicio', 'ERROR timeout']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['INFO inicio', 'ERROR timeout'].",
+    solution_example: "lineas = ['DEBUG cache', 'INFO inicio', 'ERROR timeout']\nresultado = [linea for linea in lineas if not linea.startswith('DEBUG') ]\nprint(resultado)",
+    next: Some("py-2713-log-codigos"), show_type_chips: false, micro_step: 2712,
+};
+pub const PY2713_LOG_CODIGOS: CodingStep = CodingStep {
+    id: "py-2713-log-codigos", title: "logs · códigos", objective: "Extraer códigos de estado desde registros.",
+    prompt_md: "**logs · códigos**\n\nExtraer códigos de estado desde registros.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lineas = ['GET / 200', 'POST /x 201', 'GET /z 404']\n# resultado = [int(linea.rsplit(' ', 1)[1]) for linea in lineas]\n# print(resultado)\n",
+    pytest: "def test_log_codigos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [200, 201, 404]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [200, 201, 404].",
+    solution_example: "lineas = ['GET / 200', 'POST /x 201', 'GET /z 404']\nresultado = [int(linea.rsplit(' ', 1)[1]) for linea in lineas]\nprint(resultado)",
+    next: Some("py-2714-log-errores-ruta"), show_type_chips: false, micro_step: 2713,
+};
+pub const PY2714_LOG_ERRORES_RUTA: CodingStep = CodingStep {
+    id: "py-2714-log-errores-ruta", title: "logs · errores por ruta", objective: "Contar errores del servidor agrupados por ruta.",
+    prompt_md: "**logs · errores por ruta**\n\nContar errores del servidor agrupados por ruta.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('/a', 500), ('/b', 200), ('/a', 503)]\n# resultado = {}\n# for ruta, codigo in filas:\n#     if codigo >= 500:\n#         resultado[ruta] = resultado.get(ruta, 0) + 1\n# print(resultado)\n",
+    pytest: "def test_log_errores_ruta(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'/a': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'/a': 2}.",
+    solution_example: "filas = [('/a', 500), ('/b', 200), ('/a', 503)]\nresultado = {}\nfor ruta, codigo in filas:\n    if codigo >= 500:\n        resultado[ruta] = resultado.get(ruta, 0) + 1\nprint(resultado)",
+    next: Some("py-2715-log-latencias"), show_type_chips: false, micro_step: 2714,
+};
+pub const PY2715_LOG_LATENCIAS: CodingStep = CodingStep {
+    id: "py-2715-log-latencias", title: "logs · latencias", objective: "Calcular promedio de latencias válidas por streaming.",
+    prompt_md: "**logs · latencias**\n\nCalcular promedio de latencias válidas por streaming.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# valores = (int(x) for x in ['12', '18', '30'])\n# total = 0\n# n = 0\n# for valor in valores:\n#     total += valor\n#     n += 1\n# resultado = total / n\n# print(resultado)\n",
+    pytest: "def test_log_latencias(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 20.0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 20.0.",
+    solution_example: "valores = (int(x) for x in ['12', '18', '30'])\ntotal = 0\nn = 0\nfor valor in valores:\n    total += valor\n    n += 1\nresultado = total / n\nprint(resultado)",
+    next: Some("py-2716-log-suite"), show_type_chips: false, micro_step: 2715,
+};
+pub const PY2716_LOG_SUITE: CodingStep = CodingStep {
+    id: "py-2716-log-suite", title: "logs · suite", objective: "Filtrar errores, proyectar rutas y producir un ranking.",
+    prompt_md: "**logs · suite**\n\nFiltrar errores, proyectar rutas y producir un ranking.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lineas = [('api', 503), ('web', 200), ('db', 500), ('api', 502)]\n# conteos = {}\n# for servicio, codigo in filter(lambda fila: fila[1] >= 500, lineas):\n#     conteos[servicio] = conteos.get(servicio, 0) + 1\n# resultado = sorted(conteos.items(), key=lambda par: (-par[1], par[0]))\n# print(resultado)\n",
+    pytest: "def test_log_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('api', 2), ('db', 1)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('api', 2), ('db', 1)].",
+    solution_example: "lineas = [('api', 503), ('web', 200), ('db', 500), ('api', 502)]\nconteos = {}\nfor servicio, codigo in filter(lambda fila: fila[1] >= 500, lineas):\n    conteos[servicio] = conteos.get(servicio, 0) + 1\nresultado = sorted(conteos.items(), key=lambda par: (-par[1], par[0]))\nprint(resultado)",
+    next: Some("py-2717-predicado-fabrica"), show_type_chips: false, micro_step: 2716,
+};
+pub const PY2717_PREDICADO_FABRICA: CodingStep = CodingStep {
+    id: "py-2717-predicado-fabrica", title: "predicados · fábrica", objective: "Crear un predicado parametrizado por umbral.",
+    prompt_md: "**predicados · fábrica**\n\nCrear un predicado parametrizado por umbral.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def al_menos(umbral):\n#     return lambda valor: valor >= umbral\n# resultado = list(filter(al_menos(7), [4, 7, 9, 2]))\n# print(resultado)\n",
+    pytest: "def test_predicado_fabrica(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [7, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [7, 9].",
+    solution_example: "def al_menos(umbral):\n    return lambda valor: valor >= umbral\nresultado = list(filter(al_menos(7), [4, 7, 9, 2]))\nprint(resultado)",
+    next: Some("py-2718-predicado-compuesto"), show_type_chips: false, micro_step: 2717,
+};
+pub const PY2718_PREDICADO_COMPUESTO: CodingStep = CodingStep {
+    id: "py-2718-predicado-compuesto", title: "predicados · composición", objective: "Combinar condiciones nombradas con claridad.",
+    prompt_md: "**predicados · composición**\n\nCombinar condiciones nombradas con claridad.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def valido(n):\n#     return n > 0 and n % 3 == 0\n# resultado = list(filter(valido, [-3, 3, 4, 6, 0]))\n# print(resultado)\n",
+    pytest: "def test_predicado_compuesto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [3, 6].",
+    solution_example: "def valido(n):\n    return n > 0 and n % 3 == 0\nresultado = list(filter(valido, [-3, 3, 4, 6, 0]))\nprint(resultado)",
+    next: Some("py-2719-predicado-campos"), show_type_chips: false, micro_step: 2718,
+};
+pub const PY2719_PREDICADO_CAMPOS: CodingStep = CodingStep {
+    id: "py-2719-predicado-campos", title: "predicados · campos", objective: "Filtrar registros usando más de un campo.",
+    prompt_md: "**predicados · campos**\n\nFiltrar registros usando más de un campo.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [{'activo': True, 'puntos': 8}, {'activo': False, 'puntos': 10}, {'activo': True, 'puntos': 4}]\n# resultado = list(filter(lambda fila: fila['activo'] and fila['puntos'] >= 5, filas))\n# print(resultado)\n",
+    pytest: "def test_predicado_campos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'activo': True, 'puntos': 8}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'activo': True, 'puntos': 8}].",
+    solution_example: "filas = [{'activo': True, 'puntos': 8}, {'activo': False, 'puntos': 10}, {'activo': True, 'puntos': 4}]\nresultado = list(filter(lambda fila: fila['activo'] and fila['puntos'] >= 5, filas))\nprint(resultado)",
+    next: Some("py-2720-predicado-none"), show_type_chips: false, micro_step: 2719,
+};
+pub const PY2720_PREDICADO_NONE: CodingStep = CodingStep {
+    id: "py-2720-predicado-none", title: "predicados · valores ausentes", objective: "Separar valores presentes sin perder ceros.",
+    prompt_md: "**predicados · valores ausentes**\n\nSeparar valores presentes sin perder ceros.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [None, 0, 3, None, 5]\n# resultado = list(filter(lambda valor: valor is not None, datos))\n# print(resultado)\n",
+    pytest: "def test_predicado_none(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 3, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [0, 3, 5].",
+    solution_example: "datos = [None, 0, 3, None, 5]\nresultado = list(filter(lambda valor: valor is not None, datos))\nprint(resultado)",
+    next: Some("py-2721-predicado-etiquetas"), show_type_chips: false, micro_step: 2720,
+};
+pub const PY2721_PREDICADO_ETIQUETAS: CodingStep = CodingStep {
+    id: "py-2721-predicado-etiquetas", title: "predicados · etiquetas", objective: "Transformar únicamente registros aceptados.",
+    prompt_md: "**predicados · etiquetas**\n\nTransformar únicamente registros aceptados.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('a', 2), ('b', 7), ('c', 5)]\n# aceptados = filter(lambda fila: fila[1] >= 5, filas)\n# resultado = list(map(lambda fila: f'{fila[0]}:{fila[1]}', aceptados))\n# print(resultado)\n",
+    pytest: "def test_predicado_etiquetas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['b:7', 'c:5']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['b:7', 'c:5'].",
+    solution_example: "filas = [('a', 2), ('b', 7), ('c', 5)]\naceptados = filter(lambda fila: fila[1] >= 5, filas)\nresultado = list(map(lambda fila: f'{fila[0]}:{fila[1]}', aceptados))\nprint(resultado)",
+    next: Some("py-2722-predicado-suite"), show_type_chips: false, micro_step: 2721,
+};
+pub const PY2722_PREDICADO_SUITE: CodingStep = CodingStep {
+    id: "py-2722-predicado-suite", title: "predicados · suite", objective: "Construir una tubería configurable de validación.",
+    prompt_md: "**predicados · suite**\n\nConstruir una tubería configurable de validación.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# reglas = [lambda n: n % 2 == 0, lambda n: n < 10]\n# datos = range(1, 15)\n# resultado = [n for n in datos if all(regla(n) for regla in reglas)]\n# print(resultado)\n",
+    pytest: "def test_predicado_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4, 6, 8]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 4, 6, 8].",
+    solution_example: "reglas = [lambda n: n % 2 == 0, lambda n: n < 10]\ndatos = range(1, 15)\nresultado = [n for n in datos if all(regla(n) for regla in reglas)]\nprint(resultado)",
+    next: Some("py-2723-early-any-contador"), show_type_chips: false, micro_step: 2722,
+};
+pub const PY2723_EARLY_ANY_CONTADOR: CodingStep = CodingStep {
+    id: "py-2723-early-any-contador", title: "cortocircuito · any", objective: "Demostrar que any detiene el consumo al primer éxito.",
+    prompt_md: "**cortocircuito · any**\n\nDemostrar que any detiene el consumo al primer éxito.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {'vistos': 0}\n# def pruebas():\n#     for n in [1, 3, 8, 10]:\n#         estado['vistos'] += 1\n#         yield n % 2 == 0\n# encontrado = any(pruebas())\n# resultado = (encontrado, estado['vistos'])\n# print(resultado)\n",
+    pytest: "def test_early_any_contador(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (True, 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (True, 3).",
+    solution_example: "estado = {'vistos': 0}\ndef pruebas():\n    for n in [1, 3, 8, 10]:\n        estado['vistos'] += 1\n        yield n % 2 == 0\nencontrado = any(pruebas())\nresultado = (encontrado, estado['vistos'])\nprint(resultado)",
+    next: Some("py-2724-early-all-contador"), show_type_chips: false, micro_step: 2723,
+};
+pub const PY2724_EARLY_ALL_CONTADOR: CodingStep = CodingStep {
+    id: "py-2724-early-all-contador", title: "cortocircuito · all", objective: "Demostrar que all detiene el consumo al primer fallo.",
+    prompt_md: "**cortocircuito · all**\n\nDemostrar que all detiene el consumo al primer fallo.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {'vistos': 0}\n# def pruebas():\n#     for n in [2, 4, 5, 8]:\n#         estado['vistos'] += 1\n#         yield n % 2 == 0\n# completo = all(pruebas())\n# resultado = (completo, estado['vistos'])\n# print(resultado)\n",
+    pytest: "def test_early_all_contador(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (False, 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (False, 3).",
+    solution_example: "estado = {'vistos': 0}\ndef pruebas():\n    for n in [2, 4, 5, 8]:\n        estado['vistos'] += 1\n        yield n % 2 == 0\ncompleto = all(pruebas())\nresultado = (completo, estado['vistos'])\nprint(resultado)",
+    next: Some("py-2725-early-takewhile"), show_type_chips: false, micro_step: 2724,
+};
+pub const PY2725_EARLY_TAKEWHILE: CodingStep = CodingStep {
+    id: "py-2725-early-takewhile", title: "cortocircuito · takewhile", objective: "Consumir mientras se mantenga una condición ordenada.",
+    prompt_md: "**cortocircuito · takewhile**\n\nConsumir mientras se mantenga una condición ordenada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from itertools import takewhile\n# resultado = list(takewhile(lambda n: n < 10, [2, 5, 9, 12, 3]))\n# print(resultado)\n",
+    pytest: "def test_early_takewhile(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 5, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 5, 9].",
+    solution_example: "from itertools import takewhile\nresultado = list(takewhile(lambda n: n < 10, [2, 5, 9, 12, 3]))\nprint(resultado)",
+    next: Some("py-2726-early-dropwhile"), show_type_chips: false, micro_step: 2725,
+};
+pub const PY2726_EARLY_DROPWHILE: CodingStep = CodingStep {
+    id: "py-2726-early-dropwhile", title: "cortocircuito · dropwhile", objective: "Saltar una cabecera y conservar el resto completo.",
+    prompt_md: "**cortocircuito · dropwhile**\n\nSaltar una cabecera y conservar el resto completo.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from itertools import dropwhile\n# lineas = ['# meta', '# fecha', 'dato-1', '# literal']\n# resultado = list(dropwhile(lambda linea: linea.startswith('#'), lineas))\n# print(resultado)\n",
+    pytest: "def test_early_dropwhile(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['dato-1', '# literal']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['dato-1', '# literal'].",
+    solution_example: "from itertools import dropwhile\nlineas = ['# meta', '# fecha', 'dato-1', '# literal']\nresultado = list(dropwhile(lambda linea: linea.startswith('#'), lineas))\nprint(resultado)",
+    next: Some("py-2727-early-primer-error"), show_type_chips: false, micro_step: 2726,
+};
+pub const PY2727_EARLY_PRIMER_ERROR: CodingStep = CodingStep {
+    id: "py-2727-early-primer-error", title: "cortocircuito · primer error", objective: "Encontrar el primer registro inválido con next.",
+    prompt_md: "**cortocircuito · primer error**\n\nEncontrar el primer registro inválido con next.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('a', 200), ('b', 404), ('c', 500)]\n# resultado = next((fila for fila in filas if fila[1] >= 400), None)\n# print(resultado)\n",
+    pytest: "def test_early_primer_error(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('b', 404)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('b', 404).",
+    solution_example: "filas = [('a', 200), ('b', 404), ('c', 500)]\nresultado = next((fila for fila in filas if fila[1] >= 400), None)\nprint(resultado)",
+    next: Some("py-2728-early-suite"), show_type_chips: false, micro_step: 2727,
+};
+pub const PY2728_EARLY_SUITE: CodingStep = CodingStep {
+    id: "py-2728-early-suite", title: "cortocircuito · suite", objective: "Buscar el primer múltiplo dentro de una ventana acotada.",
+    prompt_md: "**cortocircuito · suite**\n\nBuscar el primer múltiplo dentro de una ventana acotada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from itertools import islice\n# fuente = (n for n in range(1, 100))\n# ventana = islice(fuente, 12)\n# resultado = next((n for n in ventana if n % 7 == 0), None)\n# print(resultado)\n",
+    pytest: "def test_early_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 7.",
+    solution_example: "from itertools import islice\nfuente = (n for n in range(1, 100))\nventana = islice(fuente, 12)\nresultado = next((n for n in ventana if n % 7 == 0), None)\nprint(resultado)",
+    next: Some("py-2729-stream-suma-cuadrados"), show_type_chips: false, micro_step: 2728,
+};
+pub const PY2729_STREAM_SUMA_CUADRADOS: CodingStep = CodingStep {
+    id: "py-2729-stream-suma-cuadrados", title: "streaming · suma", objective: "Agregar cuadrados sin lista intermedia.",
+    prompt_md: "**streaming · suma**\n\nAgregar cuadrados sin lista intermedia.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = sum(n * n for n in range(1, 6))\n# print(resultado)\n",
+    pytest: "def test_stream_suma_cuadrados(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 55\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 55.",
+    solution_example: "resultado = sum(n * n for n in range(1, 6))\nprint(resultado)",
+    next: Some("py-2730-stream-conteo"), show_type_chips: false, micro_step: 2729,
+};
+pub const PY2730_STREAM_CONTEO: CodingStep = CodingStep {
+    id: "py-2730-stream-conteo", title: "streaming · conteo", objective: "Contar eventos aceptados con una expresión generadora.",
+    prompt_md: "**streaming · conteo**\n\nContar eventos aceptados con una expresión generadora.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = ['ok', 'skip', 'ok', 'error', 'ok']\n# resultado = sum(1 for evento in eventos if evento == 'ok')\n# print(resultado)\n",
+    pytest: "def test_stream_conteo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "eventos = ['ok', 'skip', 'ok', 'error', 'ok']\nresultado = sum(1 for evento in eventos if evento == 'ok')\nprint(resultado)",
+    next: Some("py-2731-stream-min-clave"), show_type_chips: false, micro_step: 2730,
+};
+pub const PY2731_STREAM_MIN_CLAVE: CodingStep = CodingStep {
+    id: "py-2731-stream-min-clave", title: "streaming · mínimo", objective: "Elegir el registro mínimo por una clave.",
+    prompt_md: "**streaming · mínimo**\n\nElegir el registro mínimo por una clave.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = ((nombre, costo) for nombre, costo in [('x', 9), ('y', 4), ('z', 7)])\n# resultado = min(filas, key=lambda fila: fila[1])\n# print(resultado)\n",
+    pytest: "def test_stream_min_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('y', 4)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('y', 4).",
+    solution_example: "filas = ((nombre, costo) for nombre, costo in [('x', 9), ('y', 4), ('z', 7)])\nresultado = min(filas, key=lambda fila: fila[1])\nprint(resultado)",
+    next: Some("py-2732-stream-promedio"), show_type_chips: false, micro_step: 2731,
+};
+pub const PY2732_STREAM_PROMEDIO: CodingStep = CodingStep {
+    id: "py-2732-stream-promedio", title: "streaming · promedio", objective: "Calcular suma y cantidad en una pasada.",
+    prompt_md: "**streaming · promedio**\n\nCalcular suma y cantidad en una pasada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fuente = (n for n in [10, 20, 15, 5])\n# total = 0\n# cantidad = 0\n# for valor in fuente:\n#     total += valor\n#     cantidad += 1\n# resultado = total / cantidad\n# print(resultado)\n",
+    pytest: "def test_stream_promedio(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 12.5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 12.5.",
+    solution_example: "fuente = (n for n in [10, 20, 15, 5])\ntotal = 0\ncantidad = 0\nfor valor in fuente:\n    total += valor\n    cantidad += 1\nresultado = total / cantidad\nprint(resultado)",
+    next: Some("py-2733-stream-por-clave"), show_type_chips: false, micro_step: 2732,
+};
+pub const PY2733_STREAM_POR_CLAVE: CodingStep = CodingStep {
+    id: "py-2733-stream-por-clave", title: "streaming · por clave", objective: "Mantener agregados pequeños por categoría.",
+    prompt_md: "**streaming · por clave**\n\nMantener agregados pequeños por categoría.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = ((k, v) for k, v in [('a', 2), ('b', 5), ('a', 3)])\n# resultado = {}\n# for clave, valor in filas:\n#     resultado[clave] = resultado.get(clave, 0) + valor\n# print(resultado)\n",
+    pytest: "def test_stream_por_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 5, 'b': 5}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 5, 'b': 5}.",
+    solution_example: "filas = ((k, v) for k, v in [('a', 2), ('b', 5), ('a', 3)])\nresultado = {}\nfor clave, valor in filas:\n    resultado[clave] = resultado.get(clave, 0) + valor\nprint(resultado)",
+    next: Some("py-2734-stream-suite"), show_type_chips: false, micro_step: 2733,
+};
+pub const PY2734_STREAM_SUITE: CodingStep = CodingStep {
+    id: "py-2734-stream-suite", title: "streaming · suite", objective: "Combinar filtro, proyección y suma en una expresión.",
+    prompt_md: "**streaming · suite**\n\nCombinar filtro, proyección y suma en una expresión.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# pedidos = [('ok', 12), ('cancelado', 99), ('ok', 8)]\n# resultado = sum(monto for estado, monto in pedidos if estado == 'ok')\n# print(resultado)\n",
+    pytest: "def test_stream_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 20\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 20.",
+    solution_example: "pedidos = [('ok', 12), ('cancelado', 99), ('ok', 8)]\nresultado = sum(monto for estado, monto in pedidos if estado == 'ok')\nprint(resultado)",
+    next: Some("py-2735-score-normalizar"), show_type_chips: false, micro_step: 2734,
+};
+pub const PY2735_SCORE_NORMALIZAR: CodingStep = CodingStep {
+    id: "py-2735-score-normalizar", title: "scoring · normalizar", objective: "Normalizar métricas heterogéneas antes de puntuar.",
+    prompt_md: "**scoring · normalizar**\n\nNormalizar métricas heterogéneas antes de puntuar.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('a', 80, 20), ('b', 60, 10)]\n# resultado = [(nombre, calidad / 100 - latencia / 100) for nombre, calidad, latencia in filas]\n# print(resultado)\n",
+    pytest: "def test_score_normalizar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', 0.6000000000000001), ('b', 0.5)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('a', 0.6000000000000001), ('b', 0.5)].",
+    solution_example: "filas = [('a', 80, 20), ('b', 60, 10)]\nresultado = [(nombre, calidad / 100 - latencia / 100) for nombre, calidad, latencia in filas]\nprint(resultado)",
+    next: Some("py-2736-score-ponderar"), show_type_chips: false, micro_step: 2735,
+};
+pub const PY2736_SCORE_PONDERAR: CodingStep = CodingStep {
+    id: "py-2736-score-ponderar", title: "scoring · ponderar", objective: "Aplicar pesos explícitos a dos señales.",
+    prompt_md: "**scoring · ponderar**\n\nAplicar pesos explícitos a dos señales.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('x', 8, 6), ('y', 5, 9)]\n# resultado = [(nombre, a * 0.7 + b * 0.3) for nombre, a, b in filas]\n# print(resultado)\n",
+    pytest: "def test_score_ponderar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('x', 7.3999999999999995), ('y', 6.199999999999999)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('x', 7.3999999999999995), ('y', 6.199999999999999)].",
+    solution_example: "filas = [('x', 8, 6), ('y', 5, 9)]\nresultado = [(nombre, a * 0.7 + b * 0.3) for nombre, a, b in filas]\nprint(resultado)",
+    next: Some("py-2737-score-filtrar"), show_type_chips: false, micro_step: 2736,
+};
+pub const PY2737_SCORE_FILTRAR: CodingStep = CodingStep {
+    id: "py-2737-score-filtrar", title: "scoring · umbral", objective: "Descartar candidatos que no alcanzan el umbral.",
+    prompt_md: "**scoring · umbral**\n\nDescartar candidatos que no alcanzan el umbral.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# puntajes = [('a', 7.2), ('b', 4.9), ('c', 8.1)]\n# resultado = list(filter(lambda par: par[1] >= 7, puntajes))\n# print(resultado)\n",
+    pytest: "def test_score_filtrar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', 7.2), ('c', 8.1)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('a', 7.2), ('c', 8.1)].",
+    solution_example: "puntajes = [('a', 7.2), ('b', 4.9), ('c', 8.1)]\nresultado = list(filter(lambda par: par[1] >= 7, puntajes))\nprint(resultado)",
+    next: Some("py-2738-score-desempatar"), show_type_chips: false, micro_step: 2737,
+};
+pub const PY2738_SCORE_DESEMPATAR: CodingStep = CodingStep {
+    id: "py-2738-score-desempatar", title: "scoring · desempate", objective: "Ordenar por puntaje descendente y nombre ascendente.",
+    prompt_md: "**scoring · desempate**\n\nOrdenar por puntaje descendente y nombre ascendente.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# puntajes = [('beta', 8), ('alfa', 8), ('gamma', 7)]\n# resultado = sorted(puntajes, key=lambda par: (-par[1], par[0]))\n# print(resultado)\n",
+    pytest: "def test_score_desempatar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('alfa', 8), ('beta', 8), ('gamma', 7)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('alfa', 8), ('beta', 8), ('gamma', 7)].",
+    solution_example: "puntajes = [('beta', 8), ('alfa', 8), ('gamma', 7)]\nresultado = sorted(puntajes, key=lambda par: (-par[1], par[0]))\nprint(resultado)",
+    next: Some("py-2739-score-top-lazy"), show_type_chips: false, micro_step: 2738,
+};
+pub const PY2739_SCORE_TOP_LAZY: CodingStep = CodingStep {
+    id: "py-2739-score-top-lazy", title: "scoring · top lazy", objective: "Tomar un top acotado luego de ordenar candidatos válidos.",
+    prompt_md: "**scoring · top lazy**\n\nTomar un top acotado luego de ordenar candidatos válidos.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from itertools import islice\n# puntajes = [('a', 3), ('b', 9), ('c', 6), ('d', 8)]\n# ordenados = iter(sorted((p for p in puntajes if p[1] >= 5), key=lambda p: -p[1]))\n# resultado = list(islice(ordenados, 2))\n# print(resultado)\n",
+    pytest: "def test_score_top_lazy(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('b', 9), ('d', 8)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('b', 9), ('d', 8)].",
+    solution_example: "from itertools import islice\npuntajes = [('a', 3), ('b', 9), ('c', 6), ('d', 8)]\nordenados = iter(sorted((p for p in puntajes if p[1] >= 5), key=lambda p: -p[1]))\nresultado = list(islice(ordenados, 2))\nprint(resultado)",
+    next: Some("py-2740-ola29-suite"), show_type_chips: false, micro_step: 2739,
+};
+pub const PY2740_OLA29_SUITE: CodingStep = CodingStep {
+    id: "py-2740-ola29-suite", title: "ola 29 · suite", objective: "Cerrar la ola con pipeline lazy, agregación y ranking estable.",
+    prompt_md: "**ola 29 · suite**\n\nCerrar la ola con pipeline lazy, agregación y ranking estable.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from itertools import islice\n# eventos = [('api', 5), ('web', 2), ('api', 4), ('db', 7), ('web', 3)]\n# totales = {}\n# for servicio, puntos in filter(lambda fila: fila[1] >= 3, eventos):\n#     totales[servicio] = totales.get(servicio, 0) + puntos\n# ranking = iter(sorted(totales.items(), key=lambda par: (-par[1], par[0])))\n# resultado = list(islice(ranking, 2))\n# print(resultado)\n",
+    pytest: "def test_ola29_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('api', 9), ('db', 7)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('api', 9), ('db', 7)].",
+    solution_example: "from itertools import islice\neventos = [('api', 5), ('web', 2), ('api', 4), ('db', 7), ('web', 3)]\ntotales = {}\nfor servicio, puntos in filter(lambda fila: fila[1] >= 3, eventos):\n    totales[servicio] = totales.get(servicio, 0) + puntos\nranking = iter(sorted(totales.items(), key=lambda par: (-par[1], par[0])))\nresultado = list(islice(ranking, 2))\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 2740,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -62651,6 +63191,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2678_MR_CHUNKS,
     &PY2679_MR_COMBINAR,
     &PY2680_OLA28_SUITE,
+    &PY2681_HOF_NORMALIZAR,
+    &PY2682_HOF_PROYECTAR,
+    &PY2683_HOF_COMPONER,
+    &PY2684_HOF_DESPACHAR,
+    &PY2685_HOF_CLAVE_COMPUESTA,
+    &PY2686_HOF_SUITE,
+    &PY2687_GEN_ESTADOS,
+    &PY2688_GEN_PARES_INDICE,
+    &PY2689_GEN_SENTINELA,
+    &PY2690_GEN_APLANAR,
+    &PY2691_GEN_RETORNO,
+    &PY2692_GEN_SUITE,
+    &PY2693_LAZY_ISLICE,
+    &PY2694_LAZY_NEXT_DEFAULT,
+    &PY2695_LAZY_CONTADOR,
+    &PY2696_LAZY_SKIP_TAKE,
+    &PY2697_LAZY_CADENA,
+    &PY2698_LAZY_SUITE,
+    &PY2699_ITER_AGOTAMIENTO,
+    &PY2700_ITER_PARCIAL,
+    &PY2701_ITER_TEE,
+    &PY2702_ITER_MATERIALIZAR,
+    &PY2703_ITER_REVERSED,
+    &PY2704_ITER_SUITE,
+    &PY2705_FOLD_SUMA_INICIAL,
+    &PY2706_FOLD_PRODUCTO_INICIAL,
+    &PY2707_FOLD_TEXTO_ORDEN,
+    &PY2708_FOLD_REGISTRO,
+    &PY2709_FOLD_DEDUPLICAR,
+    &PY2710_FOLD_SUITE,
+    &PY2711_LOG_PARSEAR,
+    &PY2712_LOG_DESCARTAR,
+    &PY2713_LOG_CODIGOS,
+    &PY2714_LOG_ERRORES_RUTA,
+    &PY2715_LOG_LATENCIAS,
+    &PY2716_LOG_SUITE,
+    &PY2717_PREDICADO_FABRICA,
+    &PY2718_PREDICADO_COMPUESTO,
+    &PY2719_PREDICADO_CAMPOS,
+    &PY2720_PREDICADO_NONE,
+    &PY2721_PREDICADO_ETIQUETAS,
+    &PY2722_PREDICADO_SUITE,
+    &PY2723_EARLY_ANY_CONTADOR,
+    &PY2724_EARLY_ALL_CONTADOR,
+    &PY2725_EARLY_TAKEWHILE,
+    &PY2726_EARLY_DROPWHILE,
+    &PY2727_EARLY_PRIMER_ERROR,
+    &PY2728_EARLY_SUITE,
+    &PY2729_STREAM_SUMA_CUADRADOS,
+    &PY2730_STREAM_CONTEO,
+    &PY2731_STREAM_MIN_CLAVE,
+    &PY2732_STREAM_PROMEDIO,
+    &PY2733_STREAM_POR_CLAVE,
+    &PY2734_STREAM_SUITE,
+    &PY2735_SCORE_NORMALIZAR,
+    &PY2736_SCORE_PONDERAR,
+    &PY2737_SCORE_FILTRAR,
+    &PY2738_SCORE_DESEMPATAR,
+    &PY2739_SCORE_TOP_LAZY,
+    &PY2740_OLA29_SUITE,
 
 ];
 
@@ -62818,14 +63418,14 @@ mod tests {
     #[test]
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
-        assert_eq!(CODING_STEPS.len(), 2680, "catalog must contain 2680 steps");
+        assert_eq!(CODING_STEPS.len(), 2740, "catalog must contain 2740 steps");
         for (index, step) in CODING_STEPS.iter().enumerate() {
             assert_eq!(
                 step.micro_step,
                 (index + 1) as i32,
                 "catalog must be contiguous at index {index}"
             );
-            assert!(step.micro_step >= 1 && step.micro_step <= 2680);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2740);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -62834,8 +63434,8 @@ mod tests {
         }
         assert_eq!(
             seen,
-            (1..=2680).collect(),
-            "catalog must cover every micro-step in 1..=2680"
+            (1..=2740).collect(),
+            "catalog must cover every micro-step in 1..=2740"
         );
     }
 
@@ -66164,7 +66764,22 @@ mod tests {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next wave28 step");
                 assert_eq!(step.next, Some(next_step.id));
             } else {
-                assert_eq!(step.next, None, "step 2680 is the end of the rail");
+                assert_eq!(step.next, Some("py-2681-hof-normalizar"), "step 2680 chains to Wave 29");
+            }
+        }
+    }
+
+    #[test]
+    fn py2681_to_py2740_lazy_streaming_chain() {
+        for n in 2681..=2740 {
+            let step = coding_step_by_micro_step(n).expect("wave29 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(step.id.starts_with(&format!("py-{n}-")));
+            if n < 2740 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next wave29 step");
+                assert_eq!(step.next, Some(next_step.id));
+            } else {
+                assert_eq!(step.next, None, "step 2740 is the end of the rail");
             }
         }
     }
