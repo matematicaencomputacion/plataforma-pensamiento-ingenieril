@@ -58888,7 +58888,547 @@ pub const PY2560_SCORE_CHECK: CodingStep = CodingStep {
     pytest: "def test_score_check(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [9, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "[9, 4]",
     solution_example: "scores = [2, 9, 4, 1]\naptos = filter(lambda s: s > 3, scores)\nresultado = sorted(aptos, reverse=True)[:2]\nprint(resultado)",
-    next: None, show_type_chips: false, micro_step: 2560,
+    next: Some("py-2561-base-cero"), show_type_chips: false, micro_step: 2560,
+};
+pub const PY2561_BASE_CERO: CodingStep = CodingStep {
+    id: "py-2561-base-cero", title: "recursión · caso cero", objective: "Definir un caso base para n igual a cero.",
+    prompt_md: "**recursión · caso cero**\n\nDefinir un caso base para n igual a cero.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def cuenta(n):\n#     if n == 0:\n#         return 'fin'\n#     return cuenta(n - 1)\n# resultado = cuenta(3)\n# print(resultado)\n",
+    pytest: "def test_base_cero(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'fin'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'fin'.",
+    solution_example: "def cuenta(n):\n    if n == 0:\n        return 'fin'\n    return cuenta(n - 1)\nresultado = cuenta(3)\nprint(resultado)",
+    next: Some("py-2562-base-lista-vacia"), show_type_chips: false, micro_step: 2561,
+};
+pub const PY2562_BASE_LISTA_VACIA: CodingStep = CodingStep {
+    id: "py-2562-base-lista-vacia", title: "recursión · lista vacía", objective: "Detener el recorrido al llegar a una lista vacía.",
+    prompt_md: "**recursión · lista vacía**\n\nDetener el recorrido al llegar a una lista vacía.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def largo(xs):\n#     if not xs:\n#         return 0\n#     return 1 + largo(xs[1:])\n# resultado = largo(['a', 'b', 'c'])\n# print(resultado)\n",
+    pytest: "def test_base_lista_vacia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "def largo(xs):\n    if not xs:\n        return 0\n    return 1 + largo(xs[1:])\nresultado = largo(['a', 'b', 'c'])\nprint(resultado)",
+    next: Some("py-2563-base-un-caracter"), show_type_chips: false, micro_step: 2562,
+};
+pub const PY2563_BASE_UN_CARACTER: CodingStep = CodingStep {
+    id: "py-2563-base-un-caracter", title: "recursión · un carácter", objective: "Reconocer el caso indivisible de una cadena.",
+    prompt_md: "**recursión · un carácter**\n\nReconocer el caso indivisible de una cadena.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def primero(s):\n#     if len(s) == 1:\n#         return s\n#     return primero(s[:-1])\n# resultado = primero('casa')\n# print(resultado)\n",
+    pytest: "def test_base_un_caracter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'c'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'c'.",
+    solution_example: "def primero(s):\n    if len(s) == 1:\n        return s\n    return primero(s[:-1])\nresultado = primero('casa')\nprint(resultado)",
+    next: Some("py-2564-base-uno"), show_type_chips: false, micro_step: 2563,
+};
+pub const PY2564_BASE_UNO: CodingStep = CodingStep {
+    id: "py-2564-base-uno", title: "recursión · caso uno", objective: "Usar uno como caso base multiplicativo.",
+    prompt_md: "**recursión · caso uno**\n\nUsar uno como caso base multiplicativo.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def potencia_dos(n):\n#     if n == 0:\n#         return 1\n#     return 2 * potencia_dos(n - 1)\n# resultado = potencia_dos(4)\n# print(resultado)\n",
+    pytest: "def test_base_uno(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 16\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 16.",
+    solution_example: "def potencia_dos(n):\n    if n == 0:\n        return 1\n    return 2 * potencia_dos(n - 1)\nresultado = potencia_dos(4)\nprint(resultado)",
+    next: Some("py-2565-base-bool"), show_type_chips: false, micro_step: 2564,
+};
+pub const PY2565_BASE_BOOL: CodingStep = CodingStep {
+    id: "py-2565-base-bool", title: "recursión · predicado base", objective: "Cerrar un predicado recursivo sin consumir de más.",
+    prompt_md: "**recursión · predicado base**\n\nCerrar un predicado recursivo sin consumir de más.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def todos_positivos(xs):\n#     if not xs:\n#         return True\n#     return xs[0] > 0 and todos_positivos(xs[1:])\n# resultado = todos_positivos([2, 5, 1])\n# print(resultado)\n",
+    pytest: "def test_base_bool(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "def todos_positivos(xs):\n    if not xs:\n        return True\n    return xs[0] > 0 and todos_positivos(xs[1:])\nresultado = todos_positivos([2, 5, 1])\nprint(resultado)",
+    next: Some("py-2566-base-suite"), show_type_chips: false, micro_step: 2565,
+};
+pub const PY2566_BASE_SUITE: CodingStep = CodingStep {
+    id: "py-2566-base-suite", title: "recursión · suite base", objective: "Combinar caso base y paso de reducción.",
+    prompt_md: "**recursión · suite base**\n\nCombinar caso base y paso de reducción.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def bajar(n):\n#     if n <= 0:\n#         return []\n#     return [n] + bajar(n - 1)\n# resultado = bajar(4)\n# print(resultado)\n",
+    pytest: "def test_base_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [4, 3, 2, 1]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [4, 3, 2, 1].",
+    solution_example: "def bajar(n):\n    if n <= 0:\n        return []\n    return [n] + bajar(n - 1)\nresultado = bajar(4)\nprint(resultado)",
+    next: Some("py-2567-suma-natural"), show_type_chips: false, micro_step: 2566,
+};
+pub const PY2567_SUMA_NATURAL: CodingStep = CodingStep {
+    id: "py-2567-suma-natural", title: "recursión · suma natural", objective: "Sumar desde n hasta el caso base.",
+    prompt_md: "**recursión · suma natural**\n\nSumar desde n hasta el caso base.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def suma(n):\n#     if n == 0:\n#         return 0\n#     return n + suma(n - 1)\n# resultado = suma(5)\n# print(resultado)\n",
+    pytest: "def test_suma_natural(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 15\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 15.",
+    solution_example: "def suma(n):\n    if n == 0:\n        return 0\n    return n + suma(n - 1)\nresultado = suma(5)\nprint(resultado)",
+    next: Some("py-2568-suma-lista"), show_type_chips: false, micro_step: 2567,
+};
+pub const PY2568_SUMA_LISTA: CodingStep = CodingStep {
+    id: "py-2568-suma-lista", title: "recursión · suma lista", objective: "Reducir una lista por cabeza y cola.",
+    prompt_md: "**recursión · suma lista**\n\nReducir una lista por cabeza y cola.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def sumar(xs):\n#     if not xs:\n#         return 0\n#     return xs[0] + sumar(xs[1:])\n# resultado = sumar([4, 2, 7])\n# print(resultado)\n",
+    pytest: "def test_suma_lista(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 13\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 13.",
+    solution_example: "def sumar(xs):\n    if not xs:\n        return 0\n    return xs[0] + sumar(xs[1:])\nresultado = sumar([4, 2, 7])\nprint(resultado)",
+    next: Some("py-2569-producto-lista"), show_type_chips: false, micro_step: 2568,
+};
+pub const PY2569_PRODUCTO_LISTA: CodingStep = CodingStep {
+    id: "py-2569-producto-lista", title: "recursión · producto", objective: "Multiplicar una secuencia con identidad uno.",
+    prompt_md: "**recursión · producto**\n\nMultiplicar una secuencia con identidad uno.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def producto(xs):\n#     if not xs:\n#         return 1\n#     return xs[0] * producto(xs[1:])\n# resultado = producto([2, 3, 4])\n# print(resultado)\n",
+    pytest: "def test_producto_lista(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 24\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 24.",
+    solution_example: "def producto(xs):\n    if not xs:\n        return 1\n    return xs[0] * producto(xs[1:])\nresultado = producto([2, 3, 4])\nprint(resultado)",
+    next: Some("py-2570-factorial-acotado"), show_type_chips: false, micro_step: 2569,
+};
+pub const PY2570_FACTORIAL_ACOTADO: CodingStep = CodingStep {
+    id: "py-2570-factorial-acotado", title: "recursión · factorial", objective: "Calcular un factorial con entrada pequeña.",
+    prompt_md: "**recursión · factorial**\n\nCalcular un factorial con entrada pequeña.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def factorial(n):\n#     if n <= 1:\n#         return 1\n#     return n * factorial(n - 1)\n# resultado = factorial(5)\n# print(resultado)\n",
+    pytest: "def test_factorial_acotado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 120\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 120.",
+    solution_example: "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\nresultado = factorial(5)\nprint(resultado)",
+    next: Some("py-2571-suma-pares"), show_type_chips: false, micro_step: 2570,
+};
+pub const PY2571_SUMA_PARES: CodingStep = CodingStep {
+    id: "py-2571-suma-pares", title: "recursión · suma pares", objective: "Consumir la lista y acumular solo pares.",
+    prompt_md: "**recursión · suma pares**\n\nConsumir la lista y acumular solo pares.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def suma_pares(xs):\n#     if not xs:\n#         return 0\n#     aporte = xs[0] if xs[0] % 2 == 0 else 0\n#     return aporte + suma_pares(xs[1:])\n# resultado = suma_pares([1, 2, 4, 5])\n# print(resultado)\n",
+    pytest: "def test_suma_pares(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 6.",
+    solution_example: "def suma_pares(xs):\n    if not xs:\n        return 0\n    aporte = xs[0] if xs[0] % 2 == 0 else 0\n    return aporte + suma_pares(xs[1:])\nresultado = suma_pares([1, 2, 4, 5])\nprint(resultado)",
+    next: Some("py-2572-producto-suite"), show_type_chips: false, micro_step: 2571,
+};
+pub const PY2572_PRODUCTO_SUITE: CodingStep = CodingStep {
+    id: "py-2572-producto-suite", title: "recursión · suite producto", objective: "Combinar reducción y transformación.",
+    prompt_md: "**recursión · suite producto**\n\nCombinar reducción y transformación.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def producto_dobles(xs):\n#     if not xs:\n#         return 1\n#     return (xs[0] * 2) * producto_dobles(xs[1:])\n# resultado = producto_dobles([1, 2, 3])\n# print(resultado)\n",
+    pytest: "def test_producto_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 48\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 48.",
+    solution_example: "def producto_dobles(xs):\n    if not xs:\n        return 1\n    return (xs[0] * 2) * producto_dobles(xs[1:])\nresultado = producto_dobles([1, 2, 3])\nprint(resultado)",
+    next: Some("py-2573-invertir-texto"), show_type_chips: false, micro_step: 2572,
+};
+pub const PY2573_INVERTIR_TEXTO: CodingStep = CodingStep {
+    id: "py-2573-invertir-texto", title: "recursión · invertir texto", objective: "Invertir una cadena consumiendo su cabeza.",
+    prompt_md: "**recursión · invertir texto**\n\nInvertir una cadena consumiendo su cabeza.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def invertir(s):\n#     if not s:\n#         return ''\n#     return invertir(s[1:]) + s[0]\n# resultado = invertir('luz')\n# print(resultado)\n",
+    pytest: "def test_invertir_texto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'zul'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'zul'.",
+    solution_example: "def invertir(s):\n    if not s:\n        return ''\n    return invertir(s[1:]) + s[0]\nresultado = invertir('luz')\nprint(resultado)",
+    next: Some("py-2574-contar-letra"), show_type_chips: false, micro_step: 2573,
+};
+pub const PY2574_CONTAR_LETRA: CodingStep = CodingStep {
+    id: "py-2574-contar-letra", title: "recursión · contar letra", objective: "Contar coincidencias en una cadena.",
+    prompt_md: "**recursión · contar letra**\n\nContar coincidencias en una cadena.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def contar(s, letra):\n#     if not s:\n#         return 0\n#     return (s[0] == letra) + contar(s[1:], letra)\n# resultado = contar('banana', 'a')\n# print(resultado)\n",
+    pytest: "def test_contar_letra(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "def contar(s, letra):\n    if not s:\n        return 0\n    return (s[0] == letra) + contar(s[1:], letra)\nresultado = contar('banana', 'a')\nprint(resultado)",
+    next: Some("py-2575-quitar-vocales"), show_type_chips: false, micro_step: 2574,
+};
+pub const PY2575_QUITAR_VOCALES: CodingStep = CodingStep {
+    id: "py-2575-quitar-vocales", title: "recursión · quitar vocales", objective: "Reconstruir texto omitiendo vocales.",
+    prompt_md: "**recursión · quitar vocales**\n\nReconstruir texto omitiendo vocales.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def sin_vocales(s):\n#     if not s:\n#         return ''\n#     cabeza = '' if s[0] in 'aeiou' else s[0]\n#     return cabeza + sin_vocales(s[1:])\n# resultado = sin_vocales('codigo')\n# print(resultado)\n",
+    pytest: "def test_quitar_vocales(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'cdg'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'cdg'.",
+    solution_example: "def sin_vocales(s):\n    if not s:\n        return ''\n    cabeza = '' if s[0] in 'aeiou' else s[0]\n    return cabeza + sin_vocales(s[1:])\nresultado = sin_vocales('codigo')\nprint(resultado)",
+    next: Some("py-2576-palindromo"), show_type_chips: false, micro_step: 2575,
+};
+pub const PY2576_PALINDROMO: CodingStep = CodingStep {
+    id: "py-2576-palindromo", title: "recursión · palíndromo", objective: "Comparar extremos y reducir el centro.",
+    prompt_md: "**recursión · palíndromo**\n\nComparar extremos y reducir el centro.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def palindromo(s):\n#     if len(s) <= 1:\n#         return True\n#     return s[0] == s[-1] and palindromo(s[1:-1])\n# resultado = palindromo('reconocer')\n# print(resultado)\n",
+    pytest: "def test_palindromo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "def palindromo(s):\n    if len(s) <= 1:\n        return True\n    return s[0] == s[-1] and palindromo(s[1:-1])\nresultado = palindromo('reconocer')\nprint(resultado)",
+    next: Some("py-2577-repetir-caracter"), show_type_chips: false, micro_step: 2576,
+};
+pub const PY2577_REPETIR_CARACTER: CodingStep = CodingStep {
+    id: "py-2577-repetir-caracter", title: "recursión · repetir", objective: "Construir una cadena con una cota decreciente.",
+    prompt_md: "**recursión · repetir**\n\nConstruir una cadena con una cota decreciente.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def repetir(c, n):\n#     if n == 0:\n#         return ''\n#     return c + repetir(c, n - 1)\n# resultado = repetir('*', 4)\n# print(resultado)\n",
+    pytest: "def test_repetir_caracter(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '****'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es '****'.",
+    solution_example: "def repetir(c, n):\n    if n == 0:\n        return ''\n    return c + repetir(c, n - 1)\nresultado = repetir('*', 4)\nprint(resultado)",
+    next: Some("py-2578-texto-suite"), show_type_chips: false, micro_step: 2577,
+};
+pub const PY2578_TEXTO_SUITE: CodingStep = CodingStep {
+    id: "py-2578-texto-suite", title: "recursión · suite texto", objective: "Separar caracteres con una operación recursiva.",
+    prompt_md: "**recursión · suite texto**\n\nSeparar caracteres con una operación recursiva.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def separar(s):\n#     if len(s) <= 1:\n#         return s\n#     return s[0] + '-' + separar(s[1:])\n# resultado = separar('abc')\n# print(resultado)\n",
+    pytest: "def test_texto_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'a-b-c'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'a-b-c'.",
+    solution_example: "def separar(s):\n    if len(s) <= 1:\n        return s\n    return s[0] + '-' + separar(s[1:])\nresultado = separar('abc')\nprint(resultado)",
+    next: Some("py-2579-maximo-lista"), show_type_chips: false, micro_step: 2578,
+};
+pub const PY2579_MAXIMO_LISTA: CodingStep = CodingStep {
+    id: "py-2579-maximo-lista", title: "recursión · máximo", objective: "Comparar la cabeza con el máximo de la cola.",
+    prompt_md: "**recursión · máximo**\n\nComparar la cabeza con el máximo de la cola.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def maximo(xs):\n#     if len(xs) == 1:\n#         return xs[0]\n#     resto = maximo(xs[1:])\n#     return xs[0] if xs[0] > resto else resto\n# resultado = maximo([3, 9, 4])\n# print(resultado)\n",
+    pytest: "def test_maximo_lista(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 9.",
+    solution_example: "def maximo(xs):\n    if len(xs) == 1:\n        return xs[0]\n    resto = maximo(xs[1:])\n    return xs[0] if xs[0] > resto else resto\nresultado = maximo([3, 9, 4])\nprint(resultado)",
+    next: Some("py-2580-buscar-lista"), show_type_chips: false, micro_step: 2579,
+};
+pub const PY2580_BUSCAR_LISTA: CodingStep = CodingStep {
+    id: "py-2580-buscar-lista", title: "recursión · buscar", objective: "Detener la búsqueda al encontrar el objetivo.",
+    prompt_md: "**recursión · buscar**\n\nDetener la búsqueda al encontrar el objetivo.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def contiene(xs, valor):\n#     if not xs:\n#         return False\n#     return xs[0] == valor or contiene(xs[1:], valor)\n# resultado = contiene([2, 7, 5], 7)\n# print(resultado)\n",
+    pytest: "def test_buscar_lista(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "def contiene(xs, valor):\n    if not xs:\n        return False\n    return xs[0] == valor or contiene(xs[1:], valor)\nresultado = contiene([2, 7, 5], 7)\nprint(resultado)",
+    next: Some("py-2581-duplicar-lista"), show_type_chips: false, micro_step: 2580,
+};
+pub const PY2581_DUPLICAR_LISTA: CodingStep = CodingStep {
+    id: "py-2581-duplicar-lista", title: "recursión · transformar lista", objective: "Transformar cabeza y continuar con la cola.",
+    prompt_md: "**recursión · transformar lista**\n\nTransformar cabeza y continuar con la cola.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def duplicar(xs):\n#     if not xs:\n#         return []\n#     return [xs[0] * 2] + duplicar(xs[1:])\n# resultado = duplicar([1, 3, 5])\n# print(resultado)\n",
+    pytest: "def test_duplicar_lista(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 6, 10]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 6, 10].",
+    solution_example: "def duplicar(xs):\n    if not xs:\n        return []\n    return [xs[0] * 2] + duplicar(xs[1:])\nresultado = duplicar([1, 3, 5])\nprint(resultado)",
+    next: Some("py-2582-filtrar-recursivo"), show_type_chips: false, micro_step: 2581,
+};
+pub const PY2582_FILTRAR_RECURSIVO: CodingStep = CodingStep {
+    id: "py-2582-filtrar-recursivo", title: "recursión · filtrar lista", objective: "Elegir si la cabeza integra el resultado.",
+    prompt_md: "**recursión · filtrar lista**\n\nElegir si la cabeza integra el resultado.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def positivos(xs):\n#     if not xs:\n#         return []\n#     cabeza = [xs[0]] if xs[0] > 0 else []\n#     return cabeza + positivos(xs[1:])\n# resultado = positivos([-1, 4, 0, 2])\n# print(resultado)\n",
+    pytest: "def test_filtrar_recursivo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [4, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [4, 2].",
+    solution_example: "def positivos(xs):\n    if not xs:\n        return []\n    cabeza = [xs[0]] if xs[0] > 0 else []\n    return cabeza + positivos(xs[1:])\nresultado = positivos([-1, 4, 0, 2])\nprint(resultado)",
+    next: Some("py-2583-intercalar-listas"), show_type_chips: false, micro_step: 2582,
+};
+pub const PY2583_INTERCALAR_LISTAS: CodingStep = CodingStep {
+    id: "py-2583-intercalar-listas", title: "recursión · intercalar", objective: "Consumir dos listas en paralelo.",
+    prompt_md: "**recursión · intercalar**\n\nConsumir dos listas en paralelo.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def intercalar(a, b):\n#     if not a:\n#         return b\n#     if not b:\n#         return a\n#     return [a[0], b[0]] + intercalar(a[1:], b[1:])\n# resultado = intercalar([1, 2], ['a', 'b'])\n# print(resultado)\n",
+    pytest: "def test_intercalar_listas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 'a', 2, 'b']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 'a', 2, 'b'].",
+    solution_example: "def intercalar(a, b):\n    if not a:\n        return b\n    if not b:\n        return a\n    return [a[0], b[0]] + intercalar(a[1:], b[1:])\nresultado = intercalar([1, 2], ['a', 'b'])\nprint(resultado)",
+    next: Some("py-2584-listas-suite"), show_type_chips: false, micro_step: 2583,
+};
+pub const PY2584_LISTAS_SUITE: CodingStep = CodingStep {
+    id: "py-2584-listas-suite", title: "recursión · suite listas", objective: "Eliminar duplicados preservando el primer orden.",
+    prompt_md: "**recursión · suite listas**\n\nEliminar duplicados preservando el primer orden.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def unicos(xs):\n#     if not xs:\n#         return []\n#     return [xs[0]] + unicos([x for x in xs[1:] if x != xs[0]])\n# resultado = unicos([2, 1, 2, 3, 1])\n# print(resultado)\n",
+    pytest: "def test_listas_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 1, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 1, 3].",
+    solution_example: "def unicos(xs):\n    if not xs:\n        return []\n    return [xs[0]] + unicos([x for x in xs[1:] if x != xs[0]])\nresultado = unicos([2, 1, 2, 3, 1])\nprint(resultado)",
+    next: Some("py-2585-aplanar-listas"), show_type_chips: false, micro_step: 2584,
+};
+pub const PY2585_APLANAR_LISTAS: CodingStep = CodingStep {
+    id: "py-2585-aplanar-listas", title: "recursión · aplanar", objective: "Recorrer listas anidadas con casos por tipo.",
+    prompt_md: "**recursión · aplanar**\n\nRecorrer listas anidadas con casos por tipo.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def aplanar(xs):\n#     if not xs:\n#         return []\n#     cabeza = aplanar(xs[0]) if isinstance(xs[0], list) else [xs[0]]\n#     return cabeza + aplanar(xs[1:])\n# resultado = aplanar([1, [2, [3]], 4])\n# print(resultado)\n",
+    pytest: "def test_aplanar_listas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 4].",
+    solution_example: "def aplanar(xs):\n    if not xs:\n        return []\n    cabeza = aplanar(xs[0]) if isinstance(xs[0], list) else [xs[0]]\n    return cabeza + aplanar(xs[1:])\nresultado = aplanar([1, [2, [3]], 4])\nprint(resultado)",
+    next: Some("py-2586-profundidad-listas"), show_type_chips: false, micro_step: 2585,
+};
+pub const PY2586_PROFUNDIDAD_LISTAS: CodingStep = CodingStep {
+    id: "py-2586-profundidad-listas", title: "recursión · profundidad", objective: "Medir niveles de anidación acotados.",
+    prompt_md: "**recursión · profundidad**\n\nMedir niveles de anidación acotados.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def profundidad(x):\n#     if not isinstance(x, list):\n#         return 0\n#     if not x:\n#         return 1\n#     return 1 + max(profundidad(e) for e in x)\n# resultado = profundidad([1, [2, [3]]])\n# print(resultado)\n",
+    pytest: "def test_profundidad_listas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "def profundidad(x):\n    if not isinstance(x, list):\n        return 0\n    if not x:\n        return 1\n    return 1 + max(profundidad(e) for e in x)\nresultado = profundidad([1, [2, [3]]])\nprint(resultado)",
+    next: Some("py-2587-sumar-anidado"), show_type_chips: false, micro_step: 2586,
+};
+pub const PY2587_SUMAR_ANIDADO: CodingStep = CodingStep {
+    id: "py-2587-sumar-anidado", title: "recursión · sumar anidado", objective: "Sumar hojas numéricas de una estructura.",
+    prompt_md: "**recursión · sumar anidado**\n\nSumar hojas numéricas de una estructura.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def sumar(x):\n#     if isinstance(x, int):\n#         return x\n#     if not x:\n#         return 0\n#     return sumar(x[0]) + sumar(x[1:])\n# resultado = sumar([1, [2, 3], [4]])\n# print(resultado)\n",
+    pytest: "def test_sumar_anidado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 10.",
+    solution_example: "def sumar(x):\n    if isinstance(x, int):\n        return x\n    if not x:\n        return 0\n    return sumar(x[0]) + sumar(x[1:])\nresultado = sumar([1, [2, 3], [4]])\nprint(resultado)",
+    next: Some("py-2588-contar-hojas"), show_type_chips: false, micro_step: 2587,
+};
+pub const PY2588_CONTAR_HOJAS: CodingStep = CodingStep {
+    id: "py-2588-contar-hojas", title: "recursión · contar hojas", objective: "Distinguir contenedores de valores hoja.",
+    prompt_md: "**recursión · contar hojas**\n\nDistinguir contenedores de valores hoja.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def hojas(x):\n#     if not isinstance(x, list):\n#         return 1\n#     return sum(hojas(e) for e in x)\n# resultado = hojas([1, [2, [3, 4]]])\n# print(resultado)\n",
+    pytest: "def test_contar_hojas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 4.",
+    solution_example: "def hojas(x):\n    if not isinstance(x, list):\n        return 1\n    return sum(hojas(e) for e in x)\nresultado = hojas([1, [2, [3, 4]]])\nprint(resultado)",
+    next: Some("py-2589-mapear-anidado"), show_type_chips: false, micro_step: 2588,
+};
+pub const PY2589_MAPEAR_ANIDADO: CodingStep = CodingStep {
+    id: "py-2589-mapear-anidado", title: "recursión · mapear anidado", objective: "Conservar forma mientras se transforman hojas.",
+    prompt_md: "**recursión · mapear anidado**\n\nConservar forma mientras se transforman hojas.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def duplicar(x):\n#     if isinstance(x, int):\n#         return x * 2\n#     return [duplicar(e) for e in x]\n# resultado = duplicar([1, [2, 3]])\n# print(resultado)\n",
+    pytest: "def test_mapear_anidado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, [4, 6]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, [4, 6]].",
+    solution_example: "def duplicar(x):\n    if isinstance(x, int):\n        return x * 2\n    return [duplicar(e) for e in x]\nresultado = duplicar([1, [2, 3]])\nprint(resultado)",
+    next: Some("py-2590-anidado-suite"), show_type_chips: false, micro_step: 2589,
+};
+pub const PY2590_ANIDADO_SUITE: CodingStep = CodingStep {
+    id: "py-2590-anidado-suite", title: "recursión · suite anidada", objective: "Buscar un valor en cualquier nivel.",
+    prompt_md: "**recursión · suite anidada**\n\nBuscar un valor en cualquier nivel.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def contiene(x, objetivo):\n#     if not isinstance(x, list):\n#         return x == objetivo\n#     return any(contiene(e, objetivo) for e in x)\n# resultado = contiene([1, [2, [8]]], 8)\n# print(resultado)\n",
+    pytest: "def test_anidado_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "def contiene(x, objetivo):\n    if not isinstance(x, list):\n        return x == objetivo\n    return any(contiene(e, objetivo) for e in x)\nresultado = contiene([1, [2, [8]]], 8)\nprint(resultado)",
+    next: Some("py-2591-comp-cuadrados"), show_type_chips: false, micro_step: 2590,
+};
+pub const PY2591_COMP_CUADRADOS: CodingStep = CodingStep {
+    id: "py-2591-comp-cuadrados", title: "comprensión · cuadrados", objective: "Transformar un rango con una list comprehension.",
+    prompt_md: "**comprensión · cuadrados**\n\nTransformar un rango con una list comprehension.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = [x * x for x in range(5)]\n# print(resultado)\n",
+    pytest: "def test_comp_cuadrados(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 4, 9, 16]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [0, 1, 4, 9, 16].",
+    solution_example: "resultado = [x * x for x in range(5)]\nprint(resultado)",
+    next: Some("py-2592-comp-mayusculas"), show_type_chips: false, micro_step: 2591,
+};
+pub const PY2592_COMP_MAYUSCULAS: CodingStep = CodingStep {
+    id: "py-2592-comp-mayusculas", title: "comprensión · mayúsculas", objective: "Transformar cada palabra sin bucle explícito.",
+    prompt_md: "**comprensión · mayúsculas**\n\nTransformar cada palabra sin bucle explícito.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = [s.upper() for s in ['sol', 'mar']]\n# print(resultado)\n",
+    pytest: "def test_comp_mayusculas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['SOL', 'MAR']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['SOL', 'MAR'].",
+    solution_example: "resultado = [s.upper() for s in ['sol', 'mar']]\nprint(resultado)",
+    next: Some("py-2593-comp-longitudes"), show_type_chips: false, micro_step: 2592,
+};
+pub const PY2593_COMP_LONGITUDES: CodingStep = CodingStep {
+    id: "py-2593-comp-longitudes", title: "comprensión · longitudes", objective: "Proyectar palabras a sus longitudes.",
+    prompt_md: "**comprensión · longitudes**\n\nProyectar palabras a sus longitudes.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = [len(s) for s in ['a', 'casa', 'xy']]\n# print(resultado)\n",
+    pytest: "def test_comp_longitudes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 4, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 4, 2].",
+    solution_example: "resultado = [len(s) for s in ['a', 'casa', 'xy']]\nprint(resultado)",
+    next: Some("py-2594-comp-enumerada"), show_type_chips: false, micro_step: 2593,
+};
+pub const PY2594_COMP_ENUMERADA: CodingStep = CodingStep {
+    id: "py-2594-comp-enumerada", title: "comprensión · enumerada", objective: "Combinar índice y valor en una expresión.",
+    prompt_md: "**comprensión · enumerada**\n\nCombinar índice y valor en una expresión.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = [f'{i}:{v}' for i, v in enumerate(['a', 'b'])]\n# print(resultado)\n",
+    pytest: "def test_comp_enumerada(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['0:a', '1:b']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['0:a', '1:b'].",
+    solution_example: "resultado = [f'{i}:{v}' for i, v in enumerate(['a', 'b'])]\nprint(resultado)",
+    next: Some("py-2595-comp-producto"), show_type_chips: false, micro_step: 2594,
+};
+pub const PY2595_COMP_PRODUCTO: CodingStep = CodingStep {
+    id: "py-2595-comp-producto", title: "comprensión · producto cartesiano", objective: "Usar dos cláusulas for en orden.",
+    prompt_md: "**comprensión · producto cartesiano**\n\nUsar dos cláusulas for en orden.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = [(a, b) for a in [1, 2] for b in ['x', 'y']]\n# print(resultado)\n",
+    pytest: "def test_comp_producto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 'x'), (1, 'y'), (2, 'x'), (2, 'y')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(1, 'x'), (1, 'y'), (2, 'x'), (2, 'y')].",
+    solution_example: "resultado = [(a, b) for a in [1, 2] for b in ['x', 'y']]\nprint(resultado)",
+    next: Some("py-2596-comp-lista-suite"), show_type_chips: false, micro_step: 2595,
+};
+pub const PY2596_COMP_LISTA_SUITE: CodingStep = CodingStep {
+    id: "py-2596-comp-lista-suite", title: "comprensión · suite lista", objective: "Aplanar un nivel con comprensión doble.",
+    prompt_md: "**comprensión · suite lista**\n\nAplanar un nivel con comprensión doble.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# matriz = [[1, 2], [3, 4]]\n# resultado = [x for fila in matriz for x in fila]\n# print(resultado)\n",
+    pytest: "def test_comp_lista_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 4].",
+    solution_example: "matriz = [[1, 2], [3, 4]]\nresultado = [x for fila in matriz for x in fila]\nprint(resultado)",
+    next: Some("py-2597-comp-pares"), show_type_chips: false, micro_step: 2596,
+};
+pub const PY2597_COMP_PARES: CodingStep = CodingStep {
+    id: "py-2597-comp-pares", title: "comprensión · filtro par", objective: "Filtrar pares dentro de una comprensión.",
+    prompt_md: "**comprensión · filtro par**\n\nFiltrar pares dentro de una comprensión.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = [x for x in range(7) if x % 2 == 0]\n# print(resultado)\n",
+    pytest: "def test_comp_pares(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 2, 4, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [0, 2, 4, 6].",
+    solution_example: "resultado = [x for x in range(7) if x % 2 == 0]\nprint(resultado)",
+    next: Some("py-2598-comp-pares-cuadrados"), show_type_chips: false, micro_step: 2597,
+};
+pub const PY2598_COMP_PARES_CUADRADOS: CodingStep = CodingStep {
+    id: "py-2598-comp-pares-cuadrados", title: "comprensión · filtrar y transformar", objective: "Filtrar primero y transformar el valor elegido.",
+    prompt_md: "**comprensión · filtrar y transformar**\n\nFiltrar primero y transformar el valor elegido.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = [x * x for x in range(7) if x % 2 == 0]\n# print(resultado)\n",
+    pytest: "def test_comp_pares_cuadrados(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 4, 16, 36]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [0, 4, 16, 36].",
+    solution_example: "resultado = [x * x for x in range(7) if x % 2 == 0]\nprint(resultado)",
+    next: Some("py-2599-comp-texto-no-vacio"), show_type_chips: false, micro_step: 2598,
+};
+pub const PY2599_COMP_TEXTO_NO_VACIO: CodingStep = CodingStep {
+    id: "py-2599-comp-texto-no-vacio", title: "comprensión · limpiar texto", objective: "Normalizar y descartar entradas vacías.",
+    prompt_md: "**comprensión · limpiar texto**\n\nNormalizar y descartar entradas vacías.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [' sol ', ' ', 'mar']\n# resultado = [s.strip() for s in datos if s.strip()]\n# print(resultado)\n",
+    pytest: "def test_comp_texto_no_vacio(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['sol', 'mar']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['sol', 'mar'].",
+    solution_example: "datos = [' sol ', ' ', 'mar']\nresultado = [s.strip() for s in datos if s.strip()]\nprint(resultado)",
+    next: Some("py-2600-comp-condicional"), show_type_chips: false, micro_step: 2599,
+};
+pub const PY2600_COMP_CONDICIONAL: CodingStep = CodingStep {
+    id: "py-2600-comp-condicional", title: "comprensión · expresión condicional", objective: "Elegir una transformación para cada elemento.",
+    prompt_md: "**comprensión · expresión condicional**\n\nElegir una transformación para cada elemento.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = ['par' if x % 2 == 0 else 'impar' for x in [1, 2, 3]]\n# print(resultado)\n",
+    pytest: "def test_comp_condicional(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['impar', 'par', 'impar']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['impar', 'par', 'impar'].",
+    solution_example: "resultado = ['par' if x % 2 == 0 else 'impar' for x in [1, 2, 3]]\nprint(resultado)",
+    next: Some("py-2601-comp-coordenadas"), show_type_chips: false, micro_step: 2600,
+};
+pub const PY2601_COMP_COORDENADAS: CodingStep = CodingStep {
+    id: "py-2601-comp-coordenadas", title: "comprensión · coordenadas", objective: "Filtrar pares cartesianos con una condición.",
+    prompt_md: "**comprensión · coordenadas**\n\nFiltrar pares cartesianos con una condición.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = [(x, y) for x in range(3) for y in range(3) if x < y]\n# print(resultado)\n",
+    pytest: "def test_comp_coordenadas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, 1), (0, 2), (1, 2)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(0, 1), (0, 2), (1, 2)].",
+    solution_example: "resultado = [(x, y) for x in range(3) for y in range(3) if x < y]\nprint(resultado)",
+    next: Some("py-2602-comp-filtro-suite"), show_type_chips: false, micro_step: 2601,
+};
+pub const PY2602_COMP_FILTRO_SUITE: CodingStep = CodingStep {
+    id: "py-2602-comp-filtro-suite", title: "comprensión · suite filtro", objective: "Aplicar condición y transformación de cierre.",
+    prompt_md: "**comprensión · suite filtro**\n\nAplicar condición y transformación de cierre.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [-2, -1, 0, 3]\n# resultado = [abs(x) for x in datos if x != 0]\n# print(resultado)\n",
+    pytest: "def test_comp_filtro_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 1, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 1, 3].",
+    solution_example: "datos = [-2, -1, 0, 3]\nresultado = [abs(x) for x in datos if x != 0]\nprint(resultado)",
+    next: Some("py-2603-dict-cuadrados"), show_type_chips: false, micro_step: 2602,
+};
+pub const PY2603_DICT_CUADRADOS: CodingStep = CodingStep {
+    id: "py-2603-dict-cuadrados", title: "dict comprehension · cuadrados", objective: "Construir claves y valores desde un rango.",
+    prompt_md: "**dict comprehension · cuadrados**\n\nConstruir claves y valores desde un rango.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = {x: x * x for x in range(1, 4)}\n# print(resultado)\n",
+    pytest: "def test_dict_cuadrados(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {1: 1, 2: 4, 3: 9}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {1: 1, 2: 4, 3: 9}.",
+    solution_example: "resultado = {x: x * x for x in range(1, 4)}\nprint(resultado)",
+    next: Some("py-2604-dict-longitudes"), show_type_chips: false, micro_step: 2603,
+};
+pub const PY2604_DICT_LONGITUDES: CodingStep = CodingStep {
+    id: "py-2604-dict-longitudes", title: "dict comprehension · longitudes", objective: "Indexar palabras por su longitud calculada.",
+    prompt_md: "**dict comprehension · longitudes**\n\nIndexar palabras por su longitud calculada.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = {s: len(s) for s in ['sol', 'universo']}\n# print(resultado)\n",
+    pytest: "def test_dict_longitudes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'sol': 3, 'universo': 8}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'sol': 3, 'universo': 8}.",
+    solution_example: "resultado = {s: len(s) for s in ['sol', 'universo']}\nprint(resultado)",
+    next: Some("py-2605-dict-filtrado"), show_type_chips: false, micro_step: 2604,
+};
+pub const PY2605_DICT_FILTRADO: CodingStep = CodingStep {
+    id: "py-2605-dict-filtrado", title: "dict comprehension · filtro", objective: "Conservar pares de un diccionario por condición.",
+    prompt_md: "**dict comprehension · filtro**\n\nConservar pares de un diccionario por condición.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = {'a': 1, 'b': 4, 'c': 2}\n# resultado = {k: v for k, v in datos.items() if v >= 2}\n# print(resultado)\n",
+    pytest: "def test_dict_filtrado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'b': 4, 'c': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'b': 4, 'c': 2}.",
+    solution_example: "datos = {'a': 1, 'b': 4, 'c': 2}\nresultado = {k: v for k, v in datos.items() if v >= 2}\nprint(resultado)",
+    next: Some("py-2606-dict-invertido"), show_type_chips: false, micro_step: 2605,
+};
+pub const PY2606_DICT_INVERTIDO: CodingStep = CodingStep {
+    id: "py-2606-dict-invertido", title: "dict comprehension · invertir", objective: "Intercambiar claves y valores únicos.",
+    prompt_md: "**dict comprehension · invertir**\n\nIntercambiar claves y valores únicos.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = {'rojo': 1, 'azul': 2}\n# resultado = {v: k for k, v in datos.items()}\n# print(resultado)\n",
+    pytest: "def test_dict_invertido(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {1: 'rojo', 2: 'azul'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {1: 'rojo', 2: 'azul'}.",
+    solution_example: "datos = {'rojo': 1, 'azul': 2}\nresultado = {v: k for k, v in datos.items()}\nprint(resultado)",
+    next: Some("py-2607-dict-enumerado"), show_type_chips: false, micro_step: 2606,
+};
+pub const PY2607_DICT_ENUMERADO: CodingStep = CodingStep {
+    id: "py-2607-dict-enumerado", title: "dict comprehension · enumerar", objective: "Crear un índice reproducible para palabras.",
+    prompt_md: "**dict comprehension · enumerar**\n\nCrear un índice reproducible para palabras.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = {i: palabra for i, palabra in enumerate(['uno', 'dos'], start=1)}\n# print(resultado)\n",
+    pytest: "def test_dict_enumerado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {1: 'uno', 2: 'dos'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {1: 'uno', 2: 'dos'}.",
+    solution_example: "resultado = {i: palabra for i, palabra in enumerate(['uno', 'dos'], start=1)}\nprint(resultado)",
+    next: Some("py-2608-dict-suite"), show_type_chips: false, micro_step: 2607,
+};
+pub const PY2608_DICT_SUITE: CodingStep = CodingStep {
+    id: "py-2608-dict-suite", title: "dict comprehension · suite", objective: "Normalizar claves y transformar valores.",
+    prompt_md: "**dict comprehension · suite**\n\nNormalizar claves y transformar valores.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = {' Sol ': 2, ' MAR ': 3}\n# resultado = {k.strip().lower(): v * 10 for k, v in datos.items()}\n# print(resultado)\n",
+    pytest: "def test_dict_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'sol': 20, 'mar': 30}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'sol': 20, 'mar': 30}.",
+    solution_example: "datos = {' Sol ': 2, ' MAR ': 3}\nresultado = {k.strip().lower(): v * 10 for k, v in datos.items()}\nprint(resultado)",
+    next: Some("py-2609-set-restos"), show_type_chips: false, micro_step: 2608,
+};
+pub const PY2609_SET_RESTOS: CodingStep = CodingStep {
+    id: "py-2609-set-restos", title: "set comprehension · restos", objective: "Deduplicar resultados de una transformación.",
+    prompt_md: "**set comprehension · restos**\n\nDeduplicar resultados de una transformación.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = {x % 3 for x in range(7)}\n# print(resultado)\n",
+    pytest: "def test_set_restos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0, 1, 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0, 1, 2}.",
+    solution_example: "resultado = {x % 3 for x in range(7)}\nprint(resultado)",
+    next: Some("py-2610-set-iniciales"), show_type_chips: false, micro_step: 2609,
+};
+pub const PY2610_SET_INICIALES: CodingStep = CodingStep {
+    id: "py-2610-set-iniciales", title: "set comprehension · iniciales", objective: "Extraer iniciales únicas.",
+    prompt_md: "**set comprehension · iniciales**\n\nExtraer iniciales únicas.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = {s[0] for s in ['sol', 'sal', 'mar']}\n# print(resultado)\n",
+    pytest: "def test_set_iniciales(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'m', 's'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'m', 's'}.",
+    solution_example: "resultado = {s[0] for s in ['sol', 'sal', 'mar']}\nprint(resultado)",
+    next: Some("py-2611-set-longitudes"), show_type_chips: false, micro_step: 2610,
+};
+pub const PY2611_SET_LONGITUDES: CodingStep = CodingStep {
+    id: "py-2611-set-longitudes", title: "set comprehension · longitudes", objective: "Calcular longitudes diferentes.",
+    prompt_md: "**set comprehension · longitudes**\n\nCalcular longitudes diferentes.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = {len(s) for s in ['a', 'sol', 'mar', 'universo']}\n# print(resultado)\n",
+    pytest: "def test_set_longitudes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {8, 1, 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {8, 1, 3}.",
+    solution_example: "resultado = {len(s) for s in ['a', 'sol', 'mar', 'universo']}\nprint(resultado)",
+    next: Some("py-2612-set-filtrado"), show_type_chips: false, micro_step: 2611,
+};
+pub const PY2612_SET_FILTRADO: CodingStep = CodingStep {
+    id: "py-2612-set-filtrado", title: "set comprehension · filtro", objective: "Filtrar antes de incorporar al conjunto.",
+    prompt_md: "**set comprehension · filtro**\n\nFiltrar antes de incorporar al conjunto.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = {x * x for x in range(-3, 4) if x > 0}\n# print(resultado)\n",
+    pytest: "def test_set_filtrado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {1, 4, 9}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {1, 4, 9}.",
+    solution_example: "resultado = {x * x for x in range(-3, 4) if x > 0}\nprint(resultado)",
+    next: Some("py-2613-set-normalizado"), show_type_chips: false, micro_step: 2612,
+};
+pub const PY2613_SET_NORMALIZADO: CodingStep = CodingStep {
+    id: "py-2613-set-normalizado", title: "set comprehension · normalizar", objective: "Unificar variantes de texto.",
+    prompt_md: "**set comprehension · normalizar**\n\nUnificar variantes de texto.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [' Sol', 'sol ', 'MAR']\n# resultado = {s.strip().lower() for s in datos}\n# print(resultado)\n",
+    pytest: "def test_set_normalizado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'mar', 'sol'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'mar', 'sol'}.",
+    solution_example: "datos = [' Sol', 'sol ', 'MAR']\nresultado = {s.strip().lower() for s in datos}\nprint(resultado)",
+    next: Some("py-2614-set-suite"), show_type_chips: false, micro_step: 2613,
+};
+pub const PY2614_SET_SUITE: CodingStep = CodingStep {
+    id: "py-2614-set-suite", title: "set comprehension · suite", objective: "Combinar dos fuentes y deduplicar.",
+    prompt_md: "**set comprehension · suite**\n\nCombinar dos fuentes y deduplicar.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a = [1, 2, 2]\n# b = [2, 3]\n# resultado = {x for grupo in [a, b] for x in grupo}\n# print(resultado)\n",
+    pytest: "def test_set_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {1, 2, 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {1, 2, 3}.",
+    solution_example: "a = [1, 2, 2]\nb = [2, 3]\nresultado = {x for grupo in [a, b] for x in grupo}\nprint(resultado)",
+    next: Some("py-2615-combo-rec-comp"), show_type_chips: false, micro_step: 2614,
+};
+pub const PY2615_COMBO_REC_COMP: CodingStep = CodingStep {
+    id: "py-2615-combo-rec-comp", title: "combinación · recursión y comprensión", objective: "Usar comprensión en un paso recursivo acotado.",
+    prompt_md: "**combinación · recursión y comprensión**\n\nUsar comprensión en un paso recursivo acotado.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def capas(n):\n#     if n == 0:\n#         return []\n#     return [[x for x in range(n)]] + capas(n - 1)\n# resultado = capas(3)\n# print(resultado)\n",
+    pytest: "def test_combo_rec_comp(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[0, 1, 2], [0, 1], [0]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [[0, 1, 2], [0, 1], [0]].",
+    solution_example: "def capas(n):\n    if n == 0:\n        return []\n    return [[x for x in range(n)]] + capas(n - 1)\nresultado = capas(3)\nprint(resultado)",
+    next: Some("py-2616-combo-hojas-pares"), show_type_chips: false, micro_step: 2615,
+};
+pub const PY2616_COMBO_HOJAS_PARES: CodingStep = CodingStep {
+    id: "py-2616-combo-hojas-pares", title: "combinación · hojas pares", objective: "Aplanar recursivamente y filtrar con comprensión.",
+    prompt_md: "**combinación · hojas pares**\n\nAplanar recursivamente y filtrar con comprensión.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def aplanar(x):\n#     if not isinstance(x, list):\n#         return [x]\n#     return [v for parte in x for v in aplanar(parte)]\n# resultado = [x for x in aplanar([1, [2, 3], 4]) if x % 2 == 0]\n# print(resultado)\n",
+    pytest: "def test_combo_hojas_pares(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 4].",
+    solution_example: "def aplanar(x):\n    if not isinstance(x, list):\n        return [x]\n    return [v for parte in x for v in aplanar(parte)]\nresultado = [x for x in aplanar([1, [2, 3], 4]) if x % 2 == 0]\nprint(resultado)",
+    next: Some("py-2617-combo-frecuencias"), show_type_chips: false, micro_step: 2616,
+};
+pub const PY2617_COMBO_FRECUENCIAS: CodingStep = CodingStep {
+    id: "py-2617-combo-frecuencias", title: "combinación · frecuencias", objective: "Construir frecuencias mediante una comprensión de diccionario.",
+    prompt_md: "**combinación · frecuencias**\n\nConstruir frecuencias mediante una comprensión de diccionario.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = ['a', 'b', 'a', 'c', 'b', 'a']\n# resultado = {x: datos.count(x) for x in set(datos)}\n# print(resultado)\n",
+    pytest: "def test_combo_frecuencias(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 3, 'b': 2, 'c': 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 3, 'b': 2, 'c': 1}.",
+    solution_example: "datos = ['a', 'b', 'a', 'c', 'b', 'a']\nresultado = {x: datos.count(x) for x in set(datos)}\nprint(resultado)",
+    next: Some("py-2618-combo-arbol-mapeado"), show_type_chips: false, micro_step: 2617,
+};
+pub const PY2618_COMBO_ARBOL_MAPEADO: CodingStep = CodingStep {
+    id: "py-2618-combo-arbol-mapeado", title: "combinación · árbol mapeado", objective: "Transformar hojas y conservar una estructura anidada.",
+    prompt_md: "**combinación · árbol mapeado**\n\nTransformar hojas y conservar una estructura anidada.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def mapear(x):\n#     if isinstance(x, int):\n#         return x * x\n#     return [mapear(e) for e in x]\n# resultado = mapear([1, [2, 3]])\n# print(resultado)\n",
+    pytest: "def test_combo_arbol_mapeado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, [4, 9]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, [4, 9]].",
+    solution_example: "def mapear(x):\n    if isinstance(x, int):\n        return x * x\n    return [mapear(e) for e in x]\nresultado = mapear([1, [2, 3]])\nprint(resultado)",
+    next: Some("py-2619-combo-palabras"), show_type_chips: false, micro_step: 2618,
+};
+pub const PY2619_COMBO_PALABRAS: CodingStep = CodingStep {
+    id: "py-2619-combo-palabras", title: "combinación · palabras", objective: "Aplicar recursión y deduplicación normalizada.",
+    prompt_md: "**combinación · palabras**\n\nAplicar recursión y deduplicación normalizada.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def normalizar(xs):\n#     if not xs:\n#         return []\n#     return [xs[0].lower()] + normalizar(xs[1:])\n# resultado = sorted({s for s in normalizar(['Sol', 'MAR', 'sol'])})\n# print(resultado)\n",
+    pytest: "def test_combo_palabras(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['mar', 'sol']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['mar', 'sol'].",
+    solution_example: "def normalizar(xs):\n    if not xs:\n        return []\n    return [xs[0].lower()] + normalizar(xs[1:])\nresultado = sorted({s for s in normalizar(['Sol', 'MAR', 'sol'])})\nprint(resultado)",
+    next: Some("py-2620-ola27-suite"), show_type_chips: false, micro_step: 2619,
+};
+pub const PY2620_OLA27_SUITE: CodingStep = CodingStep {
+    id: "py-2620-ola27-suite", title: "ola 27 · suite", objective: "Cerrar la ola con recorrido, filtro y resumen determinista.",
+    prompt_md: "**ola 27 · suite**\n\nCerrar la ola con recorrido, filtro y resumen determinista.\n\n**Micro-reto:** completá la función o comprensión indicada, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def suma_hojas(x):\n#     if isinstance(x, int):\n#         return x\n#     return sum(suma_hojas(e) for e in x)\n# datos = [[1, 2], [3, 4]]\n# resultado = {i: suma_hojas(fila) for i, fila in enumerate(datos, start=1)}\n# print(resultado)\n",
+    pytest: "def test_ola27_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {1: 3, 2: 7}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {1: 3, 2: 7}.",
+    solution_example: "def suma_hojas(x):\n    if isinstance(x, int):\n        return x\n    return sum(suma_hojas(e) for e in x)\ndatos = [[1, 2], [3, 4]]\nresultado = {i: suma_hojas(fila) for i, fila in enumerate(datos, start=1)}\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 2620,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -61451,6 +61991,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2558_SCORE_SORT,
     &PY2559_SCORE_TOP,
     &PY2560_SCORE_CHECK,
+    &PY2561_BASE_CERO,
+    &PY2562_BASE_LISTA_VACIA,
+    &PY2563_BASE_UN_CARACTER,
+    &PY2564_BASE_UNO,
+    &PY2565_BASE_BOOL,
+    &PY2566_BASE_SUITE,
+    &PY2567_SUMA_NATURAL,
+    &PY2568_SUMA_LISTA,
+    &PY2569_PRODUCTO_LISTA,
+    &PY2570_FACTORIAL_ACOTADO,
+    &PY2571_SUMA_PARES,
+    &PY2572_PRODUCTO_SUITE,
+    &PY2573_INVERTIR_TEXTO,
+    &PY2574_CONTAR_LETRA,
+    &PY2575_QUITAR_VOCALES,
+    &PY2576_PALINDROMO,
+    &PY2577_REPETIR_CARACTER,
+    &PY2578_TEXTO_SUITE,
+    &PY2579_MAXIMO_LISTA,
+    &PY2580_BUSCAR_LISTA,
+    &PY2581_DUPLICAR_LISTA,
+    &PY2582_FILTRAR_RECURSIVO,
+    &PY2583_INTERCALAR_LISTAS,
+    &PY2584_LISTAS_SUITE,
+    &PY2585_APLANAR_LISTAS,
+    &PY2586_PROFUNDIDAD_LISTAS,
+    &PY2587_SUMAR_ANIDADO,
+    &PY2588_CONTAR_HOJAS,
+    &PY2589_MAPEAR_ANIDADO,
+    &PY2590_ANIDADO_SUITE,
+    &PY2591_COMP_CUADRADOS,
+    &PY2592_COMP_MAYUSCULAS,
+    &PY2593_COMP_LONGITUDES,
+    &PY2594_COMP_ENUMERADA,
+    &PY2595_COMP_PRODUCTO,
+    &PY2596_COMP_LISTA_SUITE,
+    &PY2597_COMP_PARES,
+    &PY2598_COMP_PARES_CUADRADOS,
+    &PY2599_COMP_TEXTO_NO_VACIO,
+    &PY2600_COMP_CONDICIONAL,
+    &PY2601_COMP_COORDENADAS,
+    &PY2602_COMP_FILTRO_SUITE,
+    &PY2603_DICT_CUADRADOS,
+    &PY2604_DICT_LONGITUDES,
+    &PY2605_DICT_FILTRADO,
+    &PY2606_DICT_INVERTIDO,
+    &PY2607_DICT_ENUMERADO,
+    &PY2608_DICT_SUITE,
+    &PY2609_SET_RESTOS,
+    &PY2610_SET_INICIALES,
+    &PY2611_SET_LONGITUDES,
+    &PY2612_SET_FILTRADO,
+    &PY2613_SET_NORMALIZADO,
+    &PY2614_SET_SUITE,
+    &PY2615_COMBO_REC_COMP,
+    &PY2616_COMBO_HOJAS_PARES,
+    &PY2617_COMBO_FRECUENCIAS,
+    &PY2618_COMBO_ARBOL_MAPEADO,
+    &PY2619_COMBO_PALABRAS,
+    &PY2620_OLA27_SUITE,
 
 ];
 
@@ -61618,14 +62218,14 @@ mod tests {
     #[test]
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
-        assert_eq!(CODING_STEPS.len(), 2560, "catalog must contain 2560 steps");
+        assert_eq!(CODING_STEPS.len(), 2620, "catalog must contain 2620 steps");
         for (index, step) in CODING_STEPS.iter().enumerate() {
             assert_eq!(
                 step.micro_step,
                 (index + 1) as i32,
                 "catalog must be contiguous at index {index}"
             );
-            assert!(step.micro_step >= 1 && step.micro_step <= 2560);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2620);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -61634,8 +62234,8 @@ mod tests {
         }
         assert_eq!(
             seen,
-            (1..=2560).collect(),
-            "catalog must cover every micro-step in 1..=2560"
+            (1..=2620).collect(),
+            "catalog must cover every micro-step in 1..=2620"
         );
     }
 
@@ -64934,7 +65534,22 @@ mod tests {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next wave26 step");
                 assert_eq!(step.next, Some(next_step.id));
             } else {
-                assert_eq!(step.next, None, "step 2560 is the end of the rail");
+                assert_eq!(step.next, Some("py-2561-base-cero"), "step 2560 chains to Wave 27");
+            }
+        }
+    }
+
+    #[test]
+    fn py2561_to_py2620_recursion_comprehension_chain() {
+        for n in 2561..=2620 {
+            let step = coding_step_by_micro_step(n).expect("wave27 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(step.id.starts_with(&format!("py-{n}-")));
+            if n < 2620 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next wave27 step");
+                assert_eq!(step.next, Some(next_step.id));
+            } else {
+                assert_eq!(step.next, None, "step 2620 is the end of the rail");
             }
         }
     }

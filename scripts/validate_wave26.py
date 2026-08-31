@@ -50,13 +50,13 @@ def main() -> None:
 
     source = CURRICULUM.read_text(encoding="utf-8")
     catalog = [int(value) for value in re.findall(r"micro_step:\s*(\d+)", source)]
-    assert catalog == list(range(1, 2561)), "catalog must be exact and ordered 1..=2560"
+    assert catalog[:2560] == list(range(1, 2561)), "Wave 26 prefix must remain exact 1..=2560"
     for step in steps:
         constant = f'PY{step["num"]}_{step["slug"].upper().replace("-", "_")}'
         assert source.count(f"pub const {constant}:") == 1, f"bad definition count: {constant}"
         assert source.count(f"    &{constant},") == 1, f"bad catalog reference: {constant}"
     assert 'next: Some("py-2501-map-lambda"), show_type_chips: false, micro_step: 2500' in source
-    assert re.search(r'next: None, show_type_chips: false, micro_step: 2560,', source)
+    assert 'next: Some("py-2561-base-cero"), show_type_chips: false, micro_step: 2560' in source
 
     concepts = CONCEPTS.read_text(encoding="utf-8")
     partition_numbers = [int(value) for value in re.findall(r"^    \((\d+), &\[", concepts, re.MULTILINE)]
@@ -66,8 +66,8 @@ def main() -> None:
     assert active == sorted(set(active)), "active partitions must be unique and sorted"
 
     for path in E2E:
-        assert path.read_text(encoding="utf-8").count("toHaveCount(2560)") == 1, f"stale E2E count: {path}"
-    print("Wave 26 contract OK: exact catalog and partitions 2501..=2560")
+        assert "toHaveCount(2620)" in path.read_text(encoding="utf-8"), f"Wave 27 ceiling missing: {path}"
+    print("Wave 26 cumulative contract OK: prefix and partitions 2501..=2560 preserved")
 
 
 if __name__ == "__main__":
