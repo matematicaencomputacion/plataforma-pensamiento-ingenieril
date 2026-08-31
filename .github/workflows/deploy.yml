@@ -1,19 +1,19 @@
 # Deploy to Artifact Registry + Cloud Run after product gates on main.
-# Does NOT replace CI, Docker or Playwright. Deploy only promotes a main SHA
-# after all three workflows completed successfully for that exact commit.
+# E2E is the slowest gate and triggers this workflow only after completion.
+# Deploy then verifies CI and Docker succeeded for that exact commit.
 # No service-account JSON. No Cloud Build. No Neo4j.
 name: Deploy Cloud Run
 
 on:
   workflow_run:
-    workflows: ["Docker"]
+    workflows: ["E2E Web (Playwright)"]
     types: [completed]
     branches: [main]
 
 permissions:
   contents: read
   id-token: write
-  actions: write
+  actions: read
 
 concurrency:
   group: deploy-cloud-run
@@ -31,41 +31,33 @@ jobs:
   deploy:
     name: Artifact Registry + Cloud Run
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push'
     env:
       SHA: ${{ github.event.workflow_run.head_sha }}
     steps:
-      - name: Require CI and E2E success for the same SHA
+      - name: Require CI and Docker success for the same SHA
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           require_workflow() {
             local workflow="$1"
-            echo "waiting for workflow ${workflow} on ${SHA}"
-            for _ in $(seq 1 180); do
-              json="$(gh run list --repo "${GITHUB_REPOSITORY}" --workflow "${workflow}" --commit "${SHA}" --event push --json status,conclusion --limit 5)"
-              status="$(printf '%s' "${json}" | jq -r '.[0].status // "missing"')"
-              conclusion="$(printf '%s' "${json}" | jq -r '.[0].conclusion // "missing"')"
-              echo "${workflow} status=${status} conclusion=${conclusion}"
-              if [[ "${status}" == "completed" && "${conclusion}" == "success" ]]; then
-                return 0
-              fi
-              if [[ "${status}" == "completed" ]]; then
-                echo "::error::${workflow} no está verde para ${SHA} (conclusion=${conclusion}). No se despliega."
-                return 1
-              fi
-              sleep 10
-            done
-            echo "::error::${workflow} no completó a tiempo para ${SHA}."
-            return 1
+            local json status conclusion
+            json="$(gh run list --repo "${GITHUB_REPOSITORY}" --workflow "${workflow}" --commit "${SHA}" --event push --json status,conclusion --limit 5)"
+            status="$(printf '%s' "${json}" | jq -r '.[0].status // "missing"')"
+            conclusion="$(printf '%s' "${json}" | jq -r '.[0].conclusion // "missing"')"
+            echo "${workflow} status=${status} conclusion=${conclusion}"
+            if [[ "${status}" != "completed" || "${conclusion}" != "success" ]]; then
+              echo "::error::${workflow} no está verde para ${SHA} (status=${status}, conclusion=${conclusion}). No se despliega."
+              return 1
+            fi
           }
 
           require_workflow "CI"
-          require_workflow "E2E Web (Playwright)"
+          require_workflow "Docker"
 
       - name: Checkout SHA that passed Docker
         uses: actions/checkout@v4

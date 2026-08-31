@@ -25,7 +25,7 @@ Cursor Cloud Agents **GitHub App no está instalada**. Los ciclos se empujan con
 | `.github/workflows/ci.yml` | **Frontend** | lint + Vitest + build de `frontend/` (Qwik legado) | todo PR / push a `main` |
 | `.github/workflows/e2e.yml` | **Playwright Chromium shard 1–6** | misma suite que `make harness-e2e` (ADR 003); 6 shards × 120 min | PRs que tocan `web/**`, `backend/**`, `Dockerfile`, `.dockerignore` o los workflows E2E/Docker |
 | `.github/workflows/docker.yml` | **docker-build** | `docker build` (Buildx, `push: false`) + smoke `GET /api/health` + index SPA | todo PR / push a `main` (sin path filter) |
-| `.github/workflows/deploy.yml` | **Artifact Registry + Cloud Run** | WIF → push imagen → `gcloud run deploy ppi` | `workflow_run` de **Docker** en `main` (push) **después** de CI verde; no corre en PRs |
+| `.github/workflows/deploy.yml` | **Artifact Registry + Cloud Run** | WIF → push imagen → `gcloud run deploy ppi` | `workflow_run` de **E2E** verde en `main`; verifica CI + Docker del mismo SHA; no corre en PRs |
 
 PRs **solo-docs**: Backend + Frontend sí corren; Playwright **se salta** por `paths:`. `docker-build` no tiene path filter. El deploy **no** es un check de PR.
 
@@ -109,7 +109,7 @@ Cerrado en [`docs/adr/0004-persistencia-sqlite-postgres.md`](../adr/0004-persist
 
 Implementado en `.github/workflows/deploy.yml` (PR propio; no Cloud Build; no JSON de SA):
 
-1. WIF (GitHub OIDC → `github-deploy-sa`). Trigger: Docker verde en `main` + CI verde del mismo SHA. Playwright **no** bloquea este primer deploy.
+1. Gate: E2E verde dispara el workflow para un push a `main`; antes de WIF se verifican CI + Docker verdes para el mismo SHA, sin polling prolongado.
 2. Push a Artifact Registry `southamerica-east1-docker.pkg.dev/project-2dc3a0ed-9735-4291-b0b/ppi/ppi:$SHA` (y `:latest` en `main`).
 3. `gcloud run deploy ppi` con `--port=8080`, `ENV=production`, `--set-secrets=JWT_SECRET=JWT_SECRET:latest`, `--allow-unauthenticated`.
 4. Persistencia: si el secreto `DATABASE_URL` existe, se monta (Postgres). Si no, demo `sqlite:///tmp/ppi.db` + `PPI_ALLOW_EPHEMERAL_SQLITE=1`. SMTP no se inyecta en este slice.
