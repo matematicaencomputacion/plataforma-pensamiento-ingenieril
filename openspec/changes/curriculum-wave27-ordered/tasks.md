@@ -23,5 +23,5 @@
 
 - [x] 4.1 Auditar el diff y verificar que no contiene micro-steps mayores a 2620 ni cambios fuera del alcance
 - [x] 4.2 Crear commit convencional, publicar la rama y abrir un PR con la evidencia local
-- [ ] 4.3 Monitorear CI, Docker y E2E del PR hasta verde o bloqueo externo identificado
-- [ ] 4.4 Tras autorización, integrar y verificar CI, Docker, E2E y Deploy post-merge antes de Ola 28
+- [x] 4.3 Monitorear CI, Docker y E2E del PR hasta verde o bloqueo externo identificado
+- [x] 4.4 Tras autorización, integrar y verificar CI, Docker, E2E y Deploy post-merge antes de Ola 28
