@@ -1,4 +1,4 @@
-"""Validate the active Wave 25 contract and the catalog ceiling at 2500."""
+"""Validate the Wave 25 range after later ordered waves extend the catalog."""
 
 from pathlib import Path
 import re
@@ -15,15 +15,14 @@ def main() -> None:
 
     expected = set(range(2441, 2501))
     assert expected <= catalog, f"missing Wave 25 steps: {sorted(expected - catalog)}"
-    assert len(steps) == 2500, f"expected 2500 steps, got {len(steps)}"
-    assert catalog == set(range(1, 2501)), "catalog must cover exactly 1..=2500"
-    terminal = re.search(
-        r'id: "py-2500-score-check".*?next: None,.*?micro_step: 2500,',
+    assert catalog >= set(range(1, 2501)), "catalog must retain the exact Wave 25 prefix"
+    boundary = re.search(
+        r'id: "py-2500-score-check".*?next: Some\("py-2501-map-lambda"\),.*?micro_step: 2500,',
         source,
         flags=re.DOTALL,
     )
-    assert terminal is not None, "micro-step 2500 must terminate the rail"
-    print("Wave 25 contract OK: 2441..=2500; catalog ceiling 2500")
+    assert boundary is not None, "micro-step 2500 must link to the ordered Wave 26 boundary"
+    print("Wave 25 contract OK: 2441..=2500 retained; boundary links to 2501")
 
 
 if __name__ == "__main__":
