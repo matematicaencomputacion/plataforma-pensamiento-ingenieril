@@ -59428,7 +59428,547 @@ pub const PY2620_OLA27_SUITE: CodingStep = CodingStep {
     pytest: "def test_ola27_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {1: 3, 2: 7}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "El resultado esperado es {1: 3, 2: 7}.",
     solution_example: "def suma_hojas(x):\n    if isinstance(x, int):\n        return x\n    return sum(suma_hojas(e) for e in x)\ndatos = [[1, 2], [3, 4]]\nresultado = {i: suma_hojas(fila) for i, fila in enumerate(datos, start=1)}\nprint(resultado)",
-    next: None, show_type_chips: false, micro_step: 2620,
+    next: Some("py-2621-chunk-tamano"), show_type_chips: false, micro_step: 2620,
+};
+pub const PY2621_CHUNK_TAMANO: CodingStep = CodingStep {
+    id: "py-2621-chunk-tamano", title: "chunks · tamaño fijo", objective: "Particionar datos en bloques independientes.",
+    prompt_md: "**chunks · tamaño fijo**\n\nParticionar datos en bloques independientes.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3, 4, 5]\n# tamano = 2\n# resultado = [datos[i:i + tamano] for i in range(0, len(datos), tamano)]\n# print(resultado)\n",
+    pytest: "def test_chunk_tamano(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 2], [3, 4], [5]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [[1, 2], [3, 4], [5]].",
+    solution_example: "datos = [1, 2, 3, 4, 5]\ntamano = 2\nresultado = [datos[i:i + tamano] for i in range(0, len(datos), tamano)]\nprint(resultado)",
+    next: Some("py-2622-chunk-indices"), show_type_chips: false, micro_step: 2621,
+};
+pub const PY2622_CHUNK_INDICES: CodingStep = CodingStep {
+    id: "py-2622-chunk-indices", title: "chunks · índices", objective: "Conservar el índice inicial de cada bloque.",
+    prompt_md: "**chunks · índices**\n\nConservar el índice inicial de cada bloque.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = ['a', 'b', 'c', 'd']\n# resultado = [(i, datos[i:i + 2]) for i in range(0, len(datos), 2)]\n# print(resultado)\n",
+    pytest: "def test_chunk_indices(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, ['a', 'b']), (2, ['c', 'd'])]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(0, ['a', 'b']), (2, ['c', 'd'])].",
+    solution_example: "datos = ['a', 'b', 'c', 'd']\nresultado = [(i, datos[i:i + 2]) for i in range(0, len(datos), 2)]\nprint(resultado)",
+    next: Some("py-2623-chunk-equilibrado"), show_type_chips: false, micro_step: 2622,
+};
+pub const PY2623_CHUNK_EQUILIBRADO: CodingStep = CodingStep {
+    id: "py-2623-chunk-equilibrado", title: "chunks · reparto equilibrado", objective: "Repartir una secuencia en dos mitades ordenadas.",
+    prompt_md: "**chunks · reparto equilibrado**\n\nRepartir una secuencia en dos mitades ordenadas.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3, 4, 5]\n# corte = (len(datos) + 1) // 2\n# resultado = [datos[:corte], datos[corte:]]\n# print(resultado)\n",
+    pytest: "def test_chunk_equilibrado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 2, 3], [4, 5]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [[1, 2, 3], [4, 5]].",
+    solution_example: "datos = [1, 2, 3, 4, 5]\ncorte = (len(datos) + 1) // 2\nresultado = [datos[:corte], datos[corte:]]\nprint(resultado)",
+    next: Some("py-2624-chunk-etiquetas"), show_type_chips: false, micro_step: 2623,
+};
+pub const PY2624_CHUNK_ETIQUETAS: CodingStep = CodingStep {
+    id: "py-2624-chunk-etiquetas", title: "chunks · etiquetas", objective: "Etiquetar unidades de trabajo reproducibles.",
+    prompt_md: "**chunks · etiquetas**\n\nEtiquetar unidades de trabajo reproducibles.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# chunks = [[10, 20], [30]]\n# resultado = [{'worker': i, 'datos': parte} for i, parte in enumerate(chunks, start=1)]\n# print(resultado)\n",
+    pytest: "def test_chunk_etiquetas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'worker': 1, 'datos': [10, 20]}, {'worker': 2, 'datos': [30]}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'worker': 1, 'datos': [10, 20]}, {'worker': 2, 'datos': [30]}].",
+    solution_example: "chunks = [[10, 20], [30]]\nresultado = [{'worker': i, 'datos': parte} for i, parte in enumerate(chunks, start=1)]\nprint(resultado)",
+    next: Some("py-2625-chunk-vacios"), show_type_chips: false, micro_step: 2624,
+};
+pub const PY2625_CHUNK_VACIOS: CodingStep = CodingStep {
+    id: "py-2625-chunk-vacios", title: "chunks · entrada vacía", objective: "Tratar una entrada vacía sin crear trabajo ficticio.",
+    prompt_md: "**chunks · entrada vacía**\n\nTratar una entrada vacía sin crear trabajo ficticio.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = []\n# resultado = [datos[i:i + 3] for i in range(0, len(datos), 3)]\n# print(resultado)\n",
+    pytest: "def test_chunk_vacios(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == []\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [].",
+    solution_example: "datos = []\nresultado = [datos[i:i + 3] for i in range(0, len(datos), 3)]\nprint(resultado)",
+    next: Some("py-2626-chunk-suite"), show_type_chips: false, micro_step: 2625,
+};
+pub const PY2626_CHUNK_SUITE: CodingStep = CodingStep {
+    id: "py-2626-chunk-suite", title: "chunks · suite", objective: "Particionar y comprobar la reconstrucción ordenada.",
+    prompt_md: "**chunks · suite**\n\nParticionar y comprobar la reconstrucción ordenada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = list(range(7))\n# chunks = [datos[i:i + 3] for i in range(0, len(datos), 3)]\n# resultado = [x for parte in chunks for x in parte]\n# print(resultado)\n",
+    pytest: "def test_chunk_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 2, 3, 4, 5, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [0, 1, 2, 3, 4, 5, 6].",
+    solution_example: "datos = list(range(7))\nchunks = [datos[i:i + 3] for i in range(0, len(datos), 3)]\nresultado = [x for parte in chunks for x in parte]\nprint(resultado)",
+    next: Some("py-2627-batch-pares"), show_type_chips: false, micro_step: 2626,
+};
+pub const PY2627_BATCH_PARES: CodingStep = CodingStep {
+    id: "py-2627-batch-pares", title: "batch · pares", objective: "Procesar lotes pequeños con una función pura.",
+    prompt_md: "**batch · pares**\n\nProcesar lotes pequeños con una función pura.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lotes = [[1, 2], [3, 4]]\n# resultado = [[x * 2 for x in lote] for lote in lotes]\n# print(resultado)\n",
+    pytest: "def test_batch_pares(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[2, 4], [6, 8]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [[2, 4], [6, 8]].",
+    solution_example: "lotes = [[1, 2], [3, 4]]\nresultado = [[x * 2 for x in lote] for lote in lotes]\nprint(resultado)",
+    next: Some("py-2628-batch-sumas"), show_type_chips: false, micro_step: 2627,
+};
+pub const PY2628_BATCH_SUMAS: CodingStep = CodingStep {
+    id: "py-2628-batch-sumas", title: "batch · sumas", objective: "Producir un parcial por lote.",
+    prompt_md: "**batch · sumas**\n\nProducir un parcial por lote.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lotes = [[1, 2, 3], [4, 5]]\n# resultado = [sum(lote) for lote in lotes]\n# print(resultado)\n",
+    pytest: "def test_batch_sumas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [6, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [6, 9].",
+    solution_example: "lotes = [[1, 2, 3], [4, 5]]\nresultado = [sum(lote) for lote in lotes]\nprint(resultado)",
+    next: Some("py-2629-batch-filtrado"), show_type_chips: false, micro_step: 2628,
+};
+pub const PY2629_BATCH_FILTRADO: CodingStep = CodingStep {
+    id: "py-2629-batch-filtrado", title: "batch · filtro", objective: "Filtrar dentro de cada lote sin compartir estado.",
+    prompt_md: "**batch · filtro**\n\nFiltrar dentro de cada lote sin compartir estado.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lotes = [[1, 2, 3], [4, 5, 6]]\n# resultado = [[x for x in lote if x % 2 == 0] for lote in lotes]\n# print(resultado)\n",
+    pytest: "def test_batch_filtrado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[2], [4, 6]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [[2], [4, 6]].",
+    solution_example: "lotes = [[1, 2, 3], [4, 5, 6]]\nresultado = [[x for x in lote if x % 2 == 0] for lote in lotes]\nprint(resultado)",
+    next: Some("py-2630-batch-normalizar"), show_type_chips: false, micro_step: 2629,
+};
+pub const PY2630_BATCH_NORMALIZAR: CodingStep = CodingStep {
+    id: "py-2630-batch-normalizar", title: "batch · normalizar", objective: "Aplicar la misma normalización a cada lote.",
+    prompt_md: "**batch · normalizar**\n\nAplicar la misma normalización a cada lote.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lotes = [[' Sol ', 'MAR'], [' río']]\n# resultado = [[s.strip().lower() for s in lote] for lote in lotes]\n# print(resultado)\n",
+    pytest: "def test_batch_normalizar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [['sol', 'mar'], ['río']]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [['sol', 'mar'], ['río']].",
+    solution_example: "lotes = [[' Sol ', 'MAR'], [' río']]\nresultado = [[s.strip().lower() for s in lote] for lote in lotes]\nprint(resultado)",
+    next: Some("py-2631-batch-metadata"), show_type_chips: false, micro_step: 2630,
+};
+pub const PY2631_BATCH_METADATA: CodingStep = CodingStep {
+    id: "py-2631-batch-metadata", title: "batch · metadata", objective: "Resumir tamaño y total de cada lote.",
+    prompt_md: "**batch · metadata**\n\nResumir tamaño y total de cada lote.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lotes = [[2, 3], [5], []]\n# resultado = [{'n': len(lote), 'total': sum(lote)} for lote in lotes]\n# print(resultado)\n",
+    pytest: "def test_batch_metadata(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'n': 2, 'total': 5}, {'n': 1, 'total': 5}, {'n': 0, 'total': 0}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'n': 2, 'total': 5}, {'n': 1, 'total': 5}, {'n': 0, 'total': 0}].",
+    solution_example: "lotes = [[2, 3], [5], []]\nresultado = [{'n': len(lote), 'total': sum(lote)} for lote in lotes]\nprint(resultado)",
+    next: Some("py-2632-batch-suite"), show_type_chips: false, micro_step: 2631,
+};
+pub const PY2632_BATCH_SUITE: CodingStep = CodingStep {
+    id: "py-2632-batch-suite", title: "batch · suite", objective: "Transformar lotes y reunirlos en orden estable.",
+    prompt_md: "**batch · suite**\n\nTransformar lotes y reunirlos en orden estable.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lotes = [[1, 2], [3], [4, 5]]\n# procesados = [[x * x for x in lote] for lote in lotes]\n# resultado = [x for lote in procesados for x in lote]\n# print(resultado)\n",
+    pytest: "def test_batch_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 4, 9, 16, 25]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 4, 9, 16, 25].",
+    solution_example: "lotes = [[1, 2], [3], [4, 5]]\nprocesados = [[x * x for x in lote] for lote in lotes]\nresultado = [x for lote in procesados for x in lote]\nprint(resultado)",
+    next: Some("py-2633-zip-pares"), show_type_chips: false, micro_step: 2632,
+};
+pub const PY2633_ZIP_PARES: CodingStep = CodingStep {
+    id: "py-2633-zip-pares", title: "alineación · zip", objective: "Alinear dos fuentes por posición.",
+    prompt_md: "**alineación · zip**\n\nAlinear dos fuentes por posición.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# nombres = ['ana', 'leo']\n# puntos = [8, 9]\n# resultado = list(zip(nombres, puntos))\n# print(resultado)\n",
+    pytest: "def test_zip_pares(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('ana', 8), ('leo', 9)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('ana', 8), ('leo', 9)].",
+    solution_example: "nombres = ['ana', 'leo']\npuntos = [8, 9]\nresultado = list(zip(nombres, puntos))\nprint(resultado)",
+    next: Some("py-2634-zip-sumas"), show_type_chips: false, micro_step: 2633,
+};
+pub const PY2634_ZIP_SUMAS: CodingStep = CodingStep {
+    id: "py-2634-zip-sumas", title: "alineación · suma", objective: "Combinar valores alineados con una función pura.",
+    prompt_md: "**alineación · suma**\n\nCombinar valores alineados con una función pura.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a = [1, 2, 3]\n# b = [10, 20, 30]\n# resultado = [x + y for x, y in zip(a, b)]\n# print(resultado)\n",
+    pytest: "def test_zip_sumas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [11, 22, 33]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [11, 22, 33].",
+    solution_example: "a = [1, 2, 3]\nb = [10, 20, 30]\nresultado = [x + y for x, y in zip(a, b)]\nprint(resultado)",
+    next: Some("py-2635-zip-dict"), show_type_chips: false, micro_step: 2634,
+};
+pub const PY2635_ZIP_DICT: CodingStep = CodingStep {
+    id: "py-2635-zip-dict", title: "alineación · diccionario", objective: "Construir registros desde columnas alineadas.",
+    prompt_md: "**alineación · diccionario**\n\nConstruir registros desde columnas alineadas.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# claves = ['cpu', 'ram']\n# valores = [70, 55]\n# resultado = dict(zip(claves, valores))\n# print(resultado)\n",
+    pytest: "def test_zip_dict(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'cpu': 70, 'ram': 55}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'cpu': 70, 'ram': 55}.",
+    solution_example: "claves = ['cpu', 'ram']\nvalores = [70, 55]\nresultado = dict(zip(claves, valores))\nprint(resultado)",
+    next: Some("py-2636-zip-cortar"), show_type_chips: false, micro_step: 2635,
+};
+pub const PY2636_ZIP_CORTAR: CodingStep = CodingStep {
+    id: "py-2636-zip-cortar", title: "alineación · fuente corta", objective: "Observar que zip usa la fuente más corta.",
+    prompt_md: "**alineación · fuente corta**\n\nObservar que zip usa la fuente más corta.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a = [1, 2, 3]\n# b = ['x', 'y']\n# resultado = list(zip(a, b))\n# print(resultado)\n",
+    pytest: "def test_zip_cortar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 'x'), (2, 'y')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(1, 'x'), (2, 'y')].",
+    solution_example: "a = [1, 2, 3]\nb = ['x', 'y']\nresultado = list(zip(a, b))\nprint(resultado)",
+    next: Some("py-2637-zip-indice"), show_type_chips: false, micro_step: 2636,
+};
+pub const PY2637_ZIP_INDICE: CodingStep = CodingStep {
+    id: "py-2637-zip-indice", title: "alineación · índice", objective: "Asociar posiciones estables a pares alineados.",
+    prompt_md: "**alineación · índice**\n\nAsociar posiciones estables a pares alineados.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a = ['A', 'B']\n# b = [100, 200]\n# resultado = [(i, x, y) for i, (x, y) in enumerate(zip(a, b))]\n# print(resultado)\n",
+    pytest: "def test_zip_indice(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, 'A', 100), (1, 'B', 200)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(0, 'A', 100), (1, 'B', 200)].",
+    solution_example: "a = ['A', 'B']\nb = [100, 200]\nresultado = [(i, x, y) for i, (x, y) in enumerate(zip(a, b))]\nprint(resultado)",
+    next: Some("py-2638-zip-suite"), show_type_chips: false, micro_step: 2637,
+};
+pub const PY2638_ZIP_SUITE: CodingStep = CodingStep {
+    id: "py-2638-zip-suite", title: "alineación · suite", objective: "Validar y transformar dos columnas relacionadas.",
+    prompt_md: "**alineación · suite**\n\nValidar y transformar dos columnas relacionadas.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# precios = [10, 20, 5]\n# cantidades = [2, 1, 4]\n# resultado = [p * q for p, q in zip(precios, cantidades)]\n# print(resultado)\n",
+    pytest: "def test_zip_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [20, 20, 20]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [20, 20, 20].",
+    solution_example: "precios = [10, 20, 5]\ncantidades = [2, 1, 4]\nresultado = [p * q for p, q in zip(precios, cantidades)]\nprint(resultado)",
+    next: Some("py-2639-fanout-doble-triple"), show_type_chips: false, micro_step: 2638,
+};
+pub const PY2639_FANOUT_DOBLE_TRIPLE: CodingStep = CodingStep {
+    id: "py-2639-fanout-doble-triple", title: "fan-out · dos ramas", objective: "Aplicar dos transformaciones independientes a la misma entrada.",
+    prompt_md: "**fan-out · dos ramas**\n\nAplicar dos transformaciones independientes a la misma entrada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3]\n# resultado = {'dobles': [x * 2 for x in datos], 'triples': [x * 3 for x in datos]}\n# print(resultado)\n",
+    pytest: "def test_fanout_doble_triple(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'dobles': [2, 4, 6], 'triples': [3, 6, 9]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'dobles': [2, 4, 6], 'triples': [3, 6, 9]}.",
+    solution_example: "datos = [1, 2, 3]\nresultado = {'dobles': [x * 2 for x in datos], 'triples': [x * 3 for x in datos]}\nprint(resultado)",
+    next: Some("py-2640-fanout-texto"), show_type_chips: false, micro_step: 2639,
+};
+pub const PY2640_FANOUT_TEXTO: CodingStep = CodingStep {
+    id: "py-2640-fanout-texto", title: "fan-out · texto", objective: "Derivar vistas independientes de palabras.",
+    prompt_md: "**fan-out · texto**\n\nDerivar vistas independientes de palabras.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = ['Sol', 'mar']\n# resultado = {'lower': [s.lower() for s in datos], 'largos': [len(s) for s in datos]}\n# print(resultado)\n",
+    pytest: "def test_fanout_texto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'lower': ['sol', 'mar'], 'largos': [3, 3]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'lower': ['sol', 'mar'], 'largos': [3, 3]}.",
+    solution_example: "datos = ['Sol', 'mar']\nresultado = {'lower': [s.lower() for s in datos], 'largos': [len(s) for s in datos]}\nprint(resultado)",
+    next: Some("py-2641-fanout-predicados"), show_type_chips: false, micro_step: 2640,
+};
+pub const PY2641_FANOUT_PREDICADOS: CodingStep = CodingStep {
+    id: "py-2641-fanout-predicados", title: "fan-out · predicados", objective: "Evaluar condiciones independientes sin mutar la entrada.",
+    prompt_md: "**fan-out · predicados**\n\nEvaluar condiciones independientes sin mutar la entrada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3, 4]\n# resultado = {'pares': [x for x in datos if x % 2 == 0], 'mayores': [x for x in datos if x > 2]}\n# print(resultado)\n",
+    pytest: "def test_fanout_predicados(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'pares': [2, 4], 'mayores': [3, 4]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'pares': [2, 4], 'mayores': [3, 4]}.",
+    solution_example: "datos = [1, 2, 3, 4]\nresultado = {'pares': [x for x in datos if x % 2 == 0], 'mayores': [x for x in datos if x > 2]}\nprint(resultado)",
+    next: Some("py-2642-fanout-estadisticas"), show_type_chips: false, micro_step: 2641,
+};
+pub const PY2642_FANOUT_ESTADISTICAS: CodingStep = CodingStep {
+    id: "py-2642-fanout-estadisticas", title: "fan-out · estadísticas", objective: "Calcular parciales independientes sobre los mismos datos.",
+    prompt_md: "**fan-out · estadísticas**\n\nCalcular parciales independientes sobre los mismos datos.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [4, 1, 7]\n# resultado = {'min': min(datos), 'max': max(datos), 'total': sum(datos)}\n# print(resultado)\n",
+    pytest: "def test_fanout_estadisticas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'min': 1, 'max': 7, 'total': 12}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'min': 1, 'max': 7, 'total': 12}.",
+    solution_example: "datos = [4, 1, 7]\nresultado = {'min': min(datos), 'max': max(datos), 'total': sum(datos)}\nprint(resultado)",
+    next: Some("py-2643-fanout-chunks"), show_type_chips: false, micro_step: 2642,
+};
+pub const PY2643_FANOUT_CHUNKS: CodingStep = CodingStep {
+    id: "py-2643-fanout-chunks", title: "fan-out · por chunk", objective: "Aplicar workers puros a chunks separados.",
+    prompt_md: "**fan-out · por chunk**\n\nAplicar workers puros a chunks separados.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# chunks = [[1, 2], [3, 4]]\n# def worker(xs):\n#     return [x + 10 for x in xs]\n# resultado = [worker(parte) for parte in chunks]\n# print(resultado)\n",
+    pytest: "def test_fanout_chunks(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[11, 12], [13, 14]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [[11, 12], [13, 14]].",
+    solution_example: "chunks = [[1, 2], [3, 4]]\ndef worker(xs):\n    return [x + 10 for x in xs]\nresultado = [worker(parte) for parte in chunks]\nprint(resultado)",
+    next: Some("py-2644-fanout-suite"), show_type_chips: false, micro_step: 2643,
+};
+pub const PY2644_FANOUT_SUITE: CodingStep = CodingStep {
+    id: "py-2644-fanout-suite", title: "fan-out · suite", objective: "Producir tres ramas y conservar su identidad.",
+    prompt_md: "**fan-out · suite**\n\nProducir tres ramas y conservar su identidad.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3]\n# funciones = [('id', lambda x: x), ('cuad', lambda x: x * x), ('neg', lambda x: -x)]\n# resultado = {nombre: [f(x) for x in datos] for nombre, f in funciones}\n# print(resultado)\n",
+    pytest: "def test_fanout_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'id': [1, 2, 3], 'cuad': [1, 4, 9], 'neg': [-1, -2, -3]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'id': [1, 2, 3], 'cuad': [1, 4, 9], 'neg': [-1, -2, -3]}.",
+    solution_example: "datos = [1, 2, 3]\nfunciones = [('id', lambda x: x), ('cuad', lambda x: x * x), ('neg', lambda x: -x)]\nresultado = {nombre: [f(x) for x in datos] for nombre, f in funciones}\nprint(resultado)",
+    next: Some("py-2645-fanin-concatenar"), show_type_chips: false, micro_step: 2644,
+};
+pub const PY2645_FANIN_CONCATENAR: CodingStep = CodingStep {
+    id: "py-2645-fanin-concatenar", title: "fan-in · concatenar", objective: "Reunir resultados respetando el orden de workers.",
+    prompt_md: "**fan-in · concatenar**\n\nReunir resultados respetando el orden de workers.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [[1, 2], [3], [4, 5]]\n# resultado = [x for parcial in parciales for x in parcial]\n# print(resultado)\n",
+    pytest: "def test_fanin_concatenar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 4, 5].",
+    solution_example: "parciales = [[1, 2], [3], [4, 5]]\nresultado = [x for parcial in parciales for x in parcial]\nprint(resultado)",
+    next: Some("py-2646-fanin-etiquetado"), show_type_chips: false, micro_step: 2645,
+};
+pub const PY2646_FANIN_ETIQUETADO: CodingStep = CodingStep {
+    id: "py-2646-fanin-etiquetado", title: "fan-in · etiquetado", objective: "Ordenar parciales por una etiqueta explícita.",
+    prompt_md: "**fan-in · etiquetado**\n\nOrdenar parciales por una etiqueta explícita.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [(2, ['c']), (0, ['a']), (1, ['b'])]\n# resultado = [x for _, datos in sorted(parciales) for x in datos]\n# print(resultado)\n",
+    pytest: "def test_fanin_etiquetado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'b', 'c'].",
+    solution_example: "parciales = [(2, ['c']), (0, ['a']), (1, ['b'])]\nresultado = [x for _, datos in sorted(parciales) for x in datos]\nprint(resultado)",
+    next: Some("py-2647-fanin-dicts"), show_type_chips: false, micro_step: 2646,
+};
+pub const PY2647_FANIN_DICTS: CodingStep = CodingStep {
+    id: "py-2647-fanin-dicts", title: "fan-in · diccionarios", objective: "Combinar mapas de claves disjuntas.",
+    prompt_md: "**fan-in · diccionarios**\n\nCombinar mapas de claves disjuntas.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [{'a': 1}, {'b': 2}, {'c': 3}]\n# resultado = {k: v for parcial in parciales for k, v in parcial.items()}\n# print(resultado)\n",
+    pytest: "def test_fanin_dicts(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 1, 'b': 2, 'c': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 1, 'b': 2, 'c': 3}.",
+    solution_example: "parciales = [{'a': 1}, {'b': 2}, {'c': 3}]\nresultado = {k: v for parcial in parciales for k, v in parcial.items()}\nprint(resultado)",
+    next: Some("py-2648-fanin-conflicto"), show_type_chips: false, micro_step: 2647,
+};
+pub const PY2648_FANIN_CONFLICTO: CodingStep = CodingStep {
+    id: "py-2648-fanin-conflicto", title: "fan-in · conflicto", objective: "Resolver claves repetidas con una regla ordenada.",
+    prompt_md: "**fan-in · conflicto**\n\nResolver claves repetidas con una regla ordenada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [{'x': 1}, {'x': 4}, {'y': 2}]\n# resultado = {}\n# for parcial in parciales:\n#     resultado.update(parcial)\n# print(resultado)\n",
+    pytest: "def test_fanin_conflicto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'x': 4, 'y': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'x': 4, 'y': 2}.",
+    solution_example: "parciales = [{'x': 1}, {'x': 4}, {'y': 2}]\nresultado = {}\nfor parcial in parciales:\n    resultado.update(parcial)\nprint(resultado)",
+    next: Some("py-2649-fanin-intercalar"), show_type_chips: false, micro_step: 2648,
+};
+pub const PY2649_FANIN_INTERCALAR: CodingStep = CodingStep {
+    id: "py-2649-fanin-intercalar", title: "fan-in · intercalar", objective: "Intercalar salidas alineadas de dos workers.",
+    prompt_md: "**fan-in · intercalar**\n\nIntercalar salidas alineadas de dos workers.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# izq = [1, 3, 5]\n# der = [2, 4, 6]\n# resultado = [x for par in zip(izq, der) for x in par]\n# print(resultado)\n",
+    pytest: "def test_fanin_intercalar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4, 5, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 4, 5, 6].",
+    solution_example: "izq = [1, 3, 5]\nder = [2, 4, 6]\nresultado = [x for par in zip(izq, der) for x in par]\nprint(resultado)",
+    next: Some("py-2650-fanin-suite"), show_type_chips: false, micro_step: 2649,
+};
+pub const PY2650_FANIN_SUITE: CodingStep = CodingStep {
+    id: "py-2650-fanin-suite", title: "fan-in · suite", objective: "Reunir, ordenar y deduplicar resultados parciales.",
+    prompt_md: "**fan-in · suite**\n\nReunir, ordenar y deduplicar resultados parciales.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [[3, 1], [2, 3], [1, 4]]\n# resultado = sorted({x for parcial in parciales for x in parcial})\n# print(resultado)\n",
+    pytest: "def test_fanin_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 4].",
+    solution_example: "parciales = [[3, 1], [2, 3], [1, 4]]\nresultado = sorted({x for parcial in parciales for x in parcial})\nprint(resultado)",
+    next: Some("py-2651-parcial-suma"), show_type_chips: false, micro_step: 2650,
+};
+pub const PY2651_PARCIAL_SUMA: CodingStep = CodingStep {
+    id: "py-2651-parcial-suma", title: "reducción parcial · suma", objective: "Comparar suma directa con suma de parciales.",
+    prompt_md: "**reducción parcial · suma**\n\nComparar suma directa con suma de parciales.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3, 4]\n# chunks = [datos[:2], datos[2:]]\n# parciales = [sum(c) for c in chunks]\n# directo = sum(datos)\n# resultado = sum(parciales)\n# print(resultado)\n",
+    pytest: "def test_parcial_suma(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 10.",
+    solution_example: "datos = [1, 2, 3, 4]\nchunks = [datos[:2], datos[2:]]\nparciales = [sum(c) for c in chunks]\ndirecto = sum(datos)\nresultado = sum(parciales)\nprint(resultado)",
+    next: Some("py-2652-parcial-producto"), show_type_chips: false, micro_step: 2651,
+};
+pub const PY2652_PARCIAL_PRODUCTO: CodingStep = CodingStep {
+    id: "py-2652-parcial-producto", title: "reducción parcial · producto", objective: "Combinar productos parciales con identidad uno.",
+    prompt_md: "**reducción parcial · producto**\n\nCombinar productos parciales con identidad uno.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from math import prod\n# datos = [2, 3, 4]\n# chunks = [datos[:1], datos[1:]]\n# parciales = [prod(c) for c in chunks]\n# directo = prod(datos)\n# resultado = prod(parciales)\n# print(resultado)\n",
+    pytest: "def test_parcial_producto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 24\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 24.",
+    solution_example: "from math import prod\ndatos = [2, 3, 4]\nchunks = [datos[:1], datos[1:]]\nparciales = [prod(c) for c in chunks]\ndirecto = prod(datos)\nresultado = prod(parciales)\nprint(resultado)",
+    next: Some("py-2653-parcial-minimo"), show_type_chips: false, micro_step: 2652,
+};
+pub const PY2653_PARCIAL_MINIMO: CodingStep = CodingStep {
+    id: "py-2653-parcial-minimo", title: "reducción parcial · mínimo", objective: "Combinar mínimos de chunks no vacíos.",
+    prompt_md: "**reducción parcial · mínimo**\n\nCombinar mínimos de chunks no vacíos.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [8, 3, 9, 1]\n# chunks = [datos[:2], datos[2:]]\n# parciales = [min(c) for c in chunks]\n# directo = min(datos)\n# resultado = min(parciales)\n# print(resultado)\n",
+    pytest: "def test_parcial_minimo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 1.",
+    solution_example: "datos = [8, 3, 9, 1]\nchunks = [datos[:2], datos[2:]]\nparciales = [min(c) for c in chunks]\ndirecto = min(datos)\nresultado = min(parciales)\nprint(resultado)",
+    next: Some("py-2654-parcial-maximo"), show_type_chips: false, micro_step: 2653,
+};
+pub const PY2654_PARCIAL_MAXIMO: CodingStep = CodingStep {
+    id: "py-2654-parcial-maximo", title: "reducción parcial · máximo", objective: "Combinar máximos locales en un máximo global.",
+    prompt_md: "**reducción parcial · máximo**\n\nCombinar máximos locales en un máximo global.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [8, 3, 9, 1]\n# chunks = [datos[:2], datos[2:]]\n# parciales = [max(c) for c in chunks]\n# directo = max(datos)\n# resultado = max(parciales)\n# print(resultado)\n",
+    pytest: "def test_parcial_maximo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 9.",
+    solution_example: "datos = [8, 3, 9, 1]\nchunks = [datos[:2], datos[2:]]\nparciales = [max(c) for c in chunks]\ndirecto = max(datos)\nresultado = max(parciales)\nprint(resultado)",
+    next: Some("py-2655-parcial-conteo"), show_type_chips: false, micro_step: 2654,
+};
+pub const PY2655_PARCIAL_CONTEO: CodingStep = CodingStep {
+    id: "py-2655-parcial-conteo", title: "reducción parcial · conteo", objective: "Sumar conteos locales de un predicado.",
+    prompt_md: "**reducción parcial · conteo**\n\nSumar conteos locales de un predicado.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 4, 5, 6]\n# chunks = [datos[:3], datos[3:]]\n# parciales = [sum(1 for x in c if x % 2 == 0) for c in chunks]\n# directo = sum(1 for x in datos if x % 2 == 0)\n# resultado = sum(parciales)\n# print(resultado)\n",
+    pytest: "def test_parcial_conteo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "datos = [1, 2, 4, 5, 6]\nchunks = [datos[:3], datos[3:]]\nparciales = [sum(1 for x in c if x % 2 == 0) for c in chunks]\ndirecto = sum(1 for x in datos if x % 2 == 0)\nresultado = sum(parciales)\nprint(resultado)",
+    next: Some("py-2656-parcial-suite"), show_type_chips: false, micro_step: 2655,
+};
+pub const PY2656_PARCIAL_SUITE: CodingStep = CodingStep {
+    id: "py-2656-parcial-suite", title: "reducción parcial · suite", objective: "Combinar suma y conteo para calcular un promedio.",
+    prompt_md: "**reducción parcial · suite**\n\nCombinar suma y conteo para calcular un promedio.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [2, 4, 6, 8]\n# chunks = [datos[:2], datos[2:]]\n# parciales = [(sum(c), len(c)) for c in chunks]\n# total = sum(s for s, _ in parciales)\n# n = sum(c for _, c in parciales)\n# directo = sum(datos) / len(datos)\n# resultado = total / n\n# print(resultado)\n",
+    pytest: "def test_parcial_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5.0\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 5.0.",
+    solution_example: "datos = [2, 4, 6, 8]\nchunks = [datos[:2], datos[2:]]\nparciales = [(sum(c), len(c)) for c in chunks]\ntotal = sum(s for s, _ in parciales)\nn = sum(c for _, c in parciales)\ndirecto = sum(datos) / len(datos)\nresultado = total / n\nprint(resultado)",
+    next: Some("py-2657-asociar-sumas"), show_type_chips: false, micro_step: 2656,
+};
+pub const PY2657_ASOCIAR_SUMAS: CodingStep = CodingStep {
+    id: "py-2657-asociar-sumas", title: "asociatividad · suma", objective: "Verificar dos agrupaciones equivalentes de la suma.",
+    prompt_md: "**asociatividad · suma**\n\nVerificar dos agrupaciones equivalentes de la suma.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a, b, c = 2, 3, 4\n# izquierda = (a + b) + c\n# directo = a + (b + c)\n# resultado = izquierda\n# print(resultado)\n",
+    pytest: "def test_asociar_sumas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 9.",
+    solution_example: "a, b, c = 2, 3, 4\nizquierda = (a + b) + c\ndirecto = a + (b + c)\nresultado = izquierda\nprint(resultado)",
+    next: Some("py-2658-asociar-tuplas"), show_type_chips: false, micro_step: 2657,
+};
+pub const PY2658_ASOCIAR_TUPLAS: CodingStep = CodingStep {
+    id: "py-2658-asociar-tuplas", title: "asociatividad · concatenación", objective: "Conservar orden al reagrupar secuencias.",
+    prompt_md: "**asociatividad · concatenación**\n\nConservar orden al reagrupar secuencias.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a, b, c = (1,), (2,), (3,)\n# resultado = (a + b) + c\n# directo = a + (b + c)\n# print(resultado)\n",
+    pytest: "def test_asociar_tuplas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 2, 3)\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (1, 2, 3).",
+    solution_example: "a, b, c = (1,), (2,), (3,)\nresultado = (a + b) + c\ndirecto = a + (b + c)\nprint(resultado)",
+    next: Some("py-2659-asociar-max"), show_type_chips: false, micro_step: 2658,
+};
+pub const PY2659_ASOCIAR_MAX: CodingStep = CodingStep {
+    id: "py-2659-asociar-max", title: "asociatividad · máximo", objective: "Combinar máximos por niveles.",
+    prompt_md: "**asociatividad · máximo**\n\nCombinar máximos por niveles.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a, b, c = 4, 9, 2\n# resultado = max(max(a, b), c)\n# directo = max(a, max(b, c))\n# print(resultado)\n",
+    pytest: "def test_asociar_max(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 9.",
+    solution_example: "a, b, c = 4, 9, 2\nresultado = max(max(a, b), c)\ndirecto = max(a, max(b, c))\nprint(resultado)",
+    next: Some("py-2660-asociar-sets"), show_type_chips: false, micro_step: 2659,
+};
+pub const PY2660_ASOCIAR_SETS: CodingStep = CodingStep {
+    id: "py-2660-asociar-sets", title: "asociatividad · unión", objective: "Reagrupar uniones y presentar salida ordenada.",
+    prompt_md: "**asociatividad · unión**\n\nReagrupar uniones y presentar salida ordenada.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a, b, c = {1, 2}, {2, 3}, {4}\n# resultado = sorted((a | b) | c)\n# directo = sorted(a | (b | c))\n# print(resultado)\n",
+    pytest: "def test_asociar_sets(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4]\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 4].",
+    solution_example: "a, b, c = {1, 2}, {2, 3}, {4}\nresultado = sorted((a | b) | c)\ndirecto = sorted(a | (b | c))\nprint(resultado)",
+    next: Some("py-2661-asociar-dicts"), show_type_chips: false, micro_step: 2660,
+};
+pub const PY2661_ASOCIAR_DICTS: CodingStep = CodingStep {
+    id: "py-2661-asociar-dicts", title: "asociatividad · conteos", objective: "Combinar mapas de conteos con una operación asociativa.",
+    prompt_md: "**asociatividad · conteos**\n\nCombinar mapas de conteos con una operación asociativa.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def combinar(a, b):\n#     claves = a.keys() | b.keys()\n#     return {k: a.get(k, 0) + b.get(k, 0) for k in claves}\n# a, b, c = {'x': 1}, {'x': 2, 'y': 1}, {'y': 3}\n# resultado = combinar(combinar(a, b), c)\n# directo = combinar(a, combinar(b, c))\n# print(resultado)\n",
+    pytest: "def test_asociar_dicts(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'x': 3, 'y': 4}\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'x': 3, 'y': 4}.",
+    solution_example: "def combinar(a, b):\n    claves = a.keys() | b.keys()\n    return {k: a.get(k, 0) + b.get(k, 0) for k in claves}\na, b, c = {'x': 1}, {'x': 2, 'y': 1}, {'y': 3}\nresultado = combinar(combinar(a, b), c)\ndirecto = combinar(a, combinar(b, c))\nprint(resultado)",
+    next: Some("py-2662-asociar-suite"), show_type_chips: false, micro_step: 2661,
+};
+pub const PY2662_ASOCIAR_SUITE: CodingStep = CodingStep {
+    id: "py-2662-asociar-suite", title: "asociatividad · suite", objective: "Plegar parciales de suma en forma jerárquica.",
+    prompt_md: "**asociatividad · suite**\n\nPlegar parciales de suma en forma jerárquica.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [3, 7, 5, 1]\n# nivel = [parciales[0] + parciales[1], parciales[2] + parciales[3]]\n# resultado = nivel[0] + nivel[1]\n# directo = sum(parciales)\n# print(resultado)\n",
+    pytest: "def test_asociar_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 16\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 16.",
+    solution_example: "parciales = [3, 7, 5, 1]\nnivel = [parciales[0] + parciales[1], parciales[2] + parciales[3]]\nresultado = nivel[0] + nivel[1]\ndirecto = sum(parciales)\nprint(resultado)",
+    next: Some("py-2663-grupo-sumas"), show_type_chips: false, micro_step: 2662,
+};
+pub const PY2663_GRUPO_SUMAS: CodingStep = CodingStep {
+    id: "py-2663-grupo-sumas", title: "agrupación · sumas", objective: "Acumular valores por clave.",
+    prompt_md: "**agrupación · sumas**\n\nAcumular valores por clave.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('a', 2), ('b', 3), ('a', 4)]\n# resultado = {}\n# for clave, valor in filas:\n#     resultado[clave] = resultado.get(clave, 0) + valor\n# print(resultado)\n",
+    pytest: "def test_grupo_sumas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 6, 'b': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 6, 'b': 3}.",
+    solution_example: "filas = [('a', 2), ('b', 3), ('a', 4)]\nresultado = {}\nfor clave, valor in filas:\n    resultado[clave] = resultado.get(clave, 0) + valor\nprint(resultado)",
+    next: Some("py-2664-grupo-conteos"), show_type_chips: false, micro_step: 2663,
+};
+pub const PY2664_GRUPO_CONTEOS: CodingStep = CodingStep {
+    id: "py-2664-grupo-conteos", title: "agrupación · conteos", objective: "Contar registros por categoría.",
+    prompt_md: "**agrupación · conteos**\n\nContar registros por categoría.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# categorias = ['web', 'api', 'web', 'db', 'api']\n# resultado = {}\n# for clave in categorias:\n#     resultado[clave] = resultado.get(clave, 0) + 1\n# print(resultado)\n",
+    pytest: "def test_grupo_conteos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'web': 2, 'api': 2, 'db': 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'web': 2, 'api': 2, 'db': 1}.",
+    solution_example: "categorias = ['web', 'api', 'web', 'db', 'api']\nresultado = {}\nfor clave in categorias:\n    resultado[clave] = resultado.get(clave, 0) + 1\nprint(resultado)",
+    next: Some("py-2665-grupo-listas"), show_type_chips: false, micro_step: 2664,
+};
+pub const PY2665_GRUPO_LISTAS: CodingStep = CodingStep {
+    id: "py-2665-grupo-listas", title: "agrupación · colecciones", objective: "Reunir valores preservando orden por grupo.",
+    prompt_md: "**agrupación · colecciones**\n\nReunir valores preservando orden por grupo.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('x', 1), ('y', 2), ('x', 3)]\n# resultado = {}\n# for clave, valor in filas:\n#     resultado.setdefault(clave, []).append(valor)\n# print(resultado)\n",
+    pytest: "def test_grupo_listas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'x': [1, 3], 'y': [2]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'x': [1, 3], 'y': [2]}.",
+    solution_example: "filas = [('x', 1), ('y', 2), ('x', 3)]\nresultado = {}\nfor clave, valor in filas:\n    resultado.setdefault(clave, []).append(valor)\nprint(resultado)",
+    next: Some("py-2666-grupo-maximos"), show_type_chips: false, micro_step: 2665,
+};
+pub const PY2666_GRUPO_MAXIMOS: CodingStep = CodingStep {
+    id: "py-2666-grupo-maximos", title: "agrupación · máximos", objective: "Mantener un máximo parcial por clave.",
+    prompt_md: "**agrupación · máximos**\n\nMantener un máximo parcial por clave.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('a', 2), ('a', 5), ('b', 3)]\n# resultado = {}\n# for clave, valor in filas:\n#     resultado[clave] = max(resultado.get(clave, valor), valor)\n# print(resultado)\n",
+    pytest: "def test_grupo_maximos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 5, 'b': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 5, 'b': 3}.",
+    solution_example: "filas = [('a', 2), ('a', 5), ('b', 3)]\nresultado = {}\nfor clave, valor in filas:\n    resultado[clave] = max(resultado.get(clave, valor), valor)\nprint(resultado)",
+    next: Some("py-2667-grupo-parciales"), show_type_chips: false, micro_step: 2666,
+};
+pub const PY2667_GRUPO_PARCIALES: CodingStep = CodingStep {
+    id: "py-2667-grupo-parciales", title: "agrupación · merge parciales", objective: "Combinar agregados producidos por chunks.",
+    prompt_md: "**agrupación · merge parciales**\n\nCombinar agregados producidos por chunks.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [{'a': 2, 'b': 1}, {'a': 3, 'c': 4}]\n# resultado = {}\n# for parcial in parciales:\n#     for clave, valor in parcial.items():\n#         resultado[clave] = resultado.get(clave, 0) + valor\n# print(resultado)\n",
+    pytest: "def test_grupo_parciales(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 5, 'b': 1, 'c': 4}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 5, 'b': 1, 'c': 4}.",
+    solution_example: "parciales = [{'a': 2, 'b': 1}, {'a': 3, 'c': 4}]\nresultado = {}\nfor parcial in parciales:\n    for clave, valor in parcial.items():\n        resultado[clave] = resultado.get(clave, 0) + valor\nprint(resultado)",
+    next: Some("py-2668-grupo-suite"), show_type_chips: false, micro_step: 2667,
+};
+pub const PY2668_GRUPO_SUITE: CodingStep = CodingStep {
+    id: "py-2668-grupo-suite", title: "agrupación · suite", objective: "Calcular promedio por grupo desde suma y conteo.",
+    prompt_md: "**agrupación · suite**\n\nCalcular promedio por grupo desde suma y conteo.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('a', 2), ('b', 4), ('a', 6)]\n# acum = {}\n# for clave, valor in filas:\n#     total, n = acum.get(clave, (0, 0))\n#     acum[clave] = (total + valor, n + 1)\n# resultado = {k: total / n for k, (total, n) in acum.items()}\n# print(resultado)\n",
+    pytest: "def test_grupo_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 4.0, 'b': 4.0}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 4.0, 'b': 4.0}.",
+    solution_example: "filas = [('a', 2), ('b', 4), ('a', 6)]\nacum = {}\nfor clave, valor in filas:\n    total, n = acum.get(clave, (0, 0))\n    acum[clave] = (total + valor, n + 1)\nresultado = {k: total / n for k, (total, n) in acum.items()}\nprint(resultado)",
+    next: Some("py-2669-ventana-fija"), show_type_chips: false, micro_step: 2668,
+};
+pub const PY2669_VENTANA_FIJA: CodingStep = CodingStep {
+    id: "py-2669-ventana-fija", title: "ventanas · fija", objective: "Crear ventanas contiguas de tamaño constante.",
+    prompt_md: "**ventanas · fija**\n\nCrear ventanas contiguas de tamaño constante.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3, 4, 5]\n# resultado = [datos[i:i + 3] for i in range(len(datos) - 2)]\n# print(resultado)\n",
+    pytest: "def test_ventana_fija(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 2, 3], [2, 3, 4], [3, 4, 5]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [[1, 2, 3], [2, 3, 4], [3, 4, 5]].",
+    solution_example: "datos = [1, 2, 3, 4, 5]\nresultado = [datos[i:i + 3] for i in range(len(datos) - 2)]\nprint(resultado)",
+    next: Some("py-2670-ventana-sumas"), show_type_chips: false, micro_step: 2669,
+};
+pub const PY2670_VENTANA_SUMAS: CodingStep = CodingStep {
+    id: "py-2670-ventana-sumas", title: "ventanas · sumas", objective: "Reducir cada ventana de forma independiente.",
+    prompt_md: "**ventanas · sumas**\n\nReducir cada ventana de forma independiente.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3, 4]\n# resultado = [sum(datos[i:i + 2]) for i in range(len(datos) - 1)]\n# print(resultado)\n",
+    pytest: "def test_ventana_sumas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 5, 7]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [3, 5, 7].",
+    solution_example: "datos = [1, 2, 3, 4]\nresultado = [sum(datos[i:i + 2]) for i in range(len(datos) - 1)]\nprint(resultado)",
+    next: Some("py-2671-agenda-roundrobin"), show_type_chips: false, micro_step: 2670,
+};
+pub const PY2671_AGENDA_ROUNDROBIN: CodingStep = CodingStep {
+    id: "py-2671-agenda-roundrobin", title: "planificación · round robin", objective: "Asignar tareas a workers de manera reproducible.",
+    prompt_md: "**planificación · round robin**\n\nAsignar tareas a workers de manera reproducible.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# tareas = ['a', 'b', 'c', 'd', 'e']\n# workers = 2\n# resultado = {w: [t for i, t in enumerate(tareas) if i % workers == w] for w in range(workers)}\n# print(resultado)\n",
+    pytest: "def test_agenda_roundrobin(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: ['a', 'c', 'e'], 1: ['b', 'd']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: ['a', 'c', 'e'], 1: ['b', 'd']}.",
+    solution_example: "tareas = ['a', 'b', 'c', 'd', 'e']\nworkers = 2\nresultado = {w: [t for i, t in enumerate(tareas) if i % workers == w] for w in range(workers)}\nprint(resultado)",
+    next: Some("py-2672-agenda-costos"), show_type_chips: false, micro_step: 2671,
+};
+pub const PY2672_AGENDA_COSTOS: CodingStep = CodingStep {
+    id: "py-2672-agenda-costos", title: "planificación · costos", objective: "Resumir carga asignada por worker.",
+    prompt_md: "**planificación · costos**\n\nResumir carga asignada por worker.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# asignaciones = {0: [3, 2], 1: [4], 2: [1, 1]}\n# resultado = {w: sum(costos) for w, costos in asignaciones.items()}\n# print(resultado)\n",
+    pytest: "def test_agenda_costos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: 5, 1: 4, 2: 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: 5, 1: 4, 2: 2}.",
+    solution_example: "asignaciones = {0: [3, 2], 1: [4], 2: [1, 1]}\nresultado = {w: sum(costos) for w, costos in asignaciones.items()}\nprint(resultado)",
+    next: Some("py-2673-agenda-orden"), show_type_chips: false, micro_step: 2672,
+};
+pub const PY2673_AGENDA_ORDEN: CodingStep = CodingStep {
+    id: "py-2673-agenda-orden", title: "planificación · orden", objective: "Reconstruir resultados según el índice original.",
+    prompt_md: "**planificación · orden**\n\nReconstruir resultados según el índice original.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultados = [(2, 'C'), (0, 'A'), (1, 'B')]\n# resultado = [valor for _, valor in sorted(resultados)]\n# print(resultado)\n",
+    pytest: "def test_agenda_orden(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['A', 'B', 'C']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['A', 'B', 'C'].",
+    solution_example: "resultados = [(2, 'C'), (0, 'A'), (1, 'B')]\nresultado = [valor for _, valor in sorted(resultados)]\nprint(resultado)",
+    next: Some("py-2674-ventana-suite"), show_type_chips: false, micro_step: 2673,
+};
+pub const PY2674_VENTANA_SUITE: CodingStep = CodingStep {
+    id: "py-2674-ventana-suite", title: "ventanas · suite", objective: "Evaluar ventanas y elegir el mejor parcial de forma estable.",
+    prompt_md: "**ventanas · suite**\n\nEvaluar ventanas y elegir el mejor parcial de forma estable.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [2, 5, 1, 4, 3]\n# ventanas = [(i, sum(datos[i:i + 2])) for i in range(len(datos) - 1)]\n# resultado = max(ventanas, key=lambda par: (par[1], -par[0]))\n# print(resultado)\n",
+    pytest: "def test_ventana_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (0, 7)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (0, 7).",
+    solution_example: "datos = [2, 5, 1, 4, 3]\nventanas = [(i, sum(datos[i:i + 2])) for i in range(len(datos) - 1)]\nresultado = max(ventanas, key=lambda par: (par[1], -par[0]))\nprint(resultado)",
+    next: Some("py-2675-mr-tokenizar"), show_type_chips: false, micro_step: 2674,
+};
+pub const PY2675_MR_TOKENIZAR: CodingStep = CodingStep {
+    id: "py-2675-mr-tokenizar", title: "map-reduce · map", objective: "Emitir pares clave-valor desde registros independientes.",
+    prompt_md: "**map-reduce · map**\n\nEmitir pares clave-valor desde registros independientes.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lineas = ['sol mar', 'mar río']\n# resultado = [(palabra, 1) for linea in lineas for palabra in linea.split()]\n# print(resultado)\n",
+    pytest: "def test_mr_tokenizar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('sol', 1), ('mar', 1), ('mar', 1), ('río', 1)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('sol', 1), ('mar', 1), ('mar', 1), ('río', 1)].",
+    solution_example: "lineas = ['sol mar', 'mar río']\nresultado = [(palabra, 1) for linea in lineas for palabra in linea.split()]\nprint(resultado)",
+    next: Some("py-2676-mr-shuffle"), show_type_chips: false, micro_step: 2675,
+};
+pub const PY2676_MR_SHUFFLE: CodingStep = CodingStep {
+    id: "py-2676-mr-shuffle", title: "map-reduce · shuffle", objective: "Agrupar valores emitidos por clave.",
+    prompt_md: "**map-reduce · shuffle**\n\nAgrupar valores emitidos por clave.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# pares = [('a', 1), ('b', 1), ('a', 1)]\n# resultado = {}\n# for clave, valor in pares:\n#     resultado.setdefault(clave, []).append(valor)\n# print(resultado)\n",
+    pytest: "def test_mr_shuffle(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': [1, 1], 'b': [1]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': [1, 1], 'b': [1]}.",
+    solution_example: "pares = [('a', 1), ('b', 1), ('a', 1)]\nresultado = {}\nfor clave, valor in pares:\n    resultado.setdefault(clave, []).append(valor)\nprint(resultado)",
+    next: Some("py-2677-mr-reduce"), show_type_chips: false, micro_step: 2676,
+};
+pub const PY2677_MR_REDUCE: CodingStep = CodingStep {
+    id: "py-2677-mr-reduce", title: "map-reduce · reduce", objective: "Reducir valores agrupados por clave.",
+    prompt_md: "**map-reduce · reduce**\n\nReducir valores agrupados por clave.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# grupos = {'a': [1, 1, 1], 'b': [1, 1]}\n# resultado = {clave: sum(valores) for clave, valores in grupos.items()}\n# print(resultado)\n",
+    pytest: "def test_mr_reduce(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 3, 'b': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 3, 'b': 2}.",
+    solution_example: "grupos = {'a': [1, 1, 1], 'b': [1, 1]}\nresultado = {clave: sum(valores) for clave, valores in grupos.items()}\nprint(resultado)",
+    next: Some("py-2678-mr-chunks"), show_type_chips: false, micro_step: 2677,
+};
+pub const PY2678_MR_CHUNKS: CodingStep = CodingStep {
+    id: "py-2678-mr-chunks", title: "map-reduce · chunks", objective: "Producir conteos parciales por chunk.",
+    prompt_md: "**map-reduce · chunks**\n\nProducir conteos parciales por chunk.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# chunks = [['a', 'b', 'a'], ['b', 'c']]\n# def contar(xs):\n#     return {x: xs.count(x) for x in dict.fromkeys(xs)}\n# resultado = [contar(chunk) for chunk in chunks]\n# print(resultado)\n",
+    pytest: "def test_mr_chunks(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'a': 2, 'b': 1}, {'b': 1, 'c': 1}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'a': 2, 'b': 1}, {'b': 1, 'c': 1}].",
+    solution_example: "chunks = [['a', 'b', 'a'], ['b', 'c']]\ndef contar(xs):\n    return {x: xs.count(x) for x in dict.fromkeys(xs)}\nresultado = [contar(chunk) for chunk in chunks]\nprint(resultado)",
+    next: Some("py-2679-mr-combinar"), show_type_chips: false, micro_step: 2678,
+};
+pub const PY2679_MR_COMBINAR: CodingStep = CodingStep {
+    id: "py-2679-mr-combinar", title: "map-reduce · combinar", objective: "Fusionar conteos parciales en el resultado global.",
+    prompt_md: "**map-reduce · combinar**\n\nFusionar conteos parciales en el resultado global.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [{'a': 2, 'b': 1}, {'b': 1, 'c': 1}]\n# resultado = {}\n# for parcial in parciales:\n#     for clave, valor in parcial.items():\n#         resultado[clave] = resultado.get(clave, 0) + valor\n# directo = {'a': 2, 'b': 2, 'c': 1}\n# print(resultado)\n",
+    pytest: "def test_mr_combinar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 2, 'b': 2, 'c': 1}\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 2, 'b': 2, 'c': 1}.",
+    solution_example: "parciales = [{'a': 2, 'b': 1}, {'b': 1, 'c': 1}]\nresultado = {}\nfor parcial in parciales:\n    for clave, valor in parcial.items():\n        resultado[clave] = resultado.get(clave, 0) + valor\ndirecto = {'a': 2, 'b': 2, 'c': 1}\nprint(resultado)",
+    next: Some("py-2680-ola28-suite"), show_type_chips: false, micro_step: 2679,
+};
+pub const PY2680_OLA28_SUITE: CodingStep = CodingStep {
+    id: "py-2680-ola28-suite", title: "ola 28 · suite", objective: "Cerrar la ola con map, chunks, parciales y reduce equivalentes.",
+    prompt_md: "**ola 28 · suite**\n\nCerrar la ola con map, chunks, parciales y reduce equivalentes.\n\n**Micro-reto:** construí el pipeline indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3, 4, 5, 6]\n# chunks = [datos[:3], datos[3:]]\n# parciales = [sum(x * x for x in chunk if x % 2 == 0) for chunk in chunks]\n# resultado = sum(parciales)\n# directo = sum(x * x for x in datos if x % 2 == 0)\n# print(resultado)\n",
+    pytest: "def test_ola28_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 56\n    assert ns['resultado'] == ns['directo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 56.",
+    solution_example: "datos = [1, 2, 3, 4, 5, 6]\nchunks = [datos[:3], datos[3:]]\nparciales = [sum(x * x for x in chunk if x % 2 == 0) for chunk in chunks]\nresultado = sum(parciales)\ndirecto = sum(x * x for x in datos if x % 2 == 0)\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 2680,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -62051,6 +62591,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2618_COMBO_ARBOL_MAPEADO,
     &PY2619_COMBO_PALABRAS,
     &PY2620_OLA27_SUITE,
+    &PY2621_CHUNK_TAMANO,
+    &PY2622_CHUNK_INDICES,
+    &PY2623_CHUNK_EQUILIBRADO,
+    &PY2624_CHUNK_ETIQUETAS,
+    &PY2625_CHUNK_VACIOS,
+    &PY2626_CHUNK_SUITE,
+    &PY2627_BATCH_PARES,
+    &PY2628_BATCH_SUMAS,
+    &PY2629_BATCH_FILTRADO,
+    &PY2630_BATCH_NORMALIZAR,
+    &PY2631_BATCH_METADATA,
+    &PY2632_BATCH_SUITE,
+    &PY2633_ZIP_PARES,
+    &PY2634_ZIP_SUMAS,
+    &PY2635_ZIP_DICT,
+    &PY2636_ZIP_CORTAR,
+    &PY2637_ZIP_INDICE,
+    &PY2638_ZIP_SUITE,
+    &PY2639_FANOUT_DOBLE_TRIPLE,
+    &PY2640_FANOUT_TEXTO,
+    &PY2641_FANOUT_PREDICADOS,
+    &PY2642_FANOUT_ESTADISTICAS,
+    &PY2643_FANOUT_CHUNKS,
+    &PY2644_FANOUT_SUITE,
+    &PY2645_FANIN_CONCATENAR,
+    &PY2646_FANIN_ETIQUETADO,
+    &PY2647_FANIN_DICTS,
+    &PY2648_FANIN_CONFLICTO,
+    &PY2649_FANIN_INTERCALAR,
+    &PY2650_FANIN_SUITE,
+    &PY2651_PARCIAL_SUMA,
+    &PY2652_PARCIAL_PRODUCTO,
+    &PY2653_PARCIAL_MINIMO,
+    &PY2654_PARCIAL_MAXIMO,
+    &PY2655_PARCIAL_CONTEO,
+    &PY2656_PARCIAL_SUITE,
+    &PY2657_ASOCIAR_SUMAS,
+    &PY2658_ASOCIAR_TUPLAS,
+    &PY2659_ASOCIAR_MAX,
+    &PY2660_ASOCIAR_SETS,
+    &PY2661_ASOCIAR_DICTS,
+    &PY2662_ASOCIAR_SUITE,
+    &PY2663_GRUPO_SUMAS,
+    &PY2664_GRUPO_CONTEOS,
+    &PY2665_GRUPO_LISTAS,
+    &PY2666_GRUPO_MAXIMOS,
+    &PY2667_GRUPO_PARCIALES,
+    &PY2668_GRUPO_SUITE,
+    &PY2669_VENTANA_FIJA,
+    &PY2670_VENTANA_SUMAS,
+    &PY2671_AGENDA_ROUNDROBIN,
+    &PY2672_AGENDA_COSTOS,
+    &PY2673_AGENDA_ORDEN,
+    &PY2674_VENTANA_SUITE,
+    &PY2675_MR_TOKENIZAR,
+    &PY2676_MR_SHUFFLE,
+    &PY2677_MR_REDUCE,
+    &PY2678_MR_CHUNKS,
+    &PY2679_MR_COMBINAR,
+    &PY2680_OLA28_SUITE,
 
 ];
 
@@ -62218,14 +62818,14 @@ mod tests {
     #[test]
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
-        assert_eq!(CODING_STEPS.len(), 2620, "catalog must contain 2620 steps");
+        assert_eq!(CODING_STEPS.len(), 2680, "catalog must contain 2680 steps");
         for (index, step) in CODING_STEPS.iter().enumerate() {
             assert_eq!(
                 step.micro_step,
                 (index + 1) as i32,
                 "catalog must be contiguous at index {index}"
             );
-            assert!(step.micro_step >= 1 && step.micro_step <= 2620);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2680);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -62234,8 +62834,8 @@ mod tests {
         }
         assert_eq!(
             seen,
-            (1..=2620).collect(),
-            "catalog must cover every micro-step in 1..=2620"
+            (1..=2680).collect(),
+            "catalog must cover every micro-step in 1..=2680"
         );
     }
 
@@ -65549,7 +66149,22 @@ mod tests {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next wave27 step");
                 assert_eq!(step.next, Some(next_step.id));
             } else {
-                assert_eq!(step.next, None, "step 2620 is the end of the rail");
+                assert_eq!(step.next, Some("py-2621-chunk-tamano"), "step 2620 chains to Wave 28");
+            }
+        }
+    }
+
+    #[test]
+    fn py2621_to_py2680_parallel_reduction_chain() {
+        for n in 2621..=2680 {
+            let step = coding_step_by_micro_step(n).expect("wave28 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(step.id.starts_with(&format!("py-{n}-")));
+            if n < 2680 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next wave28 step");
+                assert_eq!(step.next, Some(next_step.id));
+            } else {
+                assert_eq!(step.next, None, "step 2680 is the end of the rail");
             }
         }
     }

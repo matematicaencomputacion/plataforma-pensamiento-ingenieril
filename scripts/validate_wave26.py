@@ -66,7 +66,8 @@ def main() -> None:
     assert active == sorted(set(active)), "active partitions must be unique and sorted"
 
     for path in E2E:
-        assert "toHaveCount(2620)" in path.read_text(encoding="utf-8"), f"Wave 27 ceiling missing: {path}"
+        counts = [int(value) for value in re.findall(r"toHaveCount\((\d+)\)", path.read_text(encoding="utf-8"))]
+        assert counts and max(counts) >= 2560, f"cumulative E2E ceiling below Wave 26: {path}"
     print("Wave 26 cumulative contract OK: prefix and partitions 2501..=2560 preserved")
 
 
