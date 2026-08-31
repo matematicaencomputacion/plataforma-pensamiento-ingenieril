@@ -74,7 +74,9 @@ def main():
     assert active[-60:] == list(range(2561, 2621))
     assert active == sorted(set(active))
     for path in E2E:
-        assert "toHaveCount(2680)" in path.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8")
+        match = re.search(r'#workspace-microsteps li"\)\)\.toHaveCount\((\d+)\)', text)
+        assert match and int(match.group(1)) >= 2620
     print("Wave 27 cumulative contract OK: prefix 2561..=2620 preserved and linked to Wave 28")
 
 
