@@ -2583,7 +2583,7 @@ mod tests {
         assert_eq!(partitions_for_micro_step(2423), &[3, 4]); // Wave 24: early = paradigms + ecosystem
         assert_eq!(partitions_for_micro_step(2435), &[5, 3]); // Wave 24: scoring = domains + paradigms
         assert_eq!(partitions_for_micro_step(2440), &[5, 3]); // Wave 24: ranking
-        assert!(partitions_for_micro_step(2441).is_empty()); // frontier beyond Wave 24
+        assert!(partitions_for_micro_step(2441).is_empty()); // Wave 25 intentionally untagged
     }
 
     #[test]

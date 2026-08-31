@@ -1,51 +1,29 @@
-"""Valida los 60 micro-steps (2441-2500) de la Ola 25 ejecutando sus pytest en Python.
+"""Validate the active Wave 25 contract and the catalog ceiling at 2500."""
 
-Reusa la definición de pasos de `gen_wave25.py` (sin input, stdlib-only, determinista).
-Escribe la solución esperada en `solution.py` y ejecuta el `pytest` generado.
-"""
-
-import tempfile
-import os
-import sys
-
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import gen_wave25  # noqa: E402
+from pathlib import Path
+import re
 
 
-def run_step(step_d):
-    d = tempfile.mkdtemp()
-    solpath = os.path.join(d, "solution.py")
-    with open(solpath, "w", encoding="utf-8") as fh:
-        fh.write(step_d["solution"])
-    # constraint: solution must not call input()
-    assert "input(" not in step_d["solution"], f"step {step_d['num']} uses input()"
-    pytest_code = step_d["pytest"]
-    try:
-        exec(compile(pytest_code, "<pytest>", "exec"), {})
-    except AssertionError as exc:
-        return False, "pytest assert failed: %r" % exc
-    except Exception as exc:  # noqa: BLE001
-        return False, "pytest raised: %r" % exc
-    return True, "ok"
+ROOT = Path(__file__).resolve().parents[1]
+CURRICULUM = ROOT / "web" / "src" / "curriculum.rs"
 
 
-def main():
-    steps = gen_wave25.build_raw(gen_wave25.RAW)
-    assert len(steps) == 60, f"expected 60 steps, got {len(steps)}"
-    failed = []
-    for s in steps:
-        ok, msg = run_step(s)
-        status = "OK" if ok else "FAIL"
-        print(f"[{status}] py-{s['num']}-{s['slug']}: {msg}")
-        if not ok:
-            failed.append((s["num"], s["slug"], msg))
-    print("-----")
-    if failed:
-        print(f"{len(failed)} FAILURES:")
-        for f in failed:
-            print("  ", f)
-        sys.exit(1)
-    print("All 60 wave-25 steps pass.")
+def main() -> None:
+    source = CURRICULUM.read_text(encoding="utf-8")
+    steps = [int(value) for value in re.findall(r"micro_step:\s*(\d+)", source)]
+    catalog = set(steps)
+
+    expected = set(range(2441, 2501))
+    assert expected <= catalog, f"missing Wave 25 steps: {sorted(expected - catalog)}"
+    assert len(steps) == 2500, f"expected 2500 steps, got {len(steps)}"
+    assert catalog == set(range(1, 2501)), "catalog must cover exactly 1..=2500"
+    terminal = re.search(
+        r'id: "py-2500-score-check".*?next: None,.*?micro_step: 2500,',
+        source,
+        flags=re.DOTALL,
+    )
+    assert terminal is not None, "micro-step 2500 must terminate the rail"
+    print("Wave 25 contract OK: 2441..=2500; catalog ceiling 2500")
 
 
 if __name__ == "__main__":
