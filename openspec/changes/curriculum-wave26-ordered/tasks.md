@@ -20,5 +20,5 @@
 
 - [x] 4.1 Revisar que el diff contenga solamente Ola 26 y artefactos asociados, verificando ausencia de identificadores mayores a 2560
 - [x] 4.2 Crear commit convencional, publicar la rama y abrir un PR estructurado con la evidencia local
-- [ ] 4.3 Monitorear todos los checks del PR y corregir fallos propios en la misma rama hasta quedar verde o identificar un bloqueo externo
-- [ ] 4.4 Tras autorización de merge, verificar SHA y workflows post-merge en `main` antes de habilitar Ola 27
+- [x] 4.3 Monitorear todos los checks del PR y corregir fallos propios en la misma rama hasta quedar verde o identificar un bloqueo externo
+- [x] 4.4 Tras autorización de merge, verificar SHA y workflows post-merge en `main` antes de habilitar Ola 27
