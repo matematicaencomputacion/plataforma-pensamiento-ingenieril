@@ -1,4 +1,4 @@
-"""Validate Wave 30 generation, execution, integration, safety, and originality."""
+"""Validate Wave 31 generation, execution, integration, safety, and originality."""
 
 from contextlib import redirect_stdout
 from io import StringIO
@@ -12,6 +12,7 @@ import gen_wave27
 import gen_wave28
 import gen_wave29
 import gen_wave30
+import gen_wave31
 
 ROOT = Path(__file__).resolve().parents[1]
 CURRICULUM = ROOT / "web/src/curriculum.rs"
@@ -24,7 +25,7 @@ E2E = (
 FORBIDDEN = (
     "input(", "threading", "multiprocessing", "concurrent", "subprocess",
     "socket", "requests", "urllib", "asyncio", "http://", "https://",
-    "time.", "datetime", "random",
+    "time.", "datetime", "random", "sleep(",
 )
 
 
@@ -52,8 +53,8 @@ def execute_test(step):
 
 
 def main():
-    steps = gen_wave30.build_raw(gen_wave30.RAW)
-    assert [step["num"] for step in steps] == list(range(2741, 2801))
+    steps = gen_wave31.build_raw(gen_wave31.RAW)
+    assert [step["num"] for step in steps] == list(range(2801, 2861))
     assert len({step["slug"] for step in steps}) == 60
     families = {name: sum(step["family"] == name for step in steps) for name in {s["family"] for s in steps}}
     assert len(families) == 10 and set(families.values()) == {6}, families
@@ -62,47 +63,41 @@ def main():
         + gen_wave27.build_steps()
         + gen_wave28.build_steps()
         + gen_wave29.build_raw(gen_wave29.RAW)
+        + gen_wave30.build_raw(gen_wave30.RAW)
     )
     old_signatures = {(s["slug"], s["prompt"], s["solution"]) for s in old}
     assert not old_signatures.intersection(
         (s["slug"], s["prompt"], s["solution"]) for s in steps
-    ), "Wave 30 duplicates a complete prior pedagogical signature"
+    ), "Wave 31 duplicates a complete prior pedagogical signature"
+    logical_count = 0
     for step in steps:
         teaching = "\n".join((step["prompt"], step["solution"], step["pytest"]))
         assert not any(token in teaching for token in FORBIDDEN), f"unsafe token in {step['num']}"
         assert "..." not in teaching and "Objective for step" not in teaching, f"placeholder in {step['num']}"
         compile(step["solution"], f"solution-{step['num']}", "exec")
         execute_test(step)
+        if any(word in step["solution"] for word in ("tick", "watermark", "intento", "reabrir_en")):
+            logical_count += 1
+    assert logical_count >= 20, "insufficient logical-time/recovery coverage"
 
     source = CURRICULUM.read_text(encoding="utf-8")
     catalog = [int(value) for value in re.findall(r"micro_step:\s*(\d+)", source)]
-    assert catalog in (list(range(1, 2801)), list(range(1, 2861))), "catalog must end at 2800 or the next cumulative Wave 31 ceiling"
+    assert catalog == list(range(1, 2861)), "catalog must be exact and ordered 1..=2860"
     for step in steps:
         constant = f'PY{step["num"]}_{step["slug"].upper().replace("-", "_")}'
         assert source.count(f"pub const {constant}:") == 1
         assert source.count(f"    &{constant},") == 1
-    assert 'next: Some("py-2741-merge-dos-listas"), show_type_chips: false, micro_step: 2740' in source
-    if catalog[-1] == 2800:
-        assert re.search(r'next: None, show_type_chips: false, micro_step: 2800,', source)
-        expected_e2e = 2800
-    else:
-        assert 'next: Some("py-2801-validar-requeridos"), show_type_chips: false, micro_step: 2800' in source
-        expected_e2e = 2860
+    assert 'next: Some("py-2801-validar-requeridos"), show_type_chips: false, micro_step: 2800' in source
+    assert re.search(r'next: None, show_type_chips: false, micro_step: 2860,', source)
 
     concepts = CONCEPTS.read_text(encoding="utf-8")
     numbers = [int(value) for value in re.findall(r"^    \((\d+), &\[", concepts, re.MULTILINE)]
-    active = numbers[:numbers.index(2800) + 1]
-    assert active[-60:] == list(range(2741, 2801))
+    active = numbers[:numbers.index(2860) + 1]
+    assert active[-60:] == list(range(2801, 2861))
     assert active == sorted(set(active))
     for path in E2E:
-        assert path.read_text(encoding="utf-8").count(f"toHaveCount({expected_e2e})") == 1
-
-    checkpoint = next(step for step in steps if step["slug"] == "checkpoint-equivalencia")
-    namespace = {}
-    with redirect_stdout(StringIO()):
-        exec(checkpoint["solution"], namespace)
-    assert namespace["resultado"] is True
-    print(f"Wave 30 contract OK: 60 solutions passed; 10x6 families; cumulative catalog ends at {catalog[-1]}")
+        assert path.read_text(encoding="utf-8").count("toHaveCount(2860)") == 1
+    print(f"Wave 31 contract OK: 60 solutions passed; 10x6 families; {logical_count} logical-time/recovery exercises; catalog exact 1..=2860")
 
 
 if __name__ == "__main__":
