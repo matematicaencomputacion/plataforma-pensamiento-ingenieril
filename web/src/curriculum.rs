@@ -62128,7 +62128,547 @@ pub const PY2920_OLA32_SUITE: CodingStep = CodingStep {
     pytest: "def test_ola32_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'shards': {0: [('b', 3)], 1: [('a', 2), ('a', 4)]}, 'parciales': {0: {'b': 3}, 1: {'a': 6}}, 'total': {'a': 6, 'b': 3}, 'eventos_unicos': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "El resultado esperado es {'shards': {0: [('b', 3)], 1: [('a', 2), ('a', 4)]}, 'parciales': {0: {'b': 3}, 1: {'a': 6}}, 'total': {'a': 6, 'b': 3}, 'eventos_unicos': 3}.",
     solution_example: "eventos = [('e1', 'a', 2), ('e2', 'b', 3), ('e3', 'a', 4), ('e1', 'a', 2)]\nvistos, shards = set(), {0: [], 1: []}\nfor identificador, clave, valor in eventos:\n    if identificador in vistos: continue\n    vistos.add(identificador); shards[sum(map(ord, clave)) % 2].append((clave, valor))\nparciales = {}\nfor shard, filas in shards.items():\n    parcial = {}\n    for clave, valor in filas: parcial[clave] = parcial.get(clave, 0) + valor\n    parciales[shard] = parcial\ntotal = {}\nfor shard in sorted(parciales):\n    for clave, valor in parciales[shard].items(): total[clave] = total.get(clave, 0) + valor\nresultado = {'shards': shards, 'parciales': parciales, 'total': dict(sorted(total.items())), 'eventos_unicos': len(vistos)}\nprint(resultado)",
-    next: None, show_type_chips: false, micro_step: 2920,
+    next: Some("py-2921-offset-siguiente"), show_type_chips: false, micro_step: 2920,
+};
+pub const PY2921_OFFSET_SIGUIENTE: CodingStep = CodingStep {
+    id: "py-2921-offset-siguiente", title: "offsets · siguiente", objective: "Calcular el próximo offset esperado.",
+    prompt_md: "**offsets · siguiente**\n\nCalcular el próximo offset esperado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# procesado = 7\n# resultado = procesado + 1\n# print(resultado)\n",
+    pytest: "def test_offset_siguiente(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 8\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 8.",
+    solution_example: "procesado = 7\nresultado = procesado + 1\nprint(resultado)",
+    next: Some("py-2922-offset-contiguo"), show_type_chips: false, micro_step: 2921,
+};
+pub const PY2922_OFFSET_CONTIGUO: CodingStep = CodingStep {
+    id: "py-2922-offset-contiguo", title: "offsets · continuidad", objective: "Aceptar solo el offset contiguo.",
+    prompt_md: "**offsets · continuidad**\n\nAceptar solo el offset contiguo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ultimo, recibido = 4, 5\n# resultado = recibido == ultimo + 1\n# print(resultado)\n",
+    pytest: "def test_offset_contiguo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "ultimo, recibido = 4, 5\nresultado = recibido == ultimo + 1\nprint(resultado)",
+    next: Some("py-2923-offset-huecos"), show_type_chips: false, micro_step: 2922,
+};
+pub const PY2923_OFFSET_HUECOS: CodingStep = CodingStep {
+    id: "py-2923-offset-huecos", title: "offsets · huecos", objective: "Detectar offsets ausentes en un rango.",
+    prompt_md: "**offsets · huecos**\n\nDetectar offsets ausentes en un rango.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# recibidos = {3, 4, 6, 8}\n# resultado = [n for n in range(3, 9) if n not in recibidos]\n# print(resultado)\n",
+    pytest: "def test_offset_huecos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [5, 7]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [5, 7].",
+    solution_example: "recibidos = {3, 4, 6, 8}\nresultado = [n for n in range(3, 9) if n not in recibidos]\nprint(resultado)",
+    next: Some("py-2924-offset-por-particion"), show_type_chips: false, micro_step: 2923,
+};
+pub const PY2924_OFFSET_POR_PARTICION: CodingStep = CodingStep {
+    id: "py-2924-offset-por-particion", title: "offsets · por partición", objective: "Mantener progreso independiente por partición.",
+    prompt_md: "**offsets · por partición**\n\nMantener progreso independiente por partición.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(0, 3), (1, 2), (0, 4)]\n# progreso = {}\n# for particion, offset in eventos: progreso[particion] = max(offset, progreso.get(particion, -1))\n# resultado = progreso\n# print(resultado)\n",
+    pytest: "def test_offset_por_particion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: 4, 1: 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: 4, 1: 2}.",
+    solution_example: "eventos = [(0, 3), (1, 2), (0, 4)]\nprogreso = {}\nfor particion, offset in eventos: progreso[particion] = max(offset, progreso.get(particion, -1))\nresultado = progreso\nprint(resultado)",
+    next: Some("py-2925-offset-lag"), show_type_chips: false, micro_step: 2924,
+};
+pub const PY2925_OFFSET_LAG: CodingStep = CodingStep {
+    id: "py-2925-offset-lag", title: "offsets · lag", objective: "Calcular atraso respecto del último disponible.",
+    prompt_md: "**offsets · lag**\n\nCalcular atraso respecto del último disponible.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# disponible = {0: 9, 1: 7}\n# procesado = {0: 6, 1: 7}\n# resultado = {p: disponible[p] - procesado[p] for p in sorted(disponible)}\n# print(resultado)\n",
+    pytest: "def test_offset_lag(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: 3, 1: 0}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: 3, 1: 0}.",
+    solution_example: "disponible = {0: 9, 1: 7}\nprocesado = {0: 6, 1: 7}\nresultado = {p: disponible[p] - procesado[p] for p in sorted(disponible)}\nprint(resultado)",
+    next: Some("py-2926-offset-suite"), show_type_chips: false, micro_step: 2925,
+};
+pub const PY2926_OFFSET_SUITE: CodingStep = CodingStep {
+    id: "py-2926-offset-suite", title: "offsets · suite", objective: "Avanzar progreso contiguo y reportar huecos y lag.",
+    prompt_md: "**offsets · suite**\n\nAvanzar progreso contiguo y reportar huecos y lag.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# recibidos = {0: [3, 4, 6], 1: [1, 2, 3]}\n# ultimo = {0: 2, 1: 0}; disponible = {0: 6, 1: 3}\n# for p in sorted(recibidos):\n#     while ultimo[p] + 1 in recibidos[p]: ultimo[p] += 1\n# resultado = {'progreso': ultimo, 'lag': {p: disponible[p] - ultimo[p] for p in sorted(ultimo)}}\n# print(resultado)\n",
+    pytest: "def test_offset_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'progreso': {0: 4, 1: 3}, 'lag': {0: 2, 1: 0}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'progreso': {0: 4, 1: 3}, 'lag': {0: 2, 1: 0}}.",
+    solution_example: "recibidos = {0: [3, 4, 6], 1: [1, 2, 3]}\nultimo = {0: 2, 1: 0}; disponible = {0: 6, 1: 3}\nfor p in sorted(recibidos):\n    while ultimo[p] + 1 in recibidos[p]: ultimo[p] += 1\nresultado = {'progreso': ultimo, 'lag': {p: disponible[p] - ultimo[p] for p in sorted(ultimo)}}\nprint(resultado)",
+    next: Some("py-2927-ack-marcar"), show_type_chips: false, micro_step: 2926,
+};
+pub const PY2927_ACK_MARCAR: CodingStep = CodingStep {
+    id: "py-2927-ack-marcar", title: "ack · marcar", objective: "Marcar un mensaje como confirmado.",
+    prompt_md: "**ack · marcar**\n\nMarcar un mensaje como confirmado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# confirmados = {'m1'}\n# confirmados.add('m2')\n# resultado = sorted(confirmados)\n# print(resultado)\n",
+    pytest: "def test_ack_marcar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['m1', 'm2']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['m1', 'm2'].",
+    solution_example: "confirmados = {'m1'}\nconfirmados.add('m2')\nresultado = sorted(confirmados)\nprint(resultado)",
+    next: Some("py-2928-ack-pendientes"), show_type_chips: false, micro_step: 2927,
+};
+pub const PY2928_ACK_PENDIENTES: CodingStep = CodingStep {
+    id: "py-2928-ack-pendientes", title: "ack · pendientes", objective: "Listar mensajes todavía no confirmados.",
+    prompt_md: "**ack · pendientes**\n\nListar mensajes todavía no confirmados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# enviados = ['m1', 'm2', 'm3']\n# confirmados = {'m1', 'm3'}\n# resultado = [m for m in enviados if m not in confirmados]\n# print(resultado)\n",
+    pytest: "def test_ack_pendientes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['m2']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['m2'].",
+    solution_example: "enviados = ['m1', 'm2', 'm3']\nconfirmados = {'m1', 'm3'}\nresultado = [m for m in enviados if m not in confirmados]\nprint(resultado)",
+    next: Some("py-2929-ack-cumulativo"), show_type_chips: false, micro_step: 2928,
+};
+pub const PY2929_ACK_CUMULATIVO: CodingStep = CodingStep {
+    id: "py-2929-ack-cumulativo", title: "ack · acumulativo", objective: "Confirmar todos los offsets hasta un límite.",
+    prompt_md: "**ack · acumulativo**\n\nConfirmar todos los offsets hasta un límite.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# offsets = [3, 4, 5, 6]\n# ack = 5\n# resultado = [n for n in offsets if n <= ack]\n# print(resultado)\n",
+    pytest: "def test_ack_cumulativo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, 4, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [3, 4, 5].",
+    solution_example: "offsets = [3, 4, 5, 6]\nack = 5\nresultado = [n for n in offsets if n <= ack]\nprint(resultado)",
+    next: Some("py-2930-ack-desorden"), show_type_chips: false, micro_step: 2929,
+};
+pub const PY2930_ACK_DESORDEN: CodingStep = CodingStep {
+    id: "py-2930-ack-desorden", title: "ack · desorden", objective: "Conservar confirmaciones fuera de orden hasta cerrar huecos.",
+    prompt_md: "**ack · desorden**\n\nConservar confirmaciones fuera de orden hasta cerrar huecos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# acks = {4, 6, 5}\n# base = 3\n# while base + 1 in acks: base += 1\n# resultado = base\n# print(resultado)\n",
+    pytest: "def test_ack_desorden(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 6.",
+    solution_example: "acks = {4, 6, 5}\nbase = 3\nwhile base + 1 in acks: base += 1\nresultado = base\nprint(resultado)",
+    next: Some("py-2931-ack-reintentar"), show_type_chips: false, micro_step: 2930,
+};
+pub const PY2931_ACK_REINTENTAR: CodingStep = CodingStep {
+    id: "py-2931-ack-reintentar", title: "ack · reintentar", objective: "Seleccionar mensajes no confirmados para reenvío.",
+    prompt_md: "**ack · reintentar**\n\nSeleccionar mensajes no confirmados para reenvío.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# enviados = [('m1', 1), ('m2', 2), ('m3', 3)]\n# confirmados = {'m1'}\n# resultado = [m for m in enviados if m[0] not in confirmados]\n# print(resultado)\n",
+    pytest: "def test_ack_reintentar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('m2', 2), ('m3', 3)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('m2', 2), ('m3', 3)].",
+    solution_example: "enviados = [('m1', 1), ('m2', 2), ('m3', 3)]\nconfirmados = {'m1'}\nresultado = [m for m in enviados if m[0] not in confirmados]\nprint(resultado)",
+    next: Some("py-2932-ack-suite"), show_type_chips: false, micro_step: 2931,
+};
+pub const PY2932_ACK_SUITE: CodingStep = CodingStep {
+    id: "py-2932-ack-suite", title: "ack · suite", objective: "Combinar ack individual y acumulativo en un resumen.",
+    prompt_md: "**ack · suite**\n\nCombinar ack individual y acumulativo en un resumen.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# mensajes = [('m1', 3), ('m2', 4), ('m3', 5), ('m4', 6)]\n# individuales = {'m4'}; acumulativo = 4\n# confirmados = [mid for mid, off in mensajes if off <= acumulativo or mid in individuales]\n# resultado = {'confirmados': confirmados, 'pendientes': [mid for mid, _ in mensajes if mid not in confirmados]}\n# print(resultado)\n",
+    pytest: "def test_ack_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'confirmados': ['m1', 'm2', 'm4'], 'pendientes': ['m3']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'confirmados': ['m1', 'm2', 'm4'], 'pendientes': ['m3']}.",
+    solution_example: "mensajes = [('m1', 3), ('m2', 4), ('m3', 5), ('m4', 6)]\nindividuales = {'m4'}; acumulativo = 4\nconfirmados = [mid for mid, off in mensajes if off <= acumulativo or mid in individuales]\nresultado = {'confirmados': confirmados, 'pendientes': [mid for mid, _ in mensajes if mid not in confirmados]}\nprint(resultado)",
+    next: Some("py-2933-entrega-primera"), show_type_chips: false, micro_step: 2932,
+};
+pub const PY2933_ENTREGA_PRIMERA: CodingStep = CodingStep {
+    id: "py-2933-entrega-primera", title: "entrega · primera", objective: "Aceptar la primera aparición de cada id.",
+    prompt_md: "**entrega · primera**\n\nAceptar la primera aparición de cada id.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ids = ['a', 'b', 'a', 'c']\n# vistos, resultado = set(), []\n# for identificador in ids:\n#     if identificador not in vistos: vistos.add(identificador); resultado.append(identificador)\n# print(resultado)\n",
+    pytest: "def test_entrega_primera(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'b', 'c'].",
+    solution_example: "ids = ['a', 'b', 'a', 'c']\nvistos, resultado = set(), []\nfor identificador in ids:\n    if identificador not in vistos: vistos.add(identificador); resultado.append(identificador)\nprint(resultado)",
+    next: Some("py-2934-entrega-duplicados"), show_type_chips: false, micro_step: 2933,
+};
+pub const PY2934_ENTREGA_DUPLICADOS: CodingStep = CodingStep {
+    id: "py-2934-entrega-duplicados", title: "entrega · duplicados", objective: "Contar entregas duplicadas.",
+    prompt_md: "**entrega · duplicados**\n\nContar entregas duplicadas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ids = ['a', 'a', 'b', 'c', 'b']\n# resultado = len(ids) - len(set(ids))\n# print(resultado)\n",
+    pytest: "def test_entrega_duplicados(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 2.",
+    solution_example: "ids = ['a', 'a', 'b', 'c', 'b']\nresultado = len(ids) - len(set(ids))\nprint(resultado)",
+    next: Some("py-2935-entrega-idempotente"), show_type_chips: false, micro_step: 2934,
+};
+pub const PY2935_ENTREGA_IDEMPOTENTE: CodingStep = CodingStep {
+    id: "py-2935-entrega-idempotente", title: "entrega · idempotencia", objective: "Aplicar cada operación una sola vez.",
+    prompt_md: "**entrega · idempotencia**\n\nAplicar cada operación una sola vez.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# operaciones = [('x', 3), ('y', 2), ('x', 3)]\n# vistos, total = set(), 0\n# for identificador, valor in operaciones:\n#     if identificador not in vistos: vistos.add(identificador); total += valor\n# resultado = total\n# print(resultado)\n",
+    pytest: "def test_entrega_idempotente(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 5.",
+    solution_example: "operaciones = [('x', 3), ('y', 2), ('x', 3)]\nvistos, total = set(), 0\nfor identificador, valor in operaciones:\n    if identificador not in vistos: vistos.add(identificador); total += valor\nresultado = total\nprint(resultado)",
+    next: Some("py-2936-entrega-por-clave"), show_type_chips: false, micro_step: 2935,
+};
+pub const PY2936_ENTREGA_POR_CLAVE: CodingStep = CodingStep {
+    id: "py-2936-entrega-por-clave", title: "entrega · por clave", objective: "Deduplicar independientemente por consumidor.",
+    prompt_md: "**entrega · por clave**\n\nDeduplicar independientemente por consumidor.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('a', 'm1'), ('b', 'm1'), ('a', 'm1'), ('a', 'm2')]\n# vistos, aceptados = set(), []\n# for consumidor, mensaje in eventos:\n#     clave = (consumidor, mensaje)\n#     if clave not in vistos: vistos.add(clave); aceptados.append(clave)\n# resultado = aceptados\n# print(resultado)\n",
+    pytest: "def test_entrega_por_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', 'm1'), ('b', 'm1'), ('a', 'm2')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('a', 'm1'), ('b', 'm1'), ('a', 'm2')].",
+    solution_example: "eventos = [('a', 'm1'), ('b', 'm1'), ('a', 'm1'), ('a', 'm2')]\nvistos, aceptados = set(), []\nfor consumidor, mensaje in eventos:\n    clave = (consumidor, mensaje)\n    if clave not in vistos: vistos.add(clave); aceptados.append(clave)\nresultado = aceptados\nprint(resultado)",
+    next: Some("py-2937-entrega-estado"), show_type_chips: false, micro_step: 2936,
+};
+pub const PY2937_ENTREGA_ESTADO: CodingStep = CodingStep {
+    id: "py-2937-entrega-estado", title: "entrega · estado", objective: "Conservar ids vistos junto al agregado.",
+    prompt_md: "**entrega · estado**\n\nConservar ids vistos junto al agregado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('e1', 2), ('e2', 5), ('e1', 2)]\n# estado = {'vistos': set(), 'total': 0}\n# for identificador, valor in eventos:\n#     if identificador not in estado['vistos']: estado['vistos'].add(identificador); estado['total'] += valor\n# resultado = {'vistos': sorted(estado['vistos']), 'total': estado['total']}\n# print(resultado)\n",
+    pytest: "def test_entrega_estado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'vistos': ['e1', 'e2'], 'total': 7}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'vistos': ['e1', 'e2'], 'total': 7}.",
+    solution_example: "eventos = [('e1', 2), ('e2', 5), ('e1', 2)]\nestado = {'vistos': set(), 'total': 0}\nfor identificador, valor in eventos:\n    if identificador not in estado['vistos']: estado['vistos'].add(identificador); estado['total'] += valor\nresultado = {'vistos': sorted(estado['vistos']), 'total': estado['total']}\nprint(resultado)",
+    next: Some("py-2938-entrega-suite"), show_type_chips: false, micro_step: 2937,
+};
+pub const PY2938_ENTREGA_SUITE: CodingStep = CodingStep {
+    id: "py-2938-entrega-suite", title: "entrega · suite", objective: "Deduplicar, agregar y emitir métricas de entrega.",
+    prompt_md: "**entrega · suite**\n\nDeduplicar, agregar y emitir métricas de entrega.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('e1', 'a', 2), ('e2', 'a', 3), ('e1', 'a', 2), ('e3', 'b', 4)]\n# vistos, total, duplicados = set(), {}, 0\n# for identificador, clave, valor in eventos:\n#     if identificador in vistos: duplicados += 1; continue\n#     vistos.add(identificador); total[clave] = total.get(clave, 0) + valor\n# resultado = {'total': total, 'aceptados': len(vistos), 'duplicados': duplicados}\n# print(resultado)\n",
+    pytest: "def test_entrega_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'total': {'a': 5, 'b': 4}, 'aceptados': 3, 'duplicados': 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'total': {'a': 5, 'b': 4}, 'aceptados': 3, 'duplicados': 1}.",
+    solution_example: "eventos = [('e1', 'a', 2), ('e2', 'a', 3), ('e1', 'a', 2), ('e3', 'b', 4)]\nvistos, total, duplicados = set(), {}, 0\nfor identificador, clave, valor in eventos:\n    if identificador in vistos: duplicados += 1; continue\n    vistos.add(identificador); total[clave] = total.get(clave, 0) + valor\nresultado = {'total': total, 'aceptados': len(vistos), 'duplicados': duplicados}\nprint(resultado)",
+    next: Some("py-2939-checkpoint-capturar"), show_type_chips: false, micro_step: 2938,
+};
+pub const PY2939_CHECKPOINT_CAPTURAR: CodingStep = CodingStep {
+    id: "py-2939-checkpoint-capturar", title: "checkpoints · capturar", objective: "Capturar una copia inmutable del estado.",
+    prompt_md: "**checkpoints · capturar**\n\nCapturar una copia inmutable del estado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {'offset': 4, 'total': 9}\n# resultado = dict(estado)\n# print(resultado)\n",
+    pytest: "def test_checkpoint_capturar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'offset': 4, 'total': 9}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'offset': 4, 'total': 9}.",
+    solution_example: "estado = {'offset': 4, 'total': 9}\nresultado = dict(estado)\nprint(resultado)",
+    next: Some("py-2940-checkpoint-restaurar"), show_type_chips: false, micro_step: 2939,
+};
+pub const PY2940_CHECKPOINT_RESTAURAR: CodingStep = CodingStep {
+    id: "py-2940-checkpoint-restaurar", title: "checkpoints · restaurar", objective: "Restaurar estado desde un snapshot.",
+    prompt_md: "**checkpoints · restaurar**\n\nRestaurar estado desde un snapshot.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# snapshot = {'offset': 7, 'conteos': {'a': 2}}\n# restaurado = {'offset': snapshot['offset'], 'conteos': dict(snapshot['conteos'])}\n# resultado = restaurado\n# print(resultado)\n",
+    pytest: "def test_checkpoint_restaurar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'offset': 7, 'conteos': {'a': 2}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'offset': 7, 'conteos': {'a': 2}}.",
+    solution_example: "snapshot = {'offset': 7, 'conteos': {'a': 2}}\nrestaurado = {'offset': snapshot['offset'], 'conteos': dict(snapshot['conteos'])}\nresultado = restaurado\nprint(resultado)",
+    next: Some("py-2941-checkpoint-ultimo"), show_type_chips: false, micro_step: 2940,
+};
+pub const PY2941_CHECKPOINT_ULTIMO: CodingStep = CodingStep {
+    id: "py-2941-checkpoint-ultimo", title: "checkpoints · último", objective: "Elegir el snapshot con mayor versión.",
+    prompt_md: "**checkpoints · último**\n\nElegir el snapshot con mayor versión.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# snapshots = [(1, {'x': 2}), (3, {'x': 5}), (2, {'x': 4})]\n# resultado = max(snapshots, key=lambda item: item[0])\n# print(resultado)\n",
+    pytest: "def test_checkpoint_ultimo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, {'x': 5})\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (3, {'x': 5}).",
+    solution_example: "snapshots = [(1, {'x': 2}), (3, {'x': 5}), (2, {'x': 4})]\nresultado = max(snapshots, key=lambda item: item[0])\nprint(resultado)",
+    next: Some("py-2942-checkpoint-validar"), show_type_chips: false, micro_step: 2941,
+};
+pub const PY2942_CHECKPOINT_VALIDAR: CodingStep = CodingStep {
+    id: "py-2942-checkpoint-validar", title: "checkpoints · validar", objective: "Validar versión y campos requeridos.",
+    prompt_md: "**checkpoints · validar**\n\nValidar versión y campos requeridos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# snapshot = {'version': 2, 'offset': 8, 'estado': {}}\n# resultado = snapshot.get('version') == 2 and {'offset', 'estado'} <= snapshot.keys()\n# print(resultado)\n",
+    pytest: "def test_checkpoint_validar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "snapshot = {'version': 2, 'offset': 8, 'estado': {}}\nresultado = snapshot.get('version') == 2 and {'offset', 'estado'} <= snapshot.keys()\nprint(resultado)",
+    next: Some("py-2943-checkpoint-delta"), show_type_chips: false, micro_step: 2942,
+};
+pub const PY2943_CHECKPOINT_DELTA: CodingStep = CodingStep {
+    id: "py-2943-checkpoint-delta", title: "checkpoints · delta", objective: "Calcular cambios respecto del snapshot anterior.",
+    prompt_md: "**checkpoints · delta**\n\nCalcular cambios respecto del snapshot anterior.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# anterior = {'a': 2, 'b': 1}\n# actual = {'a': 5, 'b': 1, 'c': 3}\n# resultado = {k: actual[k] - anterior.get(k, 0) for k in sorted(actual) if actual[k] != anterior.get(k, 0)}\n# print(resultado)\n",
+    pytest: "def test_checkpoint_delta(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 3, 'c': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 3, 'c': 3}.",
+    solution_example: "anterior = {'a': 2, 'b': 1}\nactual = {'a': 5, 'b': 1, 'c': 3}\nresultado = {k: actual[k] - anterior.get(k, 0) for k in sorted(actual) if actual[k] != anterior.get(k, 0)}\nprint(resultado)",
+    next: Some("py-2944-checkpoint-suite"), show_type_chips: false, micro_step: 2943,
+};
+pub const PY2944_CHECKPOINT_SUITE: CodingStep = CodingStep {
+    id: "py-2944-checkpoint-suite", title: "checkpoints · suite", objective: "Restaurar, aplicar eventos y crear un snapshot nuevo.",
+    prompt_md: "**checkpoints · suite**\n\nRestaurar, aplicar eventos y crear un snapshot nuevo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# snapshot = {'version': 1, 'offset': 2, 'total': 5}\n# eventos = [(3, 4), (4, 2)]\n# estado = dict(snapshot)\n# for offset, valor in eventos:\n#     if offset > estado['offset']: estado['offset'] = offset; estado['total'] += valor\n# resultado = {'version': estado['version'] + 1, 'offset': estado['offset'], 'total': estado['total']}\n# print(resultado)\n",
+    pytest: "def test_checkpoint_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'version': 2, 'offset': 4, 'total': 11}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'version': 2, 'offset': 4, 'total': 11}.",
+    solution_example: "snapshot = {'version': 1, 'offset': 2, 'total': 5}\neventos = [(3, 4), (4, 2)]\nestado = dict(snapshot)\nfor offset, valor in eventos:\n    if offset > estado['offset']: estado['offset'] = offset; estado['total'] += valor\nresultado = {'version': estado['version'] + 1, 'offset': estado['offset'], 'total': estado['total']}\nprint(resultado)",
+    next: Some("py-2945-barrera-llegadas"), show_type_chips: false, micro_step: 2944,
+};
+pub const PY2945_BARRERA_LLEGADAS: CodingStep = CodingStep {
+    id: "py-2945-barrera-llegadas", title: "barreras · llegadas", objective: "Registrar particiones que alcanzaron una barrera.",
+    prompt_md: "**barreras · llegadas**\n\nRegistrar particiones que alcanzaron una barrera.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# llegadas = [2, 0, 1]\n# resultado = sorted(set(llegadas))\n# print(resultado)\n",
+    pytest: "def test_barrera_llegadas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 1, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [0, 1, 2].",
+    solution_example: "llegadas = [2, 0, 1]\nresultado = sorted(set(llegadas))\nprint(resultado)",
+    next: Some("py-2946-barrera-faltantes"), show_type_chips: false, micro_step: 2945,
+};
+pub const PY2946_BARRERA_FALTANTES: CodingStep = CodingStep {
+    id: "py-2946-barrera-faltantes", title: "barreras · faltantes", objective: "Detectar particiones pendientes.",
+    prompt_md: "**barreras · faltantes**\n\nDetectar particiones pendientes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# esperadas = {0, 1, 2, 3}\n# llegadas = {0, 2}\n# resultado = sorted(esperadas - llegadas)\n# print(resultado)\n",
+    pytest: "def test_barrera_faltantes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 3].",
+    solution_example: "esperadas = {0, 1, 2, 3}\nllegadas = {0, 2}\nresultado = sorted(esperadas - llegadas)\nprint(resultado)",
+    next: Some("py-2947-barrera-completa"), show_type_chips: false, micro_step: 2946,
+};
+pub const PY2947_BARRERA_COMPLETA: CodingStep = CodingStep {
+    id: "py-2947-barrera-completa", title: "barreras · completa", objective: "Decidir si la barrera está completa.",
+    prompt_md: "**barreras · completa**\n\nDecidir si la barrera está completa.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# esperadas = {0, 1, 2}\n# llegadas = {2, 0, 1}\n# resultado = llegadas == esperadas\n# print(resultado)\n",
+    pytest: "def test_barrera_completa(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "esperadas = {0, 1, 2}\nllegadas = {2, 0, 1}\nresultado = llegadas == esperadas\nprint(resultado)",
+    next: Some("py-2948-barrera-alinear"), show_type_chips: false, micro_step: 2947,
+};
+pub const PY2948_BARRERA_ALINEAR: CodingStep = CodingStep {
+    id: "py-2948-barrera-alinear", title: "barreras · alinear", objective: "Calcular el offset seguro común.",
+    prompt_md: "**barreras · alinear**\n\nCalcular el offset seguro común.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# offsets = {0: 8, 1: 6, 2: 7}\n# resultado = min(offsets.values())\n# print(resultado)\n",
+    pytest: "def test_barrera_alinear(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 6\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 6.",
+    solution_example: "offsets = {0: 8, 1: 6, 2: 7}\nresultado = min(offsets.values())\nprint(resultado)",
+    next: Some("py-2949-barrera-buffer"), show_type_chips: false, micro_step: 2948,
+};
+pub const PY2949_BARRERA_BUFFER: CodingStep = CodingStep {
+    id: "py-2949-barrera-buffer", title: "barreras · buffer", objective: "Separar eventos posteriores a la barrera.",
+    prompt_md: "**barreras · buffer**\n\nSeparar eventos posteriores a la barrera.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(4, 'a'), (7, 'b'), (6, 'c')]\n# barrera = 6\n# resultado = ([e for e in eventos if e[0] <= barrera], [e for e in eventos if e[0] > barrera])\n# print(resultado)\n",
+    pytest: "def test_barrera_buffer(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([(4, 'a'), (6, 'c')], [(7, 'b')])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ([(4, 'a'), (6, 'c')], [(7, 'b')]).",
+    solution_example: "eventos = [(4, 'a'), (7, 'b'), (6, 'c')]\nbarrera = 6\nresultado = ([e for e in eventos if e[0] <= barrera], [e for e in eventos if e[0] > barrera])\nprint(resultado)",
+    next: Some("py-2950-barrera-suite"), show_type_chips: false, micro_step: 2949,
+};
+pub const PY2950_BARRERA_SUITE: CodingStep = CodingStep {
+    id: "py-2950-barrera-suite", title: "barreras · suite", objective: "Alinear particiones y liberar buffers al completar.",
+    prompt_md: "**barreras · suite**\n\nAlinear particiones y liberar buffers al completar.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# marcas = [(0, 5), (2, 7), (1, 6)]\n# esperadas = {0, 1, 2}; offsets = {p: off for p, off in marcas}\n# seguro = min(offsets.values()) if set(offsets) == esperadas else None\n# buffer = [(8, 'x'), (5, 'y'), (6, 'z')]\n# resultado = {'completa': seguro is not None, 'seguro': seguro, 'liberados': [e for e in buffer if e[0] <= seguro]}\n# print(resultado)\n",
+    pytest: "def test_barrera_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'completa': True, 'seguro': 5, 'liberados': [(5, 'y')]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'completa': True, 'seguro': 5, 'liberados': [(5, 'y')]}.",
+    solution_example: "marcas = [(0, 5), (2, 7), (1, 6)]\nesperadas = {0, 1, 2}; offsets = {p: off for p, off in marcas}\nseguro = min(offsets.values()) if set(offsets) == esperadas else None\nbuffer = [(8, 'x'), (5, 'y'), (6, 'z')]\nresultado = {'completa': seguro is not None, 'seguro': seguro, 'liberados': [e for e in buffer if e[0] <= seguro]}\nprint(resultado)",
+    next: Some("py-2951-credito-permitir"), show_type_chips: false, micro_step: 2950,
+};
+pub const PY2951_CREDITO_PERMITIR: CodingStep = CodingStep {
+    id: "py-2951-credito-permitir", title: "backpressure · permitir", objective: "Permitir emisión si quedan créditos.",
+    prompt_md: "**backpressure · permitir**\n\nPermitir emisión si quedan créditos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# creditos = 2\n# resultado = creditos > 0\n# print(resultado)\n",
+    pytest: "def test_credito_permitir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "creditos = 2\nresultado = creditos > 0\nprint(resultado)",
+    next: Some("py-2952-credito-consumir"), show_type_chips: false, micro_step: 2951,
+};
+pub const PY2952_CREDITO_CONSUMIR: CodingStep = CodingStep {
+    id: "py-2952-credito-consumir", title: "backpressure · consumir", objective: "Consumir un crédito por mensaje.",
+    prompt_md: "**backpressure · consumir**\n\nConsumir un crédito por mensaje.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# creditos = 3\n# creditos -= 1\n# resultado = creditos\n# print(resultado)\n",
+    pytest: "def test_credito_consumir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 2.",
+    solution_example: "creditos = 3\ncreditos -= 1\nresultado = creditos\nprint(resultado)",
+    next: Some("py-2953-credito-reponer"), show_type_chips: false, micro_step: 2952,
+};
+pub const PY2953_CREDITO_REPONER: CodingStep = CodingStep {
+    id: "py-2953-credito-reponer", title: "backpressure · reponer", objective: "Reponer créditos hasta una capacidad.",
+    prompt_md: "**backpressure · reponer**\n\nReponer créditos hasta una capacidad.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# creditos, capacidad, ack = 1, 4, 3\n# resultado = min(capacidad, creditos + ack)\n# print(resultado)\n",
+    pytest: "def test_credito_reponer(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 4.",
+    solution_example: "creditos, capacidad, ack = 1, 4, 3\nresultado = min(capacidad, creditos + ack)\nprint(resultado)",
+    next: Some("py-2954-credito-por-worker"), show_type_chips: false, micro_step: 2953,
+};
+pub const PY2954_CREDITO_POR_WORKER: CodingStep = CodingStep {
+    id: "py-2954-credito-por-worker", title: "backpressure · por worker", objective: "Mantener créditos independientes.",
+    prompt_md: "**backpressure · por worker**\n\nMantener créditos independientes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# creditos = {'a': 2, 'b': 1}\n# for worker in ['a', 'b', 'a']: creditos[worker] -= 1\n# resultado = creditos\n# print(resultado)\n",
+    pytest: "def test_credito_por_worker(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 0, 'b': 0}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 0, 'b': 0}.",
+    solution_example: "creditos = {'a': 2, 'b': 1}\nfor worker in ['a', 'b', 'a']: creditos[worker] -= 1\nresultado = creditos\nprint(resultado)",
+    next: Some("py-2955-credito-pausar"), show_type_chips: false, micro_step: 2954,
+};
+pub const PY2955_CREDITO_PAUSAR: CodingStep = CodingStep {
+    id: "py-2955-credito-pausar", title: "backpressure · pausa", objective: "Pausar cuando todos los consumidores están saturados.",
+    prompt_md: "**backpressure · pausa**\n\nPausar cuando todos los consumidores están saturados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# creditos = {'a': 0, 'b': 0}\n# resultado = 'pausado' if not any(creditos.values()) else 'activo'\n# print(resultado)\n",
+    pytest: "def test_credito_pausar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'pausado'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'pausado'.",
+    solution_example: "creditos = {'a': 0, 'b': 0}\nresultado = 'pausado' if not any(creditos.values()) else 'activo'\nprint(resultado)",
+    next: Some("py-2956-credito-suite"), show_type_chips: false, micro_step: 2955,
+};
+pub const PY2956_CREDITO_SUITE: CodingStep = CodingStep {
+    id: "py-2956-credito-suite", title: "backpressure · suite", objective: "Emitir con créditos, registrar pausas y reponer con acks.",
+    prompt_md: "**backpressure · suite**\n\nEmitir con créditos, registrar pausas y reponer con acks.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# creditos, capacidad = 2, 3\n# eventos = [('emitir', None), ('emitir', None), ('emitir', None), ('ack', 2), ('emitir', None)]\n# historial = []\n# for accion, valor in eventos:\n#     if accion == 'ack': creditos = min(capacidad, creditos + valor); historial.append(('ack', creditos))\n#     elif creditos > 0: creditos -= 1; historial.append(('emitido', creditos))\n#     else: historial.append(('pausado', creditos))\n# resultado = historial\n# print(resultado)\n",
+    pytest: "def test_credito_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('emitido', 1), ('emitido', 0), ('pausado', 0), ('ack', 2), ('emitido', 1)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('emitido', 1), ('emitido', 0), ('pausado', 0), ('ack', 2), ('emitido', 1)].",
+    solution_example: "creditos, capacidad = 2, 3\neventos = [('emitir', None), ('emitir', None), ('emitir', None), ('ack', 2), ('emitir', None)]\nhistorial = []\nfor accion, valor in eventos:\n    if accion == 'ack': creditos = min(capacidad, creditos + valor); historial.append(('ack', creditos))\n    elif creditos > 0: creditos -= 1; historial.append(('emitido', creditos))\n    else: historial.append(('pausado', creditos))\nresultado = historial\nprint(resultado)",
+    next: Some("py-2957-linaje-padre"), show_type_chips: false, micro_step: 2956,
+};
+pub const PY2957_LINAJE_PADRE: CodingStep = CodingStep {
+    id: "py-2957-linaje-padre", title: "lineage · padre", objective: "Consultar el padre directo de un artefacto.",
+    prompt_md: "**lineage · padre**\n\nConsultar el padre directo de un artefacto.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# padres = {'b': 'a', 'c': 'b'}\n# resultado = padres['c']\n# print(resultado)\n",
+    pytest: "def test_linaje_padre(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'b'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'b'.",
+    solution_example: "padres = {'b': 'a', 'c': 'b'}\nresultado = padres['c']\nprint(resultado)",
+    next: Some("py-2958-linaje-ancestros"), show_type_chips: false, micro_step: 2957,
+};
+pub const PY2958_LINAJE_ANCESTROS: CodingStep = CodingStep {
+    id: "py-2958-linaje-ancestros", title: "lineage · ancestros", objective: "Recorrer ancestros hasta la raíz.",
+    prompt_md: "**lineage · ancestros**\n\nRecorrer ancestros hasta la raíz.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# padres = {'b': 'a', 'c': 'b', 'd': 'c'}\n# actual, resultado = 'd', []\n# while actual in padres: actual = padres[actual]; resultado.append(actual)\n# print(resultado)\n",
+    pytest: "def test_linaje_ancestros(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['c', 'b', 'a']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['c', 'b', 'a'].",
+    solution_example: "padres = {'b': 'a', 'c': 'b', 'd': 'c'}\nactual, resultado = 'd', []\nwhile actual in padres: actual = padres[actual]; resultado.append(actual)\nprint(resultado)",
+    next: Some("py-2959-linaje-raices"), show_type_chips: false, micro_step: 2958,
+};
+pub const PY2959_LINAJE_RAICES: CodingStep = CodingStep {
+    id: "py-2959-linaje-raices", title: "lineage · raíces", objective: "Encontrar fuentes sin padres.",
+    prompt_md: "**lineage · raíces**\n\nEncontrar fuentes sin padres.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# nodos = {'a', 'b', 'c', 'd'}\n# padres = {'b': 'a', 'c': 'a', 'd': 'b'}\n# resultado = sorted(nodos - set(padres))\n# print(resultado)\n",
+    pytest: "def test_linaje_raices(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a'].",
+    solution_example: "nodos = {'a', 'b', 'c', 'd'}\npadres = {'b': 'a', 'c': 'a', 'd': 'b'}\nresultado = sorted(nodos - set(padres))\nprint(resultado)",
+    next: Some("py-2960-linaje-hijos"), show_type_chips: false, micro_step: 2959,
+};
+pub const PY2960_LINAJE_HIJOS: CodingStep = CodingStep {
+    id: "py-2960-linaje-hijos", title: "lineage · hijos", objective: "Construir hijos por nodo.",
+    prompt_md: "**lineage · hijos**\n\nConstruir hijos por nodo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# padres = {'b': 'a', 'c': 'a', 'd': 'b'}\n# hijos = {}\n# for hijo, padre in padres.items(): hijos.setdefault(padre, []).append(hijo)\n# resultado = {k: sorted(v) for k, v in sorted(hijos.items())}\n# print(resultado)\n",
+    pytest: "def test_linaje_hijos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': ['b', 'c'], 'b': ['d']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': ['b', 'c'], 'b': ['d']}.",
+    solution_example: "padres = {'b': 'a', 'c': 'a', 'd': 'b'}\nhijos = {}\nfor hijo, padre in padres.items(): hijos.setdefault(padre, []).append(hijo)\nresultado = {k: sorted(v) for k, v in sorted(hijos.items())}\nprint(resultado)",
+    next: Some("py-2961-linaje-impacto"), show_type_chips: false, micro_step: 2960,
+};
+pub const PY2961_LINAJE_IMPACTO: CodingStep = CodingStep {
+    id: "py-2961-linaje-impacto", title: "lineage · impacto", objective: "Calcular descendientes afectados por una fuente.",
+    prompt_md: "**lineage · impacto**\n\nCalcular descendientes afectados por una fuente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# padres = {'b': 'a', 'c': 'a', 'd': 'b'}\n# afectados = {'a'}\n# cambio = True\n# while cambio:\n#     antes = len(afectados); afectados |= {h for h, p in padres.items() if p in afectados}; cambio = len(afectados) > antes\n# resultado = sorted(afectados - {'a'})\n# print(resultado)\n",
+    pytest: "def test_linaje_impacto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['b', 'c', 'd']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['b', 'c', 'd'].",
+    solution_example: "padres = {'b': 'a', 'c': 'a', 'd': 'b'}\nafectados = {'a'}\ncambio = True\nwhile cambio:\n    antes = len(afectados); afectados |= {h for h, p in padres.items() if p in afectados}; cambio = len(afectados) > antes\nresultado = sorted(afectados - {'a'})\nprint(resultado)",
+    next: Some("py-2962-linaje-suite"), show_type_chips: false, micro_step: 2961,
+};
+pub const PY2962_LINAJE_SUITE: CodingStep = CodingStep {
+    id: "py-2962-linaje-suite", title: "lineage · suite", objective: "Producir camino, raíces e impacto reproducibles.",
+    prompt_md: "**lineage · suite**\n\nProducir camino, raíces e impacto reproducibles.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# padres = {'limpio': 'crudo', 'agregado': 'limpio', 'reporte': 'agregado'}\n# actual, camino = 'reporte', ['reporte']\n# while actual in padres: actual = padres[actual]; camino.append(actual)\n# fuente = camino[-1]\n# resultado = {'camino': camino, 'fuente': fuente, 'profundidad': len(camino) - 1}\n# print(resultado)\n",
+    pytest: "def test_linaje_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'camino': ['reporte', 'agregado', 'limpio', 'crudo'], 'fuente': 'crudo', 'profundidad': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'camino': ['reporte', 'agregado', 'limpio', 'crudo'], 'fuente': 'crudo', 'profundidad': 3}.",
+    solution_example: "padres = {'limpio': 'crudo', 'agregado': 'limpio', 'reporte': 'agregado'}\nactual, camino = 'reporte', ['reporte']\nwhile actual in padres: actual = padres[actual]; camino.append(actual)\nfuente = camino[-1]\nresultado = {'camino': camino, 'fuente': fuente, 'profundidad': len(camino) - 1}\nprint(resultado)",
+    next: Some("py-2963-replay-desde"), show_type_chips: false, micro_step: 2962,
+};
+pub const PY2963_REPLAY_DESDE: CodingStep = CodingStep {
+    id: "py-2963-replay-desde", title: "replay · desde offset", objective: "Seleccionar eventos posteriores a un offset.",
+    prompt_md: "**replay · desde offset**\n\nSeleccionar eventos posteriores a un offset.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(1, 'a'), (2, 'b'), (3, 'c')]\n# desde = 1\n# resultado = [e for e in eventos if e[0] > desde]\n# print(resultado)\n",
+    pytest: "def test_replay_desde(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(2, 'b'), (3, 'c')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(2, 'b'), (3, 'c')].",
+    solution_example: "eventos = [(1, 'a'), (2, 'b'), (3, 'c')]\ndesde = 1\nresultado = [e for e in eventos if e[0] > desde]\nprint(resultado)",
+    next: Some("py-2964-replay-hasta"), show_type_chips: false, micro_step: 2963,
+};
+pub const PY2964_REPLAY_HASTA: CodingStep = CodingStep {
+    id: "py-2964-replay-hasta", title: "replay · rango", objective: "Reproducir un rango cerrado de offsets.",
+    prompt_md: "**replay · rango**\n\nReproducir un rango cerrado de offsets.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(1, 'a'), (2, 'b'), (3, 'c'), (4, 'd')]\n# resultado = [e for e in eventos if 2 <= e[0] <= 3]\n# print(resultado)\n",
+    pytest: "def test_replay_hasta(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(2, 'b'), (3, 'c')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(2, 'b'), (3, 'c')].",
+    solution_example: "eventos = [(1, 'a'), (2, 'b'), (3, 'c'), (4, 'd')]\nresultado = [e for e in eventos if 2 <= e[0] <= 3]\nprint(resultado)",
+    next: Some("py-2965-replay-deduplicar"), show_type_chips: false, micro_step: 2964,
+};
+pub const PY2965_REPLAY_DEDUPLICAR: CodingStep = CodingStep {
+    id: "py-2965-replay-deduplicar", title: "replay · deduplicar", objective: "Evitar reaplicar ids ya incluidos en snapshot.",
+    prompt_md: "**replay · deduplicar**\n\nEvitar reaplicar ids ya incluidos en snapshot.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('e1', 2), ('e2', 3), ('e3', 4)]\n# vistos = {'e1', 'e2'}\n# resultado = [e for e in eventos if e[0] not in vistos]\n# print(resultado)\n",
+    pytest: "def test_replay_deduplicar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('e3', 4)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('e3', 4)].",
+    solution_example: "eventos = [('e1', 2), ('e2', 3), ('e3', 4)]\nvistos = {'e1', 'e2'}\nresultado = [e for e in eventos if e[0] not in vistos]\nprint(resultado)",
+    next: Some("py-2966-replay-reconstruir"), show_type_chips: false, micro_step: 2965,
+};
+pub const PY2966_REPLAY_RECONSTRUIR: CodingStep = CodingStep {
+    id: "py-2966-replay-reconstruir", title: "replay · reconstruir", objective: "Reconstruir un agregado desde el log.",
+    prompt_md: "**replay · reconstruir**\n\nReconstruir un agregado desde el log.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('a', 2), ('b', 3), ('a', 4)]\n# total = {}\n# for clave, valor in eventos: total[clave] = total.get(clave, 0) + valor\n# resultado = total\n# print(resultado)\n",
+    pytest: "def test_replay_reconstruir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 6, 'b': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 6, 'b': 3}.",
+    solution_example: "eventos = [('a', 2), ('b', 3), ('a', 4)]\ntotal = {}\nfor clave, valor in eventos: total[clave] = total.get(clave, 0) + valor\nresultado = total\nprint(resultado)",
+    next: Some("py-2967-replay-comparar"), show_type_chips: false, micro_step: 2966,
+};
+pub const PY2967_REPLAY_COMPARAR: CodingStep = CodingStep {
+    id: "py-2967-replay-comparar", title: "replay · comparar", objective: "Comparar estado reconstruido con snapshot.",
+    prompt_md: "**replay · comparar**\n\nComparar estado reconstruido con snapshot.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# snapshot = {'a': 6, 'b': 3}\n# reconstruido = {'b': 3, 'a': 6}\n# resultado = snapshot == reconstruido\n# print(resultado)\n",
+    pytest: "def test_replay_comparar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "snapshot = {'a': 6, 'b': 3}\nreconstruido = {'b': 3, 'a': 6}\nresultado = snapshot == reconstruido\nprint(resultado)",
+    next: Some("py-2968-replay-suite"), show_type_chips: false, micro_step: 2967,
+};
+pub const PY2968_REPLAY_SUITE: CodingStep = CodingStep {
+    id: "py-2968-replay-suite", title: "replay · suite", objective: "Restaurar snapshot y reproducir solo eventos nuevos.",
+    prompt_md: "**replay · suite**\n\nRestaurar snapshot y reproducir solo eventos nuevos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# snapshot = {'offset': 2, 'total': {'a': 5}, 'vistos': {'e1', 'e2'}}\n# eventos = [(2, 'e2', 'a', 3), (3, 'e3', 'a', 4), (4, 'e4', 'b', 2)]\n# total = dict(snapshot['total']); vistos = set(snapshot['vistos']); offset = snapshot['offset']\n# for off, identificador, clave, valor in eventos:\n#     if off > offset and identificador not in vistos: vistos.add(identificador); total[clave] = total.get(clave, 0) + valor; offset = off\n# resultado = {'offset': offset, 'total': total, 'vistos': sorted(vistos)}\n# print(resultado)\n",
+    pytest: "def test_replay_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'offset': 4, 'total': {'a': 9, 'b': 2}, 'vistos': ['e1', 'e2', 'e3', 'e4']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'offset': 4, 'total': {'a': 9, 'b': 2}, 'vistos': ['e1', 'e2', 'e3', 'e4']}.",
+    solution_example: "snapshot = {'offset': 2, 'total': {'a': 5}, 'vistos': {'e1', 'e2'}}\neventos = [(2, 'e2', 'a', 3), (3, 'e3', 'a', 4), (4, 'e4', 'b', 2)]\ntotal = dict(snapshot['total']); vistos = set(snapshot['vistos']); offset = snapshot['offset']\nfor off, identificador, clave, valor in eventos:\n    if off > offset and identificador not in vistos: vistos.add(identificador); total[clave] = total.get(clave, 0) + valor; offset = off\nresultado = {'offset': offset, 'total': total, 'vistos': sorted(vistos)}\nprint(resultado)",
+    next: Some("py-2969-reconciliar-iguales"), show_type_chips: false, micro_step: 2968,
+};
+pub const PY2969_RECONCILIAR_IGUALES: CodingStep = CodingStep {
+    id: "py-2969-reconciliar-iguales", title: "reconciliación · igualdad", objective: "Detectar estados equivalentes.",
+    prompt_md: "**reconciliación · igualdad**\n\nDetectar estados equivalentes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a = {'x': 2}; b = {'x': 2}\n# resultado = a == b\n# print(resultado)\n",
+    pytest: "def test_reconciliar_iguales(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "a = {'x': 2}; b = {'x': 2}\nresultado = a == b\nprint(resultado)",
+    next: Some("py-2970-reconciliar-claves"), show_type_chips: false, micro_step: 2969,
+};
+pub const PY2970_RECONCILIAR_CLAVES: CodingStep = CodingStep {
+    id: "py-2970-reconciliar-claves", title: "reconciliación · claves", objective: "Detectar claves ausentes en cada réplica.",
+    prompt_md: "**reconciliación · claves**\n\nDetectar claves ausentes en cada réplica.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a = {'x': 2, 'y': 1}; b = {'x': 2, 'z': 4}\n# resultado = {'solo_a': sorted(a.keys() - b.keys()), 'solo_b': sorted(b.keys() - a.keys())}\n# print(resultado)\n",
+    pytest: "def test_reconciliar_claves(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'solo_a': ['y'], 'solo_b': ['z']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'solo_a': ['y'], 'solo_b': ['z']}.",
+    solution_example: "a = {'x': 2, 'y': 1}; b = {'x': 2, 'z': 4}\nresultado = {'solo_a': sorted(a.keys() - b.keys()), 'solo_b': sorted(b.keys() - a.keys())}\nprint(resultado)",
+    next: Some("py-2971-reconciliar-conflictos"), show_type_chips: false, micro_step: 2970,
+};
+pub const PY2971_RECONCILIAR_CONFLICTOS: CodingStep = CodingStep {
+    id: "py-2971-reconciliar-conflictos", title: "reconciliación · conflictos", objective: "Listar valores distintos para claves comunes.",
+    prompt_md: "**reconciliación · conflictos**\n\nListar valores distintos para claves comunes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a = {'x': 2, 'y': 1}; b = {'x': 3, 'y': 1}\n# resultado = {k: (a[k], b[k]) for k in sorted(a.keys() & b.keys()) if a[k] != b[k]}\n# print(resultado)\n",
+    pytest: "def test_reconciliar_conflictos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'x': (2, 3)}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'x': (2, 3)}.",
+    solution_example: "a = {'x': 2, 'y': 1}; b = {'x': 3, 'y': 1}\nresultado = {k: (a[k], b[k]) for k in sorted(a.keys() & b.keys()) if a[k] != b[k]}\nprint(resultado)",
+    next: Some("py-2972-reconciliar-version"), show_type_chips: false, micro_step: 2971,
+};
+pub const PY2972_RECONCILIAR_VERSION: CodingStep = CodingStep {
+    id: "py-2972-reconciliar-version", title: "reconciliación · versión", objective: "Elegir el valor de mayor versión.",
+    prompt_md: "**reconciliación · versión**\n\nElegir el valor de mayor versión.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# a = {'version': 2, 'valor': 'viejo'}; b = {'version': 4, 'valor': 'nuevo'}\n# resultado = max([a, b], key=lambda item: item['version'])\n# print(resultado)\n",
+    pytest: "def test_reconciliar_version(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'version': 4, 'valor': 'nuevo'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'version': 4, 'valor': 'nuevo'}.",
+    solution_example: "a = {'version': 2, 'valor': 'viejo'}; b = {'version': 4, 'valor': 'nuevo'}\nresultado = max([a, b], key=lambda item: item['version'])\nprint(resultado)",
+    next: Some("py-2973-reconciliar-plan"), show_type_chips: false, micro_step: 2972,
+};
+pub const PY2973_RECONCILIAR_PLAN: CodingStep = CodingStep {
+    id: "py-2973-reconciliar-plan", title: "reconciliación · plan", objective: "Construir operaciones para igualar una réplica.",
+    prompt_md: "**reconciliación · plan**\n\nConstruir operaciones para igualar una réplica.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# origen = {'a': 2, 'b': 3}; destino = {'a': 1, 'c': 4}\n# resultado = [('poner', k, origen[k]) for k in sorted(origen) if destino.get(k) != origen[k]] + [('borrar', k) for k in sorted(destino.keys() - origen.keys())]\n# print(resultado)\n",
+    pytest: "def test_reconciliar_plan(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('poner', 'a', 2), ('poner', 'b', 3), ('borrar', 'c')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('poner', 'a', 2), ('poner', 'b', 3), ('borrar', 'c')].",
+    solution_example: "origen = {'a': 2, 'b': 3}; destino = {'a': 1, 'c': 4}\nresultado = [('poner', k, origen[k]) for k in sorted(origen) if destino.get(k) != origen[k]] + [('borrar', k) for k in sorted(destino.keys() - origen.keys())]\nprint(resultado)",
+    next: Some("py-2974-reconciliar-suite"), show_type_chips: false, micro_step: 2973,
+};
+pub const PY2974_RECONCILIAR_SUITE: CodingStep = CodingStep {
+    id: "py-2974-reconciliar-suite", title: "reconciliación · suite", objective: "Comparar versiones y producir estado convergente.",
+    prompt_md: "**reconciliación · suite**\n\nComparar versiones y producir estado convergente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# replicas = [{'a': (2, 'x'), 'b': (1, 'm')}, {'a': (3, 'y'), 'c': (1, 'n')}]\n# claves = sorted(set().union(*(r.keys() for r in replicas)))\n# resultado = {}\n# for clave in claves:\n#     candidatos = [r[clave] for r in replicas if clave in r]; resultado[clave] = max(candidatos, key=lambda item: (item[0], item[1]))\n# print(resultado)\n",
+    pytest: "def test_reconciliar_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': (3, 'y'), 'b': (1, 'm'), 'c': (1, 'n')}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': (3, 'y'), 'b': (1, 'm'), 'c': (1, 'n')}.",
+    solution_example: "replicas = [{'a': (2, 'x'), 'b': (1, 'm')}, {'a': (3, 'y'), 'c': (1, 'n')}]\nclaves = sorted(set().union(*(r.keys() for r in replicas)))\nresultado = {}\nfor clave in claves:\n    candidatos = [r[clave] for r in replicas if clave in r]; resultado[clave] = max(candidatos, key=lambda item: (item[0], item[1]))\nprint(resultado)",
+    next: Some("py-2975-coordinado-progreso"), show_type_chips: false, micro_step: 2974,
+};
+pub const PY2975_COORDINADO_PROGRESO: CodingStep = CodingStep {
+    id: "py-2975-coordinado-progreso", title: "capstone · progreso", objective: "Combinar offsets por partición.",
+    prompt_md: "**capstone · progreso**\n\nCombinar offsets por partición.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(0, 1), (1, 1), (0, 2)]\n# resultado = {p: max(o for pp, o in eventos if pp == p) for p in sorted({p for p, _ in eventos})}\n# print(resultado)\n",
+    pytest: "def test_coordinado_progreso(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: 2, 1: 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: 2, 1: 1}.",
+    solution_example: "eventos = [(0, 1), (1, 1), (0, 2)]\nresultado = {p: max(o for pp, o in eventos if pp == p) for p in sorted({p for p, _ in eventos})}\nprint(resultado)",
+    next: Some("py-2976-coordinado-confirmar"), show_type_chips: false, micro_step: 2975,
+};
+pub const PY2976_COORDINADO_CONFIRMAR: CodingStep = CodingStep {
+    id: "py-2976-coordinado-confirmar", title: "capstone · confirmar", objective: "Confirmar ids y obtener pendientes.",
+    prompt_md: "**capstone · confirmar**\n\nConfirmar ids y obtener pendientes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# enviados = ['e1', 'e2', 'e3']; acks = {'e1', 'e3'}\n# resultado = [e for e in enviados if e not in acks]\n# print(resultado)\n",
+    pytest: "def test_coordinado_confirmar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['e2']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['e2'].",
+    solution_example: "enviados = ['e1', 'e2', 'e3']; acks = {'e1', 'e3'}\nresultado = [e for e in enviados if e not in acks]\nprint(resultado)",
+    next: Some("py-2977-coordinado-snapshot"), show_type_chips: false, micro_step: 2976,
+};
+pub const PY2977_COORDINADO_SNAPSHOT: CodingStep = CodingStep {
+    id: "py-2977-coordinado-snapshot", title: "capstone · snapshot", objective: "Capturar progreso y agregado juntos.",
+    prompt_md: "**capstone · snapshot**\n\nCapturar progreso y agregado juntos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# progreso = {0: 2, 1: 1}; total = {'a': 5}\n# resultado = {'version': 1, 'progreso': dict(progreso), 'total': dict(total)}\n# print(resultado)\n",
+    pytest: "def test_coordinado_snapshot(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'version': 1, 'progreso': {0: 2, 1: 1}, 'total': {'a': 5}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'version': 1, 'progreso': {0: 2, 1: 1}, 'total': {'a': 5}}.",
+    solution_example: "progreso = {0: 2, 1: 1}; total = {'a': 5}\nresultado = {'version': 1, 'progreso': dict(progreso), 'total': dict(total)}\nprint(resultado)",
+    next: Some("py-2978-coordinado-pausa"), show_type_chips: false, micro_step: 2977,
+};
+pub const PY2978_COORDINADO_PAUSA: CodingStep = CodingStep {
+    id: "py-2978-coordinado-pausa", title: "capstone · pausa", objective: "Aplicar backpressure mientras hay pendientes.",
+    prompt_md: "**capstone · pausa**\n\nAplicar backpressure mientras hay pendientes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# creditos = 0; pendientes = ['e2']\n# resultado = 'pausado' if pendientes and creditos == 0 else 'activo'\n# print(resultado)\n",
+    pytest: "def test_coordinado_pausa(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'pausado'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'pausado'.",
+    solution_example: "creditos = 0; pendientes = ['e2']\nresultado = 'pausado' if pendientes and creditos == 0 else 'activo'\nprint(resultado)",
+    next: Some("py-2979-coordinado-replay"), show_type_chips: false, micro_step: 2978,
+};
+pub const PY2979_COORDINADO_REPLAY: CodingStep = CodingStep {
+    id: "py-2979-coordinado-replay", title: "capstone · replay", objective: "Reproducir eventos nuevos de forma idempotente.",
+    prompt_md: "**capstone · replay**\n\nReproducir eventos nuevos de forma idempotente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# vistos = {'e1'}; eventos = [('e1', 2), ('e2', 3)]\n# total = 2\n# for identificador, valor in eventos:\n#     if identificador not in vistos: vistos.add(identificador); total += valor\n# resultado = (total, sorted(vistos))\n# print(resultado)\n",
+    pytest: "def test_coordinado_replay(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (5, ['e1', 'e2'])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (5, ['e1', 'e2']).",
+    solution_example: "vistos = {'e1'}; eventos = [('e1', 2), ('e2', 3)]\ntotal = 2\nfor identificador, valor in eventos:\n    if identificador not in vistos: vistos.add(identificador); total += valor\nresultado = (total, sorted(vistos))\nprint(resultado)",
+    next: Some("py-2980-ola33-suite"), show_type_chips: false, micro_step: 2979,
+};
+pub const PY2980_OLA33_SUITE: CodingStep = CodingStep {
+    id: "py-2980-ola33-suite", title: "ola 33 · suite", objective: "Cerrar la ola con offsets, acks, checkpoint, replay y reconciliación.",
+    prompt_md: "**ola 33 · suite**\n\nCerrar la ola con offsets, acks, checkpoint, replay y reconciliación.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# snapshot = {'offset': 1, 'vistos': {'e1'}, 'total': {'a': 2}}\n# eventos = [(1, 'e1', 'a', 2), (2, 'e2', 'a', 3), (3, 'e3', 'b', 4), (3, 'e3', 'b', 4)]\n# estado = {'offset': snapshot['offset'], 'vistos': set(snapshot['vistos']), 'total': dict(snapshot['total'])}\n# for offset, identificador, clave, valor in eventos:\n#     if offset <= estado['offset'] or identificador in estado['vistos']: continue\n#     estado['vistos'].add(identificador); estado['total'][clave] = estado['total'].get(clave, 0) + valor; estado['offset'] = offset\n# resultado = {'offset': estado['offset'], 'vistos': sorted(estado['vistos']), 'total': dict(sorted(estado['total'].items())), 'checkpoint': 2}\n# print(resultado)\n",
+    pytest: "def test_ola33_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'offset': 3, 'vistos': ['e1', 'e2', 'e3'], 'total': {'a': 5, 'b': 4}, 'checkpoint': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'offset': 3, 'vistos': ['e1', 'e2', 'e3'], 'total': {'a': 5, 'b': 4}, 'checkpoint': 2}.",
+    solution_example: "snapshot = {'offset': 1, 'vistos': {'e1'}, 'total': {'a': 2}}\neventos = [(1, 'e1', 'a', 2), (2, 'e2', 'a', 3), (3, 'e3', 'b', 4), (3, 'e3', 'b', 4)]\nestado = {'offset': snapshot['offset'], 'vistos': set(snapshot['vistos']), 'total': dict(snapshot['total'])}\nfor offset, identificador, clave, valor in eventos:\n    if offset <= estado['offset'] or identificador in estado['vistos']: continue\n    estado['vistos'].add(identificador); estado['total'][clave] = estado['total'].get(clave, 0) + valor; estado['offset'] = offset\nresultado = {'offset': estado['offset'], 'vistos': sorted(estado['vistos']), 'total': dict(sorted(estado['total'].items())), 'checkpoint': 2}\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 2980,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -65051,6 +65591,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2918_DISTRIBUIDO_DEDUPLICAR,
     &PY2919_DISTRIBUIDO_MANIFIESTO,
     &PY2920_OLA32_SUITE,
+    &PY2921_OFFSET_SIGUIENTE,
+    &PY2922_OFFSET_CONTIGUO,
+    &PY2923_OFFSET_HUECOS,
+    &PY2924_OFFSET_POR_PARTICION,
+    &PY2925_OFFSET_LAG,
+    &PY2926_OFFSET_SUITE,
+    &PY2927_ACK_MARCAR,
+    &PY2928_ACK_PENDIENTES,
+    &PY2929_ACK_CUMULATIVO,
+    &PY2930_ACK_DESORDEN,
+    &PY2931_ACK_REINTENTAR,
+    &PY2932_ACK_SUITE,
+    &PY2933_ENTREGA_PRIMERA,
+    &PY2934_ENTREGA_DUPLICADOS,
+    &PY2935_ENTREGA_IDEMPOTENTE,
+    &PY2936_ENTREGA_POR_CLAVE,
+    &PY2937_ENTREGA_ESTADO,
+    &PY2938_ENTREGA_SUITE,
+    &PY2939_CHECKPOINT_CAPTURAR,
+    &PY2940_CHECKPOINT_RESTAURAR,
+    &PY2941_CHECKPOINT_ULTIMO,
+    &PY2942_CHECKPOINT_VALIDAR,
+    &PY2943_CHECKPOINT_DELTA,
+    &PY2944_CHECKPOINT_SUITE,
+    &PY2945_BARRERA_LLEGADAS,
+    &PY2946_BARRERA_FALTANTES,
+    &PY2947_BARRERA_COMPLETA,
+    &PY2948_BARRERA_ALINEAR,
+    &PY2949_BARRERA_BUFFER,
+    &PY2950_BARRERA_SUITE,
+    &PY2951_CREDITO_PERMITIR,
+    &PY2952_CREDITO_CONSUMIR,
+    &PY2953_CREDITO_REPONER,
+    &PY2954_CREDITO_POR_WORKER,
+    &PY2955_CREDITO_PAUSAR,
+    &PY2956_CREDITO_SUITE,
+    &PY2957_LINAJE_PADRE,
+    &PY2958_LINAJE_ANCESTROS,
+    &PY2959_LINAJE_RAICES,
+    &PY2960_LINAJE_HIJOS,
+    &PY2961_LINAJE_IMPACTO,
+    &PY2962_LINAJE_SUITE,
+    &PY2963_REPLAY_DESDE,
+    &PY2964_REPLAY_HASTA,
+    &PY2965_REPLAY_DEDUPLICAR,
+    &PY2966_REPLAY_RECONSTRUIR,
+    &PY2967_REPLAY_COMPARAR,
+    &PY2968_REPLAY_SUITE,
+    &PY2969_RECONCILIAR_IGUALES,
+    &PY2970_RECONCILIAR_CLAVES,
+    &PY2971_RECONCILIAR_CONFLICTOS,
+    &PY2972_RECONCILIAR_VERSION,
+    &PY2973_RECONCILIAR_PLAN,
+    &PY2974_RECONCILIAR_SUITE,
+    &PY2975_COORDINADO_PROGRESO,
+    &PY2976_COORDINADO_CONFIRMAR,
+    &PY2977_COORDINADO_SNAPSHOT,
+    &PY2978_COORDINADO_PAUSA,
+    &PY2979_COORDINADO_REPLAY,
+    &PY2980_OLA33_SUITE,
 
 ];
 
@@ -65218,14 +65818,14 @@ mod tests {
     #[test]
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
-        assert_eq!(CODING_STEPS.len(), 2920, "catalog must contain 2920 steps");
+        assert_eq!(CODING_STEPS.len(), 2980, "catalog must contain 2980 steps");
         for (index, step) in CODING_STEPS.iter().enumerate() {
             assert_eq!(
                 step.micro_step,
                 (index + 1) as i32,
                 "catalog must be contiguous at index {index}"
             );
-            assert!(step.micro_step >= 1 && step.micro_step <= 2920);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2980);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -65234,8 +65834,8 @@ mod tests {
         }
         assert_eq!(
             seen,
-            (1..=2920).collect(),
-            "catalog must cover every micro-step in 1..=2920"
+            (1..=2980).collect(),
+            "catalog must cover every micro-step in 1..=2980"
         );
     }
 
@@ -68624,7 +69224,22 @@ mod tests {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next wave32 step");
                 assert_eq!(step.next, Some(next_step.id));
             } else {
-                assert_eq!(step.next, None, "step 2920 is the end of the rail");
+                assert_eq!(step.next, Some("py-2921-offset-siguiente"), "step 2920 chains to Wave 33");
+            }
+        }
+    }
+
+    #[test]
+    fn py2921_to_py2980_coordinated_pipeline_chain() {
+        for n in 2921..=2980 {
+            let step = coding_step_by_micro_step(n).expect("wave33 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(step.id.starts_with(&format!("py-{n}-")));
+            if n < 2980 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next wave33 step");
+                assert_eq!(step.next, Some(next_step.id));
+            } else {
+                assert_eq!(step.next, None, "step 2980 is the end of the rail");
             }
         }
     }

@@ -84,13 +84,18 @@ def main():
 
     source = CURRICULUM.read_text(encoding="utf-8")
     catalog = [int(value) for value in re.findall(r"micro_step:\s*(\d+)", source)]
-    assert catalog == list(range(1, 2921)), "catalog must be exact and ordered 1..=2920"
+    assert catalog in (
+        list(range(1, 2921)), list(range(1, 2981))
+    ), "catalog must end at the verified Wave 32 or Wave 33 ceiling"
     for step in steps:
         constant = f'PY{step["num"]}_{step["slug"].upper().replace("-", "_")}'
         assert source.count(f"pub const {constant}:") == 1
         assert source.count(f"    &{constant},") == 1
     assert 'next: Some("py-2861-particionar-paridad"), show_type_chips: false, micro_step: 2860' in source
-    assert re.search(r'next: None, show_type_chips: false, micro_step: 2920,', source)
+    if catalog[-1] == 2920:
+        assert re.search(r'next: None, show_type_chips: false, micro_step: 2920,', source)
+    else:
+        assert 'next: Some("py-2921-offset-siguiente"), show_type_chips: false, micro_step: 2920' in source
 
     concepts = CONCEPTS.read_text(encoding="utf-8")
     numbers = [int(value) for value in re.findall(r"^    \((\d+), &\[", concepts, re.MULTILINE)]
@@ -98,8 +103,8 @@ def main():
     assert active[-60:] == list(range(2861, 2921))
     assert active == sorted(set(active))
     for path in E2E:
-        assert path.read_text(encoding="utf-8").count("toHaveCount(2920)") == 1
-    print(f"Wave 32 contract OK: 60 solutions passed; 10x6 families; {aggregate_count} distributed/aggregation exercises; catalog exact 1..=2920")
+        assert path.read_text(encoding="utf-8").count(f"toHaveCount({catalog[-1]})") == 1
+    print(f"Wave 32 cumulative contract OK: 60 solutions passed; 10x6 families; {aggregate_count} distributed/aggregation exercises; catalog ends at {catalog[-1]}")
 
 
 if __name__ == "__main__":
