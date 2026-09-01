@@ -77,8 +77,8 @@ def main():
     catalog = [int(value) for value in re.findall(r"micro_step:\s*(\d+)", source)]
     assert catalog in (
         list(range(1, 2741)), list(range(1, 2801)), list(range(1, 2861)),
-        list(range(1, 2921)),
-    ), "catalog must end at a verified cumulative ceiling from Wave 29 through Wave 32"
+        list(range(1, 2921)), list(range(1, 2981)),
+    ), "catalog must end at a verified cumulative ceiling from Wave 29 through Wave 33"
     for step in steps:
         constant = f'PY{step["num"]}_{step["slug"].upper().replace("-", "_")}'
         assert source.count(f"pub const {constant}:") == 1
