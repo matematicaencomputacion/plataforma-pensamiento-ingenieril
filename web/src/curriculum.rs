@@ -60508,7 +60508,547 @@ pub const PY2740_OLA29_SUITE: CodingStep = CodingStep {
     pytest: "def test_ola29_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('api', 9), ('db', 7)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "El resultado esperado es [('api', 9), ('db', 7)].",
     solution_example: "from itertools import islice\neventos = [('api', 5), ('web', 2), ('api', 4), ('db', 7), ('web', 3)]\ntotales = {}\nfor servicio, puntos in filter(lambda fila: fila[1] >= 3, eventos):\n    totales[servicio] = totales.get(servicio, 0) + puntos\nranking = iter(sorted(totales.items(), key=lambda par: (-par[1], par[0])))\nresultado = list(islice(ranking, 2))\nprint(resultado)",
-    next: None, show_type_chips: false, micro_step: 2740,
+    next: Some("py-2741-merge-dos-listas"), show_type_chips: false, micro_step: 2740,
+};
+pub const PY2741_MERGE_DOS_LISTAS: CodingStep = CodingStep {
+    id: "py-2741-merge-dos-listas", title: "merge ordenado · dos fuentes", objective: "Fusionar dos secuencias ya ordenadas.",
+    prompt_md: "**merge ordenado · dos fuentes**\n\nFusionar dos secuencias ya ordenadas.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from heapq import merge\n# resultado = list(merge([1, 4, 9], [2, 3, 10]))\n# print(resultado)\n",
+    pytest: "def test_merge_dos_listas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4, 9, 10]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 4, 9, 10].",
+    solution_example: "from heapq import merge\nresultado = list(merge([1, 4, 9], [2, 3, 10]))\nprint(resultado)",
+    next: Some("py-2742-merge-tres-listas"), show_type_chips: false, micro_step: 2741,
+};
+pub const PY2742_MERGE_TRES_LISTAS: CodingStep = CodingStep {
+    id: "py-2742-merge-tres-listas", title: "merge ordenado · tres fuentes", objective: "Fusionar tres secuencias sin reordenar cada entrada.",
+    prompt_md: "**merge ordenado · tres fuentes**\n\nFusionar tres secuencias sin reordenar cada entrada.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from heapq import merge\n# resultado = list(merge([1, 7], [2, 8], [3, 9]))\n# print(resultado)\n",
+    pytest: "def test_merge_tres_listas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 7, 8, 9]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 7, 8, 9].",
+    solution_example: "from heapq import merge\nresultado = list(merge([1, 7], [2, 8], [3, 9]))\nprint(resultado)",
+    next: Some("py-2743-merge-clave"), show_type_chips: false, micro_step: 2742,
+};
+pub const PY2743_MERGE_CLAVE: CodingStep = CodingStep {
+    id: "py-2743-merge-clave", title: "merge ordenado · clave", objective: "Fusionar registros ordenados por una clave explícita.",
+    prompt_md: "**merge ordenado · clave**\n\nFusionar registros ordenados por una clave explícita.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from heapq import merge\n# a = [{'seq': 1, 'v': 'a'}, {'seq': 4, 'v': 'd'}]\n# b = [{'seq': 2, 'v': 'b'}, {'seq': 3, 'v': 'c'}]\n# resultado = [x['v'] for x in merge(a, b, key=lambda x: x['seq'])]\n# print(resultado)\n",
+    pytest: "def test_merge_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b', 'c', 'd']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'b', 'c', 'd'].",
+    solution_example: "from heapq import merge\na = [{'seq': 1, 'v': 'a'}, {'seq': 4, 'v': 'd'}]\nb = [{'seq': 2, 'v': 'b'}, {'seq': 3, 'v': 'c'}]\nresultado = [x['v'] for x in merge(a, b, key=lambda x: x['seq'])]\nprint(resultado)",
+    next: Some("py-2744-merge-desempate"), show_type_chips: false, micro_step: 2743,
+};
+pub const PY2744_MERGE_DESEMPATE: CodingStep = CodingStep {
+    id: "py-2744-merge-desempate", title: "merge ordenado · desempate", objective: "Aplicar una clave total para resolver empates.",
+    prompt_md: "**merge ordenado · desempate**\n\nAplicar una clave total para resolver empates.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from heapq import merge\n# a = [(1, 'api'), (3, 'web')]\n# b = [(1, 'db'), (2, 'api')]\n# resultado = list(merge(a, b, key=lambda x: (x[0], x[1])))\n# print(resultado)\n",
+    pytest: "def test_merge_desempate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 'api'), (1, 'db'), (2, 'api'), (3, 'web')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(1, 'api'), (1, 'db'), (2, 'api'), (3, 'web')].",
+    solution_example: "from heapq import merge\na = [(1, 'api'), (3, 'web')]\nb = [(1, 'db'), (2, 'api')]\nresultado = list(merge(a, b, key=lambda x: (x[0], x[1])))\nprint(resultado)",
+    next: Some("py-2745-merge-deduplicar"), show_type_chips: false, micro_step: 2744,
+};
+pub const PY2745_MERGE_DEDUPLICAR: CodingStep = CodingStep {
+    id: "py-2745-merge-deduplicar", title: "merge ordenado · únicos", objective: "Eliminar duplicados consecutivos luego del merge.",
+    prompt_md: "**merge ordenado · únicos**\n\nEliminar duplicados consecutivos luego del merge.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from heapq import merge\n# mezcla = merge([1, 2, 5], [2, 3, 5])\n# resultado = []\n# for valor in mezcla:\n#     if not resultado or resultado[-1] != valor:\n#         resultado.append(valor)\n# print(resultado)\n",
+    pytest: "def test_merge_deduplicar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 5].",
+    solution_example: "from heapq import merge\nmezcla = merge([1, 2, 5], [2, 3, 5])\nresultado = []\nfor valor in mezcla:\n    if not resultado or resultado[-1] != valor:\n        resultado.append(valor)\nprint(resultado)",
+    next: Some("py-2746-merge-suite"), show_type_chips: false, micro_step: 2745,
+};
+pub const PY2746_MERGE_SUITE: CodingStep = CodingStep {
+    id: "py-2746-merge-suite", title: "merge ordenado · suite", objective: "Fusionar eventos y conservar el último valor por secuencia.",
+    prompt_md: "**merge ordenado · suite**\n\nFusionar eventos y conservar el último valor por secuencia.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from heapq import merge\n# a = [(1, 'x', 2), (4, 'x', 8)]\n# b = [(2, 'y', 3), (3, 'x', 5)]\n# estado = {}\n# for seq, clave, valor in merge(a, b):\n#     estado[clave] = (seq, valor)\n# resultado = {k: v for k, (_, v) in sorted(estado.items())}\n# print(resultado)\n",
+    pytest: "def test_merge_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'x': 8, 'y': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'x': 8, 'y': 3}.",
+    solution_example: "from heapq import merge\na = [(1, 'x', 2), (4, 'x', 8)]\nb = [(2, 'y', 3), (3, 'x', 5)]\nestado = {}\nfor seq, clave, valor in merge(a, b):\n    estado[clave] = (seq, valor)\nresultado = {k: v for k, (_, v) in sorted(estado.items())}\nprint(resultado)",
+    next: Some("py-2747-heap-minimo"), show_type_chips: false, micro_step: 2746,
+};
+pub const PY2747_HEAP_MINIMO: CodingStep = CodingStep {
+    id: "py-2747-heap-minimo", title: "heap · mínimo", objective: "Extraer la menor prioridad de un heap.",
+    prompt_md: "**heap · mínimo**\n\nExtraer la menor prioridad de un heap.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# cola = [7, 2, 5]\n# heapq.heapify(cola)\n# resultado = heapq.heappop(cola)\n# print(resultado)\n",
+    pytest: "def test_heap_minimo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 2.",
+    solution_example: "import heapq\ncola = [7, 2, 5]\nheapq.heapify(cola)\nresultado = heapq.heappop(cola)\nprint(resultado)",
+    next: Some("py-2748-heap-insertar"), show_type_chips: false, micro_step: 2747,
+};
+pub const PY2748_HEAP_INSERTAR: CodingStep = CodingStep {
+    id: "py-2748-heap-insertar", title: "heap · insertar", objective: "Insertar una prioridad manteniendo el invariante.",
+    prompt_md: "**heap · insertar**\n\nInsertar una prioridad manteniendo el invariante.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# cola = [3, 8]\n# heapq.heapify(cola)\n# heapq.heappush(cola, 1)\n# resultado = [heapq.heappop(cola) for _ in range(len(cola))]\n# print(resultado)\n",
+    pytest: "def test_heap_insertar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 3, 8]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 3, 8].",
+    solution_example: "import heapq\ncola = [3, 8]\nheapq.heapify(cola)\nheapq.heappush(cola, 1)\nresultado = [heapq.heappop(cola) for _ in range(len(cola))]\nprint(resultado)",
+    next: Some("py-2749-heap-tuplas"), show_type_chips: false, micro_step: 2748,
+};
+pub const PY2749_HEAP_TUPLAS: CodingStep = CodingStep {
+    id: "py-2749-heap-tuplas", title: "heap · prioridades estables", objective: "Priorizar tareas con un desempate textual explícito.",
+    prompt_md: "**heap · prioridades estables**\n\nPriorizar tareas con un desempate textual explícito.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# cola = [(2, 'web'), (1, 'db'), (1, 'api')]\n# heapq.heapify(cola)\n# resultado = [heapq.heappop(cola) for _ in range(len(cola))]\n# print(resultado)\n",
+    pytest: "def test_heap_tuplas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 'api'), (1, 'db'), (2, 'web')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(1, 'api'), (1, 'db'), (2, 'web')].",
+    solution_example: "import heapq\ncola = [(2, 'web'), (1, 'db'), (1, 'api')]\nheapq.heapify(cola)\nresultado = [heapq.heappop(cola) for _ in range(len(cola))]\nprint(resultado)",
+    next: Some("py-2750-heap-reemplazar"), show_type_chips: false, micro_step: 2749,
+};
+pub const PY2750_HEAP_REEMPLAZAR: CodingStep = CodingStep {
+    id: "py-2750-heap-reemplazar", title: "heap · reemplazo", objective: "Reemplazar la raíz y observar el elemento expulsado.",
+    prompt_md: "**heap · reemplazo**\n\nReemplazar la raíz y observar el elemento expulsado.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# cola = [2, 4, 9]\n# heapq.heapify(cola)\n# expulsado = heapq.heapreplace(cola, 6)\n# resultado = (expulsado, sorted(cola))\n# print(resultado)\n",
+    pytest: "def test_heap_reemplazar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, [4, 6, 9])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (2, [4, 6, 9]).",
+    solution_example: "import heapq\ncola = [2, 4, 9]\nheapq.heapify(cola)\nexpulsado = heapq.heapreplace(cola, 6)\nresultado = (expulsado, sorted(cola))\nprint(resultado)",
+    next: Some("py-2751-heap-pushpop"), show_type_chips: false, micro_step: 2750,
+};
+pub const PY2751_HEAP_PUSHPOP: CodingStep = CodingStep {
+    id: "py-2751-heap-pushpop", title: "heap · pushpop", objective: "Insertar y extraer en una única operación acotada.",
+    prompt_md: "**heap · pushpop**\n\nInsertar y extraer en una única operación acotada.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# cola = [4, 7, 9]\n# heapq.heapify(cola)\n# expulsado = heapq.heappushpop(cola, 6)\n# resultado = (expulsado, sorted(cola))\n# print(resultado)\n",
+    pytest: "def test_heap_pushpop(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (4, [6, 7, 9])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (4, [6, 7, 9]).",
+    solution_example: "import heapq\ncola = [4, 7, 9]\nheapq.heapify(cola)\nexpulsado = heapq.heappushpop(cola, 6)\nresultado = (expulsado, sorted(cola))\nprint(resultado)",
+    next: Some("py-2752-heap-suite"), show_type_chips: false, micro_step: 2751,
+};
+pub const PY2752_HEAP_SUITE: CodingStep = CodingStep {
+    id: "py-2752-heap-suite", title: "heap · suite", objective: "Procesar tareas por prioridad y secuencia estable.",
+    prompt_md: "**heap · suite**\n\nProcesar tareas por prioridad y secuencia estable.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# eventos = [(2, 3, 'c'), (1, 4, 'b'), (1, 2, 'a')]\n# cola = []\n# for prioridad, seq, nombre in eventos:\n#     heapq.heappush(cola, (prioridad, seq, nombre))\n# resultado = [heapq.heappop(cola)[2] for _ in range(len(cola))]\n# print(resultado)\n",
+    pytest: "def test_heap_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'b', 'c'].",
+    solution_example: "import heapq\neventos = [(2, 3, 'c'), (1, 4, 'b'), (1, 2, 'a')]\ncola = []\nfor prioridad, seq, nombre in eventos:\n    heapq.heappush(cola, (prioridad, seq, nombre))\nresultado = [heapq.heappop(cola)[2] for _ in range(len(cola))]\nprint(resultado)",
+    next: Some("py-2753-topk-mayores"), show_type_chips: false, micro_step: 2752,
+};
+pub const PY2753_TOPK_MAYORES: CodingStep = CodingStep {
+    id: "py-2753-topk-mayores", title: "top-k · mayores", objective: "Obtener los tres valores mayores.",
+    prompt_md: "**top-k · mayores**\n\nObtener los tres valores mayores.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# resultado = heapq.nlargest(3, [4, 9, 1, 7, 6])\n# print(resultado)\n",
+    pytest: "def test_topk_mayores(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [9, 7, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [9, 7, 6].",
+    solution_example: "import heapq\nresultado = heapq.nlargest(3, [4, 9, 1, 7, 6])\nprint(resultado)",
+    next: Some("py-2754-topk-menores"), show_type_chips: false, micro_step: 2753,
+};
+pub const PY2754_TOPK_MENORES: CodingStep = CodingStep {
+    id: "py-2754-topk-menores", title: "top-k · menores", objective: "Obtener los dos valores menores.",
+    prompt_md: "**top-k · menores**\n\nObtener los dos valores menores.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# resultado = heapq.nsmallest(2, [8, 3, 5, 1])\n# print(resultado)\n",
+    pytest: "def test_topk_menores(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 3].",
+    solution_example: "import heapq\nresultado = heapq.nsmallest(2, [8, 3, 5, 1])\nprint(resultado)",
+    next: Some("py-2755-topk-clave"), show_type_chips: false, micro_step: 2754,
+};
+pub const PY2755_TOPK_CLAVE: CodingStep = CodingStep {
+    id: "py-2755-topk-clave", title: "top-k · clave", objective: "Seleccionar registros por una métrica explícita.",
+    prompt_md: "**top-k · clave**\n\nSeleccionar registros por una métrica explícita.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# filas = [('a', 4), ('b', 9), ('c', 6)]\n# resultado = heapq.nlargest(2, filas, key=lambda x: x[1])\n# print(resultado)\n",
+    pytest: "def test_topk_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('b', 9), ('c', 6)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('b', 9), ('c', 6)].",
+    solution_example: "import heapq\nfilas = [('a', 4), ('b', 9), ('c', 6)]\nresultado = heapq.nlargest(2, filas, key=lambda x: x[1])\nprint(resultado)",
+    next: Some("py-2756-topk-acotado"), show_type_chips: false, micro_step: 2755,
+};
+pub const PY2756_TOPK_ACOTADO: CodingStep = CodingStep {
+    id: "py-2756-topk-acotado", title: "top-k · heap acotado", objective: "Mantener solo tres candidatos durante el recorrido.",
+    prompt_md: "**top-k · heap acotado**\n\nMantener solo tres candidatos durante el recorrido.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# import heapq\n# cola = []\n# for valor in [5, 1, 9, 4, 8, 2]:\n#     if len(cola) < 3:\n#         heapq.heappush(cola, valor)\n#     elif valor > cola[0]:\n#         heapq.heapreplace(cola, valor)\n# resultado = sorted(cola, reverse=True)\n# print(resultado)\n",
+    pytest: "def test_topk_acotado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [9, 8, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [9, 8, 5].",
+    solution_example: "import heapq\ncola = []\nfor valor in [5, 1, 9, 4, 8, 2]:\n    if len(cola) < 3:\n        heapq.heappush(cola, valor)\n    elif valor > cola[0]:\n        heapq.heapreplace(cola, valor)\nresultado = sorted(cola, reverse=True)\nprint(resultado)",
+    next: Some("py-2757-topk-desempate"), show_type_chips: false, micro_step: 2756,
+};
+pub const PY2757_TOPK_DESEMPATE: CodingStep = CodingStep {
+    id: "py-2757-topk-desempate", title: "top-k · desempate", objective: "Rankear por puntaje descendente y nombre ascendente.",
+    prompt_md: "**top-k · desempate**\n\nRankear por puntaje descendente y nombre ascendente.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('beta', 8), ('alfa', 8), ('gamma', 7)]\n# resultado = sorted(filas, key=lambda x: (-x[1], x[0]))[:2]\n# print(resultado)\n",
+    pytest: "def test_topk_desempate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('alfa', 8), ('beta', 8)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('alfa', 8), ('beta', 8)].",
+    solution_example: "filas = [('beta', 8), ('alfa', 8), ('gamma', 7)]\nresultado = sorted(filas, key=lambda x: (-x[1], x[0]))[:2]\nprint(resultado)",
+    next: Some("py-2758-topk-suite"), show_type_chips: false, micro_step: 2757,
+};
+pub const PY2758_TOPK_SUITE: CodingStep = CodingStep {
+    id: "py-2758-topk-suite", title: "top-k · suite", objective: "Agregar puntajes por clave y conservar un top estable.",
+    prompt_md: "**top-k · suite**\n\nAgregar puntajes por clave y conservar un top estable.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# totales = {}\n# for nombre, puntos in [('api', 3), ('web', 8), ('api', 7), ('db', 9)]:\n#     totales[nombre] = totales.get(nombre, 0) + puntos\n# resultado = sorted(totales.items(), key=lambda x: (-x[1], x[0]))[:2]\n# print(resultado)\n",
+    pytest: "def test_topk_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('api', 10), ('db', 9)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('api', 10), ('db', 9)].",
+    solution_example: "totales = {}\nfor nombre, puntos in [('api', 3), ('web', 8), ('api', 7), ('db', 9)]:\n    totales[nombre] = totales.get(nombre, 0) + puntos\nresultado = sorted(totales.items(), key=lambda x: (-x[1], x[0]))[:2]\nprint(resultado)",
+    next: Some("py-2759-online-conteo"), show_type_chips: false, micro_step: 2758,
+};
+pub const PY2759_ONLINE_CONTEO: CodingStep = CodingStep {
+    id: "py-2759-online-conteo", title: "online · conteo", objective: "Actualizar un contador con cada observación.",
+    prompt_md: "**online · conteo**\n\nActualizar un contador con cada observación.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = 0\n# for _ in [4, 7, 2]:\n#     estado += 1\n# resultado = estado\n# print(resultado)\n",
+    pytest: "def test_online_conteo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "estado = 0\nfor _ in [4, 7, 2]:\n    estado += 1\nresultado = estado\nprint(resultado)",
+    next: Some("py-2760-online-suma"), show_type_chips: false, micro_step: 2759,
+};
+pub const PY2760_ONLINE_SUMA: CodingStep = CodingStep {
+    id: "py-2760-online-suma", title: "online · suma", objective: "Actualizar suma y cantidad en una pasada.",
+    prompt_md: "**online · suma**\n\nActualizar suma y cantidad en una pasada.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# total = cantidad = 0\n# for valor in [4, 7, 2]:\n#     total += valor\n#     cantidad += 1\n# resultado = (total, cantidad)\n# print(resultado)\n",
+    pytest: "def test_online_suma(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (13, 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (13, 3).",
+    solution_example: "total = cantidad = 0\nfor valor in [4, 7, 2]:\n    total += valor\n    cantidad += 1\nresultado = (total, cantidad)\nprint(resultado)",
+    next: Some("py-2761-online-media"), show_type_chips: false, micro_step: 2760,
+};
+pub const PY2761_ONLINE_MEDIA: CodingStep = CodingStep {
+    id: "py-2761-online-media", title: "online · media", objective: "Calcular una media incremental sin guardar la fuente.",
+    prompt_md: "**online · media**\n\nCalcular una media incremental sin guardar la fuente.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# media = 0.0\n# for n, valor in enumerate([10, 20, 15], 1):\n#     media += (valor - media) / n\n# resultado = media\n# print(resultado)\n",
+    pytest: "def test_online_media(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 15.0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 15.0.",
+    solution_example: "media = 0.0\nfor n, valor in enumerate([10, 20, 15], 1):\n    media += (valor - media) / n\nresultado = media\nprint(resultado)",
+    next: Some("py-2762-online-media-vacia"), show_type_chips: false, micro_step: 2761,
+};
+pub const PY2762_ONLINE_MEDIA_VACIA: CodingStep = CodingStep {
+    id: "py-2762-online-media-vacia", title: "online · entrada vacía", objective: "Representar explícitamente una media sin observaciones.",
+    prompt_md: "**online · entrada vacía**\n\nRepresentar explícitamente una media sin observaciones.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# total = cantidad = 0\n# for valor in []:\n#     total += valor\n#     cantidad += 1\n# resultado = None if cantidad == 0 else total / cantidad\n# print(resultado)\n",
+    pytest: "def test_online_media_vacia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == None\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es None.",
+    solution_example: "total = cantidad = 0\nfor valor in []:\n    total += valor\n    cantidad += 1\nresultado = None if cantidad == 0 else total / cantidad\nprint(resultado)",
+    next: Some("py-2763-online-por-clave"), show_type_chips: false, micro_step: 2762,
+};
+pub const PY2763_ONLINE_POR_CLAVE: CodingStep = CodingStep {
+    id: "py-2763-online-por-clave", title: "online · por clave", objective: "Mantener suma y cantidad por categoría.",
+    prompt_md: "**online · por clave**\n\nMantener suma y cantidad por categoría.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {}\n# for clave, valor in [('a', 2), ('b', 7), ('a', 4)]:\n#     total, n = estado.get(clave, (0, 0))\n#     estado[clave] = (total + valor, n + 1)\n# resultado = {k: total / n for k, (total, n) in sorted(estado.items())}\n# print(resultado)\n",
+    pytest: "def test_online_por_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 3.0, 'b': 7.0}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 3.0, 'b': 7.0}.",
+    solution_example: "estado = {}\nfor clave, valor in [('a', 2), ('b', 7), ('a', 4)]:\n    total, n = estado.get(clave, (0, 0))\n    estado[clave] = (total + valor, n + 1)\nresultado = {k: total / n for k, (total, n) in sorted(estado.items())}\nprint(resultado)",
+    next: Some("py-2764-online-media-suite"), show_type_chips: false, micro_step: 2763,
+};
+pub const PY2764_ONLINE_MEDIA_SUITE: CodingStep = CodingStep {
+    id: "py-2764-online-media-suite", title: "online · suite", objective: "Combinar medias parciales mediante suma y cantidad.",
+    prompt_md: "**online · suite**\n\nCombinar medias parciales mediante suma y cantidad.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [(12, 2), (9, 3), (4, 1)]\n# total = sum(s for s, _ in parciales)\n# n = sum(c for _, c in parciales)\n# resultado = total / n\n# print(resultado)\n",
+    pytest: "def test_online_media_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4.166666666666667\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 4.166666666666667.",
+    solution_example: "parciales = [(12, 2), (9, 3), (4, 1)]\ntotal = sum(s for s, _ in parciales)\nn = sum(c for _, c in parciales)\nresultado = total / n\nprint(resultado)",
+    next: Some("py-2765-estado-minimo"), show_type_chips: false, micro_step: 2764,
+};
+pub const PY2765_ESTADO_MINIMO: CodingStep = CodingStep {
+    id: "py-2765-estado-minimo", title: "estado incremental · mínimo", objective: "Actualizar el mínimo observado.",
+    prompt_md: "**estado incremental · mínimo**\n\nActualizar el mínimo observado.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# minimo = None\n# for valor in [8, 3, 6, 2]:\n#     minimo = valor if minimo is None else min(minimo, valor)\n# resultado = minimo\n# print(resultado)\n",
+    pytest: "def test_estado_minimo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 2.",
+    solution_example: "minimo = None\nfor valor in [8, 3, 6, 2]:\n    minimo = valor if minimo is None else min(minimo, valor)\nresultado = minimo\nprint(resultado)",
+    next: Some("py-2766-estado-extremos"), show_type_chips: false, micro_step: 2765,
+};
+pub const PY2766_ESTADO_EXTREMOS: CodingStep = CodingStep {
+    id: "py-2766-estado-extremos", title: "estado incremental · extremos", objective: "Actualizar mínimo y máximo en una pasada.",
+    prompt_md: "**estado incremental · extremos**\n\nActualizar mínimo y máximo en una pasada.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# minimo = maximo = None\n# for valor in [8, 3, 6, 2]:\n#     minimo = valor if minimo is None else min(minimo, valor)\n#     maximo = valor if maximo is None else max(maximo, valor)\n# resultado = (minimo, maximo)\n# print(resultado)\n",
+    pytest: "def test_estado_extremos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 8)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (2, 8).",
+    solution_example: "minimo = maximo = None\nfor valor in [8, 3, 6, 2]:\n    minimo = valor if minimo is None else min(minimo, valor)\n    maximo = valor if maximo is None else max(maximo, valor)\nresultado = (minimo, maximo)\nprint(resultado)",
+    next: Some("py-2767-estado-cambios"), show_type_chips: false, micro_step: 2766,
+};
+pub const PY2767_ESTADO_CAMBIOS: CodingStep = CodingStep {
+    id: "py-2767-estado-cambios", title: "estado incremental · cambios", objective: "Contar cambios respecto del valor anterior.",
+    prompt_md: "**estado incremental · cambios**\n\nContar cambios respecto del valor anterior.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# anterior = object()\n# cambios = 0\n# for valor in ['ok', 'ok', 'err', 'err', 'ok']:\n#     if anterior != valor:\n#         cambios += 1\n#     anterior = valor\n# resultado = cambios\n# print(resultado)\n",
+    pytest: "def test_estado_cambios(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "anterior = object()\ncambios = 0\nfor valor in ['ok', 'ok', 'err', 'err', 'ok']:\n    if anterior != valor:\n        cambios += 1\n    anterior = valor\nresultado = cambios\nprint(resultado)",
+    next: Some("py-2768-welford-media"), show_type_chips: false, micro_step: 2767,
+};
+pub const PY2768_WELFORD_MEDIA: CodingStep = CodingStep {
+    id: "py-2768-welford-media", title: "Welford · media", objective: "Actualizar cantidad y media con la recurrencia de Welford.",
+    prompt_md: "**Welford · media**\n\nActualizar cantidad y media con la recurrencia de Welford.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# n = 0\n# media = 0.0\n# for x in [2.0, 4.0, 6.0]:\n#     n += 1\n#     media += (x - media) / n\n# resultado = (n, media)\n# print(resultado)\n",
+    pytest: "def test_welford_media(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (3, 4.0)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (3, 4.0).",
+    solution_example: "n = 0\nmedia = 0.0\nfor x in [2.0, 4.0, 6.0]:\n    n += 1\n    media += (x - media) / n\nresultado = (n, media)\nprint(resultado)",
+    next: Some("py-2769-welford-varianza"), show_type_chips: false, micro_step: 2768,
+};
+pub const PY2769_WELFORD_VARIANZA: CodingStep = CodingStep {
+    id: "py-2769-welford-varianza", title: "Welford · varianza", objective: "Calcular varianza poblacional en una pasada estable.",
+    prompt_md: "**Welford · varianza**\n\nCalcular varianza poblacional en una pasada estable.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# n = 0\n# media = m2 = 0.0\n# for x in [2.0, 4.0, 6.0]:\n#     n += 1\n#     delta = x - media\n#     media += delta / n\n#     m2 += delta * (x - media)\n# resultado = m2 / n\n# print(resultado)\n",
+    pytest: "def test_welford_varianza(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2.6666666666666665\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 2.6666666666666665.",
+    solution_example: "n = 0\nmedia = m2 = 0.0\nfor x in [2.0, 4.0, 6.0]:\n    n += 1\n    delta = x - media\n    media += delta / n\n    m2 += delta * (x - media)\nresultado = m2 / n\nprint(resultado)",
+    next: Some("py-2770-welford-suite"), show_type_chips: false, micro_step: 2769,
+};
+pub const PY2770_WELFORD_SUITE: CodingStep = CodingStep {
+    id: "py-2770-welford-suite", title: "Welford · suite", objective: "Reportar conteo, media, varianza y extremos juntos.",
+    prompt_md: "**Welford · suite**\n\nReportar conteo, media, varianza y extremos juntos.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1.0, 2.0, 5.0]\n# n = 0\n# media = m2 = 0.0\n# for x in datos:\n#     n += 1\n#     delta = x - media\n#     media += delta / n\n#     m2 += delta * (x - media)\n# resultado = {'n': n, 'media': media, 'var': m2 / n, 'min': min(datos), 'max': max(datos)}\n# print(resultado)\n",
+    pytest: "def test_welford_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'n': 3, 'media': 2.666666666666667, 'var': 2.888888888888889, 'min': 1.0, 'max': 5.0}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'n': 3, 'media': 2.666666666666667, 'var': 2.888888888888889, 'min': 1.0, 'max': 5.0}.",
+    solution_example: "datos = [1.0, 2.0, 5.0]\nn = 0\nmedia = m2 = 0.0\nfor x in datos:\n    n += 1\n    delta = x - media\n    media += delta / n\n    m2 += delta * (x - media)\nresultado = {'n': n, 'media': media, 'var': m2 / n, 'min': min(datos), 'max': max(datos)}\nprint(resultado)",
+    next: Some("py-2771-ventana-deque"), show_type_chips: false, micro_step: 2770,
+};
+pub const PY2771_VENTANA_DEQUE: CodingStep = CodingStep {
+    id: "py-2771-ventana-deque", title: "ventanas · deque", objective: "Conservar solo las últimas tres observaciones.",
+    prompt_md: "**ventanas · deque**\n\nConservar solo las últimas tres observaciones.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from collections import deque\n# ventana = deque(maxlen=3)\n# for valor in [1, 2, 3, 4]:\n#     ventana.append(valor)\n# resultado = list(ventana)\n# print(resultado)\n",
+    pytest: "def test_ventana_deque(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 3, 4].",
+    solution_example: "from collections import deque\nventana = deque(maxlen=3)\nfor valor in [1, 2, 3, 4]:\n    ventana.append(valor)\nresultado = list(ventana)\nprint(resultado)",
+    next: Some("py-2772-ventana-sumas"), show_type_chips: false, micro_step: 2771,
+};
+pub const PY2772_VENTANA_SUMAS: CodingStep = CodingStep {
+    id: "py-2772-ventana-sumas", title: "ventanas · sumas", objective: "Emitir la suma de cada ventana completa.",
+    prompt_md: "**ventanas · sumas**\n\nEmitir la suma de cada ventana completa.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from collections import deque\n# ventana = deque(maxlen=3)\n# resultado = []\n# for valor in [1, 2, 3, 4, 5]:\n#     ventana.append(valor)\n#     if len(ventana) == 3:\n#         resultado.append(sum(ventana))\n# print(resultado)\n",
+    pytest: "def test_ventana_sumas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [6, 9, 12]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [6, 9, 12].",
+    solution_example: "from collections import deque\nventana = deque(maxlen=3)\nresultado = []\nfor valor in [1, 2, 3, 4, 5]:\n    ventana.append(valor)\n    if len(ventana) == 3:\n        resultado.append(sum(ventana))\nprint(resultado)",
+    next: Some("py-2773-ventana-media"), show_type_chips: false, micro_step: 2772,
+};
+pub const PY2773_VENTANA_MEDIA: CodingStep = CodingStep {
+    id: "py-2773-ventana-media", title: "ventanas · media", objective: "Mantener una media móvil con suma incremental.",
+    prompt_md: "**ventanas · media**\n\nMantener una media móvil con suma incremental.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from collections import deque\n# ventana = deque()\n# total = 0\n# resultado = []\n# for valor in [2, 4, 8, 10]:\n#     ventana.append(valor); total += valor\n#     if len(ventana) > 2:\n#         total -= ventana.popleft()\n#     if len(ventana) == 2:\n#         resultado.append(total / 2)\n# print(resultado)\n",
+    pytest: "def test_ventana_media(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3.0, 6.0, 9.0]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [3.0, 6.0, 9.0].",
+    solution_example: "from collections import deque\nventana = deque()\ntotal = 0\nresultado = []\nfor valor in [2, 4, 8, 10]:\n    ventana.append(valor); total += valor\n    if len(ventana) > 2:\n        total -= ventana.popleft()\n    if len(ventana) == 2:\n        resultado.append(total / 2)\nprint(resultado)",
+    next: Some("py-2774-ventana-deltas"), show_type_chips: false, micro_step: 2773,
+};
+pub const PY2774_VENTANA_DELTAS: CodingStep = CodingStep {
+    id: "py-2774-ventana-deltas", title: "ventanas · deltas", objective: "Calcular diferencias entre observaciones consecutivas.",
+    prompt_md: "**ventanas · deltas**\n\nCalcular diferencias entre observaciones consecutivas.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from collections import deque\n# ventana = deque(maxlen=2)\n# resultado = []\n# for valor in [5, 8, 6, 11]:\n#     ventana.append(valor)\n#     if len(ventana) == 2:\n#         resultado.append(ventana[1] - ventana[0])\n# print(resultado)\n",
+    pytest: "def test_ventana_deltas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [3, -2, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [3, -2, 5].",
+    solution_example: "from collections import deque\nventana = deque(maxlen=2)\nresultado = []\nfor valor in [5, 8, 6, 11]:\n    ventana.append(valor)\n    if len(ventana) == 2:\n        resultado.append(ventana[1] - ventana[0])\nprint(resultado)",
+    next: Some("py-2775-ventana-por-clave"), show_type_chips: false, micro_step: 2774,
+};
+pub const PY2775_VENTANA_POR_CLAVE: CodingStep = CodingStep {
+    id: "py-2775-ventana-por-clave", title: "ventanas · por clave", objective: "Mantener una ventana independiente por categoría.",
+    prompt_md: "**ventanas · por clave**\n\nMantener una ventana independiente por categoría.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from collections import defaultdict, deque\n# ventanas = defaultdict(lambda: deque(maxlen=2))\n# for clave, valor in [('a', 1), ('b', 5), ('a', 3), ('a', 7)]:\n#     ventanas[clave].append(valor)\n# resultado = {k: list(v) for k, v in sorted(ventanas.items())}\n# print(resultado)\n",
+    pytest: "def test_ventana_por_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': [3, 7], 'b': [5]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': [3, 7], 'b': [5]}.",
+    solution_example: "from collections import defaultdict, deque\nventanas = defaultdict(lambda: deque(maxlen=2))\nfor clave, valor in [('a', 1), ('b', 5), ('a', 3), ('a', 7)]:\n    ventanas[clave].append(valor)\nresultado = {k: list(v) for k, v in sorted(ventanas.items())}\nprint(resultado)",
+    next: Some("py-2776-ventana-suite"), show_type_chips: false, micro_step: 2775,
+};
+pub const PY2776_VENTANA_SUITE: CodingStep = CodingStep {
+    id: "py-2776-ventana-suite", title: "ventanas · suite", objective: "Detectar picos respecto de una media móvil previa.",
+    prompt_md: "**ventanas · suite**\n\nDetectar picos respecto de una media móvil previa.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# from collections import deque\n# ventana = deque(maxlen=3)\n# resultado = []\n# for valor in [2, 3, 4, 10, 5]:\n#     if len(ventana) == 3 and valor > 2 * (sum(ventana) / 3):\n#         resultado.append(valor)\n#     ventana.append(valor)\n# print(resultado)\n",
+    pytest: "def test_ventana_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [10]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [10].",
+    solution_example: "from collections import deque\nventana = deque(maxlen=3)\nresultado = []\nfor valor in [2, 3, 4, 10, 5]:\n    if len(ventana) == 3 and valor > 2 * (sum(ventana) / 3):\n        resultado.append(valor)\n    ventana.append(valor)\nprint(resultado)",
+    next: Some("py-2777-checkpoint-tupla"), show_type_chips: false, micro_step: 2776,
+};
+pub const PY2777_CHECKPOINT_TUPLA: CodingStep = CodingStep {
+    id: "py-2777-checkpoint-tupla", title: "checkpoint · tupla", objective: "Representar un estado reanudable con una tupla.",
+    prompt_md: "**checkpoint · tupla**\n\nRepresentar un estado reanudable con una tupla.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = (0, 0)\n# for valor in [2, 5, 1]:\n#     total, n = estado\n#     estado = (total + valor, n + 1)\n# resultado = estado\n# print(resultado)\n",
+    pytest: "def test_checkpoint_tupla(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (8, 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (8, 3).",
+    solution_example: "estado = (0, 0)\nfor valor in [2, 5, 1]:\n    total, n = estado\n    estado = (total + valor, n + 1)\nresultado = estado\nprint(resultado)",
+    next: Some("py-2778-checkpoint-copia"), show_type_chips: false, micro_step: 2777,
+};
+pub const PY2778_CHECKPOINT_COPIA: CodingStep = CodingStep {
+    id: "py-2778-checkpoint-copia", title: "checkpoint · copia", objective: "Crear un snapshot que no cambia con el estado posterior.",
+    prompt_md: "**checkpoint · copia**\n\nCrear un snapshot que no cambia con el estado posterior.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {'total': 3, 'n': 1}\n# snapshot = estado.copy()\n# estado['total'] += 4\n# estado['n'] += 1\n# resultado = (snapshot, estado)\n# print(resultado)\n",
+    pytest: "def test_checkpoint_copia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ({'total': 3, 'n': 1}, {'total': 7, 'n': 2})\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ({'total': 3, 'n': 1}, {'total': 7, 'n': 2}).",
+    solution_example: "estado = {'total': 3, 'n': 1}\nsnapshot = estado.copy()\nestado['total'] += 4\nestado['n'] += 1\nresultado = (snapshot, estado)\nprint(resultado)",
+    next: Some("py-2779-checkpoint-avanzar"), show_type_chips: false, micro_step: 2778,
+};
+pub const PY2779_CHECKPOINT_AVANZAR: CodingStep = CodingStep {
+    id: "py-2779-checkpoint-avanzar", title: "checkpoint · transición pura", objective: "Aplicar una transición sin mutar el estado recibido.",
+    prompt_md: "**checkpoint · transición pura**\n\nAplicar una transición sin mutar el estado recibido.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def avanzar(estado, valor):\n#     return {'total': estado['total'] + valor, 'n': estado['n'] + 1}\n# inicial = {'total': 2, 'n': 1}\n# final = avanzar(inicial, 5)\n# resultado = (inicial, final)\n# print(resultado)\n",
+    pytest: "def test_checkpoint_avanzar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ({'total': 2, 'n': 1}, {'total': 7, 'n': 2})\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ({'total': 2, 'n': 1}, {'total': 7, 'n': 2}).",
+    solution_example: "def avanzar(estado, valor):\n    return {'total': estado['total'] + valor, 'n': estado['n'] + 1}\ninicial = {'total': 2, 'n': 1}\nfinal = avanzar(inicial, 5)\nresultado = (inicial, final)\nprint(resultado)",
+    next: Some("py-2780-checkpoint-reanudar"), show_type_chips: false, micro_step: 2779,
+};
+pub const PY2780_CHECKPOINT_REANUDAR: CodingStep = CodingStep {
+    id: "py-2780-checkpoint-reanudar", title: "checkpoint · reanudar", objective: "Reanudar desde un snapshot y continuar el cálculo.",
+    prompt_md: "**checkpoint · reanudar**\n\nReanudar desde un snapshot y continuar el cálculo.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def aplicar(estado, datos):\n#     total, n = estado\n#     for valor in datos:\n#         total, n = total + valor, n + 1\n#     return total, n\n# snapshot = aplicar((0, 0), [2, 3])\n# resultado = aplicar(snapshot, [5, 7])\n# print(resultado)\n",
+    pytest: "def test_checkpoint_reanudar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (17, 4)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (17, 4).",
+    solution_example: "def aplicar(estado, datos):\n    total, n = estado\n    for valor in datos:\n        total, n = total + valor, n + 1\n    return total, n\nsnapshot = aplicar((0, 0), [2, 3])\nresultado = aplicar(snapshot, [5, 7])\nprint(resultado)",
+    next: Some("py-2781-checkpoint-equivalencia"), show_type_chips: false, micro_step: 2780,
+};
+pub const PY2781_CHECKPOINT_EQUIVALENCIA: CodingStep = CodingStep {
+    id: "py-2781-checkpoint-equivalencia", title: "checkpoint · equivalencia", objective: "Comprobar que ejecución continua y reanudada coinciden.",
+    prompt_md: "**checkpoint · equivalencia**\n\nComprobar que ejecución continua y reanudada coinciden.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def aplicar(estado, datos):\n#     return (estado[0] + sum(datos), estado[1] + len(datos))\n# continua = aplicar((0, 0), [1, 2, 3, 4])\n# reanuda = aplicar(aplicar((0, 0), [1, 2]), [3, 4])\n# resultado = continua == reanuda\n# print(resultado)\n",
+    pytest: "def test_checkpoint_equivalencia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "def aplicar(estado, datos):\n    return (estado[0] + sum(datos), estado[1] + len(datos))\ncontinua = aplicar((0, 0), [1, 2, 3, 4])\nreanuda = aplicar(aplicar((0, 0), [1, 2]), [3, 4])\nresultado = continua == reanuda\nprint(resultado)",
+    next: Some("py-2782-checkpoint-suite"), show_type_chips: false, micro_step: 2781,
+};
+pub const PY2782_CHECKPOINT_SUITE: CodingStep = CodingStep {
+    id: "py-2782-checkpoint-suite", title: "checkpoint · suite", objective: "Reanudar agregados por clave preservando snapshots previos.",
+    prompt_md: "**checkpoint · suite**\n\nReanudar agregados por clave preservando snapshots previos.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def aplicar(estado, eventos):\n#     nuevo = estado.copy()\n#     for clave, valor in eventos:\n#         nuevo[clave] = nuevo.get(clave, 0) + valor\n#     return nuevo\n# primero = aplicar({}, [('a', 2), ('b', 3)])\n# segundo = aplicar(primero, [('a', 5)])\n# resultado = (primero, segundo)\n# print(resultado)\n",
+    pytest: "def test_checkpoint_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ({'a': 2, 'b': 3}, {'a': 7, 'b': 3})\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ({'a': 2, 'b': 3}, {'a': 7, 'b': 3}).",
+    solution_example: "def aplicar(estado, eventos):\n    nuevo = estado.copy()\n    for clave, valor in eventos:\n        nuevo[clave] = nuevo.get(clave, 0) + valor\n    return nuevo\nprimero = aplicar({}, [('a', 2), ('b', 3)])\nsegundo = aplicar(primero, [('a', 5)])\nresultado = (primero, segundo)\nprint(resultado)",
+    next: Some("py-2783-idem-claves"), show_type_chips: false, micro_step: 2782,
+};
+pub const PY2783_IDEM_CLAVES: CodingStep = CodingStep {
+    id: "py-2783-idem-claves", title: "idempotencia · claves", objective: "Conservar una sola aparición de cada clave.",
+    prompt_md: "**idempotencia · claves**\n\nConservar una sola aparición de cada clave.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# vistos = set()\n# resultado = []\n# for clave in ['a', 'b', 'a', 'c']:\n#     if clave not in vistos:\n#         vistos.add(clave); resultado.append(clave)\n# print(resultado)\n",
+    pytest: "def test_idem_claves(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'b', 'c'].",
+    solution_example: "vistos = set()\nresultado = []\nfor clave in ['a', 'b', 'a', 'c']:\n    if clave not in vistos:\n        vistos.add(clave); resultado.append(clave)\nprint(resultado)",
+    next: Some("py-2784-idem-eventos"), show_type_chips: false, micro_step: 2783,
+};
+pub const PY2784_IDEM_EVENTOS: CodingStep = CodingStep {
+    id: "py-2784-idem-eventos", title: "idempotencia · eventos", objective: "Aplicar cada evento identificado una sola vez.",
+    prompt_md: "**idempotencia · eventos**\n\nAplicar cada evento identificado una sola vez.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# vistos = set(); total = 0\n# for eid, valor in [('e1', 3), ('e2', 5), ('e1', 3)]:\n#     if eid not in vistos:\n#         vistos.add(eid); total += valor\n# resultado = total\n# print(resultado)\n",
+    pytest: "def test_idem_eventos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 8\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 8.",
+    solution_example: "vistos = set(); total = 0\nfor eid, valor in [('e1', 3), ('e2', 5), ('e1', 3)]:\n    if eid not in vistos:\n        vistos.add(eid); total += valor\nresultado = total\nprint(resultado)",
+    next: Some("py-2785-idem-primer-valor"), show_type_chips: false, micro_step: 2784,
+};
+pub const PY2785_IDEM_PRIMER_VALOR: CodingStep = CodingStep {
+    id: "py-2785-idem-primer-valor", title: "idempotencia · primer valor", objective: "Preservar el primer registro para una clave repetida.",
+    prompt_md: "**idempotencia · primer valor**\n\nPreservar el primer registro para una clave repetida.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {}\n# for clave, valor in [('a', 2), ('a', 9), ('b', 4)]:\n#     estado.setdefault(clave, valor)\n# resultado = estado\n# print(resultado)\n",
+    pytest: "def test_idem_primer_valor(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 2, 'b': 4}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 2, 'b': 4}.",
+    solution_example: "estado = {}\nfor clave, valor in [('a', 2), ('a', 9), ('b', 4)]:\n    estado.setdefault(clave, valor)\nresultado = estado\nprint(resultado)",
+    next: Some("py-2786-idem-ultimo-valor"), show_type_chips: false, micro_step: 2785,
+};
+pub const PY2786_IDEM_ULTIMO_VALOR: CodingStep = CodingStep {
+    id: "py-2786-idem-ultimo-valor", title: "idempotencia · último valor", objective: "Conservar el registro con mayor secuencia por clave.",
+    prompt_md: "**idempotencia · último valor**\n\nConservar el registro con mayor secuencia por clave.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {}\n# for clave, seq, valor in [('a', 2, 'nuevo'), ('a', 1, 'viejo'), ('b', 1, 'ok')]:\n#     if clave not in estado or seq > estado[clave][0]:\n#         estado[clave] = (seq, valor)\n# resultado = {k: v for k, (_, v) in sorted(estado.items())}\n# print(resultado)\n",
+    pytest: "def test_idem_ultimo_valor(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 'nuevo', 'b': 'ok'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 'nuevo', 'b': 'ok'}.",
+    solution_example: "estado = {}\nfor clave, seq, valor in [('a', 2, 'nuevo'), ('a', 1, 'viejo'), ('b', 1, 'ok')]:\n    if clave not in estado or seq > estado[clave][0]:\n        estado[clave] = (seq, valor)\nresultado = {k: v for k, (_, v) in sorted(estado.items())}\nprint(resultado)",
+    next: Some("py-2787-idem-reintento"), show_type_chips: false, micro_step: 2786,
+};
+pub const PY2787_IDEM_REINTENTO: CodingStep = CodingStep {
+    id: "py-2787-idem-reintento", title: "idempotencia · reintento", objective: "Demostrar que reaplicar el mismo lote no cambia el resultado.",
+    prompt_md: "**idempotencia · reintento**\n\nDemostrar que reaplicar el mismo lote no cambia el resultado.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def aplicar(estado, eventos):\n#     nuevo = dict(estado)\n#     for eid, valor in eventos:\n#         nuevo.setdefault(eid, valor)\n#     return nuevo\n# lote = [('x1', 2), ('x2', 7)]\n# una = aplicar({}, lote)\n# dos = aplicar(una, lote)\n# resultado = una == dos\n# print(resultado)\n",
+    pytest: "def test_idem_reintento(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "def aplicar(estado, eventos):\n    nuevo = dict(estado)\n    for eid, valor in eventos:\n        nuevo.setdefault(eid, valor)\n    return nuevo\nlote = [('x1', 2), ('x2', 7)]\nuna = aplicar({}, lote)\ndos = aplicar(una, lote)\nresultado = una == dos\nprint(resultado)",
+    next: Some("py-2788-idem-suite"), show_type_chips: false, micro_step: 2787,
+};
+pub const PY2788_IDEM_SUITE: CodingStep = CodingStep {
+    id: "py-2788-idem-suite", title: "idempotencia · suite", objective: "Agregar montos una sola vez y conservar claves procesadas.",
+    prompt_md: "**idempotencia · suite**\n\nAgregar montos una sola vez y conservar claves procesadas.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def aplicar(estado, vistos, eventos):\n#     nuevo = estado.copy(); ids = set(vistos)\n#     for eid, clave, monto in eventos:\n#         if eid not in ids:\n#             ids.add(eid); nuevo[clave] = nuevo.get(clave, 0) + monto\n#     return nuevo, ids\n# eventos = [('1', 'a', 3), ('2', 'a', 4), ('1', 'a', 3)]\n# estado, vistos = aplicar({}, set(), eventos)\n# resultado = (estado, sorted(vistos))\n# print(resultado)\n",
+    pytest: "def test_idem_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ({'a': 7}, ['1', '2'])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ({'a': 7}, ['1', '2']).",
+    solution_example: "def aplicar(estado, vistos, eventos):\n    nuevo = estado.copy(); ids = set(vistos)\n    for eid, clave, monto in eventos:\n        if eid not in ids:\n            ids.add(eid); nuevo[clave] = nuevo.get(clave, 0) + monto\n    return nuevo, ids\neventos = [('1', 'a', 3), ('2', 'a', 4), ('1', 'a', 3)]\nestado, vistos = aplicar({}, set(), eventos)\nresultado = (estado, sorted(vistos))\nprint(resultado)",
+    next: Some("py-2789-recon-secuencia"), show_type_chips: false, micro_step: 2788,
+};
+pub const PY2789_RECON_SECUENCIA: CodingStep = CodingStep {
+    id: "py-2789-recon-secuencia", title: "reconciliación · secuencia", objective: "Elegir el registro con mayor secuencia.",
+    prompt_md: "**reconciliación · secuencia**\n\nElegir el registro con mayor secuencia.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# versiones = [(2, 'medio'), (1, 'viejo'), (3, 'nuevo')]\n# resultado = max(versiones, key=lambda x: x[0])[1]\n# print(resultado)\n",
+    pytest: "def test_recon_secuencia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'nuevo'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'nuevo'.",
+    solution_example: "versiones = [(2, 'medio'), (1, 'viejo'), (3, 'nuevo')]\nresultado = max(versiones, key=lambda x: x[0])[1]\nprint(resultado)",
+    next: Some("py-2790-recon-desempate"), show_type_chips: false, micro_step: 2789,
+};
+pub const PY2790_RECON_DESEMPATE: CodingStep = CodingStep {
+    id: "py-2790-recon-desempate", title: "reconciliación · desempate", objective: "Resolver igual secuencia con un origen estable.",
+    prompt_md: "**reconciliación · desempate**\n\nResolver igual secuencia con un origen estable.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# versiones = [(4, 'web', 8), (4, 'api', 7)]\n# resultado = max(versiones, key=lambda x: (x[0], x[1]))\n# print(resultado)\n",
+    pytest: "def test_recon_desempate(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (4, 'web', 8)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (4, 'web', 8).",
+    solution_example: "versiones = [(4, 'web', 8), (4, 'api', 7)]\nresultado = max(versiones, key=lambda x: (x[0], x[1]))\nprint(resultado)",
+    next: Some("py-2791-recon-por-clave"), show_type_chips: false, micro_step: 2790,
+};
+pub const PY2791_RECON_POR_CLAVE: CodingStep = CodingStep {
+    id: "py-2791-recon-por-clave", title: "reconciliación · por clave", objective: "Seleccionar la versión vigente de cada clave.",
+    prompt_md: "**reconciliación · por clave**\n\nSeleccionar la versión vigente de cada clave.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {}\n# for clave, seq, valor in [('a', 1, 3), ('b', 2, 8), ('a', 3, 5)]:\n#     if clave not in estado or seq > estado[clave][0]:\n#         estado[clave] = (seq, valor)\n# resultado = {k: v for k, (_, v) in sorted(estado.items())}\n# print(resultado)\n",
+    pytest: "def test_recon_por_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 5, 'b': 8}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 5, 'b': 8}.",
+    solution_example: "estado = {}\nfor clave, seq, valor in [('a', 1, 3), ('b', 2, 8), ('a', 3, 5)]:\n    if clave not in estado or seq > estado[clave][0]:\n        estado[clave] = (seq, valor)\nresultado = {k: v for k, (_, v) in sorted(estado.items())}\nprint(resultado)",
+    next: Some("py-2792-recon-tombstone"), show_type_chips: false, micro_step: 2791,
+};
+pub const PY2792_RECON_TOMBSTONE: CodingStep = CodingStep {
+    id: "py-2792-recon-tombstone", title: "reconciliación · tombstone", objective: "Eliminar una clave cuando gana una versión tombstone.",
+    prompt_md: "**reconciliación · tombstone**\n\nEliminar una clave cuando gana una versión tombstone.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# versiones = [('a', 1, 5), ('a', 3, None), ('b', 2, 7)]\n# actual = {}\n# for clave, seq, valor in versiones:\n#     if clave not in actual or seq > actual[clave][0]:\n#         actual[clave] = (seq, valor)\n# resultado = {k: v for k, (_, v) in sorted(actual.items()) if v is not None}\n# print(resultado)\n",
+    pytest: "def test_recon_tombstone(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'b': 7}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'b': 7}.",
+    solution_example: "versiones = [('a', 1, 5), ('a', 3, None), ('b', 2, 7)]\nactual = {}\nfor clave, seq, valor in versiones:\n    if clave not in actual or seq > actual[clave][0]:\n        actual[clave] = (seq, valor)\nresultado = {k: v for k, (_, v) in sorted(actual.items()) if v is not None}\nprint(resultado)",
+    next: Some("py-2793-recon-conmutativa"), show_type_chips: false, micro_step: 2792,
+};
+pub const PY2793_RECON_CONMUTATIVA: CodingStep = CodingStep {
+    id: "py-2793-recon-conmutativa", title: "reconciliación · orden de llegada", objective: "Comprobar independencia del orden de llegada con clave total.",
+    prompt_md: "**reconciliación · orden de llegada**\n\nComprobar independencia del orden de llegada con clave total.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def reconciliar(eventos):\n#     estado = {}\n#     for clave, seq, origen, valor in eventos:\n#         if clave not in estado or (seq, origen) > estado[clave][:2]:\n#             estado[clave] = (seq, origen, valor)\n#     return {k: v for k, (_, _, v) in estado.items()}\n# e = [('a', 2, 'api', 5), ('a', 2, 'web', 7), ('b', 1, 'api', 3)]\n# resultado = reconciliar(e) == reconciliar(reversed(e))\n# print(resultado)\n",
+    pytest: "def test_recon_conmutativa(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "def reconciliar(eventos):\n    estado = {}\n    for clave, seq, origen, valor in eventos:\n        if clave not in estado or (seq, origen) > estado[clave][:2]:\n            estado[clave] = (seq, origen, valor)\n    return {k: v for k, (_, _, v) in estado.items()}\ne = [('a', 2, 'api', 5), ('a', 2, 'web', 7), ('b', 1, 'api', 3)]\nresultado = reconciliar(e) == reconciliar(reversed(e))\nprint(resultado)",
+    next: Some("py-2794-recon-suite"), show_type_chips: false, micro_step: 2793,
+};
+pub const PY2794_RECON_SUITE: CodingStep = CodingStep {
+    id: "py-2794-recon-suite", title: "reconciliación · suite", objective: "Fusionar dos réplicas con tombstones y desempate estable.",
+    prompt_md: "**reconciliación · suite**\n\nFusionar dos réplicas con tombstones y desempate estable.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def fusionar(*replicas):\n#     estado = {}\n#     for replica in replicas:\n#         for clave, seq, origen, valor in replica:\n#             candidato = (seq, origen, valor)\n#             if clave not in estado or candidato[:2] > estado[clave][:2]:\n#                 estado[clave] = candidato\n#     return {k: v for k, (_, _, v) in sorted(estado.items()) if v is not None}\n# a = [('x', 1, 'api', 3), ('y', 4, 'api', 8)]\n# b = [('x', 2, 'web', 5), ('y', 5, 'web', None)]\n# resultado = fusionar(a, b)\n# print(resultado)\n",
+    pytest: "def test_recon_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'x': 5}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'x': 5}.",
+    solution_example: "def fusionar(*replicas):\n    estado = {}\n    for replica in replicas:\n        for clave, seq, origen, valor in replica:\n            candidato = (seq, origen, valor)\n            if clave not in estado or candidato[:2] > estado[clave][:2]:\n                estado[clave] = candidato\n    return {k: v for k, (_, _, v) in sorted(estado.items()) if v is not None}\na = [('x', 1, 'api', 3), ('y', 4, 'api', 8)]\nb = [('x', 2, 'web', 5), ('y', 5, 'web', None)]\nresultado = fusionar(a, b)\nprint(resultado)",
+    next: Some("py-2795-cap-normalizar"), show_type_chips: false, micro_step: 2794,
+};
+pub const PY2795_CAP_NORMALIZAR: CodingStep = CodingStep {
+    id: "py-2795-cap-normalizar", title: "capstone · normalizar", objective: "Normalizar eventos con una clave total.",
+    prompt_md: "**capstone · normalizar**\n\nNormalizar eventos con una clave total.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('b', 2, 4), ('a', 1, 3)]\n# resultado = sorted(eventos, key=lambda x: (x[1], x[0]))\n# print(resultado)\n",
+    pytest: "def test_cap_normalizar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', 1, 3), ('b', 2, 4)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('a', 1, 3), ('b', 2, 4)].",
+    solution_example: "eventos = [('b', 2, 4), ('a', 1, 3)]\nresultado = sorted(eventos, key=lambda x: (x[1], x[0]))\nprint(resultado)",
+    next: Some("py-2796-cap-reconciliar"), show_type_chips: false, micro_step: 2795,
+};
+pub const PY2796_CAP_RECONCILIAR: CodingStep = CodingStep {
+    id: "py-2796-cap-reconciliar", title: "capstone · reconciliar", objective: "Conservar la última versión explícita antes de agregar.",
+    prompt_md: "**capstone · reconciliar**\n\nConservar la última versión explícita antes de agregar.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('a', 1, 3), ('a', 2, 5), ('b', 1, 4)]\n# estado = {}\n# for clave, seq, valor in eventos:\n#     if clave not in estado or seq > estado[clave][0]: estado[clave] = (seq, valor)\n# resultado = estado\n# print(resultado)\n",
+    pytest: "def test_cap_reconciliar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': (2, 5), 'b': (1, 4)}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': (2, 5), 'b': (1, 4)}.",
+    solution_example: "eventos = [('a', 1, 3), ('a', 2, 5), ('b', 1, 4)]\nestado = {}\nfor clave, seq, valor in eventos:\n    if clave not in estado or seq > estado[clave][0]: estado[clave] = (seq, valor)\nresultado = estado\nprint(resultado)",
+    next: Some("py-2797-cap-agregar"), show_type_chips: false, micro_step: 2796,
+};
+pub const PY2797_CAP_AGREGAR: CodingStep = CodingStep {
+    id: "py-2797-cap-agregar", title: "capstone · agregar", objective: "Agregar valores vigentes por grupo.",
+    prompt_md: "**capstone · agregar**\n\nAgregar valores vigentes por grupo.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# vigentes = [('api', 'a', 5), ('web', 'b', 4), ('api', 'c', 3)]\n# totales = {}\n# for grupo, _, valor in vigentes:\n#     totales[grupo] = totales.get(grupo, 0) + valor\n# resultado = totales\n# print(resultado)\n",
+    pytest: "def test_cap_agregar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'api': 8, 'web': 4}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'api': 8, 'web': 4}.",
+    solution_example: "vigentes = [('api', 'a', 5), ('web', 'b', 4), ('api', 'c', 3)]\ntotales = {}\nfor grupo, _, valor in vigentes:\n    totales[grupo] = totales.get(grupo, 0) + valor\nresultado = totales\nprint(resultado)",
+    next: Some("py-2798-cap-checkpoint"), show_type_chips: false, micro_step: 2797,
+};
+pub const PY2798_CAP_CHECKPOINT: CodingStep = CodingStep {
+    id: "py-2798-cap-checkpoint", title: "capstone · checkpoint", objective: "Continuar un agregado desde un snapshot independiente.",
+    prompt_md: "**capstone · checkpoint**\n\nContinuar un agregado desde un snapshot independiente.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def aplicar(estado, filas):\n#     nuevo = estado.copy()\n#     for clave, valor in filas: nuevo[clave] = nuevo.get(clave, 0) + valor\n#     return nuevo\n# s1 = aplicar({}, [('api', 3)])\n# s2 = aplicar(s1, [('api', 4), ('web', 5)])\n# resultado = (s1, s2)\n# print(resultado)\n",
+    pytest: "def test_cap_checkpoint(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ({'api': 3}, {'api': 7, 'web': 5})\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ({'api': 3}, {'api': 7, 'web': 5}).",
+    solution_example: "def aplicar(estado, filas):\n    nuevo = estado.copy()\n    for clave, valor in filas: nuevo[clave] = nuevo.get(clave, 0) + valor\n    return nuevo\ns1 = aplicar({}, [('api', 3)])\ns2 = aplicar(s1, [('api', 4), ('web', 5)])\nresultado = (s1, s2)\nprint(resultado)",
+    next: Some("py-2799-cap-topk"), show_type_chips: false, micro_step: 2798,
+};
+pub const PY2799_CAP_TOPK: CodingStep = CodingStep {
+    id: "py-2799-cap-topk", title: "capstone · top-k", objective: "Rankear agregados con desempate estable.",
+    prompt_md: "**capstone · top-k**\n\nRankear agregados con desempate estable.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# totales = {'web': 7, 'api': 9, 'db': 9}\n# resultado = sorted(totales.items(), key=lambda x: (-x[1], x[0]))[:2]\n# print(resultado)\n",
+    pytest: "def test_cap_topk(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('api', 9), ('db', 9)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('api', 9), ('db', 9)].",
+    solution_example: "totales = {'web': 7, 'api': 9, 'db': 9}\nresultado = sorted(totales.items(), key=lambda x: (-x[1], x[0]))[:2]\nprint(resultado)",
+    next: Some("py-2800-ola30-suite"), show_type_chips: false, micro_step: 2799,
+};
+pub const PY2800_OLA30_SUITE: CodingStep = CodingStep {
+    id: "py-2800-ola30-suite", title: "ola 30 · suite", objective: "Cerrar la ola con deduplicación, reconciliación, checkpoint y ranking.",
+    prompt_md: "**ola 30 · suite**\n\nCerrar la ola con deduplicación, reconciliación, checkpoint y ranking.\n\n**Micro-reto:** implementá el algoritmo indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('e1', 'api', 1, 4), ('e2', 'web', 1, 8), ('e1', 'api', 1, 4), ('e3', 'api', 2, 7), ('e4', 'db', 1, 7)]\n# vistos = set(); vigentes = {}\n# for eid, clave, seq, valor in eventos:\n#     if eid in vistos: continue\n#     vistos.add(eid)\n#     if clave not in vigentes or seq > vigentes[clave][0]: vigentes[clave] = (seq, valor)\n# snapshot = vigentes.copy()\n# resultado = sorted(((k, v) for k, (_, v) in snapshot.items()), key=lambda x: (-x[1], x[0]))[:2]\n# print(resultado)\n",
+    pytest: "def test_ola30_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('web', 8), ('api', 7)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('web', 8), ('api', 7)].",
+    solution_example: "eventos = [('e1', 'api', 1, 4), ('e2', 'web', 1, 8), ('e1', 'api', 1, 4), ('e3', 'api', 2, 7), ('e4', 'db', 1, 7)]\nvistos = set(); vigentes = {}\nfor eid, clave, seq, valor in eventos:\n    if eid in vistos: continue\n    vistos.add(eid)\n    if clave not in vigentes or seq > vigentes[clave][0]: vigentes[clave] = (seq, valor)\nsnapshot = vigentes.copy()\nresultado = sorted(((k, v) for k, (_, v) in snapshot.items()), key=lambda x: (-x[1], x[0]))[:2]\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 2800,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -63251,6 +63791,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2738_SCORE_DESEMPATAR,
     &PY2739_SCORE_TOP_LAZY,
     &PY2740_OLA29_SUITE,
+    &PY2741_MERGE_DOS_LISTAS,
+    &PY2742_MERGE_TRES_LISTAS,
+    &PY2743_MERGE_CLAVE,
+    &PY2744_MERGE_DESEMPATE,
+    &PY2745_MERGE_DEDUPLICAR,
+    &PY2746_MERGE_SUITE,
+    &PY2747_HEAP_MINIMO,
+    &PY2748_HEAP_INSERTAR,
+    &PY2749_HEAP_TUPLAS,
+    &PY2750_HEAP_REEMPLAZAR,
+    &PY2751_HEAP_PUSHPOP,
+    &PY2752_HEAP_SUITE,
+    &PY2753_TOPK_MAYORES,
+    &PY2754_TOPK_MENORES,
+    &PY2755_TOPK_CLAVE,
+    &PY2756_TOPK_ACOTADO,
+    &PY2757_TOPK_DESEMPATE,
+    &PY2758_TOPK_SUITE,
+    &PY2759_ONLINE_CONTEO,
+    &PY2760_ONLINE_SUMA,
+    &PY2761_ONLINE_MEDIA,
+    &PY2762_ONLINE_MEDIA_VACIA,
+    &PY2763_ONLINE_POR_CLAVE,
+    &PY2764_ONLINE_MEDIA_SUITE,
+    &PY2765_ESTADO_MINIMO,
+    &PY2766_ESTADO_EXTREMOS,
+    &PY2767_ESTADO_CAMBIOS,
+    &PY2768_WELFORD_MEDIA,
+    &PY2769_WELFORD_VARIANZA,
+    &PY2770_WELFORD_SUITE,
+    &PY2771_VENTANA_DEQUE,
+    &PY2772_VENTANA_SUMAS,
+    &PY2773_VENTANA_MEDIA,
+    &PY2774_VENTANA_DELTAS,
+    &PY2775_VENTANA_POR_CLAVE,
+    &PY2776_VENTANA_SUITE,
+    &PY2777_CHECKPOINT_TUPLA,
+    &PY2778_CHECKPOINT_COPIA,
+    &PY2779_CHECKPOINT_AVANZAR,
+    &PY2780_CHECKPOINT_REANUDAR,
+    &PY2781_CHECKPOINT_EQUIVALENCIA,
+    &PY2782_CHECKPOINT_SUITE,
+    &PY2783_IDEM_CLAVES,
+    &PY2784_IDEM_EVENTOS,
+    &PY2785_IDEM_PRIMER_VALOR,
+    &PY2786_IDEM_ULTIMO_VALOR,
+    &PY2787_IDEM_REINTENTO,
+    &PY2788_IDEM_SUITE,
+    &PY2789_RECON_SECUENCIA,
+    &PY2790_RECON_DESEMPATE,
+    &PY2791_RECON_POR_CLAVE,
+    &PY2792_RECON_TOMBSTONE,
+    &PY2793_RECON_CONMUTATIVA,
+    &PY2794_RECON_SUITE,
+    &PY2795_CAP_NORMALIZAR,
+    &PY2796_CAP_RECONCILIAR,
+    &PY2797_CAP_AGREGAR,
+    &PY2798_CAP_CHECKPOINT,
+    &PY2799_CAP_TOPK,
+    &PY2800_OLA30_SUITE,
 
 ];
 
@@ -63418,14 +64018,14 @@ mod tests {
     #[test]
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
-        assert_eq!(CODING_STEPS.len(), 2740, "catalog must contain 2740 steps");
+        assert_eq!(CODING_STEPS.len(), 2800, "catalog must contain 2800 steps");
         for (index, step) in CODING_STEPS.iter().enumerate() {
             assert_eq!(
                 step.micro_step,
                 (index + 1) as i32,
                 "catalog must be contiguous at index {index}"
             );
-            assert!(step.micro_step >= 1 && step.micro_step <= 2740);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2800);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -63434,8 +64034,8 @@ mod tests {
         }
         assert_eq!(
             seen,
-            (1..=2740).collect(),
-            "catalog must cover every micro-step in 1..=2740"
+            (1..=2800).collect(),
+            "catalog must cover every micro-step in 1..=2800"
         );
     }
 
@@ -66779,7 +67379,22 @@ mod tests {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next wave29 step");
                 assert_eq!(step.next, Some(next_step.id));
             } else {
-                assert_eq!(step.next, None, "step 2740 is the end of the rail");
+                assert_eq!(step.next, Some("py-2741-merge-dos-listas"), "step 2740 chains to Wave 30");
+            }
+        }
+    }
+
+    #[test]
+    fn py2741_to_py2800_reconciliation_chain() {
+        for n in 2741..=2800 {
+            let step = coding_step_by_micro_step(n).expect("wave30 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(step.id.starts_with(&format!("py-{n}-")));
+            if n < 2800 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next wave30 step");
+                assert_eq!(step.next, Some(next_step.id));
+            } else {
+                assert_eq!(step.next, None, "step 2800 is the end of the rail");
             }
         }
     }
