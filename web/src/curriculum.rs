@@ -61588,7 +61588,547 @@ pub const PY2860_OLA31_SUITE: CodingStep = CodingStep {
     pytest: "def test_ola31_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'aceptados': [{'id': 'e1', 'valor': 4}], 'cuarentena': [({'id': 'e2', 'valor': -1}, 'negativo'), ({'valor': 8}, 'sin_id')], 'retry': ('ok', 2), 'estado': 'recuperado'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "El resultado esperado es {'aceptados': [{'id': 'e1', 'valor': 4}], 'cuarentena': [({'id': 'e2', 'valor': -1}, 'negativo'), ({'valor': 8}, 'sin_id')], 'retry': ('ok', 2), 'estado': 'recuperado'}.",
     solution_example: "entradas = [{'id': 'e1', 'valor': 4}, {'id': 'e2', 'valor': -1}, {'valor': 8}]\naceptados, cuarentena = [], []\nfor fila in entradas:\n    razon = 'sin_id' if 'id' not in fila else ('negativo' if fila['valor'] < 0 else None)\n    (cuarentena if razon else aceptados).append((fila, razon) if razon else fila)\nrespuestas = ['timeout', 'ok']\nintentos = next(i for i, estado in enumerate(respuestas, 1) if estado == 'ok')\nresultado = {'aceptados': aceptados, 'cuarentena': cuarentena, 'retry': ('ok', intentos), 'estado': 'recuperado'}\nprint(resultado)",
-    next: None, show_type_chips: false, micro_step: 2860,
+    next: Some("py-2861-particionar-paridad"), show_type_chips: false, micro_step: 2860,
+};
+pub const PY2861_PARTICIONAR_PARIDAD: CodingStep = CodingStep {
+    id: "py-2861-particionar-paridad", title: "particionado · paridad", objective: "Separar enteros en dos particiones estables.",
+    prompt_md: "**particionado · paridad**\n\nSeparar enteros en dos particiones estables.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [5, 2, 7, 4]\n# partes = {0: [], 1: []}\n# for valor in datos: partes[valor % 2].append(valor)\n# resultado = partes\n# print(resultado)\n",
+    pytest: "def test_particionar_paridad(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: [2, 4], 1: [5, 7]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: [2, 4], 1: [5, 7]}.",
+    solution_example: "datos = [5, 2, 7, 4]\npartes = {0: [], 1: []}\nfor valor in datos: partes[valor % 2].append(valor)\nresultado = partes\nprint(resultado)",
+    next: Some("py-2862-particionar-rango"), show_type_chips: false, micro_step: 2861,
+};
+pub const PY2862_PARTICIONAR_RANGO: CodingStep = CodingStep {
+    id: "py-2862-particionar-rango", title: "particionado · rangos", objective: "Asignar valores a rangos declarados.",
+    prompt_md: "**particionado · rangos**\n\nAsignar valores a rangos declarados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [2, 8, 13, 4]\n# resultado = {'bajo': [n for n in datos if n < 5], 'medio': [n for n in datos if 5 <= n < 10], 'alto': [n for n in datos if n >= 10]}\n# print(resultado)\n",
+    pytest: "def test_particionar_rango(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'bajo': [2, 4], 'medio': [8], 'alto': [13]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'bajo': [2, 4], 'medio': [8], 'alto': [13]}.",
+    solution_example: "datos = [2, 8, 13, 4]\nresultado = {'bajo': [n for n in datos if n < 5], 'medio': [n for n in datos if 5 <= n < 10], 'alto': [n for n in datos if n >= 10]}\nprint(resultado)",
+    next: Some("py-2863-particionar-clave"), show_type_chips: false, micro_step: 2862,
+};
+pub const PY2863_PARTICIONAR_CLAVE: CodingStep = CodingStep {
+    id: "py-2863-particionar-clave", title: "particionado · clave", objective: "Agrupar registros preservando el orden por clave.",
+    prompt_md: "**particionado · clave**\n\nAgrupar registros preservando el orden por clave.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('sur', 3), ('norte', 2), ('sur', 5)]\n# partes = {}\n# for clave, valor in filas: partes.setdefault(clave, []).append(valor)\n# resultado = partes\n# print(resultado)\n",
+    pytest: "def test_particionar_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'sur': [3, 5], 'norte': [2]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'sur': [3, 5], 'norte': [2]}.",
+    solution_example: "filas = [('sur', 3), ('norte', 2), ('sur', 5)]\npartes = {}\nfor clave, valor in filas: partes.setdefault(clave, []).append(valor)\nresultado = partes\nprint(resultado)",
+    next: Some("py-2864-particionar-indice"), show_type_chips: false, micro_step: 2863,
+};
+pub const PY2864_PARTICIONAR_INDICE: CodingStep = CodingStep {
+    id: "py-2864-particionar-indice", title: "particionado · round robin", objective: "Distribuir por índice sin concurrencia.",
+    prompt_md: "**particionado · round robin**\n\nDistribuir por índice sin concurrencia.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = list('abcde')\n# partes = [[], []]\n# for indice, valor in enumerate(datos): partes[indice % 2].append(valor)\n# resultado = partes\n# print(resultado)\n",
+    pytest: "def test_particionar_indice(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [['a', 'c', 'e'], ['b', 'd']]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [['a', 'c', 'e'], ['b', 'd']].",
+    solution_example: "datos = list('abcde')\npartes = [[], []]\nfor indice, valor in enumerate(datos): partes[indice % 2].append(valor)\nresultado = partes\nprint(resultado)",
+    next: Some("py-2865-particionar-vacios"), show_type_chips: false, micro_step: 2864,
+};
+pub const PY2865_PARTICIONAR_VACIOS: CodingStep = CodingStep {
+    id: "py-2865-particionar-vacios", title: "particionado · vacíos", objective: "Conservar particiones vacías en el contrato.",
+    prompt_md: "**particionado · vacíos**\n\nConservar particiones vacías en el contrato.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [2, 4]\n# partes = {i: [] for i in range(3)}\n# for valor in datos: partes[valor % 3].append(valor)\n# resultado = partes\n# print(resultado)\n",
+    pytest: "def test_particionar_vacios(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: [], 1: [4], 2: [2]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: [], 1: [4], 2: [2]}.",
+    solution_example: "datos = [2, 4]\npartes = {i: [] for i in range(3)}\nfor valor in datos: partes[valor % 3].append(valor)\nresultado = partes\nprint(resultado)",
+    next: Some("py-2866-particionar-suite"), show_type_chips: false, micro_step: 2865,
+};
+pub const PY2866_PARTICIONAR_SUITE: CodingStep = CodingStep {
+    id: "py-2866-particionar-suite", title: "particionado · suite", objective: "Particionar eventos y resumir tamaños verificables.",
+    prompt_md: "**particionado · suite**\n\nParticionar eventos y resumir tamaños verificables.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('a', 4), ('b', 7), ('c', 10), ('d', 5)]\n# partes = {0: [], 1: []}\n# for evento in eventos: partes[evento[1] % 2].append(evento)\n# resultado = {'partes': partes, 'tamanos': [len(partes[i]) for i in range(2)]}\n# print(resultado)\n",
+    pytest: "def test_particionar_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'partes': {0: [('a', 4), ('c', 10)], 1: [('b', 7), ('d', 5)]}, 'tamanos': [2, 2]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'partes': {0: [('a', 4), ('c', 10)], 1: [('b', 7), ('d', 5)]}, 'tamanos': [2, 2]}.",
+    solution_example: "eventos = [('a', 4), ('b', 7), ('c', 10), ('d', 5)]\npartes = {0: [], 1: []}\nfor evento in eventos: partes[evento[1] % 2].append(evento)\nresultado = {'partes': partes, 'tamanos': [len(partes[i]) for i in range(2)]}\nprint(resultado)",
+    next: Some("py-2867-shard-entero"), show_type_chips: false, micro_step: 2866,
+};
+pub const PY2867_SHARD_ENTERO: CodingStep = CodingStep {
+    id: "py-2867-shard-entero", title: "sharding · entero", objective: "Calcular shard con módulo explícito.",
+    prompt_md: "**sharding · entero**\n\nCalcular shard con módulo explícito.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# clave, cantidad = 17, 4\n# resultado = clave % cantidad\n# print(resultado)\n",
+    pytest: "def test_shard_entero(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 1.",
+    solution_example: "clave, cantidad = 17, 4\nresultado = clave % cantidad\nprint(resultado)",
+    next: Some("py-2868-shard-texto"), show_type_chips: false, micro_step: 2867,
+};
+pub const PY2868_SHARD_TEXTO: CodingStep = CodingStep {
+    id: "py-2868-shard-texto", title: "sharding · texto", objective: "Derivar un shard textual estable sin hash implícito.",
+    prompt_md: "**sharding · texto**\n\nDerivar un shard textual estable sin hash implícito.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# clave, cantidad = 'ana', 3\n# resultado = sum(ord(c) for c in clave) % cantidad\n# print(resultado)\n",
+    pytest: "def test_shard_texto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 1.",
+    solution_example: "clave, cantidad = 'ana', 3\nresultado = sum(ord(c) for c in clave) % cantidad\nprint(resultado)",
+    next: Some("py-2869-shard-registros"), show_type_chips: false, micro_step: 2868,
+};
+pub const PY2869_SHARD_REGISTROS: CodingStep = CodingStep {
+    id: "py-2869-shard-registros", title: "sharding · registros", objective: "Enrutar registros por su clave estable.",
+    prompt_md: "**sharding · registros**\n\nEnrutar registros por su clave estable.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [{'id': 2}, {'id': 5}, {'id': 8}]\n# resultado = [(fila['id'], fila['id'] % 3) for fila in filas]\n# print(resultado)\n",
+    pytest: "def test_shard_registros(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(2, 2), (5, 2), (8, 2)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(2, 2), (5, 2), (8, 2)].",
+    solution_example: "filas = [{'id': 2}, {'id': 5}, {'id': 8}]\nresultado = [(fila['id'], fila['id'] % 3) for fila in filas]\nprint(resultado)",
+    next: Some("py-2870-shard-consistente"), show_type_chips: false, micro_step: 2869,
+};
+pub const PY2870_SHARD_CONSISTENTE: CodingStep = CodingStep {
+    id: "py-2870-shard-consistente", title: "sharding · consistencia", objective: "Comprobar que una clave repite destino.",
+    prompt_md: "**sharding · consistencia**\n\nComprobar que una clave repite destino.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# claves = ['sur', 'norte', 'sur']\n# resultado = [sum(map(ord, clave)) % 4 for clave in claves]\n# print(resultado)\n",
+    pytest: "def test_shard_consistente(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 0, 2]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 0, 2].",
+    solution_example: "claves = ['sur', 'norte', 'sur']\nresultado = [sum(map(ord, clave)) % 4 for clave in claves]\nprint(resultado)",
+    next: Some("py-2871-shard-distribucion"), show_type_chips: false, micro_step: 2870,
+};
+pub const PY2871_SHARD_DISTRIBUCION: CodingStep = CodingStep {
+    id: "py-2871-shard-distribucion", title: "sharding · distribución", objective: "Contar carga por shard.",
+    prompt_md: "**sharding · distribución**\n\nContar carga por shard.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# claves = [1, 2, 3, 4, 5]\n# conteos = {i: 0 for i in range(3)}\n# for clave in claves: conteos[clave % 3] += 1\n# resultado = conteos\n# print(resultado)\n",
+    pytest: "def test_shard_distribucion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: 1, 1: 2, 2: 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: 1, 1: 2, 2: 2}.",
+    solution_example: "claves = [1, 2, 3, 4, 5]\nconteos = {i: 0 for i in range(3)}\nfor clave in claves: conteos[clave % 3] += 1\nresultado = conteos\nprint(resultado)",
+    next: Some("py-2872-shard-suite"), show_type_chips: false, micro_step: 2871,
+};
+pub const PY2872_SHARD_SUITE: CodingStep = CodingStep {
+    id: "py-2872-shard-suite", title: "sharding · suite", objective: "Enrutar claves y conservar un manifiesto ordenado.",
+    prompt_md: "**sharding · suite**\n\nEnrutar claves y conservar un manifiesto ordenado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# claves = ['aa', 'b', 'cc', 'd']\n# shards = {i: [] for i in range(3)}\n# for clave in claves: shards[sum(map(ord, clave)) % 3].append(clave)\n# resultado = [(i, shards[i]) for i in sorted(shards)]\n# print(resultado)\n",
+    pytest: "def test_shard_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, ['cc']), (1, ['d']), (2, ['aa', 'b'])]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(0, ['cc']), (1, ['d']), (2, ['aa', 'b'])].",
+    solution_example: "claves = ['aa', 'b', 'cc', 'd']\nshards = {i: [] for i in range(3)}\nfor clave in claves: shards[sum(map(ord, clave)) % 3].append(clave)\nresultado = [(i, shards[i]) for i in sorted(shards)]\nprint(resultado)",
+    next: Some("py-2873-fanout-replicar"), show_type_chips: false, micro_step: 2872,
+};
+pub const PY2873_FANOUT_REPLICAR: CodingStep = CodingStep {
+    id: "py-2873-fanout-replicar", title: "fan-out · replicar", objective: "Replicar una tarea a destinos declarados.",
+    prompt_md: "**fan-out · replicar**\n\nReplicar una tarea a destinos declarados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# tarea = ('t1', 7)\n# destinos = ['a', 'b', 'c']\n# resultado = [(destino, tarea) for destino in destinos]\n# print(resultado)\n",
+    pytest: "def test_fanout_replicar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('a', ('t1', 7)), ('b', ('t1', 7)), ('c', ('t1', 7))]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('a', ('t1', 7)), ('b', ('t1', 7)), ('c', ('t1', 7))].",
+    solution_example: "tarea = ('t1', 7)\ndestinos = ['a', 'b', 'c']\nresultado = [(destino, tarea) for destino in destinos]\nprint(resultado)",
+    next: Some("py-2874-fanout-segmentar"), show_type_chips: false, micro_step: 2873,
+};
+pub const PY2874_FANOUT_SEGMENTAR: CodingStep = CodingStep {
+    id: "py-2874-fanout-segmentar", title: "fan-out · segmentar", objective: "Crear tareas por segmentos contiguos.",
+    prompt_md: "**fan-out · segmentar**\n\nCrear tareas por segmentos contiguos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = [1, 2, 3, 4, 5]\n# tamano = 2\n# resultado = [datos[i:i + tamano] for i in range(0, len(datos), tamano)]\n# print(resultado)\n",
+    pytest: "def test_fanout_segmentar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [[1, 2], [3, 4], [5]]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [[1, 2], [3, 4], [5]].",
+    solution_example: "datos = [1, 2, 3, 4, 5]\ntamano = 2\nresultado = [datos[i:i + tamano] for i in range(0, len(datos), tamano)]\nprint(resultado)",
+    next: Some("py-2875-fanout-etiquetar"), show_type_chips: false, micro_step: 2874,
+};
+pub const PY2875_FANOUT_ETIQUETAR: CodingStep = CodingStep {
+    id: "py-2875-fanout-etiquetar", title: "fan-out · etiquetar", objective: "Etiquetar cada tarea con un identificador estable.",
+    prompt_md: "**fan-out · etiquetar**\n\nEtiquetar cada tarea con un identificador estable.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lotes = [['a'], ['b', 'c']]\n# resultado = [{'tarea': i, 'datos': lote} for i, lote in enumerate(lotes)]\n# print(resultado)\n",
+    pytest: "def test_fanout_etiquetar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'tarea': 0, 'datos': ['a']}, {'tarea': 1, 'datos': ['b', 'c']}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'tarea': 0, 'datos': ['a']}, {'tarea': 1, 'datos': ['b', 'c']}].",
+    solution_example: "lotes = [['a'], ['b', 'c']]\nresultado = [{'tarea': i, 'datos': lote} for i, lote in enumerate(lotes)]\nprint(resultado)",
+    next: Some("py-2876-fanout-filtrar"), show_type_chips: false, micro_step: 2875,
+};
+pub const PY2876_FANOUT_FILTRAR: CodingStep = CodingStep {
+    id: "py-2876-fanout-filtrar", title: "fan-out · seleccionar", objective: "Crear tareas solo para destinos habilitados.",
+    prompt_md: "**fan-out · seleccionar**\n\nCrear tareas solo para destinos habilitados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# destinos = [('a', True), ('b', False), ('c', True)]\n# resultado = [nombre for nombre, activo in destinos if activo]\n# print(resultado)\n",
+    pytest: "def test_fanout_filtrar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'c'].",
+    solution_example: "destinos = [('a', True), ('b', False), ('c', True)]\nresultado = [nombre for nombre, activo in destinos if activo]\nprint(resultado)",
+    next: Some("py-2877-fanout-costo"), show_type_chips: false, micro_step: 2876,
+};
+pub const PY2877_FANOUT_COSTO: CodingStep = CodingStep {
+    id: "py-2877-fanout-costo", title: "fan-out · costo", objective: "Calcular costo lógico por tarea antes de distribuir.",
+    prompt_md: "**fan-out · costo**\n\nCalcular costo lógico por tarea antes de distribuir.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lotes = [[1, 2], [3], [4, 5, 6]]\n# resultado = [(i, len(lote)) for i, lote in enumerate(lotes)]\n# print(resultado)\n",
+    pytest: "def test_fanout_costo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, 2), (1, 1), (2, 3)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(0, 2), (1, 1), (2, 3)].",
+    solution_example: "lotes = [[1, 2], [3], [4, 5, 6]]\nresultado = [(i, len(lote)) for i, lote in enumerate(lotes)]\nprint(resultado)",
+    next: Some("py-2878-fanout-suite"), show_type_chips: false, micro_step: 2877,
+};
+pub const PY2878_FANOUT_SUITE: CodingStep = CodingStep {
+    id: "py-2878-fanout-suite", title: "fan-out · suite", objective: "Segmentar, etiquetar y asignar tareas a workers lógicos.",
+    prompt_md: "**fan-out · suite**\n\nSegmentar, etiquetar y asignar tareas a workers lógicos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# datos = list(range(7))\n# lotes = [datos[i:i + 3] for i in range(0, len(datos), 3)]\n# resultado = [{'tarea': i, 'worker': i % 2, 'datos': lote} for i, lote in enumerate(lotes)]\n# print(resultado)\n",
+    pytest: "def test_fanout_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'tarea': 0, 'worker': 0, 'datos': [0, 1, 2]}, {'tarea': 1, 'worker': 1, 'datos': [3, 4, 5]}, {'tarea': 2, 'worker': 0, 'datos': [6]}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'tarea': 0, 'worker': 0, 'datos': [0, 1, 2]}, {'tarea': 1, 'worker': 1, 'datos': [3, 4, 5]}, {'tarea': 2, 'worker': 0, 'datos': [6]}].",
+    solution_example: "datos = list(range(7))\nlotes = [datos[i:i + 3] for i in range(0, len(datos), 3)]\nresultado = [{'tarea': i, 'worker': i % 2, 'datos': lote} for i, lote in enumerate(lotes)]\nprint(resultado)",
+    next: Some("py-2879-fanin-ordenar"), show_type_chips: false, micro_step: 2878,
+};
+pub const PY2879_FANIN_ORDENAR: CodingStep = CodingStep {
+    id: "py-2879-fanin-ordenar", title: "fan-in · ordenar", objective: "Reunir respuestas por identificador de tarea.",
+    prompt_md: "**fan-in · ordenar**\n\nReunir respuestas por identificador de tarea.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# respuestas = [(2, 'c'), (0, 'a'), (1, 'b')]\n# resultado = [valor for _, valor in sorted(respuestas)]\n# print(resultado)\n",
+    pytest: "def test_fanin_ordenar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'b', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'b', 'c'].",
+    solution_example: "respuestas = [(2, 'c'), (0, 'a'), (1, 'b')]\nresultado = [valor for _, valor in sorted(respuestas)]\nprint(resultado)",
+    next: Some("py-2880-fanin-faltantes"), show_type_chips: false, micro_step: 2879,
+};
+pub const PY2880_FANIN_FALTANTES: CodingStep = CodingStep {
+    id: "py-2880-fanin-faltantes", title: "fan-in · faltantes", objective: "Detectar tareas que aún no respondieron.",
+    prompt_md: "**fan-in · faltantes**\n\nDetectar tareas que aún no respondieron.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# esperadas = {0, 1, 2, 3}\n# recibidas = {0, 2}\n# resultado = sorted(esperadas - recibidas)\n# print(resultado)\n",
+    pytest: "def test_fanin_faltantes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 3].",
+    solution_example: "esperadas = {0, 1, 2, 3}\nrecibidas = {0, 2}\nresultado = sorted(esperadas - recibidas)\nprint(resultado)",
+    next: Some("py-2881-fanin-duplicados"), show_type_chips: false, micro_step: 2880,
+};
+pub const PY2881_FANIN_DUPLICADOS: CodingStep = CodingStep {
+    id: "py-2881-fanin-duplicados", title: "fan-in · duplicados", objective: "Aceptar una sola respuesta por tarea.",
+    prompt_md: "**fan-in · duplicados**\n\nAceptar una sola respuesta por tarea.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# respuestas = [(0, 'a'), (1, 'b'), (0, 'otra')]\n# por_tarea = {}\n# for tarea, valor in respuestas: por_tarea.setdefault(tarea, valor)\n# resultado = por_tarea\n# print(resultado)\n",
+    pytest: "def test_fanin_duplicados(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: 'a', 1: 'b'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: 'a', 1: 'b'}.",
+    solution_example: "respuestas = [(0, 'a'), (1, 'b'), (0, 'otra')]\npor_tarea = {}\nfor tarea, valor in respuestas: por_tarea.setdefault(tarea, valor)\nresultado = por_tarea\nprint(resultado)",
+    next: Some("py-2882-fanin-errores"), show_type_chips: false, micro_step: 2881,
+};
+pub const PY2882_FANIN_ERRORES: CodingStep = CodingStep {
+    id: "py-2882-fanin-errores", title: "fan-in · errores", objective: "Separar respuestas exitosas y fallidas.",
+    prompt_md: "**fan-in · errores**\n\nSeparar respuestas exitosas y fallidas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# respuestas = [(0, 'ok', 4), (1, 'error', 'timeout')]\n# resultado = {'ok': [(i, v) for i, e, v in respuestas if e == 'ok'], 'error': [(i, v) for i, e, v in respuestas if e == 'error']}\n# print(resultado)\n",
+    pytest: "def test_fanin_errores(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'ok': [(0, 4)], 'error': [(1, 'timeout')]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'ok': [(0, 4)], 'error': [(1, 'timeout')]}.",
+    solution_example: "respuestas = [(0, 'ok', 4), (1, 'error', 'timeout')]\nresultado = {'ok': [(i, v) for i, e, v in respuestas if e == 'ok'], 'error': [(i, v) for i, e, v in respuestas if e == 'error']}\nprint(resultado)",
+    next: Some("py-2883-fanin-completo"), show_type_chips: false, micro_step: 2882,
+};
+pub const PY2883_FANIN_COMPLETO: CodingStep = CodingStep {
+    id: "py-2883-fanin-completo", title: "fan-in · completo", objective: "Decidir si llegó el conjunto completo.",
+    prompt_md: "**fan-in · completo**\n\nDecidir si llegó el conjunto completo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# esperadas = 3\n# recibidas = {0: 'a', 2: 'c'}\n# resultado = len(recibidas) == esperadas\n# print(resultado)\n",
+    pytest: "def test_fanin_completo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == False\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es False.",
+    solution_example: "esperadas = 3\nrecibidas = {0: 'a', 2: 'c'}\nresultado = len(recibidas) == esperadas\nprint(resultado)",
+    next: Some("py-2884-fanin-suite"), show_type_chips: false, micro_step: 2883,
+};
+pub const PY2884_FANIN_SUITE: CodingStep = CodingStep {
+    id: "py-2884-fanin-suite", title: "fan-in · suite", objective: "Deduplicar, ordenar y resumir respuestas.",
+    prompt_md: "**fan-in · suite**\n\nDeduplicar, ordenar y resumir respuestas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# respuestas = [(2, 5), (0, 3), (2, 9), (1, 4)]\n# primeras = {}\n# for tarea, valor in respuestas: primeras.setdefault(tarea, valor)\n# ordenadas = [primeras[i] for i in sorted(primeras)]\n# resultado = {'valores': ordenadas, 'total': sum(ordenadas), 'completo': set(primeras) == {0, 1, 2}}\n# print(resultado)\n",
+    pytest: "def test_fanin_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'valores': [3, 4, 5], 'total': 12, 'completo': True}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'valores': [3, 4, 5], 'total': 12, 'completo': True}.",
+    solution_example: "respuestas = [(2, 5), (0, 3), (2, 9), (1, 4)]\nprimeras = {}\nfor tarea, valor in respuestas: primeras.setdefault(tarea, valor)\nordenadas = [primeras[i] for i in sorted(primeras)]\nresultado = {'valores': ordenadas, 'total': sum(ordenadas), 'completo': set(primeras) == {0, 1, 2}}\nprint(resultado)",
+    next: Some("py-2885-mapreduce-map"), show_type_chips: false, micro_step: 2884,
+};
+pub const PY2885_MAPREDUCE_MAP: CodingStep = CodingStep {
+    id: "py-2885-mapreduce-map", title: "map-reduce · map", objective: "Emitir pares clave-valor desde palabras.",
+    prompt_md: "**map-reduce · map**\n\nEmitir pares clave-valor desde palabras.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# palabras = ['sol', 'mar', 'sol']\n# resultado = [(palabra, 1) for palabra in palabras]\n# print(resultado)\n",
+    pytest: "def test_mapreduce_map(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('sol', 1), ('mar', 1), ('sol', 1)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('sol', 1), ('mar', 1), ('sol', 1)].",
+    solution_example: "palabras = ['sol', 'mar', 'sol']\nresultado = [(palabra, 1) for palabra in palabras]\nprint(resultado)",
+    next: Some("py-2886-mapreduce-shuffle"), show_type_chips: false, micro_step: 2885,
+};
+pub const PY2886_MAPREDUCE_SHUFFLE: CodingStep = CodingStep {
+    id: "py-2886-mapreduce-shuffle", title: "map-reduce · shuffle", objective: "Agrupar valores emitidos por clave.",
+    prompt_md: "**map-reduce · shuffle**\n\nAgrupar valores emitidos por clave.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# pares = [('a', 1), ('b', 2), ('a', 3)]\n# grupo = {}\n# for clave, valor in pares: grupo.setdefault(clave, []).append(valor)\n# resultado = grupo\n# print(resultado)\n",
+    pytest: "def test_mapreduce_shuffle(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': [1, 3], 'b': [2]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': [1, 3], 'b': [2]}.",
+    solution_example: "pares = [('a', 1), ('b', 2), ('a', 3)]\ngrupo = {}\nfor clave, valor in pares: grupo.setdefault(clave, []).append(valor)\nresultado = grupo\nprint(resultado)",
+    next: Some("py-2887-mapreduce-reduce"), show_type_chips: false, micro_step: 2886,
+};
+pub const PY2887_MAPREDUCE_REDUCE: CodingStep = CodingStep {
+    id: "py-2887-mapreduce-reduce", title: "map-reduce · reduce", objective: "Reducir grupos mediante suma.",
+    prompt_md: "**map-reduce · reduce**\n\nReducir grupos mediante suma.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# grupos = {'a': [1, 3], 'b': [2]}\n# resultado = {clave: sum(grupos[clave]) for clave in sorted(grupos)}\n# print(resultado)\n",
+    pytest: "def test_mapreduce_reduce(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 4, 'b': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 4, 'b': 2}.",
+    solution_example: "grupos = {'a': [1, 3], 'b': [2]}\nresultado = {clave: sum(grupos[clave]) for clave in sorted(grupos)}\nprint(resultado)",
+    next: Some("py-2888-mapreduce-conteo"), show_type_chips: false, micro_step: 2887,
+};
+pub const PY2888_MAPREDUCE_CONTEO: CodingStep = CodingStep {
+    id: "py-2888-mapreduce-conteo", title: "map-reduce · conteo", objective: "Contar palabras con map y reduce explícitos.",
+    prompt_md: "**map-reduce · conteo**\n\nContar palabras con map y reduce explícitos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# palabras = 'rojo azul rojo'.split()\n# conteos = {}\n# for palabra in palabras: conteos[palabra] = conteos.get(palabra, 0) + 1\n# resultado = dict(sorted(conteos.items()))\n# print(resultado)\n",
+    pytest: "def test_mapreduce_conteo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'azul': 1, 'rojo': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'azul': 1, 'rojo': 2}.",
+    solution_example: "palabras = 'rojo azul rojo'.split()\nconteos = {}\nfor palabra in palabras: conteos[palabra] = conteos.get(palabra, 0) + 1\nresultado = dict(sorted(conteos.items()))\nprint(resultado)",
+    next: Some("py-2889-mapreduce-maximo"), show_type_chips: false, micro_step: 2888,
+};
+pub const PY2889_MAPREDUCE_MAXIMO: CodingStep = CodingStep {
+    id: "py-2889-mapreduce-maximo", title: "map-reduce · máximo", objective: "Reducir mediciones al máximo por clave.",
+    prompt_md: "**map-reduce · máximo**\n\nReducir mediciones al máximo por clave.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# medidas = [('x', 3), ('y', 8), ('x', 5)]\n# maximos = {}\n# for clave, valor in medidas: maximos[clave] = max(valor, maximos.get(clave, valor))\n# resultado = maximos\n# print(resultado)\n",
+    pytest: "def test_mapreduce_maximo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'x': 5, 'y': 8}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'x': 5, 'y': 8}.",
+    solution_example: "medidas = [('x', 3), ('y', 8), ('x', 5)]\nmaximos = {}\nfor clave, valor in medidas: maximos[clave] = max(valor, maximos.get(clave, valor))\nresultado = maximos\nprint(resultado)",
+    next: Some("py-2890-mapreduce-suite"), show_type_chips: false, micro_step: 2889,
+};
+pub const PY2890_MAPREDUCE_SUITE: CodingStep = CodingStep {
+    id: "py-2890-mapreduce-suite", title: "map-reduce · suite", objective: "Ejecutar map, shuffle y reduce sobre ventas.",
+    prompt_md: "**map-reduce · suite**\n\nEjecutar map, shuffle y reduce sobre ventas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ventas = [('sur', 4), ('norte', 3), ('sur', 6)]\n# emitidos = [(region, monto) for region, monto in ventas]\n# grupo = {}\n# for clave, valor in emitidos: grupo.setdefault(clave, []).append(valor)\n# resultado = [(clave, sum(grupo[clave])) for clave in sorted(grupo)]\n# print(resultado)\n",
+    pytest: "def test_mapreduce_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('norte', 3), ('sur', 10)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('norte', 3), ('sur', 10)].",
+    solution_example: "ventas = [('sur', 4), ('norte', 3), ('sur', 6)]\nemitidos = [(region, monto) for region, monto in ventas]\ngrupo = {}\nfor clave, valor in emitidos: grupo.setdefault(clave, []).append(valor)\nresultado = [(clave, sum(grupo[clave])) for clave in sorted(grupo)]\nprint(resultado)",
+    next: Some("py-2891-parcial-suma"), show_type_chips: false, micro_step: 2890,
+};
+pub const PY2891_PARCIAL_SUMA: CodingStep = CodingStep {
+    id: "py-2891-parcial-suma", title: "agregados parciales · suma", objective: "Combinar sumas parciales.",
+    prompt_md: "**agregados parciales · suma**\n\nCombinar sumas parciales.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [7, 4, 9]\n# resultado = sum(parciales)\n# print(resultado)\n",
+    pytest: "def test_parcial_suma(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 20\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 20.",
+    solution_example: "parciales = [7, 4, 9]\nresultado = sum(parciales)\nprint(resultado)",
+    next: Some("py-2892-parcial-conteo"), show_type_chips: false, micro_step: 2891,
+};
+pub const PY2892_PARCIAL_CONTEO: CodingStep = CodingStep {
+    id: "py-2892-parcial-conteo", title: "agregados parciales · conteo", objective: "Combinar conteos por clave.",
+    prompt_md: "**agregados parciales · conteo**\n\nCombinar conteos por clave.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [{'a': 2, 'b': 1}, {'a': 3}]\n# total = {}\n# for parcial in parciales:\n#     for clave, valor in parcial.items(): total[clave] = total.get(clave, 0) + valor\n# resultado = total\n# print(resultado)\n",
+    pytest: "def test_parcial_conteo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 5, 'b': 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 5, 'b': 1}.",
+    solution_example: "parciales = [{'a': 2, 'b': 1}, {'a': 3}]\ntotal = {}\nfor parcial in parciales:\n    for clave, valor in parcial.items(): total[clave] = total.get(clave, 0) + valor\nresultado = total\nprint(resultado)",
+    next: Some("py-2893-parcial-promedio"), show_type_chips: false, micro_step: 2892,
+};
+pub const PY2893_PARCIAL_PROMEDIO: CodingStep = CodingStep {
+    id: "py-2893-parcial-promedio", title: "agregados parciales · promedio", objective: "Combinar suma y cantidad sin promediar promedios.",
+    prompt_md: "**agregados parciales · promedio**\n\nCombinar suma y cantidad sin promediar promedios.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [(10, 2), (9, 3)]\n# suma = sum(p[0] for p in parciales); cantidad = sum(p[1] for p in parciales)\n# resultado = suma / cantidad\n# print(resultado)\n",
+    pytest: "def test_parcial_promedio(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3.8\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.8.",
+    solution_example: "parciales = [(10, 2), (9, 3)]\nsuma = sum(p[0] for p in parciales); cantidad = sum(p[1] for p in parciales)\nresultado = suma / cantidad\nprint(resultado)",
+    next: Some("py-2894-parcial-minmax"), show_type_chips: false, micro_step: 2893,
+};
+pub const PY2894_PARCIAL_MINMAX: CodingStep = CodingStep {
+    id: "py-2894-parcial-minmax", title: "agregados parciales · extremos", objective: "Combinar mínimos y máximos parciales.",
+    prompt_md: "**agregados parciales · extremos**\n\nCombinar mínimos y máximos parciales.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [(2, 8), (1, 7), (3, 10)]\n# resultado = (min(p[0] for p in parciales), max(p[1] for p in parciales))\n# print(resultado)\n",
+    pytest: "def test_parcial_minmax(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 10)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (1, 10).",
+    solution_example: "parciales = [(2, 8), (1, 7), (3, 10)]\nresultado = (min(p[0] for p in parciales), max(p[1] for p in parciales))\nprint(resultado)",
+    next: Some("py-2895-parcial-vacio"), show_type_chips: false, micro_step: 2894,
+};
+pub const PY2895_PARCIAL_VACIO: CodingStep = CodingStep {
+    id: "py-2895-parcial-vacio", title: "agregados parciales · vacío", objective: "Usar identidad al combinar un conjunto vacío.",
+    prompt_md: "**agregados parciales · vacío**\n\nUsar identidad al combinar un conjunto vacío.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = []\n# resultado = sum(parciales, 0)\n# print(resultado)\n",
+    pytest: "def test_parcial_vacio(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 0\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 0.",
+    solution_example: "parciales = []\nresultado = sum(parciales, 0)\nprint(resultado)",
+    next: Some("py-2896-parcial-suite"), show_type_chips: false, micro_step: 2895,
+};
+pub const PY2896_PARCIAL_SUITE: CodingStep = CodingStep {
+    id: "py-2896-parcial-suite", title: "agregados parciales · suite", objective: "Combinar estados parciales por región.",
+    prompt_md: "**agregados parciales · suite**\n\nCombinar estados parciales por región.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [{'sur': (8, 2), 'norte': (3, 1)}, {'sur': (7, 1)}]\n# total = {}\n# for parcial in parciales:\n#     for clave, (suma, cantidad) in parcial.items():\n#         anterior = total.get(clave, (0, 0)); total[clave] = (anterior[0] + suma, anterior[1] + cantidad)\n# resultado = {clave: (suma, cantidad, suma / cantidad) for clave, (suma, cantidad) in sorted(total.items())}\n# print(resultado)\n",
+    pytest: "def test_parcial_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'norte': (3, 1, 3.0), 'sur': (15, 3, 5.0)}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'norte': (3, 1, 3.0), 'sur': (15, 3, 5.0)}.",
+    solution_example: "parciales = [{'sur': (8, 2), 'norte': (3, 1)}, {'sur': (7, 1)}]\ntotal = {}\nfor parcial in parciales:\n    for clave, (suma, cantidad) in parcial.items():\n        anterior = total.get(clave, (0, 0)); total[clave] = (anterior[0] + suma, anterior[1] + cantidad)\nresultado = {clave: (suma, cantidad, suma / cantidad) for clave, (suma, cantidad) in sorted(total.items())}\nprint(resultado)",
+    next: Some("py-2897-ventana-asignar"), show_type_chips: false, micro_step: 2896,
+};
+pub const PY2897_VENTANA_ASIGNAR: CodingStep = CodingStep {
+    id: "py-2897-ventana-asignar", title: "ventanas · asignar", objective: "Asignar ticks a ventanas fijas.",
+    prompt_md: "**ventanas · asignar**\n\nAsignar ticks a ventanas fijas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ticks = [1, 4, 5, 9]\n# ancho = 5\n# resultado = [(tick, (tick // ancho) * ancho) for tick in ticks]\n# print(resultado)\n",
+    pytest: "def test_ventana_asignar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 0), (4, 0), (5, 5), (9, 5)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(1, 0), (4, 0), (5, 5), (9, 5)].",
+    solution_example: "ticks = [1, 4, 5, 9]\nancho = 5\nresultado = [(tick, (tick // ancho) * ancho) for tick in ticks]\nprint(resultado)",
+    next: Some("py-2898-ventana-agrupar"), show_type_chips: false, micro_step: 2897,
+};
+pub const PY2898_VENTANA_AGRUPAR: CodingStep = CodingStep {
+    id: "py-2898-ventana-agrupar", title: "ventanas · agrupar", objective: "Agrupar valores por inicio de ventana.",
+    prompt_md: "**ventanas · agrupar**\n\nAgrupar valores por inicio de ventana.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(1, 2), (4, 3), (7, 5)]\n# ventanas = {}\n# for tick, valor in eventos: ventanas.setdefault((tick // 5) * 5, []).append(valor)\n# resultado = ventanas\n# print(resultado)\n",
+    pytest: "def test_ventana_agrupar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: [2, 3], 5: [5]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: [2, 3], 5: [5]}.",
+    solution_example: "eventos = [(1, 2), (4, 3), (7, 5)]\nventanas = {}\nfor tick, valor in eventos: ventanas.setdefault((tick // 5) * 5, []).append(valor)\nresultado = ventanas\nprint(resultado)",
+    next: Some("py-2899-ventana-sumar"), show_type_chips: false, micro_step: 2898,
+};
+pub const PY2899_VENTANA_SUMAR: CodingStep = CodingStep {
+    id: "py-2899-ventana-sumar", title: "ventanas · sumar", objective: "Agregar valores dentro de cada ventana.",
+    prompt_md: "**ventanas · sumar**\n\nAgregar valores dentro de cada ventana.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ventanas = {0: [2, 3], 5: [5]}\n# resultado = {inicio: sum(valores) for inicio, valores in ventanas.items()}\n# print(resultado)\n",
+    pytest: "def test_ventana_sumar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: 5, 5: 5}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: 5, 5: 5}.",
+    solution_example: "ventanas = {0: [2, 3], 5: [5]}\nresultado = {inicio: sum(valores) for inicio, valores in ventanas.items()}\nprint(resultado)",
+    next: Some("py-2900-ventana-cerrar"), show_type_chips: false, micro_step: 2899,
+};
+pub const PY2900_VENTANA_CERRAR: CodingStep = CodingStep {
+    id: "py-2900-ventana-cerrar", title: "ventanas · cerrar", objective: "Cerrar ventanas según un watermark lógico.",
+    prompt_md: "**ventanas · cerrar**\n\nCerrar ventanas según un watermark lógico.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# inicios = [0, 5, 10]\n# ancho, watermark = 5, 10\n# resultado = [inicio for inicio in inicios if inicio + ancho <= watermark]\n# print(resultado)\n",
+    pytest: "def test_ventana_cerrar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0, 5]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [0, 5].",
+    solution_example: "inicios = [0, 5, 10]\nancho, watermark = 5, 10\nresultado = [inicio for inicio in inicios if inicio + ancho <= watermark]\nprint(resultado)",
+    next: Some("py-2901-ventana-particiones"), show_type_chips: false, micro_step: 2900,
+};
+pub const PY2901_VENTANA_PARTICIONES: CodingStep = CodingStep {
+    id: "py-2901-ventana-particiones", title: "ventanas · particiones", objective: "Combinar ventanas parciales de dos shards.",
+    prompt_md: "**ventanas · particiones**\n\nCombinar ventanas parciales de dos shards.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = [{0: 4, 5: 2}, {0: 3, 5: 8}]\n# total = {}\n# for parcial in parciales:\n#     for ventana, valor in parcial.items(): total[ventana] = total.get(ventana, 0) + valor\n# resultado = total\n# print(resultado)\n",
+    pytest: "def test_ventana_particiones(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: 7, 5: 10}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: 7, 5: 10}.",
+    solution_example: "parciales = [{0: 4, 5: 2}, {0: 3, 5: 8}]\ntotal = {}\nfor parcial in parciales:\n    for ventana, valor in parcial.items(): total[ventana] = total.get(ventana, 0) + valor\nresultado = total\nprint(resultado)",
+    next: Some("py-2902-ventana-suite"), show_type_chips: false, micro_step: 2901,
+};
+pub const PY2902_VENTANA_SUITE: CodingStep = CodingStep {
+    id: "py-2902-ventana-suite", title: "ventanas · suite", objective: "Particionar, agregar y emitir ventanas cerradas.",
+    prompt_md: "**ventanas · suite**\n\nParticionar, agregar y emitir ventanas cerradas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(1, 'a', 2), (6, 'a', 4), (3, 'b', 5), (8, 'a', 1)]\n# total = {}\n# for tick, clave, valor in eventos:\n#     grupo = ((tick // 5) * 5, clave); total[grupo] = total.get(grupo, 0) + valor\n# watermark = 10\n# resultado = [(grupo, total[grupo]) for grupo in sorted(total) if grupo[0] + 5 <= watermark]\n# print(resultado)\n",
+    pytest: "def test_ventana_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [((0, 'a'), 2), ((0, 'b'), 5), ((5, 'a'), 5)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [((0, 'a'), 2), ((0, 'b'), 5), ((5, 'a'), 5)].",
+    solution_example: "eventos = [(1, 'a', 2), (6, 'a', 4), (3, 'b', 5), (8, 'a', 1)]\ntotal = {}\nfor tick, clave, valor in eventos:\n    grupo = ((tick // 5) * 5, clave); total[grupo] = total.get(grupo, 0) + valor\nwatermark = 10\nresultado = [(grupo, total[grupo]) for grupo in sorted(total) if grupo[0] + 5 <= watermark]\nprint(resultado)",
+    next: Some("py-2903-skew-cargas"), show_type_chips: false, micro_step: 2902,
+};
+pub const PY2903_SKEW_CARGAS: CodingStep = CodingStep {
+    id: "py-2903-skew-cargas", title: "skew · cargas", objective: "Medir carga por shard.",
+    prompt_md: "**skew · cargas**\n\nMedir carga por shard.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# asignaciones = [0, 0, 0, 1, 2]\n# resultado = {i: asignaciones.count(i) for i in range(3)}\n# print(resultado)\n",
+    pytest: "def test_skew_cargas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: 3, 1: 1, 2: 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: 3, 1: 1, 2: 1}.",
+    solution_example: "asignaciones = [0, 0, 0, 1, 2]\nresultado = {i: asignaciones.count(i) for i in range(3)}\nprint(resultado)",
+    next: Some("py-2904-skew-detectar"), show_type_chips: false, micro_step: 2903,
+};
+pub const PY2904_SKEW_DETECTAR: CodingStep = CodingStep {
+    id: "py-2904-skew-detectar", title: "skew · detectar", objective: "Detectar shards sobre un umbral.",
+    prompt_md: "**skew · detectar**\n\nDetectar shards sobre un umbral.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# cargas = {0: 7, 1: 2, 2: 3}\n# umbral = 5\n# resultado = [shard for shard, carga in sorted(cargas.items()) if carga > umbral]\n# print(resultado)\n",
+    pytest: "def test_skew_detectar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [0]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [0].",
+    solution_example: "cargas = {0: 7, 1: 2, 2: 3}\numbral = 5\nresultado = [shard for shard, carga in sorted(cargas.items()) if carga > umbral]\nprint(resultado)",
+    next: Some("py-2905-skew-ratio"), show_type_chips: false, micro_step: 2904,
+};
+pub const PY2905_SKEW_RATIO: CodingStep = CodingStep {
+    id: "py-2905-skew-ratio", title: "skew · razón", objective: "Calcular la razón entre máxima carga y promedio.",
+    prompt_md: "**skew · razón**\n\nCalcular la razón entre máxima carga y promedio.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# cargas = [6, 2, 4]\n# resultado = max(cargas) / (sum(cargas) / len(cargas))\n# print(resultado)\n",
+    pytest: "def test_skew_ratio(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 1.5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 1.5.",
+    solution_example: "cargas = [6, 2, 4]\nresultado = max(cargas) / (sum(cargas) / len(cargas))\nprint(resultado)",
+    next: Some("py-2906-skew-salting"), show_type_chips: false, micro_step: 2905,
+};
+pub const PY2906_SKEW_SALTING: CodingStep = CodingStep {
+    id: "py-2906-skew-salting", title: "skew · salting", objective: "Distribuir una clave caliente con sufijos estables.",
+    prompt_md: "**skew · salting**\n\nDistribuir una clave caliente con sufijos estables.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('hot', i) for i in range(5)]\n# resultado = [(clave + ':' + str(indice % 2), valor) for indice, (clave, valor) in enumerate(eventos)]\n# print(resultado)\n",
+    pytest: "def test_skew_salting(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('hot:0', 0), ('hot:1', 1), ('hot:0', 2), ('hot:1', 3), ('hot:0', 4)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('hot:0', 0), ('hot:1', 1), ('hot:0', 2), ('hot:1', 3), ('hot:0', 4)].",
+    solution_example: "eventos = [('hot', i) for i in range(5)]\nresultado = [(clave + ':' + str(indice % 2), valor) for indice, (clave, valor) in enumerate(eventos)]\nprint(resultado)",
+    next: Some("py-2907-skew-desalar"), show_type_chips: false, micro_step: 2906,
+};
+pub const PY2907_SKEW_DESALAR: CodingStep = CodingStep {
+    id: "py-2907-skew-desalar", title: "skew · combinar sales", objective: "Recombinar parciales de una clave salteada.",
+    prompt_md: "**skew · combinar sales**\n\nRecombinar parciales de una clave salteada.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = {'hot:0': 8, 'hot:1': 5, 'cold:0': 2}\n# total = {}\n# for clave, valor in parciales.items():\n#     base = clave.split(':')[0]; total[base] = total.get(base, 0) + valor\n# resultado = total\n# print(resultado)\n",
+    pytest: "def test_skew_desalar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'hot': 13, 'cold': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'hot': 13, 'cold': 2}.",
+    solution_example: "parciales = {'hot:0': 8, 'hot:1': 5, 'cold:0': 2}\ntotal = {}\nfor clave, valor in parciales.items():\n    base = clave.split(':')[0]; total[base] = total.get(base, 0) + valor\nresultado = total\nprint(resultado)",
+    next: Some("py-2908-skew-suite"), show_type_chips: false, micro_step: 2907,
+};
+pub const PY2908_SKEW_SUITE: CodingStep = CodingStep {
+    id: "py-2908-skew-suite", title: "skew · suite", objective: "Detectar clave caliente, salar y recombinar su agregado.",
+    prompt_md: "**skew · suite**\n\nDetectar clave caliente, salar y recombinar su agregado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('hot', 2), ('hot', 3), ('cold', 4), ('hot', 5)]\n# conteos = {clave: sum(1 for k, _ in eventos if k == clave) for clave in sorted({k for k, _ in eventos})}\n# caliente = max(conteos, key=conteos.get)\n# parciales = {}\n# for indice, (clave, valor) in enumerate(eventos):\n#     efectiva = clave + ':' + str(indice % 2) if clave == caliente else clave + ':0'; parciales[efectiva] = parciales.get(efectiva, 0) + valor\n# total = {}\n# for clave, valor in parciales.items(): total[clave.split(':')[0]] = total.get(clave.split(':')[0], 0) + valor\n# resultado = {'caliente': caliente, 'total': total}\n# print(resultado)\n",
+    pytest: "def test_skew_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'caliente': 'hot', 'total': {'hot': 10, 'cold': 4}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'caliente': 'hot', 'total': {'hot': 10, 'cold': 4}}.",
+    solution_example: "eventos = [('hot', 2), ('hot', 3), ('cold', 4), ('hot', 5)]\nconteos = {clave: sum(1 for k, _ in eventos if k == clave) for clave in sorted({k for k, _ in eventos})}\ncaliente = max(conteos, key=conteos.get)\nparciales = {}\nfor indice, (clave, valor) in enumerate(eventos):\n    efectiva = clave + ':' + str(indice % 2) if clave == caliente else clave + ':0'; parciales[efectiva] = parciales.get(efectiva, 0) + valor\ntotal = {}\nfor clave, valor in parciales.items(): total[clave.split(':')[0]] = total.get(clave.split(':')[0], 0) + valor\nresultado = {'caliente': caliente, 'total': total}\nprint(resultado)",
+    next: Some("py-2909-rebalance-diferencia"), show_type_chips: false, micro_step: 2908,
+};
+pub const PY2909_REBALANCE_DIFERENCIA: CodingStep = CodingStep {
+    id: "py-2909-rebalance-diferencia", title: "rebalanceo · diferencia", objective: "Calcular diferencia de carga entre shards.",
+    prompt_md: "**rebalanceo · diferencia**\n\nCalcular diferencia de carga entre shards.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# cargas = {0: 6, 1: 2}\n# resultado = max(cargas.values()) - min(cargas.values())\n# print(resultado)\n",
+    pytest: "def test_rebalance_diferencia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 4.",
+    solution_example: "cargas = {0: 6, 1: 2}\nresultado = max(cargas.values()) - min(cargas.values())\nprint(resultado)",
+    next: Some("py-2910-rebalance-origen-destino"), show_type_chips: false, micro_step: 2909,
+};
+pub const PY2910_REBALANCE_ORIGEN_DESTINO: CodingStep = CodingStep {
+    id: "py-2910-rebalance-origen-destino", title: "rebalanceo · extremos", objective: "Elegir origen y destino deterministas.",
+    prompt_md: "**rebalanceo · extremos**\n\nElegir origen y destino deterministas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# cargas = {0: 6, 1: 2, 2: 4}\n# resultado = (max(cargas, key=lambda k: (cargas[k], -k)), min(cargas, key=lambda k: (cargas[k], k)))\n# print(resultado)\n",
+    pytest: "def test_rebalance_origen_destino(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (0, 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (0, 1).",
+    solution_example: "cargas = {0: 6, 1: 2, 2: 4}\nresultado = (max(cargas, key=lambda k: (cargas[k], -k)), min(cargas, key=lambda k: (cargas[k], k)))\nprint(resultado)",
+    next: Some("py-2911-rebalance-mover"), show_type_chips: false, micro_step: 2910,
+};
+pub const PY2911_REBALANCE_MOVER: CodingStep = CodingStep {
+    id: "py-2911-rebalance-mover", title: "rebalanceo · mover", objective: "Representar un movimiento sin ejecutarlo.",
+    prompt_md: "**rebalanceo · mover**\n\nRepresentar un movimiento sin ejecutarlo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# partes = {0: ['a', 'b', 'c'], 1: ['d']}\n# resultado = {'clave': partes[0][-1], 'desde': 0, 'hacia': 1}\n# print(resultado)\n",
+    pytest: "def test_rebalance_mover(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'clave': 'c', 'desde': 0, 'hacia': 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'clave': 'c', 'desde': 0, 'hacia': 1}.",
+    solution_example: "partes = {0: ['a', 'b', 'c'], 1: ['d']}\nresultado = {'clave': partes[0][-1], 'desde': 0, 'hacia': 1}\nprint(resultado)",
+    next: Some("py-2912-rebalance-aplicar"), show_type_chips: false, micro_step: 2911,
+};
+pub const PY2912_REBALANCE_APLICAR: CodingStep = CodingStep {
+    id: "py-2912-rebalance-aplicar", title: "rebalanceo · aplicar", objective: "Aplicar un plan sobre una copia de particiones.",
+    prompt_md: "**rebalanceo · aplicar**\n\nAplicar un plan sobre una copia de particiones.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# partes = {0: ['a', 'b', 'c'], 1: ['d']}\n# plan = {'clave': 'c', 'desde': 0, 'hacia': 1}\n# nuevas = {k: list(v) for k, v in partes.items()}\n# nuevas[plan['desde']].remove(plan['clave']); nuevas[plan['hacia']].append(plan['clave'])\n# resultado = nuevas\n# print(resultado)\n",
+    pytest: "def test_rebalance_aplicar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: ['a', 'b'], 1: ['d', 'c']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: ['a', 'b'], 1: ['d', 'c']}.",
+    solution_example: "partes = {0: ['a', 'b', 'c'], 1: ['d']}\nplan = {'clave': 'c', 'desde': 0, 'hacia': 1}\nnuevas = {k: list(v) for k, v in partes.items()}\nnuevas[plan['desde']].remove(plan['clave']); nuevas[plan['hacia']].append(plan['clave'])\nresultado = nuevas\nprint(resultado)",
+    next: Some("py-2913-rebalance-idempotente"), show_type_chips: false, micro_step: 2912,
+};
+pub const PY2913_REBALANCE_IDEMPOTENTE: CodingStep = CodingStep {
+    id: "py-2913-rebalance-idempotente", title: "rebalanceo · idempotencia", objective: "No repetir un movimiento ya aplicado.",
+    prompt_md: "**rebalanceo · idempotencia**\n\nNo repetir un movimiento ya aplicado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# aplicados = {'m1'}\n# planes = [('m1', 'a'), ('m2', 'b'), ('m2', 'b')]\n# resultado = []\n# for identificador, clave in planes:\n#     if identificador not in aplicados: aplicados.add(identificador); resultado.append(clave)\n# print(resultado)\n",
+    pytest: "def test_rebalance_idempotente(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['b']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['b'].",
+    solution_example: "aplicados = {'m1'}\nplanes = [('m1', 'a'), ('m2', 'b'), ('m2', 'b')]\nresultado = []\nfor identificador, clave in planes:\n    if identificador not in aplicados: aplicados.add(identificador); resultado.append(clave)\nprint(resultado)",
+    next: Some("py-2914-rebalance-suite"), show_type_chips: false, micro_step: 2913,
+};
+pub const PY2914_REBALANCE_SUITE: CodingStep = CodingStep {
+    id: "py-2914-rebalance-suite", title: "rebalanceo · suite", objective: "Planificar y aplicar un movimiento hasta equilibrar.",
+    prompt_md: "**rebalanceo · suite**\n\nPlanificar y aplicar un movimiento hasta equilibrar.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# partes = {0: ['a', 'b', 'c', 'd'], 1: ['e', 'f']}\n# plan = {'id': 'm1', 'clave': partes[0][-1], 'desde': 0, 'hacia': 1}\n# nuevas = {k: list(v) for k, v in partes.items()}\n# nuevas[0].remove(plan['clave']); nuevas[1].append(plan['clave'])\n# resultado = {'plan': plan, 'cargas': {k: len(v) for k, v in nuevas.items()}, 'partes': nuevas}\n# print(resultado)\n",
+    pytest: "def test_rebalance_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'plan': {'id': 'm1', 'clave': 'd', 'desde': 0, 'hacia': 1}, 'cargas': {0: 3, 1: 3}, 'partes': {0: ['a', 'b', 'c'], 1: ['e', 'f', 'd']}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'plan': {'id': 'm1', 'clave': 'd', 'desde': 0, 'hacia': 1}, 'cargas': {0: 3, 1: 3}, 'partes': {0: ['a', 'b', 'c'], 1: ['e', 'f', 'd']}}.",
+    solution_example: "partes = {0: ['a', 'b', 'c', 'd'], 1: ['e', 'f']}\nplan = {'id': 'm1', 'clave': partes[0][-1], 'desde': 0, 'hacia': 1}\nnuevas = {k: list(v) for k, v in partes.items()}\nnuevas[0].remove(plan['clave']); nuevas[1].append(plan['clave'])\nresultado = {'plan': plan, 'cargas': {k: len(v) for k, v in nuevas.items()}, 'partes': nuevas}\nprint(resultado)",
+    next: Some("py-2915-distribuido-enrutar"), show_type_chips: false, micro_step: 2914,
+};
+pub const PY2915_DISTRIBUIDO_ENRUTAR: CodingStep = CodingStep {
+    id: "py-2915-distribuido-enrutar", title: "capstone · enrutar", objective: "Enrutar eventos a shards estables.",
+    prompt_md: "**capstone · enrutar**\n\nEnrutar eventos a shards estables.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('a', 2), ('b', 3), ('a', 4)]\n# resultado = [(sum(map(ord, clave)) % 2, clave, valor) for clave, valor in eventos]\n# print(resultado)\n",
+    pytest: "def test_distribuido_enrutar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 'a', 2), (0, 'b', 3), (1, 'a', 4)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(1, 'a', 2), (0, 'b', 3), (1, 'a', 4)].",
+    solution_example: "eventos = [('a', 2), ('b', 3), ('a', 4)]\nresultado = [(sum(map(ord, clave)) % 2, clave, valor) for clave, valor in eventos]\nprint(resultado)",
+    next: Some("py-2916-distribuido-parciales"), show_type_chips: false, micro_step: 2915,
+};
+pub const PY2916_DISTRIBUIDO_PARCIALES: CodingStep = CodingStep {
+    id: "py-2916-distribuido-parciales", title: "capstone · parciales", objective: "Calcular agregados parciales por shard y clave.",
+    prompt_md: "**capstone · parciales**\n\nCalcular agregados parciales por shard y clave.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# shards = {0: [('b', 3)], 1: [('a', 2), ('a', 4)]}\n# resultado = {}\n# for shard, filas in shards.items():\n#     parcial = {}\n#     for clave, valor in filas: parcial[clave] = parcial.get(clave, 0) + valor\n#     resultado[shard] = parcial\n# print(resultado)\n",
+    pytest: "def test_distribuido_parciales(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {0: {'b': 3}, 1: {'a': 6}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {0: {'b': 3}, 1: {'a': 6}}.",
+    solution_example: "shards = {0: [('b', 3)], 1: [('a', 2), ('a', 4)]}\nresultado = {}\nfor shard, filas in shards.items():\n    parcial = {}\n    for clave, valor in filas: parcial[clave] = parcial.get(clave, 0) + valor\n    resultado[shard] = parcial\nprint(resultado)",
+    next: Some("py-2917-distribuido-merge"), show_type_chips: false, micro_step: 2916,
+};
+pub const PY2917_DISTRIBUIDO_MERGE: CodingStep = CodingStep {
+    id: "py-2917-distribuido-merge", title: "capstone · merge", objective: "Combinar parciales en orden estable.",
+    prompt_md: "**capstone · merge**\n\nCombinar parciales en orden estable.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# parciales = {0: {'b': 3}, 1: {'a': 6, 'b': 2}}\n# total = {}\n# for shard in sorted(parciales):\n#     for clave, valor in parciales[shard].items(): total[clave] = total.get(clave, 0) + valor\n# resultado = dict(sorted(total.items()))\n# print(resultado)\n",
+    pytest: "def test_distribuido_merge(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 6, 'b': 5}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 6, 'b': 5}.",
+    solution_example: "parciales = {0: {'b': 3}, 1: {'a': 6, 'b': 2}}\ntotal = {}\nfor shard in sorted(parciales):\n    for clave, valor in parciales[shard].items(): total[clave] = total.get(clave, 0) + valor\nresultado = dict(sorted(total.items()))\nprint(resultado)",
+    next: Some("py-2918-distribuido-deduplicar"), show_type_chips: false, micro_step: 2917,
+};
+pub const PY2918_DISTRIBUIDO_DEDUPLICAR: CodingStep = CodingStep {
+    id: "py-2918-distribuido-deduplicar", title: "capstone · deduplicar", objective: "Ignorar un parcial repetido por identificador.",
+    prompt_md: "**capstone · deduplicar**\n\nIgnorar un parcial repetido por identificador.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# mensajes = [('p1', {'a': 2}), ('p2', {'a': 3}), ('p1', {'a': 2})]\n# vistos, total = set(), {}\n# for identificador, parcial in mensajes:\n#     if identificador in vistos: continue\n#     vistos.add(identificador)\n#     for clave, valor in parcial.items(): total[clave] = total.get(clave, 0) + valor\n# resultado = total\n# print(resultado)\n",
+    pytest: "def test_distribuido_deduplicar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a': 5}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a': 5}.",
+    solution_example: "mensajes = [('p1', {'a': 2}), ('p2', {'a': 3}), ('p1', {'a': 2})]\nvistos, total = set(), {}\nfor identificador, parcial in mensajes:\n    if identificador in vistos: continue\n    vistos.add(identificador)\n    for clave, valor in parcial.items(): total[clave] = total.get(clave, 0) + valor\nresultado = total\nprint(resultado)",
+    next: Some("py-2919-distribuido-manifiesto"), show_type_chips: false, micro_step: 2918,
+};
+pub const PY2919_DISTRIBUIDO_MANIFIESTO: CodingStep = CodingStep {
+    id: "py-2919-distribuido-manifiesto", title: "capstone · manifiesto", objective: "Emitir un manifiesto de cobertura y carga.",
+    prompt_md: "**capstone · manifiesto**\n\nEmitir un manifiesto de cobertura y carga.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# shards = {0: [('b', 3)], 1: [('a', 2), ('a', 4)]}\n# resultado = [{'shard': shard, 'eventos': len(shards[shard]), 'claves': sorted({k for k, _ in shards[shard]})} for shard in sorted(shards)]\n# print(resultado)\n",
+    pytest: "def test_distribuido_manifiesto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'shard': 0, 'eventos': 1, 'claves': ['b']}, {'shard': 1, 'eventos': 2, 'claves': ['a']}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'shard': 0, 'eventos': 1, 'claves': ['b']}, {'shard': 1, 'eventos': 2, 'claves': ['a']}].",
+    solution_example: "shards = {0: [('b', 3)], 1: [('a', 2), ('a', 4)]}\nresultado = [{'shard': shard, 'eventos': len(shards[shard]), 'claves': sorted({k for k, _ in shards[shard]})} for shard in sorted(shards)]\nprint(resultado)",
+    next: Some("py-2920-ola32-suite"), show_type_chips: false, micro_step: 2919,
+};
+pub const PY2920_OLA32_SUITE: CodingStep = CodingStep {
+    id: "py-2920-ola32-suite", title: "ola 32 · suite", objective: "Cerrar la ola con sharding, parciales, deduplicación y merge observables.",
+    prompt_md: "**ola 32 · suite**\n\nCerrar la ola con sharding, parciales, deduplicación y merge observables.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('e1', 'a', 2), ('e2', 'b', 3), ('e3', 'a', 4), ('e1', 'a', 2)]\n# vistos, shards = set(), {0: [], 1: []}\n# for identificador, clave, valor in eventos:\n#     if identificador in vistos: continue\n#     vistos.add(identificador); shards[sum(map(ord, clave)) % 2].append((clave, valor))\n# parciales = {}\n# for shard, filas in shards.items():\n#     parcial = {}\n#     for clave, valor in filas: parcial[clave] = parcial.get(clave, 0) + valor\n#     parciales[shard] = parcial\n# total = {}\n# for shard in sorted(parciales):\n#     for clave, valor in parciales[shard].items(): total[clave] = total.get(clave, 0) + valor\n# resultado = {'shards': shards, 'parciales': parciales, 'total': dict(sorted(total.items())), 'eventos_unicos': len(vistos)}\n# print(resultado)\n",
+    pytest: "def test_ola32_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'shards': {0: [('b', 3)], 1: [('a', 2), ('a', 4)]}, 'parciales': {0: {'b': 3}, 1: {'a': 6}}, 'total': {'a': 6, 'b': 3}, 'eventos_unicos': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'shards': {0: [('b', 3)], 1: [('a', 2), ('a', 4)]}, 'parciales': {0: {'b': 3}, 1: {'a': 6}}, 'total': {'a': 6, 'b': 3}, 'eventos_unicos': 3}.",
+    solution_example: "eventos = [('e1', 'a', 2), ('e2', 'b', 3), ('e3', 'a', 4), ('e1', 'a', 2)]\nvistos, shards = set(), {0: [], 1: []}\nfor identificador, clave, valor in eventos:\n    if identificador in vistos: continue\n    vistos.add(identificador); shards[sum(map(ord, clave)) % 2].append((clave, valor))\nparciales = {}\nfor shard, filas in shards.items():\n    parcial = {}\n    for clave, valor in filas: parcial[clave] = parcial.get(clave, 0) + valor\n    parciales[shard] = parcial\ntotal = {}\nfor shard in sorted(parciales):\n    for clave, valor in parciales[shard].items(): total[clave] = total.get(clave, 0) + valor\nresultado = {'shards': shards, 'parciales': parciales, 'total': dict(sorted(total.items())), 'eventos_unicos': len(vistos)}\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 2920,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -64451,6 +64991,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2858_RESILIENTE_WATERMARK,
     &PY2859_RESILIENTE_RECUPERAR,
     &PY2860_OLA31_SUITE,
+    &PY2861_PARTICIONAR_PARIDAD,
+    &PY2862_PARTICIONAR_RANGO,
+    &PY2863_PARTICIONAR_CLAVE,
+    &PY2864_PARTICIONAR_INDICE,
+    &PY2865_PARTICIONAR_VACIOS,
+    &PY2866_PARTICIONAR_SUITE,
+    &PY2867_SHARD_ENTERO,
+    &PY2868_SHARD_TEXTO,
+    &PY2869_SHARD_REGISTROS,
+    &PY2870_SHARD_CONSISTENTE,
+    &PY2871_SHARD_DISTRIBUCION,
+    &PY2872_SHARD_SUITE,
+    &PY2873_FANOUT_REPLICAR,
+    &PY2874_FANOUT_SEGMENTAR,
+    &PY2875_FANOUT_ETIQUETAR,
+    &PY2876_FANOUT_FILTRAR,
+    &PY2877_FANOUT_COSTO,
+    &PY2878_FANOUT_SUITE,
+    &PY2879_FANIN_ORDENAR,
+    &PY2880_FANIN_FALTANTES,
+    &PY2881_FANIN_DUPLICADOS,
+    &PY2882_FANIN_ERRORES,
+    &PY2883_FANIN_COMPLETO,
+    &PY2884_FANIN_SUITE,
+    &PY2885_MAPREDUCE_MAP,
+    &PY2886_MAPREDUCE_SHUFFLE,
+    &PY2887_MAPREDUCE_REDUCE,
+    &PY2888_MAPREDUCE_CONTEO,
+    &PY2889_MAPREDUCE_MAXIMO,
+    &PY2890_MAPREDUCE_SUITE,
+    &PY2891_PARCIAL_SUMA,
+    &PY2892_PARCIAL_CONTEO,
+    &PY2893_PARCIAL_PROMEDIO,
+    &PY2894_PARCIAL_MINMAX,
+    &PY2895_PARCIAL_VACIO,
+    &PY2896_PARCIAL_SUITE,
+    &PY2897_VENTANA_ASIGNAR,
+    &PY2898_VENTANA_AGRUPAR,
+    &PY2899_VENTANA_SUMAR,
+    &PY2900_VENTANA_CERRAR,
+    &PY2901_VENTANA_PARTICIONES,
+    &PY2902_VENTANA_SUITE,
+    &PY2903_SKEW_CARGAS,
+    &PY2904_SKEW_DETECTAR,
+    &PY2905_SKEW_RATIO,
+    &PY2906_SKEW_SALTING,
+    &PY2907_SKEW_DESALAR,
+    &PY2908_SKEW_SUITE,
+    &PY2909_REBALANCE_DIFERENCIA,
+    &PY2910_REBALANCE_ORIGEN_DESTINO,
+    &PY2911_REBALANCE_MOVER,
+    &PY2912_REBALANCE_APLICAR,
+    &PY2913_REBALANCE_IDEMPOTENTE,
+    &PY2914_REBALANCE_SUITE,
+    &PY2915_DISTRIBUIDO_ENRUTAR,
+    &PY2916_DISTRIBUIDO_PARCIALES,
+    &PY2917_DISTRIBUIDO_MERGE,
+    &PY2918_DISTRIBUIDO_DEDUPLICAR,
+    &PY2919_DISTRIBUIDO_MANIFIESTO,
+    &PY2920_OLA32_SUITE,
 
 ];
 
@@ -64618,14 +65218,14 @@ mod tests {
     #[test]
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
-        assert_eq!(CODING_STEPS.len(), 2860, "catalog must contain 2860 steps");
+        assert_eq!(CODING_STEPS.len(), 2920, "catalog must contain 2920 steps");
         for (index, step) in CODING_STEPS.iter().enumerate() {
             assert_eq!(
                 step.micro_step,
                 (index + 1) as i32,
                 "catalog must be contiguous at index {index}"
             );
-            assert!(step.micro_step >= 1 && step.micro_step <= 2860);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2920);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -64634,8 +65234,8 @@ mod tests {
         }
         assert_eq!(
             seen,
-            (1..=2860).collect(),
-            "catalog must cover every micro-step in 1..=2860"
+            (1..=2920).collect(),
+            "catalog must cover every micro-step in 1..=2920"
         );
     }
 
@@ -68009,7 +68609,22 @@ mod tests {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next wave31 step");
                 assert_eq!(step.next, Some(next_step.id));
             } else {
-                assert_eq!(step.next, None, "step 2860 is the end of the rail");
+                assert_eq!(step.next, Some("py-2861-particionar-paridad"), "step 2860 chains to Wave 32");
+            }
+        }
+    }
+
+    #[test]
+    fn py2861_to_py2920_distributed_aggregation_chain() {
+        for n in 2861..=2920 {
+            let step = coding_step_by_micro_step(n).expect("wave32 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(step.id.starts_with(&format!("py-{n}-")));
+            if n < 2920 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next wave32 step");
+                assert_eq!(step.next, Some(next_step.id));
+            } else {
+                assert_eq!(step.next, None, "step 2920 is the end of the rail");
             }
         }
     }
