@@ -61048,7 +61048,547 @@ pub const PY2800_OLA30_SUITE: CodingStep = CodingStep {
     pytest: "def test_ola30_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('web', 8), ('api', 7)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "El resultado esperado es [('web', 8), ('api', 7)].",
     solution_example: "eventos = [('e1', 'api', 1, 4), ('e2', 'web', 1, 8), ('e1', 'api', 1, 4), ('e3', 'api', 2, 7), ('e4', 'db', 1, 7)]\nvistos = set(); vigentes = {}\nfor eid, clave, seq, valor in eventos:\n    if eid in vistos: continue\n    vistos.add(eid)\n    if clave not in vigentes or seq > vigentes[clave][0]: vigentes[clave] = (seq, valor)\nsnapshot = vigentes.copy()\nresultado = sorted(((k, v) for k, (_, v) in snapshot.items()), key=lambda x: (-x[1], x[0]))[:2]\nprint(resultado)",
-    next: None, show_type_chips: false, micro_step: 2800,
+    next: Some("py-2801-validar-requeridos"), show_type_chips: false, micro_step: 2800,
+};
+pub const PY2801_VALIDAR_REQUERIDOS: CodingStep = CodingStep {
+    id: "py-2801-validar-requeridos", title: "validación · campos requeridos", objective: "Detectar campos obligatorios ausentes.",
+    prompt_md: "**validación · campos requeridos**\n\nDetectar campos obligatorios ausentes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fila = {'id': 7}\n# requeridos = ['id', 'monto']\n# resultado = [campo for campo in requeridos if campo not in fila]\n# print(resultado)\n",
+    pytest: "def test_validar_requeridos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['monto']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['monto'].",
+    solution_example: "fila = {'id': 7}\nrequeridos = ['id', 'monto']\nresultado = [campo for campo in requeridos if campo not in fila]\nprint(resultado)",
+    next: Some("py-2802-validar-tipos"), show_type_chips: false, micro_step: 2801,
+};
+pub const PY2802_VALIDAR_TIPOS: CodingStep = CodingStep {
+    id: "py-2802-validar-tipos", title: "validación · tipos", objective: "Validar tipos con reglas declarativas.",
+    prompt_md: "**validación · tipos**\n\nValidar tipos con reglas declarativas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fila = {'id': 7, 'activo': 'sí'}\n# reglas = {'id': int, 'activo': bool}\n# resultado = [campo for campo, tipo in reglas.items() if not isinstance(fila.get(campo), tipo)]\n# print(resultado)\n",
+    pytest: "def test_validar_tipos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['activo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['activo'].",
+    solution_example: "fila = {'id': 7, 'activo': 'sí'}\nreglas = {'id': int, 'activo': bool}\nresultado = [campo for campo, tipo in reglas.items() if not isinstance(fila.get(campo), tipo)]\nprint(resultado)",
+    next: Some("py-2803-validar-rango"), show_type_chips: false, micro_step: 2802,
+};
+pub const PY2803_VALIDAR_RANGO: CodingStep = CodingStep {
+    id: "py-2803-validar-rango", title: "validación · rango", objective: "Devolver un código estable para un valor fuera de rango.",
+    prompt_md: "**validación · rango**\n\nDevolver un código estable para un valor fuera de rango.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def validar_puntaje(valor):\n#     return ('ok', valor) if 0 <= valor <= 100 else ('error', 'fuera_de_rango')\n# resultado = validar_puntaje(120)\n# print(resultado)\n",
+    pytest: "def test_validar_rango(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('error', 'fuera_de_rango')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('error', 'fuera_de_rango').",
+    solution_example: "def validar_puntaje(valor):\n    return ('ok', valor) if 0 <= valor <= 100 else ('error', 'fuera_de_rango')\nresultado = validar_puntaje(120)\nprint(resultado)",
+    next: Some("py-2804-validar-normalizar"), show_type_chips: false, micro_step: 2803,
+};
+pub const PY2804_VALIDAR_NORMALIZAR: CodingStep = CodingStep {
+    id: "py-2804-validar-normalizar", title: "validación · normalizar", objective: "Normalizar una entrada antes de comprobarla.",
+    prompt_md: "**validación · normalizar**\n\nNormalizar una entrada antes de comprobarla.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def email_valido(texto):\n#     limpio = texto.strip().lower()\n#     return ('ok', limpio) if '@' in limpio else ('error', 'email_invalido')\n# resultado = email_valido('  A@B.COM ')\n# print(resultado)\n",
+    pytest: "def test_validar_normalizar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ok', 'a@b.com')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('ok', 'a@b.com').",
+    solution_example: "def email_valido(texto):\n    limpio = texto.strip().lower()\n    return ('ok', limpio) if '@' in limpio else ('error', 'email_invalido')\nresultado = email_valido('  A@B.COM ')\nprint(resultado)",
+    next: Some("py-2805-validar-reglas"), show_type_chips: false, micro_step: 2804,
+};
+pub const PY2805_VALIDAR_REGLAS: CodingStep = CodingStep {
+    id: "py-2805-validar-reglas", title: "validación · múltiples reglas", objective: "Evaluar todas las reglas sin cortar en el primer error.",
+    prompt_md: "**validación · múltiples reglas**\n\nEvaluar todas las reglas sin cortar en el primer error.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fila = {'nombre': '', 'edad': -2}\n# errores = []\n# if not fila['nombre']: errores.append('nombre_vacio')\n# if fila['edad'] < 0: errores.append('edad_negativa')\n# resultado = errores\n# print(resultado)\n",
+    pytest: "def test_validar_reglas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['nombre_vacio', 'edad_negativa']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['nombre_vacio', 'edad_negativa'].",
+    solution_example: "fila = {'nombre': '', 'edad': -2}\nerrores = []\nif not fila['nombre']: errores.append('nombre_vacio')\nif fila['edad'] < 0: errores.append('edad_negativa')\nresultado = errores\nprint(resultado)",
+    next: Some("py-2806-validar-suite"), show_type_chips: false, micro_step: 2805,
+};
+pub const PY2806_VALIDAR_SUITE: CodingStep = CodingStep {
+    id: "py-2806-validar-suite", title: "validación · suite", objective: "Separar registros válidos y errores estructurados.",
+    prompt_md: "**validación · suite**\n\nSeparar registros válidos y errores estructurados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [{'id': 1, 'monto': 5}, {'id': 2}, {'id': 'x', 'monto': 3}]\n# validos, errores = [], []\n# for indice, fila in enumerate(filas):\n#     fallos = []\n#     if not isinstance(fila.get('id'), int): fallos.append('id')\n#     if not isinstance(fila.get('monto'), int): fallos.append('monto')\n#     (errores if fallos else validos).append((indice, fallos) if fallos else fila)\n# resultado = (validos, errores)\n# print(resultado)\n",
+    pytest: "def test_validar_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([{'id': 1, 'monto': 5}], [(1, ['monto']), (2, ['id'])])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ([{'id': 1, 'monto': 5}], [(1, ['monto']), (2, ['id'])]).",
+    solution_example: "filas = [{'id': 1, 'monto': 5}, {'id': 2}, {'id': 'x', 'monto': 3}]\nvalidos, errores = [], []\nfor indice, fila in enumerate(filas):\n    fallos = []\n    if not isinstance(fila.get('id'), int): fallos.append('id')\n    if not isinstance(fila.get('monto'), int): fallos.append('monto')\n    (errores if fallos else validos).append((indice, fallos) if fallos else fila)\nresultado = (validos, errores)\nprint(resultado)",
+    next: Some("py-2807-resultado-parsear"), show_type_chips: false, micro_step: 2806,
+};
+pub const PY2807_RESULTADO_PARSEAR: CodingStep = CodingStep {
+    id: "py-2807-resultado-parsear", title: "resultados · parsear", objective: "Representar parseo exitoso o fallido como dato.",
+    prompt_md: "**resultados · parsear**\n\nRepresentar parseo exitoso o fallido como dato.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def parsear(texto):\n#     try:\n#         return ('ok', int(texto))\n#     except ValueError:\n#         return ('error', 'no_entero')\n# resultado = parsear('abc')\n# print(resultado)\n",
+    pytest: "def test_resultado_parsear(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('error', 'no_entero')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('error', 'no_entero').",
+    solution_example: "def parsear(texto):\n    try:\n        return ('ok', int(texto))\n    except ValueError:\n        return ('error', 'no_entero')\nresultado = parsear('abc')\nprint(resultado)",
+    next: Some("py-2808-resultado-mapear"), show_type_chips: false, micro_step: 2807,
+};
+pub const PY2808_RESULTADO_MAPEAR: CodingStep = CodingStep {
+    id: "py-2808-resultado-mapear", title: "resultados · map", objective: "Transformar solo un resultado exitoso.",
+    prompt_md: "**resultados · map**\n\nTransformar solo un resultado exitoso.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def map_ok(res, f):\n#     return ('ok', f(res[1])) if res[0] == 'ok' else res\n# resultado = map_ok(('ok', 4), lambda n: n * 3)\n# print(resultado)\n",
+    pytest: "def test_resultado_mapear(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ok', 12)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('ok', 12).",
+    solution_example: "def map_ok(res, f):\n    return ('ok', f(res[1])) if res[0] == 'ok' else res\nresultado = map_ok(('ok', 4), lambda n: n * 3)\nprint(resultado)",
+    next: Some("py-2809-resultado-encadenar"), show_type_chips: false, micro_step: 2808,
+};
+pub const PY2809_RESULTADO_ENCADENAR: CodingStep = CodingStep {
+    id: "py-2809-resultado-encadenar", title: "resultados · bind", objective: "Encadenar validaciones que también pueden fallar.",
+    prompt_md: "**resultados · bind**\n\nEncadenar validaciones que también pueden fallar.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# def bind(res, f):\n#     return f(res[1]) if res[0] == 'ok' else res\n# def positivo(n):\n#     return ('ok', n) if n > 0 else ('error', 'no_positivo')\n# resultado = bind(('ok', -3), positivo)\n# print(resultado)\n",
+    pytest: "def test_resultado_encadenar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('error', 'no_positivo')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('error', 'no_positivo').",
+    solution_example: "def bind(res, f):\n    return f(res[1]) if res[0] == 'ok' else res\ndef positivo(n):\n    return ('ok', n) if n > 0 else ('error', 'no_positivo')\nresultado = bind(('ok', -3), positivo)\nprint(resultado)",
+    next: Some("py-2810-errores-acumular"), show_type_chips: false, micro_step: 2809,
+};
+pub const PY2810_ERRORES_ACUMULAR: CodingStep = CodingStep {
+    id: "py-2810-errores-acumular", title: "resultados · acumular", objective: "Acumular todos los errores de un lote.",
+    prompt_md: "**resultados · acumular**\n\nAcumular todos los errores de un lote.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultados = [('ok', 3), ('error', 'tipo'), ('error', 'rango')]\n# resultado = [detalle for estado, detalle in resultados if estado == 'error']\n# print(resultado)\n",
+    pytest: "def test_errores_acumular(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['tipo', 'rango']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['tipo', 'rango'].",
+    solution_example: "resultados = [('ok', 3), ('error', 'tipo'), ('error', 'rango')]\nresultado = [detalle for estado, detalle in resultados if estado == 'error']\nprint(resultado)",
+    next: Some("py-2811-errores-indexar"), show_type_chips: false, micro_step: 2810,
+};
+pub const PY2811_ERRORES_INDEXAR: CodingStep = CodingStep {
+    id: "py-2811-errores-indexar", title: "resultados · contexto", objective: "Adjuntar el índice de entrada a cada error.",
+    prompt_md: "**resultados · contexto**\n\nAdjuntar el índice de entrada a cada error.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# valores = ['4', 'x', '7', '?']\n# resultado = []\n# for indice, texto in enumerate(valores):\n#     try: int(texto)\n#     except ValueError: resultado.append({'indice': indice, 'codigo': 'no_entero'})\n# print(resultado)\n",
+    pytest: "def test_errores_indexar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'indice': 1, 'codigo': 'no_entero'}, {'indice': 3, 'codigo': 'no_entero'}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'indice': 1, 'codigo': 'no_entero'}, {'indice': 3, 'codigo': 'no_entero'}].",
+    solution_example: "valores = ['4', 'x', '7', '?']\nresultado = []\nfor indice, texto in enumerate(valores):\n    try: int(texto)\n    except ValueError: resultado.append({'indice': indice, 'codigo': 'no_entero'})\nprint(resultado)",
+    next: Some("py-2812-errores-suite"), show_type_chips: false, micro_step: 2811,
+};
+pub const PY2812_ERRORES_SUITE: CodingStep = CodingStep {
+    id: "py-2812-errores-suite", title: "resultados · suite", objective: "Producir valores, errores y un resumen reproducible.",
+    prompt_md: "**resultados · suite**\n\nProducir valores, errores y un resumen reproducible.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# entradas = ['2', 'mal', '-1', '5']\n# valores, errores = [], []\n# for indice, texto in enumerate(entradas):\n#     try:\n#         n = int(texto)\n#         if n < 0: raise ValueError('negativo')\n#         valores.append(n)\n#     except ValueError as exc:\n#         errores.append((indice, str(exc)))\n# resultado = {'valores': valores, 'errores': errores, 'ok': not errores}\n# print(resultado)\n",
+    pytest: "def test_errores_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'valores': [2, 5], 'errores': [(1, \"invalid literal for int() with base 10: 'mal'\"), (2, 'negativo')], 'ok': False}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'valores': [2, 5], 'errores': [(1, \"invalid literal for int() with base 10: 'mal'\"), (2, 'negativo')], 'ok': False}.",
+    solution_example: "entradas = ['2', 'mal', '-1', '5']\nvalores, errores = [], []\nfor indice, texto in enumerate(entradas):\n    try:\n        n = int(texto)\n        if n < 0: raise ValueError('negativo')\n        valores.append(n)\n    except ValueError as exc:\n        errores.append((indice, str(exc)))\nresultado = {'valores': valores, 'errores': errores, 'ok': not errores}\nprint(resultado)",
+    next: Some("py-2813-cuarentena-separar"), show_type_chips: false, micro_step: 2812,
+};
+pub const PY2813_CUARENTENA_SEPARAR: CodingStep = CodingStep {
+    id: "py-2813-cuarentena-separar", title: "cuarentena · separar", objective: "Separar registros aceptados y rechazados.",
+    prompt_md: "**cuarentena · separar**\n\nSeparar registros aceptados y rechazados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [3, -1, 5, -2]\n# resultado = ([n for n in filas if n >= 0], [n for n in filas if n < 0])\n# print(resultado)\n",
+    pytest: "def test_cuarentena_separar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([3, 5], [-1, -2])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ([3, 5], [-1, -2]).",
+    solution_example: "filas = [3, -1, 5, -2]\nresultado = ([n for n in filas if n >= 0], [n for n in filas if n < 0])\nprint(resultado)",
+    next: Some("py-2814-cuarentena-razon"), show_type_chips: false, micro_step: 2813,
+};
+pub const PY2814_CUARENTENA_RAZON: CodingStep = CodingStep {
+    id: "py-2814-cuarentena-razon", title: "cuarentena · razón", objective: "Guardar el registro rechazado junto con su razón.",
+    prompt_md: "**cuarentena · razón**\n\nGuardar el registro rechazado junto con su razón.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [{'id': 1}, {'valor': 3}]\n# resultado = [(fila, 'sin_id') for fila in filas if 'id' not in fila]\n# print(resultado)\n",
+    pytest: "def test_cuarentena_razon(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [({'valor': 3}, 'sin_id')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [({'valor': 3}, 'sin_id')].",
+    solution_example: "filas = [{'id': 1}, {'valor': 3}]\nresultado = [(fila, 'sin_id') for fila in filas if 'id' not in fila]\nprint(resultado)",
+    next: Some("py-2815-cuarentena-orden"), show_type_chips: false, micro_step: 2814,
+};
+pub const PY2815_CUARENTENA_ORDEN: CodingStep = CodingStep {
+    id: "py-2815-cuarentena-orden", title: "cuarentena · orden", objective: "Preservar el orden de llegada en la salida lateral.",
+    prompt_md: "**cuarentena · orden**\n\nPreservar el orden de llegada en la salida lateral.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [('a', True), ('b', False), ('c', False)]\n# resultado = [clave for clave, valido in filas if not valido]\n# print(resultado)\n",
+    pytest: "def test_cuarentena_orden(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['b', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['b', 'c'].",
+    solution_example: "filas = [('a', True), ('b', False), ('c', False)]\nresultado = [clave for clave, valido in filas if not valido]\nprint(resultado)",
+    next: Some("py-2816-cuarentena-reprocesar"), show_type_chips: false, micro_step: 2815,
+};
+pub const PY2816_CUARENTENA_REPROCESAR: CodingStep = CodingStep {
+    id: "py-2816-cuarentena-reprocesar", title: "cuarentena · reprocesar", objective: "Corregir y reevaluar un registro aislado.",
+    prompt_md: "**cuarentena · reprocesar**\n\nCorregir y reevaluar un registro aislado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# cuarentena = [{'id': '7', 'razon': 'tipo_id'}]\n# reprocesados = []\n# for item in cuarentena:\n#     corregido = {'id': int(item['id'])}\n#     reprocesados.append(corregido)\n# resultado = reprocesados\n# print(resultado)\n",
+    pytest: "def test_cuarentena_reprocesar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'id': 7}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'id': 7}].",
+    solution_example: "cuarentena = [{'id': '7', 'razon': 'tipo_id'}]\nreprocesados = []\nfor item in cuarentena:\n    corregido = {'id': int(item['id'])}\n    reprocesados.append(corregido)\nresultado = reprocesados\nprint(resultado)",
+    next: Some("py-2817-cuarentena-metricas"), show_type_chips: false, micro_step: 2816,
+};
+pub const PY2817_CUARENTENA_METRICAS: CodingStep = CodingStep {
+    id: "py-2817-cuarentena-metricas", title: "cuarentena · métricas", objective: "Contar rechazos por código estable.",
+    prompt_md: "**cuarentena · métricas**\n\nContar rechazos por código estable.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# rechazos = [('a', 'tipo'), ('b', 'rango'), ('c', 'tipo')]\n# conteos = {}\n# for _, razon in rechazos: conteos[razon] = conteos.get(razon, 0) + 1\n# resultado = dict(sorted(conteos.items()))\n# print(resultado)\n",
+    pytest: "def test_cuarentena_metricas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'rango': 1, 'tipo': 2}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'rango': 1, 'tipo': 2}.",
+    solution_example: "rechazos = [('a', 'tipo'), ('b', 'rango'), ('c', 'tipo')]\nconteos = {}\nfor _, razon in rechazos: conteos[razon] = conteos.get(razon, 0) + 1\nresultado = dict(sorted(conteos.items()))\nprint(resultado)",
+    next: Some("py-2818-cuarentena-suite"), show_type_chips: false, micro_step: 2817,
+};
+pub const PY2818_CUARENTENA_SUITE: CodingStep = CodingStep {
+    id: "py-2818-cuarentena-suite", title: "cuarentena · suite", objective: "Validar un lote sin perder entradas sanas ni diagnóstico.",
+    prompt_md: "**cuarentena · suite**\n\nValidar un lote sin perder entradas sanas ni diagnóstico.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [{'id': 1, 'monto': 3}, {'id': 2, 'monto': -1}, {'monto': 4}]\n# aceptados, rechazo = [], []\n# for fila in filas:\n#     razon = 'sin_id' if 'id' not in fila else ('monto_negativo' if fila['monto'] < 0 else None)\n#     (rechazo if razon else aceptados).append((fila, razon) if razon else fila)\n# resultado = {'aceptados': aceptados, 'cuarentena': rechazo}\n# print(resultado)\n",
+    pytest: "def test_cuarentena_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'aceptados': [{'id': 1, 'monto': 3}], 'cuarentena': [({'id': 2, 'monto': -1}, 'monto_negativo'), ({'monto': 4}, 'sin_id')]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'aceptados': [{'id': 1, 'monto': 3}], 'cuarentena': [({'id': 2, 'monto': -1}, 'monto_negativo'), ({'monto': 4}, 'sin_id')]}.",
+    solution_example: "filas = [{'id': 1, 'monto': 3}, {'id': 2, 'monto': -1}, {'monto': 4}]\naceptados, rechazo = [], []\nfor fila in filas:\n    razon = 'sin_id' if 'id' not in fila else ('monto_negativo' if fila['monto'] < 0 else None)\n    (rechazo if razon else aceptados).append((fila, razon) if razon else fila)\nresultado = {'aceptados': aceptados, 'cuarentena': rechazo}\nprint(resultado)",
+    next: Some("py-2819-retry-intentos"), show_type_chips: false, micro_step: 2818,
+};
+pub const PY2819_RETRY_INTENTOS: CodingStep = CodingStep {
+    id: "py-2819-retry-intentos", title: "reintentos · intentos", objective: "Construir números de intento acotados.",
+    prompt_md: "**reintentos · intentos**\n\nConstruir números de intento acotados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# max_intentos = 4\n# resultado = list(range(1, max_intentos + 1))\n# print(resultado)\n",
+    pytest: "def test_retry_intentos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3, 4]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3, 4].",
+    solution_example: "max_intentos = 4\nresultado = list(range(1, max_intentos + 1))\nprint(resultado)",
+    next: Some("py-2820-retry-backoff"), show_type_chips: false, micro_step: 2819,
+};
+pub const PY2820_RETRY_BACKOFF: CodingStep = CodingStep {
+    id: "py-2820-retry-backoff", title: "reintentos · backoff", objective: "Calcular ticks de espera exponenciales sin dormir.",
+    prompt_md: "**reintentos · backoff**\n\nCalcular ticks de espera exponenciales sin dormir.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# base = 2\n# resultado = [base * (2 ** intento) for intento in range(4)]\n# print(resultado)\n",
+    pytest: "def test_retry_backoff(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [2, 4, 8, 16]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [2, 4, 8, 16].",
+    solution_example: "base = 2\nresultado = [base * (2 ** intento) for intento in range(4)]\nprint(resultado)",
+    next: Some("py-2821-retry-exito"), show_type_chips: false, micro_step: 2820,
+};
+pub const PY2821_RETRY_EXITO: CodingStep = CodingStep {
+    id: "py-2821-retry-exito", title: "reintentos · corte por éxito", objective: "Detener el plan en el primer resultado exitoso.",
+    prompt_md: "**reintentos · corte por éxito**\n\nDetener el plan en el primer resultado exitoso.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# respuestas = ['error', 'error', 'ok', 'ok']\n# usados = []\n# for intento, estado in enumerate(respuestas, 1):\n#     usados.append(intento)\n#     if estado == 'ok': break\n# resultado = usados\n# print(resultado)\n",
+    pytest: "def test_retry_exito(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [1, 2, 3]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [1, 2, 3].",
+    solution_example: "respuestas = ['error', 'error', 'ok', 'ok']\nusados = []\nfor intento, estado in enumerate(respuestas, 1):\n    usados.append(intento)\n    if estado == 'ok': break\nresultado = usados\nprint(resultado)",
+    next: Some("py-2822-retry-agotado"), show_type_chips: false, micro_step: 2821,
+};
+pub const PY2822_RETRY_AGOTADO: CodingStep = CodingStep {
+    id: "py-2822-retry-agotado", title: "reintentos · agotado", objective: "Representar el agotamiento como estado terminal.",
+    prompt_md: "**reintentos · agotado**\n\nRepresentar el agotamiento como estado terminal.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# respuestas = ['error'] * 3\n# resultado = ('agotado', len(respuestas)) if 'ok' not in respuestas else ('ok', respuestas.index('ok') + 1)\n# print(resultado)\n",
+    pytest: "def test_retry_agotado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('agotado', 3)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('agotado', 3).",
+    solution_example: "respuestas = ['error'] * 3\nresultado = ('agotado', len(respuestas)) if 'ok' not in respuestas else ('ok', respuestas.index('ok') + 1)\nprint(resultado)",
+    next: Some("py-2823-retry-codigos"), show_type_chips: false, micro_step: 2822,
+};
+pub const PY2823_RETRY_CODIGOS: CodingStep = CodingStep {
+    id: "py-2823-retry-codigos", title: "reintentos · códigos", objective: "Reintentar solo códigos declarados recuperables.",
+    prompt_md: "**reintentos · códigos**\n\nReintentar solo códigos declarados recuperables.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# recuperables = {'timeout', 'ocupado'}\n# codigos = ['timeout', 'ocupado', 'invalido']\n# resultado = [codigo in recuperables for codigo in codigos]\n# print(resultado)\n",
+    pytest: "def test_retry_codigos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [True, True, False]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [True, True, False].",
+    solution_example: "recuperables = {'timeout', 'ocupado'}\ncodigos = ['timeout', 'ocupado', 'invalido']\nresultado = [codigo in recuperables for codigo in codigos]\nprint(resultado)",
+    next: Some("py-2824-retry-suite"), show_type_chips: false, micro_step: 2823,
+};
+pub const PY2824_RETRY_SUITE: CodingStep = CodingStep {
+    id: "py-2824-retry-suite", title: "reintentos · suite", objective: "Simular un plan acotado con ticks y salida terminal.",
+    prompt_md: "**reintentos · suite**\n\nSimular un plan acotado con ticks y salida terminal.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# respuestas = [('timeout', None), ('ocupado', None), ('ok', 42)]\n# plan = [0, 2, 6]\n# historial = []\n# resultado = None\n# for intento, ((estado, valor), tick) in enumerate(zip(respuestas, plan), 1):\n#     historial.append((intento, tick, estado))\n#     if estado == 'ok':\n#         resultado = {'estado': 'ok', 'valor': valor, 'historial': historial}; break\n# if resultado is None: resultado = {'estado': 'agotado', 'historial': historial}\n# print(resultado)\n",
+    pytest: "def test_retry_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'estado': 'ok', 'valor': 42, 'historial': [(1, 0, 'timeout'), (2, 2, 'ocupado'), (3, 6, 'ok')]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'estado': 'ok', 'valor': 42, 'historial': [(1, 0, 'timeout'), (2, 2, 'ocupado'), (3, 6, 'ok')]}.",
+    solution_example: "respuestas = [('timeout', None), ('ocupado', None), ('ok', 42)]\nplan = [0, 2, 6]\nhistorial = []\nresultado = None\nfor intento, ((estado, valor), tick) in enumerate(zip(respuestas, plan), 1):\n    historial.append((intento, tick, estado))\n    if estado == 'ok':\n        resultado = {'estado': 'ok', 'valor': valor, 'historial': historial}; break\nif resultado is None: resultado = {'estado': 'agotado', 'historial': historial}\nprint(resultado)",
+    next: Some("py-2825-circuito-fallos"), show_type_chips: false, micro_step: 2824,
+};
+pub const PY2825_CIRCUITO_FALLOS: CodingStep = CodingStep {
+    id: "py-2825-circuito-fallos", title: "circuit breaker · umbral", objective: "Abrir el circuito al alcanzar un umbral de fallos.",
+    prompt_md: "**circuit breaker · umbral**\n\nAbrir el circuito al alcanzar un umbral de fallos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {'modo': 'cerrado', 'fallos': 0}\n# for ok in [False, False, False]:\n#     estado['fallos'] = 0 if ok else estado['fallos'] + 1\n#     if estado['fallos'] >= 3: estado['modo'] = 'abierto'\n# resultado = estado\n# print(resultado)\n",
+    pytest: "def test_circuito_fallos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'modo': 'abierto', 'fallos': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'modo': 'abierto', 'fallos': 3}.",
+    solution_example: "estado = {'modo': 'cerrado', 'fallos': 0}\nfor ok in [False, False, False]:\n    estado['fallos'] = 0 if ok else estado['fallos'] + 1\n    if estado['fallos'] >= 3: estado['modo'] = 'abierto'\nresultado = estado\nprint(resultado)",
+    next: Some("py-2826-circuito-rechazar"), show_type_chips: false, micro_step: 2825,
+};
+pub const PY2826_CIRCUITO_RECHAZAR: CodingStep = CodingStep {
+    id: "py-2826-circuito-rechazar", title: "circuit breaker · rechazo", objective: "Rechazar una operación mientras el circuito está abierto.",
+    prompt_md: "**circuit breaker · rechazo**\n\nRechazar una operación mientras el circuito está abierto.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {'modo': 'abierto'}\n# resultado = ('rechazado', 'circuito_abierto') if estado['modo'] == 'abierto' else ('aceptado', None)\n# print(resultado)\n",
+    pytest: "def test_circuito_rechazar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('rechazado', 'circuito_abierto')\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('rechazado', 'circuito_abierto').",
+    solution_example: "estado = {'modo': 'abierto'}\nresultado = ('rechazado', 'circuito_abierto') if estado['modo'] == 'abierto' else ('aceptado', None)\nprint(resultado)",
+    next: Some("py-2827-circuito-halfopen"), show_type_chips: false, micro_step: 2826,
+};
+pub const PY2827_CIRCUITO_HALFOPEN: CodingStep = CodingStep {
+    id: "py-2827-circuito-halfopen", title: "circuit breaker · prueba", objective: "Pasar a prueba cuando llega el tick de reapertura.",
+    prompt_md: "**circuit breaker · prueba**\n\nPasar a prueba cuando llega el tick de reapertura.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {'modo': 'abierto', 'reabrir_en': 8}\n# tick = 8\n# resultado = {**estado, 'modo': 'prueba'} if tick >= estado['reabrir_en'] else estado\n# print(resultado)\n",
+    pytest: "def test_circuito_halfopen(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'modo': 'prueba', 'reabrir_en': 8}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'modo': 'prueba', 'reabrir_en': 8}.",
+    solution_example: "estado = {'modo': 'abierto', 'reabrir_en': 8}\ntick = 8\nresultado = {**estado, 'modo': 'prueba'} if tick >= estado['reabrir_en'] else estado\nprint(resultado)",
+    next: Some("py-2828-circuito-recuperar"), show_type_chips: false, micro_step: 2827,
+};
+pub const PY2828_CIRCUITO_RECUPERAR: CodingStep = CodingStep {
+    id: "py-2828-circuito-recuperar", title: "circuit breaker · recuperación", objective: "Cerrar el circuito tras una prueba exitosa.",
+    prompt_md: "**circuit breaker · recuperación**\n\nCerrar el circuito tras una prueba exitosa.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# estado = {'modo': 'prueba', 'fallos': 3}\n# prueba_ok = True\n# resultado = {'modo': 'cerrado', 'fallos': 0} if prueba_ok else estado\n# print(resultado)\n",
+    pytest: "def test_circuito_recuperar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'modo': 'cerrado', 'fallos': 0}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'modo': 'cerrado', 'fallos': 0}.",
+    solution_example: "estado = {'modo': 'prueba', 'fallos': 3}\nprueba_ok = True\nresultado = {'modo': 'cerrado', 'fallos': 0} if prueba_ok else estado\nprint(resultado)",
+    next: Some("py-2829-circuito-reabrir"), show_type_chips: false, micro_step: 2828,
+};
+pub const PY2829_CIRCUITO_REABRIR: CodingStep = CodingStep {
+    id: "py-2829-circuito-reabrir", title: "circuit breaker · recaída", objective: "Reabrir y programar otro tick tras fallar la prueba.",
+    prompt_md: "**circuit breaker · recaída**\n\nReabrir y programar otro tick tras fallar la prueba.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# tick = 10\n# estado = {'modo': 'prueba', 'fallos': 3}\n# resultado = {'modo': 'abierto', 'fallos': 4, 'reabrir_en': tick + 5}\n# print(resultado)\n",
+    pytest: "def test_circuito_reabrir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'modo': 'abierto', 'fallos': 4, 'reabrir_en': 15}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'modo': 'abierto', 'fallos': 4, 'reabrir_en': 15}.",
+    solution_example: "tick = 10\nestado = {'modo': 'prueba', 'fallos': 3}\nresultado = {'modo': 'abierto', 'fallos': 4, 'reabrir_en': tick + 5}\nprint(resultado)",
+    next: Some("py-2830-circuito-suite"), show_type_chips: false, micro_step: 2829,
+};
+pub const PY2830_CIRCUITO_SUITE: CodingStep = CodingStep {
+    id: "py-2830-circuito-suite", title: "circuit breaker · suite", objective: "Recorrer transiciones y conservar un historial observable.",
+    prompt_md: "**circuit breaker · suite**\n\nRecorrer transiciones y conservar un historial observable.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(1, False), (2, False), (3, False), (8, True)]\n# modo, fallos, reabrir = 'cerrado', 0, None\n# historial = []\n# for tick, ok in eventos:\n#     if modo == 'abierto' and tick >= reabrir: modo = 'prueba'\n#     if modo in ('cerrado', 'prueba'):\n#         if ok: modo, fallos, reabrir = 'cerrado', 0, None\n#         else:\n#             fallos += 1\n#             if fallos >= 3: modo, reabrir = 'abierto', tick + 5\n#     historial.append((tick, modo))\n# resultado = (modo, historial)\n# print(resultado)\n",
+    pytest: "def test_circuito_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('cerrado', [(1, 'cerrado'), (2, 'cerrado'), (3, 'abierto'), (8, 'cerrado')])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('cerrado', [(1, 'cerrado'), (2, 'cerrado'), (3, 'abierto'), (8, 'cerrado')]).",
+    solution_example: "eventos = [(1, False), (2, False), (3, False), (8, True)]\nmodo, fallos, reabrir = 'cerrado', 0, None\nhistorial = []\nfor tick, ok in eventos:\n    if modo == 'abierto' and tick >= reabrir: modo = 'prueba'\n    if modo in ('cerrado', 'prueba'):\n        if ok: modo, fallos, reabrir = 'cerrado', 0, None\n        else:\n            fallos += 1\n            if fallos >= 3: modo, reabrir = 'abierto', tick + 5\n    historial.append((tick, modo))\nresultado = (modo, historial)\nprint(resultado)",
+    next: Some("py-2831-limite-ventana"), show_type_chips: false, micro_step: 2830,
+};
+pub const PY2831_LIMITE_VENTANA: CodingStep = CodingStep {
+    id: "py-2831-limite-ventana", title: "límites · ventana fija", objective: "Contar operaciones dentro de una ventana lógica.",
+    prompt_md: "**límites · ventana fija**\n\nContar operaciones dentro de una ventana lógica.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ticks = [1, 2, 4, 11]\n# inicio, ancho = 0, 10\n# resultado = sum(inicio <= tick < inicio + ancho for tick in ticks)\n# print(resultado)\n",
+    pytest: "def test_limite_ventana(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "ticks = [1, 2, 4, 11]\ninicio, ancho = 0, 10\nresultado = sum(inicio <= tick < inicio + ancho for tick in ticks)\nprint(resultado)",
+    next: Some("py-2832-limite-permitir"), show_type_chips: false, micro_step: 2831,
+};
+pub const PY2832_LIMITE_PERMITIR: CodingStep = CodingStep {
+    id: "py-2832-limite-permitir", title: "límites · decisión", objective: "Permitir hasta una capacidad declarada.",
+    prompt_md: "**límites · decisión**\n\nPermitir hasta una capacidad declarada.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# capacidad = 3\n# usados = 2\n# resultado = usados < capacidad\n# print(resultado)\n",
+    pytest: "def test_limite_permitir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "capacidad = 3\nusados = 2\nresultado = usados < capacidad\nprint(resultado)",
+    next: Some("py-2833-bucket-consumir"), show_type_chips: false, micro_step: 2832,
+};
+pub const PY2833_BUCKET_CONSUMIR: CodingStep = CodingStep {
+    id: "py-2833-bucket-consumir", title: "token bucket · consumir", objective: "Consumir un token sin producir saldo negativo.",
+    prompt_md: "**token bucket · consumir**\n\nConsumir un token sin producir saldo negativo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# tokens = 2\n# if tokens > 0:\n#     tokens -= 1; decision = 'permitido'\n# else: decision = 'limitado'\n# resultado = (decision, tokens)\n# print(resultado)\n",
+    pytest: "def test_bucket_consumir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('permitido', 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('permitido', 1).",
+    solution_example: "tokens = 2\nif tokens > 0:\n    tokens -= 1; decision = 'permitido'\nelse: decision = 'limitado'\nresultado = (decision, tokens)\nprint(resultado)",
+    next: Some("py-2834-bucket-rellenar"), show_type_chips: false, micro_step: 2833,
+};
+pub const PY2834_BUCKET_RELLENAR: CodingStep = CodingStep {
+    id: "py-2834-bucket-rellenar", title: "token bucket · rellenar", objective: "Rellenar por ticks respetando la capacidad.",
+    prompt_md: "**token bucket · rellenar**\n\nRellenar por ticks respetando la capacidad.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# tokens, capacidad, ultimo_tick = 1, 5, 3\n# tick, tasa = 7, 1\n# tokens = min(capacidad, tokens + (tick - ultimo_tick) * tasa)\n# resultado = tokens\n# print(resultado)\n",
+    pytest: "def test_bucket_rellenar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 5.",
+    solution_example: "tokens, capacidad, ultimo_tick = 1, 5, 3\ntick, tasa = 7, 1\ntokens = min(capacidad, tokens + (tick - ultimo_tick) * tasa)\nresultado = tokens\nprint(resultado)",
+    next: Some("py-2835-limite-por-clave"), show_type_chips: false, micro_step: 2834,
+};
+pub const PY2835_LIMITE_POR_CLAVE: CodingStep = CodingStep {
+    id: "py-2835-limite-por-clave", title: "límites · por clave", objective: "Mantener presupuestos independientes por consumidor.",
+    prompt_md: "**límites · por clave**\n\nMantener presupuestos independientes por consumidor.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# capacidad = 2\n# usos = {}\n# decisiones = []\n# for clave in ['a', 'b', 'a', 'a']:\n#     usados = usos.get(clave, 0)\n#     decisiones.append(usados < capacidad)\n#     if usados < capacidad: usos[clave] = usados + 1\n# resultado = decisiones\n# print(resultado)\n",
+    pytest: "def test_limite_por_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [True, True, True, False]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [True, True, True, False].",
+    solution_example: "capacidad = 2\nusos = {}\ndecisiones = []\nfor clave in ['a', 'b', 'a', 'a']:\n    usados = usos.get(clave, 0)\n    decisiones.append(usados < capacidad)\n    if usados < capacidad: usos[clave] = usados + 1\nresultado = decisiones\nprint(resultado)",
+    next: Some("py-2836-limite-suite"), show_type_chips: false, micro_step: 2835,
+};
+pub const PY2836_LIMITE_SUITE: CodingStep = CodingStep {
+    id: "py-2836-limite-suite", title: "límites · suite", objective: "Aplicar token bucket con ticks explícitos a una secuencia.",
+    prompt_md: "**límites · suite**\n\nAplicar token bucket con ticks explícitos a una secuencia.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# tokens, capacidad, tasa, ultimo = 2, 3, 1, 0\n# decisiones = []\n# for tick in [0, 0, 0, 2, 2]:\n#     tokens = min(capacidad, tokens + (tick - ultimo) * tasa); ultimo = tick\n#     permitido = tokens >= 1\n#     if permitido: tokens -= 1\n#     decisiones.append((tick, permitido, tokens))\n# resultado = decisiones\n# print(resultado)\n",
+    pytest: "def test_limite_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, True, 1), (0, True, 0), (0, False, 0), (2, True, 1), (2, True, 0)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(0, True, 1), (0, True, 0), (0, False, 0), (2, True, 1), (2, True, 0)].",
+    solution_example: "tokens, capacidad, tasa, ultimo = 2, 3, 1, 0\ndecisiones = []\nfor tick in [0, 0, 0, 2, 2]:\n    tokens = min(capacidad, tokens + (tick - ultimo) * tasa); ultimo = tick\n    permitido = tokens >= 1\n    if permitido: tokens -= 1\n    decisiones.append((tick, permitido, tokens))\nresultado = decisiones\nprint(resultado)",
+    next: Some("py-2837-watermark-maximo"), show_type_chips: false, micro_step: 2836,
+};
+pub const PY2837_WATERMARK_MAXIMO: CodingStep = CodingStep {
+    id: "py-2837-watermark-maximo", title: "watermarks · máximo visto", objective: "Actualizar el event-time máximo observado.",
+    prompt_md: "**watermarks · máximo visto**\n\nActualizar el event-time máximo observado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# max_visto = None\n# for marca in [4, 9, 6]: max_visto = marca if max_visto is None else max(max_visto, marca)\n# resultado = max_visto\n# print(resultado)\n",
+    pytest: "def test_watermark_maximo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 9.",
+    solution_example: "max_visto = None\nfor marca in [4, 9, 6]: max_visto = marca if max_visto is None else max(max_visto, marca)\nresultado = max_visto\nprint(resultado)",
+    next: Some("py-2838-watermark-calcular"), show_type_chips: false, micro_step: 2837,
+};
+pub const PY2838_WATERMARK_CALCULAR: CodingStep = CodingStep {
+    id: "py-2838-watermark-calcular", title: "watermarks · cálculo", objective: "Restar una tolerancia al máximo observado.",
+    prompt_md: "**watermarks · cálculo**\n\nRestar una tolerancia al máximo observado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# max_visto, tolerancia = 12, 3\n# resultado = max_visto - tolerancia\n# print(resultado)\n",
+    pytest: "def test_watermark_calcular(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 9.",
+    solution_example: "max_visto, tolerancia = 12, 3\nresultado = max_visto - tolerancia\nprint(resultado)",
+    next: Some("py-2839-watermark-monotono"), show_type_chips: false, micro_step: 2838,
+};
+pub const PY2839_WATERMARK_MONOTONO: CodingStep = CodingStep {
+    id: "py-2839-watermark-monotono", title: "watermarks · monotonicidad", objective: "Evitar que el watermark retroceda con eventos desordenados.",
+    prompt_md: "**watermarks · monotonicidad**\n\nEvitar que el watermark retroceda con eventos desordenados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# watermark = 5\n# resultado = []\n# for max_visto in [8, 7, 12]:\n#     watermark = max(watermark, max_visto - 2)\n#     resultado.append(watermark)\n# print(resultado)\n",
+    pytest: "def test_watermark_monotono(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [6, 6, 10]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [6, 6, 10].",
+    solution_example: "watermark = 5\nresultado = []\nfor max_visto in [8, 7, 12]:\n    watermark = max(watermark, max_visto - 2)\n    resultado.append(watermark)\nprint(resultado)",
+    next: Some("py-2840-watermark-clasificar"), show_type_chips: false, micro_step: 2839,
+};
+pub const PY2840_WATERMARK_CLASIFICAR: CodingStep = CodingStep {
+    id: "py-2840-watermark-clasificar", title: "watermarks · clasificar", objective: "Clasificar un evento respecto del watermark actual.",
+    prompt_md: "**watermarks · clasificar**\n\nClasificar un evento respecto del watermark actual.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# watermark = 10\n# event_time = 8\n# resultado = 'tardio' if event_time < watermark else 'a_tiempo'\n# print(resultado)\n",
+    pytest: "def test_watermark_clasificar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'tardio'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'tardio'.",
+    solution_example: "watermark = 10\nevent_time = 8\nresultado = 'tardio' if event_time < watermark else 'a_tiempo'\nprint(resultado)",
+    next: Some("py-2841-watermark-cerrar"), show_type_chips: false, micro_step: 2840,
+};
+pub const PY2841_WATERMARK_CERRAR: CodingStep = CodingStep {
+    id: "py-2841-watermark-cerrar", title: "watermarks · cerrar ventana", objective: "Cerrar ventanas cuyo final no supera el watermark.",
+    prompt_md: "**watermarks · cerrar ventana**\n\nCerrar ventanas cuyo final no supera el watermark.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ventanas = [(0, 5), (5, 10), (10, 15)]\n# watermark = 10\n# resultado = [ventana for ventana in ventanas if ventana[1] <= watermark]\n# print(resultado)\n",
+    pytest: "def test_watermark_cerrar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(0, 5), (5, 10)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(0, 5), (5, 10)].",
+    solution_example: "ventanas = [(0, 5), (5, 10), (10, 15)]\nwatermark = 10\nresultado = [ventana for ventana in ventanas if ventana[1] <= watermark]\nprint(resultado)",
+    next: Some("py-2842-watermark-suite"), show_type_chips: false, micro_step: 2841,
+};
+pub const PY2842_WATERMARK_SUITE: CodingStep = CodingStep {
+    id: "py-2842-watermark-suite", title: "watermarks · suite", objective: "Avanzar watermark y emitir cierres deterministas.",
+    prompt_md: "**watermarks · suite**\n\nAvanzar watermark y emitir cierres deterministas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [3, 9, 6, 14]\n# tolerancia, max_visto, cerradas = 2, None, []\n# for marca in eventos:\n#     max_visto = marca if max_visto is None else max(max_visto, marca)\n#     watermark = max_visto - tolerancia\n#     cerradas = [fin for fin in [5, 10, 15] if fin <= watermark]\n# resultado = {'watermark': watermark, 'cerradas': cerradas}\n# print(resultado)\n",
+    pytest: "def test_watermark_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'watermark': 12, 'cerradas': [5, 10]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'watermark': 12, 'cerradas': [5, 10]}.",
+    solution_example: "eventos = [3, 9, 6, 14]\ntolerancia, max_visto, cerradas = 2, None, []\nfor marca in eventos:\n    max_visto = marca if max_visto is None else max(max_visto, marca)\n    watermark = max_visto - tolerancia\n    cerradas = [fin for fin in [5, 10, 15] if fin <= watermark]\nresultado = {'watermark': watermark, 'cerradas': cerradas}\nprint(resultado)",
+    next: Some("py-2843-tardios-separar"), show_type_chips: false, micro_step: 2842,
+};
+pub const PY2843_TARDIOS_SEPARAR: CodingStep = CodingStep {
+    id: "py-2843-tardios-separar", title: "eventos tardíos · separar", objective: "Separar eventos según el watermark.",
+    prompt_md: "**eventos tardíos · separar**\n\nSeparar eventos según el watermark.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(4, 'a'), (11, 'b'), (8, 'c')]\n# watermark = 9\n# resultado = ([e for e in eventos if e[0] >= watermark], [e for e in eventos if e[0] < watermark])\n# print(resultado)\n",
+    pytest: "def test_tardios_separar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ([(11, 'b')], [(4, 'a'), (8, 'c')])\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ([(11, 'b')], [(4, 'a'), (8, 'c')]).",
+    solution_example: "eventos = [(4, 'a'), (11, 'b'), (8, 'c')]\nwatermark = 9\nresultado = ([e for e in eventos if e[0] >= watermark], [e for e in eventos if e[0] < watermark])\nprint(resultado)",
+    next: Some("py-2844-tardios-gracia"), show_type_chips: false, micro_step: 2843,
+};
+pub const PY2844_TARDIOS_GRACIA: CodingStep = CodingStep {
+    id: "py-2844-tardios-gracia", title: "eventos tardíos · gracia", objective: "Aceptar eventos dentro de una gracia explícita.",
+    prompt_md: "**eventos tardíos · gracia**\n\nAceptar eventos dentro de una gracia explícita.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# watermark, gracia = 10, 3\n# eventos = [6, 7, 9, 12]\n# resultado = [(m, 'aceptado' if m >= watermark - gracia else 'descartado') for m in eventos]\n# print(resultado)\n",
+    pytest: "def test_tardios_gracia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(6, 'descartado'), (7, 'aceptado'), (9, 'aceptado'), (12, 'aceptado')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(6, 'descartado'), (7, 'aceptado'), (9, 'aceptado'), (12, 'aceptado')].",
+    solution_example: "watermark, gracia = 10, 3\neventos = [6, 7, 9, 12]\nresultado = [(m, 'aceptado' if m >= watermark - gracia else 'descartado') for m in eventos]\nprint(resultado)",
+    next: Some("py-2845-tardios-side-output"), show_type_chips: false, micro_step: 2844,
+};
+pub const PY2845_TARDIOS_SIDE_OUTPUT: CodingStep = CodingStep {
+    id: "py-2845-tardios-side-output", title: "eventos tardíos · salida lateral", objective: "Enviar descartes a una salida con razón.",
+    prompt_md: "**eventos tardíos · salida lateral**\n\nEnviar descartes a una salida con razón.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(3, 'x'), (9, 'y')]\n# watermark, gracia = 8, 2\n# resultado = [(evento, 'demasiado_tardio') for evento in eventos if evento[0] < watermark - gracia]\n# print(resultado)\n",
+    pytest: "def test_tardios_side_output(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [((3, 'x'), 'demasiado_tardio')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [((3, 'x'), 'demasiado_tardio')].",
+    solution_example: "eventos = [(3, 'x'), (9, 'y')]\nwatermark, gracia = 8, 2\nresultado = [(evento, 'demasiado_tardio') for evento in eventos if evento[0] < watermark - gracia]\nprint(resultado)",
+    next: Some("py-2846-tardios-corregir"), show_type_chips: false, micro_step: 2845,
+};
+pub const PY2846_TARDIOS_CORREGIR: CodingStep = CodingStep {
+    id: "py-2846-tardios-corregir", title: "eventos tardíos · corrección", objective: "Aplicar una corrección explícita a un agregado emitido.",
+    prompt_md: "**eventos tardíos · corrección**\n\nAplicar una corrección explícita a un agregado emitido.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# emitido = {'a': 5}\n# evento_tardio = ('a', 3)\n# corregido = emitido.copy(); corregido[evento_tardio[0]] += evento_tardio[1]\n# resultado = (emitido, corregido)\n# print(resultado)\n",
+    pytest: "def test_tardios_corregir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ({'a': 5}, {'a': 8})\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ({'a': 5}, {'a': 8}).",
+    solution_example: "emitido = {'a': 5}\nevento_tardio = ('a', 3)\ncorregido = emitido.copy(); corregido[evento_tardio[0]] += evento_tardio[1]\nresultado = (emitido, corregido)\nprint(resultado)",
+    next: Some("py-2847-tardios-metricas"), show_type_chips: false, micro_step: 2846,
+};
+pub const PY2847_TARDIOS_METRICAS: CodingStep = CodingStep {
+    id: "py-2847-tardios-metricas", title: "eventos tardíos · métricas", objective: "Contar aceptados, tardíos y descartados.",
+    prompt_md: "**eventos tardíos · métricas**\n\nContar aceptados, tardíos y descartados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# clases = ['aceptado', 'tardio', 'aceptado', 'descartado']\n# resultado = {clase: clases.count(clase) for clase in sorted(set(clases))}\n# print(resultado)\n",
+    pytest: "def test_tardios_metricas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'aceptado': 2, 'descartado': 1, 'tardio': 1}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'aceptado': 2, 'descartado': 1, 'tardio': 1}.",
+    solution_example: "clases = ['aceptado', 'tardio', 'aceptado', 'descartado']\nresultado = {clase: clases.count(clase) for clase in sorted(set(clases))}\nprint(resultado)",
+    next: Some("py-2848-tardios-suite"), show_type_chips: false, micro_step: 2847,
+};
+pub const PY2848_TARDIOS_SUITE: CodingStep = CodingStep {
+    id: "py-2848-tardios-suite", title: "eventos tardíos · suite", objective: "Clasificar con watermark y gracia preservando el orden.",
+    prompt_md: "**eventos tardíos · suite**\n\nClasificar con watermark y gracia preservando el orden.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(5, 'a'), (12, 'b'), (8, 'c'), (3, 'd')]\n# watermark, gracia = 10, 3\n# salidas = {'a_tiempo': [], 'tardio_aceptado': [], 'descartado': []}\n# for evento in eventos:\n#     marca = evento[0]\n#     clave = 'a_tiempo' if marca >= watermark else ('tardio_aceptado' if marca >= watermark - gracia else 'descartado')\n#     salidas[clave].append(evento)\n# resultado = salidas\n# print(resultado)\n",
+    pytest: "def test_tardios_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'a_tiempo': [(12, 'b')], 'tardio_aceptado': [(8, 'c')], 'descartado': [(5, 'a'), (3, 'd')]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'a_tiempo': [(12, 'b')], 'tardio_aceptado': [(8, 'c')], 'descartado': [(5, 'a'), (3, 'd')]}.",
+    solution_example: "eventos = [(5, 'a'), (12, 'b'), (8, 'c'), (3, 'd')]\nwatermark, gracia = 10, 3\nsalidas = {'a_tiempo': [], 'tardio_aceptado': [], 'descartado': []}\nfor evento in eventos:\n    marca = evento[0]\n    clave = 'a_tiempo' if marca >= watermark else ('tardio_aceptado' if marca >= watermark - gracia else 'descartado')\n    salidas[clave].append(evento)\nresultado = salidas\nprint(resultado)",
+    next: Some("py-2849-saga-plan"), show_type_chips: false, micro_step: 2848,
+};
+pub const PY2849_SAGA_PLAN: CodingStep = CodingStep {
+    id: "py-2849-saga-plan", title: "compensación · plan", objective: "Asociar cada acción con su compensación.",
+    prompt_md: "**compensación · plan**\n\nAsociar cada acción con su compensación.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# pasos = [('reservar', 'liberar'), ('cobrar', 'reembolsar')]\n# resultado = pasos\n# print(resultado)\n",
+    pytest: "def test_saga_plan(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('reservar', 'liberar'), ('cobrar', 'reembolsar')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('reservar', 'liberar'), ('cobrar', 'reembolsar')].",
+    solution_example: "pasos = [('reservar', 'liberar'), ('cobrar', 'reembolsar')]\nresultado = pasos\nprint(resultado)",
+    next: Some("py-2850-saga-reversa"), show_type_chips: false, micro_step: 2849,
+};
+pub const PY2850_SAGA_REVERSA: CodingStep = CodingStep {
+    id: "py-2850-saga-reversa", title: "compensación · orden inverso", objective: "Ejecutar compensaciones en orden inverso.",
+    prompt_md: "**compensación · orden inverso**\n\nEjecutar compensaciones en orden inverso.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# completados = [('reservar', 'liberar'), ('cobrar', 'reembolsar')]\n# resultado = [deshacer for _, deshacer in reversed(completados)]\n# print(resultado)\n",
+    pytest: "def test_saga_reversa(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['reembolsar', 'liberar']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['reembolsar', 'liberar'].",
+    solution_example: "completados = [('reservar', 'liberar'), ('cobrar', 'reembolsar')]\nresultado = [deshacer for _, deshacer in reversed(completados)]\nprint(resultado)",
+    next: Some("py-2851-saga-detener"), show_type_chips: false, micro_step: 2850,
+};
+pub const PY2851_SAGA_DETENER: CodingStep = CodingStep {
+    id: "py-2851-saga-detener", title: "compensación · detener", objective: "Detener el plan ante el primer fallo.",
+    prompt_md: "**compensación · detener**\n\nDetener el plan ante el primer fallo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultados = [('reservar', True), ('cobrar', False), ('notificar', True)]\n# completados = []\n# for nombre, ok in resultados:\n#     if not ok: break\n#     completados.append(nombre)\n# resultado = completados\n# print(resultado)\n",
+    pytest: "def test_saga_detener(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['reservar']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['reservar'].",
+    solution_example: "resultados = [('reservar', True), ('cobrar', False), ('notificar', True)]\ncompletados = []\nfor nombre, ok in resultados:\n    if not ok: break\n    completados.append(nombre)\nresultado = completados\nprint(resultado)",
+    next: Some("py-2852-saga-compensar"), show_type_chips: false, micro_step: 2851,
+};
+pub const PY2852_SAGA_COMPENSAR: CodingStep = CodingStep {
+    id: "py-2852-saga-compensar", title: "compensación · recuperar", objective: "Construir compensaciones solo para pasos completados.",
+    prompt_md: "**compensación · recuperar**\n\nConstruir compensaciones solo para pasos completados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# plan = [('reservar', 'liberar', True), ('cobrar', 'reembolsar', False)]\n# completados = []\n# for hacer, deshacer, ok in plan:\n#     if not ok: break\n#     completados.append((hacer, deshacer))\n# resultado = [deshacer for _, deshacer in reversed(completados)]\n# print(resultado)\n",
+    pytest: "def test_saga_compensar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['liberar']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['liberar'].",
+    solution_example: "plan = [('reservar', 'liberar', True), ('cobrar', 'reembolsar', False)]\ncompletados = []\nfor hacer, deshacer, ok in plan:\n    if not ok: break\n    completados.append((hacer, deshacer))\nresultado = [deshacer for _, deshacer in reversed(completados)]\nprint(resultado)",
+    next: Some("py-2853-saga-idempotente"), show_type_chips: false, micro_step: 2852,
+};
+pub const PY2853_SAGA_IDEMPOTENTE: CodingStep = CodingStep {
+    id: "py-2853-saga-idempotente", title: "compensación · idempotencia", objective: "Evitar compensar dos veces el mismo paso.",
+    prompt_md: "**compensación · idempotencia**\n\nEvitar compensar dos veces el mismo paso.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# solicitadas = ['reembolsar', 'liberar', 'reembolsar']\n# vistas, aplicadas = set(), []\n# for accion in solicitadas:\n#     if accion not in vistas: vistas.add(accion); aplicadas.append(accion)\n# resultado = aplicadas\n# print(resultado)\n",
+    pytest: "def test_saga_idempotente(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['reembolsar', 'liberar']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['reembolsar', 'liberar'].",
+    solution_example: "solicitadas = ['reembolsar', 'liberar', 'reembolsar']\nvistas, aplicadas = set(), []\nfor accion in solicitadas:\n    if accion not in vistas: vistas.add(accion); aplicadas.append(accion)\nresultado = aplicadas\nprint(resultado)",
+    next: Some("py-2854-saga-suite"), show_type_chips: false, micro_step: 2853,
+};
+pub const PY2854_SAGA_SUITE: CodingStep = CodingStep {
+    id: "py-2854-saga-suite", title: "compensación · suite", objective: "Modelar ejecución, fallo y recuperación completa como datos.",
+    prompt_md: "**compensación · suite**\n\nModelar ejecución, fallo y recuperación completa como datos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# plan = [('reservar', 'liberar', True), ('cobrar', 'reembolsar', True), ('enviar', 'cancelar_envio', False)]\n# completados, fallo = [], None\n# for hacer, deshacer, ok in plan:\n#     if not ok: fallo = hacer; break\n#     completados.append((hacer, deshacer))\n# resultado = {'fallo': fallo, 'completados': [h for h, _ in completados], 'compensaciones': [d for _, d in reversed(completados)]}\n# print(resultado)\n",
+    pytest: "def test_saga_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'fallo': 'enviar', 'completados': ['reservar', 'cobrar'], 'compensaciones': ['reembolsar', 'liberar']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'fallo': 'enviar', 'completados': ['reservar', 'cobrar'], 'compensaciones': ['reembolsar', 'liberar']}.",
+    solution_example: "plan = [('reservar', 'liberar', True), ('cobrar', 'reembolsar', True), ('enviar', 'cancelar_envio', False)]\ncompletados, fallo = [], None\nfor hacer, deshacer, ok in plan:\n    if not ok: fallo = hacer; break\n    completados.append((hacer, deshacer))\nresultado = {'fallo': fallo, 'completados': [h for h, _ in completados], 'compensaciones': [d for _, d in reversed(completados)]}\nprint(resultado)",
+    next: Some("py-2855-resiliente-validar"), show_type_chips: false, micro_step: 2854,
+};
+pub const PY2855_RESILIENTE_VALIDAR: CodingStep = CodingStep {
+    id: "py-2855-resiliente-validar", title: "capstone · validar", objective: "Validar eventos antes del pipeline resiliente.",
+    prompt_md: "**capstone · validar**\n\nValidar eventos antes del pipeline resiliente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [{'id': 'e1', 'tick': 3}, {'tick': 4}]\n# resultado = [evento for evento in eventos if 'id' in evento and isinstance(evento.get('tick'), int)]\n# print(resultado)\n",
+    pytest: "def test_resiliente_validar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'id': 'e1', 'tick': 3}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'id': 'e1', 'tick': 3}].",
+    solution_example: "eventos = [{'id': 'e1', 'tick': 3}, {'tick': 4}]\nresultado = [evento for evento in eventos if 'id' in evento and isinstance(evento.get('tick'), int)]\nprint(resultado)",
+    next: Some("py-2856-resiliente-aislar"), show_type_chips: false, micro_step: 2855,
+};
+pub const PY2856_RESILIENTE_AISLAR: CodingStep = CodingStep {
+    id: "py-2856-resiliente-aislar", title: "capstone · aislar", objective: "Aislar entradas inválidas sin detener el lote.",
+    prompt_md: "**capstone · aislar**\n\nAislar entradas inválidas sin detener el lote.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [('e1', 4), ('e2', -1), ('e3', 7)]\n# resultado = {'ok': [e for e in eventos if e[1] >= 0], 'cuarentena': [e for e in eventos if e[1] < 0]}\n# print(resultado)\n",
+    pytest: "def test_resiliente_aislar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'ok': [('e1', 4), ('e3', 7)], 'cuarentena': [('e2', -1)]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'ok': [('e1', 4), ('e3', 7)], 'cuarentena': [('e2', -1)]}.",
+    solution_example: "eventos = [('e1', 4), ('e2', -1), ('e3', 7)]\nresultado = {'ok': [e for e in eventos if e[1] >= 0], 'cuarentena': [e for e in eventos if e[1] < 0]}\nprint(resultado)",
+    next: Some("py-2857-resiliente-reintentar"), show_type_chips: false, micro_step: 2856,
+};
+pub const PY2857_RESILIENTE_REINTENTAR: CodingStep = CodingStep {
+    id: "py-2857-resiliente-reintentar", title: "capstone · reintentar", objective: "Aplicar un plan de respuestas acotado.",
+    prompt_md: "**capstone · reintentar**\n\nAplicar un plan de respuestas acotado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# respuestas = ['timeout', 'ok']\n# resultado = next((('ok', i) for i, estado in enumerate(respuestas, 1) if estado == 'ok'), ('agotado', len(respuestas)))\n# print(resultado)\n",
+    pytest: "def test_resiliente_reintentar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ('ok', 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ('ok', 2).",
+    solution_example: "respuestas = ['timeout', 'ok']\nresultado = next((('ok', i) for i, estado in enumerate(respuestas, 1) if estado == 'ok'), ('agotado', len(respuestas)))\nprint(resultado)",
+    next: Some("py-2858-resiliente-watermark"), show_type_chips: false, micro_step: 2857,
+};
+pub const PY2858_RESILIENTE_WATERMARK: CodingStep = CodingStep {
+    id: "py-2858-resiliente-watermark", title: "capstone · watermark", objective: "Clasificar eventos con tiempo lógico explícito.",
+    prompt_md: "**capstone · watermark**\n\nClasificar eventos con tiempo lógico explícito.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(4, 'a'), (9, 'b'), (6, 'c')]\n# watermark = max(m for m, _ in eventos) - 2\n# resultado = {'watermark': watermark, 'tardios': [e for e in eventos if e[0] < watermark]}\n# print(resultado)\n",
+    pytest: "def test_resiliente_watermark(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'watermark': 7, 'tardios': [(4, 'a'), (6, 'c')]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'watermark': 7, 'tardios': [(4, 'a'), (6, 'c')]}.",
+    solution_example: "eventos = [(4, 'a'), (9, 'b'), (6, 'c')]\nwatermark = max(m for m, _ in eventos) - 2\nresultado = {'watermark': watermark, 'tardios': [e for e in eventos if e[0] < watermark]}\nprint(resultado)",
+    next: Some("py-2859-resiliente-recuperar"), show_type_chips: false, micro_step: 2858,
+};
+pub const PY2859_RESILIENTE_RECUPERAR: CodingStep = CodingStep {
+    id: "py-2859-resiliente-recuperar", title: "capstone · recuperar", objective: "Crear compensaciones ante un paso terminal fallido.",
+    prompt_md: "**capstone · recuperar**\n\nCrear compensaciones ante un paso terminal fallido.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# pasos = [('validar', None, True), ('guardar', 'retirar', True), ('publicar', 'despublicar', False)]\n# hechos = []\n# for hacer, deshacer, ok in pasos:\n#     if not ok: break\n#     hechos.append((hacer, deshacer))\n# resultado = [d for _, d in reversed(hechos) if d]\n# print(resultado)\n",
+    pytest: "def test_resiliente_recuperar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['retirar']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['retirar'].",
+    solution_example: "pasos = [('validar', None, True), ('guardar', 'retirar', True), ('publicar', 'despublicar', False)]\nhechos = []\nfor hacer, deshacer, ok in pasos:\n    if not ok: break\n    hechos.append((hacer, deshacer))\nresultado = [d for _, d in reversed(hechos) if d]\nprint(resultado)",
+    next: Some("py-2860-ola31-suite"), show_type_chips: false, micro_step: 2859,
+};
+pub const PY2860_OLA31_SUITE: CodingStep = CodingStep {
+    id: "py-2860-ola31-suite", title: "ola 31 · suite", objective: "Cerrar la ola con validación, cuarentena, retry y recuperación observables.",
+    prompt_md: "**ola 31 · suite**\n\nCerrar la ola con validación, cuarentena, retry y recuperación observables.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# entradas = [{'id': 'e1', 'valor': 4}, {'id': 'e2', 'valor': -1}, {'valor': 8}]\n# aceptados, cuarentena = [], []\n# for fila in entradas:\n#     razon = 'sin_id' if 'id' not in fila else ('negativo' if fila['valor'] < 0 else None)\n#     (cuarentena if razon else aceptados).append((fila, razon) if razon else fila)\n# respuestas = ['timeout', 'ok']\n# intentos = next(i for i, estado in enumerate(respuestas, 1) if estado == 'ok')\n# resultado = {'aceptados': aceptados, 'cuarentena': cuarentena, 'retry': ('ok', intentos), 'estado': 'recuperado'}\n# print(resultado)\n",
+    pytest: "def test_ola31_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'aceptados': [{'id': 'e1', 'valor': 4}], 'cuarentena': [({'id': 'e2', 'valor': -1}, 'negativo'), ({'valor': 8}, 'sin_id')], 'retry': ('ok', 2), 'estado': 'recuperado'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'aceptados': [{'id': 'e1', 'valor': 4}], 'cuarentena': [({'id': 'e2', 'valor': -1}, 'negativo'), ({'valor': 8}, 'sin_id')], 'retry': ('ok', 2), 'estado': 'recuperado'}.",
+    solution_example: "entradas = [{'id': 'e1', 'valor': 4}, {'id': 'e2', 'valor': -1}, {'valor': 8}]\naceptados, cuarentena = [], []\nfor fila in entradas:\n    razon = 'sin_id' if 'id' not in fila else ('negativo' if fila['valor'] < 0 else None)\n    (cuarentena if razon else aceptados).append((fila, razon) if razon else fila)\nrespuestas = ['timeout', 'ok']\nintentos = next(i for i, estado in enumerate(respuestas, 1) if estado == 'ok')\nresultado = {'aceptados': aceptados, 'cuarentena': cuarentena, 'retry': ('ok', intentos), 'estado': 'recuperado'}\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 2860,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -63851,6 +64391,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY2798_CAP_CHECKPOINT,
     &PY2799_CAP_TOPK,
     &PY2800_OLA30_SUITE,
+    &PY2801_VALIDAR_REQUERIDOS,
+    &PY2802_VALIDAR_TIPOS,
+    &PY2803_VALIDAR_RANGO,
+    &PY2804_VALIDAR_NORMALIZAR,
+    &PY2805_VALIDAR_REGLAS,
+    &PY2806_VALIDAR_SUITE,
+    &PY2807_RESULTADO_PARSEAR,
+    &PY2808_RESULTADO_MAPEAR,
+    &PY2809_RESULTADO_ENCADENAR,
+    &PY2810_ERRORES_ACUMULAR,
+    &PY2811_ERRORES_INDEXAR,
+    &PY2812_ERRORES_SUITE,
+    &PY2813_CUARENTENA_SEPARAR,
+    &PY2814_CUARENTENA_RAZON,
+    &PY2815_CUARENTENA_ORDEN,
+    &PY2816_CUARENTENA_REPROCESAR,
+    &PY2817_CUARENTENA_METRICAS,
+    &PY2818_CUARENTENA_SUITE,
+    &PY2819_RETRY_INTENTOS,
+    &PY2820_RETRY_BACKOFF,
+    &PY2821_RETRY_EXITO,
+    &PY2822_RETRY_AGOTADO,
+    &PY2823_RETRY_CODIGOS,
+    &PY2824_RETRY_SUITE,
+    &PY2825_CIRCUITO_FALLOS,
+    &PY2826_CIRCUITO_RECHAZAR,
+    &PY2827_CIRCUITO_HALFOPEN,
+    &PY2828_CIRCUITO_RECUPERAR,
+    &PY2829_CIRCUITO_REABRIR,
+    &PY2830_CIRCUITO_SUITE,
+    &PY2831_LIMITE_VENTANA,
+    &PY2832_LIMITE_PERMITIR,
+    &PY2833_BUCKET_CONSUMIR,
+    &PY2834_BUCKET_RELLENAR,
+    &PY2835_LIMITE_POR_CLAVE,
+    &PY2836_LIMITE_SUITE,
+    &PY2837_WATERMARK_MAXIMO,
+    &PY2838_WATERMARK_CALCULAR,
+    &PY2839_WATERMARK_MONOTONO,
+    &PY2840_WATERMARK_CLASIFICAR,
+    &PY2841_WATERMARK_CERRAR,
+    &PY2842_WATERMARK_SUITE,
+    &PY2843_TARDIOS_SEPARAR,
+    &PY2844_TARDIOS_GRACIA,
+    &PY2845_TARDIOS_SIDE_OUTPUT,
+    &PY2846_TARDIOS_CORREGIR,
+    &PY2847_TARDIOS_METRICAS,
+    &PY2848_TARDIOS_SUITE,
+    &PY2849_SAGA_PLAN,
+    &PY2850_SAGA_REVERSA,
+    &PY2851_SAGA_DETENER,
+    &PY2852_SAGA_COMPENSAR,
+    &PY2853_SAGA_IDEMPOTENTE,
+    &PY2854_SAGA_SUITE,
+    &PY2855_RESILIENTE_VALIDAR,
+    &PY2856_RESILIENTE_AISLAR,
+    &PY2857_RESILIENTE_REINTENTAR,
+    &PY2858_RESILIENTE_WATERMARK,
+    &PY2859_RESILIENTE_RECUPERAR,
+    &PY2860_OLA31_SUITE,
 
 ];
 
@@ -64018,14 +64618,14 @@ mod tests {
     #[test]
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
-        assert_eq!(CODING_STEPS.len(), 2800, "catalog must contain 2800 steps");
+        assert_eq!(CODING_STEPS.len(), 2860, "catalog must contain 2860 steps");
         for (index, step) in CODING_STEPS.iter().enumerate() {
             assert_eq!(
                 step.micro_step,
                 (index + 1) as i32,
                 "catalog must be contiguous at index {index}"
             );
-            assert!(step.micro_step >= 1 && step.micro_step <= 2800);
+            assert!(step.micro_step >= 1 && step.micro_step <= 2860);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -64034,8 +64634,8 @@ mod tests {
         }
         assert_eq!(
             seen,
-            (1..=2800).collect(),
-            "catalog must cover every micro-step in 1..=2800"
+            (1..=2860).collect(),
+            "catalog must cover every micro-step in 1..=2860"
         );
     }
 
@@ -67394,7 +67994,22 @@ mod tests {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next wave30 step");
                 assert_eq!(step.next, Some(next_step.id));
             } else {
-                assert_eq!(step.next, None, "step 2800 is the end of the rail");
+                assert_eq!(step.next, Some("py-2801-validar-requeridos"), "step 2800 chains to Wave 31");
+            }
+        }
+    }
+
+    #[test]
+    fn py2801_to_py2860_resilient_pipeline_chain() {
+        for n in 2801..=2860 {
+            let step = coding_step_by_micro_step(n).expect("wave31 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(step.id.starts_with(&format!("py-{n}-")));
+            if n < 2860 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next wave31 step");
+                assert_eq!(step.next, Some(next_step.id));
+            } else {
+                assert_eq!(step.next, None, "step 2860 is the end of the rail");
             }
         }
     }
