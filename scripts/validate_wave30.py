@@ -76,7 +76,9 @@ def main():
 
     source = CURRICULUM.read_text(encoding="utf-8")
     catalog = [int(value) for value in re.findall(r"micro_step:\s*(\d+)", source)]
-    assert catalog in (list(range(1, 2801)), list(range(1, 2861))), "catalog must end at 2800 or the next cumulative Wave 31 ceiling"
+    assert catalog in (
+        list(range(1, 2801)), list(range(1, 2861)), list(range(1, 2921))
+    ), "catalog must end at a verified cumulative ceiling from Wave 30 through Wave 32"
     for step in steps:
         constant = f'PY{step["num"]}_{step["slug"].upper().replace("-", "_")}'
         assert source.count(f"pub const {constant}:") == 1
@@ -87,7 +89,7 @@ def main():
         expected_e2e = 2800
     else:
         assert 'next: Some("py-2801-validar-requeridos"), show_type_chips: false, micro_step: 2800' in source
-        expected_e2e = 2860
+        expected_e2e = catalog[-1]
 
     concepts = CONCEPTS.read_text(encoding="utf-8")
     numbers = [int(value) for value in re.findall(r"^    \((\d+), &\[", concepts, re.MULTILINE)]
