@@ -23,6 +23,6 @@
 ## 4. Entrega secuencial
 
 - [x] 4.1 Auditar el diff y verificar que no contiene micro-steps mayores a 2920 ni cambios fuera del alcance
-- [ ] 4.2 Crear commit convencional, publicar la rama y abrir un único PR con evidencia local y SHA explícito
+- [x] 4.2 Crear commit convencional, publicar la rama y abrir un único PR con evidencia local y SHA explícito
 - [ ] 4.3 Verificar CI, Docker, E2E 6/6 y smoke del head exacto; corregir cualquier fallo en la misma rama
 - [ ] 4.4 Hacer squash merge autorizado solo con todos los checks efectivos verdes y verificar CI, Docker, E2E y Deploy post-merge por el merge SHA exacto
