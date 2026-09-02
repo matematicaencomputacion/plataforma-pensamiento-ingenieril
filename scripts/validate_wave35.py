@@ -79,13 +79,18 @@ def main():
 
     source = CURRICULUM.read_text(encoding="utf-8")
     catalog = [int(value) for value in re.findall(r"micro_step:\s*(\d+)", source)]
-    assert catalog == list(range(1, 3101)), "catalog must be exact and ordered 1..=3100"
+    assert catalog in (
+        list(range(1, 3101)), list(range(1, 3161)),
+    ), "catalog must end at the verified Wave 35 or Wave 36 ceiling"
     for step in steps:
         constant = f'PY{step["num"]}_{step["slug"].upper().replace("-", "_")}'
         assert source.count(f"pub const {constant}:") == 1
         assert source.count(f"    &{constant},") == 1
     assert 'next: Some("py-3041-telemetria-normalizar"), show_type_chips: false, micro_step: 3040' in source
-    assert re.search(r'next: None, show_type_chips: false, micro_step: 3100,', source)
+    if catalog[-1] == 3100:
+        assert re.search(r'next: None, show_type_chips: false, micro_step: 3100,', source)
+    else:
+        assert 'next: Some("py-3101-release-manifiesto"), show_type_chips: false, micro_step: 3100' in source
 
     concepts = CONCEPTS.read_text(encoding="utf-8")
     numbers = [int(value) for value in re.findall(r"^    \((\d+), &\[", concepts, re.MULTILINE)]
@@ -93,8 +98,8 @@ def main():
     assert active[-60:] == list(range(3041, 3101))
     assert active == sorted(set(active))
     for path in E2E:
-        assert path.read_text(encoding="utf-8").count("toHaveCount(3100)") == 1
-    print(f"Wave 35 contract OK: 60 solutions passed; 10x6 families; {operational_count} operational-resilience exercises; catalog exact 1..=3100")
+        assert path.read_text(encoding="utf-8").count(f"toHaveCount({catalog[-1]})") == 1
+    print(f"Wave 35 cumulative contract OK: 60 solutions passed; 10x6 families; {operational_count} operational-resilience exercises; catalog ends at {catalog[-1]}")
 
 
 if __name__ == "__main__":

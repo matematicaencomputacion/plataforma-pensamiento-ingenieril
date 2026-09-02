@@ -1,4 +1,4 @@
-"""Validate Wave 32 generation, execution, integration, safety, and originality."""
+"""Validate Wave 36 generation, execution, integration, safety, and originality."""
 
 from contextlib import redirect_stdout
 from io import StringIO
@@ -7,13 +7,8 @@ import os
 import re
 import tempfile
 
-import gen_wave26
-import gen_wave27
-import gen_wave28
-import gen_wave29
-import gen_wave30
-import gen_wave31
-import gen_wave32
+import gen_wave26, gen_wave27, gen_wave28, gen_wave29, gen_wave30
+import gen_wave31, gen_wave32, gen_wave33, gen_wave34, gen_wave35, gen_wave36
 
 ROOT = Path(__file__).resolve().parents[1]
 CURRICULUM = ROOT / "web/src/curriculum.rs"
@@ -54,58 +49,56 @@ def execute_test(step):
 
 
 def main():
-    steps = gen_wave32.build_raw(gen_wave32.RAW)
-    assert [step["num"] for step in steps] == list(range(2861, 2921))
+    steps = gen_wave36.build_raw()
+    assert [step["num"] for step in steps] == list(range(3101, 3161))
     assert len({step["slug"] for step in steps}) == 60
     families = {name: sum(step["family"] == name for step in steps) for name in {s["family"] for s in steps}}
     assert len(families) == 10 and set(families.values()) == {6}, families
     old = (
-        gen_wave26.build_raw(gen_wave26.RAW)
-        + gen_wave27.build_steps()
-        + gen_wave28.build_steps()
-        + gen_wave29.build_raw(gen_wave29.RAW)
-        + gen_wave30.build_raw(gen_wave30.RAW)
-        + gen_wave31.build_raw(gen_wave31.RAW)
+        gen_wave26.build_raw(gen_wave26.RAW) + gen_wave27.build_steps()
+        + gen_wave28.build_steps() + gen_wave29.build_raw(gen_wave29.RAW)
+        + gen_wave30.build_raw(gen_wave30.RAW) + gen_wave31.build_raw(gen_wave31.RAW)
+        + gen_wave32.build_raw(gen_wave32.RAW) + gen_wave33.build_raw(gen_wave33.RAW)
+        + gen_wave34.build_raw(gen_wave34.RAW) + gen_wave35.build_raw(gen_wave35.RAW)
     )
     old_signatures = {(s["slug"], s["prompt"], s["solution"]) for s in old}
     assert not old_signatures.intersection(
         (s["slug"], s["prompt"], s["solution"]) for s in steps
-    ), "Wave 32 duplicates a complete prior pedagogical signature"
-    aggregate_count = 0
+    ), "Wave 36 duplicates a complete prior pedagogical signature"
+    delivery_count = 0
+    markers = (
+        "version", "release", "revision", "artefactos", "compatible", "soporte",
+        "cohorte", "porcentaje", "canary", "migracion", "nuevo", "gates",
+        "requeridos", "restaurar", "previo", "ambientes", "promover",
+    )
     for step in steps:
         teaching = "\n".join((step["prompt"], step["solution"], step["pytest"]))
         assert not any(token in teaching for token in FORBIDDEN), f"unsafe token in {step['num']}"
         assert "..." not in teaching and "Objective for step" not in teaching, f"placeholder in {step['num']}"
         compile(step["solution"], f"solution-{step['num']}", "exec")
         execute_test(step)
-        if any(word in step["solution"] for word in ("shard", "parcial", "total", "ventana", "partes")):
-            aggregate_count += 1
-    assert aggregate_count >= 28, "insufficient distributed aggregation coverage"
+        if any(word in step["solution"] for word in markers):
+            delivery_count += 1
+    assert delivery_count >= 30, "insufficient safe-delivery coverage"
 
     source = CURRICULUM.read_text(encoding="utf-8")
     catalog = [int(value) for value in re.findall(r"micro_step:\s*(\d+)", source)]
-    assert catalog in (
-        list(range(1, 2921)), list(range(1, 2981)), list(range(1, 3041)),
-        list(range(1, 3101)), list(range(1, 3161)),
-    ), "catalog must end at a verified cumulative ceiling from Wave 32 through Wave 36"
+    assert catalog == list(range(1, 3161)), "catalog must be exact and ordered 1..=3160"
     for step in steps:
         constant = f'PY{step["num"]}_{step["slug"].upper().replace("-", "_")}'
         assert source.count(f"pub const {constant}:") == 1
         assert source.count(f"    &{constant},") == 1
-    assert 'next: Some("py-2861-particionar-paridad"), show_type_chips: false, micro_step: 2860' in source
-    if catalog[-1] == 2920:
-        assert re.search(r'next: None, show_type_chips: false, micro_step: 2920,', source)
-    else:
-        assert 'next: Some("py-2921-offset-siguiente"), show_type_chips: false, micro_step: 2920' in source
+    assert 'next: Some("py-3101-release-manifiesto"), show_type_chips: false, micro_step: 3100' in source
+    assert re.search(r'next: None, show_type_chips: false, micro_step: 3160,', source)
 
     concepts = CONCEPTS.read_text(encoding="utf-8")
     numbers = [int(value) for value in re.findall(r"^    \((\d+), &\[", concepts, re.MULTILINE)]
-    active = numbers[:numbers.index(2920) + 1]
-    assert active[-60:] == list(range(2861, 2921))
+    active = numbers[:numbers.index(3160) + 1]
+    assert active[-60:] == list(range(3101, 3161))
     assert active == sorted(set(active))
     for path in E2E:
-        assert path.read_text(encoding="utf-8").count(f"toHaveCount({catalog[-1]})") == 1
-    print(f"Wave 32 cumulative contract OK: 60 solutions passed; 10x6 families; {aggregate_count} distributed/aggregation exercises; catalog ends at {catalog[-1]}")
+        assert path.read_text(encoding="utf-8").count("toHaveCount(3160)") == 1
+    print(f"Wave 36 contract OK: 60 solutions passed; 10x6 families; {delivery_count} safe-delivery exercises; catalog exact 1..=3160")
 
 
 if __name__ == "__main__":
