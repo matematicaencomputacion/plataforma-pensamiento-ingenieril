@@ -79,8 +79,8 @@ def main():
     source = CURRICULUM.read_text(encoding="utf-8")
     catalog = [int(value) for value in re.findall(r"micro_step:\s*(\d+)", source)]
     assert catalog in (
-        list(range(1, 3041)), list(range(1, 3101))
-    ), "catalog must end at the verified Wave 34 or Wave 35 ceiling"
+        list(range(1, 3041)), list(range(1, 3101)), list(range(1, 3161))
+    ), "catalog must end at a verified ceiling from Wave 34 through Wave 36"
     for step in steps:
         constant = f'PY{step["num"]}_{step["slug"].upper().replace("-", "_")}'
         assert source.count(f"pub const {constant}:") == 1

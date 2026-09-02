@@ -63748,7 +63748,547 @@ pub const PY3100_OLA35_SUITE: CodingStep = CodingStep {
     pytest: "def test_ola35_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'metricas': {'error_bp': 5000, 'lentas': 2}, 'presupuesto': -1, 'incumplidos': ['errores', 'latencia'], 'accion': 'mitigar'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "El resultado esperado es {'metricas': {'error_bp': 5000, 'lentas': 2}, 'presupuesto': -1, 'incumplidos': ['errores', 'latencia'], 'accion': 'mitigar'}.",
     solution_example: "muestras = [{'ok': True, 'latencia': 80}, {'ok': False, 'latencia': 150}, {'ok': True, 'latencia': 110}, {'ok': False, 'latencia': 140}]\ntotal = len(muestras); errores = sum(not m['ok'] for m in muestras); error_bp = errores * 10000 // total; lentas = sum(m['latencia'] > 120 for m in muestras)\npresupuesto = 1; restante = presupuesto - errores; incumplidos = [n for n, fallo in [('errores', error_bp > 1000), ('latencia', lentas > 1)] if fallo]\nresultado = {'metricas': {'error_bp': error_bp, 'lentas': lentas}, 'presupuesto': restante, 'incumplidos': incumplidos, 'accion': 'mitigar' if incumplidos else 'observar'}\nprint(resultado)",
-    next: None, show_type_chips: false, micro_step: 3100,
+    next: Some("py-3101-release-manifiesto"), show_type_chips: false, micro_step: 3100,
+};
+pub const PY3101_RELEASE_MANIFIESTO: CodingStep = CodingStep {
+    id: "py-3101-release-manifiesto", title: "release · manifiesto", objective: "Construir un manifiesto de entrega.",
+    prompt_md: "**release · manifiesto**\n\nConstruir un manifiesto de entrega.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = {'version': '2.1.0', 'artefactos': ['api', 'web']}\n# print(resultado)\n",
+    pytest: "def test_release_manifiesto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'version': '2.1.0', 'artefactos': ['api', 'web']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'version': '2.1.0', 'artefactos': ['api', 'web']}.",
+    solution_example: "resultado = {'version': '2.1.0', 'artefactos': ['api', 'web']}\nprint(resultado)",
+    next: Some("py-3102-release-ordenar"), show_type_chips: false, micro_step: 3101,
+};
+pub const PY3102_RELEASE_ORDENAR: CodingStep = CodingStep {
+    id: "py-3102-release-ordenar", title: "release · ordenar", objective: "Ordenar artefactos reproduciblemente.",
+    prompt_md: "**release · ordenar**\n\nOrdenar artefactos reproduciblemente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# artefactos = ['web', 'api', 'worker']\n# resultado = sorted(artefactos)\n# print(resultado)\n",
+    pytest: "def test_release_ordenar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['api', 'web', 'worker']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['api', 'web', 'worker'].",
+    solution_example: "artefactos = ['web', 'api', 'worker']\nresultado = sorted(artefactos)\nprint(resultado)",
+    next: Some("py-3103-release-requeridos"), show_type_chips: false, micro_step: 3102,
+};
+pub const PY3103_RELEASE_REQUERIDOS: CodingStep = CodingStep {
+    id: "py-3103-release-requeridos", title: "release · requeridos", objective: "Validar campos obligatorios.",
+    prompt_md: "**release · requeridos**\n\nValidar campos obligatorios.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# manifiesto = {'version': '2.1.0', 'revision': 'abc'}\n# resultado = {'version', 'revision'} <= manifiesto.keys()\n# print(resultado)\n",
+    pytest: "def test_release_requeridos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "manifiesto = {'version': '2.1.0', 'revision': 'abc'}\nresultado = {'version', 'revision'} <= manifiesto.keys()\nprint(resultado)",
+    next: Some("py-3104-release-diferencia"), show_type_chips: false, micro_step: 3103,
+};
+pub const PY3104_RELEASE_DIFERENCIA: CodingStep = CodingStep {
+    id: "py-3104-release-diferencia", title: "release · diferencia", objective: "Detectar artefactos cambiados.",
+    prompt_md: "**release · diferencia**\n\nDetectar artefactos cambiados.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# anterior = {'api': 'a1', 'web': 'w1'}; nuevo = {'api': 'a2', 'web': 'w1'}\n# resultado = sorted(k for k in nuevo if nuevo[k] != anterior.get(k))\n# print(resultado)\n",
+    pytest: "def test_release_diferencia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['api']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['api'].",
+    solution_example: "anterior = {'api': 'a1', 'web': 'w1'}; nuevo = {'api': 'a2', 'web': 'w1'}\nresultado = sorted(k for k in nuevo if nuevo[k] != anterior.get(k))\nprint(resultado)",
+    next: Some("py-3105-release-aprobaciones"), show_type_chips: false, micro_step: 3104,
+};
+pub const PY3105_RELEASE_APROBACIONES: CodingStep = CodingStep {
+    id: "py-3105-release-aprobaciones", title: "release · aprobaciones", objective: "Comprobar aprobaciones requeridas.",
+    prompt_md: "**release · aprobaciones**\n\nComprobar aprobaciones requeridas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# requeridas = {'qa', 'producto'}; recibidas = {'producto', 'qa', 'ops'}\n# resultado = requeridas <= recibidas\n# print(resultado)\n",
+    pytest: "def test_release_aprobaciones(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "requeridas = {'qa', 'producto'}; recibidas = {'producto', 'qa', 'ops'}\nresultado = requeridas <= recibidas\nprint(resultado)",
+    next: Some("py-3106-release-suite"), show_type_chips: false, micro_step: 3105,
+};
+pub const PY3106_RELEASE_SUITE: CodingStep = CodingStep {
+    id: "py-3106-release-suite", title: "release · suite", objective: "Validar un contrato completo de entrega.",
+    prompt_md: "**release · suite**\n\nValidar un contrato completo de entrega.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# m = {'version': '3.0.0', 'revision': 'c7', 'artefactos': ['web', 'api'], 'aprobaciones': ['qa', 'producto']}\n# resultado = {'valido': {'version', 'revision', 'artefactos'} <= m.keys(), 'artefactos': sorted(m['artefactos']), 'aprobado': {'qa', 'producto'} <= set(m['aprobaciones'])}\n# print(resultado)\n",
+    pytest: "def test_release_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'valido': True, 'artefactos': ['api', 'web'], 'aprobado': True}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'valido': True, 'artefactos': ['api', 'web'], 'aprobado': True}.",
+    solution_example: "m = {'version': '3.0.0', 'revision': 'c7', 'artefactos': ['web', 'api'], 'aprobaciones': ['qa', 'producto']}\nresultado = {'valido': {'version', 'revision', 'artefactos'} <= m.keys(), 'artefactos': sorted(m['artefactos']), 'aprobado': {'qa', 'producto'} <= set(m['aprobaciones'])}\nprint(resultado)",
+    next: Some("py-3107-version-parsear"), show_type_chips: false, micro_step: 3106,
+};
+pub const PY3107_VERSION_PARSEAR: CodingStep = CodingStep {
+    id: "py-3107-version-parsear", title: "versión · parsear", objective: "Convertir una versión en componentes.",
+    prompt_md: "**versión · parsear**\n\nConvertir una versión en componentes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = tuple(map(int, '2.4.1'.split('.')))\n# print(resultado)\n",
+    pytest: "def test_version_parsear(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 4, 1)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (2, 4, 1).",
+    solution_example: "resultado = tuple(map(int, '2.4.1'.split('.')))\nprint(resultado)",
+    next: Some("py-3108-version-comparar"), show_type_chips: false, micro_step: 3107,
+};
+pub const PY3108_VERSION_COMPARAR: CodingStep = CodingStep {
+    id: "py-3108-version-comparar", title: "versión · comparar", objective: "Comparar versiones por componentes.",
+    prompt_md: "**versión · comparar**\n\nComparar versiones por componentes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# actual = (2, 3, 9); candidata = (2, 4, 0)\n# resultado = candidata > actual\n# print(resultado)\n",
+    pytest: "def test_version_comparar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "actual = (2, 3, 9); candidata = (2, 4, 0)\nresultado = candidata > actual\nprint(resultado)",
+    next: Some("py-3109-version-mayor"), show_type_chips: false, micro_step: 3108,
+};
+pub const PY3109_VERSION_MAYOR: CodingStep = CodingStep {
+    id: "py-3109-version-mayor", title: "versión · mayor", objective: "Clasificar un cambio mayor.",
+    prompt_md: "**versión · mayor**\n\nClasificar un cambio mayor.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# antes = (2, 8, 1); despues = (3, 0, 0)\n# resultado = despues[0] > antes[0]\n# print(resultado)\n",
+    pytest: "def test_version_mayor(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "antes = (2, 8, 1); despues = (3, 0, 0)\nresultado = despues[0] > antes[0]\nprint(resultado)",
+    next: Some("py-3110-version-menor"), show_type_chips: false, micro_step: 3109,
+};
+pub const PY3110_VERSION_MENOR: CodingStep = CodingStep {
+    id: "py-3110-version-menor", title: "versión · menor", objective: "Calcular la siguiente versión menor.",
+    prompt_md: "**versión · menor**\n\nCalcular la siguiente versión menor.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# mayor, menor, parche = (2, 4, 7)\n# resultado = (mayor, menor + 1, 0)\n# print(resultado)\n",
+    pytest: "def test_version_menor(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (2, 5, 0)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (2, 5, 0).",
+    solution_example: "mayor, menor, parche = (2, 4, 7)\nresultado = (mayor, menor + 1, 0)\nprint(resultado)",
+    next: Some("py-3111-version-seleccionar"), show_type_chips: false, micro_step: 3110,
+};
+pub const PY3111_VERSION_SELECCIONAR: CodingStep = CodingStep {
+    id: "py-3111-version-seleccionar", title: "versión · seleccionar", objective: "Elegir la versión máxima compatible.",
+    prompt_md: "**versión · seleccionar**\n\nElegir la versión máxima compatible.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# versiones = [(1, 9, 0), (2, 0, 0), (1, 10, 2)]; mayor = 1\n# resultado = max(v for v in versiones if v[0] == mayor)\n# print(resultado)\n",
+    pytest: "def test_version_seleccionar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (1, 10, 2)\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (1, 10, 2).",
+    solution_example: "versiones = [(1, 9, 0), (2, 0, 0), (1, 10, 2)]; mayor = 1\nresultado = max(v for v in versiones if v[0] == mayor)\nprint(resultado)",
+    next: Some("py-3112-version-suite"), show_type_chips: false, micro_step: 3111,
+};
+pub const PY3112_VERSION_SUITE: CodingStep = CodingStep {
+    id: "py-3112-version-suite", title: "versión · suite", objective: "Ordenar y clasificar una evolución semántica.",
+    prompt_md: "**versión · suite**\n\nOrdenar y clasificar una evolución semántica.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# textos = ['2.1.0', '1.9.4', '2.0.3']; versiones = [tuple(map(int, x.split('.'))) for x in textos]\n# orden = sorted(versiones); anterior, nueva = orden[-2:]\n# resultado = {'orden': orden, 'tipo': 'menor' if nueva[0] == anterior[0] and nueva[1] > anterior[1] else 'otro'}\n# print(resultado)\n",
+    pytest: "def test_version_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'orden': [(1, 9, 4), (2, 0, 3), (2, 1, 0)], 'tipo': 'menor'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'orden': [(1, 9, 4), (2, 0, 3), (2, 1, 0)], 'tipo': 'menor'}.",
+    solution_example: "textos = ['2.1.0', '1.9.4', '2.0.3']; versiones = [tuple(map(int, x.split('.'))) for x in textos]\norden = sorted(versiones); anterior, nueva = orden[-2:]\nresultado = {'orden': orden, 'tipo': 'menor' if nueva[0] == anterior[0] and nueva[1] > anterior[1] else 'otro'}\nprint(resultado)",
+    next: Some("py-3113-compatibilidad-campos"), show_type_chips: false, micro_step: 3112,
+};
+pub const PY3113_COMPATIBILIDAD_CAMPOS: CodingStep = CodingStep {
+    id: "py-3113-compatibilidad-campos", title: "compatibilidad · campos", objective: "Aceptar campos adicionales.",
+    prompt_md: "**compatibilidad · campos**\n\nAceptar campos adicionales.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# requeridos = {'id', 'nombre'}; recibido = {'id': 1, 'nombre': 'Ada', 'extra': True}\n# resultado = requeridos <= recibido.keys()\n# print(resultado)\n",
+    pytest: "def test_compatibilidad_campos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "requeridos = {'id', 'nombre'}; recibido = {'id': 1, 'nombre': 'Ada', 'extra': True}\nresultado = requeridos <= recibido.keys()\nprint(resultado)",
+    next: Some("py-3114-compatibilidad-default"), show_type_chips: false, micro_step: 3113,
+};
+pub const PY3114_COMPATIBILIDAD_DEFAULT: CodingStep = CodingStep {
+    id: "py-3114-compatibilidad-default", title: "compatibilidad · default", objective: "Completar un campo opcional.",
+    prompt_md: "**compatibilidad · default**\n\nCompletar un campo opcional.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# entrada = {'id': 7}\n# resultado = {**entrada, 'modo': entrada.get('modo', 'estable')}\n# print(resultado)\n",
+    pytest: "def test_compatibilidad_default(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'id': 7, 'modo': 'estable'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'id': 7, 'modo': 'estable'}.",
+    solution_example: "entrada = {'id': 7}\nresultado = {**entrada, 'modo': entrada.get('modo', 'estable')}\nprint(resultado)",
+    next: Some("py-3115-compatibilidad-lector"), show_type_chips: false, micro_step: 3114,
+};
+pub const PY3115_COMPATIBILIDAD_LECTOR: CodingStep = CodingStep {
+    id: "py-3115-compatibilidad-lector", title: "compatibilidad · lector", objective: "Elegir lectores compatibles.",
+    prompt_md: "**compatibilidad · lector**\n\nElegir lectores compatibles.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lectores = {'v1': {1}, 'v2': {1, 2}, 'v3': {2, 3}}; formato = 2\n# resultado = sorted(k for k, formatos in lectores.items() if formato in formatos)\n# print(resultado)\n",
+    pytest: "def test_compatibilidad_lector(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['v2', 'v3']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['v2', 'v3'].",
+    solution_example: "lectores = {'v1': {1}, 'v2': {1, 2}, 'v3': {2, 3}}; formato = 2\nresultado = sorted(k for k, formatos in lectores.items() if formato in formatos)\nprint(resultado)",
+    next: Some("py-3116-compatibilidad-matriz"), show_type_chips: false, micro_step: 3115,
+};
+pub const PY3116_COMPATIBILIDAD_MATRIZ: CodingStep = CodingStep {
+    id: "py-3116-compatibilidad-matriz", title: "compatibilidad · matriz", objective: "Construir una matriz de compatibilidad.",
+    prompt_md: "**compatibilidad · matriz**\n\nConstruir una matriz de compatibilidad.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# productores = {'p1': 1, 'p2': 2}; consumidores = {'c1': {1, 2}, 'c2': {2}}\n# resultado = {p: sorted(c for c, soporta in consumidores.items() if v in soporta) for p, v in sorted(productores.items())}\n# print(resultado)\n",
+    pytest: "def test_compatibilidad_matriz(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'p1': ['c1'], 'p2': ['c1', 'c2']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'p1': ['c1'], 'p2': ['c1', 'c2']}.",
+    solution_example: "productores = {'p1': 1, 'p2': 2}; consumidores = {'c1': {1, 2}, 'c2': {2}}\nresultado = {p: sorted(c for c, soporta in consumidores.items() if v in soporta) for p, v in sorted(productores.items())}\nprint(resultado)",
+    next: Some("py-3117-compatibilidad-bloqueos"), show_type_chips: false, micro_step: 3116,
+};
+pub const PY3117_COMPATIBILIDAD_BLOQUEOS: CodingStep = CodingStep {
+    id: "py-3117-compatibilidad-bloqueos", title: "compatibilidad · bloqueos", objective: "Detectar consumidores incompatibles.",
+    prompt_md: "**compatibilidad · bloqueos**\n\nDetectar consumidores incompatibles.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# version = 3; soporte = {'a': {2, 3}, 'b': {1, 2}, 'c': {3}}\n# resultado = sorted(k for k, versiones in soporte.items() if version not in versiones)\n# print(resultado)\n",
+    pytest: "def test_compatibilidad_bloqueos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['b']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['b'].",
+    solution_example: "version = 3; soporte = {'a': {2, 3}, 'b': {1, 2}, 'c': {3}}\nresultado = sorted(k for k, versiones in soporte.items() if version not in versiones)\nprint(resultado)",
+    next: Some("py-3118-compatibilidad-suite"), show_type_chips: false, micro_step: 3117,
+};
+pub const PY3118_COMPATIBILIDAD_SUITE: CodingStep = CodingStep {
+    id: "py-3118-compatibilidad-suite", title: "compatibilidad · suite", objective: "Validar productores y consumidores antes de entregar.",
+    prompt_md: "**compatibilidad · suite**\n\nValidar productores y consumidores antes de entregar.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# formatos = {'api': 2, 'eventos': 3}; soporte = {'web': {1, 2}, 'worker': {2, 3}}\n# resultado = {origen: sorted(c for c, versiones in soporte.items() if version in versiones) for origen, version in sorted(formatos.items())}\n# print(resultado)\n",
+    pytest: "def test_compatibilidad_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'api': ['web', 'worker'], 'eventos': ['worker']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'api': ['web', 'worker'], 'eventos': ['worker']}.",
+    solution_example: "formatos = {'api': 2, 'eventos': 3}; soporte = {'web': {1, 2}, 'worker': {2, 3}}\nresultado = {origen: sorted(c for c, versiones in soporte.items() if version in versiones) for origen, version in sorted(formatos.items())}\nprint(resultado)",
+    next: Some("py-3119-flag-activa"), show_type_chips: false, micro_step: 3118,
+};
+pub const PY3119_FLAG_ACTIVA: CodingStep = CodingStep {
+    id: "py-3119-flag-activa", title: "flags · activa", objective: "Consultar una bandera explícita.",
+    prompt_md: "**flags · activa**\n\nConsultar una bandera explícita.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# flags = {'nuevo_editor': True}\n# resultado = flags.get('nuevo_editor', False)\n# print(resultado)\n",
+    pytest: "def test_flag_activa(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "flags = {'nuevo_editor': True}\nresultado = flags.get('nuevo_editor', False)\nprint(resultado)",
+    next: Some("py-3120-flag-cohorte"), show_type_chips: false, micro_step: 3119,
+};
+pub const PY3120_FLAG_COHORTE: CodingStep = CodingStep {
+    id: "py-3120-flag-cohorte", title: "flags · cohorte", objective: "Habilitar una cohorte permitida.",
+    prompt_md: "**flags · cohorte**\n\nHabilitar una cohorte permitida.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# permitidas = {'beta', 'staff'}; cohorte = 'beta'\n# resultado = cohorte in permitidas\n# print(resultado)\n",
+    pytest: "def test_flag_cohorte(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "permitidas = {'beta', 'staff'}; cohorte = 'beta'\nresultado = cohorte in permitidas\nprint(resultado)",
+    next: Some("py-3121-flag-porcentaje"), show_type_chips: false, micro_step: 3120,
+};
+pub const PY3121_FLAG_PORCENTAJE: CodingStep = CodingStep {
+    id: "py-3121-flag-porcentaje", title: "flags · porcentaje", objective: "Asignar exposición por bucket estable.",
+    prompt_md: "**flags · porcentaje**\n\nAsignar exposición por bucket estable.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# bucket, porcentaje = 17, 20\n# resultado = bucket < porcentaje\n# print(resultado)\n",
+    pytest: "def test_flag_porcentaje(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "bucket, porcentaje = 17, 20\nresultado = bucket < porcentaje\nprint(resultado)",
+    next: Some("py-3122-flag-prioridad"), show_type_chips: false, micro_step: 3121,
+};
+pub const PY3122_FLAG_PRIORIDAD: CodingStep = CodingStep {
+    id: "py-3122-flag-prioridad", title: "flags · prioridad", objective: "Resolver reglas por prioridad.",
+    prompt_md: "**flags · prioridad**\n\nResolver reglas por prioridad.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# reglas = [('global', False), ('beta', True)]; cohorte = 'beta'\n# resultado = next(valor for nombre, valor in reversed(reglas) if nombre in {'global', cohorte})\n# print(resultado)\n",
+    pytest: "def test_flag_prioridad(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "reglas = [('global', False), ('beta', True)]; cohorte = 'beta'\nresultado = next(valor for nombre, valor in reversed(reglas) if nombre in {'global', cohorte})\nprint(resultado)",
+    next: Some("py-3123-flag-resumen"), show_type_chips: false, micro_step: 3122,
+};
+pub const PY3123_FLAG_RESUMEN: CodingStep = CodingStep {
+    id: "py-3123-flag-resumen", title: "flags · resumen", objective: "Resumir exposición de usuarios.",
+    prompt_md: "**flags · resumen**\n\nResumir exposición de usuarios.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# usuarios = [('a', 5), ('b', 35), ('c', 19)]; porcentaje = 20\n# resultado = [u for u, bucket in usuarios if bucket < porcentaje]\n# print(resultado)\n",
+    pytest: "def test_flag_resumen(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'c'].",
+    solution_example: "usuarios = [('a', 5), ('b', 35), ('c', 19)]; porcentaje = 20\nresultado = [u for u, bucket in usuarios if bucket < porcentaje]\nprint(resultado)",
+    next: Some("py-3124-flag-suite"), show_type_chips: false, micro_step: 3123,
+};
+pub const PY3124_FLAG_SUITE: CodingStep = CodingStep {
+    id: "py-3124-flag-suite", title: "flags · suite", objective: "Combinar estado, cohorte y porcentaje.",
+    prompt_md: "**flags · suite**\n\nCombinar estado, cohorte y porcentaje.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# config = {'activa': True, 'cohortes': {'beta'}, 'porcentaje': 25}; usuarios = [('ana', 'beta', 80), ('leo', 'general', 10), ('sol', 'general', 40)]\n# resultado = [u for u, c, b in usuarios if config['activa'] and (c in config['cohortes'] or b < config['porcentaje'])]\n# print(resultado)\n",
+    pytest: "def test_flag_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['ana', 'leo']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['ana', 'leo'].",
+    solution_example: "config = {'activa': True, 'cohortes': {'beta'}, 'porcentaje': 25}; usuarios = [('ana', 'beta', 80), ('leo', 'general', 10), ('sol', 'general', 40)]\nresultado = [u for u, c, b in usuarios if config['activa'] and (c in config['cohortes'] or b < config['porcentaje'])]\nprint(resultado)",
+    next: Some("py-3125-canary-muestra"), show_type_chips: false, micro_step: 3124,
+};
+pub const PY3125_CANARY_MUESTRA: CodingStep = CodingStep {
+    id: "py-3125-canary-muestra", title: "canary · muestra", objective: "Separar muestras canary y estable.",
+    prompt_md: "**canary · muestra**\n\nSeparar muestras canary y estable.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# peticiones = [('a', 'canary'), ('b', 'estable'), ('c', 'canary')]\n# resultado = [x for x, grupo in peticiones if grupo == 'canary']\n# print(resultado)\n",
+    pytest: "def test_canary_muestra(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'c'].",
+    solution_example: "peticiones = [('a', 'canary'), ('b', 'estable'), ('c', 'canary')]\nresultado = [x for x, grupo in peticiones if grupo == 'canary']\nprint(resultado)",
+    next: Some("py-3126-canary-error"), show_type_chips: false, micro_step: 3125,
+};
+pub const PY3126_CANARY_ERROR: CodingStep = CodingStep {
+    id: "py-3126-canary-error", title: "canary · error", objective: "Calcular error canary en puntos base.",
+    prompt_md: "**canary · error**\n\nCalcular error canary en puntos base.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultados = [True, True, False, True]\n# resultado = sum(not ok for ok in resultados) * 10000 // len(resultados)\n# print(resultado)\n",
+    pytest: "def test_canary_error(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2500\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 2500.",
+    solution_example: "resultados = [True, True, False, True]\nresultado = sum(not ok for ok in resultados) * 10000 // len(resultados)\nprint(resultado)",
+    next: Some("py-3127-canary-comparar"), show_type_chips: false, micro_step: 3126,
+};
+pub const PY3127_CANARY_COMPARAR: CodingStep = CodingStep {
+    id: "py-3127-canary-comparar", title: "canary · comparar", objective: "Comparar canary con la base.",
+    prompt_md: "**canary · comparar**\n\nComparar canary con la base.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# error_canary, error_base, tolerancia = 120, 100, 30\n# resultado = error_canary <= error_base + tolerancia\n# print(resultado)\n",
+    pytest: "def test_canary_comparar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "error_canary, error_base, tolerancia = 120, 100, 30\nresultado = error_canary <= error_base + tolerancia\nprint(resultado)",
+    next: Some("py-3128-canary-fases"), show_type_chips: false, micro_step: 3127,
+};
+pub const PY3128_CANARY_FASES: CodingStep = CodingStep {
+    id: "py-3128-canary-fases", title: "canary · fases", objective: "Elegir la siguiente fase gradual.",
+    prompt_md: "**canary · fases**\n\nElegir la siguiente fase gradual.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fases = [5, 20, 50, 100]; actual = 20\n# resultado = fases[fases.index(actual) + 1]\n# print(resultado)\n",
+    pytest: "def test_canary_fases(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 50\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 50.",
+    solution_example: "fases = [5, 20, 50, 100]; actual = 20\nresultado = fases[fases.index(actual) + 1]\nprint(resultado)",
+    next: Some("py-3129-canary-detener"), show_type_chips: false, micro_step: 3128,
+};
+pub const PY3129_CANARY_DETENER: CodingStep = CodingStep {
+    id: "py-3129-canary-detener", title: "canary · detener", objective: "Detener ante una señal incumplida.",
+    prompt_md: "**canary · detener**\n\nDetener ante una señal incumplida.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# senales = {'errores': True, 'latencia': False}\n# resultado = any(senales.values())\n# print(resultado)\n",
+    pytest: "def test_canary_detener(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "senales = {'errores': True, 'latencia': False}\nresultado = any(senales.values())\nprint(resultado)",
+    next: Some("py-3130-canary-suite"), show_type_chips: false, micro_step: 3129,
+};
+pub const PY3130_CANARY_SUITE: CodingStep = CodingStep {
+    id: "py-3130-canary-suite", title: "canary · suite", objective: "Evaluar señales y decidir promoción.",
+    prompt_md: "**canary · suite**\n\nEvaluar señales y decidir promoción.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# canary = {'errores': 2, 'total': 100, 'latencia': 110}; limites = {'error_bp': 300, 'latencia': 120}\n# metricas = {'error_bp': canary['errores'] * 10000 // canary['total'], 'latencia': canary['latencia']}; fallos = sorted(k for k in metricas if metricas[k] > limites[k])\n# resultado = {'metricas': metricas, 'promover': not fallos, 'fallos': fallos}\n# print(resultado)\n",
+    pytest: "def test_canary_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'metricas': {'error_bp': 200, 'latencia': 110}, 'promover': True, 'fallos': []}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'metricas': {'error_bp': 200, 'latencia': 110}, 'promover': True, 'fallos': []}.",
+    solution_example: "canary = {'errores': 2, 'total': 100, 'latencia': 110}; limites = {'error_bp': 300, 'latencia': 120}\nmetricas = {'error_bp': canary['errores'] * 10000 // canary['total'], 'latencia': canary['latencia']}; fallos = sorted(k for k in metricas if metricas[k] > limites[k])\nresultado = {'metricas': metricas, 'promover': not fallos, 'fallos': fallos}\nprint(resultado)",
+    next: Some("py-3131-migracion-expandir"), show_type_chips: false, micro_step: 3130,
+};
+pub const PY3131_MIGRACION_EXPANDIR: CodingStep = CodingStep {
+    id: "py-3131-migracion-expandir", title: "migración · expandir", objective: "Agregar un campo compatible.",
+    prompt_md: "**migración · expandir**\n\nAgregar un campo compatible.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fila = {'nombre': 'Ada'}\n# resultado = {**fila, 'nombre_nuevo': fila['nombre']}\n# print(resultado)\n",
+    pytest: "def test_migracion_expandir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'nombre': 'Ada', 'nombre_nuevo': 'Ada'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'nombre': 'Ada', 'nombre_nuevo': 'Ada'}.",
+    solution_example: "fila = {'nombre': 'Ada'}\nresultado = {**fila, 'nombre_nuevo': fila['nombre']}\nprint(resultado)",
+    next: Some("py-3132-migracion-dual"), show_type_chips: false, micro_step: 3131,
+};
+pub const PY3132_MIGRACION_DUAL: CodingStep = CodingStep {
+    id: "py-3132-migracion-dual", title: "migración · dual", objective: "Leer campo nuevo con fallback.",
+    prompt_md: "**migración · dual**\n\nLeer campo nuevo con fallback.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fila = {'nombre_viejo': 'Lin'}\n# resultado = fila.get('nombre_nuevo', fila['nombre_viejo'])\n# print(resultado)\n",
+    pytest: "def test_migracion_dual(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'Lin'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'Lin'.",
+    solution_example: "fila = {'nombre_viejo': 'Lin'}\nresultado = fila.get('nombre_nuevo', fila['nombre_viejo'])\nprint(resultado)",
+    next: Some("py-3133-migracion-rellenar"), show_type_chips: false, micro_step: 3132,
+};
+pub const PY3133_MIGRACION_RELLENAR: CodingStep = CodingStep {
+    id: "py-3133-migracion-rellenar", title: "migración · rellenar", objective: "Rellenar filas preservando orden.",
+    prompt_md: "**migración · rellenar**\n\nRellenar filas preservando orden.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [{'id': 2, 'viejo': 'b'}, {'id': 1, 'viejo': 'a'}]\n# resultado = [{**f, 'nuevo': f['viejo']} for f in filas]\n# print(resultado)\n",
+    pytest: "def test_migracion_rellenar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [{'id': 2, 'viejo': 'b', 'nuevo': 'b'}, {'id': 1, 'viejo': 'a', 'nuevo': 'a'}]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [{'id': 2, 'viejo': 'b', 'nuevo': 'b'}, {'id': 1, 'viejo': 'a', 'nuevo': 'a'}].",
+    solution_example: "filas = [{'id': 2, 'viejo': 'b'}, {'id': 1, 'viejo': 'a'}]\nresultado = [{**f, 'nuevo': f['viejo']} for f in filas]\nprint(resultado)",
+    next: Some("py-3134-migracion-verificar"), show_type_chips: false, micro_step: 3133,
+};
+pub const PY3134_MIGRACION_VERIFICAR: CodingStep = CodingStep {
+    id: "py-3134-migracion-verificar", title: "migración · verificar", objective: "Verificar equivalencia de columnas.",
+    prompt_md: "**migración · verificar**\n\nVerificar equivalencia de columnas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [{'viejo': 'a', 'nuevo': 'a'}, {'viejo': 'b', 'nuevo': 'b'}]\n# resultado = all(f['viejo'] == f['nuevo'] for f in filas)\n# print(resultado)\n",
+    pytest: "def test_migracion_verificar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "filas = [{'viejo': 'a', 'nuevo': 'a'}, {'viejo': 'b', 'nuevo': 'b'}]\nresultado = all(f['viejo'] == f['nuevo'] for f in filas)\nprint(resultado)",
+    next: Some("py-3135-migracion-contraer"), show_type_chips: false, micro_step: 3134,
+};
+pub const PY3135_MIGRACION_CONTRAER: CodingStep = CodingStep {
+    id: "py-3135-migracion-contraer", title: "migración · contraer", objective: "Retirar el campo antiguo.",
+    prompt_md: "**migración · contraer**\n\nRetirar el campo antiguo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fila = {'id': 1, 'viejo': 'a', 'nuevo': 'a'}\n# resultado = {k: v for k, v in fila.items() if k != 'viejo'}\n# print(resultado)\n",
+    pytest: "def test_migracion_contraer(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'id': 1, 'nuevo': 'a'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'id': 1, 'nuevo': 'a'}.",
+    solution_example: "fila = {'id': 1, 'viejo': 'a', 'nuevo': 'a'}\nresultado = {k: v for k, v in fila.items() if k != 'viejo'}\nprint(resultado)",
+    next: Some("py-3136-migracion-suite"), show_type_chips: false, micro_step: 3135,
+};
+pub const PY3136_MIGRACION_SUITE: CodingStep = CodingStep {
+    id: "py-3136-migracion-suite", title: "migración · suite", objective: "Ejecutar expand, backfill, verificación y contract.",
+    prompt_md: "**migración · suite**\n\nEjecutar expand, backfill, verificación y contract.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# filas = [{'id': 1, 'viejo': 'a'}, {'id': 2, 'viejo': 'b'}]; expandidas = [{**f, 'nuevo': f['viejo']} for f in filas]\n# valida = all(f['viejo'] == f['nuevo'] for f in expandidas); finales = [{k: v for k, v in f.items() if k != 'viejo'} for f in expandidas]\n# resultado = {'valida': valida, 'filas': finales}\n# print(resultado)\n",
+    pytest: "def test_migracion_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'valida': True, 'filas': [{'id': 1, 'nuevo': 'a'}, {'id': 2, 'nuevo': 'b'}]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'valida': True, 'filas': [{'id': 1, 'nuevo': 'a'}, {'id': 2, 'nuevo': 'b'}]}.",
+    solution_example: "filas = [{'id': 1, 'viejo': 'a'}, {'id': 2, 'viejo': 'b'}]; expandidas = [{**f, 'nuevo': f['viejo']} for f in filas]\nvalida = all(f['viejo'] == f['nuevo'] for f in expandidas); finales = [{k: v for k, v in f.items() if k != 'viejo'} for f in expandidas]\nresultado = {'valida': valida, 'filas': finales}\nprint(resultado)",
+    next: Some("py-3137-gate-resultados"), show_type_chips: false, micro_step: 3136,
+};
+pub const PY3137_GATE_RESULTADOS: CodingStep = CodingStep {
+    id: "py-3137-gate-resultados", title: "verificación · resultados", objective: "Comprobar todos los gates.",
+    prompt_md: "**verificación · resultados**\n\nComprobar todos los gates.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# gates = {'unit': True, 'e2e': True, 'smoke': True}\n# resultado = all(gates.values())\n# print(resultado)\n",
+    pytest: "def test_gate_resultados(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "gates = {'unit': True, 'e2e': True, 'smoke': True}\nresultado = all(gates.values())\nprint(resultado)",
+    next: Some("py-3138-gate-fallidos"), show_type_chips: false, micro_step: 3137,
+};
+pub const PY3138_GATE_FALLIDOS: CodingStep = CodingStep {
+    id: "py-3138-gate-fallidos", title: "verificación · fallidos", objective: "Listar gates fallidos.",
+    prompt_md: "**verificación · fallidos**\n\nListar gates fallidos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# gates = {'unit': True, 'e2e': False, 'smoke': True}\n# resultado = sorted(k for k, ok in gates.items() if not ok)\n# print(resultado)\n",
+    pytest: "def test_gate_fallidos(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['e2e']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['e2e'].",
+    solution_example: "gates = {'unit': True, 'e2e': False, 'smoke': True}\nresultado = sorted(k for k, ok in gates.items() if not ok)\nprint(resultado)",
+    next: Some("py-3139-gate-orden"), show_type_chips: false, micro_step: 3138,
+};
+pub const PY3139_GATE_ORDEN: CodingStep = CodingStep {
+    id: "py-3139-gate-orden", title: "verificación · orden", objective: "Ordenar gates por dependencia.",
+    prompt_md: "**verificación · orden**\n\nOrdenar gates por dependencia.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# dependencias = {'unit': set(), 'build': {'unit'}, 'smoke': {'build'}}; hechos = set(); orden = []\n# while len(orden) < len(dependencias):\n#     listo = min(k for k, req in dependencias.items() if k not in hechos and req <= hechos); hechos.add(listo); orden.append(listo)\n# resultado = orden\n# print(resultado)\n",
+    pytest: "def test_gate_orden(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['unit', 'build', 'smoke']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['unit', 'build', 'smoke'].",
+    solution_example: "dependencias = {'unit': set(), 'build': {'unit'}, 'smoke': {'build'}}; hechos = set(); orden = []\nwhile len(orden) < len(dependencias):\n    listo = min(k for k, req in dependencias.items() if k not in hechos and req <= hechos); hechos.add(listo); orden.append(listo)\nresultado = orden\nprint(resultado)",
+    next: Some("py-3140-gate-evidencia"), show_type_chips: false, micro_step: 3139,
+};
+pub const PY3140_GATE_EVIDENCIA: CodingStep = CodingStep {
+    id: "py-3140-gate-evidencia", title: "verificación · evidencia", objective: "Asociar gates con revisiones.",
+    prompt_md: "**verificación · evidencia**\n\nAsociar gates con revisiones.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ejecuciones = [('unit', 'abc', True), ('e2e', 'abc', True), ('smoke', 'def', True)]; revision = 'abc'\n# resultado = sorted(nombre for nombre, sha, ok in ejecuciones if sha == revision and ok)\n# print(resultado)\n",
+    pytest: "def test_gate_evidencia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['e2e', 'unit']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['e2e', 'unit'].",
+    solution_example: "ejecuciones = [('unit', 'abc', True), ('e2e', 'abc', True), ('smoke', 'def', True)]; revision = 'abc'\nresultado = sorted(nombre for nombre, sha, ok in ejecuciones if sha == revision and ok)\nprint(resultado)",
+    next: Some("py-3141-gate-cobertura"), show_type_chips: false, micro_step: 3140,
+};
+pub const PY3141_GATE_COBERTURA: CodingStep = CodingStep {
+    id: "py-3141-gate-cobertura", title: "verificación · cobertura", objective: "Detectar evidencia ausente.",
+    prompt_md: "**verificación · cobertura**\n\nDetectar evidencia ausente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# requeridos = {'unit', 'e2e', 'smoke'}; presentes = {'unit', 'smoke'}\n# resultado = sorted(requeridos - presentes)\n# print(resultado)\n",
+    pytest: "def test_gate_cobertura(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['e2e']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['e2e'].",
+    solution_example: "requeridos = {'unit', 'e2e', 'smoke'}; presentes = {'unit', 'smoke'}\nresultado = sorted(requeridos - presentes)\nprint(resultado)",
+    next: Some("py-3142-gate-suite"), show_type_chips: false, micro_step: 3141,
+};
+pub const PY3142_GATE_SUITE: CodingStep = CodingStep {
+    id: "py-3142-gate-suite", title: "verificación · suite", objective: "Validar evidencia completa del mismo commit.",
+    prompt_md: "**verificación · suite**\n\nValidar evidencia completa del mismo commit.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# revision = 'r7'; runs = [('unit', 'r7', True), ('e2e', 'r7', True), ('smoke', 'r7', True), ('viejo', 'r6', True)]; requeridos = {'unit', 'e2e', 'smoke'}\n# pasados = {n for n, sha, ok in runs if sha == revision and ok}\n# resultado = {'completo': requeridos <= pasados, 'faltantes': sorted(requeridos - pasados)}\n# print(resultado)\n",
+    pytest: "def test_gate_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'completo': True, 'faltantes': []}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'completo': True, 'faltantes': []}.",
+    solution_example: "revision = 'r7'; runs = [('unit', 'r7', True), ('e2e', 'r7', True), ('smoke', 'r7', True), ('viejo', 'r6', True)]; requeridos = {'unit', 'e2e', 'smoke'}\npasados = {n for n, sha, ok in runs if sha == revision and ok}\nresultado = {'completo': requeridos <= pasados, 'faltantes': sorted(requeridos - pasados)}\nprint(resultado)",
+    next: Some("py-3143-rollback-version"), show_type_chips: false, micro_step: 3142,
+};
+pub const PY3143_ROLLBACK_VERSION: CodingStep = CodingStep {
+    id: "py-3143-rollback-version", title: "rollback · versión", objective: "Elegir la versión previa.",
+    prompt_md: "**rollback · versión**\n\nElegir la versión previa.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# historial = ['1.0.0', '1.1.0', '1.2.0']\n# resultado = historial[-2]\n# print(resultado)\n",
+    pytest: "def test_rollback_version(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == '1.1.0'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es '1.1.0'.",
+    solution_example: "historial = ['1.0.0', '1.1.0', '1.2.0']\nresultado = historial[-2]\nprint(resultado)",
+    next: Some("py-3144-rollback-cambios"), show_type_chips: false, micro_step: 3143,
+};
+pub const PY3144_ROLLBACK_CAMBIOS: CodingStep = CodingStep {
+    id: "py-3144-rollback-cambios", title: "rollback · cambios", objective: "Invertir cambios en orden reverso.",
+    prompt_md: "**rollback · cambios**\n\nInvertir cambios en orden reverso.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# cambios = [('poner', 'a', 1), ('poner', 'b', 2)]\n# inversas = [('borrar', clave) for _, clave, _ in reversed(cambios)]\n# resultado = inversas\n# print(resultado)\n",
+    pytest: "def test_rollback_cambios(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('borrar', 'b'), ('borrar', 'a')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('borrar', 'b'), ('borrar', 'a')].",
+    solution_example: "cambios = [('poner', 'a', 1), ('poner', 'b', 2)]\ninversas = [('borrar', clave) for _, clave, _ in reversed(cambios)]\nresultado = inversas\nprint(resultado)",
+    next: Some("py-3145-rollback-seguro"), show_type_chips: false, micro_step: 3144,
+};
+pub const PY3145_ROLLBACK_SEGURO: CodingStep = CodingStep {
+    id: "py-3145-rollback-seguro", title: "rollback · seguro", objective: "Comprobar compatibilidad de reversión.",
+    prompt_md: "**rollback · seguro**\n\nComprobar compatibilidad de reversión.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# lectores_previos = {1, 2}; formato_actual = 2\n# resultado = formato_actual in lectores_previos\n# print(resultado)\n",
+    pytest: "def test_rollback_seguro(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "lectores_previos = {1, 2}; formato_actual = 2\nresultado = formato_actual in lectores_previos\nprint(resultado)",
+    next: Some("py-3146-rollback-disparador"), show_type_chips: false, micro_step: 3145,
+};
+pub const PY3146_ROLLBACK_DISPARADOR: CodingStep = CodingStep {
+    id: "py-3146-rollback-disparador", title: "rollback · disparador", objective: "Activar rollback ante gates críticos.",
+    prompt_md: "**rollback · disparador**\n\nActivar rollback ante gates críticos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# fallos = {'latencia': False, 'errores': True}; criticos = {'errores'}\n# resultado = any(fallos.get(k, False) for k in criticos)\n# print(resultado)\n",
+    pytest: "def test_rollback_disparador(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "fallos = {'latencia': False, 'errores': True}; criticos = {'errores'}\nresultado = any(fallos.get(k, False) for k in criticos)\nprint(resultado)",
+    next: Some("py-3147-rollback-plan"), show_type_chips: false, micro_step: 3146,
+};
+pub const PY3147_ROLLBACK_PLAN: CodingStep = CodingStep {
+    id: "py-3147-rollback-plan", title: "rollback · plan", objective: "Construir un plan de reversión.",
+    prompt_md: "**rollback · plan**\n\nConstruir un plan de reversión.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# componentes = ['api', 'web']; anterior = {'api': 'a1', 'web': 'w1'}\n# resultado = [('restaurar', c, anterior[c]) for c in reversed(componentes)]\n# print(resultado)\n",
+    pytest: "def test_rollback_plan(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('restaurar', 'web', 'w1'), ('restaurar', 'api', 'a1')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('restaurar', 'web', 'w1'), ('restaurar', 'api', 'a1')].",
+    solution_example: "componentes = ['api', 'web']; anterior = {'api': 'a1', 'web': 'w1'}\nresultado = [('restaurar', c, anterior[c]) for c in reversed(componentes)]\nprint(resultado)",
+    next: Some("py-3148-rollback-suite"), show_type_chips: false, micro_step: 3147,
+};
+pub const PY3148_ROLLBACK_SUITE: CodingStep = CodingStep {
+    id: "py-3148-rollback-suite", title: "rollback · suite", objective: "Evaluar disparador y producir plan compatible.",
+    prompt_md: "**rollback · suite**\n\nEvaluar disparador y producir plan compatible.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# senales = {'errores': 8, 'limite': 5}; actual = {'api': 'a2', 'web': 'w2'}; previo = {'api': 'a1', 'web': 'w1'}\n# activar = senales['errores'] > senales['limite']; plan = [('restaurar', k, previo[k]) for k in sorted(actual)] if activar else []\n# resultado = {'activar': activar, 'plan': plan}\n# print(resultado)\n",
+    pytest: "def test_rollback_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'activar': True, 'plan': [('restaurar', 'api', 'a1'), ('restaurar', 'web', 'w1')]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'activar': True, 'plan': [('restaurar', 'api', 'a1'), ('restaurar', 'web', 'w1')]}.",
+    solution_example: "senales = {'errores': 8, 'limite': 5}; actual = {'api': 'a2', 'web': 'w2'}; previo = {'api': 'a1', 'web': 'w1'}\nactivar = senales['errores'] > senales['limite']; plan = [('restaurar', k, previo[k]) for k in sorted(actual)] if activar else []\nresultado = {'activar': activar, 'plan': plan}\nprint(resultado)",
+    next: Some("py-3149-promocion-ambientes"), show_type_chips: false, micro_step: 3148,
+};
+pub const PY3149_PROMOCION_AMBIENTES: CodingStep = CodingStep {
+    id: "py-3149-promocion-ambientes", title: "promoción · ambientes", objective: "Ordenar ambientes de entrega.",
+    prompt_md: "**promoción · ambientes**\n\nOrdenar ambientes de entrega.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# resultado = list(enumerate(['dev', 'staging', 'prod'], 1))\n# print(resultado)\n",
+    pytest: "def test_promocion_ambientes(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(1, 'dev'), (2, 'staging'), (3, 'prod')]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(1, 'dev'), (2, 'staging'), (3, 'prod')].",
+    solution_example: "resultado = list(enumerate(['dev', 'staging', 'prod'], 1))\nprint(resultado)",
+    next: Some("py-3150-promocion-siguiente"), show_type_chips: false, micro_step: 3149,
+};
+pub const PY3150_PROMOCION_SIGUIENTE: CodingStep = CodingStep {
+    id: "py-3150-promocion-siguiente", title: "promoción · siguiente", objective: "Elegir el siguiente ambiente.",
+    prompt_md: "**promoción · siguiente**\n\nElegir el siguiente ambiente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ambientes = ['dev', 'staging', 'prod']; actual = 'dev'\n# resultado = ambientes[ambientes.index(actual) + 1]\n# print(resultado)\n",
+    pytest: "def test_promocion_siguiente(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'staging'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'staging'.",
+    solution_example: "ambientes = ['dev', 'staging', 'prod']; actual = 'dev'\nresultado = ambientes[ambientes.index(actual) + 1]\nprint(resultado)",
+    next: Some("py-3151-promocion-misma-revision"), show_type_chips: false, micro_step: 3150,
+};
+pub const PY3151_PROMOCION_MISMA_REVISION: CodingStep = CodingStep {
+    id: "py-3151-promocion-misma-revision", title: "promoción · revisión", objective: "Verificar la misma revisión entre ambientes.",
+    prompt_md: "**promoción · revisión**\n\nVerificar la misma revisión entre ambientes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# revisiones = {'dev': 'abc', 'staging': 'abc'}\n# resultado = len(set(revisiones.values())) == 1\n# print(resultado)\n",
+    pytest: "def test_promocion_misma_revision(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "revisiones = {'dev': 'abc', 'staging': 'abc'}\nresultado = len(set(revisiones.values())) == 1\nprint(resultado)",
+    next: Some("py-3152-promocion-gates"), show_type_chips: false, micro_step: 3151,
+};
+pub const PY3152_PROMOCION_GATES: CodingStep = CodingStep {
+    id: "py-3152-promocion-gates", title: "promoción · gates", objective: "Exigir gates del ambiente origen.",
+    prompt_md: "**promoción · gates**\n\nExigir gates del ambiente origen.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# gates = {'dev': {'unit': True}, 'staging': {'e2e': True, 'smoke': True}}\n# resultado = all(gates['staging'].values())\n# print(resultado)\n",
+    pytest: "def test_promocion_gates(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "gates = {'dev': {'unit': True}, 'staging': {'e2e': True, 'smoke': True}}\nresultado = all(gates['staging'].values())\nprint(resultado)",
+    next: Some("py-3153-promocion-historial"), show_type_chips: false, micro_step: 3152,
+};
+pub const PY3153_PROMOCION_HISTORIAL: CodingStep = CodingStep {
+    id: "py-3153-promocion-historial", title: "promoción · historial", objective: "Registrar promociones ordenadas.",
+    prompt_md: "**promoción · historial**\n\nRegistrar promociones ordenadas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(2, 'staging'), (1, 'dev'), (3, 'prod')]\n# resultado = [ambiente for _, ambiente in sorted(eventos)]\n# print(resultado)\n",
+    pytest: "def test_promocion_historial(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['dev', 'staging', 'prod']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['dev', 'staging', 'prod'].",
+    solution_example: "eventos = [(2, 'staging'), (1, 'dev'), (3, 'prod')]\nresultado = [ambiente for _, ambiente in sorted(eventos)]\nprint(resultado)",
+    next: Some("py-3154-promocion-suite"), show_type_chips: false, micro_step: 3153,
+};
+pub const PY3154_PROMOCION_SUITE: CodingStep = CodingStep {
+    id: "py-3154-promocion-suite", title: "promoción · suite", objective: "Promover la misma revisión solo con gates verdes.",
+    prompt_md: "**promoción · suite**\n\nPromover la misma revisión solo con gates verdes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# revision = 'c9'; estados = [('dev', 'c9', True), ('staging', 'c9', True)]; orden = ['dev', 'staging', 'prod']\n# actual = estados[-1]; siguiente = orden[orden.index(actual[0]) + 1]\n# resultado = {'revision': revision, 'siguiente': siguiente, 'permitida': actual[1] == revision and actual[2]}\n# print(resultado)\n",
+    pytest: "def test_promocion_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'revision': 'c9', 'siguiente': 'prod', 'permitida': True}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'revision': 'c9', 'siguiente': 'prod', 'permitida': True}.",
+    solution_example: "revision = 'c9'; estados = [('dev', 'c9', True), ('staging', 'c9', True)]; orden = ['dev', 'staging', 'prod']\nactual = estados[-1]; siguiente = orden[orden.index(actual[0]) + 1]\nresultado = {'revision': revision, 'siguiente': siguiente, 'permitida': actual[1] == revision and actual[2]}\nprint(resultado)",
+    next: Some("py-3155-entrega-contrato"), show_type_chips: false, micro_step: 3154,
+};
+pub const PY3155_ENTREGA_CONTRATO: CodingStep = CodingStep {
+    id: "py-3155-entrega-contrato", title: "capstone · contrato", objective: "Validar versión y artefactos.",
+    prompt_md: "**capstone · contrato**\n\nValidar versión y artefactos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# m = {'version': (2, 1, 0), 'artefactos': {'api', 'web'}}\n# resultado = m['version'] > (2, 0, 0) and m['artefactos'] == {'api', 'web'}\n# print(resultado)\n",
+    pytest: "def test_entrega_contrato(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "m = {'version': (2, 1, 0), 'artefactos': {'api', 'web'}}\nresultado = m['version'] > (2, 0, 0) and m['artefactos'] == {'api', 'web'}\nprint(resultado)",
+    next: Some("py-3156-entrega-compatibilidad"), show_type_chips: false, micro_step: 3155,
+};
+pub const PY3156_ENTREGA_COMPATIBILIDAD: CodingStep = CodingStep {
+    id: "py-3156-entrega-compatibilidad", title: "capstone · compatibilidad", objective: "Verificar consumidores de la entrega.",
+    prompt_md: "**capstone · compatibilidad**\n\nVerificar consumidores de la entrega.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# formato = 2; consumidores = {'web': {1, 2}, 'worker': {2}}\n# resultado = all(formato in soporta for soporta in consumidores.values())\n# print(resultado)\n",
+    pytest: "def test_entrega_compatibilidad(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "formato = 2; consumidores = {'web': {1, 2}, 'worker': {2}}\nresultado = all(formato in soporta for soporta in consumidores.values())\nprint(resultado)",
+    next: Some("py-3157-entrega-exposicion"), show_type_chips: false, micro_step: 3156,
+};
+pub const PY3157_ENTREGA_EXPOSICION: CodingStep = CodingStep {
+    id: "py-3157-entrega-exposicion", title: "capstone · exposición", objective: "Seleccionar cohorte canary estable.",
+    prompt_md: "**capstone · exposición**\n\nSeleccionar cohorte canary estable.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# usuarios = [('ana', 7), ('leo', 42), ('sol', 18)]; porcentaje = 20\n# resultado = [u for u, bucket in usuarios if bucket < porcentaje]\n# print(resultado)\n",
+    pytest: "def test_entrega_exposicion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['ana', 'sol']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['ana', 'sol'].",
+    solution_example: "usuarios = [('ana', 7), ('leo', 42), ('sol', 18)]; porcentaje = 20\nresultado = [u for u, bucket in usuarios if bucket < porcentaje]\nprint(resultado)",
+    next: Some("py-3158-entrega-verificacion"), show_type_chips: false, micro_step: 3157,
+};
+pub const PY3158_ENTREGA_VERIFICACION: CodingStep = CodingStep {
+    id: "py-3158-entrega-verificacion", title: "capstone · verificación", objective: "Evaluar gates sobre la misma revisión.",
+    prompt_md: "**capstone · verificación**\n\nEvaluar gates sobre la misma revisión.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# sha = 'z8'; runs = [('unit', 'z8', True), ('e2e', 'z8', True), ('smoke', 'z8', True)]\n# resultado = all(s == sha and ok for _, s, ok in runs)\n# print(resultado)\n",
+    pytest: "def test_entrega_verificacion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "sha = 'z8'; runs = [('unit', 'z8', True), ('e2e', 'z8', True), ('smoke', 'z8', True)]\nresultado = all(s == sha and ok for _, s, ok in runs)\nprint(resultado)",
+    next: Some("py-3159-entrega-decision"), show_type_chips: false, micro_step: 3158,
+};
+pub const PY3159_ENTREGA_DECISION: CodingStep = CodingStep {
+    id: "py-3159-entrega-decision", title: "capstone · decisión", objective: "Elegir promoción o rollback.",
+    prompt_md: "**capstone · decisión**\n\nElegir promoción o rollback.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# compatible, gates, error_bp, limite = True, True, 180, 200\n# resultado = 'promover' if compatible and gates and error_bp <= limite else 'rollback'\n# print(resultado)\n",
+    pytest: "def test_entrega_decision(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'promover'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'promover'.",
+    solution_example: "compatible, gates, error_bp, limite = True, True, 180, 200\nresultado = 'promover' if compatible and gates and error_bp <= limite else 'rollback'\nprint(resultado)",
+    next: Some("py-3160-ola36-suite"), show_type_chips: false, micro_step: 3159,
+};
+pub const PY3160_OLA36_SUITE: CodingStep = CodingStep {
+    id: "py-3160-ola36-suite", title: "ola 36 · suite", objective: "Cerrar la ola con contrato, canary, gates y reversión.",
+    prompt_md: "**ola 36 · suite**\n\nCerrar la ola con contrato, canary, gates y reversión.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# release = {'version': (3, 1, 0), 'revision': 'r9'}; soporte = {'web': {3}, 'worker': {2, 3}}; canary = [True, True, False, True, True]; limite_bp = 2500\n# compatible = all(3 in versiones for versiones in soporte.values()); error_bp = sum(not ok for ok in canary) * 10000 // len(canary); gates = {'unit': True, 'e2e': True, 'smoke': True}; accion = 'promover' if compatible and all(gates.values()) and error_bp <= limite_bp else 'rollback'\n# resultado = {'revision': release['revision'], 'compatible': compatible, 'error_bp': error_bp, 'accion': accion}\n# print(resultado)\n",
+    pytest: "def test_ola36_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'revision': 'r9', 'compatible': True, 'error_bp': 2000, 'accion': 'promover'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'revision': 'r9', 'compatible': True, 'error_bp': 2000, 'accion': 'promover'}.",
+    solution_example: "release = {'version': (3, 1, 0), 'revision': 'r9'}; soporte = {'web': {3}, 'worker': {2, 3}}; canary = [True, True, False, True, True]; limite_bp = 2500\ncompatible = all(3 in versiones for versiones in soporte.values()); error_bp = sum(not ok for ok in canary) * 10000 // len(canary); gates = {'unit': True, 'e2e': True, 'smoke': True}; accion = 'promover' if compatible and all(gates.values()) and error_bp <= limite_bp else 'rollback'\nresultado = {'revision': release['revision'], 'compatible': compatible, 'error_bp': error_bp, 'accion': accion}\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 3160,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -66851,6 +67391,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY3098_OPERACION_CARGA,
     &PY3099_OPERACION_INCIDENTE,
     &PY3100_OLA35_SUITE,
+    &PY3101_RELEASE_MANIFIESTO,
+    &PY3102_RELEASE_ORDENAR,
+    &PY3103_RELEASE_REQUERIDOS,
+    &PY3104_RELEASE_DIFERENCIA,
+    &PY3105_RELEASE_APROBACIONES,
+    &PY3106_RELEASE_SUITE,
+    &PY3107_VERSION_PARSEAR,
+    &PY3108_VERSION_COMPARAR,
+    &PY3109_VERSION_MAYOR,
+    &PY3110_VERSION_MENOR,
+    &PY3111_VERSION_SELECCIONAR,
+    &PY3112_VERSION_SUITE,
+    &PY3113_COMPATIBILIDAD_CAMPOS,
+    &PY3114_COMPATIBILIDAD_DEFAULT,
+    &PY3115_COMPATIBILIDAD_LECTOR,
+    &PY3116_COMPATIBILIDAD_MATRIZ,
+    &PY3117_COMPATIBILIDAD_BLOQUEOS,
+    &PY3118_COMPATIBILIDAD_SUITE,
+    &PY3119_FLAG_ACTIVA,
+    &PY3120_FLAG_COHORTE,
+    &PY3121_FLAG_PORCENTAJE,
+    &PY3122_FLAG_PRIORIDAD,
+    &PY3123_FLAG_RESUMEN,
+    &PY3124_FLAG_SUITE,
+    &PY3125_CANARY_MUESTRA,
+    &PY3126_CANARY_ERROR,
+    &PY3127_CANARY_COMPARAR,
+    &PY3128_CANARY_FASES,
+    &PY3129_CANARY_DETENER,
+    &PY3130_CANARY_SUITE,
+    &PY3131_MIGRACION_EXPANDIR,
+    &PY3132_MIGRACION_DUAL,
+    &PY3133_MIGRACION_RELLENAR,
+    &PY3134_MIGRACION_VERIFICAR,
+    &PY3135_MIGRACION_CONTRAER,
+    &PY3136_MIGRACION_SUITE,
+    &PY3137_GATE_RESULTADOS,
+    &PY3138_GATE_FALLIDOS,
+    &PY3139_GATE_ORDEN,
+    &PY3140_GATE_EVIDENCIA,
+    &PY3141_GATE_COBERTURA,
+    &PY3142_GATE_SUITE,
+    &PY3143_ROLLBACK_VERSION,
+    &PY3144_ROLLBACK_CAMBIOS,
+    &PY3145_ROLLBACK_SEGURO,
+    &PY3146_ROLLBACK_DISPARADOR,
+    &PY3147_ROLLBACK_PLAN,
+    &PY3148_ROLLBACK_SUITE,
+    &PY3149_PROMOCION_AMBIENTES,
+    &PY3150_PROMOCION_SIGUIENTE,
+    &PY3151_PROMOCION_MISMA_REVISION,
+    &PY3152_PROMOCION_GATES,
+    &PY3153_PROMOCION_HISTORIAL,
+    &PY3154_PROMOCION_SUITE,
+    &PY3155_ENTREGA_CONTRATO,
+    &PY3156_ENTREGA_COMPATIBILIDAD,
+    &PY3157_ENTREGA_EXPOSICION,
+    &PY3158_ENTREGA_VERIFICACION,
+    &PY3159_ENTREGA_DECISION,
+    &PY3160_OLA36_SUITE,
 
 ];
 
@@ -67018,14 +67618,14 @@ mod tests {
     #[test]
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
-        assert_eq!(CODING_STEPS.len(), 3100, "catalog must contain 3100 steps");
+        assert_eq!(CODING_STEPS.len(), 3160, "catalog must contain 3160 steps");
         for (index, step) in CODING_STEPS.iter().enumerate() {
             assert_eq!(
                 step.micro_step,
                 (index + 1) as i32,
                 "catalog must be contiguous at index {index}"
             );
-            assert!(step.micro_step >= 1 && step.micro_step <= 3100);
+            assert!(step.micro_step >= 1 && step.micro_step <= 3160);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -67034,8 +67634,8 @@ mod tests {
         }
         assert_eq!(
             seen,
-            (1..=3100).collect(),
-            "catalog must cover every micro-step in 1..=3100"
+            (1..=3160).collect(),
+            "catalog must cover every micro-step in 1..=3160"
         );
     }
 
@@ -70469,7 +71069,22 @@ mod tests {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next wave35 step");
                 assert_eq!(step.next, Some(next_step.id));
             } else {
-                assert_eq!(step.next, None, "step 3100 is the end of the rail");
+                assert_eq!(step.next, Some("py-3101-release-manifiesto"), "step 3100 chains to Wave 36");
+            }
+        }
+    }
+
+    #[test]
+    fn py3101_to_py3160_safe_delivery_chain() {
+        for n in 3101..=3160 {
+            let step = coding_step_by_micro_step(n).expect("wave36 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(step.id.starts_with(&format!("py-{n}-")));
+            if n < 3160 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next wave36 step");
+                assert_eq!(step.next, Some(next_step.id));
+            } else {
+                assert_eq!(step.next, None, "step 3160 is the end of the rail");
             }
         }
     }
