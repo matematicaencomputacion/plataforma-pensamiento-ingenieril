@@ -63208,7 +63208,547 @@ pub const PY3040_OLA34_SUITE: CodingStep = CodingStep {
     pytest: "def test_ola34_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'estado': {'id': 7, 'version': 2, 'total': 7}, 'auditoria': [(1, 'crear'), (2, 'actualizar')], 'reparadas': [{'id': 7, 'version': 2, 'total': 7}, {'id': 7, 'version': 2, 'total': 7}]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
     hint: "El resultado esperado es {'estado': {'id': 7, 'version': 2, 'total': 7}, 'auditoria': [(1, 'crear'), (2, 'actualizar')], 'reparadas': [{'id': 7, 'version': 2, 'total': 7}, {'id': 7, 'version': 2, 'total': 7}]}.",
     solution_example: "registro = {'version': 1, 'id': 7}; eventos = [(2, 'actualizar', 5), (1, 'crear', 2)]\nestado = {'id': registro['id'], 'version': 2, 'total': 0}; auditoria = []\nfor secuencia, accion, valor in sorted(eventos): estado['total'] += valor; auditoria.append((secuencia, accion))\nreplicas = [dict(estado), {'id': 7, 'version': 2, 'total': 6}]; canonico = max(replicas, key=lambda r: r['total'])\nresultado = {'estado': canonico, 'auditoria': auditoria, 'reparadas': [dict(canonico) for _ in replicas]}\nprint(resultado)",
-    next: None, show_type_chips: false, micro_step: 3040,
+    next: Some("py-3041-telemetria-normalizar"), show_type_chips: false, micro_step: 3040,
+};
+pub const PY3041_TELEMETRIA_NORMALIZAR: CodingStep = CodingStep {
+    id: "py-3041-telemetria-normalizar", title: "telemetría · normalizar", objective: "Normalizar una señal a campos canónicos.",
+    prompt_md: "**telemetría · normalizar**\n\nNormalizar una señal a campos canónicos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# senal = {'servicio': 'api', 'valor': 7}\n# resultado = {'servicio': senal['servicio'], 'tipo': 'contador', 'valor': senal['valor']}\n# print(resultado)\n",
+    pytest: "def test_telemetria_normalizar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'servicio': 'api', 'tipo': 'contador', 'valor': 7}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'servicio': 'api', 'tipo': 'contador', 'valor': 7}.",
+    solution_example: "senal = {'servicio': 'api', 'valor': 7}\nresultado = {'servicio': senal['servicio'], 'tipo': 'contador', 'valor': senal['valor']}\nprint(resultado)",
+    next: Some("py-3042-telemetria-etiquetas"), show_type_chips: false, micro_step: 3041,
+};
+pub const PY3042_TELEMETRIA_ETIQUETAS: CodingStep = CodingStep {
+    id: "py-3042-telemetria-etiquetas", title: "telemetría · etiquetas", objective: "Ordenar etiquetas para una señal reproducible.",
+    prompt_md: "**telemetría · etiquetas**\n\nOrdenar etiquetas para una señal reproducible.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# etiquetas = {'region': 'sur', 'servicio': 'web'}\n# resultado = tuple(sorted(etiquetas.items()))\n# print(resultado)\n",
+    pytest: "def test_telemetria_etiquetas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == (('region', 'sur'), ('servicio', 'web'))\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es (('region', 'sur'), ('servicio', 'web')).",
+    solution_example: "etiquetas = {'region': 'sur', 'servicio': 'web'}\nresultado = tuple(sorted(etiquetas.items()))\nprint(resultado)",
+    next: Some("py-3043-telemetria-agrupar"), show_type_chips: false, micro_step: 3042,
+};
+pub const PY3043_TELEMETRIA_AGRUPAR: CodingStep = CodingStep {
+    id: "py-3043-telemetria-agrupar", title: "telemetría · agrupar", objective: "Agrupar señales por servicio.",
+    prompt_md: "**telemetría · agrupar**\n\nAgrupar señales por servicio.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# senales = [('api', 3), ('web', 2), ('api', 4)]\n# resultado = {s: [v for ss, v in senales if ss == s] for s in sorted({s for s, _ in senales})}\n# print(resultado)\n",
+    pytest: "def test_telemetria_agrupar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'api': [3, 4], 'web': [2]}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'api': [3, 4], 'web': [2]}.",
+    solution_example: "senales = [('api', 3), ('web', 2), ('api', 4)]\nresultado = {s: [v for ss, v in senales if ss == s] for s in sorted({s for s, _ in senales})}\nprint(resultado)",
+    next: Some("py-3044-telemetria-filtrar"), show_type_chips: false, micro_step: 3043,
+};
+pub const PY3044_TELEMETRIA_FILTRAR: CodingStep = CodingStep {
+    id: "py-3044-telemetria-filtrar", title: "telemetría · filtrar", objective: "Conservar señales por encima de un umbral.",
+    prompt_md: "**telemetría · filtrar**\n\nConservar señales por encima de un umbral.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# senales = [('cpu', 40), ('cola', 8), ('cpu', 75)]\n# resultado = [senal for senal in senales if senal[1] >= 50]\n# print(resultado)\n",
+    pytest: "def test_telemetria_filtrar(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [('cpu', 75)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [('cpu', 75)].",
+    solution_example: "senales = [('cpu', 40), ('cola', 8), ('cpu', 75)]\nresultado = [senal for senal in senales if senal[1] >= 50]\nprint(resultado)",
+    next: Some("py-3045-telemetria-resumir"), show_type_chips: false, micro_step: 3044,
+};
+pub const PY3045_TELEMETRIA_RESUMIR: CodingStep = CodingStep {
+    id: "py-3045-telemetria-resumir", title: "telemetría · resumen", objective: "Resumir cantidad y máximo por tipo.",
+    prompt_md: "**telemetría · resumen**\n\nResumir cantidad y máximo por tipo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# senales = {'latencia': [8, 5, 11], 'errores': [0, 2]}\n# resultado = {k: {'cantidad': len(v), 'maximo': max(v)} for k, v in sorted(senales.items())}\n# print(resultado)\n",
+    pytest: "def test_telemetria_resumir(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'errores': {'cantidad': 2, 'maximo': 2}, 'latencia': {'cantidad': 3, 'maximo': 11}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'errores': {'cantidad': 2, 'maximo': 2}, 'latencia': {'cantidad': 3, 'maximo': 11}}.",
+    solution_example: "senales = {'latencia': [8, 5, 11], 'errores': [0, 2]}\nresultado = {k: {'cantidad': len(v), 'maximo': max(v)} for k, v in sorted(senales.items())}\nprint(resultado)",
+    next: Some("py-3046-telemetria-suite"), show_type_chips: false, micro_step: 3045,
+};
+pub const PY3046_TELEMETRIA_SUITE: CodingStep = CodingStep {
+    id: "py-3046-telemetria-suite", title: "telemetría · suite", objective: "Normalizar, agrupar y resumir señales.",
+    prompt_md: "**telemetría · suite**\n\nNormalizar, agrupar y resumir señales.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# entrada = [('web', 'latencia', 8), ('api', 'errores', 2), ('web', 'latencia', 5)]\n# grupos = {}\n# for servicio, tipo, valor in entrada: grupos.setdefault((servicio, tipo), []).append(valor)\n# resultado = {f'{s}:{t}': {'total': sum(v), 'maximo': max(v)} for (s, t), v in sorted(grupos.items())}\n# print(resultado)\n",
+    pytest: "def test_telemetria_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'api:errores': {'total': 2, 'maximo': 2}, 'web:latencia': {'total': 13, 'maximo': 8}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'api:errores': {'total': 2, 'maximo': 2}, 'web:latencia': {'total': 13, 'maximo': 8}}.",
+    solution_example: "entrada = [('web', 'latencia', 8), ('api', 'errores', 2), ('web', 'latencia', 5)]\ngrupos = {}\nfor servicio, tipo, valor in entrada: grupos.setdefault((servicio, tipo), []).append(valor)\nresultado = {f'{s}:{t}': {'total': sum(v), 'maximo': max(v)} for (s, t), v in sorted(grupos.items())}\nprint(resultado)",
+    next: Some("py-3047-metrica-tasa"), show_type_chips: false, micro_step: 3046,
+};
+pub const PY3047_METRICA_TASA: CodingStep = CodingStep {
+    id: "py-3047-metrica-tasa", title: "métricas · tasa", objective: "Calcular eventos por tick lógico.",
+    prompt_md: "**métricas · tasa**\n\nCalcular eventos por tick lógico.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos, ticks = 24, 6\n# resultado = eventos // ticks\n# print(resultado)\n",
+    pytest: "def test_metrica_tasa(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 4\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 4.",
+    solution_example: "eventos, ticks = 24, 6\nresultado = eventos // ticks\nprint(resultado)",
+    next: Some("py-3048-metrica-error"), show_type_chips: false, micro_step: 3047,
+};
+pub const PY3048_METRICA_ERROR: CodingStep = CodingStep {
+    id: "py-3048-metrica-error", title: "métricas · error", objective: "Calcular tasa de error en puntos base.",
+    prompt_md: "**métricas · error**\n\nCalcular tasa de error en puntos base.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# errores, total = 3, 200\n# resultado = errores * 10000 // total\n# print(resultado)\n",
+    pytest: "def test_metrica_error(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 150\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 150.",
+    solution_example: "errores, total = 3, 200\nresultado = errores * 10000 // total\nprint(resultado)",
+    next: Some("py-3049-metrica-percentil"), show_type_chips: false, micro_step: 3048,
+};
+pub const PY3049_METRICA_PERCENTIL: CodingStep = CodingStep {
+    id: "py-3049-metrica-percentil", title: "métricas · percentil", objective: "Elegir un percentil discreto ordenado.",
+    prompt_md: "**métricas · percentil**\n\nElegir un percentil discreto ordenado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# valores = [9, 2, 7, 4, 12]\n# ordenados = sorted(valores); indice = (90 * len(ordenados) + 99) // 100 - 1\n# resultado = ordenados[indice]\n# print(resultado)\n",
+    pytest: "def test_metrica_percentil(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 12\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 12.",
+    solution_example: "valores = [9, 2, 7, 4, 12]\nordenados = sorted(valores); indice = (90 * len(ordenados) + 99) // 100 - 1\nresultado = ordenados[indice]\nprint(resultado)",
+    next: Some("py-3050-metrica-ventana"), show_type_chips: false, micro_step: 3049,
+};
+pub const PY3050_METRICA_VENTANA: CodingStep = CodingStep {
+    id: "py-3050-metrica-ventana", title: "métricas · ventana", objective: "Calcular promedios en ventanas fijas.",
+    prompt_md: "**métricas · ventana**\n\nCalcular promedios en ventanas fijas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# valores = [2, 4, 6, 8, 10, 12]\n# tamano = 3\n# resultado = [sum(valores[i:i + tamano]) // tamano for i in range(0, len(valores), tamano)]\n# print(resultado)\n",
+    pytest: "def test_metrica_ventana(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [4, 10]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [4, 10].",
+    solution_example: "valores = [2, 4, 6, 8, 10, 12]\ntamano = 3\nresultado = [sum(valores[i:i + tamano]) // tamano for i in range(0, len(valores), tamano)]\nprint(resultado)",
+    next: Some("py-3051-metrica-delta"), show_type_chips: false, micro_step: 3050,
+};
+pub const PY3051_METRICA_DELTA: CodingStep = CodingStep {
+    id: "py-3051-metrica-delta", title: "métricas · delta", objective: "Derivar incrementos de un contador acumulado.",
+    prompt_md: "**métricas · delta**\n\nDerivar incrementos de un contador acumulado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# contador = [3, 7, 8, 14]\n# resultado = [b - a for a, b in zip(contador, contador[1:])]\n# print(resultado)\n",
+    pytest: "def test_metrica_delta(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [4, 1, 6]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [4, 1, 6].",
+    solution_example: "contador = [3, 7, 8, 14]\nresultado = [b - a for a, b in zip(contador, contador[1:])]\nprint(resultado)",
+    next: Some("py-3052-metrica-suite"), show_type_chips: false, micro_step: 3051,
+};
+pub const PY3052_METRICA_SUITE: CodingStep = CodingStep {
+    id: "py-3052-metrica-suite", title: "métricas · suite", objective: "Derivar tasa, errores y latencia máxima.",
+    prompt_md: "**métricas · suite**\n\nDerivar tasa, errores y latencia máxima.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# muestras = [{'ok': True, 'latencia': 8}, {'ok': False, 'latencia': 15}, {'ok': True, 'latencia': 6}]\n# resultado = {'total': len(muestras), 'errores_bp': sum(not m['ok'] for m in muestras) * 10000 // len(muestras), 'latencia_max': max(m['latencia'] for m in muestras)}\n# print(resultado)\n",
+    pytest: "def test_metrica_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'total': 3, 'errores_bp': 3333, 'latencia_max': 15}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'total': 3, 'errores_bp': 3333, 'latencia_max': 15}.",
+    solution_example: "muestras = [{'ok': True, 'latencia': 8}, {'ok': False, 'latencia': 15}, {'ok': True, 'latencia': 6}]\nresultado = {'total': len(muestras), 'errores_bp': sum(not m['ok'] for m in muestras) * 10000 // len(muestras), 'latencia_max': max(m['latencia'] for m in muestras)}\nprint(resultado)",
+    next: Some("py-3053-sli-disponibilidad"), show_type_chips: false, micro_step: 3052,
+};
+pub const PY3053_SLI_DISPONIBILIDAD: CodingStep = CodingStep {
+    id: "py-3053-sli-disponibilidad", title: "SLI · disponibilidad", objective: "Medir respuestas satisfactorias en puntos base.",
+    prompt_md: "**SLI · disponibilidad**\n\nMedir respuestas satisfactorias en puntos base.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# correctas, total = 997, 1000\n# resultado = correctas * 10000 // total\n# print(resultado)\n",
+    pytest: "def test_sli_disponibilidad(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 9970\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 9970.",
+    solution_example: "correctas, total = 997, 1000\nresultado = correctas * 10000 // total\nprint(resultado)",
+    next: Some("py-3054-sli-latencia"), show_type_chips: false, micro_step: 3053,
+};
+pub const PY3054_SLI_LATENCIA: CodingStep = CodingStep {
+    id: "py-3054-sli-latencia", title: "SLI · latencia", objective: "Medir proporción dentro del objetivo de latencia.",
+    prompt_md: "**SLI · latencia**\n\nMedir proporción dentro del objetivo de latencia.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# latencias = [80, 120, 95, 150]; limite = 120\n# resultado = sum(v <= limite for v in latencias) * 10000 // len(latencias)\n# print(resultado)\n",
+    pytest: "def test_sli_latencia(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 7500\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 7500.",
+    solution_example: "latencias = [80, 120, 95, 150]; limite = 120\nresultado = sum(v <= limite for v in latencias) * 10000 // len(latencias)\nprint(resultado)",
+    next: Some("py-3055-slo-cumplido"), show_type_chips: false, micro_step: 3054,
+};
+pub const PY3055_SLO_CUMPLIDO: CodingStep = CodingStep {
+    id: "py-3055-slo-cumplido", title: "SLO · cumplimiento", objective: "Comparar un SLI con su objetivo.",
+    prompt_md: "**SLO · cumplimiento**\n\nComparar un SLI con su objetivo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# sli, objetivo = 9985, 9980\n# resultado = sli >= objetivo\n# print(resultado)\n",
+    pytest: "def test_slo_cumplido(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "sli, objetivo = 9985, 9980\nresultado = sli >= objetivo\nprint(resultado)",
+    next: Some("py-3056-slo-por-servicio"), show_type_chips: false, micro_step: 3055,
+};
+pub const PY3056_SLO_POR_SERVICIO: CodingStep = CodingStep {
+    id: "py-3056-slo-por-servicio", title: "SLO · por servicio", objective: "Evaluar objetivos independientes.",
+    prompt_md: "**SLO · por servicio**\n\nEvaluar objetivos independientes.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# slis = {'api': 9990, 'web': 9950}; objetivos = {'api': 9980, 'web': 9970}\n# resultado = {s: slis[s] >= objetivos[s] for s in sorted(slis)}\n# print(resultado)\n",
+    pytest: "def test_slo_por_servicio(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'api': True, 'web': False}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'api': True, 'web': False}.",
+    solution_example: "slis = {'api': 9990, 'web': 9950}; objetivos = {'api': 9980, 'web': 9970}\nresultado = {s: slis[s] >= objetivos[s] for s in sorted(slis)}\nprint(resultado)",
+    next: Some("py-3057-slo-brecha"), show_type_chips: false, micro_step: 3056,
+};
+pub const PY3057_SLO_BRECHA: CodingStep = CodingStep {
+    id: "py-3057-slo-brecha", title: "SLO · brecha", objective: "Calcular distancia hasta el objetivo.",
+    prompt_md: "**SLO · brecha**\n\nCalcular distancia hasta el objetivo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# sli, objetivo = 9960, 9990\n# resultado = max(0, objetivo - sli)\n# print(resultado)\n",
+    pytest: "def test_slo_brecha(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 30\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 30.",
+    solution_example: "sli, objetivo = 9960, 9990\nresultado = max(0, objetivo - sli)\nprint(resultado)",
+    next: Some("py-3058-slo-suite"), show_type_chips: false, micro_step: 3057,
+};
+pub const PY3058_SLO_SUITE: CodingStep = CodingStep {
+    id: "py-3058-slo-suite", title: "SLO · suite", objective: "Calcular SLIs y clasificar objetivos.",
+    prompt_md: "**SLO · suite**\n\nCalcular SLIs y clasificar objetivos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# servicios = {'api': (998, 1000, 9950), 'web': (985, 1000, 9900)}\n# resultado = {}\n# for nombre, (ok, total, objetivo) in sorted(servicios.items()):\n#     sli = ok * 10000 // total; resultado[nombre] = {'sli': sli, 'cumple': sli >= objetivo}\n# print(resultado)\n",
+    pytest: "def test_slo_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'api': {'sli': 9980, 'cumple': True}, 'web': {'sli': 9850, 'cumple': False}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'api': {'sli': 9980, 'cumple': True}, 'web': {'sli': 9850, 'cumple': False}}.",
+    solution_example: "servicios = {'api': (998, 1000, 9950), 'web': (985, 1000, 9900)}\nresultado = {}\nfor nombre, (ok, total, objetivo) in sorted(servicios.items()):\n    sli = ok * 10000 // total; resultado[nombre] = {'sli': sli, 'cumple': sli >= objetivo}\nprint(resultado)",
+    next: Some("py-3059-presupuesto-total"), show_type_chips: false, micro_step: 3058,
+};
+pub const PY3059_PRESUPUESTO_TOTAL: CodingStep = CodingStep {
+    id: "py-3059-presupuesto-total", title: "presupuesto · total", objective: "Calcular fallos permitidos por objetivo.",
+    prompt_md: "**presupuesto · total**\n\nCalcular fallos permitidos por objetivo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# total, objetivo_bp = 10000, 9990\n# resultado = total * (10000 - objetivo_bp) // 10000\n# print(resultado)\n",
+    pytest: "def test_presupuesto_total(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 10\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 10.",
+    solution_example: "total, objetivo_bp = 10000, 9990\nresultado = total * (10000 - objetivo_bp) // 10000\nprint(resultado)",
+    next: Some("py-3060-presupuesto-consumido"), show_type_chips: false, micro_step: 3059,
+};
+pub const PY3060_PRESUPUESTO_CONSUMIDO: CodingStep = CodingStep {
+    id: "py-3060-presupuesto-consumido", title: "presupuesto · consumido", objective: "Medir presupuesto consumido.",
+    prompt_md: "**presupuesto · consumido**\n\nMedir presupuesto consumido.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# permitidos, fallos = 20, 7\n# resultado = {'usado': fallos, 'restante': permitidos - fallos}\n# print(resultado)\n",
+    pytest: "def test_presupuesto_consumido(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'usado': 7, 'restante': 13}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'usado': 7, 'restante': 13}.",
+    solution_example: "permitidos, fallos = 20, 7\nresultado = {'usado': fallos, 'restante': permitidos - fallos}\nprint(resultado)",
+    next: Some("py-3061-presupuesto-agotado"), show_type_chips: false, micro_step: 3060,
+};
+pub const PY3061_PRESUPUESTO_AGOTADO: CodingStep = CodingStep {
+    id: "py-3061-presupuesto-agotado", title: "presupuesto · agotado", objective: "Detectar presupuesto agotado.",
+    prompt_md: "**presupuesto · agotado**\n\nDetectar presupuesto agotado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# permitidos, fallos = 5, 6\n# resultado = fallos > permitidos\n# print(resultado)\n",
+    pytest: "def test_presupuesto_agotado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == True\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es True.",
+    solution_example: "permitidos, fallos = 5, 6\nresultado = fallos > permitidos\nprint(resultado)",
+    next: Some("py-3062-presupuesto-velocidad"), show_type_chips: false, micro_step: 3061,
+};
+pub const PY3062_PRESUPUESTO_VELOCIDAD: CodingStep = CodingStep {
+    id: "py-3062-presupuesto-velocidad", title: "presupuesto · velocidad", objective: "Calcular velocidad de consumo por ventana.",
+    prompt_md: "**presupuesto · velocidad**\n\nCalcular velocidad de consumo por ventana.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# consumos = [2, 3, 1, 4]\n# resultado = sum(consumos) // len(consumos)\n# print(resultado)\n",
+    pytest: "def test_presupuesto_velocidad(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 2\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 2.",
+    solution_example: "consumos = [2, 3, 1, 4]\nresultado = sum(consumos) // len(consumos)\nprint(resultado)",
+    next: Some("py-3063-presupuesto-politica"), show_type_chips: false, micro_step: 3062,
+};
+pub const PY3063_PRESUPUESTO_POLITICA: CodingStep = CodingStep {
+    id: "py-3063-presupuesto-politica", title: "presupuesto · política", objective: "Elegir política según restante.",
+    prompt_md: "**presupuesto · política**\n\nElegir política según restante.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# restante, total = 2, 20\n# porcentaje = restante * 100 // total\n# resultado = 'congelar' if porcentaje < 20 else 'continuar'\n# print(resultado)\n",
+    pytest: "def test_presupuesto_politica(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'congelar'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'congelar'.",
+    solution_example: "restante, total = 2, 20\nporcentaje = restante * 100 // total\nresultado = 'congelar' if porcentaje < 20 else 'continuar'\nprint(resultado)",
+    next: Some("py-3064-presupuesto-suite"), show_type_chips: false, micro_step: 3063,
+};
+pub const PY3064_PRESUPUESTO_SUITE: CodingStep = CodingStep {
+    id: "py-3064-presupuesto-suite", title: "presupuesto · suite", objective: "Distribuir y evaluar presupuestos por servicio.",
+    prompt_md: "**presupuesto · suite**\n\nDistribuir y evaluar presupuestos por servicio.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# trafico = {'api': 8000, 'web': 2000}; objetivo = 9990; fallos = {'api': 6, 'web': 3}\n# resultado = {}\n# for s in sorted(trafico):\n#     permitido = trafico[s] * (10000 - objetivo) // 10000; resultado[s] = {'permitido': permitido, 'restante': permitido - fallos[s]}\n# print(resultado)\n",
+    pytest: "def test_presupuesto_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'api': {'permitido': 8, 'restante': 2}, 'web': {'permitido': 2, 'restante': -1}}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'api': {'permitido': 8, 'restante': 2}, 'web': {'permitido': 2, 'restante': -1}}.",
+    solution_example: "trafico = {'api': 8000, 'web': 2000}; objetivo = 9990; fallos = {'api': 6, 'web': 3}\nresultado = {}\nfor s in sorted(trafico):\n    permitido = trafico[s] * (10000 - objetivo) // 10000; resultado[s] = {'permitido': permitido, 'restante': permitido - fallos[s]}\nprint(resultado)",
+    next: Some("py-3065-anomalia-umbral"), show_type_chips: false, micro_step: 3064,
+};
+pub const PY3065_ANOMALIA_UMBRAL: CodingStep = CodingStep {
+    id: "py-3065-anomalia-umbral", title: "anomalías · umbral", objective: "Detectar valores sobre un límite fijo.",
+    prompt_md: "**anomalías · umbral**\n\nDetectar valores sobre un límite fijo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# valores = [4, 7, 13, 6]; limite = 10\n# resultado = [v for v in valores if v > limite]\n# print(resultado)\n",
+    pytest: "def test_anomalia_umbral(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [13]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [13].",
+    solution_example: "valores = [4, 7, 13, 6]; limite = 10\nresultado = [v for v in valores if v > limite]\nprint(resultado)",
+    next: Some("py-3066-anomalia-desvio"), show_type_chips: false, micro_step: 3065,
+};
+pub const PY3066_ANOMALIA_DESVIO: CodingStep = CodingStep {
+    id: "py-3066-anomalia-desvio", title: "anomalías · desvío", objective: "Detectar desvíos respecto de una base entera.",
+    prompt_md: "**anomalías · desvío**\n\nDetectar desvíos respecto de una base entera.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# base, tolerancia = 20, 5; valores = [18, 26, 15, 22]\n# resultado = [v for v in valores if abs(v - base) > tolerancia]\n# print(resultado)\n",
+    pytest: "def test_anomalia_desvio(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [26]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [26].",
+    solution_example: "base, tolerancia = 20, 5; valores = [18, 26, 15, 22]\nresultado = [v for v in valores if abs(v - base) > tolerancia]\nprint(resultado)",
+    next: Some("py-3067-anomalia-rachas"), show_type_chips: false, micro_step: 3066,
+};
+pub const PY3067_ANOMALIA_RACHAS: CodingStep = CodingStep {
+    id: "py-3067-anomalia-rachas", title: "anomalías · rachas", objective: "Medir la mayor racha sobre umbral.",
+    prompt_md: "**anomalías · rachas**\n\nMedir la mayor racha sobre umbral.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# valores = [2, 8, 9, 3, 7, 10, 11]; limite = 6\n# racha = mejor = 0\n# for v in valores:\n#     racha = racha + 1 if v > limite else 0; mejor = max(mejor, racha)\n# resultado = mejor\n# print(resultado)\n",
+    pytest: "def test_anomalia_rachas(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "valores = [2, 8, 9, 3, 7, 10, 11]; limite = 6\nracha = mejor = 0\nfor v in valores:\n    racha = racha + 1 if v > limite else 0; mejor = max(mejor, racha)\nresultado = mejor\nprint(resultado)",
+    next: Some("py-3068-anomalia-cambio"), show_type_chips: false, micro_step: 3067,
+};
+pub const PY3068_ANOMALIA_CAMBIO: CodingStep = CodingStep {
+    id: "py-3068-anomalia-cambio", title: "anomalías · cambio", objective: "Detectar saltos entre muestras consecutivas.",
+    prompt_md: "**anomalías · cambio**\n\nDetectar saltos entre muestras consecutivas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# valores = [10, 12, 25, 27]; max_delta = 8\n# resultado = [(a, b) for a, b in zip(valores, valores[1:]) if abs(b - a) > max_delta]\n# print(resultado)\n",
+    pytest: "def test_anomalia_cambio(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [(12, 25)]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [(12, 25)].",
+    solution_example: "valores = [10, 12, 25, 27]; max_delta = 8\nresultado = [(a, b) for a, b in zip(valores, valores[1:]) if abs(b - a) > max_delta]\nprint(resultado)",
+    next: Some("py-3069-anomalia-por-clave"), show_type_chips: false, micro_step: 3068,
+};
+pub const PY3069_ANOMALIA_POR_CLAVE: CodingStep = CodingStep {
+    id: "py-3069-anomalia-por-clave", title: "anomalías · por clave", objective: "Aplicar umbrales distintos por señal.",
+    prompt_md: "**anomalías · por clave**\n\nAplicar umbrales distintos por señal.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# muestras = {'cpu': 81, 'cola': 12}; limites = {'cpu': 80, 'cola': 20}\n# resultado = sorted(k for k in muestras if muestras[k] > limites[k])\n# print(resultado)\n",
+    pytest: "def test_anomalia_por_clave(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['cpu']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['cpu'].",
+    solution_example: "muestras = {'cpu': 81, 'cola': 12}; limites = {'cpu': 80, 'cola': 20}\nresultado = sorted(k for k in muestras if muestras[k] > limites[k])\nprint(resultado)",
+    next: Some("py-3070-anomalia-suite"), show_type_chips: false, micro_step: 3069,
+};
+pub const PY3070_ANOMALIA_SUITE: CodingStep = CodingStep {
+    id: "py-3070-anomalia-suite", title: "anomalías · suite", objective: "Combinar umbral, racha y severidad.",
+    prompt_md: "**anomalías · suite**\n\nCombinar umbral, racha y severidad.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# valores = [5, 12, 14, 4, 18]; limite = 10\n# indices = [i for i, v in enumerate(valores) if v > limite]\n# resultado = {'indices': indices, 'cantidad': len(indices), 'severidad': max(valores) - limite}\n# print(resultado)\n",
+    pytest: "def test_anomalia_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'indices': [1, 2, 4], 'cantidad': 3, 'severidad': 8}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'indices': [1, 2, 4], 'cantidad': 3, 'severidad': 8}.",
+    solution_example: "valores = [5, 12, 14, 4, 18]; limite = 10\nindices = [i for i, v in enumerate(valores) if v > limite]\nresultado = {'indices': indices, 'cantidad': len(indices), 'severidad': max(valores) - limite}\nprint(resultado)",
+    next: Some("py-3071-presion-ocupacion"), show_type_chips: false, micro_step: 3070,
+};
+pub const PY3071_PRESION_OCUPACION: CodingStep = CodingStep {
+    id: "py-3071-presion-ocupacion", title: "backpressure · ocupación", objective: "Calcular ocupación de cola en porcentaje.",
+    prompt_md: "**backpressure · ocupación**\n\nCalcular ocupación de cola en porcentaje.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# usado, capacidad = 7, 10\n# resultado = usado * 100 // capacidad\n# print(resultado)\n",
+    pytest: "def test_presion_ocupacion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 70\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 70.",
+    solution_example: "usado, capacidad = 7, 10\nresultado = usado * 100 // capacidad\nprint(resultado)",
+    next: Some("py-3072-presion-estado"), show_type_chips: false, micro_step: 3071,
+};
+pub const PY3072_PRESION_ESTADO: CodingStep = CodingStep {
+    id: "py-3072-presion-estado", title: "backpressure · estado", objective: "Clasificar presión por umbrales.",
+    prompt_md: "**backpressure · estado**\n\nClasificar presión por umbrales.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# ocupacion = 85\n# resultado = 'critica' if ocupacion >= 90 else 'alta' if ocupacion >= 70 else 'normal'\n# print(resultado)\n",
+    pytest: "def test_presion_estado(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'alta'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'alta'.",
+    solution_example: "ocupacion = 85\nresultado = 'critica' if ocupacion >= 90 else 'alta' if ocupacion >= 70 else 'normal'\nprint(resultado)",
+    next: Some("py-3073-presion-admision"), show_type_chips: false, micro_step: 3072,
+};
+pub const PY3073_PRESION_ADMISION: CodingStep = CodingStep {
+    id: "py-3073-presion-admision", title: "backpressure · admisión", objective: "Limitar admisiones a la capacidad libre.",
+    prompt_md: "**backpressure · admisión**\n\nLimitar admisiones a la capacidad libre.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# pendientes, libres = 8, 3\n# resultado = min(pendientes, libres)\n# print(resultado)\n",
+    pytest: "def test_presion_admision(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "pendientes, libres = 8, 3\nresultado = min(pendientes, libres)\nprint(resultado)",
+    next: Some("py-3074-presion-drenaje"), show_type_chips: false, micro_step: 3073,
+};
+pub const PY3074_PRESION_DRENAJE: CodingStep = CodingStep {
+    id: "py-3074-presion-drenaje", title: "backpressure · drenaje", objective: "Simular drenaje por ticks lógicos.",
+    prompt_md: "**backpressure · drenaje**\n\nSimular drenaje por ticks lógicos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# cola, drenaje = 11, 4\n# resultado = [max(0, cola - drenaje * tick) for tick in range(1, 4)]\n# print(resultado)\n",
+    pytest: "def test_presion_drenaje(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == [7, 3, 0]\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es [7, 3, 0].",
+    solution_example: "cola, drenaje = 11, 4\nresultado = [max(0, cola - drenaje * tick) for tick in range(1, 4)]\nprint(resultado)",
+    next: Some("py-3075-presion-fuente"), show_type_chips: false, micro_step: 3074,
+};
+pub const PY3075_PRESION_FUENTE: CodingStep = CodingStep {
+    id: "py-3075-presion-fuente", title: "backpressure · fuente", objective: "Elegir fuentes que deben pausarse.",
+    prompt_md: "**backpressure · fuente**\n\nElegir fuentes que deben pausarse.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# colas = {'a': 9, 'b': 3, 'c': 7}; limite = 7\n# resultado = sorted(k for k, v in colas.items() if v >= limite)\n# print(resultado)\n",
+    pytest: "def test_presion_fuente(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'c'].",
+    solution_example: "colas = {'a': 9, 'b': 3, 'c': 7}; limite = 7\nresultado = sorted(k for k, v in colas.items() if v >= limite)\nprint(resultado)",
+    next: Some("py-3076-presion-suite"), show_type_chips: false, micro_step: 3075,
+};
+pub const PY3076_PRESION_SUITE: CodingStep = CodingStep {
+    id: "py-3076-presion-suite", title: "backpressure · suite", objective: "Admitir, drenar y clasificar una cola.",
+    prompt_md: "**backpressure · suite**\n\nAdmitir, drenar y clasificar una cola.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# capacidad, inicial, llegadas, drenaje = 10, 6, 7, 4\n# admitidos = min(llegadas, capacidad - inicial); final = max(0, inicial + admitidos - drenaje)\n# resultado = {'admitidos': admitidos, 'rechazados': llegadas - admitidos, 'final': final, 'presion': final * 100 // capacidad}\n# print(resultado)\n",
+    pytest: "def test_presion_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'admitidos': 4, 'rechazados': 3, 'final': 6, 'presion': 60}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'admitidos': 4, 'rechazados': 3, 'final': 6, 'presion': 60}.",
+    solution_example: "capacidad, inicial, llegadas, drenaje = 10, 6, 7, 4\nadmitidos = min(llegadas, capacidad - inicial); final = max(0, inicial + admitidos - drenaje)\nresultado = {'admitidos': admitidos, 'rechazados': llegadas - admitidos, 'final': final, 'presion': final * 100 // capacidad}\nprint(resultado)",
+    next: Some("py-3077-descarte-prioridad"), show_type_chips: false, micro_step: 3076,
+};
+pub const PY3077_DESCARTE_PRIORIDAD: CodingStep = CodingStep {
+    id: "py-3077-descarte-prioridad", title: "descarte · prioridad", objective: "Conservar solicitudes de mayor prioridad.",
+    prompt_md: "**descarte · prioridad**\n\nConservar solicitudes de mayor prioridad.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# solicitudes = [('a', 2), ('b', 5), ('c', 3)]; cupo = 2\n# resultado = [x for x, _ in sorted(solicitudes, key=lambda item: (-item[1], item[0]))[:cupo]]\n# print(resultado)\n",
+    pytest: "def test_descarte_prioridad(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['b', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['b', 'c'].",
+    solution_example: "solicitudes = [('a', 2), ('b', 5), ('c', 3)]; cupo = 2\nresultado = [x for x, _ in sorted(solicitudes, key=lambda item: (-item[1], item[0]))[:cupo]]\nprint(resultado)",
+    next: Some("py-3078-descarte-costo"), show_type_chips: false, micro_step: 3077,
+};
+pub const PY3078_DESCARTE_COSTO: CodingStep = CodingStep {
+    id: "py-3078-descarte-costo", title: "descarte · costo", objective: "Aceptar solicitudes dentro de un presupuesto.",
+    prompt_md: "**descarte · costo**\n\nAceptar solicitudes dentro de un presupuesto.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# solicitudes = [('a', 3), ('b', 5), ('c', 2)]; presupuesto = 6\n# usado, aceptadas = 0, []\n# for nombre, costo in solicitudes:\n#     if usado + costo <= presupuesto: usado += costo; aceptadas.append(nombre)\n# resultado = aceptadas\n# print(resultado)\n",
+    pytest: "def test_descarte_costo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'c']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'c'].",
+    solution_example: "solicitudes = [('a', 3), ('b', 5), ('c', 2)]; presupuesto = 6\nusado, aceptadas = 0, []\nfor nombre, costo in solicitudes:\n    if usado + costo <= presupuesto: usado += costo; aceptadas.append(nombre)\nresultado = aceptadas\nprint(resultado)",
+    next: Some("py-3079-descarte-clase"), show_type_chips: false, micro_step: 3078,
+};
+pub const PY3079_DESCARTE_CLASE: CodingStep = CodingStep {
+    id: "py-3079-descarte-clase", title: "descarte · clase", objective: "Proteger una clase esencial.",
+    prompt_md: "**descarte · clase**\n\nProteger una clase esencial.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# solicitudes = [('salud', True), ('reporte', False), ('login', True)]\n# resultado = [nombre for nombre, esencial in solicitudes if esencial]\n# print(resultado)\n",
+    pytest: "def test_descarte_clase(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['salud', 'login']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['salud', 'login'].",
+    solution_example: "solicitudes = [('salud', True), ('reporte', False), ('login', True)]\nresultado = [nombre for nombre, esencial in solicitudes if esencial]\nprint(resultado)",
+    next: Some("py-3080-descarte-cuota"), show_type_chips: false, micro_step: 3079,
+};
+pub const PY3080_DESCARTE_CUOTA: CodingStep = CodingStep {
+    id: "py-3080-descarte-cuota", title: "descarte · cuota", objective: "Aplicar cuotas independientes por cliente.",
+    prompt_md: "**descarte · cuota**\n\nAplicar cuotas independientes por cliente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# solicitudes = ['a', 'a', 'b', 'a', 'b']; cuota = 2\n# conteos, aceptadas = {}, []\n# for cliente in solicitudes:\n#     if conteos.get(cliente, 0) < cuota: conteos[cliente] = conteos.get(cliente, 0) + 1; aceptadas.append(cliente)\n# resultado = aceptadas\n# print(resultado)\n",
+    pytest: "def test_descarte_cuota(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['a', 'a', 'b', 'b']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['a', 'a', 'b', 'b'].",
+    solution_example: "solicitudes = ['a', 'a', 'b', 'a', 'b']; cuota = 2\nconteos, aceptadas = {}, []\nfor cliente in solicitudes:\n    if conteos.get(cliente, 0) < cuota: conteos[cliente] = conteos.get(cliente, 0) + 1; aceptadas.append(cliente)\nresultado = aceptadas\nprint(resultado)",
+    next: Some("py-3081-descarte-resumen"), show_type_chips: false, micro_step: 3080,
+};
+pub const PY3081_DESCARTE_RESUMEN: CodingStep = CodingStep {
+    id: "py-3081-descarte-resumen", title: "descarte · resumen", objective: "Contar aceptadas y descartadas.",
+    prompt_md: "**descarte · resumen**\n\nContar aceptadas y descartadas.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# decisiones = [True, False, True, False, False]\n# resultado = {'aceptadas': sum(decisiones), 'descartadas': len(decisiones) - sum(decisiones)}\n# print(resultado)\n",
+    pytest: "def test_descarte_resumen(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'aceptadas': 2, 'descartadas': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'aceptadas': 2, 'descartadas': 3}.",
+    solution_example: "decisiones = [True, False, True, False, False]\nresultado = {'aceptadas': sum(decisiones), 'descartadas': len(decisiones) - sum(decisiones)}\nprint(resultado)",
+    next: Some("py-3082-descarte-suite"), show_type_chips: false, micro_step: 3081,
+};
+pub const PY3082_DESCARTE_SUITE: CodingStep = CodingStep {
+    id: "py-3082-descarte-suite", title: "descarte · suite", objective: "Aplicar prioridad, capacidad y protección esencial.",
+    prompt_md: "**descarte · suite**\n\nAplicar prioridad, capacidad y protección esencial.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# solicitudes = [('salud', 9, True), ('lote', 3, False), ('login', 8, True), ('reporte', 5, False)]; capacidad = 3\n# ordenadas = sorted(solicitudes, key=lambda x: (not x[2], -x[1], x[0])); aceptadas = ordenadas[:capacidad]\n# resultado = {'aceptadas': [x[0] for x in aceptadas], 'descartadas': [x[0] for x in ordenadas[capacidad:]]}\n# print(resultado)\n",
+    pytest: "def test_descarte_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'aceptadas': ['salud', 'login', 'reporte'], 'descartadas': ['lote']}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'aceptadas': ['salud', 'login', 'reporte'], 'descartadas': ['lote']}.",
+    solution_example: "solicitudes = [('salud', 9, True), ('lote', 3, False), ('login', 8, True), ('reporte', 5, False)]; capacidad = 3\nordenadas = sorted(solicitudes, key=lambda x: (not x[2], -x[1], x[0])); aceptadas = ordenadas[:capacidad]\nresultado = {'aceptadas': [x[0] for x in aceptadas], 'descartadas': [x[0] for x in ordenadas[capacidad:]]}\nprint(resultado)",
+    next: Some("py-3083-capacidad-utilizacion"), show_type_chips: false, micro_step: 3082,
+};
+pub const PY3083_CAPACIDAD_UTILIZACION: CodingStep = CodingStep {
+    id: "py-3083-capacidad-utilizacion", title: "capacidad · utilización", objective: "Calcular utilización en porcentaje.",
+    prompt_md: "**capacidad · utilización**\n\nCalcular utilización en porcentaje.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# demanda, capacidad = 72, 90\n# resultado = demanda * 100 // capacidad\n# print(resultado)\n",
+    pytest: "def test_capacidad_utilizacion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 80\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 80.",
+    solution_example: "demanda, capacidad = 72, 90\nresultado = demanda * 100 // capacidad\nprint(resultado)",
+    next: Some("py-3084-capacidad-holgura"), show_type_chips: false, micro_step: 3083,
+};
+pub const PY3084_CAPACIDAD_HOLGURA: CodingStep = CodingStep {
+    id: "py-3084-capacidad-holgura", title: "capacidad · holgura", objective: "Calcular capacidad disponible.",
+    prompt_md: "**capacidad · holgura**\n\nCalcular capacidad disponible.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# demanda, capacidad = 72, 90\n# resultado = capacidad - demanda\n# print(resultado)\n",
+    pytest: "def test_capacidad_holgura(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 18\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 18.",
+    solution_example: "demanda, capacidad = 72, 90\nresultado = capacidad - demanda\nprint(resultado)",
+    next: Some("py-3085-capacidad-instancias"), show_type_chips: false, micro_step: 3084,
+};
+pub const PY3085_CAPACIDAD_INSTANCIAS: CodingStep = CodingStep {
+    id: "py-3085-capacidad-instancias", title: "capacidad · instancias", objective: "Calcular instancias necesarias con división techo.",
+    prompt_md: "**capacidad · instancias**\n\nCalcular instancias necesarias con división techo.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# demanda, por_instancia = 101, 25\n# resultado = (demanda + por_instancia - 1) // por_instancia\n# print(resultado)\n",
+    pytest: "def test_capacidad_instancias(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 5\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 5.",
+    solution_example: "demanda, por_instancia = 101, 25\nresultado = (demanda + por_instancia - 1) // por_instancia\nprint(resultado)",
+    next: Some("py-3086-capacidad-pico"), show_type_chips: false, micro_step: 3085,
+};
+pub const PY3086_CAPACIDAD_PICO: CodingStep = CodingStep {
+    id: "py-3086-capacidad-pico", title: "capacidad · pico", objective: "Dimensionar según el pico observado.",
+    prompt_md: "**capacidad · pico**\n\nDimensionar según el pico observado.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# demanda = [40, 55, 70, 62]; margen = 20\n# resultado = max(demanda) * (100 + margen) // 100\n# print(resultado)\n",
+    pytest: "def test_capacidad_pico(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 84\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 84.",
+    solution_example: "demanda = [40, 55, 70, 62]; margen = 20\nresultado = max(demanda) * (100 + margen) // 100\nprint(resultado)",
+    next: Some("py-3087-capacidad-plan"), show_type_chips: false, micro_step: 3086,
+};
+pub const PY3087_CAPACIDAD_PLAN: CodingStep = CodingStep {
+    id: "py-3087-capacidad-plan", title: "capacidad · plan", objective: "Proyectar capacidad para varios servicios.",
+    prompt_md: "**capacidad · plan**\n\nProyectar capacidad para varios servicios.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# demanda = {'api': 90, 'web': 45}; unidad = {'api': 30, 'web': 20}\n# resultado = {s: (demanda[s] + unidad[s] - 1) // unidad[s] for s in sorted(demanda)}\n# print(resultado)\n",
+    pytest: "def test_capacidad_plan(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'api': 3, 'web': 3}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'api': 3, 'web': 3}.",
+    solution_example: "demanda = {'api': 90, 'web': 45}; unidad = {'api': 30, 'web': 20}\nresultado = {s: (demanda[s] + unidad[s] - 1) // unidad[s] for s in sorted(demanda)}\nprint(resultado)",
+    next: Some("py-3088-capacidad-suite"), show_type_chips: false, micro_step: 3087,
+};
+pub const PY3088_CAPACIDAD_SUITE: CodingStep = CodingStep {
+    id: "py-3088-capacidad-suite", title: "capacidad · suite", objective: "Calcular pico, margen e instancias.",
+    prompt_md: "**capacidad · suite**\n\nCalcular pico, margen e instancias.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# muestras = [60, 85, 70]; margen = 25; unidad = 30\n# pico = max(muestras); objetivo = (pico * (100 + margen) + 99) // 100\n# resultado = {'pico': pico, 'objetivo': objetivo, 'instancias': (objetivo + unidad - 1) // unidad}\n# print(resultado)\n",
+    pytest: "def test_capacidad_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'pico': 85, 'objetivo': 107, 'instancias': 4}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'pico': 85, 'objetivo': 107, 'instancias': 4}.",
+    solution_example: "muestras = [60, 85, 70]; margen = 25; unidad = 30\npico = max(muestras); objetivo = (pico * (100 + margen) + 99) // 100\nresultado = {'pico': pico, 'objetivo': objetivo, 'instancias': (objetivo + unidad - 1) // unidad}\nprint(resultado)",
+    next: Some("py-3089-incidente-severidad"), show_type_chips: false, micro_step: 3088,
+};
+pub const PY3089_INCIDENTE_SEVERIDAD: CodingStep = CodingStep {
+    id: "py-3089-incidente-severidad", title: "incidentes · severidad", objective: "Clasificar severidad por impacto.",
+    prompt_md: "**incidentes · severidad**\n\nClasificar severidad por impacto.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# impacto = 82\n# resultado = 'sev1' if impacto >= 80 else 'sev2' if impacto >= 50 else 'sev3'\n# print(resultado)\n",
+    pytest: "def test_incidente_severidad(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'sev1'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'sev1'.",
+    solution_example: "impacto = 82\nresultado = 'sev1' if impacto >= 80 else 'sev2' if impacto >= 50 else 'sev3'\nprint(resultado)",
+    next: Some("py-3090-incidente-linea"), show_type_chips: false, micro_step: 3089,
+};
+pub const PY3090_INCIDENTE_LINEA: CodingStep = CodingStep {
+    id: "py-3090-incidente-linea", title: "incidentes · línea", objective: "Ordenar eventos de una línea temporal lógica.",
+    prompt_md: "**incidentes · línea**\n\nOrdenar eventos de una línea temporal lógica.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# eventos = [(3, 'mitigado'), (1, 'detectado'), (2, 'asignado')]\n# resultado = [evento for _, evento in sorted(eventos)]\n# print(resultado)\n",
+    pytest: "def test_incidente_linea(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['detectado', 'asignado', 'mitigado']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['detectado', 'asignado', 'mitigado'].",
+    solution_example: "eventos = [(3, 'mitigado'), (1, 'detectado'), (2, 'asignado')]\nresultado = [evento for _, evento in sorted(eventos)]\nprint(resultado)",
+    next: Some("py-3091-incidente-propietario"), show_type_chips: false, micro_step: 3090,
+};
+pub const PY3091_INCIDENTE_PROPIETARIO: CodingStep = CodingStep {
+    id: "py-3091-incidente-propietario", title: "incidentes · propietario", objective: "Asignar propietario por componente.",
+    prompt_md: "**incidentes · propietario**\n\nAsignar propietario por componente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# guardias = {'api': 'ana', 'db': 'leo'}; componente = 'db'\n# resultado = guardias[componente]\n# print(resultado)\n",
+    pytest: "def test_incidente_propietario(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 'leo'\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 'leo'.",
+    solution_example: "guardias = {'api': 'ana', 'db': 'leo'}; componente = 'db'\nresultado = guardias[componente]\nprint(resultado)",
+    next: Some("py-3092-incidente-acciones"), show_type_chips: false, micro_step: 3091,
+};
+pub const PY3092_INCIDENTE_ACCIONES: CodingStep = CodingStep {
+    id: "py-3092-incidente-acciones", title: "incidentes · acciones", objective: "Priorizar acciones por dependencia.",
+    prompt_md: "**incidentes · acciones**\n\nPriorizar acciones por dependencia.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# dependencias = {'mitigar': {'diagnosticar'}, 'comunicar': {'diagnosticar'}, 'cerrar': {'mitigar', 'comunicar'}}\n# hechas, orden = set(), []\n# while len(orden) < len(dependencias) + 1:\n#     lista = sorted(a for a, req in dependencias.items() if a not in hechas and req <= hechas)\n#     if not lista: hechas.add('diagnosticar'); orden.append('diagnosticar')\n#     else: hechas.add(lista[0]); orden.append(lista[0])\n# resultado = orden\n# print(resultado)\n",
+    pytest: "def test_incidente_acciones(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['diagnosticar', 'comunicar', 'mitigar', 'cerrar']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['diagnosticar', 'comunicar', 'mitigar', 'cerrar'].",
+    solution_example: "dependencias = {'mitigar': {'diagnosticar'}, 'comunicar': {'diagnosticar'}, 'cerrar': {'mitigar', 'comunicar'}}\nhechas, orden = set(), []\nwhile len(orden) < len(dependencias) + 1:\n    lista = sorted(a for a, req in dependencias.items() if a not in hechas and req <= hechas)\n    if not lista: hechas.add('diagnosticar'); orden.append('diagnosticar')\n    else: hechas.add(lista[0]); orden.append(lista[0])\nresultado = orden\nprint(resultado)",
+    next: Some("py-3093-incidente-duracion"), show_type_chips: false, micro_step: 3092,
+};
+pub const PY3093_INCIDENTE_DURACION: CodingStep = CodingStep {
+    id: "py-3093-incidente-duracion", title: "incidentes · duración", objective: "Calcular duración por ticks de inicio y cierre.",
+    prompt_md: "**incidentes · duración**\n\nCalcular duración por ticks de inicio y cierre.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# inicio, mitigacion, cierre = 4, 9, 12\n# resultado = {'hasta_mitigar': mitigacion - inicio, 'total': cierre - inicio}\n# print(resultado)\n",
+    pytest: "def test_incidente_duracion(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'hasta_mitigar': 5, 'total': 8}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'hasta_mitigar': 5, 'total': 8}.",
+    solution_example: "inicio, mitigacion, cierre = 4, 9, 12\nresultado = {'hasta_mitigar': mitigacion - inicio, 'total': cierre - inicio}\nprint(resultado)",
+    next: Some("py-3094-incidente-suite"), show_type_chips: false, micro_step: 3093,
+};
+pub const PY3094_INCIDENTE_SUITE: CodingStep = CodingStep {
+    id: "py-3094-incidente-suite", title: "incidentes · suite", objective: "Resumir severidad, línea y tiempos.",
+    prompt_md: "**incidentes · suite**\n\nResumir severidad, línea y tiempos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# incidente = {'inicio': 2, 'mitigacion': 7, 'cierre': 10, 'impacto': 65}; eventos = [(7, 'mitigado'), (2, 'detectado'), (10, 'cerrado')]\n# resultado = {'severidad': 'sev2' if incidente['impacto'] >= 50 else 'sev3', 'linea': [e for _, e in sorted(eventos)], 'mttr': incidente['mitigacion'] - incidente['inicio']}\n# print(resultado)\n",
+    pytest: "def test_incidente_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'severidad': 'sev2', 'linea': ['detectado', 'mitigado', 'cerrado'], 'mttr': 5}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'severidad': 'sev2', 'linea': ['detectado', 'mitigado', 'cerrado'], 'mttr': 5}.",
+    solution_example: "incidente = {'inicio': 2, 'mitigacion': 7, 'cierre': 10, 'impacto': 65}; eventos = [(7, 'mitigado'), (2, 'detectado'), (10, 'cerrado')]\nresultado = {'severidad': 'sev2' if incidente['impacto'] >= 50 else 'sev3', 'linea': [e for _, e in sorted(eventos)], 'mttr': incidente['mitigacion'] - incidente['inicio']}\nprint(resultado)",
+    next: Some("py-3095-operacion-senales"), show_type_chips: false, micro_step: 3094,
+};
+pub const PY3095_OPERACION_SENALES: CodingStep = CodingStep {
+    id: "py-3095-operacion-senales", title: "capstone · señales", objective: "Resumir señales para una decisión operativa.",
+    prompt_md: "**capstone · señales**\n\nResumir señales para una decisión operativa.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# senales = {'errores': 4, 'total': 200, 'latencia': 130}\n# resultado = {'error_bp': senales['errores'] * 10000 // senales['total'], 'latencia': senales['latencia']}\n# print(resultado)\n",
+    pytest: "def test_operacion_senales(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'error_bp': 200, 'latencia': 130}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'error_bp': 200, 'latencia': 130}.",
+    solution_example: "senales = {'errores': 4, 'total': 200, 'latencia': 130}\nresultado = {'error_bp': senales['errores'] * 10000 // senales['total'], 'latencia': senales['latencia']}\nprint(resultado)",
+    next: Some("py-3096-operacion-objetivo"), show_type_chips: false, micro_step: 3095,
+};
+pub const PY3096_OPERACION_OBJETIVO: CodingStep = CodingStep {
+    id: "py-3096-operacion-objetivo", title: "capstone · objetivo", objective: "Evaluar señales contra objetivos.",
+    prompt_md: "**capstone · objetivo**\n\nEvaluar señales contra objetivos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# metricas = {'error_bp': 200, 'latencia': 130}; limites = {'error_bp': 100, 'latencia': 120}\n# resultado = sorted(k for k in metricas if metricas[k] > limites[k])\n# print(resultado)\n",
+    pytest: "def test_operacion_objetivo(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['error_bp', 'latencia']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['error_bp', 'latencia'].",
+    solution_example: "metricas = {'error_bp': 200, 'latencia': 130}; limites = {'error_bp': 100, 'latencia': 120}\nresultado = sorted(k for k in metricas if metricas[k] > limites[k])\nprint(resultado)",
+    next: Some("py-3097-operacion-presupuesto"), show_type_chips: false, micro_step: 3096,
+};
+pub const PY3097_OPERACION_PRESUPUESTO: CodingStep = CodingStep {
+    id: "py-3097-operacion-presupuesto", title: "capstone · presupuesto", objective: "Calcular presupuesto restante.",
+    prompt_md: "**capstone · presupuesto**\n\nCalcular presupuesto restante.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# permitidos, observados = 10, 7\n# resultado = permitidos - observados\n# print(resultado)\n",
+    pytest: "def test_operacion_presupuesto(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == 3\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es 3.",
+    solution_example: "permitidos, observados = 10, 7\nresultado = permitidos - observados\nprint(resultado)",
+    next: Some("py-3098-operacion-carga"), show_type_chips: false, micro_step: 3097,
+};
+pub const PY3098_OPERACION_CARGA: CodingStep = CodingStep {
+    id: "py-3098-operacion-carga", title: "capstone · carga", objective: "Elegir admisión según presión y prioridad.",
+    prompt_md: "**capstone · carga**\n\nElegir admisión según presión y prioridad.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# solicitudes = [('login', 9), ('reporte', 3), ('salud', 10)]; libres = 2\n# resultado = [n for n, _ in sorted(solicitudes, key=lambda x: (-x[1], x[0]))[:libres]]\n# print(resultado)\n",
+    pytest: "def test_operacion_carga(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == ['salud', 'login']\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es ['salud', 'login'].",
+    solution_example: "solicitudes = [('login', 9), ('reporte', 3), ('salud', 10)]; libres = 2\nresultado = [n for n, _ in sorted(solicitudes, key=lambda x: (-x[1], x[0]))[:libres]]\nprint(resultado)",
+    next: Some("py-3099-operacion-incidente"), show_type_chips: false, micro_step: 3098,
+};
+pub const PY3099_OPERACION_INCIDENTE: CodingStep = CodingStep {
+    id: "py-3099-operacion-incidente", title: "capstone · incidente", objective: "Abrir incidente cuando se incumplen objetivos.",
+    prompt_md: "**capstone · incidente**\n\nAbrir incidente cuando se incumplen objetivos.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# incumplidos = ['error_bp', 'latencia']; presupuesto = 3\n# resultado = {'abrir': bool(incumplidos), 'severidad': 'sev1' if presupuesto <= 0 else 'sev2'}\n# print(resultado)\n",
+    pytest: "def test_operacion_incidente(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'abrir': True, 'severidad': 'sev2'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'abrir': True, 'severidad': 'sev2'}.",
+    solution_example: "incumplidos = ['error_bp', 'latencia']; presupuesto = 3\nresultado = {'abrir': bool(incumplidos), 'severidad': 'sev1' if presupuesto <= 0 else 'sev2'}\nprint(resultado)",
+    next: Some("py-3100-ola35-suite"), show_type_chips: false, micro_step: 3099,
+};
+pub const PY3100_OLA35_SUITE: CodingStep = CodingStep {
+    id: "py-3100-ola35-suite", title: "ola 35 · suite", objective: "Cerrar la ola con señales, SLO, presupuesto, carga e incidente.",
+    prompt_md: "**ola 35 · suite**\n\nCerrar la ola con señales, SLO, presupuesto, carga e incidente.\n\n**Micro-reto:** modelá el comportamiento indicado, guardá el valor final en `resultado` y mostralo.",
+    starter_code: "# muestras = [{'ok': True, 'latencia': 80}, {'ok': False, 'latencia': 150}, {'ok': True, 'latencia': 110}, {'ok': False, 'latencia': 140}]\n# total = len(muestras); errores = sum(not m['ok'] for m in muestras); error_bp = errores * 10000 // total; lentas = sum(m['latencia'] > 120 for m in muestras)\n# presupuesto = 1; restante = presupuesto - errores; incumplidos = [n for n, fallo in [('errores', error_bp > 1000), ('latencia', lentas > 1)] if fallo]\n# resultado = {'metricas': {'error_bp': error_bp, 'lentas': lentas}, 'presupuesto': restante, 'incumplidos': incumplidos, 'accion': 'mitigar' if incumplidos else 'observar'}\n# print(resultado)\n",
+    pytest: "def test_ola35_suite(capsys):\n    ns = {}\n    exec(open('solution.py', encoding='utf-8').read(), ns)\n    assert ns['resultado'] == {'metricas': {'error_bp': 5000, 'lentas': 2}, 'presupuesto': -1, 'incumplidos': ['errores', 'latencia'], 'accion': 'mitigar'}\n    assert capsys.readouterr().out.strip() == str(ns['resultado'])\n",
+    hint: "El resultado esperado es {'metricas': {'error_bp': 5000, 'lentas': 2}, 'presupuesto': -1, 'incumplidos': ['errores', 'latencia'], 'accion': 'mitigar'}.",
+    solution_example: "muestras = [{'ok': True, 'latencia': 80}, {'ok': False, 'latencia': 150}, {'ok': True, 'latencia': 110}, {'ok': False, 'latencia': 140}]\ntotal = len(muestras); errores = sum(not m['ok'] for m in muestras); error_bp = errores * 10000 // total; lentas = sum(m['latencia'] > 120 for m in muestras)\npresupuesto = 1; restante = presupuesto - errores; incumplidos = [n for n, fallo in [('errores', error_bp > 1000), ('latencia', lentas > 1)] if fallo]\nresultado = {'metricas': {'error_bp': error_bp, 'lentas': lentas}, 'presupuesto': restante, 'incumplidos': incumplidos, 'accion': 'mitigar' if incumplidos else 'observar'}\nprint(resultado)",
+    next: None, show_type_chips: false, micro_step: 3100,
 };
 pub const CODING_STEPS: &[&CodingStep] = &[
     &PY02_VARIABLES,
@@ -66251,6 +66791,66 @@ pub const CODING_STEPS: &[&CodingStep] = &[
     &PY3038_RECUPERAR_COMPENSAR,
     &PY3039_RECUPERAR_REPARAR,
     &PY3040_OLA34_SUITE,
+    &PY3041_TELEMETRIA_NORMALIZAR,
+    &PY3042_TELEMETRIA_ETIQUETAS,
+    &PY3043_TELEMETRIA_AGRUPAR,
+    &PY3044_TELEMETRIA_FILTRAR,
+    &PY3045_TELEMETRIA_RESUMIR,
+    &PY3046_TELEMETRIA_SUITE,
+    &PY3047_METRICA_TASA,
+    &PY3048_METRICA_ERROR,
+    &PY3049_METRICA_PERCENTIL,
+    &PY3050_METRICA_VENTANA,
+    &PY3051_METRICA_DELTA,
+    &PY3052_METRICA_SUITE,
+    &PY3053_SLI_DISPONIBILIDAD,
+    &PY3054_SLI_LATENCIA,
+    &PY3055_SLO_CUMPLIDO,
+    &PY3056_SLO_POR_SERVICIO,
+    &PY3057_SLO_BRECHA,
+    &PY3058_SLO_SUITE,
+    &PY3059_PRESUPUESTO_TOTAL,
+    &PY3060_PRESUPUESTO_CONSUMIDO,
+    &PY3061_PRESUPUESTO_AGOTADO,
+    &PY3062_PRESUPUESTO_VELOCIDAD,
+    &PY3063_PRESUPUESTO_POLITICA,
+    &PY3064_PRESUPUESTO_SUITE,
+    &PY3065_ANOMALIA_UMBRAL,
+    &PY3066_ANOMALIA_DESVIO,
+    &PY3067_ANOMALIA_RACHAS,
+    &PY3068_ANOMALIA_CAMBIO,
+    &PY3069_ANOMALIA_POR_CLAVE,
+    &PY3070_ANOMALIA_SUITE,
+    &PY3071_PRESION_OCUPACION,
+    &PY3072_PRESION_ESTADO,
+    &PY3073_PRESION_ADMISION,
+    &PY3074_PRESION_DRENAJE,
+    &PY3075_PRESION_FUENTE,
+    &PY3076_PRESION_SUITE,
+    &PY3077_DESCARTE_PRIORIDAD,
+    &PY3078_DESCARTE_COSTO,
+    &PY3079_DESCARTE_CLASE,
+    &PY3080_DESCARTE_CUOTA,
+    &PY3081_DESCARTE_RESUMEN,
+    &PY3082_DESCARTE_SUITE,
+    &PY3083_CAPACIDAD_UTILIZACION,
+    &PY3084_CAPACIDAD_HOLGURA,
+    &PY3085_CAPACIDAD_INSTANCIAS,
+    &PY3086_CAPACIDAD_PICO,
+    &PY3087_CAPACIDAD_PLAN,
+    &PY3088_CAPACIDAD_SUITE,
+    &PY3089_INCIDENTE_SEVERIDAD,
+    &PY3090_INCIDENTE_LINEA,
+    &PY3091_INCIDENTE_PROPIETARIO,
+    &PY3092_INCIDENTE_ACCIONES,
+    &PY3093_INCIDENTE_DURACION,
+    &PY3094_INCIDENTE_SUITE,
+    &PY3095_OPERACION_SENALES,
+    &PY3096_OPERACION_OBJETIVO,
+    &PY3097_OPERACION_PRESUPUESTO,
+    &PY3098_OPERACION_CARGA,
+    &PY3099_OPERACION_INCIDENTE,
+    &PY3100_OLA35_SUITE,
 
 ];
 
@@ -66418,14 +67018,14 @@ mod tests {
     #[test]
     fn coding_steps_have_unique_micro_steps() {
         let mut seen = std::collections::BTreeSet::new();
-        assert_eq!(CODING_STEPS.len(), 3040, "catalog must contain 3040 steps");
+        assert_eq!(CODING_STEPS.len(), 3100, "catalog must contain 3100 steps");
         for (index, step) in CODING_STEPS.iter().enumerate() {
             assert_eq!(
                 step.micro_step,
                 (index + 1) as i32,
                 "catalog must be contiguous at index {index}"
             );
-            assert!(step.micro_step >= 1 && step.micro_step <= 3040);
+            assert!(step.micro_step >= 1 && step.micro_step <= 3100);
             assert!(
                 seen.insert(step.micro_step),
                 "duplicate micro_step {}",
@@ -66434,8 +67034,8 @@ mod tests {
         }
         assert_eq!(
             seen,
-            (1..=3040).collect(),
-            "catalog must cover every micro-step in 1..=3040"
+            (1..=3100).collect(),
+            "catalog must cover every micro-step in 1..=3100"
         );
     }
 
@@ -69854,7 +70454,22 @@ mod tests {
                 let next_step = coding_step_by_micro_step(n + 1).expect("next wave34 step");
                 assert_eq!(step.next, Some(next_step.id));
             } else {
-                assert_eq!(step.next, None, "step 3040 is the end of the rail");
+                assert_eq!(step.next, Some("py-3041-telemetria-normalizar"), "step 3040 chains to Wave 35");
+            }
+        }
+    }
+
+    #[test]
+    fn py3041_to_py3100_operational_resilience_chain() {
+        for n in 3041..=3100 {
+            let step = coding_step_by_micro_step(n).expect("wave35 chain step");
+            assert_eq!(step.micro_step, n);
+            assert!(step.id.starts_with(&format!("py-{n}-")));
+            if n < 3100 {
+                let next_step = coding_step_by_micro_step(n + 1).expect("next wave35 step");
+                assert_eq!(step.next, Some(next_step.id));
+            } else {
+                assert_eq!(step.next, None, "step 3100 is the end of the rail");
             }
         }
     }
