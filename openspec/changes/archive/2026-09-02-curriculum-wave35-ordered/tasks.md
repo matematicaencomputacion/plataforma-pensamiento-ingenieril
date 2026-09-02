@@ -24,5 +24,5 @@
 
 - [x] 4.1 Auditar que el diff no contiene pasos mayores a 3100 ni archivos fuera de alcance
 - [x] 4.2 Crear commit, publicar rama y abrir PR único con evidencia y SHA
-- [ ] 4.3 Verificar CI, Docker, E2E 6/6 y smoke del head exacto
-- [ ] 4.4 Hacer squash merge autorizado y verificar CI, Docker, E2E y Deploy post-merge por SHA exacto
+- [x] 4.3 Verificar CI, Docker, E2E 6/6 y smoke del head exacto
+- [x] 4.4 Hacer squash merge autorizado y verificar CI, Docker, E2E y Deploy post-merge por SHA exacto
