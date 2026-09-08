@@ -173,14 +173,14 @@ jobs:
             fi
             gcloud run deploy "${SERVICE}" \
               "${common[@]}" \
-              --set-env-vars="ENV=production" \
+              --set-env-vars="ENV=production,PPI_TRUST_PROXY_HEADERS=1" \
               --set-secrets="JWT_SECRET=JWT_SECRET:latest,DATABASE_URL=DATABASE_URL:latest" \
               "${sql_flags[@]}"
             echo "deployed ${image} with Secret Manager DATABASE_URL"
           else
             gcloud run deploy "${SERVICE}" \
               "${common[@]}" \
-              --set-env-vars="ENV=production,DATABASE_URL=sqlite:///tmp/ppi.db,PPI_ALLOW_EPHEMERAL_SQLITE=1" \
+              --set-env-vars="ENV=production,DATABASE_URL=sqlite:///tmp/ppi.db,PPI_ALLOW_EPHEMERAL_SQLITE=1,PPI_TRUST_PROXY_HEADERS=1" \
               --set-secrets="JWT_SECRET=JWT_SECRET:latest" \
               --clear-cloudsql-instances
             echo "::warning::Demo efímera SQLite /tmp. Crear Cloud SQL + secreto DATABASE_URL (docs/ops/gcp-iteration-plan.md). No publicar cuentas reales."

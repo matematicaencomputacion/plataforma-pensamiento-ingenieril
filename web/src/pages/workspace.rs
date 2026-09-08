@@ -3,7 +3,7 @@ use leptos_router::components::A;
 use leptos_router::hooks::{use_location, use_navigate};
 use leptos_router::NavigateOptions;
 
-use crate::auth::reset_progress;
+use crate::auth::{login_path, path_with_search, reset_progress};
 use crate::components::{level_completed, ProgressCheck};
 use crate::curriculum::{coding_step_by_micro_step, max_micro_step, micro_step_unlocked};
 use crate::session::SessionCtx;
@@ -27,10 +27,13 @@ pub fn WorkspacePage() -> impl IntoView {
         let ready = session.bootstrapped.get();
         let live = session.user.get().is_some();
         let pending = session.token.get().is_some() && !live;
-        let on_workspace = location.pathname.get() == "/workspace";
+        let pathname = location.pathname.get();
+        let search = location.search.get();
+        let on_workspace = pathname == "/workspace";
         if ready && !live && !pending && on_workspace {
+            let destination = path_with_search(&pathname, &search);
             navigate(
-                "/login",
+                &login_path(&destination),
                 NavigateOptions {
                     replace: true,
                     ..Default::default()

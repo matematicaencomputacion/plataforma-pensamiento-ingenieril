@@ -1,11 +1,53 @@
 import { expect, test } from "@playwright/test";
-import { gotoApp } from "./helpers";
+import { e2eTimeout, gotoApp } from "./helpers";
 
 /**
  * Auth navigation must be unidirectional — no /workspace ↔ / bounce.
  * Seeds session via API + localStorage to isolate route-guard behavior.
  */
 test.describe("session navigation", () => {
+  test("transient /api/me failure retains token and retry restores session", async ({
+    page,
+    request,
+  }) => {
+    const email = `retry-${Date.now()}@example.com`;
+    const password = "secreto12retry";
+    const reg = await request.post("/api/auth/register", {
+      data: { email, password },
+      timeout: e2eTimeout,
+    });
+    expect(reg.ok(), await reg.text()).toBeTruthy();
+    const body = (await reg.json()) as { token: string };
+
+    await page.goto("/");
+    await page.evaluate((token) => localStorage.setItem("ppi.auth.token", token), body.token);
+    let meRequests = 0;
+    await page.route("**/api/me", async (route) => {
+      meRequests += 1;
+      if (meRequests === 1) {
+        await route.fulfill({
+          status: 503,
+          contentType: "application/json",
+          body: '{"error":"temporary"}',
+        });
+        return;
+      }
+      await route.continue();
+    });
+
+    // This scenario intentionally renders the transient recovery state before
+    // the workspace UI, so the generic `gotoApp` ready selector cannot apply.
+    await page.goto("/workspace", { waitUntil: "load" });
+    await expect(page).toHaveURL(/\/workspace$/, { timeout: e2eTimeout });
+    await expect(page.locator("#session-recovery")).toBeVisible({ timeout: e2eTimeout });
+    expect(await page.evaluate(() => localStorage.getItem("ppi.auth.token"))).toBe(body.token);
+
+    await page.locator("#session-retry").click();
+    await expect(page.locator("#session-recovery")).toHaveCount(0, { timeout: e2eTimeout });
+    await expect(page.locator(".session-bar__email")).toContainText(email);
+    expect(meRequests).toBe(2);
+  });
+
   test("portada stays put when authenticated; logout clears without bounce", async ({
     page,
     request,

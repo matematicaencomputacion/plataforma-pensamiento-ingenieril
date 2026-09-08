@@ -14,7 +14,7 @@ use leptos_router::NavigateOptions;
 use wasm_bindgen::JsCast;
 
 use crate::analytics::{emit_learn_step_enter, emit_learn_validate};
-use crate::auth::{complete_progress, input_value};
+use crate::auth::{complete_progress, input_value, login_path, path_with_search};
 use crate::components::{
     level_completed, ConceptLensWidget, FabState, PartitionBadges, ProgressCheck, VariableTypeChips,
 };
@@ -156,10 +156,13 @@ pub fn LearnPage() -> impl IntoView {
         let ready = session.bootstrapped.get();
         let live = session.user.get().is_some();
         let pending = session.token.get().is_some() && !live;
-        let on_learn = location.pathname.get().starts_with("/learn");
+        let pathname = location.pathname.get();
+        let search = location.search.get();
+        let on_learn = pathname.starts_with("/learn");
         if ready && !live && !pending && on_learn {
+            let destination = path_with_search(&pathname, &search);
             navigate(
-                "/login",
+                &login_path(&destination),
                 NavigateOptions {
                     replace: true,
                     ..Default::default()

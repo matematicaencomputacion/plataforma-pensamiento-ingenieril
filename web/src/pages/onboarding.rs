@@ -8,7 +8,8 @@ use wasm_bindgen::closure::Closure;
 
 use crate::api::{ProfileSynthesis, UserProfile, MIN_LEARNER_NOTES_RUNES};
 use crate::auth::{
-    fetch_user_profile, input_value, put_user_profile, synthesize_learner_profile,
+    fetch_user_profile, input_value, login_path, path_with_search, put_user_profile,
+    synthesize_learner_profile,
 };
 use crate::interop::speech;
 use crate::session::SessionCtx;
@@ -58,10 +59,13 @@ pub fn OnboardingPage() -> impl IntoView {
         let ready = session.bootstrapped.get();
         let live = session.user.get().is_some();
         let pending = session.token.get().is_some() && !live;
-        let on_onboarding = location.pathname.get() == "/onboarding";
+        let pathname = location.pathname.get();
+        let search = location.search.get();
+        let on_onboarding = pathname == "/onboarding";
         if ready && !live && !pending && on_onboarding {
+            let destination = path_with_search(&pathname, &search);
             navigate(
-                "/login",
+                &login_path(&destination),
                 NavigateOptions {
                     replace: true,
                     ..Default::default()

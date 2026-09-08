@@ -2,15 +2,23 @@ use leptos::prelude::*;
 use leptos_router::components::A;
 
 use crate::components::BrandLink;
-use leptos_router::hooks::use_navigate;
+use leptos_router::hooks::{use_navigate, use_query_map};
 
-use crate::auth::{input_value, login_user};
+use crate::auth::{input_value, login_user, safe_return_to};
 use crate::session::SessionCtx;
 
 #[component]
 pub fn LoginPage() -> impl IntoView {
     let session = expect_context::<SessionCtx>();
     let navigate = use_navigate();
+    let query = use_query_map();
+    let destination = Memo::new(move |_| {
+        query
+            .get()
+            .get_str("return_to")
+            .and_then(safe_return_to)
+            .unwrap_or_else(|| "/workspace".to_string())
+    });
 
     let email = RwSignal::new(String::new());
     let password = RwSignal::new(String::new());
@@ -22,8 +30,9 @@ pub fn LoginPage() -> impl IntoView {
         let navigate = navigate.clone();
         move |_| {
             if session.bootstrapped.get() && session.user.get().is_some() {
+                let destination = destination.get();
                 navigate(
-                    "/workspace",
+                    &destination,
                     leptos_router::NavigateOptions {
                         replace: true,
                         ..Default::default()
@@ -44,6 +53,7 @@ pub fn LoginPage() -> impl IntoView {
         let email_v = email.get_untracked();
         let password_v = password.get_untracked();
         let navigate = navigate.clone();
+        let destination = destination.get_untracked();
 
         leptos::task::spawn_local(async move {
             let outcome = login_user(email_v, password_v).await;
@@ -51,7 +61,7 @@ pub fn LoginPage() -> impl IntoView {
             match outcome {
                 Ok(result) => {
                     session.establish(result.user, result.token);
-                    navigate("/workspace", Default::default());
+                    navigate(&destination, Default::default());
                 }
                 Err(err) => {
                     // Stale bearer ghosts on 401/409 must not keep the shell "logged in".

@@ -7,9 +7,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time" // <-- AGREGAR
-	"github.com/getsentry/sentry-go"
+	"time"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/keyword"
@@ -151,7 +151,17 @@ func main() {
 			PublicAppURL:     smtpCfg.PublicAppURL,
 		},
 	)
-	authHandler := handlers.NewAuthHandler(authService)
+	authHandler := handlers.NewAuthHandlerWithOptions(
+		authService,
+		handlers.AuthHandlerOptions{
+			LoginLimiter: handlers.NewMemoryLoginLimiter(
+				authCfg.LoginAttemptLimit,
+				authCfg.LoginAttemptWindow,
+				authCfg.LoginLimiterCapacity,
+			),
+			TrustProxyHeaders: authCfg.TrustProxyHeaders,
+		},
+	)
 	if exposeReset {
 		log.Printf("auth DX: forgot-password incluye resetToken (dev/harness)")
 	}

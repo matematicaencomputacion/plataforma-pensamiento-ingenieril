@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 	"testing"
+	"time"
 )
 
 func clearAuthEnv(t *testing.T) {
@@ -14,6 +15,10 @@ func clearAuthEnv(t *testing.T) {
 	t.Setenv("JWT_SECRET", "")
 	t.Setenv("DATABASE_URL", "")
 	t.Setenv("PPI_ALLOW_EPHEMERAL_SQLITE", "")
+	t.Setenv("PPI_LOGIN_ATTEMPT_LIMIT", "")
+	t.Setenv("PPI_LOGIN_WINDOW_SECONDS", "")
+	t.Setenv("PPI_LOGIN_LIMITER_CAPACITY", "")
+	t.Setenv("PPI_TRUST_PROXY_HEADERS", "")
 }
 
 func TestLoadAuthConfig_DevDefaultWhenNotProduction(t *testing.T) {
@@ -31,6 +36,46 @@ func TestLoadAuthConfig_DevDefaultWhenNotProduction(t *testing.T) {
 	}
 	if cfg.Driver() != DriverSQLite {
 		t.Fatalf("driver: %s", cfg.Driver())
+	}
+	if cfg.LoginAttemptLimit != 5 || cfg.LoginAttemptWindow != time.Minute || cfg.LoginLimiterCapacity != 4096 {
+		t.Fatalf("login limiter defaults: %d/%s/%d", cfg.LoginAttemptLimit, cfg.LoginAttemptWindow, cfg.LoginLimiterCapacity)
+	}
+	if cfg.TrustProxyHeaders {
+		t.Fatal("proxy headers must be untrusted by default")
+	}
+}
+
+func TestLoadAuthConfig_LoginLimiterOverrides(t *testing.T) {
+	clearAuthEnv(t)
+	t.Setenv("PPI_LOGIN_ATTEMPT_LIMIT", "7")
+	t.Setenv("PPI_LOGIN_WINDOW_SECONDS", "90")
+	t.Setenv("PPI_LOGIN_LIMITER_CAPACITY", "512")
+	t.Setenv("PPI_TRUST_PROXY_HEADERS", "true")
+
+	cfg, err := LoadAuthConfig()
+	if err != nil {
+		t.Fatalf("load config: %v", err)
+	}
+	if cfg.LoginAttemptLimit != 7 || cfg.LoginAttemptWindow != 90*time.Second || cfg.LoginLimiterCapacity != 512 {
+		t.Fatalf("login limiter overrides: %d/%s/%d", cfg.LoginAttemptLimit, cfg.LoginAttemptWindow, cfg.LoginLimiterCapacity)
+	}
+	if !cfg.TrustProxyHeaders {
+		t.Fatal("expected trusted proxy headers")
+	}
+}
+
+func TestLoadAuthConfig_InvalidLoginLimiterValuesUseDefaults(t *testing.T) {
+	clearAuthEnv(t)
+	t.Setenv("PPI_LOGIN_ATTEMPT_LIMIT", "0")
+	t.Setenv("PPI_LOGIN_WINDOW_SECONDS", "invalid")
+	t.Setenv("PPI_LOGIN_LIMITER_CAPACITY", "-4")
+
+	cfg, err := LoadAuthConfig()
+	if err != nil {
+		t.Fatalf("load config: %v", err)
+	}
+	if cfg.LoginAttemptLimit != 5 || cfg.LoginAttemptWindow != time.Minute || cfg.LoginLimiterCapacity != 4096 {
+		t.Fatalf("invalid fallback: %d/%s/%d", cfg.LoginAttemptLimit, cfg.LoginAttemptWindow, cfg.LoginLimiterCapacity)
 	}
 }
 

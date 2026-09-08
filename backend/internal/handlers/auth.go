@@ -1,11 +1,17 @@
 package handlers
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"net/netip"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/domain"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/repositories"
@@ -24,11 +30,30 @@ type authSuccessResponse struct {
 
 // AuthHandler endpoints de registro, login, logout, /me y perfil.
 type AuthHandler struct {
-	service *usecases.AuthService
+	service           *usecases.AuthService
+	loginLimiter      LoginLimiter
+	trustProxyHeaders bool
 }
 
 func NewAuthHandler(service *usecases.AuthService) *AuthHandler {
-	return &AuthHandler{service: service}
+	return NewAuthHandlerWithOptions(service, AuthHandlerOptions{})
+}
+
+type AuthHandlerOptions struct {
+	LoginLimiter      LoginLimiter
+	TrustProxyHeaders bool
+}
+
+func NewAuthHandlerWithOptions(service *usecases.AuthService, options AuthHandlerOptions) *AuthHandler {
+	limiter := options.LoginLimiter
+	if limiter == nil {
+		limiter = allowAllLoginLimiter{}
+	}
+	return &AuthHandler{
+		service:           service,
+		loginLimiter:      limiter,
+		trustProxyHeaders: options.TrustProxyHeaders,
+	}
 }
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
@@ -53,12 +78,54 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	key := loginAttemptKey(r, req.Email, h.trustProxyHeaders)
+	allowed, retryAfter := h.loginLimiter.Allow(key)
+	if !allowed {
+		w.Header().Set("Retry-After", strconv.Itoa(retryAfterSeconds(retryAfter)))
+		writeJSONError(w, "demasiados intentos; esperá un momento e intentá de nuevo", http.StatusTooManyRequests)
+		return
+	}
+
 	out, err := h.service.Login(r.Context(), req.Email, req.Password)
 	if err != nil {
 		writeAuthError(w, err)
 		return
 	}
+	h.loginLimiter.Reset(key)
 	writeJSON(w, http.StatusOK, authSuccessResponse{User: out.User, Token: out.Token})
+}
+
+func loginAttemptKey(r *http.Request, email string, trustProxyHeaders bool) string {
+	identity := clientIdentity(r, trustProxyHeaders)
+	emailDigest := sha256.Sum256([]byte(strings.ToLower(strings.TrimSpace(email))))
+	return fmt.Sprintf("%s:%x", identity, emailDigest)
+}
+
+func clientIdentity(r *http.Request, trustProxyHeaders bool) string {
+	if trustProxyHeaders {
+		for part := range strings.SplitSeq(r.Header.Get("X-Forwarded-For"), ",") {
+			if addr, err := netip.ParseAddr(strings.TrimSpace(part)); err == nil {
+				return addr.Unmap().String()
+			}
+		}
+	}
+
+	remote := strings.TrimSpace(r.RemoteAddr)
+	if host, _, err := net.SplitHostPort(remote); err == nil {
+		remote = host
+	}
+	if addr, err := netip.ParseAddr(remote); err == nil {
+		return addr.Unmap().String()
+	}
+	return "unknown"
+}
+
+func retryAfterSeconds(remaining time.Duration) int {
+	if remaining <= 0 {
+		return 1
+	}
+	seconds := int((remaining + time.Second - 1) / time.Second)
+	return max(seconds, 1)
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {

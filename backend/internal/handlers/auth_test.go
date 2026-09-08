@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
+	"time"
 
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/crypto"
 	"github.com/matematicaencomputacion/plataforma-pensamiento-ingenieril/backend/internal/adapters/jwtauth"
@@ -15,6 +17,10 @@ import (
 )
 
 func newAuthHandler(t *testing.T) *handlers.AuthHandler {
+	return handlers.NewAuthHandler(authServiceForHandler(t))
+}
+
+func authServiceForHandler(t *testing.T) *usecases.AuthService {
 	t.Helper()
 	db, err := sqlite.OpenDB(":memory:")
 	if err != nil {
@@ -31,7 +37,65 @@ func newAuthHandler(t *testing.T) *handlers.AuthHandler {
 		jwtauth.NewHS256Issuer("test-secret"),
 		usecases.AuthOptions{ExposeResetToken: true},
 	)
-	return handlers.NewAuthHandler(svc)
+	return svc
+}
+
+func TestLoginRateLimitAndSuccessfulReset(t *testing.T) {
+	h := handlers.NewAuthHandlerWithOptions(
+		authServiceForHandler(t),
+		handlers.AuthHandlerOptions{
+			LoginLimiter:      handlers.NewMemoryLoginLimiter(2, time.Minute, 10),
+			TrustProxyHeaders: true,
+		},
+	)
+
+	registered := []byte(`{"email":"limit@ppi.local","password":"clave1234"}`)
+	rec := httptest.NewRecorder()
+	h.Register(rec, httptest.NewRequest(http.MethodPost, "/api/auth/register", bytes.NewReader(registered)))
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("register: %d %s", rec.Code, rec.Body.String())
+	}
+
+	wrong := []byte(`{"email":" LIMIT@PPI.LOCAL ","password":"incorrecta"}`)
+	for attempt := 1; attempt <= 2; attempt++ {
+		rec = httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(wrong))
+		req.RemoteAddr = "10.0.0.1:1234"
+		req.Header.Set("X-Forwarded-For", "203.0.113.8")
+		h.Login(rec, req)
+		if rec.Code != http.StatusUnauthorized {
+			t.Fatalf("attempt %d: got %d", attempt, rec.Code)
+		}
+	}
+
+	rec = httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(wrong))
+	req.RemoteAddr = "10.0.0.2:9999"
+	req.Header.Set("X-Forwarded-For", "203.0.113.8")
+	h.Login(rec, req)
+	retryAfter, retryErr := strconv.Atoi(rec.Header().Get("Retry-After"))
+	if rec.Code != http.StatusTooManyRequests || retryErr != nil || retryAfter < 1 || retryAfter > 60 {
+		t.Fatalf("blocked response: %d Retry-After=%q body=%s", rec.Code, rec.Header().Get("Retry-After"), rec.Body.String())
+	}
+
+	// A different client can fail once, then succeed and reset its own budget.
+	for _, body := range [][]byte{wrong, registered} {
+		rec = httptest.NewRecorder()
+		req = httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(body))
+		req.Header.Set("X-Forwarded-For", "203.0.113.9")
+		h.Login(rec, req)
+	}
+	if rec.Code != http.StatusOK {
+		t.Fatalf("valid login: %d %s", rec.Code, rec.Body.String())
+	}
+
+	rec = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(wrong))
+	req.Header.Set("X-Forwarded-For", "203.0.113.9")
+	h.Login(rec, req)
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("budget not reset: %d", rec.Code)
+	}
 }
 
 func TestAuthHTTPFlow(t *testing.T) {
