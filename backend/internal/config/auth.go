@@ -45,7 +45,6 @@ type AuthConfig struct {
 	LoginAttemptLimit      int
 	LoginAttemptWindow     time.Duration
 	LoginLimiterCapacity   int
-	TrustProxyHeaders      bool
 }
 
 // LoadAuthConfig lee JWT_SECRET y DATABASE_URL con defaults seguros solo para dev.
@@ -75,7 +74,6 @@ func LoadAuthConfig() (AuthConfig, error) {
 		LoginAttemptLimit:    positiveEnvInt("PPI_LOGIN_ATTEMPT_LIMIT", 5),
 		LoginAttemptWindow:   time.Duration(positiveEnvInt("PPI_LOGIN_WINDOW_SECONDS", 60)) * time.Second,
 		LoginLimiterCapacity: positiveEnvInt("PPI_LOGIN_LIMITER_CAPACITY", 4096),
-		TrustProxyHeaders:    envBool("PPI_TRUST_PROXY_HEADERS"),
 	}
 
 	if isProductionEnv() && !IsPostgresURL(dbURL) {
@@ -93,15 +91,6 @@ func positiveEnvInt(key string, fallback int) int {
 		return fallback
 	}
 	return value
-}
-
-func envBool(key string) bool {
-	switch strings.ToLower(strings.TrimSpace(os.Getenv(key))) {
-	case "1", "true", "yes", "on":
-		return true
-	default:
-		return false
-	}
 }
 
 func isProductionEnv() bool {

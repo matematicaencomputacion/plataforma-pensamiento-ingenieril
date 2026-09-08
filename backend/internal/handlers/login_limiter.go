@@ -65,7 +65,7 @@ func (l *MemoryLoginLimiter) Allow(key string) (bool, time.Duration) {
 	}
 	l.removeExpired(now)
 	if len(l.entries) >= l.capacity {
-		l.evictClosestToExpiry()
+		return false, l.untilNextExpiry(now)
 	}
 	l.entries[key] = loginWindow{count: 1, expires: now.Add(l.window)}
 	return true, 0
@@ -85,19 +85,17 @@ func (l *MemoryLoginLimiter) removeExpired(now time.Time) {
 	}
 }
 
-func (l *MemoryLoginLimiter) evictClosestToExpiry() {
-	var candidate string
-	var candidateExpiry time.Time
-	for key, state := range l.entries {
-		if candidate == "" || state.expires.Before(candidateExpiry) ||
-			(state.expires.Equal(candidateExpiry) && key < candidate) {
-			candidate = key
-			candidateExpiry = state.expires
+func (l *MemoryLoginLimiter) untilNextExpiry(now time.Time) time.Duration {
+	var next time.Time
+	for _, state := range l.entries {
+		if next.IsZero() || state.expires.Before(next) {
+			next = state.expires
 		}
 	}
-	if candidate != "" {
-		delete(l.entries, candidate)
+	if next.IsZero() || !next.After(now) {
+		return time.Second
 	}
+	return next.Sub(now)
 }
 
 type allowAllLoginLimiter struct{}

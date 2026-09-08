@@ -12,7 +12,7 @@ El acceso actual pierde la ruta que el alumno intentaba abrir, confunde una fall
 ### Alcance incluido
 
 - Login del backend Go y bootstrap/guards/login del frontend Leptos.
-- Limitador en memoria por instancia, configurable, con máximo estricto de claves y política explícita de identidad del cliente detrás de proxy.
+- Limitador en memoria por instancia, configurable, con máximo estricto de claves e identidad derivada exclusivamente del peer del servidor.
 - Mensajería accesible y acción explícita de reintento durante indisponibilidad temporal.
 
 ### Fuera de alcance

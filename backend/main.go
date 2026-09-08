@@ -159,7 +159,6 @@ func main() {
 				authCfg.LoginAttemptWindow,
 				authCfg.LoginLimiterCapacity,
 			),
-			TrustProxyHeaders: authCfg.TrustProxyHeaders,
 		},
 	)
 	if exposeReset {

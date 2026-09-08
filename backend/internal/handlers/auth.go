@@ -8,7 +8,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"net/netip"
 	"strconv"
 	"strings"
 	"time"
@@ -30,9 +29,8 @@ type authSuccessResponse struct {
 
 // AuthHandler endpoints de registro, login, logout, /me y perfil.
 type AuthHandler struct {
-	service           *usecases.AuthService
-	loginLimiter      LoginLimiter
-	trustProxyHeaders bool
+	service      *usecases.AuthService
+	loginLimiter LoginLimiter
 }
 
 func NewAuthHandler(service *usecases.AuthService) *AuthHandler {
@@ -40,8 +38,7 @@ func NewAuthHandler(service *usecases.AuthService) *AuthHandler {
 }
 
 type AuthHandlerOptions struct {
-	LoginLimiter      LoginLimiter
-	TrustProxyHeaders bool
+	LoginLimiter LoginLimiter
 }
 
 func NewAuthHandlerWithOptions(service *usecases.AuthService, options AuthHandlerOptions) *AuthHandler {
@@ -50,9 +47,8 @@ func NewAuthHandlerWithOptions(service *usecases.AuthService, options AuthHandle
 		limiter = allowAllLoginLimiter{}
 	}
 	return &AuthHandler{
-		service:           service,
-		loginLimiter:      limiter,
-		trustProxyHeaders: options.TrustProxyHeaders,
+		service:      service,
+		loginLimiter: limiter,
 	}
 }
 
@@ -78,7 +74,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	key := loginAttemptKey(r, req.Email, h.trustProxyHeaders)
+	key := loginAttemptKey(r, req.Email)
 	allowed, retryAfter := h.loginLimiter.Allow(key)
 	if !allowed {
 		w.Header().Set("Retry-After", strconv.Itoa(retryAfterSeconds(retryAfter)))
@@ -95,29 +91,18 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, authSuccessResponse{User: out.User, Token: out.Token})
 }
 
-func loginAttemptKey(r *http.Request, email string, trustProxyHeaders bool) string {
-	identity := clientIdentity(r, trustProxyHeaders)
+func loginAttemptKey(r *http.Request, email string) string {
+	identity := clientIdentity(r)
 	emailDigest := sha256.Sum256([]byte(strings.ToLower(strings.TrimSpace(email))))
 	return fmt.Sprintf("%s:%x", identity, emailDigest)
 }
 
-func clientIdentity(r *http.Request, trustProxyHeaders bool) string {
-	if trustProxyHeaders {
-		for part := range strings.SplitSeq(r.Header.Get("X-Forwarded-For"), ",") {
-			if addr, err := netip.ParseAddr(strings.TrimSpace(part)); err == nil {
-				return addr.Unmap().String()
-			}
-		}
-	}
-
+func clientIdentity(r *http.Request) string {
 	remote := strings.TrimSpace(r.RemoteAddr)
 	if host, _, err := net.SplitHostPort(remote); err == nil {
-		remote = host
+		return host
 	}
-	if addr, err := netip.ParseAddr(remote); err == nil {
-		return addr.Unmap().String()
-	}
-	return "unknown"
+	return remote
 }
 
 func retryAfterSeconds(remaining time.Duration) int {

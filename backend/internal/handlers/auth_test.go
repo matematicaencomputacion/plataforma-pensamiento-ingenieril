@@ -44,8 +44,7 @@ func TestLoginRateLimitAndSuccessfulReset(t *testing.T) {
 	h := handlers.NewAuthHandlerWithOptions(
 		authServiceForHandler(t),
 		handlers.AuthHandlerOptions{
-			LoginLimiter:      handlers.NewMemoryLoginLimiter(2, time.Minute, 10),
-			TrustProxyHeaders: true,
+			LoginLimiter: handlers.NewMemoryLoginLimiter(2, time.Minute, 10),
 		},
 	)
 
@@ -60,8 +59,8 @@ func TestLoginRateLimitAndSuccessfulReset(t *testing.T) {
 	for attempt := 1; attempt <= 2; attempt++ {
 		rec = httptest.NewRecorder()
 		req := httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(wrong))
-		req.RemoteAddr = "10.0.0.1:1234"
-		req.Header.Set("X-Forwarded-For", "203.0.113.8")
+		req.RemoteAddr = "203.0.113.8:1234"
+		req.Header.Set("X-Forwarded-For", "198.51.100.200")
 		h.Login(rec, req)
 		if rec.Code != http.StatusUnauthorized {
 			t.Fatalf("attempt %d: got %d", attempt, rec.Code)
@@ -70,8 +69,8 @@ func TestLoginRateLimitAndSuccessfulReset(t *testing.T) {
 
 	rec = httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(wrong))
-	req.RemoteAddr = "10.0.0.2:9999"
-	req.Header.Set("X-Forwarded-For", "203.0.113.8")
+	req.RemoteAddr = "203.0.113.8:9999"
+	req.Header.Set("X-Forwarded-For", "198.51.100.201")
 	h.Login(rec, req)
 	retryAfter, retryErr := strconv.Atoi(rec.Header().Get("Retry-After"))
 	if rec.Code != http.StatusTooManyRequests || retryErr != nil || retryAfter < 1 || retryAfter > 60 {
@@ -82,7 +81,7 @@ func TestLoginRateLimitAndSuccessfulReset(t *testing.T) {
 	for _, body := range [][]byte{wrong, registered} {
 		rec = httptest.NewRecorder()
 		req = httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(body))
-		req.Header.Set("X-Forwarded-For", "203.0.113.9")
+		req.RemoteAddr = "203.0.113.9:4321"
 		h.Login(rec, req)
 	}
 	if rec.Code != http.StatusOK {
@@ -91,7 +90,7 @@ func TestLoginRateLimitAndSuccessfulReset(t *testing.T) {
 
 	rec = httptest.NewRecorder()
 	req = httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(wrong))
-	req.Header.Set("X-Forwarded-For", "203.0.113.9")
+	req.RemoteAddr = "203.0.113.9:9876"
 	h.Login(rec, req)
 	if rec.Code != http.StatusUnauthorized {
 		t.Fatalf("budget not reset: %d", rec.Code)

@@ -1,9 +1,9 @@
 ## 1. Backend abuse protection
 
 - [x] 1.1 Implement a bounded concurrency-safe login limiter and verify allow, block, expiry, reset and capacity unit tests pass
-- [x] 1.2 Implement trusted-proxy-aware client identity and hashed normalized-email keys and verify direct, trusted and malformed-header cases
+- [x] 1.2 Implement server-peer identity that ignores spoofable forwarding headers plus hashed normalized-email keys and verify both properties
 - [x] 1.3 Integrate `429` and ceiling-rounded `Retry-After` into the login handler and verify handler tests cover blocking and success reset
-- [x] 1.4 Wire configurable production defaults and the Cloud Run proxy flag and verify configuration and backend suites pass
+- [x] 1.4 Wire configurable production defaults and verify configuration and backend suites pass
 
 ## 2. Safe login continuation
 

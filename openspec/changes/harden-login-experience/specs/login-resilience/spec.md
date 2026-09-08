@@ -17,7 +17,11 @@ The system SHALL limit repeated login attempts using both a server-derived clien
 
 #### Scenario: Limiter receives unbounded distinct keys
 - **WHEN** distinct client and email combinations exceed the configured limiter capacity
-- **THEN** the limiter evicts entries while retaining no more than its configured maximum
+- **THEN** the limiter rejects previously unseen keys until capacity expires, retains no more than its configured maximum and does not evict an active blocked key
+
+#### Scenario: Forwarding headers are attacker controlled
+- **WHEN** a login request supplies `X-Forwarded-For` or another forwarding header
+- **THEN** the limiter ignores it and derives network identity only from the server-controlled peer address
 
 ### Requirement: Authentication preserves a safe internal destination
 The web application SHALL return an authenticated user to the requested internal route and MUST reject external, protocol-relative, malformed or authentication-loop destinations.

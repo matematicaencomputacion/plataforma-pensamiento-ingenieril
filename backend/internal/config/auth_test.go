@@ -18,7 +18,6 @@ func clearAuthEnv(t *testing.T) {
 	t.Setenv("PPI_LOGIN_ATTEMPT_LIMIT", "")
 	t.Setenv("PPI_LOGIN_WINDOW_SECONDS", "")
 	t.Setenv("PPI_LOGIN_LIMITER_CAPACITY", "")
-	t.Setenv("PPI_TRUST_PROXY_HEADERS", "")
 }
 
 func TestLoadAuthConfig_DevDefaultWhenNotProduction(t *testing.T) {
@@ -40,9 +39,6 @@ func TestLoadAuthConfig_DevDefaultWhenNotProduction(t *testing.T) {
 	if cfg.LoginAttemptLimit != 5 || cfg.LoginAttemptWindow != time.Minute || cfg.LoginLimiterCapacity != 4096 {
 		t.Fatalf("login limiter defaults: %d/%s/%d", cfg.LoginAttemptLimit, cfg.LoginAttemptWindow, cfg.LoginLimiterCapacity)
 	}
-	if cfg.TrustProxyHeaders {
-		t.Fatal("proxy headers must be untrusted by default")
-	}
 }
 
 func TestLoadAuthConfig_LoginLimiterOverrides(t *testing.T) {
@@ -50,7 +46,6 @@ func TestLoadAuthConfig_LoginLimiterOverrides(t *testing.T) {
 	t.Setenv("PPI_LOGIN_ATTEMPT_LIMIT", "7")
 	t.Setenv("PPI_LOGIN_WINDOW_SECONDS", "90")
 	t.Setenv("PPI_LOGIN_LIMITER_CAPACITY", "512")
-	t.Setenv("PPI_TRUST_PROXY_HEADERS", "true")
 
 	cfg, err := LoadAuthConfig()
 	if err != nil {
@@ -58,9 +53,6 @@ func TestLoadAuthConfig_LoginLimiterOverrides(t *testing.T) {
 	}
 	if cfg.LoginAttemptLimit != 7 || cfg.LoginAttemptWindow != 90*time.Second || cfg.LoginLimiterCapacity != 512 {
 		t.Fatalf("login limiter overrides: %d/%s/%d", cfg.LoginAttemptLimit, cfg.LoginAttemptWindow, cfg.LoginLimiterCapacity)
-	}
-	if !cfg.TrustProxyHeaders {
-		t.Fatal("expected trusted proxy headers")
 	}
 }
 

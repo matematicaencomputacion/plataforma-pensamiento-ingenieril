@@ -9,29 +9,21 @@ import (
 	"time"
 )
 
-func TestClientIdentityTrustPolicy(t *testing.T) {
+func TestClientIdentityIgnoresForwardingHeaders(t *testing.T) {
 	req := httptest.NewRequest("POST", "/api/auth/login", nil)
 	req.RemoteAddr = "10.0.0.7:4321"
 	req.Header.Set("X-Forwarded-For", "198.51.100.9, 203.0.113.5")
 
-	if got := clientIdentity(req, false); got != "10.0.0.7" {
-		t.Fatalf("untrusted identity = %q", got)
-	}
-	if got := clientIdentity(req, true); got != "198.51.100.9" {
-		t.Fatalf("trusted identity = %q", got)
-	}
-
-	req.Header.Set("X-Forwarded-For", "invalid, 2001:db8::5")
-	if got := clientIdentity(req, true); got != "2001:db8::5" {
-		t.Fatalf("malformed fallback identity = %q", got)
+	if got := clientIdentity(req); got != "10.0.0.7" {
+		t.Fatalf("server-derived identity = %q", got)
 	}
 }
 
 func TestLoginAttemptKeyNormalizesEmailAndHidesIt(t *testing.T) {
 	req := httptest.NewRequest("POST", "/api/auth/login", nil)
 	req.RemoteAddr = "192.0.2.10:1234"
-	a := loginAttemptKey(req, " User@Example.com ", false)
-	b := loginAttemptKey(req, "user@example.com", false)
+	a := loginAttemptKey(req, " User@Example.com ")
+	b := loginAttemptKey(req, "user@example.com")
 	if a != b {
 		t.Fatalf("normalized keys differ: %q != %q", a, b)
 	}
@@ -76,13 +68,32 @@ func TestMemoryLoginLimiterAllowsBlocksExpiresAndResets(t *testing.T) {
 	}
 }
 
-func TestMemoryLoginLimiterNeverExceedsCapacity(t *testing.T) {
+func TestMemoryLoginLimiterFailsClosedAtCapacityWithoutEvictingBlockedKeys(t *testing.T) {
+	now := time.Date(2026, 9, 8, 12, 0, 0, 0, time.UTC)
 	limiter := NewMemoryLoginLimiter(2, time.Hour, 3)
-	for i := 0; i < 20; i++ {
-		limiter.Allow(fmt.Sprintf("client-%02d", i))
-		if got := len(limiter.entries); got > 3 {
-			t.Fatalf("entries = %d, capacity = 3", got)
-		}
+	limiter.now = func() time.Time { return now }
+
+	limiter.Allow("target")
+	limiter.Allow("target")
+	if ok, _ := limiter.Allow("target"); ok {
+		t.Fatal("target must be blocked")
+	}
+	limiter.Allow("filler-1")
+	limiter.Allow("filler-2")
+
+	if ok, retry := limiter.Allow("churn"); ok || retry != time.Hour {
+		t.Fatalf("new key at capacity = (%v, %v), want fail closed for one hour", ok, retry)
+	}
+	if got := len(limiter.entries); got != 3 {
+		t.Fatalf("entries = %d, capacity = 3", got)
+	}
+	if ok, _ := limiter.Allow("target"); ok {
+		t.Fatal("capacity churn evicted a blocked key")
+	}
+
+	now = now.Add(time.Hour)
+	if ok, _ := limiter.Allow(fmt.Sprintf("client-%d", now.Unix())); !ok {
+		t.Fatal("new key remained blocked after capacity entries expired")
 	}
 }
 

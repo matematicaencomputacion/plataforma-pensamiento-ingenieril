@@ -19,13 +19,13 @@ See `proposal.md`. The Go service currently delegates every login directly to th
 
 ### Bounded in-memory fixed-window limiter
 
-The handler receives a typed limiter port and production injects a mutex-protected fixed-window implementation. The key combines client identity with a SHA-256 digest of normalized email; raw email and password never enter limiter state or logs. Success resets the key. Expired entries are removed before insertion and, at capacity, the entry closest to expiry is deterministically evicted. A fixed window is simple and testable; token bucket and Redis were rejected for this first increment because they add infrastructure not required by the contract.
+The handler receives a typed limiter port and production injects a mutex-protected fixed-window implementation. The key combines server-derived peer identity with a SHA-256 digest of normalized email; raw email and password never enter limiter state or logs. Success resets the key. Expired entries are removed before insertion and, at capacity, unknown keys fail closed until the earliest active entry expires. Existing blocked keys are never evicted by attacker-controlled key churn. A fixed window is simple and testable; token bucket and Redis were rejected for this first increment because they add infrastructure not required by the contract.
 
 The default handler constructor keeps a no-op limiter for isolated legacy tests; production composition explicitly injects the bounded limiter.
 
-### Explicit trusted-proxy policy
+### Server-controlled network identity
 
-Local/default mode derives client identity from `RemoteAddr` and ignores forwarding headers. `PPI_TRUST_PROXY_HEADERS=1` opts into the first syntactically valid address in `X-Forwarded-For` for deployments known to run behind a managed proxy that supplies that header; the Cloud Run workflow sets this value explicitly. This avoids trusting arbitrary forwarding headers in direct/local deployments while separating users behind Cloud Run's shared peer.
+Client identity is always derived from `RemoteAddr`; forwarding headers are ignored. Google Cloud Load Balancing preserves caller-supplied `X-Forwarded-For` prefixes, so accepting a convenient header position without a separately configured trusted-hop boundary would let an attacker rotate identities. Behind Cloud Run, the peer may be shared and the normalized-email digest therefore carries most of the key separation. This is a deliberate fail-closed trade-off until a verified edge header or distributed limiter is introduced.
 
 ### Strict allow-list semantics for `return_to`
 
@@ -38,13 +38,12 @@ A pure frontend helper accepts only absolute-path references beginning with exac
 ## Risks / Trade-offs
 
 - [Counters are per Cloud Run instance] → Keep the limiter port replaceable by a distributed adapter and document this first-layer limitation.
-- [Forwarded headers are unsafe outside a trusted proxy] → Default trust off; enable only in the managed Cloud Run deployment.
-- [Capacity eviction can release a hot key under extreme cardinality] → Use a generous configurable ceiling and evict the entry nearest natural expiry.
+- [Cloud Run peers can be shared] → Combine peer identity with normalized email and prefer a conservative account-scoped budget over trusting spoofable forwarding input.
+- [Capacity exhaustion can reject previously unseen keys] → Fail closed only until the earliest active window expires; never evict a blocked key.
 - [A retained invalid token may briefly hold the UI] → Only non-auth failures retain it; a later `401/403` clears it deterministically.
 
 ## Migration Plan
 
 1. Deploy additive frontend state and backend limiter together; no data migration is required.
-2. Enable trusted proxy headers explicitly in the Cloud Run workflow.
-3. Observe `429` rates and session-retry behavior through existing platform logs and tests.
-4. Roll back by reverting the change; no persisted limiter/session schema remains.
+2. Observe `429` rates and session-retry behavior through existing platform logs and tests.
+3. Roll back by reverting the change; no persisted limiter/session schema remains.
