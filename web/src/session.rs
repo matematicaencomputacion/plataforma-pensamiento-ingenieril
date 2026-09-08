@@ -7,8 +7,30 @@ use web_sys::StorageEvent;
 
 use crate::api::{AuthUser, AUTH_TOKEN_KEY};
 use crate::auth::{
-    fetch_me, get_stored_token, purge_auth_storage, store_token, AUTH_CLEARED_EVENT,
+    fetch_me, get_stored_token, purge_auth_storage, store_token, AuthError, AUTH_CLEARED_EVENT,
 };
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SessionStatus {
+    Loading,
+    Authenticated,
+    Anonymous,
+    TemporarilyUnavailable,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum RestoreFailure {
+    Rejected,
+    Transient,
+}
+
+fn classify_restore_error(error: &AuthError) -> RestoreFailure {
+    if error.is_unauthorized() {
+        RestoreFailure::Rejected
+    } else {
+        RestoreFailure::Transient
+    }
+}
 
 #[derive(Clone, Copy)]
 pub struct SessionCtx {
@@ -16,6 +38,7 @@ pub struct SessionCtx {
     pub user: RwSignal<Option<AuthUser>>,
     /// True after the initial localStorage restore finished (sync step).
     pub bootstrapped: RwSignal<bool>,
+    pub status: RwSignal<SessionStatus>,
 }
 
 impl SessionCtx {
@@ -24,6 +47,7 @@ impl SessionCtx {
             token: RwSignal::new(None),
             user: RwSignal::new(None),
             bootstrapped: RwSignal::new(false),
+            status: RwSignal::new(SessionStatus::Loading),
         };
         provide_context(ctx);
         ctx
@@ -33,6 +57,7 @@ impl SessionCtx {
         store_token(&token);
         self.token.set(Some(token));
         self.user.set(Some(user));
+        self.status.set(SessionStatus::Authenticated);
     }
 
     /// Patch progress cursor + earned set on the live session user.
@@ -57,11 +82,13 @@ impl SessionCtx {
         let already_clear =
             self.token.get_untracked().is_none() && self.user.get_untracked().is_none();
         if already_clear && get_stored_token().is_none() {
+            self.status.set(SessionStatus::Anonymous);
             return;
         }
         // Clear signals first so UI reacts, then storage (which emits AUTH_CLEARED_EVENT).
         self.token.set(None);
         self.user.set(None);
+        self.status.set(SessionStatus::Anonymous);
         purge_auth_storage();
     }
 
@@ -69,7 +96,36 @@ impl SessionCtx {
     fn drop_memory_only(&self) {
         self.token.set(None);
         self.user.set(None);
+        self.status.set(SessionStatus::Anonymous);
     }
+
+    pub fn retry_restore(&self) {
+        let Some(token) = self.token.get_untracked().or_else(get_stored_token) else {
+            self.status.set(SessionStatus::Anonymous);
+            return;
+        };
+        self.token.set(Some(token.clone()));
+        self.status.set(SessionStatus::Loading);
+        restore_session(*self, token);
+    }
+}
+
+fn restore_session(session: SessionCtx, token: String) {
+    leptos::task::spawn_local(async move {
+        match fetch_me(&token).await {
+            Ok(user) => {
+                session.user.set(Some(user));
+                session.status.set(SessionStatus::Authenticated);
+            }
+            Err(error) => match classify_restore_error(&error) {
+                RestoreFailure::Rejected => session.clear(),
+                RestoreFailure::Transient => {
+                    session.user.set(None);
+                    session.status.set(SessionStatus::TemporarilyUnavailable);
+                }
+            },
+        }
+    });
 }
 
 /// Load token from localStorage and hydrate `/api/me` once on startup.
@@ -96,32 +152,34 @@ pub fn SessionBootstrap() -> impl IntoView {
         if let Some(token) = get_stored_token() {
             session.token.set(Some(token.clone()));
             session.bootstrapped.set(true);
-            leptos::task::spawn_local(async move {
-                match fetch_me(&token).await {
-                    Ok(user) => session.user.set(Some(user)),
-                    Err(err) => {
-                        if err.is_unauthorized() {
-                            session.clear();
-                        } else {
-                            // Transient network / 5xx: drop optimistic UI session but
-                            // leave storage so a refresh can retry (fetch_me only
-                            // purges on 401/403).
-                            session.token.set(None);
-                            session.user.set(None);
-                        }
-                    }
-                }
-            });
+            restore_session(session, token);
         } else {
             // Ensure no stale key survives an interrupted clear.
             purge_auth_storage();
             session.bootstrapped.set(true);
+            session.status.set(SessionStatus::Anonymous);
         }
 
         attach_auth_sync_listeners(session);
     });
 
     view! { <></> }
+}
+
+#[component]
+pub fn SessionRecoveryNotice() -> impl IntoView {
+    let session = expect_context::<SessionCtx>();
+
+    view! {
+        <Show when=move || session.status.get() == SessionStatus::TemporarilyUnavailable>
+            <div id="session-recovery" class="session-recovery" role="alert" aria-live="polite">
+                <span>"No pudimos verificar tu sesión. Conservamos tu acceso para reintentar."</span>
+                <button id="session-retry" type="button" on:click=move |_| session.retry_restore()>
+                    "Reintentar"
+                </button>
+            </div>
+        </Show>
+    }
 }
 
 fn attach_auth_sync_listeners(session: SessionCtx) {
@@ -154,4 +212,32 @@ fn attach_auth_sync_listeners(session: SessionCtx) {
     let _ = window
         .add_event_listener_with_callback(AUTH_CLEARED_EVENT, on_cleared.as_ref().unchecked_ref());
     on_cleared.forget();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{classify_restore_error, RestoreFailure};
+    use crate::auth::AuthError;
+
+    #[test]
+    fn unauthorized_and_forbidden_are_rejected() {
+        for status in [401, 403] {
+            assert_eq!(
+                classify_restore_error(&AuthError::with_status("rejected", status)),
+                RestoreFailure::Rejected
+            );
+        }
+    }
+
+    #[test]
+    fn network_and_server_failures_are_transient() {
+        assert_eq!(
+            classify_restore_error(&AuthError::new("offline")),
+            RestoreFailure::Transient
+        );
+        assert_eq!(
+            classify_restore_error(&AuthError::with_status("unavailable", 503)),
+            RestoreFailure::Transient
+        );
+    }
 }

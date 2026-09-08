@@ -10,6 +10,67 @@ import {
  * Rebanada 1 — email trim + recovery guards when already authenticated.
  */
 test.describe("session hardening (trim + recovery guards)", () => {
+  test("login API throttles repeated attempts with Retry-After", async ({ request }) => {
+    const email = `throttle-${Date.now()}@example.com`;
+    for (let attempt = 1; attempt <= 5; attempt += 1) {
+      const response = await request.post("/api/auth/login", {
+        data: { email, password: "incorrecta" },
+        timeout: e2eTimeout,
+      });
+      expect(response.status(), `attempt ${attempt}`).toBe(401);
+    }
+
+    const blocked = await request.post("/api/auth/login", {
+      data: { email, password: "incorrecta" },
+      timeout: e2eTimeout,
+    });
+    expect(blocked.status()).toBe(429);
+    expect(Number(blocked.headers()["retry-after"])).toBeGreaterThan(0);
+    const blockedBody = await blocked.json();
+    expect(blockedBody).toMatchObject({
+      error: expect.stringMatching(/demasiados intentos/i),
+    });
+  });
+
+  test("protected destination survives login and unsafe return falls back", async ({
+    page,
+    request,
+  }) => {
+    const email = `return-${Date.now()}@example.com`;
+    const password = "secreto12return";
+    const reg = await request.post("/api/auth/register", {
+      data: { email, password },
+      timeout: e2eTimeout,
+    });
+    expect(reg.ok(), await reg.text()).toBeTruthy();
+
+    await gotoApp(page, "/onboarding?source=protected");
+    await expect(page).toHaveURL(/\/login\?return_to=%2Fonboarding%3Fsource%3Dprotected/, {
+      timeout: e2eTimeout,
+    });
+    await waitForAuthFormReady(page, {
+      emailSelector: "#login-email",
+      passwordSelector: "#login-password",
+      submitName: "Entrar",
+    });
+    await fillLeptosInput(page, "#login-email", email);
+    await fillLeptosInput(page, "#login-password", password);
+    await page.getByRole("button", { name: "Entrar" }).click();
+    await expect(page).toHaveURL(/\/onboarding\?source=protected$/, { timeout: e2eTimeout });
+
+    await page.getByRole("button", { name: "Salir" }).click();
+    await gotoApp(page, "/login?return_to=https%3A%2F%2Fevil.test");
+    await waitForAuthFormReady(page, {
+      emailSelector: "#login-email",
+      passwordSelector: "#login-password",
+      submitName: "Entrar",
+    });
+    await fillLeptosInput(page, "#login-email", email);
+    await fillLeptosInput(page, "#login-password", password);
+    await page.getByRole("button", { name: "Entrar" }).click();
+    await expect(page).toHaveURL(/\/workspace$/, { timeout: e2eTimeout });
+  });
+
   test("login accepts email with surrounding whitespace", async ({ page, request }) => {
     const stamp = `${Date.now()}-${Math.floor(Math.random() * 1e6)}`;
     const email = `trim-${stamp}@example.com`;

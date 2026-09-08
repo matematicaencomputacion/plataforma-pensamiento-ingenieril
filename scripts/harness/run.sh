@@ -261,6 +261,7 @@ run_web_journeys() {
       tests/journey.concepts-hub.spec.ts \
       tests/concepts.drawer.spec.ts \
       tests/auth.validation.spec.ts \
+      tests/session.hardening.spec.ts \
       tests/session.navigation.spec.ts \
       --reporter=list | tee "$RUN_DIR/web-journeys.log"); then
     [[ -d web/e2e/playwright-report ]] && cp -R web/e2e/playwright-report "$RUN_DIR/" || true

@@ -2,12 +2,12 @@ use leptos::ev;
 use leptos::leptos_dom::helpers::window_event_listener;
 use leptos::prelude::*;
 use leptos_router::components::A;
-use leptos_router::hooks::{use_navigate, use_params_map};
+use leptos_router::hooks::{use_location, use_navigate, use_params_map};
 use leptos_router::NavigateOptions;
 
 use crate::analytics::emit_and_refresh_summary;
 use crate::api::{ConceptAnalyticsSummary, EVENT_CONCEPT_DWELL, EVENT_HEATMAP_DECADE_OPEN};
-use crate::auth::input_value;
+use crate::auth::{input_value, login_path, path_with_search};
 use crate::components::level_completed;
 use crate::concepts::{
     edges_for_partition, entry_by_id, filtered_drills_for_partition, heatmap_cells_for_drills,
@@ -21,6 +21,7 @@ use crate::session::SessionCtx;
 pub fn ConceptsPage() -> impl IntoView {
     let session = expect_context::<SessionCtx>();
     let navigate = use_navigate();
+    let location = use_location();
     let params = use_params_map();
     let open_decade = RwSignal::new(None::<HeatmapBand>);
     let query = RwSignal::new(String::new());
@@ -32,8 +33,9 @@ pub fn ConceptsPage() -> impl IntoView {
         let live = session.user.get().is_some();
         let pending = session.token.get().is_some() && !live;
         if ready && !live && !pending {
+            let destination = path_with_search(&location.pathname.get(), &location.search.get());
             navigate(
-                "/login",
+                &login_path(&destination),
                 NavigateOptions {
                     replace: true,
                     ..Default::default()

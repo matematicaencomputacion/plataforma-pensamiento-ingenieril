@@ -4,7 +4,9 @@ import (
 	"errors"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 const defaultDevJWTSecret = "dev-only-change-me-ppi-jwt-secret"
@@ -40,6 +42,9 @@ type AuthConfig struct {
 	JWTSecret              string
 	DatabaseURL            string
 	EphemeralSQLiteAllowed bool // production sqlite only when PPI_ALLOW_EPHEMERAL_SQLITE=1
+	LoginAttemptLimit      int
+	LoginAttemptWindow     time.Duration
+	LoginLimiterCapacity   int
 }
 
 // LoadAuthConfig lee JWT_SECRET y DATABASE_URL con defaults seguros solo para dev.
@@ -64,8 +69,11 @@ func LoadAuthConfig() (AuthConfig, error) {
 	}
 
 	cfg := AuthConfig{
-		JWTSecret:   secret,
-		DatabaseURL: dbURL,
+		JWTSecret:            secret,
+		DatabaseURL:          dbURL,
+		LoginAttemptLimit:    positiveEnvInt("PPI_LOGIN_ATTEMPT_LIMIT", 5),
+		LoginAttemptWindow:   time.Duration(positiveEnvInt("PPI_LOGIN_WINDOW_SECONDS", 60)) * time.Second,
+		LoginLimiterCapacity: positiveEnvInt("PPI_LOGIN_LIMITER_CAPACITY", 4096),
 	}
 
 	if isProductionEnv() && !IsPostgresURL(dbURL) {
@@ -75,6 +83,14 @@ func LoadAuthConfig() (AuthConfig, error) {
 		cfg.EphemeralSQLiteAllowed = true
 	}
 	return cfg, nil
+}
+
+func positiveEnvInt(key string, fallback int) int {
+	value, err := strconv.Atoi(strings.TrimSpace(os.Getenv(key)))
+	if err != nil || value < 1 {
+		return fallback
+	}
+	return value
 }
 
 func isProductionEnv() bool {

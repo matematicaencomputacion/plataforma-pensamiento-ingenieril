@@ -20,7 +20,7 @@ use pages::{
     ConceptsPage, ForgotPasswordPage, LandingPage, LearnPage, LoginPage, OnboardingPage,
     RegisterPage, ResetPasswordPage, WorkspacePage,
 };
-use session::{SessionBootstrap, SessionCtx};
+use session::{SessionBootstrap, SessionCtx, SessionRecoveryNotice};
 
 fn main() {
     console_error_panic_hook::set_once();
@@ -44,6 +44,7 @@ fn App() -> impl IntoView {
                     <SessionBar />
                 </header>
                 <main class="shell__main">
+                    <SessionRecoveryNotice />
                     <Routes fallback=|| {
                         view! { <p class="not-found">"Ruta no encontrada"</p> }
                     }>

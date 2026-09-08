@@ -743,6 +743,36 @@ button:focus-visible {
   width: min(100%, 24rem);
 }
 
+.session-recovery {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(100%, 52rem);
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 0.5rem;
+  background: rgba(61, 143, 110, 0.12);
+}
+
+.session-recovery button {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--accent);
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+}
+
+@media (max-width: 34rem) {
+  .session-recovery {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
 .auth-page__card {
   padding: 1.5rem;
   border: 1px solid var(--border);
@@ -2073,4 +2103,3 @@ button:focus-visible {
   background: color-mix(in srgb, var(--accent) 18%, transparent);
   border-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }
-

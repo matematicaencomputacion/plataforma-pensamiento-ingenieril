@@ -6,17 +6,71 @@ use web_sys::{CustomEvent, CustomEventInit, HtmlInputElement, HtmlTextAreaElemen
 
 use crate::api::{
     concept_analytics_url, concept_events_url, current_level_url, forgot_password_url,
-    is_auth_rejection, parse_auth_error_body, progress_complete_url, progress_reset_url,
-    reset_password_url, sanitize_email, synthesize_profile_url, user_profile_url, AuthCredentials,
-    AuthSuccess, AuthUser, ConceptAnalyticsSummary, ConceptEventRequest, ForgotPasswordRequest,
-    ForgotPasswordResponse, Level, ProfileSynthesis, ProgressCompleteRequest,
-    ProgressCompleteResponse, ResetPasswordRequest, SynthesizeProfileRequest, UserProfile,
-    AUTH_TOKEN_KEY, MSG_INVALID_RESPONSE, MSG_NETWORK_UNAVAILABLE, login_url, logout_url, me_url,
-    register_url,
+    is_auth_rejection, login_url, logout_url, me_url, parse_auth_error_body, progress_complete_url,
+    progress_reset_url, register_url, reset_password_url, sanitize_email, synthesize_profile_url,
+    user_profile_url, AuthCredentials, AuthSuccess, AuthUser, ConceptAnalyticsSummary,
+    ConceptEventRequest, ForgotPasswordRequest, ForgotPasswordResponse, Level, ProfileSynthesis,
+    ProgressCompleteRequest, ProgressCompleteResponse, ResetPasswordRequest,
+    SynthesizeProfileRequest, UserProfile, AUTH_TOKEN_KEY, MSG_INVALID_RESPONSE,
+    MSG_NETWORK_UNAVAILABLE,
 };
 
 /// Same-tab signal that `SessionCtx` should drop in-memory auth after a storage purge.
 pub const AUTH_CLEARED_EVENT: &str = "ppi:auth-cleared";
+
+const AUTH_ROUTES: [&str; 4] = ["/login", "/register", "/forgot-password", "/reset-password"];
+
+/// Accept only same-origin absolute paths and avoid authentication redirect loops.
+pub fn safe_return_to(candidate: &str) -> Option<String> {
+    let value = candidate.trim();
+    if !value.starts_with('/')
+        || value.starts_with("//")
+        || value.contains('\\')
+        || value.chars().any(char::is_control)
+    {
+        return None;
+    }
+
+    let path = value.split(['?', '#']).next().unwrap_or(value);
+    if AUTH_ROUTES
+        .iter()
+        .any(|route| path == *route || path.starts_with(&format!("{route}/")))
+    {
+        return None;
+    }
+    Some(value.to_string())
+}
+
+pub fn path_with_search(pathname: &str, search: &str) -> String {
+    if search.is_empty() {
+        return pathname.to_string();
+    }
+    if search.starts_with('?') {
+        format!("{pathname}{search}")
+    } else {
+        format!("{pathname}?{search}")
+    }
+}
+
+pub fn login_path(return_to: &str) -> String {
+    match safe_return_to(return_to) {
+        Some(path) => format!("/login?return_to={}", percent_encode_query_value(&path)),
+        None => "/login".to_string(),
+    }
+}
+
+fn percent_encode_query_value(value: &str) -> String {
+    let mut encoded = String::with_capacity(value.len());
+    for byte in value.bytes() {
+        match byte {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'.' | b'_' | b'~' => {
+                encoded.push(byte as char)
+            }
+            _ => encoded.push_str(&format!("%{byte:02X}")),
+        }
+    }
+    encoded
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthError {
@@ -200,6 +254,45 @@ pub async fn fetch_me(token: &str) -> Result<AuthUser, AuthError> {
 
     let res = reject_if_not_ok(res).await?;
     res.json::<AuthUser>().await.map_err(invalid_response)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{login_path, path_with_search, safe_return_to};
+
+    #[test]
+    fn safe_return_to_accepts_and_encodes_internal_routes() {
+        assert_eq!(
+            safe_return_to("/learn/42?mode=review#result"),
+            Some("/learn/42?mode=review#result".into())
+        );
+        assert_eq!(
+            login_path("/learn/42?mode=review"),
+            "/login?return_to=%2Flearn%2F42%3Fmode%3Dreview"
+        );
+        assert_eq!(
+            path_with_search("/concepts/2", "q=list"),
+            "/concepts/2?q=list"
+        );
+        assert_eq!(path_with_search("/workspace", ""), "/workspace");
+    }
+
+    #[test]
+    fn safe_return_to_rejects_external_auth_and_malformed_routes() {
+        for value in [
+            "https://evil.test",
+            "//evil.test",
+            "/\\evil.test",
+            "/login",
+            "/login/again",
+            "/register?next=/workspace",
+            "workspace",
+            "/learn\n/42",
+        ] {
+            assert_eq!(safe_return_to(value), None, "{value:?}");
+            assert_eq!(login_path(value), "/login", "{value:?}");
+        }
+    }
 }
 
 /// Public curriculum entry (`GET /api/levels/current`) — no Bearer required.
