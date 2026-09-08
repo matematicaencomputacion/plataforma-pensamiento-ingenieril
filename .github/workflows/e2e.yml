@@ -14,23 +14,55 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - "web/**"
-      - "backend/**"
-      - "Dockerfile"
-      - ".dockerignore"
-      - ".github/workflows/e2e.yml"
-      - ".github/workflows/docker.yml"
 
 concurrency:
   group: e2e-web-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  e2e-scope:
+    name: Classify E2E scope
+    runs-on: ubuntu-latest
+    outputs:
+      run-e2e: ${{ steps.scope.outputs.run-e2e }}
+    steps:
+      - name: Checkout PR history
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decide whether product E2E is required
+        id: scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "${EVENT_NAME}" != "pull_request" ]]; then
+            echo "run-e2e=true" >> "${GITHUB_OUTPUT}"
+            echo "Product push: run the full E2E suite."
+            exit 0
+          fi
+
+          changed_files="$(git diff --name-only "${BASE_SHA}" "${HEAD_SHA}")"
+          printf '%s\n' "${changed_files}"
+          if printf '%s\n' "${changed_files}" | grep -Eq \
+            '^(web/|backend/|Dockerfile$|\.dockerignore$|\.github/workflows/(e2e|docker)\.yml$)'; then
+            echo "run-e2e=true" >> "${GITHUB_OUTPUT}"
+            echo "Product surface changed: run the full E2E suite."
+          else
+            echo "run-e2e=false" >> "${GITHUB_OUTPUT}"
+            echo "No product surface changed: preserve the required check without consuming shard runners."
+          fi
+
   # ~1145 serial Chromium tests do not fit one GHA runner (GHA max is 6h, not 12h).
   # 6 shards × 120m keeps wall-clock ~90m. Same suite as `make harness-e2e` (ADR 003).
   playwright-shard:
     name: Playwright Chromium shard ${{ matrix.shard }}/6
+    needs: e2e-scope
+    if: needs.e2e-scope.outputs.run-e2e == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 120
     strategy:
@@ -156,12 +188,25 @@ jobs:
   # Required check name — keep exact so branch protection stays a single story.
   playwright:
     name: Playwright Chromium smoke
-    needs: playwright-shard
+    needs: [e2e-scope, playwright-shard]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Require all shards
+        env:
+          SCOPE_RESULT: ${{ needs.e2e-scope.result }}
+          RUN_E2E: ${{ needs.e2e-scope.outputs.run-e2e }}
+          SHARD_RESULT: ${{ needs.playwright-shard.result }}
         run: |
-          echo "Shard matrix result: ${{ needs.playwright-shard.result }}"
-          test "${{ needs.playwright-shard.result }}" = "success"
+          set -euo pipefail
+          echo "Scope result: ${SCOPE_RESULT}"
+          echo "Run E2E: ${RUN_E2E}"
+          echo "Shard matrix result: ${SHARD_RESULT}"
+          test "${SCOPE_RESULT}" = "success"
+          if [[ "${RUN_E2E}" == "true" ]]; then
+            test "${SHARD_RESULT}" = "success"
+          else
+            test "${RUN_E2E}" = "false"
+            test "${SHARD_RESULT}" = "skipped"
+          fi

@@ -22,12 +22,22 @@ Cursor Cloud Agents **GitHub App no está instalada**. Los ciclos se empujan con
 | Workflow | Job | Qué prueba | Cuándo |
 |---|---|---|---|
 | `.github/workflows/ci.yml` | **Backend** | `go test ./...` en `backend/` | todo PR / push a `main` |
-| `.github/workflows/ci.yml` | **Frontend** | lint + Vitest + build de `frontend/` (Qwik legado) | todo PR / push a `main` |
-| `.github/workflows/e2e.yml` | **Playwright Chromium shard 1–6** | misma suite que `make harness-e2e` (ADR 003); 6 shards × 120 min | PRs que tocan `web/**`, `backend/**`, `Dockerfile`, `.dockerignore` o los workflows E2E/Docker |
+| `.github/workflows/ci.yml` | **Legacy Frontend** | lint + Vitest + build de `frontend/` (Qwik legado) | todo PR / push a `main` |
+| `.github/workflows/e2e.yml` | **Playwright Chromium smoke** | check requerido en toda PR; ejecuta 6 shards de la suite `make harness-e2e` sólo cuando cambia producto | toda PR; en pushes a `main`, sólo cambios de producto |
 | `.github/workflows/docker.yml` | **docker-build** | `docker build` (Buildx, `push: false`) + smoke `GET /api/health` + index SPA | todo PR / push a `main` (sin path filter) |
 | `.github/workflows/deploy.yml` | **Artifact Registry + Cloud Run** | WIF → push imagen → `gcloud run deploy ppi` | `workflow_run` de **E2E** verde en `main`; verifica CI + Docker del mismo SHA; no corre en PRs |
 
-PRs **solo-docs**: Backend + Frontend sí corren; Playwright **se salta** por `paths:`. `docker-build` no tiene path filter. El deploy **no** es un check de PR.
+PRs **solo-docs**: Backend + Legacy Frontend + Docker corren; el workflow E2E
+publica su check requerido sin lanzar los seis shards. En pushes documentales a
+`main`, E2E conserva `paths:` y no dispara un deploy redundante. El deploy **no**
+es un check de PR.
+
+### Protección de `main`
+
+GitHub exige PR, historial lineal, conversaciones resueltas y branch actualizado,
+con los checks `Backend`, `Legacy Frontend`, `Rust Web Build`, `docker-build` y
+`Playwright Chromium smoke`. La política también aplica a administradores y
+prohíbe force-push y borrado de `main`.
 
 ### Cómo correr un ciclo de mejora
 

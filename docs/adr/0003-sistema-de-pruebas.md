@@ -29,6 +29,19 @@ La **fuente de verdad local** es `scripts/harness/run.sh` (`make harness*`).
 CI debe permanecer alineada a esas mismas suites (no inventar smoke paralelo
 sin documentarlo aquí).
 
+### Check requerido y routing por alcance
+
+`Playwright Chromium smoke` es un check obligatorio de protección de `main` y
+debe existir en toda PR. En PRs que modifican `web/**`, `backend/**`, la imagen
+Docker o los workflows E2E/Docker, `e2e.yml` ejecuta los seis shards y el
+agregador exige que todos terminen verdes. En PRs sin cambios de producto
+(por ejemplo, sólo ADR/OpenSpec), el clasificador omite la matriz costosa y el
+agregador valida explícitamente esa decisión antes de quedar verde.
+
+Los pushes a `main` conservan el filtro de paths: un cambio documental no
+ejecuta E2E ni dispara un deploy redundante. Un cambio de producto siempre
+ejecuta la suite completa antes de poder promocionarse a Cloud Run.
+
 ### Journeys E2E canónicos (páginas)
 
 Se definen tres journeys productivos (todos deben permanecer verdes):
@@ -62,6 +75,8 @@ ejecutan en `make harness-journeys` y dentro de `make harness-e2e` / CI
 - Un fallo de “no puedo entrar” tiene un diagnostico reproducible en minutos.
 - Los agentes IA tienen un checklist irrefutable (este ADR + Mermaid).
 - CI y local comparten el mismo mapa de journeys.
+- La protección de rama recibe un check E2E determinista sin gastar seis
+  runners en cambios que no alteran el producto.
 
 ## Consecuencias / costos
 - E2E es más lento y flaky si no se respetan esperas de hidratación Wasm.
